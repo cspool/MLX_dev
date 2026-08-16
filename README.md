@@ -29,6 +29,14 @@ pytest
 
 The full-paper completion checklist is in `docs/experiment_inventory.md`. Research decisions and current limitations are in `findings.md` and `research-state.yaml`.
 
+For the optional training/fine-tuning stack (CUDA PyTorch, Transformers, PEFT, Accelerate, and bitsandbytes), run:
+
+```bash
+scripts/bootstrap_training.sh
+```
+
+The script installs only into the project `.venv` and finishes with a two-GPU/BF16/LoRA injection check.
+
 ## Evidence policy
 
 - Paper target values live only under `artifacts/targets/`.

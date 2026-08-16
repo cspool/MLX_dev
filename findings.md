@@ -32,7 +32,7 @@ This supports a hybrid reproduction strategy: use public spatial/GPU projects as
 
 ## Lessons and Constraints
 
-- The current host has Python 3.12 and g++ 11.4 but no CMake, Docker CLI, visible NVIDIA GPU, ImageMagick, `file`, or Tesseract.
+- The current host has Python 3.12, g++ 11.4, and two visible RTX 4090 GPUs. A pinned PyTorch 2.13/CUDA 13, Transformers, PEFT, Accelerate, and bitsandbytes environment passes BF16 LoRA forward/backward and NF4 forward smoke tests. CMake, Docker CLI, ImageMagick, `file`, and Tesseract remain unavailable.
 - The supplied paper extraction has malformed Table III row labels and raster-only plots; numeric values cannot be trusted until cross-checked visually.
 - No completion claim is valid until every paper experiment is represented in an experiment manifest and the generated-vs-target audit passes point by point.
 - Functional-unit occupancy and useful roofline utilization are different metrics. Both are emitted; Fig. 22 is audited with useful operations per peak slot.
