@@ -65,15 +65,36 @@ hypotheses:
 
 experiments:
   proxy_metric: "Maximum absolute percentage error across every numeric paper anchor; pass only when each reproducible point is <=10%, with unavailable measurements explicitly classified rather than fabricated."
-  baseline_value: null
-  best_value: null
-  total_runs: 0
-  trajectory: []
+  baseline_value: 0.2486
+  best_value: 0.0710
+  total_runs: 3
+  trajectory:
+    - run_id: "run_001"
+      hypothesis: "H2"
+      metric_value: 0.2486
+      delta: null
+      wall_time_min: 0.3
+      change_summary: "Initial tag/block event model; max point error across Fig. 22/23."
+      timestamp: "2026-08-16"
+    - run_id: "run_002"
+      hypothesis: "H2"
+      metric_value: 0.0710
+      delta: -0.1776
+      wall_time_min: 0.3
+      change_summary: "Corrected useful-compute metric and added kernel/mesh mechanism calibration."
+      timestamp: "2026-08-16"
+    - run_id: "run_003"
+      hypothesis: "H2"
+      metric_value: 0.0710
+      delta: 0.0
+      wall_time_min: 0.1
+      change_summary: "Ablated skip-hop, active tags, and decoupled pipelines on communication-sensitive FFT."
+      timestamp: "2026-08-16"
 
 outer_loop:
   cycle: 0
   last_direction: null
-  last_reflection: "H1 supported with caveat: SimICT is the explicit but unavailable original framework; DSAGEN/Accel-Sim/Timeloop are open surrogates, not proven MLX source lineage. Target digitization and H2 protocol are next."
+  last_reflection: "H1 supported. H2 event simulator now passes Fig. 22/23 point-wise gates after declared exploratory calibration and shows causal regressions under three architectural ablations. H2 remains active until held-out Fig. 20/21/24/25 are implemented."
 
 workspace:
   findings: "findings.md"

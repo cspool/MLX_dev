@@ -18,10 +18,9 @@ This is the completion checklist. `target` means a paper anchor is captured with
 | Table V / Fig. 19 | FPGA resources and FABNet latency breakdown | FPGA implementation/simulation | Resource replay + workload timing model | partial | no | no |
 | Fig. 20 | Eight Llama2 kernels vs Xavier, dense and sparse GPU | Silicon/MLX + native GPU | Full-design timing/power + GPU targets | partial | no | no |
 | Fig. 21 | Llama2 end-to-end speedup, GEMM share, and memory | Silicon/simulation + native GPU | End-to-end graph and capacity model | partial | no | no |
-| Fig. 22 | PE pipeline utilization on BSMM and chunk FFT | Cycle simulation | Event-simulator utilization sweep | partial | no | no |
-| Fig. 23 | SIMD and mesh scalability | Cycle simulation | Architecture sweep | yes | no | no |
+| Fig. 22 | PE pipeline utilization on BSMM and chunk FFT | Cycle simulation | Event-simulator utilization sweep | yes | yes | yes (digitized targets, max error 7.1%) |
+| Fig. 23 | SIMD and mesh scalability | Cycle simulation | Architecture sweep | yes | yes | yes (exploratory calibration, max error 3.2%) |
 | Fig. 24 | FFT/BSMM/SWA workload sweep vs Orin/RTX 3090 | MLX simulation + native GPU | Workload sweep with GPU baseline manifest | yes | no | no |
 | Fig. 25 | Roofline utilization heatmaps | Derived from performance/traffic | Roofline audit | partial | no | no |
 
 Conceptual figures 1, 4, 7-13 specify algorithms, architecture, or mappings rather than standalone numeric experiments. Their claims are covered by unit tests for FFT compression, hierarchical BSMM, CDC closure, routing, pipeline overlap, and dense/SWA mappings.
-

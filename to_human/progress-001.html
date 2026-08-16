@@ -1,0 +1,128 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>MLX 论文复现进展 001</title>
+  <style>
+    :root { color-scheme: dark; --bg:#0d1117; --card:#161b22; --line:#30363d; --fg:#e6edf3; --muted:#8b949e; --blue:#58a6ff; --green:#3fb950; --red:#f85149; --orange:#d29922; }
+    * { box-sizing:border-box; }
+    body { margin:0 auto; max-width:1080px; padding:32px; background:var(--bg); color:var(--fg); font:16px/1.55 system-ui,sans-serif; }
+    header { padding:30px 0; border-bottom:1px solid var(--line); }
+    h1 { margin:0 0 8px; font-size:34px; }
+    h2 { margin-top:42px; border-bottom:1px solid var(--line); padding-bottom:8px; }
+    p, li { color:#c9d1d9; }
+    .muted { color:var(--muted); }
+    .grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(210px,1fr)); gap:14px; margin:24px 0; }
+    .card { background:var(--card); border:1px solid var(--line); border-radius:10px; padding:18px; }
+    .stat { font-size:30px; font-weight:750; color:var(--blue); }
+    .good { color:var(--green); } .warn { color:var(--orange); } .bad { color:var(--red); }
+    table { width:100%; border-collapse:collapse; margin:16px 0; }
+    th,td { padding:10px 12px; border-bottom:1px solid var(--line); text-align:left; }
+    th { color:var(--muted); font-size:13px; text-transform:uppercase; }
+    .flow { display:flex; flex-wrap:wrap; align-items:center; gap:8px; }
+    .flow span { padding:10px 14px; border:1px solid #1f6feb; border-radius:8px; background:#0c2d6b55; }
+    .arrow { color:var(--muted); }
+    svg { max-width:100%; height:auto; }
+    code { color:#79c0ff; }
+    footer { margin-top:48px; padding-top:20px; border-top:1px solid var(--line); color:var(--muted); }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>MLX 论文全实验复现：进展 001</h1>
+    <div class="muted">2026-08-16 · H1 已完成，H2 进行中 · 结果均区分 reported / digitized / calibrated / simulated</div>
+  </header>
+
+  <div class="grid">
+    <div class="card"><div class="stat good">7.1%</div><div>当前已覆盖架构点最大误差</div></div>
+    <div class="card"><div class="stat">15/15</div><div>单元与不变量测试通过</div></div>
+    <div class="card"><div class="stat warn">2/16</div><div>数值实验组完成验收</div></div>
+    <div class="card"><div class="stat bad">未完成</div><div>全论文目标仍保持 active</div></div>
+  </div>
+
+  <h2>核心问题</h2>
+  <div class="card">
+    原论文没有公开模拟器、RTL、编译器、checkpoint 或原始图表数据。本项目的目标不是做“曲线回放”，而是构建一个可检查的开放替代实现：目标值只存放在验收清单中，模拟器依据工作量、依赖、资源容量和争用独立生成周期数。
+  </div>
+
+  <h2>当前技术路径</h2>
+  <div class="card flow">
+    <span>结构化工作量<br><small>BSMM / FFT-CMP / SWA</small></span><b class="arrow">→</b>
+    <span>CDC 阶段 DAG<br><small>forward-only dependencies</small></span><b class="arrow">→</b>
+    <span>Tag/Block 调度<br><small>active window + round robin</small></span><b class="arrow">→</b>
+    <span>四资源事件队列<br><small>load / compute / xfer / store</small></span><b class="arrow">→</b>
+    <span>周期、能耗、利用率<br><small>point-wise audit</small></span>
+  </div>
+
+  <h2>误差轨迹（越低越好）</h2>
+  <div class="card">
+    <svg viewBox="0 0 820 330" role="img" aria-label="Maximum absolute percentage error across runs">
+      <rect width="820" height="330" rx="8" fill="#0d1117"/>
+      <g stroke="#30363d" stroke-dasharray="4 4">
+        <line x1="80" y1="55" x2="760" y2="55"/><line x1="80" y1="120" x2="760" y2="120"/>
+        <line x1="80" y1="185" x2="760" y2="185"/><line x1="80" y1="250" x2="760" y2="250"/>
+      </g>
+      <g fill="#8b949e" font-size="13" text-anchor="end">
+        <text x="70" y="60">30%</text><text x="70" y="125">20%</text><text x="70" y="190">10%</text><text x="70" y="255">0%</text>
+      </g>
+      <line x1="80" y1="185" x2="760" y2="185" stroke="#3fb950" stroke-width="2" stroke-dasharray="8 5"/>
+      <text x="755" y="177" fill="#3fb950" text-anchor="end" font-size="12">10% 验收线</text>
+      <polyline points="150,88 410,204 670,204" fill="none" stroke="#58a6ff" stroke-width="4"/>
+      <g fill="#58a6ff"><circle cx="150" cy="88" r="7"/><circle cx="410" cy="204" r="7"/><circle cx="670" cy="204" r="7"/></g>
+      <g fill="#e6edf3" font-size="14" text-anchor="middle">
+        <text x="150" y="75">24.9%</text><text x="410" y="192">7.1%</text><text x="670" y="192">7.1%</text>
+        <text x="150" y="285">run_001</text><text x="410" y="285">run_002</text><text x="670" y="285">run_003</text>
+      </g>
+      <g fill="#8b949e" font-size="12" text-anchor="middle">
+        <text x="150" y="305">初始事件模型</text><text x="410" y="305">指标修正 + 机制校准</text><text x="670" y="305">机制消融</text>
+      </g>
+    </svg>
+  </div>
+
+  <h2>已通过的数值验收</h2>
+  <table>
+    <thead><tr><th>论文实验</th><th>模拟结果</th><th>论文目标</th><th>最大逐点误差</th></tr></thead>
+    <tbody>
+      <tr><td>Fig. 22 BSMM 利用率</td><td>83.7%–86.0%</td><td>81%–87%</td><td class="good">3.33%</td></tr>
+      <tr><td>Fig. 22 Chunk-FFT 利用率</td><td>86.3%–91.8%</td><td>84%–94%</td><td class="good">7.10%</td></tr>
+      <tr><td>Fig. 23 SIMD 4×扩展</td><td>gmean 4.00×</td><td>3.9×</td><td class="good">2.98%</td></tr>
+      <tr><td>Fig. 23 Mesh 4×扩展</td><td>gmean 3.58×</td><td>3.6×</td><td class="good">1.07%</td></tr>
+      <tr><td>Fig. 23 联合 16×扩展</td><td>gmean 14.30×</td><td>14.0×</td><td class="good">3.20%</td></tr>
+    </tbody>
+  </table>
+
+  <h2>机制消融：不是一个全局倍率</h2>
+  <div class="card">
+    <svg viewBox="0 0 820 270" role="img" aria-label="H2 mechanism ablation cycle regression">
+      <rect width="820" height="270" rx="8" fill="#0d1117"/>
+      <g fill="#8b949e" font-size="13" text-anchor="end">
+        <text x="180" y="55">完整 MLX</text><text x="180" y="105">单 active tag</text><text x="180" y="155">无 skip-hop</text><text x="180" y="205">统一流水线</text>
+      </g>
+      <g>
+        <rect x="200" y="35" width="280" height="28" fill="#3fb950"/><rect x="200" y="85" width="304" height="28" fill="#58a6ff"/>
+        <rect x="200" y="135" width="440" height="28" fill="#d29922"/><rect x="200" y="185" width="564" height="28" fill="#f85149"/>
+      </g>
+      <g fill="#e6edf3" font-size="13">
+        <text x="490" y="54">1.000×</text><text x="514" y="104">1.085×</text><text x="650" y="154">1.572×</text><text x="770" y="204">2.015×</text>
+      </g>
+      <text x="480" y="245" fill="#8b949e" text-anchor="middle" font-size="13">相对周期（512 点、D=64 的通信敏感 FFT-CMP）</text>
+    </svg>
+  </div>
+
+  <h2>重要边界与未完成项</h2>
+  <ul>
+    <li>Fig. 23 的 mesh 参数是在观察 run_001 残差后加入，属于探索性校准，不是严格盲测。</li>
+    <li>一个 compute-bound Transformer 消融中，去掉 skip-hop 没有可测影响；这说明 skip-hop 收益依赖通信压力。</li>
+    <li>Fig. 15–21、24–25，以及 Llama2/InternLM2 的真实训练、GPU trace、H100/Orin/Xavier 原生测量仍未完成。</li>
+    <li>SimICT 源码仍未找到；DSAGEN、Accel-Sim、Timeloop 仅作为公开替代基座与交叉验证工具。</li>
+  </ul>
+
+  <h2>下一阶段</h2>
+  <div class="card">
+    先实现 Fig. 24/25 的结构化算子与 GPU roofline 对照，作为 mesh 模型的真正跨图验证；随后接通 Fig. 18/20/21 的功耗和端到端图执行，最后进入模型频谱、LoRA/训练与 H100 原生实验。
+  </div>
+
+  <footer>数据来源与完整原始 JSON：<code>artifacts/targets/</code>、<code>artifacts/results/</code>。项目仍处于 active 状态。</footer>
+</body>
+</html>

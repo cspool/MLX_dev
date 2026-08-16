@@ -1,0 +1,277 @@
+{
+  "calibration": {
+    "kernel_compute_setup_cycles": {
+      "bsmm": 1.0,
+      "fft": 0.25,
+      "fft_cmp": 0.25,
+      "gemm": 1.0,
+      "swa": 0.5
+    },
+    "kernel_issue_scale": {
+      "bsmm": 0.8958333333333334,
+      "fft": 0.9583333333333334,
+      "fft_cmp": 0.9583333333333334,
+      "gemm": 1.0,
+      "swa": 0.94
+    },
+    "mesh_base_penalty": 0.02,
+    "mesh_congestion_penalty": 0.069,
+    "mesh_congestion_start_n": 2048,
+    "mesh_fill_penalty": 0.075,
+    "mesh_reference": 4,
+    "mesh_reference_n": 512,
+    "name": "paper-v1-mechanism-calibration"
+  },
+  "cycle_regression": {
+    "baseline": 1.0,
+    "no_skip_links": 1.572380856747775,
+    "single_active_tag": 1.0848257803387906,
+    "unified_pipeline": 2.0146782147353934
+  },
+  "experiment": "h2-ablations",
+  "results": {
+    "baseline": {
+      "achieved_gops": 216.22575010399478,
+      "average_power_w": 0.4224971377006035,
+      "compute_utilization": 0.8446318363437296,
+      "cycles": 9850.445652174198,
+      "energy_mj": 0.004161785093118953,
+      "event_count": 4480,
+      "hardware": "mlx-reduced-simd8-4x4",
+      "latency_us": 9.850445652174198,
+      "metadata": {
+        "calibration": {
+          "kernel_compute_setup_cycles": {
+            "bsmm": 1.0,
+            "fft": 0.25,
+            "fft_cmp": 0.25,
+            "gemm": 1.0,
+            "swa": 0.5
+          },
+          "kernel_issue_scale": {
+            "bsmm": 0.8958333333333334,
+            "fft": 0.9583333333333334,
+            "fft_cmp": 0.9583333333333334,
+            "gemm": 1.0,
+            "swa": 0.94
+          },
+          "mesh_base_penalty": 0.02,
+          "mesh_congestion_penalty": 0.069,
+          "mesh_congestion_start_n": 2048,
+          "mesh_fill_penalty": 0.075,
+          "mesh_reference": 4,
+          "mesh_reference_n": 512,
+          "name": "paper-v1-mechanism-calibration"
+        },
+        "chunk_length": 512,
+        "compute_active_fraction": 0.9733040107432815,
+        "hardware_peak_tops": 0.256,
+        "launch_cycles": 18.0,
+        "operational_intensity": 21.666666666666668,
+        "retained_length": 256,
+        "stage_count": 17,
+        "trace": []
+      },
+      "offchip_bytes": 98304.0,
+      "operations": 2129920.0,
+      "resource_busy_cycles": {
+        "compute_fma": 9587.478260869866,
+        "load": 1152.0,
+        "store": 640.0,
+        "xfer": 8448.000000000016
+      },
+      "resource_utilization": {
+        "compute_fma": 0.9733040107432815,
+        "load": 0.11694902349374718,
+        "store": 0.06497167971874843,
+        "xfer": 0.857626172287481
+      },
+      "waves": 128,
+      "workload": "h2-ablation-communication-sensitive-fft512"
+    },
+    "no_skip_links": {
+      "achieved_gops": 137.5148706346019,
+      "average_power_w": 0.31852815849484906,
+      "compute_utilization": 0.5371674634164136,
+      "cycles": 15488.65217391306,
+      "energy_mj": 0.004933571854523767,
+      "event_count": 4480,
+      "hardware": "mlx-no-skip",
+      "latency_us": 15.48865217391306,
+      "metadata": {
+        "calibration": {
+          "kernel_compute_setup_cycles": {
+            "bsmm": 1.0,
+            "fft": 0.25,
+            "fft_cmp": 0.25,
+            "gemm": 1.0,
+            "swa": 0.5
+          },
+          "kernel_issue_scale": {
+            "bsmm": 0.8958333333333334,
+            "fft": 0.9583333333333334,
+            "fft_cmp": 0.9583333333333334,
+            "gemm": 1.0,
+            "swa": 0.94
+          },
+          "mesh_base_penalty": 0.02,
+          "mesh_congestion_penalty": 0.069,
+          "mesh_congestion_start_n": 2048,
+          "mesh_fill_penalty": 0.075,
+          "mesh_reference": 4,
+          "mesh_reference_n": 512,
+          "name": "paper-v1-mechanism-calibration"
+        },
+        "chunk_length": 512,
+        "compute_active_fraction": 0.619000165619168,
+        "hardware_peak_tops": 0.256,
+        "launch_cycles": 18.0,
+        "operational_intensity": 21.666666666666668,
+        "retained_length": 256,
+        "stage_count": 17,
+        "trace": []
+      },
+      "offchip_bytes": 98304.0,
+      "operations": 2129920.0,
+      "resource_busy_cycles": {
+        "compute_fma": 9587.478260869872,
+        "load": 1152.0,
+        "store": 640.0,
+        "xfer": 15445.333333333352
+      },
+      "resource_utilization": {
+        "compute_fma": 0.619000165619168,
+        "load": 0.07437703339611881,
+        "store": 0.0413205741089549,
+        "xfer": 0.9972031884961128
+      },
+      "waves": 128,
+      "workload": "h2-ablation-communication-sensitive-fft512"
+    },
+    "single_active_tag": {
+      "achieved_gops": 199.318410405464,
+      "average_power_w": 0.39456338204713115,
+      "compute_utilization": 0.7785875406463436,
+      "cycles": 10686.017391304722,
+      "energy_mj": 0.004216311162527652,
+      "event_count": 4480,
+      "hardware": "mlx-single-tag",
+      "latency_us": 10.686017391304722,
+      "metadata": {
+        "calibration": {
+          "kernel_compute_setup_cycles": {
+            "bsmm": 1.0,
+            "fft": 0.25,
+            "fft_cmp": 0.25,
+            "gemm": 1.0,
+            "swa": 0.5
+          },
+          "kernel_issue_scale": {
+            "bsmm": 0.8958333333333334,
+            "fft": 0.9583333333333334,
+            "fft_cmp": 0.9583333333333334,
+            "gemm": 1.0,
+            "swa": 0.94
+          },
+          "mesh_base_penalty": 0.02,
+          "mesh_congestion_penalty": 0.069,
+          "mesh_congestion_start_n": 2048,
+          "mesh_fill_penalty": 0.075,
+          "mesh_reference": 4,
+          "mesh_reference_n": 512,
+          "name": "paper-v1-mechanism-calibration"
+        },
+        "chunk_length": 512,
+        "compute_active_fraction": 0.8971984519388126,
+        "hardware_peak_tops": 0.256,
+        "launch_cycles": 18.0,
+        "operational_intensity": 21.666666666666668,
+        "retained_length": 256,
+        "stage_count": 17,
+        "trace": []
+      },
+      "offchip_bytes": 98304.0,
+      "operations": 2129920.0,
+      "resource_busy_cycles": {
+        "compute_fma": 9587.478260869826,
+        "load": 1152.0,
+        "store": 640.0,
+        "xfer": 8448.000000000216
+      },
+      "resource_utilization": {
+        "compute_fma": 0.8971984519388126,
+        "load": 0.10780442870487834,
+        "store": 0.05989134928048797,
+        "xfer": 0.7905658105024614
+      },
+      "waves": 128,
+      "workload": "h2-ablation-communication-sensitive-fft512"
+    },
+    "unified_pipeline": {
+      "achieved_gops": 107.32520385762633,
+      "average_power_w": 0.3703742042265679,
+      "compute_utilization": 0.41923907756885287,
+      "cycles": 19845.47826087033,
+      "energy_mj": 0.007350253218365502,
+      "event_count": 4480,
+      "hardware": "mlx-unified-pipeline",
+      "latency_us": 19.845478260870333,
+      "metadata": {
+        "calibration": {
+          "kernel_compute_setup_cycles": {
+            "bsmm": 1.0,
+            "fft": 0.25,
+            "fft_cmp": 0.25,
+            "gemm": 1.0,
+            "swa": 0.5
+          },
+          "kernel_issue_scale": {
+            "bsmm": 0.8958333333333334,
+            "fft": 0.9583333333333334,
+            "fft_cmp": 0.9583333333333334,
+            "gemm": 1.0,
+            "swa": 0.94
+          },
+          "mesh_base_penalty": 0.02,
+          "mesh_congestion_penalty": 0.069,
+          "mesh_congestion_start_n": 2048,
+          "mesh_fill_penalty": 0.075,
+          "mesh_reference": 4,
+          "mesh_reference_n": 512,
+          "name": "paper-v1-mechanism-calibration"
+        },
+        "chunk_length": 512,
+        "compute_active_fraction": 0.9990929923802597,
+        "hardware_peak_tops": 0.256,
+        "launch_cycles": 18.0,
+        "operational_intensity": 21.666666666666668,
+        "retained_length": 256,
+        "stage_count": 17,
+        "trace": []
+      },
+      "offchip_bytes": 98304.0,
+      "operations": 2129920.0,
+      "resource_busy_cycles": {
+        "unified": 19827.47826087033
+      },
+      "resource_utilization": {
+        "unified": 0.9990929923802597
+      },
+      "waves": 128,
+      "workload": "h2-ablation-communication-sensitive-fft512"
+    }
+  },
+  "workload": {
+    "batch": 1,
+    "block_size": 32,
+    "chunk_length": 512,
+    "compression_ratio": 0.5,
+    "d": 64,
+    "kernel": "fft_cmp",
+    "n": 512,
+    "name": "h2-ablation-communication-sensitive-fft512",
+    "projections": 1,
+    "query_block": 32,
+    "window": 128
+  }
+}
