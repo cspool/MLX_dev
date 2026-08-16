@@ -4,6 +4,20 @@ metadata:
   source_file: "MLX Multi-Layer Execution for Structured LLM Workload Acceleration on Spatial Architectures/MLX Multi-Layer Execution for Structured LLM Workload Acceleration on Spatial Architectures.md"
   digitized_on: "2026-08-16"
 
+fig2_orin_profile:
+  provenance: digitized_and_reported_annotations
+  uncertainty_abs_normalized_time: 0.015
+  uncertainty_abs_hit_rate_pct: 1.5
+  groups: [N8K_dense, N8K_fft, N512_dense, N512_fft]
+  normalized_execution_time:
+    projection: [0.114, 0.063, 0.759, 0.133]
+    attention: [0.886, 0.203, 0.241, 0.259]
+  annotated_fft_speedup: [3.77, 2.56]
+  cache_hit_rate_pct:
+    l2: [72.0, 74.0, 67.0, 74.0]
+    l1: [7.0, 14.0, 14.0, 7.0]
+  digitization_method: "Linear y axes recovered from the supplied raster; stack boundaries and cache-bar tops were sampled away from hatch strokes."
+
 fig3_h100_profile:
   provenance: digitized
   uncertainty_abs_cuda_utilization: 0.004
@@ -13,6 +27,15 @@ fig3_h100_profile:
   to_qkv_sequence_lengths: [512, 8192]
   to_qkv_gflops: [492000, 770000]
   to_qkv_implied_tensor_efficiency: [0.325, 0.509]
+  roofline:
+    bandwidth_gbs: 2000.0
+    tensor_peak_gflops: 1513000.0
+    cuda_peak_gflops: 102000.0
+  point_names: [softmax_qkv_512, softmax_qkv_8K, fft_512, fft_8K, bsmm_512, bsmm_8K, to_qkv_512, to_qkv_8K]
+  point_modes: [tensor, tensor, cuda, cuda, cuda, cuda, tensor, tensor]
+  operational_intensity_flops_per_byte: [288.0, 558.0, 12.9, 18.7, 10.3, 14.8, 491.0, 1670.0]
+  performance_gflops: [395000.0, 503000.0, 12100.0, 14400.0, 10450.0, 12100.0, 492000.0, 770000.0]
+  uncertainty_relative_points: 0.08
   digitization_method: "Bar tops and marker centers were mapped through the plotted linear/log axes of the supplied raster; these are not author raw data."
 
 fig17_h100_speedup:
