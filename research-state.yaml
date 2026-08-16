@@ -1,0 +1,84 @@
+project:
+  title: "MLX paper reproduction"
+  question: "Can a transparent open surrogate of the unpublished MLX simulator reproduce every reported experiment within 10% while separating measured, digitized, inferred, and calibrated evidence?"
+  status: active
+  started: "2026-08-16"
+  domain: "spatial accelerator architecture simulation and structured LLM inference"
+
+literature:
+  key_papers:
+    - id: mlx2026
+      title: "MLX: Multi-Layer Execution for Structured LLM Workload Acceleration on Spatial Architectures"
+      authors: "Wu et al."
+      year: 2026
+      relevance: "Target paper and source of all acceptance anchors."
+    - id: simict2013
+      title: "SimICT: A Fast and Flexible Framework for Performance and Power Evaluation of Large-Scale Architecture"
+      authors: "Ye et al."
+      year: 2013
+      relevance: "The target paper explicitly identifies this as the simulator used for the reduced design."
+    - id: dsagen2020
+      title: "DSAGEN: Synthesizing Programmable Spatial Accelerators"
+      authors: "Weng et al."
+      year: 2020
+      relevance: "Open full-stack spatial compiler/simulator from an MLX coauthor; closest available surrogate substrate."
+  open_problems:
+    - "The target MLX simulator, RTL, compiler, model checkpoints, and raw plot data are not public."
+    - "The paper omits many low-level latency, SRAM, DRAM, compiler schedule, and calibration parameters."
+    - "Several plots must be digitized from raster figures before numerical reproduction can be audited."
+  evidence_gaps:
+    - "Need verify whether SimICT source is publicly obtainable."
+    - "Need identify exact open GPU simulator suitable for the H100/Orin/Xavier comparison."
+    - "Need recover all per-point targets from Figures 2, 3, and 15-25."
+
+hypotheses:
+  - id: H1
+    statement: "MLX is most plausibly a SimICT-hosted specialization of the authors' DFU/DSA lineage; DSAGEN is the closest open spatial surrogate, while Accel-Sim/GPGPU-Sim can cover GPU baselines."
+    status: active
+    motivation: "Select an evidence-grounded, reproducible substrate without pretending the unpublished code is available."
+    parent: null
+    priority: high
+  - id: H2
+    statement: "A block/tag-level discrete-event model with decoupled load, compute, and transfer queues can reproduce MLX cycle results within 10% after calibrating only parameters not disclosed by the paper."
+    status: pending
+    motivation: "This is the architectural mechanism claimed by the paper and the central simulator deliverable."
+    parent: null
+    priority: high
+  - id: H3
+    statement: "Closed dependency components, skip-hop routing, and bounded tag windows explain the reported 90% compute utilization and near-linear SIMD/mesh scaling."
+    status: pending
+    motivation: "Tests whether calibrated agreement follows the proposed mechanism rather than per-figure constants."
+    parent: H2
+    priority: high
+  - id: H4
+    statement: "Analytical structured-operator FLOP/traffic models reproduce the reported FFT-CMP and hierarchical-BSMM reductions across model shapes."
+    status: pending
+    motivation: "Connect the algorithm and architecture experiments with common workload descriptions."
+    parent: null
+    priority: high
+  - id: H5
+    statement: "The complete reported experiment suite can be regenerated from versioned manifests with per-point provenance and <=10% absolute relative error."
+    status: pending
+    motivation: "Defines full-paper completion rather than matching a few headline averages."
+    parent: null
+    priority: high
+
+experiments:
+  proxy_metric: "Maximum absolute percentage error across every numeric paper anchor; pass only when each reproducible point is <=10%, with unavailable measurements explicitly classified rather than fabricated."
+  baseline_value: null
+  best_value: null
+  total_runs: 0
+  trajectory: []
+
+outer_loop:
+  cycle: 0
+  last_direction: null
+  last_reflection: "Bootstrap in progress: audit the paper, recover targets, and select open surrogate components."
+
+workspace:
+  findings: "findings.md"
+  log: "research-log.md"
+  literature_dir: "literature/"
+  experiments_dir: "experiments/"
+  to_human_dir: "to_human/"
+  paper_dir: "paper/"
