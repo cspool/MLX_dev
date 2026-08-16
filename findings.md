@@ -15,6 +15,7 @@ This supports a hybrid reproduction strategy: use public spatial/GPU projects as
 - The paper defines at least four distinct evidence classes: algorithm accuracy/FLOPs, native GPU profiling, cycle-simulated spatial performance/utilization/scaling, and RTL/silicon area-power results.
 - Headline anchors include 57-72% QKV+attention compute reduction, <1.45% LLM accuracy loss, about 90% compute utilization, 3.9x SIMD scaling, 3.6x mesh scaling, up to 14x joint scaling, 3.2x hardware speedup, and 3.1x energy saving.
 - Figures 15-25 contain many more acceptance points than the prose. Raster digitization is therefore a required first-class stage.
+- H1 is supported with caveat: DSAGEN is an evidence-grounded open spatial surrogate, Accel-Sim is the GPU surrogate, and Timeloop is an analytical cross-check. None is presented as proven original MLX source.
 
 ## Patterns and Insights
 
@@ -36,5 +37,4 @@ This supports a hybrid reproduction strategy: use public spatial/GPU projects as
 
 ## Optimization Trajectory
 
-No simulator run yet. Bootstrap and evidence recovery are in progress.
-
+H1 base-selection study completed. No simulator timing run yet; target recovery and H2 implementation are in progress.
