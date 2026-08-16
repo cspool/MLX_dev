@@ -70,7 +70,7 @@ hypotheses:
     priority: high
   - id: H7
     statement: "Reported totals and normalized metrics across Tables II/IV/V and Figures 18/19 are arithmetically consistent within 10%."
-    status: pending
+    status: rejected
     motivation: "Separate reproducible reported-number arithmetic from unavailable RTL, FPGA, and prior-accelerator implementations."
     parent: H5
     priority: medium
@@ -79,7 +79,7 @@ experiments:
   proxy_metric: "Maximum absolute percentage error across every numeric paper anchor; pass only when each reproducible point is <=10%, with unavailable measurements explicitly classified rather than fabricated."
   baseline_value: 0.2486
   best_value: 0.0710
-  total_runs: 7
+  total_runs: 9
   trajectory:
     - run_id: "run_001"
       hypothesis: "H2"
@@ -130,11 +130,25 @@ experiments:
       wall_time_min: 0.1
       change_summary: "Fig. 21 holdout: speed model rejected; first-principles memory reached 5-6% MAPE but max 13.5%."
       timestamp: "2026-08-16"
+    - run_id: "run_008"
+      hypothesis: "H7"
+      metric_value: 0.8750
+      delta: null
+      wall_time_min: 0.1
+      change_summary: "Fig. 18/Table IV affinity audit; prior accelerators reconcile, but both MLX bars fail the published normalization relationship."
+      timestamp: "2026-08-16"
+    - run_id: "run_009"
+      hypothesis: "H7"
+      metric_value: 0.0725
+      delta: null
+      wall_time_min: 0.1
+      change_summary: "Table II, Table V, and Fig. 19 reported arithmetic passes; classified separately from hardware reproduction."
+      timestamp: "2026-08-16"
 
 outer_loop:
   cycle: 0
   last_direction: null
-  last_reflection: "H1 supported. H2 event simulator passes exploratory Fig. 22/23 fits and causal ablations, while Fig. 24/25 are calibration replay only. H6 honestly rejected transfer of H100 efficiency to held-out Xavier Fig. 20/21. Memory nearly matches, but performance/energy now require native Xavier or validated Accel-Sim; H2 remains active."
+  last_reflection: "H1 supported. H2 remains active: Fig. 22/23 are exploratory fits, Fig. 24/25 are calibration replay, and H6 rejects Xavier transfer. H7 passes Table II/V and Fig. 19 arithmetic but finds Fig. 18(c)'s MLX normalization unreconciled with Table IV. Native/upstream evidence and algorithm experiments remain."
 
 workspace:
   findings: "findings.md"

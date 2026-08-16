@@ -42,7 +42,19 @@ def _parser() -> argparse.ArgumentParser:
     reproduce_parser.add_argument(
         "--figure",
         required=True,
-        choices=["20", "21", "22", "23", "24", "25", "h2-ablations", "all"],
+        choices=[
+            "18",
+            "19",
+            "20",
+            "21",
+            "22",
+            "23",
+            "24",
+            "25",
+            "tables",
+            "h2-ablations",
+            "all",
+        ],
     )
     reproduce_parser.add_argument("--output", type=Path)
     return parser

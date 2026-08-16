@@ -1,10 +1,12 @@
 from mlxsim.experiments import (
     geometric_mean,
+    reproduce_fig18,
     reproduce_fig20,
     reproduce_fig21,
     reproduce_fig22,
     reproduce_fig24,
     reproduce_fig25,
+    reproduce_tables_and_fig19,
     run_h2_ablations,
 )
 
@@ -59,3 +61,16 @@ def test_fig21_memory_model_and_capacity_labels() -> None:
     assert len(result["actual"]["dense_memory_gb"]) == 5
     assert result["xavier_execution_status"][:3] == ["within-xavier-capacity"] * 3
     assert result["xavier_execution_status"][3:] == ["projected-over-xavier-capacity"] * 2
+
+
+def test_fig18_cross_figure_affinity_audit_is_not_simulator_validation() -> None:
+    result = reproduce_fig18()
+    assert result["simulator_validation_eligible"] is False
+    assert len(result["actual"]["algorithm_normalized_speedup"]) == 7
+
+
+def test_reported_table_arithmetic() -> None:
+    result = reproduce_tables_and_fig19()
+    assert result["table2"]["audit"]["pass_10pct"]
+    assert result["table5"]["audit"]["pass_10pct"]
+    assert result["fig19"]["audit"]["pass_10pct"]

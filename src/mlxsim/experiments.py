@@ -53,7 +53,109 @@ def _audit_series(actual: list[float], target: list[float]) -> dict[str, Any]:
         "absolute_relative_errors": errors,
         "mean_absolute_percentage_error": sum(errors) / len(errors),
         "maximum_absolute_percentage_error": max(errors),
-        "pass_10pct": all(error <= 0.10 for error in errors),
+        "pass_10pct": all(error <= 0.10 + 1e-12 for error in errors),
+    }
+
+
+def reproduce_fig18() -> dict[str, Any]:
+    target = load_targets()["fig18_prior_accelerators"]
+    latency = list(target["latency_speedup"])
+    flop_saving = list(target["algorithm_flop_saving_from_table4"])
+    baseline_flop_saving = flop_saving[0]
+    derived_affinity = [
+        speedup / (saving / baseline_flop_saving)
+        for speedup, saving in zip(latency, flop_saving, strict=True)
+    ]
+    reported_affinity = list(target["algorithm_normalized_speedup"])
+    return {
+        "figure": 18,
+        "classification": "exploratory-cross-figure-arithmetic-audit",
+        "simulator_validation_eligible": False,
+        "hardware": target["hardware"],
+        "formula": ("latency_speedup / (algorithm_flop_saving / SpAtten_algorithm_flop_saving)"),
+        "inputs": {
+            "latency_speedup": latency,
+            "algorithm_flop_saving_from_table4": flop_saving,
+        },
+        "actual": {"algorithm_normalized_speedup": derived_affinity},
+        "target": {"algorithm_normalized_speedup": reported_affinity},
+        "audit": {
+            "algorithm_normalized_speedup": _audit_series(derived_affinity, reported_affinity)
+        },
+    }
+
+
+def reproduce_tables_and_fig19() -> dict[str, Any]:
+    targets = load_targets()
+    table2 = targets["table2_area_power"]
+    components = table2["components"]
+    pe_component_names = (
+        "config_network",
+        "data_network",
+        "control_logic",
+        "tag_buffer",
+        "register_file",
+        "fu_simd32",
+    )
+    pe_area = sum(components[name]["area_mm2"] for name in pe_component_names)
+    pe_power = sum(components[name]["power_mw"] for name in pe_component_names)
+    derived_table2 = [pe_area, pe_power, 16 * pe_area, 16 * pe_power]
+    reported_table2 = [
+        components["pe"]["area_mm2"],
+        components["pe"]["power_mw"],
+        components["pe_array"]["area_mm2"],
+        components["pe_array"]["power_mw"],
+    ]
+    reduced_ratios = [
+        components["reduced_simd8"]["area_mm2"] / components["pe_array"]["area_mm2"],
+        components["reduced_simd8"]["power_mw"] / components["pe_array"]["power_mw"],
+    ]
+    reported_reduced = [
+        table2["reported_reduced_over_full"]["area"],
+        table2["reported_reduced_over_full"]["power"],
+    ]
+
+    fig19 = targets["fig19_fabnet"]
+    resources = fig19["fpga_resources"]
+    resource_names = ("LUT", "FF", "DSP")
+    derived_ratios = [resources[name]["mlx"] / resources[name]["fabnet"] for name in resource_names]
+    reported_ratios = [resources[name]["ratio"] for name in resource_names]
+    end_to_end = list(fig19["end_to_end_speedup"])
+    derived_range = [min(end_to_end), max(end_to_end)]
+    reported_range = list(fig19["reported_end_to_end_speedup_range"])
+    return {
+        "items": ["table2", "table5", "fig19"],
+        "classification": "reported-arithmetic-audit",
+        "simulator_validation_eligible": False,
+        "table2": {
+            "labels": ["pe_area_mm2", "pe_power_mw", "array_area_mm2", "array_power_mw"],
+            "actual": derived_table2,
+            "target": reported_table2,
+            "audit": _audit_series(derived_table2, reported_table2),
+            "reduced_over_full": {
+                "labels": ["area", "power"],
+                "actual": reduced_ratios,
+                "target": reported_reduced,
+                "audit": _audit_series(reduced_ratios, reported_reduced),
+            },
+        },
+        "table5": {
+            "labels": list(resource_names),
+            "actual": derived_ratios,
+            "target": reported_ratios,
+            "audit": _audit_series(derived_ratios, reported_ratios),
+        },
+        "fig19": {
+            "sequence_lengths": fig19["sequence_lengths"],
+            "end_to_end_speedup": end_to_end,
+            "geometric_mean": geometric_mean(end_to_end),
+            "actual_range": derived_range,
+            "target_range": reported_range,
+            "audit": _audit_series(derived_range, reported_range),
+            "component_range_classification": "prose-replay-only",
+            "attention_speedup_range": fig19["attention_speedup_range"],
+            "bsmm_ffn_speedup_range": fig19["bsmm_ffn_speedup_range"],
+        },
     }
 
 
@@ -596,6 +698,10 @@ def reproduce_fig24() -> dict[str, Any]:
 
 def reproduce(figure: str | int) -> dict[str, Any]:
     value = str(figure).lower()
+    if value == "18":
+        return reproduce_fig18()
+    if value in {"19", "tables"}:
+        return reproduce_tables_and_fig19()
     if value == "20":
         return reproduce_fig20()
     if value == "21":
@@ -610,6 +716,8 @@ def reproduce(figure: str | int) -> dict[str, Any]:
         return reproduce_fig24()
     if value == "all":
         return {
+            "fig18": reproduce_fig18(),
+            "tables_and_fig19": reproduce_tables_and_fig19(),
             "fig20": reproduce_fig20(),
             "fig21": reproduce_fig21(),
             "fig22": reproduce_fig22(),
@@ -620,7 +728,7 @@ def reproduce(figure: str | int) -> dict[str, Any]:
         }
     if value in {"h2", "h2-ablations"}:
         return run_h2_ablations()
-    raise ValueError(f"implemented figures are 20-25, h2-ablations, or all; got {figure!r}")
+    raise ValueError(f"implemented figures are 18-25, tables, h2-ablations, or all; got {figure!r}")
 
 
 def write_json(data: dict[str, Any], path: str | Path) -> None:
