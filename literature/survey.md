@@ -26,6 +26,12 @@
 
 - Pending primary-source comparison of Accel-Sim/GPGPU-Sim support for Volta, Ampere, Hopper, trace-driven execution, and custom structured kernels.
 
+## NVIDIA Jetson AGX Xavier specifications
+
+- NVIDIA's official Jetson material specifies a 512-core Volta GPU with 64 Tensor Cores, 16-GB 256-bit LPDDR4x memory, 137-GB/s bandwidth, and 10/15/30-W power modes for the original module.
+- Official sources: <https://developer.nvidia.com/blog/nvidia-jetson-agx-xavier-32-teraops-ai-robotics/> and <https://www.nvidia.com/en-us/autonomous-machines/embedded-systems/jetson-xavier-series/>.
+- The target paper fixes its evaluated operating point at 15 W and reports 1.7-TFLOP/s CUDA and 6-TFLOP/s Tensor peaks; those paper-specific values take precedence in H6.
+
 ## Evidence labels used by this project
 
 - `reported`: numeric text/table value stated by the paper.
@@ -34,4 +40,3 @@
 - `simulated`: output of the local mechanism model.
 - `inferred`: assumption needed because the paper omits a detail.
 - `calibrated`: inferred parameter fit only on a declared calibration subset.
-
