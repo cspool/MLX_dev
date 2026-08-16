@@ -67,7 +67,7 @@ experiments:
   proxy_metric: "Maximum absolute percentage error across every numeric paper anchor; pass only when each reproducible point is <=10%, with unavailable measurements explicitly classified rather than fabricated."
   baseline_value: 0.2486
   best_value: 0.0710
-  total_runs: 3
+  total_runs: 5
   trajectory:
     - run_id: "run_001"
       hypothesis: "H2"
@@ -90,11 +90,25 @@ experiments:
       wall_time_min: 0.1
       change_summary: "Ablated skip-hop, active tags, and decoupled pipelines on communication-sensitive FFT."
       timestamp: "2026-08-16"
+    - run_id: "run_004"
+      hypothesis: "H2"
+      metric_value: 0.0710
+      delta: 0.0
+      wall_time_min: 0.1
+      change_summary: "Added Fig. 25 roofline-utilization pipeline; saturated four-parameter/four-anchor surfaces are classified as calibration replay only."
+      timestamp: "2026-08-16"
+    - run_id: "run_005"
+      hypothesis: "H2"
+      metric_value: 0.0710
+      delta: 0.0
+      wall_time_min: 0.2
+      change_summary: "Added Fig. 24 full-event numerator and saturated seven-parameter Orin proxy; excluded exact replay from validation."
+      timestamp: "2026-08-16"
 
 outer_loop:
   cycle: 0
   last_direction: null
-  last_reflection: "H1 supported. H2 event simulator now passes Fig. 22/23 point-wise gates after declared exploratory calibration and shows causal regressions under three architectural ablations. H2 remains active until held-out Fig. 20/21/24/25 are implemented."
+  last_reflection: "H1 supported. H2 event simulator passes Fig. 22/23 point-wise gates after exploratory calibration and shows causal regressions under three ablations. Fig. 24/25 runners now expose target coverage, but their saturated empirical surfaces are calibration replay only. H2 remains active pending Fig. 20/21 and upstream/native validation."
 
 workspace:
   findings: "findings.md"

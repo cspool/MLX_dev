@@ -37,7 +37,7 @@ def _parser() -> argparse.ArgumentParser:
 
     reproduce_parser = subparsers.add_parser("reproduce", help="run a paper figure manifest")
     reproduce_parser.add_argument(
-        "--figure", required=True, choices=["22", "23", "h2-ablations", "all"]
+        "--figure", required=True, choices=["22", "23", "24", "25", "h2-ablations", "all"]
     )
     reproduce_parser.add_argument("--output", type=Path)
     return parser

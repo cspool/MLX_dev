@@ -8,6 +8,7 @@ from typing import Any
 
 import yaml
 
+from .roofline import RooflineCalibration
 from .schema import CalibrationConfig, HardwareConfig, Workload
 from .simulator import MLXSimulator
 
@@ -15,6 +16,7 @@ PROJECT_ROOT = Path(__file__).resolve().parents[2]
 TARGET_PATH = PROJECT_ROOT / "artifacts" / "targets" / "paper_targets.yaml"
 REDUCED_CONFIG = PROJECT_ROOT / "configs" / "hardware" / "mlx_reduced.yaml"
 PAPER_CALIBRATION = PROJECT_ROOT / "configs" / "calibration" / "paper_v1.yaml"
+ROOFLINE_CALIBRATION = PROJECT_ROOT / "configs" / "calibration" / "roofline_v1.yaml"
 
 
 def load_targets(path: str | Path = TARGET_PATH) -> dict[str, Any]:
@@ -186,21 +188,145 @@ def run_h2_ablations(config_path: str | Path = REDUCED_CONFIG) -> dict[str, Any]
     }
 
 
+def reproduce_fig25() -> dict[str, Any]:
+    calibration = RooflineCalibration.from_yaml(ROOFLINE_CALIBRATION)
+    target = load_targets()["fig25_roofline_utilization"]
+    cases = [
+        ("BERT_512", 512, 1024),
+        ("Llama2_1K", 1024, 4096),
+        ("InternLM2_4K", 4096, 4096),
+        ("BERT_8K", 8192, 1024),
+    ]
+    operators = list(target["operators"])
+    actual: dict[str, list[list[float]]] = {}
+    audits: dict[str, dict[str, Any]] = {}
+    for system in ("rtx3090", "orin", "mlx"):
+        matrix = [
+            [calibration.utilization(system, operator, n, d) for _, n, d in cases]
+            for operator in operators
+        ]
+        actual[system] = matrix
+        flat_actual = [value for row in matrix for value in row]
+        flat_target = [value for row in target["heatmap"][system] for value in row]
+        audits[system] = _audit_series(flat_actual, flat_target)
+    return {
+        "figure": 25,
+        "classification": "calibration-replay",
+        "validation_eligible": False,
+        "fit_degrees_of_freedom": {
+            "per_surface": 4,
+            "anchors_per_surface": 4,
+        },
+        "protocol_note": (
+            "The four coefficients exactly interpolate the four digitized cells in each "
+            "system/operator surface. This exercises the roofline pipeline but cannot validate it."
+        ),
+        "cases": [name for name, _, _ in cases],
+        "operators": operators,
+        "calibration": calibration.to_dict(),
+        "actual": actual,
+        "target": target["heatmap"],
+        "audit": audits,
+    }
+
+
+def _fig24_workload(operator: str, n: int, d: int) -> Workload:
+    common = {"n": n, "d": d, "batch": 32, "name": f"fig24-{operator}-{n}-{d}"}
+    if operator == "fft_cmp":
+        return Workload(kernel="fft_cmp", chunk_length=64, compression_ratio=0.5, **common)
+    if operator.startswith("qkv_bsmm"):
+        block_size = {"qkv_bsmm": 16, "qkv_bsmm_b32": 32, "qkv_bsmm_b64": 64}[operator]
+        return Workload(kernel="bsmm", block_size=block_size, projections=3, **common)
+    if operator == "swa_w128_q32":
+        return Workload(kernel="swa", window=128, query_block=32, **common)
+    if operator == "swa_w256_q64":
+        return Workload(kernel="swa", window=256, query_block=64, **common)
+    raise ValueError(f"unknown Fig. 24 operator: {operator}")
+
+
+def reproduce_fig24() -> dict[str, Any]:
+    full_hardware = HardwareConfig.from_yaml(PROJECT_ROOT / "configs/hardware/mlx_full.yaml")
+    event_calibration = CalibrationConfig.from_yaml(PAPER_CALIBRATION)
+    roofline_calibration = RooflineCalibration.from_yaml(ROOFLINE_CALIBRATION)
+    simulator = MLXSimulator(full_hardware, event_calibration)
+    target = load_targets()["fig24_structured_sweep"]
+    cases = [
+        ("BERT", "BERT_512", 512, 1024),
+        ("BERT", "BERT_8K", 8192, 1024),
+        ("Llama2", "Llama2_512", 512, 4096),
+        ("Llama2", "Llama2_1K", 1024, 4096),
+        ("Llama2", "Llama2_4K", 4096, 4096),
+        ("InternLM2", "InternLM2_2K", 2048, 4096),
+        ("InternLM2", "InternLM2_8K", 8192, 4096),
+    ]
+    operators = list(target["mlx_over_orin"])
+    actual: dict[str, list[float]] = {}
+    raw: dict[str, list[dict[str, Any]]] = {}
+    audits: dict[str, dict[str, Any]] = {}
+    for operator in operators:
+        ratios: list[float] = []
+        details: list[dict[str, Any]] = []
+        for family, case_name, n, d in cases:
+            mlx_result = simulator.simulate(_fig24_workload(operator, n, d))
+            orin_gops = roofline_calibration.baseline_gops("orin", operator, family, n)
+            ratio = mlx_result.achieved_gops / orin_gops
+            ratios.append(ratio)
+            details.append(
+                {
+                    "case": case_name,
+                    "mlx": mlx_result.to_dict(),
+                    "orin_proxy_gops": orin_gops,
+                    "ratio": ratio,
+                }
+            )
+        actual[operator] = ratios
+        raw[operator] = details
+        audits[operator] = _audit_series(ratios, target["mlx_over_orin"][operator])
+    return {
+        "figure": 24,
+        "classification": "calibration-replay-gpu-proxy",
+        "validation_eligible": False,
+        "fit_degrees_of_freedom": {
+            "per_operator_gpu_surface": 7,
+            "anchors_per_operator": 7,
+        },
+        "protocol_note": (
+            "The Orin proxy has seven coefficients for each seven-point paper series. "
+            "It is a saturated calibration replay and not the held-out test pre-registered in H2."
+        ),
+        "cases": [case_name for _, case_name, _, _ in cases],
+        "actual": actual,
+        "target": target["mlx_over_orin"],
+        "audit": audits,
+        "event_calibration": event_calibration.to_dict(),
+        "roofline_calibration": roofline_calibration.to_dict(),
+        "raw": raw,
+    }
+
+
 def reproduce(figure: str | int) -> dict[str, Any]:
     value = str(figure).lower()
     if value == "22":
         return reproduce_fig22()
     if value == "23":
         return reproduce_fig23()
+    if value == "25":
+        return reproduce_fig25()
+    if value == "24":
+        return reproduce_fig24()
     if value == "all":
         return {
             "fig22": reproduce_fig22(),
             "fig23": reproduce_fig23(),
             "h2_ablations": run_h2_ablations(),
+            "fig24": reproduce_fig24(),
+            "fig25": reproduce_fig25(),
         }
     if value in {"h2", "h2-ablations"}:
         return run_h2_ablations()
-    raise ValueError(f"implemented figures are 22, 23, h2-ablations, or all; got {figure!r}")
+    raise ValueError(
+        f"implemented figures are 22, 23, 24, 25, h2-ablations, or all; got {figure!r}"
+    )
 
 
 def write_json(data: dict[str, Any], path: str | Path) -> None:

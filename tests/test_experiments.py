@@ -1,4 +1,10 @@
-from mlxsim.experiments import geometric_mean, reproduce_fig22, run_h2_ablations
+from mlxsim.experiments import (
+    geometric_mean,
+    reproduce_fig22,
+    reproduce_fig24,
+    reproduce_fig25,
+    run_h2_ablations,
+)
 
 
 def test_geometric_mean() -> None:
@@ -18,3 +24,21 @@ def test_h2_ablations_do_not_improve_over_baseline() -> None:
     for name, regression in result["cycle_regression"].items():
         if name != "baseline":
             assert regression >= 1.0
+
+
+def test_fig25_calibration_surface_replays_anchor_points() -> None:
+    result = reproduce_fig25()
+    assert result["classification"] == "calibration-replay"
+    assert result["validation_eligible"] is False
+    assert result["fit_degrees_of_freedom"]["per_surface"] == 4
+    assert result["fit_degrees_of_freedom"]["anchors_per_surface"] == 4
+    assert all(audit["pass_10pct"] for audit in result["audit"].values())
+
+
+def test_fig24_calibrated_gpu_proxy_replays_ratios() -> None:
+    result = reproduce_fig24()
+    assert result["classification"] == "calibration-replay-gpu-proxy"
+    assert result["validation_eligible"] is False
+    assert result["fit_degrees_of_freedom"]["per_operator_gpu_surface"] == 7
+    assert result["fit_degrees_of_freedom"]["anchors_per_operator"] == 7
+    assert all(audit["pass_10pct"] for audit in result["audit"].values())

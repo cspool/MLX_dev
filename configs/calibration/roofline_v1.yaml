@@ -1,0 +1,40 @@
+name: paper-empirical-surfaces-v1
+classification: calibration-replay-only
+fit_provenance: "Fig. 25 uses one four-coefficient bilinear surface for each 2x2 heatmap; Fig. 24 uses one seven-coefficient log-throughput surface for each seven-point operator series. The coefficients therefore interpolate their calibration anchors exactly and are not independent validation evidence."
+reference_n: 512
+reference_d: 1024
+systems:
+  mlx: {peak_gops: 1000.0, bandwidth_gbs: 64.0}
+  orin: {peak_gops: 6600.0, bandwidth_gbs: 205.0}
+  rtx3090: {peak_gops: 36000.0, bandwidth_gbs: 936.0}
+efficiency_coefficients:
+  rtx3090:
+    fft_cmp: [0.114, 0.03475, -0.00625, 0.017375]
+    qkv_bsmm: [0.131, 0.0215, -0.0285, 0.00175]
+    qkv_bsmm_b32: [0.135, 0.0195, -0.0315, 0.00375]
+    qkv_bsmm_b64: [0.082, 0.0275, -0.0095, 0.00125]
+    swa_w128_q32: [0.089, 0.013, 0.00025, 0.02525]
+    swa_w256_q64: [0.1, 0.03525, 0.0, 0.011375]
+  orin:
+    fft_cmp: [0.159, 0.03275, 0.0045, -0.012875]
+    qkv_bsmm: [0.123, 0.018, 0.04325, -0.01625]
+    qkv_bsmm_b32: [0.123, 0.01975, 0.043, -0.014875]
+    qkv_bsmm_b64: [0.12, 0.02125, 0.04525, -0.014875]
+    swa_w128_q32: [0.108, 0.02425, 0.00125, 0.008125]
+    swa_w256_q64: [0.139, 0.04275, -0.0245, 0.012625]
+  mlx:
+    fft_cmp: [0.579, 0.06525, -0.0215, 0.000375]
+    qkv_bsmm: [0.533, 0.05525, 0.05675, -0.028375]
+    qkv_bsmm_b32: [0.529, 0.05875, 0.05125, -0.027625]
+    qkv_bsmm_b64: [0.52, 0.06025, 0.0085, -0.012625]
+    swa_w128_q32: [0.43, 0.075, -0.04125, 0.02125]
+    swa_w256_q64: [0.441, 0.07725, -0.0555, 0.024875]
+baseline_throughput_feature_order: [bias, log_n, log_n_sq, llama, internlm, log_n_internlm, log_n_llama]
+baseline_throughput_coefficients:
+  orin:
+    fft_cmp: [5.53356231251, -0.267410618466, 0.098532223683, 0.751744526639, 1.31311131347, -0.375452857577, -0.161620028015]
+    qkv_bsmm: [6.74132247602, 0.401644034671, -0.0747661397437, 0.367810391744, -0.608801252587, 0.141574049094, -0.177344851716]
+    qkv_bsmm_b32: [6.70350505046, 0.569705009299, -0.136983889824, 0.300254686041, -1.18825663721, 0.28476842476, -0.128229560569]
+    qkv_bsmm_b64: [6.47283647925, 0.593735461547, -0.118310716106, 0.530900252781, -0.766763456698, 0.155754372002, -0.153836582199]
+    swa_w128_q32: [7.07817957277, 0.153338002584, -0.0129895671442, 0.295211250232, 0.23744394342, -0.115420607819, -0.157435691601]
+    swa_w256_q64: [7.60650695207, -0.28623259656, 0.0426962038858, 0.331057743426, 0.555587748552, 0.00505083598159, 0.102461383862]

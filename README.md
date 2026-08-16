@@ -15,6 +15,9 @@ mlxsim simulate --hardware configs/hardware/mlx_reduced.yaml \
   --kernel bsmm --n 1024 --d 512 --block-size 32
 mlxsim reproduce --figure 22 --output artifacts/results/fig22.json
 mlxsim reproduce --figure 23 --output artifacts/results/fig23.json
+mlxsim reproduce --figure 24 --output artifacts/results/fig24.json
+mlxsim reproduce --figure 25 --output artifacts/results/fig25.json
+python scripts/audit_empirical_surface_fits.py
 pytest
 ```
 
@@ -25,4 +28,5 @@ The full-paper completion checklist is in `docs/experiment_inventory.md`. Resear
 - Paper target values live only under `artifacts/targets/`.
 - Simulator code may read hardware/workload configuration, but never paper result bars as timing inputs.
 - Calibrated parameters are named and versioned under `configs/calibration/`.
+- Fig. 24/25 empirical surfaces are saturated calibration replays and explicitly export `validation_eligible: false`.
 - A result is accepted only by a point-wise audit; matching a headline geometric mean is insufficient.

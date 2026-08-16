@@ -44,6 +44,18 @@ On a communication-sensitive 512-point FFT-CMP workload (D=64), relative cycles 
 
 An earlier end-to-end transformer ablation showed no measurable skip-link penalty because compute dominated and hid transfer latency. That negative result is retained in `artifacts/results/h2-ablations-run002.json`; switching to a communication-sensitive microbenchmark makes the mechanism identifiable rather than erasing the negative result.
 
+## Run 004 — Fig. 25 calibrated efficiency replay
+
+The Fig. 25 runner covers 72 heatmap cells (three systems, six operators, four shapes). Each system/operator surface has four bilinear coefficients and exactly four digitized anchors. It therefore replays all cells to floating-point precision by construction.
+
+This is a **saturated calibration replay**, not an architecture prediction or held-out validation. Its value is narrower: it validates target ordering, shape/operator manifests, utilization plumbing, and roofline reporting. The result exports `validation_eligible: false` and its degrees of freedom in `artifacts/results/fig25-run004.json`.
+
+## Run 005 — Fig. 24 event/Orin-proxy replay
+
+The full MLX event simulator generates the numerator for all 42 Fig. 24 ratios. Because this host has no NVIDIA GPU and no validated Orin simulator trace, the Orin denominator is an empirical log-throughput surface. Each operator surface uses seven coefficients for the seven reported shapes, so all ratios replay to floating-point precision by construction.
+
+This is also a **saturated calibration replay**. It violates the pre-registered intent to keep Fig. 24 held out and is deliberately excluded from H2 confirmation. `scripts/audit_empirical_surface_fits.py` reconstructs both fitted surfaces and reports their difference from the checked-in coefficients without modifying the repository.
+
 ## Current verdict
 
-H2 remains **active**. The scheduler, invariants, Fig. 22/23 runners, and mechanism ablations work, but the protocol also requires the held-out Fig. 20/21/24/25 validations. Passing two calibrated figures is not sufficient to close the hypothesis or the full-paper goal.
+H2 remains **active**. The scheduler, invariants, Fig. 22/23 runners, mechanism ablations, and Fig. 24/25 replay pipelines work. However, Fig. 23 was tuned after residual inspection and Fig. 24/25 are saturated fits. They cannot carry held-out validation. Fig. 20/21 and an upstream/native backend remain necessary before H2 can be confirmed, and the full-paper goal is much broader still.
