@@ -31,13 +31,29 @@ pytest
 
 The full-paper completion checklist is in `docs/experiment_inventory.md`. Research decisions and current limitations are in `findings.md` and `research-state.yaml`.
 
-For the optional training/fine-tuning stack (CUDA PyTorch, Transformers, PEFT, Accelerate, and bitsandbytes), run:
+For the optional training/fine-tuning stack (CUDA PyTorch, Transformers, PEFT, Accelerate, bitsandbytes, and a pinned ModelScope fallback for official InternLM weights), run:
 
 ```bash
 scripts/bootstrap_training.sh
 ```
 
 The script installs only into the project `.venv` and finishes with a two-GPU/BF16/LoRA injection check.
+
+Quality-experiment inputs and the paper's missing recipe fields are pinned in `configs/training/quality_v1.yaml`. Audit locally materialized files without downloading anything with:
+
+```bash
+python scripts/audit_quality_inputs.py --output artifacts/environment/quality-inputs.json
+```
+
+The frozen native perplexity runner consumes only local, audited inputs. For example:
+
+```bash
+python scripts/evaluate_perplexity.py \
+  --model third_party/models/internlm2-7b-msdownload \
+  --dataset-parquet third_party/data/wikitext-msdownload/wikitext-2-raw-v1/test-00000-of-00001.parquet \
+  --sequence-length 1024 --device cuda:1 \
+  --output artifacts/results/internlm2-wikitext2.json
+```
 
 ## Evidence policy
 

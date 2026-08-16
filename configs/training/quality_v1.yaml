@@ -1,0 +1,78 @@
+version: 1
+paper_scope: "Figures 5, 6, 15, and 16 model-quality experiments"
+
+repositories:
+  fgscr42: {url: "https://github.com/DYH666/FGSCR-42.git", revision: "ced49c37964c3c7c453602ba6e4ba2a812f67086"}
+  ada_leval: {url: "https://github.com/open-compass/Ada-LEval.git", revision: "2154258d5fa3969ac5429b3132d505570ef8a57a"}
+  internlm: {url: "https://github.com/InternLM/InternLM.git", revision: "68fdc71330059255fd647abf28219ad11e8e4865"}
+
+datasets:
+  ada_leval:
+    local_root: third_party/ada-leval/data
+    source_prefix: "http://opencompass.openxlab.space/utils/AdaLEval"
+    files:
+      - {path: stackselect_1k.json, sha256: 22b4dd4983c863d3bd6df206c1dd33ce2584b71b7d911edc768ab7e583d1d574, bytes: 3170252, records: 1000}
+      - {path: stackselect_2k.json, sha256: 653d6e0f31e00aa984e15bd1280443f2a7ecc137daa005afa4d26eeb36af958e, bytes: 7632671, records: 1000}
+      - {path: stackselect_4k.json, sha256: 68b43b082ebe66c33aeb4def955a676447aa2fc02acd2682af40d473553a1614, bytes: 16508984, records: 1000}
+  wikitext:
+    local_root: third_party/data/wikitext-msdownload
+    source: "modelscope://Salesforce/wikitext"
+    revision: "998a61e72d01782315d6e24fb78aa22d5a74b1d4"
+    files:
+      - {path: wikitext-2-raw-v1/train-00000-of-00001.parquet, sha256: e83889baabc497075506f91975be5fac0d45c5290b6b20582c8cd1e853d0c9f7, bytes: 6357543}
+      - {path: wikitext-2-raw-v1/validation-00000-of-00001.parquet, sha256: 204929b7ff9d6184953f867dedb860e40aa69c078fc1e54b3baaa8fb28511c4c, bytes: 657209}
+      - {path: wikitext-2-raw-v1/test-00000-of-00001.parquet, sha256: 5f1bea067869d04849c0f975a2b29c4ff47d867f484f5010ea5e861eab246d91, bytes: 732610}
+      - {path: wikitext-103-raw-v1/train-00000-of-00002.parquet, sha256: 74da360f23826045b3e6ac6375411fdb15f003030aa74f2596ed08b857cb9212, bytes: 156987808}
+      - {path: wikitext-103-raw-v1/train-00001-of-00002.parquet, sha256: ba090ac30dbf5461e8dcbdd1a1b8e6f3cf9c2c756d64f0c1220450acd514f720, bytes: 157088770}
+      - {path: wikitext-103-raw-v1/validation-00000-of-00001.parquet, sha256: 204929b7ff9d6184953f867dedb860e40aa69c078fc1e54b3baaa8fb28511c4c, bytes: 657209}
+      - {path: wikitext-103-raw-v1/test-00000-of-00001.parquet, sha256: 5f1bea067869d04849c0f975a2b29c4ff47d867f484f5010ea5e861eab246d91, bytes: 732610}
+  fgscr42:
+    local_root: third_party/data/fgscr42
+    source: "https://pan.baidu.com/s/1eXplDfB5fCBPm7WMcFKZkg"
+    extraction_password: "9xx8"
+    expected_images: 9320
+    expected_classes: 42
+    availability: "official repository contains only a Baidu Pan share; archive is not checked in and no split manifest is published"
+  squad:
+    source: "huggingface://rajpurkar/squad"
+    revision: "7b6d24c440a36b6815f21b70d25016731768db1f"
+    availability: "public; download not yet materialized"
+
+models:
+  internlm2_7b:
+    paper_role: "literal InternLM2-7B checkpoint candidate for WikiText perplexity"
+    source: "modelscope://Shanghai_AI_Laboratory/internlm2-7b"
+    revision: "75c5f9b5e5fc1c1f1194ce6d634f2de435da4322"
+    local_root: third_party/models/internlm2-7b-msdownload
+    config_signature: {hidden_size: 4096, num_hidden_layers: 32, num_attention_heads: 32, num_key_value_heads: 8, vocab_size: 92544}
+    files:
+      - {path: pytorch_model-00001-of-00002.bin, sha256: d0e177fb965c2cc83047e9b5ab1f9c29ddebdf5fbf88b0a732bedd91f708e8f0, bytes: 9969206994}
+      - {path: pytorch_model-00002-of-00002.bin, sha256: 11ae795ee6d148c804ea6ae3ef5a5c2d06d54fc40beb83f71582c643bb0b1a6e, bytes: 5506287027}
+      - {path: tokenizer.model, sha256: f868398fc4e05ee1e8aeba95ddf18ddcc45b8bce55d5093bead5bbf80429b48b, bytes: 1477754}
+  internlm2_chat_7b:
+    paper_role: "checkpoint used by the official Ada-LEval InternLM2-7B evaluator"
+    source: "modelscope://Shanghai_AI_Laboratory/internlm2-chat-7b"
+    revision: "263ce44692abcef0ebf1fc28c394cb4e7543adbb"
+    local_root: third_party/models/internlm2-chat-7b-msdownload
+    files:
+      - {path: model-00001-of-00008.safetensors, sha256: 9cec9c25c5f54c545deb16123fc72a0b265fd6bed4c467b4519380a8b215b62b, bytes: 1949337704}
+      - {path: model-00002-of-00008.safetensors, sha256: 4735b4b15a670c33a6aefe70cf39e4ba08468a496167b5233fa43ebcfbd42895, bytes: 1946242696}
+      - {path: model-00003-of-00008.safetensors, sha256: 523c7292140bc4c37d5fbd517ec7f9d0aa27b7d22822fdfc730f94f3bf02ebac, bytes: 1979780440}
+      - {path: model-00004-of-00008.safetensors, sha256: 2dd631ca87a5e516780832e747156e304a3c9bb53f85c4304550bff970d2db26, bytes: 1946242728}
+      - {path: model-00005-of-00008.safetensors, sha256: 4a28f7db7ba9fc0991e3552a156e11b942494e945c4c134003aad40bb4e49ed6, bytes: 1979780456}
+      - {path: model-00006-of-00008.safetensors, sha256: d330d795037a2db1c7a15a991c88ba6bf2bc2890e36210571d7499d1ae6dfd51, bytes: 1946242728}
+      - {path: model-00007-of-00008.safetensors, sha256: c6c65720f77de3aec168dff5b0f11e779f4c9059f2fdb04c67bae4321f5efd6a, bytes: 1979780456}
+      - {path: model-00008-of-00008.safetensors, sha256: eb488551289c4630b7b1fb015acf2ff52a206383c96370a7664b42253a007eae, bytes: 1748035640}
+      - {path: tokenizer.model, sha256: f868398fc4e05ee1e8aeba95ddf18ddcc45b8bce55d5093bead5bbf80429b48b, bytes: 1477754}
+  llama2_7b:
+    source: "huggingface://meta-llama/Llama-2-7b-hf"
+    revision: "01c7f73d771dfac7d292323805ebc428287df4f9"
+    availability: "manual access gate; HF_TOKEN is absent on this host"
+
+paper_recipe_gaps:
+  - "No exact modified-layer indices beyond more than 60 percent of layers."
+  - "No spectral peak threshold, per-layer chunk lengths, or decompression implementation."
+  - "No dense-to-hierarchical-butterfly factor initialization algorithm."
+  - "No LoRA rank, alpha, target modules, optimizer, learning rate, epochs, seed, or training split."
+  - "No ViT architecture/augmentation recipe or FGSCR-42 train/test split manifest."
+  - "No BERT checkpoint, SQuAD version/evaluation script, or retraining recipe."

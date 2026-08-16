@@ -86,6 +86,12 @@ hypotheses:
     motivation: "Test whether the reported algorithmic compute savings follow from the disclosed structured operators before introducing any training-dependent quality metric."
     parent: H4
     priority: high
+  - id: H10
+    statement: "The pinned unmodified InternLM2-7B checkpoint evaluated on the official WikiText-2 raw test split with frozen 1024-token BF16 causal-LM scoring reproduces Fig. 15(d)'s annotated original perplexity of 8.02 within 10%."
+    status: pending
+    motivation: "Establish a native checkpoint/data quality baseline before introducing reconstructed FFT compression, hierarchical BSMM, or LoRA training."
+    parent: H5
+    priority: high
 
 experiments:
   proxy_metric: "Maximum absolute percentage error across every numeric paper anchor; pass only when each reproducible point is <=10%, with unavailable measurements explicitly classified rather than fabricated."
@@ -181,7 +187,7 @@ experiments:
 outer_loop:
   cycle: 0
   last_direction: null
-  last_reflection: "H9 supports the disclosed FLOP arithmetic across 31 Fig. 15/16 MLX-method bars, but does not test model quality. The next independent work is real data/model evaluation: public InternLM2 first, while gated Llama2 remains conditional on credentials."
+  last_reflection: "H10 freezes the first native model-quality run on public InternLM2 and WikiText-2. This isolates checkpoint/data/evaluation reproducibility from the paper's undisclosed compression initialization and LoRA recipe."
 
 workspace:
   findings: "findings.md"

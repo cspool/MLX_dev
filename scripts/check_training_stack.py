@@ -6,6 +6,7 @@ import json
 from pathlib import Path
 
 import bitsandbytes as bnb
+import modelscope
 import torch
 import transformers
 from accelerate import __version__ as accelerate_version
@@ -85,6 +86,7 @@ def main() -> int:
         "peft": peft_version,
         "accelerate": accelerate_version,
         "datasets": datasets_version,
+        "modelscope": modelscope.__version__,
         "bitsandbytes": bnb.__version__,
         "cuda_available": torch.cuda.is_available(),
         "cuda_devices": devices,
