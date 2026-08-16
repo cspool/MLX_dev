@@ -152,6 +152,7 @@ class Workload:
     kernel: str
     n: int
     d: int
+    output_dim: int | None = None
     batch: int = 1
     block_size: int = 32
     compression_ratio: float = 0.5
@@ -162,13 +163,15 @@ class Workload:
     name: str = ""
 
     def __post_init__(self) -> None:
-        supported = {"bsmm", "fft", "fft_cmp", "gemm", "swa", "transformer"}
+        supported = {"attention", "bsmm", "fft", "fft_cmp", "gemm", "swa", "transformer"}
         if self.kernel not in supported:
             raise ValueError(
                 f"unsupported kernel {self.kernel!r}; expected one of {sorted(supported)}"
             )
         if min(self.n, self.d, self.batch, self.projections) < 1:
             raise ValueError("n, d, batch, and projections must be positive")
+        if self.output_dim is not None and self.output_dim < 1:
+            raise ValueError("output_dim must be positive when specified")
         if self.block_size < 2 or self.block_size & (self.block_size - 1):
             raise ValueError("block_size must be a power of two >= 2")
         if self.chunk_length < 2 or self.chunk_length & (self.chunk_length - 1):
@@ -179,6 +182,10 @@ class Workload:
     @property
     def label(self) -> str:
         return self.name or f"{self.kernel}-N{self.n}-D{self.d}-B{self.block_size}"
+
+    @property
+    def resolved_output_dim(self) -> int:
+        return self.output_dim or self.d
 
     def to_dict(self) -> dict[str, Any]:
         return asdict(self)

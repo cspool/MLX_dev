@@ -26,3 +26,20 @@ def test_cdc_stage_tags_are_forward_only() -> None:
     profile = compile_workload(Workload(kernel="transformer", n=512, d=512, batch=8, block_size=32))
     tags = [stage.tag for stage in profile.stages]
     assert tags == list(range(len(tags)))
+
+
+def test_rectangular_ffn_profiles_preserve_dense_shape() -> None:
+    dense = compile_workload(Workload(kernel="gemm", n=128, d=4096, output_dim=11008))
+    sparse = compile_workload(
+        Workload(kernel="bsmm", n=128, d=4096, output_dim=11008, block_size=32)
+    )
+    assert dense.operations == pytest.approx(2 * 128 * 4096 * 11008)
+    assert sparse.operations / dense.operations == pytest.approx(2 * 5 / 32)
+    assert dense.output_elements == sparse.output_elements == 128 * 11008
+
+
+def test_full_attention_has_quadratic_score_work() -> None:
+    short = compile_workload(Workload(kernel="attention", n=128, d=512))
+    long = compile_workload(Workload(kernel="attention", n=256, d=512))
+    assert len(short.stages) == 4
+    assert long.operations / short.operations == pytest.approx(4.0)

@@ -19,6 +19,8 @@ This supports a hybrid reproduction strategy: use public spatial/GPU projects as
 - The local event simulator passes every captured Fig. 22/23 point within 7.1%; simulated scaling geometric means are 4.00x SIMD, 3.58x mesh, and 14.30x joint versus 3.9x/3.6x/14.0x reported.
 - On a communication-sensitive FFT, removing skip hops, tag overlap, or pipeline decoupling costs 57%, 8.5%, or 101% cycles. On a compute-heavy transformer, the skip-hop effect is hidden; this boundary condition is preserved rather than discarded.
 - Fig. 24 and Fig. 25 now have executable manifests covering 42 ratios and 72 utilization cells. Their exact matches are saturated empirical fits, so they improve pipeline coverage but contribute no held-out validation evidence.
+- H6 is rejected on genuinely held-out Fig. 20/21 data. Transferring H100 utilization to Xavier underpredicts dense-baseline speedups (64.9% MAPE), and fixed 15-W power cannot reproduce per-kernel energy. End-to-end speed MAPE is 51.0%.
+- An unfitted Llama2 parameter + batch-8 KV-cache model reaches 5.1% dense and 5.9% sparse memory MAPE and correctly predicts the 16-GB capacity crossover, although its worst point (13.5%) misses the strict gate.
 
 ## Patterns and Insights
 
@@ -33,6 +35,7 @@ This supports a hybrid reproduction strategy: use public spatial/GPU projects as
 - Functional-unit occupancy and useful roofline utilization are different metrics. Both are emitted; Fig. 22 is audited with useful operations per peak slot.
 - Fig. 23 is no longer a strictly held-out test because its residuals informed the mesh fill/congestion model. Later figures must validate that model out of sample.
 - A fit with as many coefficients as anchors is a replay even when expressed as a smooth surface rather than a literal lookup table. Results export this classification and are excluded from the best validation error.
+- Peak throughput, bandwidth, and TDP are insufficient to reproduce GPU latency or energy. Cross-generation kernel efficiency and activity power must be measured or validated independently; using paper residuals would turn the holdout into another replay.
 
 ## Open Questions
 
@@ -43,4 +46,4 @@ This supports a hybrid reproduction strategy: use public spatial/GPU projects as
 
 ## Optimization Trajectory
 
-H1 base selection completed. H2 maximum validation-eligible captured architecture error fell from 24.9% in run_001 to 7.1% in run_002. Run_003 added causal ablation evidence. Runs 004/005 added Fig. 25/24 replay coverage without changing the validation metric. Full-paper coverage remains incomplete.
+H1 base selection completed. H2 maximum validation-eligible captured architecture error fell from 24.9% in run_001 to 7.1% in run_002. Run_003 added causal ablation evidence. Runs 004/005 added Fig. 25/24 replay coverage without changing the validation metric. Runs 006/007 rejected the first cross-device holdout and identified native GPU timing/power as a hard evidence gap. Full-paper coverage remains incomplete.

@@ -21,12 +21,13 @@ def _retag(stages: list[StageSpec], offset: int) -> list[StageSpec]:
 
 def _bsmm_profile(workload: Workload) -> KernelProfile:
     b = workload.block_size
+    output_dim = workload.resolved_output_dim
     stage_count = _log2(b)
-    dense_ops = 2.0 * workload.batch * workload.n * workload.d * workload.d
+    dense_ops = 2.0 * workload.batch * workload.n * workload.d * output_dim
     ratio = 2.0 * stage_count / b
     operations = dense_ops * ratio * workload.projections
-    output_elements = workload.batch * workload.n * workload.d * workload.projections
-    weight_bytes = workload.d * workload.d * ratio * workload.projections * FP16_BYTES
+    output_elements = workload.batch * workload.n * output_dim * workload.projections
+    weight_bytes = workload.d * output_dim * ratio * workload.projections * FP16_BYTES
     input_bytes = workload.batch * workload.n * workload.d * FP16_BYTES
     output_bytes = output_elements * FP16_BYTES
 
@@ -62,16 +63,18 @@ def _fft_profile(workload: Workload, compressed: bool) -> KernelProfile:
     retained = 1 << round(math.log2(retained))
     inverse_stages = _log2(retained) if compressed else 0
     chunks = math.ceil(workload.n / length)
-    vectors = workload.batch * workload.d * chunks
+    vectors = workload.batch * workload.d * chunks * workload.projections
 
     # Five real FLOPs per point per radix-2 stage is a conventional FFT work proxy.
     forward_ops = 5.0 * vectors * length * forward_stages
     inverse_ops = 5.0 * vectors * retained * inverse_stages
     operations = forward_ops + inverse_ops
-    input_bytes = workload.batch * workload.n * workload.d * FP16_BYTES
+    input_bytes = workload.batch * workload.n * workload.d * workload.projections * FP16_BYTES
     output_tokens = workload.n * (workload.compression_ratio if compressed else 1.0)
-    output_bytes = workload.batch * output_tokens * workload.d * FP16_BYTES
-    full_intermediate = workload.batch * workload.n * workload.d * COMPLEX_FP16_BYTES
+    output_bytes = workload.batch * output_tokens * workload.d * workload.projections * FP16_BYTES
+    full_intermediate = (
+        workload.batch * workload.n * workload.d * workload.projections * COMPLEX_FP16_BYTES
+    )
 
     stage_ops: list[float] = []
     stage_names: list[str] = []
@@ -106,7 +109,7 @@ def _fft_profile(workload: Workload, compressed: bool) -> KernelProfile:
     return KernelProfile(
         operations=operations,
         offchip_bytes=input_bytes + output_bytes,
-        output_elements=workload.batch * output_tokens * workload.d,
+        output_elements=workload.batch * output_tokens * workload.d * workload.projections,
         stages=tuple(stages),
         metadata={
             "chunk_length": length,
@@ -117,10 +120,11 @@ def _fft_profile(workload: Workload, compressed: bool) -> KernelProfile:
 
 
 def _gemm_profile(workload: Workload) -> KernelProfile:
-    operations = 2.0 * workload.batch * workload.n * workload.d * workload.d * workload.projections
+    output_dim = workload.resolved_output_dim
+    operations = 2.0 * workload.batch * workload.n * workload.d * output_dim * workload.projections
     input_bytes = workload.batch * workload.n * workload.d * FP16_BYTES
-    weight_bytes = workload.d * workload.d * workload.projections * FP16_BYTES
-    output_bytes = workload.batch * workload.n * workload.d * workload.projections * FP16_BYTES
+    weight_bytes = workload.d * output_dim * workload.projections * FP16_BYTES
+    output_bytes = workload.batch * workload.n * output_dim * workload.projections * FP16_BYTES
     stage = StageSpec(
         tag=0,
         name="gemm-tile",
@@ -133,7 +137,7 @@ def _gemm_profile(workload: Workload) -> KernelProfile:
     return KernelProfile(
         operations=operations,
         offchip_bytes=input_bytes + weight_bytes + output_bytes,
-        output_elements=workload.batch * workload.n * workload.d * workload.projections,
+        output_elements=workload.batch * workload.n * output_dim * workload.projections,
         stages=(stage,),
         metadata={"stage_count": 1},
     )
@@ -197,6 +201,16 @@ def _swa_profile(workload: Workload) -> KernelProfile:
     )
 
 
+def _attention_profile(workload: Workload) -> KernelProfile:
+    profile = _swa_profile(replace(workload, kernel="swa", window=workload.n))
+    stages = tuple(replace(stage, kernel_class="attention") for stage in profile.stages)
+    return replace(
+        profile,
+        stages=stages,
+        metadata={**profile.metadata, "attention_length": workload.n},
+    )
+
+
 def _transformer_profile(workload: Workload) -> KernelProfile:
     # One structured block: QKV BSMM, semantic FFT compression, attention, output
     # projection, and two FFN projections. The shapes are explicit approximations
@@ -229,6 +243,8 @@ def _transformer_profile(workload: Workload) -> KernelProfile:
 
 
 def compile_workload(workload: Workload) -> KernelProfile:
+    if workload.kernel == "attention":
+        return _attention_profile(workload)
     if workload.kernel == "bsmm":
         return _bsmm_profile(workload)
     if workload.kernel == "fft":

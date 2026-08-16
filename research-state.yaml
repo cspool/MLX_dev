@@ -64,7 +64,7 @@ hypotheses:
     priority: high
   - id: H6
     statement: "A Fig. 3-calibrated, hardware-spec Xavier roofline plus the MLX event model predicts held-out Fig. 20/21 performance and first-principles memory within 10%."
-    status: pending
+    status: rejected
     motivation: "Create an honest cross-device validation after Fig. 24/25 were consumed as saturated calibration replays."
     parent: H2
     priority: high
@@ -73,7 +73,7 @@ experiments:
   proxy_metric: "Maximum absolute percentage error across every numeric paper anchor; pass only when each reproducible point is <=10%, with unavailable measurements explicitly classified rather than fabricated."
   baseline_value: 0.2486
   best_value: 0.0710
-  total_runs: 5
+  total_runs: 7
   trajectory:
     - run_id: "run_001"
       hypothesis: "H2"
@@ -110,11 +110,25 @@ experiments:
       wall_time_min: 0.2
       change_summary: "Added Fig. 24 full-event numerator and saturated seven-parameter Orin proxy; excluded exact replay from validation."
       timestamp: "2026-08-16"
+    - run_id: "run_006"
+      hypothesis: "H6"
+      metric_value: 10.1341
+      delta: null
+      wall_time_min: 0.1
+      change_summary: "First Fig. 20 holdout: cross-device speed and fixed-power energy model rejected; no residual tuning."
+      timestamp: "2026-08-16"
+    - run_id: "run_007"
+      hypothesis: "H6"
+      metric_value: 0.7551
+      delta: null
+      wall_time_min: 0.1
+      change_summary: "Fig. 21 holdout: speed model rejected; first-principles memory reached 5-6% MAPE but max 13.5%."
+      timestamp: "2026-08-16"
 
 outer_loop:
   cycle: 0
   last_direction: null
-  last_reflection: "H1 supported. H2 event simulator passes Fig. 22/23 point-wise gates after exploratory calibration and shows causal regressions under three ablations. Fig. 24/25 runners now expose target coverage, but their saturated empirical surfaces are calibration replay only. H2 remains active pending Fig. 20/21 and upstream/native validation."
+  last_reflection: "H1 supported. H2 event simulator passes exploratory Fig. 22/23 fits and causal ablations, while Fig. 24/25 are calibration replay only. H6 honestly rejected transfer of H100 efficiency to held-out Xavier Fig. 20/21. Memory nearly matches, but performance/energy now require native Xavier or validated Accel-Sim; H2 remains active."
 
 workspace:
   findings: "findings.md"

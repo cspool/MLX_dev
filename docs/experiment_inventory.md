@@ -16,8 +16,8 @@ This is the completion checklist. `target` means a paper anchor is captured with
 | Fig. 17 | H100 prefill/decode speedup vs eager/FA | Native GPU benchmark | Native/trace GPU runner + audit | partial | no | no |
 | Fig. 18 | Latency, energy, and algorithm-normalized speedup vs sparse accelerators | MLX cycle simulation + cited baselines | Reduced-design simulator + baseline replay | yes | no | no |
 | Table V / Fig. 19 | FPGA resources and FABNet latency breakdown | FPGA implementation/simulation | Resource replay + workload timing model | partial | no | no |
-| Fig. 20 | Eight Llama2 kernels vs Xavier, dense and sparse GPU | Silicon/MLX + native GPU | Full-design timing/power + GPU targets | partial | no | no |
-| Fig. 21 | Llama2 end-to-end speedup, GEMM share, and memory | Silicon/simulation + native GPU | End-to-end graph and capacity model | partial | no | no |
+| Fig. 20 | Eight Llama2 kernels vs Xavier, dense and sparse GPU | Silicon/MLX + native GPU | Full-design timing/power + GPU targets | yes | yes | no (held-out proxy rejected; speed MAPE 65%/25%) |
+| Fig. 21 | Llama2 end-to-end speedup, GEMM share, and memory | Silicon/simulation + native GPU | End-to-end graph and capacity model | partial | yes | no (speed rejected; memory MAPE 5-6%, max 13.5%) |
 | Fig. 22 | PE pipeline utilization on BSMM and chunk FFT | Cycle simulation | Event-simulator utilization sweep | yes | yes | yes (digitized targets, max error 7.1%) |
 | Fig. 23 | SIMD and mesh scalability | Cycle simulation | Architecture sweep | yes | yes | yes (exploratory calibration, max error 3.2%) |
 | Fig. 24 | FFT/BSMM/SWA workload sweep vs Orin/RTX 3090 | MLX simulation + native GPU | Workload sweep with GPU baseline manifest | yes | yes | calibration replay only; validation no |

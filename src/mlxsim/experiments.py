@@ -8,15 +8,27 @@ from typing import Any
 
 import yaml
 
+from .gpu import GpuBaselineConfig
 from .roofline import RooflineCalibration
 from .schema import CalibrationConfig, HardwareConfig, Workload
 from .simulator import MLXSimulator
+from .workloads import compile_workload
 
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
 TARGET_PATH = PROJECT_ROOT / "artifacts" / "targets" / "paper_targets.yaml"
 REDUCED_CONFIG = PROJECT_ROOT / "configs" / "hardware" / "mlx_reduced.yaml"
 PAPER_CALIBRATION = PROJECT_ROOT / "configs" / "calibration" / "paper_v1.yaml"
 ROOFLINE_CALIBRATION = PROJECT_ROOT / "configs" / "calibration" / "roofline_v1.yaml"
+XAVIER_CONFIG = PROJECT_ROOT / "configs" / "hardware" / "xavier_paper.yaml"
+
+LLAMA_D = 4096
+LLAMA_FFN_D = 11008
+LLAMA_LAYERS = 32
+LLAMA_MODIFIED_LAYERS = 24
+LLAMA_HEADS = 32
+LLAMA_HEAD_D = 128
+LLAMA_VOCAB = 32000
+FP16_BYTES = 2
 
 
 def load_targets(path: str | Path = TARGET_PATH) -> dict[str, Any]:
@@ -188,6 +200,284 @@ def run_h2_ablations(config_path: str | Path = REDUCED_CONFIG) -> dict[str, Any]
     }
 
 
+def _llama_kernel_workloads(n: int, *, sparse: bool, batch: int) -> dict[str, list[Workload]]:
+    projection_kernel = "bsmm" if sparse else "gemm"
+    common = {"n": n, "batch": batch, "block_size": 32}
+    if sparse:
+        attention = [
+            Workload(
+                kernel="fft_cmp",
+                d=LLAMA_D,
+                projections=3,
+                compression_ratio=0.5,
+                chunk_length=n,
+                name=f"llama-fft-cmp-N{n}",
+                **common,
+            ),
+            Workload(
+                kernel="attention",
+                n=n // 2,
+                d=LLAMA_D,
+                batch=batch,
+                name=f"llama-compressed-attention-N{n}",
+            ),
+        ]
+    else:
+        attention = [
+            Workload(
+                kernel="attention",
+                d=LLAMA_D,
+                name=f"llama-dense-attention-N{n}",
+                **common,
+            )
+        ]
+    return {
+        "qkv": [
+            Workload(
+                kernel=projection_kernel,
+                d=LLAMA_D,
+                projections=3,
+                name=f"llama-{'structured' if sparse else 'dense'}-qkv-N{n}",
+                **common,
+            )
+        ],
+        "attention": attention,
+        "output": [
+            Workload(
+                kernel=projection_kernel,
+                d=LLAMA_D,
+                name=f"llama-{'structured' if sparse else 'dense'}-output-N{n}",
+                **common,
+            )
+        ],
+        "ffn1": [
+            Workload(
+                kernel=projection_kernel,
+                d=LLAMA_D,
+                output_dim=LLAMA_FFN_D,
+                name=f"llama-{'structured' if sparse else 'dense'}-ffn1-N{n}",
+                **common,
+            )
+        ],
+        "ffn2": [
+            Workload(
+                kernel=projection_kernel,
+                d=LLAMA_FFN_D,
+                output_dim=LLAMA_D,
+                name=f"llama-{'structured' if sparse else 'dense'}-ffn2-N{n}",
+                **common,
+            )
+        ],
+    }
+
+
+def _aggregate_mlx(simulator: MLXSimulator, workloads: list[Workload]) -> dict[str, Any]:
+    components = [simulator.simulate(workload).to_dict() for workload in workloads]
+    latency_us = sum(component["latency_us"] for component in components)
+    energy_mj = sum(component["energy_mj"] for component in components)
+    return {
+        "latency_us": latency_us,
+        "energy_mj": energy_mj,
+        "operations": sum(component["operations"] for component in components),
+        "offchip_bytes": sum(component["offchip_bytes"] for component in components),
+        "average_power_w": energy_mj / max(latency_us, 1e-30) * 1000.0,
+        "components": components,
+    }
+
+
+def _aggregate_gpu(
+    gpu: GpuBaselineConfig, workloads: list[Workload], n: int, mode: str
+) -> dict[str, Any]:
+    components = [gpu.predict(compile_workload(workload), n, mode) for workload in workloads]
+    return {
+        "latency_us": sum(float(component["latency_us"]) for component in components),
+        "energy_mj": sum(float(component["energy_mj"]) for component in components),
+        "operations": sum(float(component["operations"]) for component in components),
+        "offchip_bytes": sum(float(component["offchip_bytes"]) for component in components),
+        "components": components,
+    }
+
+
+def reproduce_fig20() -> dict[str, Any]:
+    hardware = HardwareConfig.from_yaml(PROJECT_ROOT / "configs/hardware/mlx_full.yaml")
+    calibration = CalibrationConfig.from_yaml(PAPER_CALIBRATION)
+    simulator = MLXSimulator(hardware, calibration)
+    gpu = GpuBaselineConfig.from_yaml(XAVIER_CONFIG)
+    target = load_targets()["fig20_xavier_kernels"]
+
+    actual = {
+        "versus_dense_tcu": {"speedup": [], "energy_saving": []},
+        "versus_sparse_cuda": {"speedup": [], "energy_saving": []},
+    }
+    raw: list[dict[str, Any]] = []
+    for n in (256, 8192):
+        structured = _llama_kernel_workloads(n, sparse=True, batch=1)
+        dense = _llama_kernel_workloads(n, sparse=False, batch=1)
+        for kernel in ("qkv", "attention", "ffn1", "ffn2"):
+            mlx = _aggregate_mlx(simulator, structured[kernel])
+            dense_gpu = _aggregate_gpu(gpu, dense[kernel], n, "tensor")
+            sparse_gpu = _aggregate_gpu(gpu, structured[kernel], n, "cuda")
+            actual["versus_dense_tcu"]["speedup"].append(
+                dense_gpu["latency_us"] / mlx["latency_us"]
+            )
+            actual["versus_dense_tcu"]["energy_saving"].append(
+                dense_gpu["energy_mj"] / mlx["energy_mj"]
+            )
+            actual["versus_sparse_cuda"]["speedup"].append(
+                sparse_gpu["latency_us"] / mlx["latency_us"]
+            )
+            actual["versus_sparse_cuda"]["energy_saving"].append(
+                sparse_gpu["energy_mj"] / mlx["energy_mj"]
+            )
+            raw.append(
+                {
+                    "case": f"{kernel}-N{n}",
+                    "mlx": mlx,
+                    "xavier_dense_tcu": dense_gpu,
+                    "xavier_sparse_cuda": sparse_gpu,
+                }
+            )
+
+    for baseline in actual.values():
+        baseline["speedup"].append(geometric_mean(baseline["speedup"]))
+        baseline["energy_saving"].append(geometric_mean(baseline["energy_saving"]))
+
+    target_series = {
+        baseline: {
+            metric: list(target[baseline][metric]) for metric in ("speedup", "energy_saving")
+        }
+        for baseline in ("versus_dense_tcu", "versus_sparse_cuda")
+    }
+    audits = {
+        baseline: {
+            metric: _audit_series(actual[baseline][metric], target_series[baseline][metric])
+            for metric in ("speedup", "energy_saving")
+        }
+        for baseline in target_series
+    }
+    return {
+        "figure": 20,
+        "classification": "held-out-cross-device-prediction",
+        "validation_eligible": True,
+        "groups": target["groups"],
+        "actual": actual,
+        "target": target_series,
+        "audit": audits,
+        "mlx_hardware": hardware.to_dict(),
+        "event_calibration": calibration.to_dict(),
+        "xavier": gpu.to_dict(),
+        "raw": raw,
+    }
+
+
+def _llama_memory_gb(n: int, batch: int = 8) -> dict[str, float]:
+    projection_parameters_per_layer = 4 * LLAMA_D * LLAMA_D + 3 * LLAMA_D * LLAMA_FFN_D
+    normalization_parameters = 2 * LLAMA_D * LLAMA_LAYERS + LLAMA_D
+    embedding_parameters = 2 * LLAMA_VOCAB * LLAMA_D
+    dense_parameters = (
+        projection_parameters_per_layer * LLAMA_LAYERS
+        + normalization_parameters
+        + embedding_parameters
+    )
+    butterfly_density = 2 * math.log2(32) / 32
+    sparse_parameters = (
+        projection_parameters_per_layer
+        * (LLAMA_LAYERS - LLAMA_MODIFIED_LAYERS + LLAMA_MODIFIED_LAYERS * butterfly_density)
+        + normalization_parameters
+        + embedding_parameters
+    )
+    dense_kv_elements = 2 * LLAMA_LAYERS * batch * n * LLAMA_HEADS * LLAMA_HEAD_D
+    sparse_kv_elements = (
+        2
+        * batch
+        * n
+        * LLAMA_HEADS
+        * LLAMA_HEAD_D
+        * (LLAMA_LAYERS - LLAMA_MODIFIED_LAYERS + 0.5 * LLAMA_MODIFIED_LAYERS)
+    )
+    live_qkv_elements = 3 * batch * n * LLAMA_D
+    return {
+        "dense": ((dense_parameters + dense_kv_elements + live_qkv_elements) * FP16_BYTES / 1e9),
+        "sparse": ((sparse_parameters + sparse_kv_elements + live_qkv_elements) * FP16_BYTES / 1e9),
+        "dense_parameter_gb": dense_parameters * FP16_BYTES / 1e9,
+        "sparse_parameter_gb": sparse_parameters * FP16_BYTES / 1e9,
+        "butterfly_density": butterfly_density,
+    }
+
+
+def reproduce_fig21() -> dict[str, Any]:
+    hardware = HardwareConfig.from_yaml(PROJECT_ROOT / "configs/hardware/mlx_full.yaml")
+    calibration = CalibrationConfig.from_yaml(PAPER_CALIBRATION)
+    simulator = MLXSimulator(hardware, calibration)
+    gpu = GpuBaselineConfig.from_yaml(XAVIER_CONFIG)
+    target = load_targets()["fig21_end_to_end"]
+    sizes = list(target["sequence_lengths"])
+    speedups: list[float] = []
+    dense_memory: list[float] = []
+    sparse_memory: list[float] = []
+    status: list[str] = []
+    raw: list[dict[str, Any]] = []
+    for n in sizes:
+        structured = _llama_kernel_workloads(n, sparse=True, batch=8)
+        dense = _llama_kernel_workloads(n, sparse=False, batch=8)
+        block_order = ("qkv", "attention", "output", "ffn1", "ffn2")
+        mlx_structured = [_aggregate_mlx(simulator, structured[kernel]) for kernel in block_order]
+        mlx_dense = [_aggregate_mlx(simulator, dense[kernel]) for kernel in block_order]
+        xavier_dense = [_aggregate_gpu(gpu, dense[kernel], n, "tensor") for kernel in block_order]
+        mlx_latency_us = LLAMA_MODIFIED_LAYERS * sum(
+            component["latency_us"] for component in mlx_structured
+        ) + (LLAMA_LAYERS - LLAMA_MODIFIED_LAYERS) * sum(
+            component["latency_us"] for component in mlx_dense
+        )
+        xavier_latency_us = LLAMA_LAYERS * sum(
+            component["latency_us"] for component in xavier_dense
+        )
+        speedups.append(xavier_latency_us / mlx_latency_us)
+        memory = _llama_memory_gb(n)
+        dense_memory.append(memory["dense"])
+        sparse_memory.append(memory["sparse"])
+        status.append(
+            "within-xavier-capacity"
+            if memory["dense"] <= gpu.memory_capacity_gb
+            else "projected-over-xavier-capacity"
+        )
+        raw.append(
+            {
+                "sequence_length": n,
+                "mlx_latency_us": mlx_latency_us,
+                "xavier_latency_us": xavier_latency_us,
+                "memory": memory,
+                "mlx_structured_components": mlx_structured,
+                "mlx_dense_components": mlx_dense,
+                "xavier_dense_components": xavier_dense,
+            }
+        )
+    actual = {
+        "speedup_over_xavier": speedups,
+        "dense_memory_gb": dense_memory,
+        "sparse_memory_gb": sparse_memory,
+    }
+    target_series = {
+        "speedup_over_xavier": list(target["speedup_over_xavier"]),
+        "dense_memory_gb": list(target["dense_memory_gb"]),
+        "sparse_memory_gb": list(target["sparse_memory_gb"]),
+    }
+    return {
+        "figure": 21,
+        "classification": "held-out-cross-device-prediction",
+        "validation_eligible": True,
+        "sequence_lengths": sizes,
+        "xavier_execution_status": status,
+        "actual": actual,
+        "target": target_series,
+        "audit": {name: _audit_series(actual[name], target_series[name]) for name in actual},
+        "mlx_hardware": hardware.to_dict(),
+        "event_calibration": calibration.to_dict(),
+        "xavier": gpu.to_dict(),
+        "raw": raw,
+    }
+
+
 def reproduce_fig25() -> dict[str, Any]:
     calibration = RooflineCalibration.from_yaml(ROOFLINE_CALIBRATION)
     target = load_targets()["fig25_roofline_utilization"]
@@ -306,6 +596,10 @@ def reproduce_fig24() -> dict[str, Any]:
 
 def reproduce(figure: str | int) -> dict[str, Any]:
     value = str(figure).lower()
+    if value == "20":
+        return reproduce_fig20()
+    if value == "21":
+        return reproduce_fig21()
     if value == "22":
         return reproduce_fig22()
     if value == "23":
@@ -316,6 +610,8 @@ def reproduce(figure: str | int) -> dict[str, Any]:
         return reproduce_fig24()
     if value == "all":
         return {
+            "fig20": reproduce_fig20(),
+            "fig21": reproduce_fig21(),
             "fig22": reproduce_fig22(),
             "fig23": reproduce_fig23(),
             "h2_ablations": run_h2_ablations(),
@@ -324,9 +620,7 @@ def reproduce(figure: str | int) -> dict[str, Any]:
         }
     if value in {"h2", "h2-ablations"}:
         return run_h2_ablations()
-    raise ValueError(
-        f"implemented figures are 22, 23, 24, 25, h2-ablations, or all; got {figure!r}"
-    )
+    raise ValueError(f"implemented figures are 20-25, h2-ablations, or all; got {figure!r}")
 
 
 def write_json(data: dict[str, Any], path: str | Path) -> None:

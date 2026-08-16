@@ -15,6 +15,8 @@ mlxsim simulate --hardware configs/hardware/mlx_reduced.yaml \
   --kernel bsmm --n 1024 --d 512 --block-size 32
 mlxsim reproduce --figure 22 --output artifacts/results/fig22.json
 mlxsim reproduce --figure 23 --output artifacts/results/fig23.json
+mlxsim reproduce --figure 20 --output artifacts/results/fig20.json
+mlxsim reproduce --figure 21 --output artifacts/results/fig21.json
 mlxsim reproduce --figure 24 --output artifacts/results/fig24.json
 mlxsim reproduce --figure 25 --output artifacts/results/fig25.json
 python scripts/audit_empirical_surface_fits.py

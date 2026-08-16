@@ -1,0 +1,1294 @@
+{
+  "actual": {
+    "versus_dense_tcu": {
+      "energy_saving": [
+        4.396161178073517,
+        3.975656626520542,
+        4.395792645182825,
+        4.398292230649968,
+        2.823399162443407,
+        7.98451209600438,
+        2.8232707252660107,
+        2.824885583938584,
+        3.9622988256177183
+      ],
+      "speedup": [
+        1.4446744513919263,
+        0.7666332658092357,
+        1.4446258988592817,
+        1.4446258988592817,
+        0.9227054415035576,
+        1.1888668145749848,
+        0.9227037447130803,
+        0.9227037447130803,
+        1.1009653788992737
+      ]
+    },
+    "versus_sparse_cuda": {
+      "energy_saving": [
+        13.354490119085494,
+        16.16960508557032,
+        13.35337060397948,
+        13.360963749014575,
+        10.49700652768573,
+        24.574146908175564,
+        10.49652901607226,
+        10.502532836662976,
+        13.488227613965222
+      ],
+      "speedup": [
+        4.388576738868171,
+        3.1180150395547117,
+        4.3884292478433435,
+        4.3884292478433435,
+        3.4304908676858505,
+        3.6590072636047974,
+        3.430484559254172,
+        3.430484559254172,
+        3.747842421595689
+      ]
+    }
+  },
+  "audit": {
+    "versus_dense_tcu": {
+      "energy_saving": {
+        "absolute_relative_errors": [
+          0.8317338241972988,
+          0.807116648418428,
+          0.831580268826177,
+          1.4434956836944268,
+          0.584794240817146,
+          2.802148617144943,
+          0.5588639491771858,
+          0.5369040026330191,
+          0.2382183830055369
+        ],
+        "maximum_absolute_percentage_error": 2.802148617144943,
+        "mean_absolute_percentage_error": 0.9594284019904623,
+        "pass_10pct": false
+      },
+      "speedup": {
+        "absolute_relative_errors": [
+          0.7110651097216147,
+          0.6666811887785932,
+          0.6926327874767486,
+          0.6095605678758699,
+          0.7902942178401006,
+          0.18886681457498478,
+          0.7749503061675413,
+          0.7634092962274153,
+          0.6448498777744278
+        ],
+        "maximum_absolute_percentage_error": 0.7902942178401006,
+        "mean_absolute_percentage_error": 0.6491455740485885,
+        "pass_10pct": false
+      }
+    },
+    "versus_sparse_cuda": {
+      "energy_saving": {
+        "absolute_relative_errors": [
+          2.257192711972072,
+          6.349820493441055,
+          7.345856627487175,
+          10.134136457512147,
+          0.7791536487602932,
+          4.585033388221719,
+          2.0872144164918414,
+          0.7800903112988093,
+          3.351041165795233
+        ],
+        "maximum_absolute_percentage_error": 10.134136457512147,
+        "mean_absolute_percentage_error": 4.185504357886705,
+        "pass_10pct": false
+      },
+      "speedup": {
+        "absolute_relative_errors": [
+          0.020599241597249036,
+          1.2271535996819372,
+          0.07034859703496193,
+          0.253836927955241,
+          0.14237728307853736,
+          0.18032492374348302,
+          0.07202642476692875,
+          0.12038857455021225,
+          0.17120075674865273
+        ],
+        "maximum_absolute_percentage_error": 1.2271535996819372,
+        "mean_absolute_percentage_error": 0.2509173699063559,
+        "pass_10pct": false
+      }
+    }
+  },
+  "classification": "held-out-cross-device-prediction",
+  "event_calibration": {
+    "kernel_compute_setup_cycles": {
+      "bsmm": 1.0,
+      "fft": 0.25,
+      "fft_cmp": 0.25,
+      "gemm": 1.0,
+      "swa": 0.5
+    },
+    "kernel_issue_scale": {
+      "bsmm": 0.8958333333333334,
+      "fft": 0.9583333333333334,
+      "fft_cmp": 0.9583333333333334,
+      "gemm": 1.0,
+      "swa": 0.94
+    },
+    "mesh_base_penalty": 0.02,
+    "mesh_congestion_penalty": 0.069,
+    "mesh_congestion_start_n": 2048,
+    "mesh_fill_penalty": 0.075,
+    "mesh_reference": 4,
+    "mesh_reference_n": 512,
+    "name": "paper-v1-mechanism-calibration"
+  },
+  "figure": 20,
+  "groups": [
+    "QKV_256",
+    "Attn_256",
+    "FFN1_256",
+    "FFN2_256",
+    "QKV_8K",
+    "Attn_8K",
+    "FFN1_8K",
+    "FFN2_8K",
+    "gmean"
+  ],
+  "mlx_hardware": {
+    "active_tags": 16,
+    "compute_issue_efficiency": 0.96,
+    "compute_latency_cycles": 1.0,
+    "core_power_w": 5.8464,
+    "count_fma_as_two_ops": true,
+    "decoupled_pipelines": true,
+    "frequency_ghz": 1.0,
+    "heterogeneous_compute": true,
+    "idle_power_fraction": 0.12,
+    "instructions_per_pe": 32,
+    "launch_cycles": 18.0,
+    "load_latency_cycles": 1.0,
+    "max_event_waves": 512,
+    "max_skip_hops": 2,
+    "memory_power_w": 0.6,
+    "mesh_x": 4,
+    "mesh_y": 4,
+    "name": "mlx-full-simd32-4x4",
+    "noc_bytes_per_cycle": 320.0,
+    "noc_link_bytes_per_cycle": 8.0,
+    "pe_count": 16,
+    "peak_ops_per_cycle": 1024,
+    "peak_tops": 1.024,
+    "simd_width": 32,
+    "skip_distance": 4,
+    "spm_bandwidth_gbs": 64.0,
+    "spm_bytes_per_cycle": 64.0,
+    "store_latency_cycles": 1.0,
+    "xfer_latency_cycles": 1.0
+  },
+  "raw": [
+    {
+      "case": "qkv-N256",
+      "mlx": {
+        "average_power_w": 4.929327177302256,
+        "components": [
+          {
+            "achieved_gops": 880.3484938169549,
+            "average_power_w": 4.929327177302255,
+            "compute_utilization": 0.8597153259931202,
+            "cycles": 9147586.139534442,
+            "energy_mj": 45.09144496432055,
+            "event_count": 7680,
+            "hardware": "mlx-full-simd32-4x4",
+            "latency_us": 9147.586139534442,
+            "metadata": {
+              "butterfly_density": 0.3125,
+              "calibration": {
+                "kernel_compute_setup_cycles": {
+                  "bsmm": 1.0,
+                  "fft": 0.25,
+                  "fft_cmp": 0.25,
+                  "gemm": 1.0,
+                  "swa": 0.5
+                },
+                "kernel_issue_scale": {
+                  "bsmm": 0.8958333333333334,
+                  "fft": 0.9583333333333334,
+                  "fft_cmp": 0.9583333333333334,
+                  "gemm": 1.0,
+                  "swa": 0.94
+                },
+                "mesh_base_penalty": 0.02,
+                "mesh_congestion_penalty": 0.069,
+                "mesh_congestion_start_n": 2048,
+                "mesh_fill_penalty": 0.075,
+                "mesh_reference": 4,
+                "mesh_reference_n": 512,
+                "name": "paper-v1-mechanism-calibration"
+              },
+              "compute_active_fraction": 0.9999488389622287,
+              "hardware_peak_tops": 1.024,
+              "launch_cycles": 18.0,
+              "operational_intensity": 202.10526315789474,
+              "stage_count": 5,
+              "trace": []
+            },
+            "offchip_bytes": 39845888.0,
+            "operations": 8053063680.0,
+            "resource_busy_cycles": {
+              "compute_fma": 9147118.139534442,
+              "load": 526848.0,
+              "store": 98816.0,
+              "xfer": 81203.1999999994
+            },
+            "resource_utilization": {
+              "compute_fma": 0.9999488389622287,
+              "load": 0.05759421031555473,
+              "store": 0.010802412624783346,
+              "xfer": 0.008877008509277855
+            },
+            "waves": 512,
+            "workload": "llama-structured-qkv-N256"
+          }
+        ],
+        "energy_mj": 45.09144496432055,
+        "latency_us": 9147.586139534442,
+        "offchip_bytes": 39845888.0,
+        "operations": 8053063680.0
+      },
+      "xavier_dense_tcu": {
+        "components": [
+          {
+            "achieved_gops": 1950.0,
+            "efficiency": 0.325,
+            "energy_mj": 198.2292598153846,
+            "latency_us": 13215.283987692308,
+            "mode": "tensor",
+            "offchip_bytes": 109051904,
+            "operational_intensity": 236.30769230769232,
+            "operations": 25769803776.0,
+            "roofline_gops": 6000.0
+          }
+        ],
+        "energy_mj": 198.2292598153846,
+        "latency_us": 13215.283987692308,
+        "offchip_bytes": 109051904.0,
+        "operations": 25769803776.0
+      },
+      "xavier_sparse_cuda": {
+        "components": [
+          {
+            "achieved_gops": 200.6,
+            "efficiency": 0.118,
+            "energy_mj": 602.1732562313061,
+            "latency_us": 40144.88374875374,
+            "mode": "cuda",
+            "offchip_bytes": 39845888.0,
+            "operational_intensity": 202.10526315789474,
+            "operations": 8053063680.0,
+            "roofline_gops": 1700.0
+          }
+        ],
+        "energy_mj": 602.1732562313061,
+        "latency_us": 40144.88374875374,
+        "offchip_bytes": 39845888.0,
+        "operations": 8053063680.0
+      }
+    },
+    {
+      "case": "attention-N256",
+      "mlx": {
+        "average_power_w": 2.8924779143219896,
+        "components": [
+          {
+            "achieved_gops": 407.1390829917843,
+            "average_power_w": 3.2620055093751676,
+            "compute_utilization": 0.39759676073416433,
+            "cycles": 444269.21304346994,
+            "energy_mj": 1.449208620593569,
+            "event_count": 15872,
+            "hardware": "mlx-full-simd32-4x4",
+            "latency_us": 444.26921304346996,
+            "metadata": {
+              "calibration": {
+                "kernel_compute_setup_cycles": {
+                  "bsmm": 1.0,
+                  "fft": 0.25,
+                  "fft_cmp": 0.25,
+                  "gemm": 1.0,
+                  "swa": 0.5
+                },
+                "kernel_issue_scale": {
+                  "bsmm": 0.8958333333333334,
+                  "fft": 0.9583333333333334,
+                  "fft_cmp": 0.9583333333333334,
+                  "gemm": 1.0,
+                  "swa": 0.94
+                },
+                "mesh_base_penalty": 0.02,
+                "mesh_congestion_penalty": 0.069,
+                "mesh_congestion_start_n": 2048,
+                "mesh_fill_penalty": 0.075,
+                "mesh_reference": 4,
+                "mesh_reference_n": 512,
+                "name": "paper-v1-mechanism-calibration"
+              },
+              "chunk_length": 256,
+              "compute_active_fraction": 0.4364920960233116,
+              "hardware_peak_tops": 1.024,
+              "launch_cycles": 18.0,
+              "operational_intensity": 19.166666666666668,
+              "retained_length": 128,
+              "stage_count": 15,
+              "trace": []
+            },
+            "offchip_bytes": 9437184.0,
+            "operations": 180879360.0,
+            "resource_busy_cycles": {
+              "compute_fma": 193919.99999997136,
+              "load": 98816.0,
+              "store": 49664.0,
+              "xfer": 443801.59999999165
+            },
+            "resource_utilization": {
+              "compute_fma": 0.4364920960233116,
+              "load": 0.2224236951353441,
+              "store": 0.11178807475714186,
+              "xfer": 0.9989474556648323
+            },
+            "waves": 512,
+            "workload": "llama-fft-cmp-N256"
+          },
+          {
+            "achieved_gops": 979.1673007259254,
+            "average_power_w": 2.293858079121844,
+            "compute_utilization": 0.9562180671151613,
+            "cycles": 274247.06666666374,
+            "energy_mj": 0.6290838495487935,
+            "event_count": 5120,
+            "hardware": "mlx-full-simd32-4x4",
+            "latency_us": 274.2470666666637,
+            "metadata": {
+              "attention_length": 128,
+              "calibration": {
+                "kernel_compute_setup_cycles": {
+                  "bsmm": 1.0,
+                  "fft": 0.25,
+                  "fft_cmp": 0.25,
+                  "gemm": 1.0,
+                  "swa": 0.5
+                },
+                "kernel_issue_scale": {
+                  "bsmm": 0.8958333333333334,
+                  "fft": 0.9583333333333334,
+                  "fft_cmp": 0.9583333333333334,
+                  "gemm": 1.0,
+                  "swa": 0.94
+                },
+                "mesh_base_penalty": 0.02,
+                "mesh_congestion_penalty": 0.069,
+                "mesh_congestion_start_n": 2048,
+                "mesh_fill_penalty": 0.075,
+                "mesh_reference": 4,
+                "mesh_reference_n": 512,
+                "name": "paper-v1-mechanism-calibration"
+              },
+              "compute_active_fraction": 0.33523867124518214,
+              "hardware_peak_tops": 1.024,
+              "launch_cycles": 18.0,
+              "operational_intensity": 64.0234375,
+              "stage_count": 4,
+              "trace": []
+            },
+            "offchip_bytes": 4194304.0,
+            "operations": 268533760.0,
+            "resource_busy_cycles": {
+              "compute_fexp": 1178.6666666666683,
+              "compute_fma": 274090.6666666637,
+              "compute_fmax": 545.3333333333358,
+              "load": 49664.0,
+              "store": 16896.0,
+              "xfer": 7679.999999999739
+            },
+            "resource_utilization": {
+              "compute_fexp": 0.004297827798097437,
+              "compute_fma": 0.9994297113114062,
+              "compute_fmax": 0.0019884746260428244,
+              "load": 0.18109218305829536,
+              "store": 0.06160868083426543,
+              "xfer": 0.028003945833756063
+            },
+            "waves": 512,
+            "workload": "llama-compressed-attention-N256"
+          }
+        ],
+        "energy_mj": 2.0782924701423626,
+        "latency_us": 718.5162797101336,
+        "offchip_bytes": 13631488.0,
+        "operations": 449413120.0
+      },
+      "xavier_dense_tcu": {
+        "components": [
+          {
+            "achieved_gops": 1950.0,
+            "efficiency": 0.325,
+            "energy_mj": 8.26257723076923,
+            "latency_us": 550.8384820512821,
+            "mode": "tensor",
+            "offchip_bytes": 8388608.0,
+            "operational_intensity": 128.046875,
+            "operations": 1074135040.0,
+            "roofline_gops": 6000.0
+          }
+        ],
+        "energy_mj": 8.26257723076923,
+        "latency_us": 550.8384820512821,
+        "offchip_bytes": 8388608.0,
+        "operations": 1074135040.0
+      },
+      "xavier_sparse_cuda": {
+        "components": [
+          {
+            "achieved_gops": 200.6,
+            "efficiency": 0.118,
+            "energy_mj": 13.52537587238285,
+            "latency_us": 901.6917248255235,
+            "mode": "cuda",
+            "offchip_bytes": 9437184.0,
+            "operational_intensity": 19.166666666666668,
+            "operations": 180879360.0,
+            "roofline_gops": 1700.0
+          },
+          {
+            "achieved_gops": 200.6,
+            "efficiency": 0.118,
+            "energy_mj": 20.0797926221336,
+            "latency_us": 1338.6528414755733,
+            "mode": "cuda",
+            "offchip_bytes": 4194304.0,
+            "operational_intensity": 64.0234375,
+            "operations": 268533760.0,
+            "roofline_gops": 1700.0
+          }
+        ],
+        "energy_mj": 33.60516849451645,
+        "latency_us": 2240.3445663010966,
+        "offchip_bytes": 13631488.0,
+        "operations": 449413120.0
+      }
+    },
+    {
+      "case": "ffn1-N256",
+      "mlx": {
+        "average_power_w": 4.9295747620479435,
+        "components": [
+          {
+            "achieved_gops": 880.3189071173749,
+            "average_power_w": 4.929574762047944,
+            "compute_utilization": 0.8596864327318112,
+            "cycles": 8194988.0,
+            "energy_mj": 40.39780602008575,
+            "event_count": 7680,
+            "hardware": "mlx-full-simd32-4x4",
+            "latency_us": 8194.988,
+            "metadata": {
+              "butterfly_density": 0.3125,
+              "calibration": {
+                "kernel_compute_setup_cycles": {
+                  "bsmm": 1.0,
+                  "fft": 0.25,
+                  "fft_cmp": 0.25,
+                  "gemm": 1.0,
+                  "swa": 0.5
+                },
+                "kernel_issue_scale": {
+                  "bsmm": 0.8958333333333334,
+                  "fft": 0.9583333333333334,
+                  "fft_cmp": 0.9583333333333334,
+                  "gemm": 1.0,
+                  "swa": 0.94
+                },
+                "mesh_base_penalty": 0.02,
+                "mesh_congestion_penalty": 0.069,
+                "mesh_congestion_start_n": 2048,
+                "mesh_fill_penalty": 0.075,
+                "mesh_reference": 4,
+                "mesh_reference_n": 512,
+                "name": "paper-v1-mechanism-calibration"
+              },
+              "compute_active_fraction": 0.9999477729558603,
+              "hardware_peak_tops": 1.024,
+              "launch_cycles": 18.0,
+              "operational_intensity": 200.87591240875912,
+              "stage_count": 5,
+              "trace": []
+            },
+            "offchip_bytes": 35913728.0,
+            "operations": 7214202880.0,
+            "resource_busy_cycles": {
+              "compute_fma": 8194560.0,
+              "load": 475648.0,
+              "store": 88576.0,
+              "xfer": 73011.20000000067
+            },
+            "resource_utilization": {
+              "compute_fma": 0.9999477729558603,
+              "load": 0.058041329651733475,
+              "store": 0.01080855762082873,
+              "xfer": 0.008909250385723648
+            },
+            "waves": 512,
+            "workload": "llama-structured-ffn1-N256"
+          }
+        ],
+        "energy_mj": 40.39780602008575,
+        "latency_us": 8194.988,
+        "offchip_bytes": 35913728.0,
+        "operations": 7214202880.0
+      },
+      "xavier_dense_tcu": {
+        "components": [
+          {
+            "achieved_gops": 1950.0,
+            "efficiency": 0.325,
+            "energy_mj": 177.5803785846154,
+            "latency_us": 11838.691905641026,
+            "mode": "tensor",
+            "offchip_bytes": 97910784,
+            "operational_intensity": 235.78045515394913,
+            "operations": 23085449216.0,
+            "roofline_gops": 6000.0
+          }
+        ],
+        "energy_mj": 177.5803785846154,
+        "latency_us": 11838.691905641026,
+        "offchip_bytes": 97910784.0,
+        "operations": 23085449216.0
+      },
+      "xavier_sparse_cuda": {
+        "components": [
+          {
+            "achieved_gops": 200.6,
+            "efficiency": 0.118,
+            "energy_mj": 539.4468753738784,
+            "latency_us": 35963.125024925226,
+            "mode": "cuda",
+            "offchip_bytes": 35913728.0,
+            "operational_intensity": 200.87591240875912,
+            "operations": 7214202880.0,
+            "roofline_gops": 1700.0
+          }
+        ],
+        "energy_mj": 539.4468753738784,
+        "latency_us": 35963.125024925226,
+        "offchip_bytes": 35913728.0,
+        "operations": 7214202880.0
+      }
+    },
+    {
+      "case": "ffn2-N256",
+      "mlx": {
+        "average_power_w": 4.926773244370573,
+        "components": [
+          {
+            "achieved_gops": 880.3189071173749,
+            "average_power_w": 4.926773244370573,
+            "compute_utilization": 0.8596864327318112,
+            "cycles": 8194988.0,
+            "energy_mj": 40.37484761633791,
+            "event_count": 7680,
+            "hardware": "mlx-full-simd32-4x4",
+            "latency_us": 8194.988,
+            "metadata": {
+              "butterfly_density": 0.3125,
+              "calibration": {
+                "kernel_compute_setup_cycles": {
+                  "bsmm": 1.0,
+                  "fft": 0.25,
+                  "fft_cmp": 0.25,
+                  "gemm": 1.0,
+                  "swa": 0.5
+                },
+                "kernel_issue_scale": {
+                  "bsmm": 0.8958333333333334,
+                  "fft": 0.9583333333333334,
+                  "fft_cmp": 0.9583333333333334,
+                  "gemm": 1.0,
+                  "swa": 0.94
+                },
+                "mesh_base_penalty": 0.02,
+                "mesh_congestion_penalty": 0.069,
+                "mesh_congestion_start_n": 2048,
+                "mesh_fill_penalty": 0.075,
+                "mesh_reference": 4,
+                "mesh_reference_n": 512,
+                "name": "paper-v1-mechanism-calibration"
+              },
+              "compute_active_fraction": 0.9999477729558603,
+              "hardware_peak_tops": 1.024,
+              "launch_cycles": 18.0,
+              "operational_intensity": 200.87591240875912,
+              "stage_count": 5,
+              "trace": []
+            },
+            "offchip_bytes": 35913728.0,
+            "operations": 7214202880.0,
+            "resource_busy_cycles": {
+              "compute_fma": 8194560.0,
+              "load": 530944.0,
+              "store": 33280.0,
+              "xfer": 28774.399999999012
+            },
+            "resource_utilization": {
+              "compute_fma": 0.9999477729558603,
+              "load": 0.0647888685132913,
+              "store": 0.0040610187592709105,
+              "xfer": 0.00351121929647719
+            },
+            "waves": 512,
+            "workload": "llama-structured-ffn2-N256"
+          }
+        ],
+        "energy_mj": 40.37484761633791,
+        "latency_us": 8194.988,
+        "offchip_bytes": 35913728.0,
+        "operations": 7214202880.0
+      },
+      "xavier_dense_tcu": {
+        "components": [
+          {
+            "achieved_gops": 1950.0,
+            "efficiency": 0.325,
+            "energy_mj": 177.5803785846154,
+            "latency_us": 11838.691905641026,
+            "mode": "tensor",
+            "offchip_bytes": 97910784,
+            "operational_intensity": 235.78045515394913,
+            "operations": 23085449216.0,
+            "roofline_gops": 6000.0
+          }
+        ],
+        "energy_mj": 177.5803785846154,
+        "latency_us": 11838.691905641026,
+        "offchip_bytes": 97910784.0,
+        "operations": 23085449216.0
+      },
+      "xavier_sparse_cuda": {
+        "components": [
+          {
+            "achieved_gops": 200.6,
+            "efficiency": 0.118,
+            "energy_mj": 539.4468753738784,
+            "latency_us": 35963.125024925226,
+            "mode": "cuda",
+            "offchip_bytes": 35913728.0,
+            "operational_intensity": 200.87591240875912,
+            "operations": 7214202880.0,
+            "roofline_gops": 1700.0
+          }
+        ],
+        "energy_mj": 539.4468753738784,
+        "latency_us": 35963.125024925226,
+        "offchip_bytes": 35913728.0,
+        "operations": 7214202880.0
+      }
+    },
+    {
+      "case": "qkv-N8192",
+      "mlx": {
+        "average_power_w": 4.902098791647845,
+        "components": [
+          {
+            "achieved_gops": 880.6070057349579,
+            "average_power_w": 4.902098791647846,
+            "compute_utilization": 0.8599677790380446,
+            "cycles": 292636824.46510214,
+            "energy_mj": 1434.5346236020396,
+            "event_count": 7680,
+            "hardware": "mlx-full-simd32-4x4",
+            "latency_us": 292636.8244651021,
+            "metadata": {
+              "butterfly_density": 0.3125,
+              "calibration": {
+                "kernel_compute_setup_cycles": {
+                  "bsmm": 1.0,
+                  "fft": 0.25,
+                  "fft_cmp": 0.25,
+                  "gemm": 1.0,
+                  "swa": 0.5
+                },
+                "kernel_issue_scale": {
+                  "bsmm": 0.8958333333333334,
+                  "fft": 0.9583333333333334,
+                  "fft_cmp": 0.9583333333333334,
+                  "gemm": 1.0,
+                  "swa": 0.94
+                },
+                "mesh_base_penalty": 0.02,
+                "mesh_congestion_penalty": 0.069,
+                "mesh_congestion_start_n": 2048,
+                "mesh_fill_penalty": 0.075,
+                "mesh_reference": 4,
+                "mesh_reference_n": 512,
+                "name": "paper-v1-mechanism-calibration"
+              },
+              "compute_active_fraction": 0.999971281809747,
+              "hardware_peak_tops": 1.024,
+              "launch_cycles": 18.0,
+              "operational_intensity": 859.3006993006993,
+              "stage_count": 5,
+              "trace": []
+            },
+            "offchip_bytes": 299892736.0,
+            "operations": 257698037760.0,
+            "resource_busy_cycles": {
+              "compute_fma": 292628420.46510214,
+              "load": 1542656.0,
+              "store": 3146240.0,
+              "xfer": 2519142.399999992
+            },
+            "resource_utilization": {
+              "compute_fma": 0.999971281809747,
+              "load": 0.005271571692386125,
+              "store": 0.01075134684690101,
+              "xfer": 0.008608425835007677
+            },
+            "waves": 512,
+            "workload": "llama-structured-qkv-N8192"
+          }
+        ],
+        "energy_mj": 1434.5346236020396,
+        "latency_us": 292636.8244651021,
+        "offchip_bytes": 299892736.0,
+        "operations": 257698037760.0
+      },
+      "xavier_dense_tcu": {
+        "components": [
+          {
+            "achieved_gops": 3054.0,
+            "efficiency": 0.509,
+            "energy_mj": 4050.2638547740667,
+            "latency_us": 270017.59031827113,
+            "mode": "tensor",
+            "offchip_bytes": 369098752,
+            "operational_intensity": 2234.181818181818,
+            "operations": 824633720832.0,
+            "roofline_gops": 6000.0
+          }
+        ],
+        "energy_mj": 4050.2638547740667,
+        "latency_us": 270017.59031827113,
+        "offchip_bytes": 369098752.0,
+        "operations": 824633720832.0
+      },
+      "xavier_sparse_cuda": {
+        "components": [
+          {
+            "achieved_gops": 256.7,
+            "efficiency": 0.151,
+            "energy_mj": 15058.319308141801,
+            "latency_us": 1003887.95387612,
+            "mode": "cuda",
+            "offchip_bytes": 299892736.0,
+            "operational_intensity": 859.3006993006993,
+            "operations": 257698037760.0,
+            "roofline_gops": 1700.0
+          }
+        ],
+        "energy_mj": 15058.319308141801,
+        "latency_us": 1003887.95387612,
+        "offchip_bytes": 299892736.0,
+        "operations": 257698037760.0
+      }
+    },
+    {
+      "case": "attention-N8192",
+      "mlx": {
+        "average_power_w": 2.233449208192544,
+        "components": [
+          {
+            "achieved_gops": 410.1766999968493,
+            "average_power_w": 3.189886498461122,
+            "compute_utilization": 0.4005631835906731,
+            "cycles": 23314374.31739408,
+            "energy_mj": 74.37020785512412,
+            "event_count": 26112,
+            "hardware": "mlx-full-simd32-4x4",
+            "latency_us": 23314.374317394082,
+            "metadata": {
+              "calibration": {
+                "kernel_compute_setup_cycles": {
+                  "bsmm": 1.0,
+                  "fft": 0.25,
+                  "fft_cmp": 0.25,
+                  "gemm": 1.0,
+                  "swa": 0.5
+                },
+                "kernel_issue_scale": {
+                  "bsmm": 0.8958333333333334,
+                  "fft": 0.9583333333333334,
+                  "fft_cmp": 0.9583333333333334,
+                  "gemm": 1.0,
+                  "swa": 0.94
+                },
+                "mesh_base_penalty": 0.02,
+                "mesh_congestion_penalty": 0.069,
+                "mesh_congestion_start_n": 2048,
+                "mesh_fill_penalty": 0.075,
+                "mesh_reference": 4,
+                "mesh_reference_n": 512,
+                "name": "paper-v1-mechanism-calibration"
+              },
+              "chunk_length": 8192,
+              "compute_active_fraction": 0.4355320191528513,
+              "hardware_peak_tops": 1.024,
+              "launch_cycles": 18.0,
+              "operational_intensity": 31.666666666666668,
+              "retained_length": 4096,
+              "stage_count": 25,
+              "trace": []
+            },
+            "offchip_bytes": 301989888.0,
+            "operations": 9563013120.0,
+            "resource_busy_cycles": {
+              "compute_fma": 10154156.521740023,
+              "load": 3146240.0,
+              "store": 1573376.0,
+              "xfer": 23299891.200002775
+            },
+            "resource_utilization": {
+              "compute_fma": 0.4355320191528513,
+              "load": 0.1349485067524499,
+              "store": 0.06748523372665233,
+              "xfer": 0.9993787902178227
+            },
+            "waves": 512,
+            "workload": "llama-fft-cmp-N8192"
+          },
+          {
+            "achieved_gops": 983.3811961320288,
+            "average_power_w": 2.1537042351910127,
+            "compute_utilization": 0.9603331993476845,
+            "cycles": 279625613.4666636,
+            "energy_mj": 602.2308679910384,
+            "event_count": 5120,
+            "hardware": "mlx-full-simd32-4x4",
+            "latency_us": 279625.6134666636,
+            "metadata": {
+              "attention_length": 4096,
+              "calibration": {
+                "kernel_compute_setup_cycles": {
+                  "bsmm": 1.0,
+                  "fft": 0.25,
+                  "fft_cmp": 0.25,
+                  "gemm": 1.0,
+                  "swa": 0.5
+                },
+                "kernel_issue_scale": {
+                  "bsmm": 0.8958333333333334,
+                  "fft": 0.9583333333333334,
+                  "fft_cmp": 0.9583333333333334,
+                  "gemm": 1.0,
+                  "swa": 0.94
+                },
+                "mesh_base_penalty": 0.02,
+                "mesh_congestion_penalty": 0.069,
+                "mesh_congestion_start_n": 2048,
+                "mesh_fill_penalty": 0.075,
+                "mesh_reference": 4,
+                "mesh_reference_n": 512,
+                "name": "paper-v1-mechanism-calibration"
+              },
+              "compute_active_fraction": 0.33418387678099815,
+              "hardware_peak_tops": 1.024,
+              "launch_cycles": 18.0,
+              "operational_intensity": 2048.75,
+              "stage_count": 4,
+              "trace": []
+            },
+            "offchip_bytes": 134217728.0,
+            "operations": 274978570240.0,
+            "resource_busy_cycles": {
+              "compute_fexp": 683178.6666666683,
+              "compute_fma": 279621290.6666636,
+              "compute_fmax": 34645.3333333335,
+              "load": 1573376.0,
+              "store": 524800.0,
+              "xfer": 423526.39999998483
+            },
+            "resource_utilization": {
+              "compute_fexp": 0.002443190586859867,
+              "compute_fma": 0.9999845407581001,
+              "compute_fmax": 0.00012389899803461263,
+              "load": 0.005626723462468414,
+              "store": 0.0018767951672730638,
+              "xfer": 0.001514619475481193
+            },
+            "waves": 512,
+            "workload": "llama-compressed-attention-N8192"
+          }
+        ],
+        "energy_mj": 676.6010758461625,
+        "latency_us": 302939.9877840577,
+        "offchip_bytes": 436207616.0,
+        "operations": 284541583360.0
+      },
+      "xavier_dense_tcu": {
+        "components": [
+          {
+            "achieved_gops": 3054.0,
+            "efficiency": 0.509,
+            "energy_mj": 5402.329474263262,
+            "latency_us": 360155.2982842174,
+            "mode": "tensor",
+            "offchip_bytes": 268435456.0,
+            "operational_intensity": 4097.5,
+            "operations": 1099914280960.0,
+            "roofline_gops": 6000.0
+          }
+        ],
+        "energy_mj": 5402.329474263262,
+        "latency_us": 360155.2982842174,
+        "offchip_bytes": 268435456.0,
+        "operations": 1099914280960.0
+      },
+      "xavier_sparse_cuda": {
+        "components": [
+          {
+            "achieved_gops": 256.7,
+            "efficiency": 0.151,
+            "energy_mj": 558.8048180755746,
+            "latency_us": 37253.654538371644,
+            "mode": "cuda",
+            "offchip_bytes": 301989888.0,
+            "operational_intensity": 31.666666666666668,
+            "operations": 9563013120.0,
+            "roofline_gops": 1700.0
+          },
+          {
+            "achieved_gops": 256.7,
+            "efficiency": 0.151,
+            "energy_mj": 16068.089417997662,
+            "latency_us": 1071205.961199844,
+            "mode": "cuda",
+            "offchip_bytes": 134217728.0,
+            "operational_intensity": 2048.75,
+            "operations": 274978570240.0,
+            "roofline_gops": 1700.0
+          }
+        ],
+        "energy_mj": 16626.894236073236,
+        "latency_us": 1108459.6157382156,
+        "offchip_bytes": 436207616.0,
+        "operations": 284541583360.0
+      }
+    },
+    {
+      "case": "ffn1-N8192",
+      "mlx": {
+        "average_power_w": 4.902312784542522,
+        "components": [
+          {
+            "achieved_gops": 880.6053863605459,
+            "average_power_w": 4.902312784542522,
+            "compute_utilization": 0.8599661976177206,
+            "cycles": 262154304.0,
+            "energy_mj": 1285.1623960220468,
+            "event_count": 7680,
+            "hardware": "mlx-full-simd32-4x4",
+            "latency_us": 262154.304,
+            "metadata": {
+              "butterfly_density": 0.3125,
+              "calibration": {
+                "kernel_compute_setup_cycles": {
+                  "bsmm": 1.0,
+                  "fft": 0.25,
+                  "fft_cmp": 0.25,
+                  "gemm": 1.0,
+                  "swa": 0.5
+                },
+                "kernel_issue_scale": {
+                  "bsmm": 0.8958333333333334,
+                  "fft": 0.9583333333333334,
+                  "fft_cmp": 0.9583333333333334,
+                  "gemm": 1.0,
+                  "swa": 0.94
+                },
+                "mesh_base_penalty": 0.02,
+                "mesh_congestion_penalty": 0.069,
+                "mesh_congestion_start_n": 2048,
+                "mesh_fill_penalty": 0.075,
+                "mesh_reference": 4,
+                "mesh_reference_n": 512,
+                "name": "paper-v1-mechanism-calibration"
+              },
+              "compute_active_fraction": 0.9999704601454874,
+              "hardware_peak_tops": 1.024,
+              "launch_cycles": 18.0,
+              "operational_intensity": 837.508321445554,
+              "stage_count": 5,
+              "trace": []
+            },
+            "offchip_bytes": 275644416.0,
+            "operations": 230854492160.0,
+            "resource_busy_cycles": {
+              "compute_fma": 262146560.0,
+              "load": 1491456.0,
+              "store": 2818560.0,
+              "xfer": 2256998.4000000353
+            },
+            "resource_utilization": {
+              "compute_fma": 0.9999704601454874,
+              "load": 0.00568922950050059,
+              "store": 0.010751530518453742,
+              "xfer": 0.008609427217338516
+            },
+            "waves": 512,
+            "workload": "llama-structured-ffn1-N8192"
+          }
+        ],
+        "energy_mj": 1285.1623960220468,
+        "latency_us": 262154.304,
+        "offchip_bytes": 275644416.0,
+        "operations": 230854492160.0
+      },
+      "xavier_dense_tcu": {
+        "components": [
+          {
+            "achieved_gops": 3054.0,
+            "efficiency": 0.509,
+            "energy_mj": 3628.3613699017683,
+            "latency_us": 241890.75799345123,
+            "mode": "tensor",
+            "offchip_bytes": 337641472,
+            "operational_intensity": 2187.9254658385094,
+            "operations": 738734374912.0,
+            "roofline_gops": 6000.0
+          }
+        ],
+        "energy_mj": 3628.3613699017683,
+        "latency_us": 241890.75799345123,
+        "offchip_bytes": 337641472.0,
+        "operations": 738734374912.0
+      },
+      "xavier_sparse_cuda": {
+        "components": [
+          {
+            "achieved_gops": 256.7,
+            "efficiency": 0.151,
+            "energy_mj": 13489.744380210363,
+            "latency_us": 899316.2920140242,
+            "mode": "cuda",
+            "offchip_bytes": 275644416.0,
+            "operational_intensity": 837.508321445554,
+            "operations": 230854492160.0,
+            "roofline_gops": 1700.0
+          }
+        ],
+        "energy_mj": 13489.744380210363,
+        "latency_us": 899316.2920140242,
+        "offchip_bytes": 275644416.0,
+        "operations": 230854492160.0
+      }
+    },
+    {
+      "case": "ffn2-N8192",
+      "mlx": {
+        "average_power_w": 4.899510355176606,
+        "components": [
+          {
+            "achieved_gops": 880.6053863605459,
+            "average_power_w": 4.899510355176606,
+            "compute_utilization": 0.8599661976177206,
+            "cycles": 262154304.0,
+            "energy_mj": 1284.4277271021158,
+            "event_count": 7680,
+            "hardware": "mlx-full-simd32-4x4",
+            "latency_us": 262154.304,
+            "metadata": {
+              "butterfly_density": 0.3125,
+              "calibration": {
+                "kernel_compute_setup_cycles": {
+                  "bsmm": 1.0,
+                  "fft": 0.25,
+                  "fft_cmp": 0.25,
+                  "gemm": 1.0,
+                  "swa": 0.5
+                },
+                "kernel_issue_scale": {
+                  "bsmm": 0.8958333333333334,
+                  "fft": 0.9583333333333334,
+                  "fft_cmp": 0.9583333333333334,
+                  "gemm": 1.0,
+                  "swa": 0.94
+                },
+                "mesh_base_penalty": 0.02,
+                "mesh_congestion_penalty": 0.069,
+                "mesh_congestion_start_n": 2048,
+                "mesh_fill_penalty": 0.075,
+                "mesh_reference": 4,
+                "mesh_reference_n": 512,
+                "name": "paper-v1-mechanism-calibration"
+              },
+              "compute_active_fraction": 0.9999704601454874,
+              "hardware_peak_tops": 1.024,
+              "launch_cycles": 18.0,
+              "operational_intensity": 837.508321445554,
+              "stage_count": 5,
+              "trace": []
+            },
+            "offchip_bytes": 275644416.0,
+            "operations": 230854492160.0,
+            "resource_busy_cycles": {
+              "compute_fma": 262146560.0,
+              "load": 3260928.0,
+              "store": 1049088.0,
+              "xfer": 841420.7999999698
+            },
+            "resource_utilization": {
+              "compute_fma": 0.9999704601454874,
+              "load": 0.012438964191104794,
+              "store": 0.0040017958278495405,
+              "xfer": 0.003209639464854904
+            },
+            "waves": 512,
+            "workload": "llama-structured-ffn2-N8192"
+          }
+        ],
+        "energy_mj": 1284.4277271021158,
+        "latency_us": 262154.304,
+        "offchip_bytes": 275644416.0,
+        "operations": 230854492160.0
+      },
+      "xavier_dense_tcu": {
+        "components": [
+          {
+            "achieved_gops": 3054.0,
+            "efficiency": 0.509,
+            "energy_mj": 3628.3613699017683,
+            "latency_us": 241890.75799345123,
+            "mode": "tensor",
+            "offchip_bytes": 337641472,
+            "operational_intensity": 2187.9254658385094,
+            "operations": 738734374912.0,
+            "roofline_gops": 6000.0
+          }
+        ],
+        "energy_mj": 3628.3613699017683,
+        "latency_us": 241890.75799345123,
+        "offchip_bytes": 337641472.0,
+        "operations": 738734374912.0
+      },
+      "xavier_sparse_cuda": {
+        "components": [
+          {
+            "achieved_gops": 256.7,
+            "efficiency": 0.151,
+            "energy_mj": 13489.744380210363,
+            "latency_us": 899316.2920140242,
+            "mode": "cuda",
+            "offchip_bytes": 275644416.0,
+            "operational_intensity": 837.508321445554,
+            "operations": 230854492160.0,
+            "roofline_gops": 1700.0
+          }
+        ],
+        "energy_mj": 13489.744380210363,
+        "latency_us": 899316.2920140242,
+        "offchip_bytes": 275644416.0,
+        "operations": 230854492160.0
+      }
+    }
+  ],
+  "target": {
+    "versus_dense_tcu": {
+      "energy_saving": [
+        2.4,
+        2.2,
+        2.4,
+        1.8,
+        6.8,
+        2.1,
+        6.4,
+        6.1,
+        3.2
+      ],
+      "speedup": [
+        5.0,
+        2.3,
+        4.7,
+        3.7,
+        4.4,
+        1.0,
+        4.1,
+        3.9,
+        3.1
+      ]
+    },
+    "versus_sparse_cuda": {
+      "energy_saving": [
+        4.1,
+        2.2,
+        1.6,
+        1.2,
+        5.9,
+        4.4,
+        3.4,
+        5.9,
+        3.1
+      ],
+      "speedup": [
+        4.3,
+        1.4,
+        4.1,
+        3.5,
+        4.0,
+        3.1,
+        3.2,
+        3.9,
+        3.2
+      ]
+    }
+  },
+  "validation_eligible": true,
+  "xavier": {
+    "bandwidth_gbs": 137.0,
+    "cuda_efficiency": {
+      "sequence_lengths": [
+        512,
+        1024,
+        2048,
+        4096,
+        8192
+      ],
+      "values": [
+        0.118,
+        0.136,
+        0.128,
+        0.188,
+        0.151
+      ]
+    },
+    "cuda_peak_gops": 1700.0,
+    "memory_capacity_gb": 16.0,
+    "name": "jetson-agx-xavier-paper",
+    "power_w": 15.0,
+    "provenance": {
+      "bandwidth_and_capacity": "Official NVIDIA Jetson AGX Xavier specifications",
+      "classification": "pre-registered cross-device proxy; no Fig. 20/21 fit",
+      "efficiency": "Digitized MLX paper Fig. 3 H100 profile, transferred cross-device",
+      "peaks_and_power": "MLX paper Table IV"
+    },
+    "tensor_efficiency": {
+      "sequence_lengths": [
+        512,
+        8192
+      ],
+      "values": [
+        0.325,
+        0.509
+      ]
+    },
+    "tensor_peak_gops": 6000.0
+  }
+}
