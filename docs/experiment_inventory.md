@@ -9,10 +9,10 @@ This is the completion checklist. `target` means a paper anchor is captured with
 | Fig. 5 | Dominant Q/K/V frequencies across Llama2-7B layers | Model activation measurement | Activation capture + spectrum runner | no | no | no |
 | Fig. 6 | K frequency energy at Llama2 layers 1 and 16 | Model activation measurement | Spectrum runner and digitized curves | no | no | no |
 | Table II / Fig. 14 | 12-nm area and power breakdown | RTL synthesis + silicon | Exact table replay, component power model, provenance limitation | yes | yes | reported arithmetic pass; RTL unavailable |
-| Fig. 15(a) | ViT dense/BSMM/FNet/MLX accuracy and compute | Training from scratch | Training recipe + FLOP model + result audit | partial | no | no |
-| Fig. 15(b) | BERT layer-count sensitivity | Retraining | Training recipe + FLOP model + audit | partial | no | no |
-| Fig. 15(c,d) | Llama2/InternLM2 LoRA accuracy/perplexity and compute | Fine-tuning/evaluation | Model recipes, cached targets, FLOP model | partial | no | no |
-| Fig. 16 | Block-size B sensitivity on ViT/Llama2/InternLM2 | Training/fine-tuning | Parameter sweep runner | partial | no | no |
+| Fig. 15(a) | ViT dense/BSMM/FNet/MLX accuracy and compute | Training from scratch | Training recipe + FLOP model + result audit | compute yes; quality partial | compute yes | MLX compute pass; training no |
+| Fig. 15(b) | BERT layer-count sensitivity | Retraining | Training recipe + FLOP model + audit | compute yes; quality partial | compute yes | MLX compute pass; training no |
+| Fig. 15(c,d) | Llama2/InternLM2 LoRA accuracy/perplexity and compute | Fine-tuning/evaluation | Model recipes, cached targets, FLOP model | compute yes; quality partial | compute yes | MLX compute pass; fine-tuning no |
+| Fig. 16 | Block-size B sensitivity on ViT/Llama2/InternLM2 | Training/fine-tuning | Parameter sweep runner | compute yes; quality partial | compute yes | MLX compute pass; training no |
 | Fig. 17 | H100 prefill/decode speedup vs eager/FA | Native GPU benchmark | Native/trace GPU runner + audit | partial | no | no |
 | Fig. 18 | Latency, energy, and algorithm-normalized speedup vs sparse accelerators | MLX cycle simulation + cited baselines | Reduced-design simulator + baseline replay | yes | yes | no (Fig. 18(c)/Table IV MLX values unreconciled) |
 | Table V / Fig. 19 | FPGA resources and FABNet latency breakdown | FPGA implementation/simulation | Resource replay + workload timing model | partial | yes | reported arithmetic pass; FPGA timing not reproduced |

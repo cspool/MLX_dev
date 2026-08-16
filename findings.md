@@ -24,6 +24,7 @@ This supports a hybrid reproduction strategy: use public spatial/GPU projects as
 - Table II component sums and Table V resource ratios are internally consistent; Fig. 19's annotations span the stated 1.19x-1.30x range.
 - Fig. 18(c)'s five prior-accelerator bars reconcile with Fig. 18(a)/Table IV within 10%, but the same published formula yields 3.00/2.85 for MLX(s=0.75/0.5), not the plotted 1.6/2.5. The available paper text does not explain the different MLX normalization.
 - Fig. 2's digitized stacks independently recover its 3.77x/2.56x annotations within 0.35%; all eight Fig. 3 markers lie under the stated H100 roofline at 38.5%-68.6% of the applicable limit.
+- The disclosed hierarchical-BSMM density `2*log2(B)/B` plus `s^2` attention scaling reproduces all 31 captured MLX-method compute bars in Figs. 15/16. Fig. 15 MAPE/max error is 4.34%/9.64%; Fig. 16 is 4.14%/7.85%. This validates operation-count consistency, not accuracy or perplexity.
 
 ## Patterns and Insights
 
@@ -41,6 +42,7 @@ This supports a hybrid reproduction strategy: use public spatial/GPU projects as
 - Peak throughput, bandwidth, and TDP are insufficient to reproduce GPU latency or energy. Cross-generation kernel efficiency and activity power must be measured or validated independently; using paper residuals would turn the holdout into another replay.
 - Arithmetic agreement of reported rows is weaker evidence than regenerating synthesis or execution measurements; the result inventory labels these separately.
 - Raster-derived roofline consistency is useful for catching axis/series mistakes but says nothing about whether the CUDA implementation can be rebuilt; artifacts therefore carry `native_profile_reproduced: false`.
+- The Fig. 15/16 y label says computation reduction, but its original-model bar is 100% and the prose savings equal one minus the bar height. The target manifest therefore records normalized computation remaining and preserves a two-percentage-point digitization uncertainty.
 
 ## Open Questions
 
@@ -51,4 +53,4 @@ This supports a hybrid reproduction strategy: use public spatial/GPU projects as
 
 ## Optimization Trajectory
 
-H1 base selection completed. H2 maximum validation-eligible captured architecture error fell from 24.9% in run_001 to 7.1% in run_002. Run_003 added causal ablation evidence. Runs 004/005 added Fig. 25/24 replay coverage without changing the validation metric. Runs 006/007 rejected the first cross-device holdout and identified native GPU timing/power as a hard evidence gap. Runs 008/009 separated an unreconciled Fig. 18 normalization from otherwise consistent table arithmetic. Runs 010/011 completed Fig. 2/3 profile arithmetic. Full-paper coverage remains incomplete.
+H1 base selection completed. H2 maximum validation-eligible captured architecture error fell from 24.9% in run_001 to 7.1% in run_002. Run_003 added causal ablation evidence. Runs 004/005 added Fig. 25/24 replay coverage without changing the validation metric. Runs 006/007 rejected the first cross-device holdout and identified native GPU timing/power as a hard evidence gap. Runs 008/009 separated an unreconciled Fig. 18 normalization from otherwise consistent table arithmetic. Runs 010/011 completed Fig. 2/3 profile arithmetic. Run 012 supported the Fig. 15/16 equation-derived compute audit; training-dependent quality remains open. Full-paper coverage remains incomplete.

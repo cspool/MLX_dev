@@ -8,6 +8,7 @@ from typing import Any
 
 import yaml
 
+from .algorithm import AttentionShape, hybrid_compute_remaining, mixed_layer_compute_remaining
 from .gpu import GpuBaselineConfig
 from .roofline import RooflineCalibration
 from .schema import CalibrationConfig, HardwareConfig, Workload
@@ -54,6 +55,161 @@ def _audit_series(actual: list[float], target: list[float]) -> dict[str, Any]:
         "mean_absolute_percentage_error": sum(errors) / len(errors),
         "maximum_absolute_percentage_error": max(errors),
         "pass_10pct": all(error <= 0.10 + 1e-12 for error in errors),
+    }
+
+
+def _attention_shape(case: dict[str, Any]) -> AttentionShape:
+    return AttentionShape(
+        name=str(case.get("name", "paper-case")),
+        sequence_length=int(case["sequence_length"]),
+        hidden_size=int(case["hidden_size"]),
+        query_heads=int(case["query_heads"]),
+        key_value_heads=int(case["key_value_heads"]),
+    )
+
+
+def reproduce_fig15_compute() -> dict[str, Any]:
+    target = load_targets()["fig15_algorithm_compute"]
+    block_size = int(target["fixed_block_size"])
+    compression_ratios = list(target["compression_ratios"])
+
+    vit_target = target["vit_mlx"]
+    vit_shape = _attention_shape({"name": "vit_mlx", **vit_target})
+    vit_actual = [
+        hybrid_compute_remaining(
+            vit_shape,
+            block_size=block_size,
+            compression_ratio=compression_ratio,
+        )
+        for compression_ratio in compression_ratios
+    ]
+
+    bert_target = target["bert_last_k_layers"]
+    bert_shape = _attention_shape({"name": "bert_last_k_layers", **bert_target})
+    bert_modified_ratio = hybrid_compute_remaining(
+        bert_shape,
+        block_size=block_size,
+        compression_ratio=float(bert_target["compression_ratio"]),
+    )
+    bert_actual = [
+        mixed_layer_compute_remaining(
+            bert_modified_ratio,
+            total_layers=int(bert_target["total_layers"]),
+            modified_layers=int(modified_layers),
+        )
+        for modified_layers in bert_target["modified_layers"]
+    ]
+
+    llm_actual: dict[str, list[float]] = {}
+    llm_target: dict[str, list[float]] = {}
+    llm_audit: dict[str, dict[str, Any]] = {}
+    for case in target["llm_cases"]:
+        name = str(case["name"])
+        shape = _attention_shape(case)
+        actual = [
+            hybrid_compute_remaining(
+                shape,
+                block_size=block_size,
+                compression_ratio=compression_ratio,
+            )
+            for compression_ratio in compression_ratios
+        ]
+        expected = list(case["compute_remaining"])
+        llm_actual[name] = actual
+        llm_target[name] = expected
+        llm_audit[name] = _audit_series(actual, expected)
+
+    vit_expected = list(vit_target["compute_remaining"])
+    bert_expected = list(bert_target["compute_remaining"])
+    flat_actual = (
+        vit_actual
+        + bert_actual
+        + [value for case_values in llm_actual.values() for value in case_values]
+    )
+    flat_target = (
+        vit_expected
+        + bert_expected
+        + [value for case_values in llm_target.values() for value in case_values]
+    )
+    return {
+        "figure": 15,
+        "classification": "exploratory-equation-derived-operation-count-audit",
+        "validation_eligible": False,
+        "training_reproduced": False,
+        "formula": {
+            "hierarchical_bsmm_density": "2*log2(B)/B",
+            "attention_scaling": "s^2",
+            "scope": "QKV projections plus QK^T and AV in modified layers",
+            "excluded_minor_term": "chunked FFT/iFFT overhead; implementation constants undisclosed",
+        },
+        "compression_ratios": compression_ratios,
+        "block_size": block_size,
+        "actual": {
+            "vit_mlx": vit_actual,
+            "bert_last_k_layers": bert_actual,
+            "llm_cases": llm_actual,
+        },
+        "target": {
+            "vit_mlx": vit_expected,
+            "bert_last_k_layers": bert_expected,
+            "llm_cases": llm_target,
+        },
+        "audit": {
+            "vit_mlx": _audit_series(vit_actual, vit_expected),
+            "bert_last_k_layers": _audit_series(bert_actual, bert_expected),
+            "llm_cases": llm_audit,
+            "all_mlx_compute_bars": _audit_series(flat_actual, flat_target),
+        },
+        "modified_layers": list(bert_target["modified_layers"]),
+        "external_baselines": {
+            **target["external_baselines_target_only"],
+            "classification": "target-only-recipe-undisclosed",
+        },
+        "digitization_uncertainty_abs": target["uncertainty_abs"],
+    }
+
+
+def reproduce_fig16_compute() -> dict[str, Any]:
+    target = load_targets()["fig16_block_size_compute"]
+    block_sizes = list(target["block_sizes"])
+    compression_ratio = float(target["compression_ratio"])
+    actual: dict[str, list[float]] = {}
+    expected: dict[str, list[float]] = {}
+    audits: dict[str, dict[str, Any]] = {}
+    for case in target["cases"]:
+        name = str(case["name"])
+        shape = _attention_shape(case)
+        values = [
+            hybrid_compute_remaining(
+                shape,
+                block_size=block_size,
+                compression_ratio=compression_ratio,
+            )
+            for block_size in block_sizes
+        ]
+        case_target = list(case["compute_remaining"])
+        actual[name] = values
+        expected[name] = case_target
+        audits[name] = _audit_series(values, case_target)
+    flat_actual = [value for case_values in actual.values() for value in case_values]
+    flat_target = [value for case_values in expected.values() for value in case_values]
+    return {
+        "figure": 16,
+        "classification": "exploratory-equation-derived-operation-count-audit",
+        "validation_eligible": False,
+        "training_reproduced": False,
+        "formula": {
+            "hierarchical_bsmm_density": "2*log2(B)/B",
+            "attention_scaling": "s^2",
+            "scope": "QKV projections plus QK^T and AV in modified layers",
+            "excluded_minor_term": "chunked FFT/iFFT overhead; implementation constants undisclosed",
+        },
+        "block_sizes": block_sizes,
+        "compression_ratio": compression_ratio,
+        "actual": actual,
+        "target": expected,
+        "audit": {**audits, "all_mlx_compute_bars": _audit_series(flat_actual, flat_target)},
+        "digitization_uncertainty_abs": target["uncertainty_abs"],
     }
 
 
@@ -782,6 +938,10 @@ def reproduce(figure: str | int) -> dict[str, Any]:
         return reproduce_fig2()
     if value == "3":
         return reproduce_fig3()
+    if value == "15":
+        return reproduce_fig15_compute()
+    if value == "16":
+        return reproduce_fig16_compute()
     if value == "18":
         return reproduce_fig18()
     if value in {"19", "tables"}:
@@ -802,6 +962,8 @@ def reproduce(figure: str | int) -> dict[str, Any]:
         return {
             "fig2": reproduce_fig2(),
             "fig3": reproduce_fig3(),
+            "fig15_compute": reproduce_fig15_compute(),
+            "fig16_compute": reproduce_fig16_compute(),
             "fig18": reproduce_fig18(),
             "tables_and_fig19": reproduce_tables_and_fig19(),
             "fig20": reproduce_fig20(),
@@ -815,7 +977,7 @@ def reproduce(figure: str | int) -> dict[str, Any]:
     if value in {"h2", "h2-ablations"}:
         return run_h2_ablations()
     raise ValueError(
-        f"implemented figures are 2, 3, 18-25, tables, h2-ablations, or all; got {figure!r}"
+        f"implemented figures are 2, 3, 15, 16, 18-25, tables, h2-ablations, or all; got {figure!r}"
     )
 
 

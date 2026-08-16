@@ -45,6 +45,8 @@ def _parser() -> argparse.ArgumentParser:
         choices=[
             "2",
             "3",
+            "15",
+            "16",
             "18",
             "19",
             "20",

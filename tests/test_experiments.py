@@ -2,6 +2,8 @@ from mlxsim.experiments import (
     geometric_mean,
     reproduce_fig2,
     reproduce_fig3,
+    reproduce_fig15_compute,
+    reproduce_fig16_compute,
     reproduce_fig18,
     reproduce_fig20,
     reproduce_fig21,
@@ -90,3 +92,16 @@ def test_fig3_points_respect_roofline() -> None:
     assert result["physical_audit"]["all_positive"]
     assert result["physical_audit"]["all_at_or_below_roofline_with_raster_tolerance"]
     assert result["audit"]["to_qkv_implied_tensor_efficiency"]["pass_10pct"]
+
+
+def test_fig15_disclosed_compute_formulas_pass_digitized_mlx_bars() -> None:
+    result = reproduce_fig15_compute()
+    assert result["training_reproduced"] is False
+    assert result["validation_eligible"] is False
+    assert result["audit"]["all_mlx_compute_bars"]["pass_10pct"]
+
+
+def test_fig16_block_size_formula_passes_digitized_compute_bars() -> None:
+    result = reproduce_fig16_compute()
+    assert result["training_reproduced"] is False
+    assert result["audit"]["all_mlx_compute_bars"]["pass_10pct"]

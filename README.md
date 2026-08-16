@@ -21,6 +21,8 @@ mlxsim reproduce --figure 18 --output artifacts/results/fig18-consistency.json
 mlxsim reproduce --figure tables --output artifacts/results/tables.json
 mlxsim reproduce --figure 2 --output artifacts/results/fig2.json
 mlxsim reproduce --figure 3 --output artifacts/results/fig3.json
+mlxsim reproduce --figure 15 --output artifacts/results/fig15-compute.json
+mlxsim reproduce --figure 16 --output artifacts/results/fig16-compute.json
 mlxsim reproduce --figure 24 --output artifacts/results/fig24.json
 mlxsim reproduce --figure 25 --output artifacts/results/fig25.json
 python scripts/audit_empirical_surface_fits.py

@@ -82,7 +82,7 @@ hypotheses:
     priority: medium
   - id: H9
     statement: "Equation-derived QKV-plus-attention operation counts, using hierarchical-BSMM density 2*log2(B)/B and s^2 attention scaling, reproduce every digitized MLX-method compute-remaining bar in Fig. 15/16 within 10%."
-    status: pending
+    status: supported
     motivation: "Test whether the reported algorithmic compute savings follow from the disclosed structured operators before introducing any training-dependent quality metric."
     parent: H4
     priority: high
@@ -91,7 +91,7 @@ experiments:
   proxy_metric: "Maximum absolute percentage error across every numeric paper anchor; pass only when each reproducible point is <=10%, with unavailable measurements explicitly classified rather than fabricated."
   baseline_value: 0.2486
   best_value: 0.0710
-  total_runs: 11
+  total_runs: 12
   trajectory:
     - run_id: "run_001"
       hypothesis: "H2"
@@ -170,11 +170,18 @@ experiments:
       wall_time_min: 0.1
       change_summary: "All eight Fig. 3 digitized H100 points respect the stated rooflines; no native GPU claim."
       timestamp: "2026-08-16"
+    - run_id: "run_012"
+      hypothesis: "H9"
+      metric_value: 0.0964
+      delta: null
+      wall_time_min: 0.3
+      change_summary: "Equation-derived Fig. 15/16 MLX compute audit passes 31 digitized bars; Fig. 15/16 max errors are 9.64%/7.85%."
+      timestamp: "2026-08-16"
 
 outer_loop:
   cycle: 0
   last_direction: null
-  last_reflection: "The two-GPU PEFT/NF4 environment is operational. H9 freezes a first-principles Fig. 15/16 FLOP model before implementing the algorithmic sweep; quality reproduction will remain a separate training-dependent claim."
+  last_reflection: "H9 supports the disclosed FLOP arithmetic across 31 Fig. 15/16 MLX-method bars, but does not test model quality. The next independent work is real data/model evaluation: public InternLM2 first, while gated Llama2 remains conditional on credentials."
 
 workspace:
   findings: "findings.md"
