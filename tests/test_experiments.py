@@ -1,5 +1,7 @@
 from mlxsim.experiments import (
     geometric_mean,
+    reproduce_fig2,
+    reproduce_fig3,
     reproduce_fig18,
     reproduce_fig20,
     reproduce_fig21,
@@ -74,3 +76,17 @@ def test_reported_table_arithmetic() -> None:
     assert result["table2"]["audit"]["pass_10pct"]
     assert result["table5"]["audit"]["pass_10pct"]
     assert result["fig19"]["audit"]["pass_10pct"]
+
+
+def test_fig2_stack_totals_reproduce_annotated_speedups() -> None:
+    result = reproduce_fig2()
+    assert result["native_profile_reproduced"] is False
+    assert result["audit"]["fft_speedup"]["pass_10pct"]
+
+
+def test_fig3_points_respect_roofline() -> None:
+    result = reproduce_fig3()
+    assert result["native_profile_reproduced"] is False
+    assert result["physical_audit"]["all_positive"]
+    assert result["physical_audit"]["all_at_or_below_roofline_with_raster_tolerance"]
+    assert result["audit"]["to_qkv_implied_tensor_efficiency"]["pass_10pct"]

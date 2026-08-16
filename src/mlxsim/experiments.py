@@ -57,6 +57,86 @@ def _audit_series(actual: list[float], target: list[float]) -> dict[str, Any]:
     }
 
 
+def reproduce_fig2() -> dict[str, Any]:
+    target = load_targets()["fig2_orin_profile"]
+    projection = list(target["normalized_execution_time"]["projection"])
+    attention = list(target["normalized_execution_time"]["attention"])
+    totals = [p + a for p, a in zip(projection, attention, strict=True)]
+    speedups = [totals[0] / totals[1], totals[2] / totals[3]]
+    annotated = list(target["annotated_fft_speedup"])
+    return {
+        "figure": 2,
+        "classification": "digitized-profile-arithmetic-audit",
+        "native_profile_reproduced": False,
+        "groups": target["groups"],
+        "actual": {
+            "normalized_total_execution_time": totals,
+            "fft_speedup": speedups,
+        },
+        "target": {"fft_speedup": annotated},
+        "audit": {"fft_speedup": _audit_series(speedups, annotated)},
+        "digitized_components": {
+            "projection": projection,
+            "attention": attention,
+            "cache_hit_rate_pct": target["cache_hit_rate_pct"],
+        },
+        "uncertainty": {
+            "normalized_time_abs": target["uncertainty_abs_normalized_time"],
+            "hit_rate_pct_abs": target["uncertainty_abs_hit_rate_pct"],
+        },
+    }
+
+
+def reproduce_fig3() -> dict[str, Any]:
+    target = load_targets()["fig3_h100_profile"]
+    roofline = target["roofline"]
+    names = list(target["point_names"])
+    modes = list(target["point_modes"])
+    intensities = list(target["operational_intensity_flops_per_byte"])
+    performance = list(target["performance_gflops"])
+    limits: list[float] = []
+    utilizations: list[float] = []
+    for mode, intensity, achieved in zip(modes, intensities, performance, strict=True):
+        peak_key = "tensor_peak_gflops" if mode == "tensor" else "cuda_peak_gflops"
+        limit = min(roofline[peak_key], intensity * roofline["bandwidth_gbs"])
+        limits.append(limit)
+        utilizations.append(achieved / limit)
+    qkv_efficiency = [
+        performance[names.index(name)] / roofline["tensor_peak_gflops"]
+        for name in ("to_qkv_512", "to_qkv_8K")
+    ]
+    qkv_target = list(target["to_qkv_implied_tensor_efficiency"])
+    return {
+        "figure": 3,
+        "classification": "digitized-profile-roofline-audit",
+        "native_profile_reproduced": False,
+        "point_names": names,
+        "point_modes": modes,
+        "operational_intensity_flops_per_byte": intensities,
+        "performance_gflops": performance,
+        "roofline_limit_gflops": limits,
+        "roofline_utilization": utilizations,
+        "physical_audit": {
+            "all_positive": all(value > 0 for value in utilizations),
+            "all_at_or_below_roofline_with_raster_tolerance": all(
+                value <= 1.02 for value in utilizations
+            ),
+            "minimum_utilization": min(utilizations),
+            "maximum_utilization": max(utilizations),
+        },
+        "actual": {"to_qkv_implied_tensor_efficiency": qkv_efficiency},
+        "target": {"to_qkv_implied_tensor_efficiency": qkv_target},
+        "audit": {"to_qkv_implied_tensor_efficiency": _audit_series(qkv_efficiency, qkv_target)},
+        "digitized_cuda_utilization": {
+            "sequence_lengths": target["sequence_lengths"],
+            "values": target["cuda_utilization"],
+            "classification": "raster-replay-only",
+        },
+        "roofline": roofline,
+        "point_uncertainty_relative": target["uncertainty_relative_points"],
+    }
+
+
 def reproduce_fig18() -> dict[str, Any]:
     target = load_targets()["fig18_prior_accelerators"]
     latency = list(target["latency_speedup"])
@@ -698,6 +778,10 @@ def reproduce_fig24() -> dict[str, Any]:
 
 def reproduce(figure: str | int) -> dict[str, Any]:
     value = str(figure).lower()
+    if value == "2":
+        return reproduce_fig2()
+    if value == "3":
+        return reproduce_fig3()
     if value == "18":
         return reproduce_fig18()
     if value in {"19", "tables"}:
@@ -716,6 +800,8 @@ def reproduce(figure: str | int) -> dict[str, Any]:
         return reproduce_fig24()
     if value == "all":
         return {
+            "fig2": reproduce_fig2(),
+            "fig3": reproduce_fig3(),
             "fig18": reproduce_fig18(),
             "tables_and_fig19": reproduce_tables_and_fig19(),
             "fig20": reproduce_fig20(),
@@ -728,7 +814,9 @@ def reproduce(figure: str | int) -> dict[str, Any]:
         }
     if value in {"h2", "h2-ablations"}:
         return run_h2_ablations()
-    raise ValueError(f"implemented figures are 18-25, tables, h2-ablations, or all; got {figure!r}")
+    raise ValueError(
+        f"implemented figures are 2, 3, 18-25, tables, h2-ablations, or all; got {figure!r}"
+    )
 
 
 def write_json(data: dict[str, Any], path: str | Path) -> None:

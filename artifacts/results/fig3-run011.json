@@ -1,0 +1,117 @@
+{
+  "actual": {
+    "to_qkv_implied_tensor_efficiency": [
+      0.325181758096497,
+      0.5089226701916721
+    ]
+  },
+  "audit": {
+    "to_qkv_implied_tensor_efficiency": {
+      "absolute_relative_errors": [
+        0.0005592556815292582,
+        0.0001519249672453123
+      ],
+      "maximum_absolute_percentage_error": 0.0005592556815292582,
+      "mean_absolute_percentage_error": 0.00035559032438728524,
+      "pass_10pct": true
+    }
+  },
+  "classification": "digitized-profile-roofline-audit",
+  "digitized_cuda_utilization": {
+    "classification": "raster-replay-only",
+    "sequence_lengths": [
+      512,
+      1024,
+      2048,
+      4096,
+      8192
+    ],
+    "values": [
+      0.118,
+      0.136,
+      0.128,
+      0.188,
+      0.151
+    ]
+  },
+  "figure": 3,
+  "native_profile_reproduced": false,
+  "operational_intensity_flops_per_byte": [
+    288.0,
+    558.0,
+    12.9,
+    18.7,
+    10.3,
+    14.8,
+    491.0,
+    1670.0
+  ],
+  "performance_gflops": [
+    395000.0,
+    503000.0,
+    12100.0,
+    14400.0,
+    10450.0,
+    12100.0,
+    492000.0,
+    770000.0
+  ],
+  "physical_audit": {
+    "all_at_or_below_roofline_with_raster_tolerance": true,
+    "all_positive": true,
+    "maximum_utilization": 0.6857638888888888,
+    "minimum_utilization": 0.3850267379679144
+  },
+  "point_modes": [
+    "tensor",
+    "tensor",
+    "cuda",
+    "cuda",
+    "cuda",
+    "cuda",
+    "tensor",
+    "tensor"
+  ],
+  "point_names": [
+    "softmax_qkv_512",
+    "softmax_qkv_8K",
+    "fft_512",
+    "fft_8K",
+    "bsmm_512",
+    "bsmm_8K",
+    "to_qkv_512",
+    "to_qkv_8K"
+  ],
+  "point_uncertainty_relative": 0.08,
+  "roofline": {
+    "bandwidth_gbs": 2000.0,
+    "cuda_peak_gflops": 102000.0,
+    "tensor_peak_gflops": 1513000.0
+  },
+  "roofline_limit_gflops": [
+    576000.0,
+    1116000.0,
+    25800.0,
+    37400.0,
+    20600.0,
+    29600.0,
+    982000.0,
+    1513000.0
+  ],
+  "roofline_utilization": [
+    0.6857638888888888,
+    0.4507168458781362,
+    0.4689922480620155,
+    0.3850267379679144,
+    0.5072815533980582,
+    0.40878378378378377,
+    0.5010183299389002,
+    0.5089226701916721
+  ],
+  "target": {
+    "to_qkv_implied_tensor_efficiency": [
+      0.325,
+      0.509
+    ]
+  }
+}

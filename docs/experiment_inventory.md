@@ -4,8 +4,8 @@ This is the completion checklist. `target` means a paper anchor is captured with
 
 | Paper item | Experiment | Evidence type in paper | Required reproduction artifact | Target | Runner | Pass |
 |---|---|---|---|---:|---:|---:|
-| Fig. 2 | AGX Orin dense vs FFT normalized execution time and L2/L1 hit rate at N=512/8K | Native GPU profile | GPU profile manifest + replay/native results | partial | no | no |
-| Fig. 3 | H100 roofline, OI/performance points, CUDA utilization and QKV+attention FLOPs | Native GPU profile + analytical roofline | GPU roofline runner and targets | partial | no | no |
+| Fig. 2 | AGX Orin dense vs FFT normalized execution time and L2/L1 hit rate at N=512/8K | Native GPU profile | GPU profile manifest + replay/native results | yes | yes | profile arithmetic pass; native run unavailable |
+| Fig. 3 | H100 roofline, OI/performance points, CUDA utilization and QKV+attention FLOPs | Native GPU profile + analytical roofline | GPU roofline runner and targets | partial | yes | roofline arithmetic pass; native run unavailable |
 | Fig. 5 | Dominant Q/K/V frequencies across Llama2-7B layers | Model activation measurement | Activation capture + spectrum runner | no | no | no |
 | Fig. 6 | K frequency energy at Llama2 layers 1 and 16 | Model activation measurement | Spectrum runner and digitized curves | no | no | no |
 | Table II / Fig. 14 | 12-nm area and power breakdown | RTL synthesis + silicon | Exact table replay, component power model, provenance limitation | yes | yes | reported arithmetic pass; RTL unavailable |

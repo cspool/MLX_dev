@@ -43,6 +43,8 @@ def _parser() -> argparse.ArgumentParser:
         "--figure",
         required=True,
         choices=[
+            "2",
+            "3",
             "18",
             "19",
             "20",

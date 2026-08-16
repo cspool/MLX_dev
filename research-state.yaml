@@ -76,7 +76,7 @@ hypotheses:
     priority: medium
   - id: H8
     statement: "Digitized Fig. 2 execution stacks and Fig. 3 roofline points are consistent with the paper's annotated speedups and hardware ceilings within 10%."
-    status: pending
+    status: supported
     motivation: "Complete the GPU motivation-figure manifests without presenting raster replay as native profiling."
     parent: H5
     priority: medium
@@ -85,7 +85,7 @@ experiments:
   proxy_metric: "Maximum absolute percentage error across every numeric paper anchor; pass only when each reproducible point is <=10%, with unavailable measurements explicitly classified rather than fabricated."
   baseline_value: 0.2486
   best_value: 0.0710
-  total_runs: 9
+  total_runs: 11
   trajectory:
     - run_id: "run_001"
       hypothesis: "H2"
@@ -150,11 +150,25 @@ experiments:
       wall_time_min: 0.1
       change_summary: "Table II, Table V, and Fig. 19 reported arithmetic passes; classified separately from hardware reproduction."
       timestamp: "2026-08-16"
+    - run_id: "run_010"
+      hypothesis: "H8"
+      metric_value: 0.0035
+      delta: null
+      wall_time_min: 0.1
+      change_summary: "Fig. 2 digitized execution stacks reproduce both annotated Orin speedups; cache bars remain raster replay."
+      timestamp: "2026-08-16"
+    - run_id: "run_011"
+      hypothesis: "H8"
+      metric_value: 0.0006
+      delta: null
+      wall_time_min: 0.1
+      change_summary: "All eight Fig. 3 digitized H100 points respect the stated rooflines; no native GPU claim."
+      timestamp: "2026-08-16"
 
 outer_loop:
   cycle: 0
   last_direction: null
-  last_reflection: "H1 supported. H2 remains active: Fig. 22/23 are exploratory fits, Fig. 24/25 are calibration replay, and H6 rejects Xavier transfer. H7 passes Table II/V and Fig. 19 arithmetic but finds Fig. 18(c)'s MLX normalization unreconciled with Table IV. Native/upstream evidence and algorithm experiments remain."
+  last_reflection: "H8 completes self-consistent Fig. 2/3 digitized arithmetic while preserving the native-GPU gap. H2 remains active: Fig. 22/23 are exploratory fits, Fig. 24/25 replay, H6 rejects Xavier transfer, and H7 finds an unreconciled Fig. 18 MLX normalization. Algorithm/activation experiments are next."
 
 workspace:
   findings: "findings.md"
