@@ -86,7 +86,9 @@ def test_institutional_bibliography_is_identity_only() -> None:
     assert texts[0]["feature_eligible"] is False
 
 
-def test_h35_preflight_binds_h34_and_has_no_output() -> None:
+def test_h35_preflight_binds_h34_and_tracks_output_absence() -> None:
     report = recovery.preflight(load_config())
-    assert report["pass"] is True
-    assert all(report["checks"].values())
+    output = PROJECT_ROOT / load_config()["run"]["output"]
+    assert report["checks"]["output_absent"] is (not output.exists())
+    assert all(value for name, value in report["checks"].items() if name != "output_absent")
+    assert report["pass"] is (not output.exists())

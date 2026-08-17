@@ -19,6 +19,7 @@
 - DFU-E, DFGAS, and the ICCD paper predate MLX and are affiliated with ICT/CAS; their author overlap is substantial but explicitly scores zero as derivation evidence. M2-DFU remains a 2026 just-accepted TOCS item on the official UCAS bibliography without a DOI or accessible paper.
 - The formal feature audit cannot pass the DFU-E/M2-DFU family gate: IEEE returns empty HTTP-202 shells for DFU-E/SimICT, ACM returns 403 for DFGAS, and no M2-DFU full text exists. Publisher/index abstracts are retained as discovery and identity context, not counted as primary technical features.
 - Result boundary: architecture-family attribution is inconclusive, exact parent-chip identity is unresolved, and no candidate code/RTL provenance is supported. This does not contradict a DFU lineage; it prevents promoting plausibility into provenance.
+- H35 exhausts the record-derived first-party representations without recovering substantive DFU-E/M2-DFU text. Its explicit HTML-only UCAS response does formally verify both titles on the institutional bibliography, while all IEEE routes remain document shells and all ACM routes return 403. This strengthens identity but changes no lineage gate.
 
 ## SimICT
 
