@@ -1,0 +1,277 @@
+{
+  "classification": "exploratory_cross_figure_consistency",
+  "config": {
+    "classification": "exploratory_cross_figure_consistency",
+    "fig3_h100_throughput_gflops": {
+      "bsmm": [
+        10450.0,
+        12100.0
+      ],
+      "dense_attention": [
+        395000.0,
+        503000.0
+      ],
+      "dense_qkv": [
+        492000.0,
+        770000.0
+      ],
+      "endpoint_sequence_lengths": [
+        512,
+        8192
+      ],
+      "fft": [
+        12100.0,
+        14400.0
+      ],
+      "interpolation": "linear_in_log2_sequence_length_clamped_to_endpoints",
+      "provenance": "artifacts/results/fig3-run011.json"
+    },
+    "model": {
+      "block_size": 32,
+      "compression_ratio": 0.5,
+      "hidden_size": 4096,
+      "key_value_heads": 32,
+      "modified_layers": 20,
+      "query_heads": 32,
+      "sequence_lengths": [
+        512,
+        1024,
+        2048,
+        4096,
+        8192
+      ],
+      "total_layers": 32
+    },
+    "prediction": {
+      "attention_remaining": "s^2",
+      "fft_time": "omitted_for_optimistic_upper_bound",
+      "mixed_layers": "(total-modified)*dense_time + modified*structured_time",
+      "qkv_remaining": "2*log2(B)/B",
+      "unchanged_work": "omitted"
+    },
+    "run": {
+      "hypothesis": "H18",
+      "id": "run_021",
+      "output": "artifacts/results/fig17-cross-figure-run021.json",
+      "protocol": "experiments/h18-fig17-cross-figure/protocol.md"
+    },
+    "targets": {
+      "all_point_relative_error_gate": 0.1,
+      "series": "prefill_eager",
+      "source": "artifacts/targets/paper_targets.yaml"
+    },
+    "validation_eligible": false
+  },
+  "git_commit": "a72a503ba711a030ce39ae4c5fec32cf14fb60ef",
+  "hypothesis": "H18",
+  "interpretation": {
+    "all_predicted_speedups_below_one": true,
+    "all_targets_above_one": true,
+    "fft_time_included": false,
+    "identifiable_from_public_profiles": false,
+    "unchanged_work_included": false
+  },
+  "predictions": [
+    {
+      "baseline_32_layer_phase_ms": 1.8500581572643409,
+      "mixed_32_layer_phase_ms_without_fft": 16.13351721327623,
+      "passes_10pct_gate": false,
+      "per_layer_time_ms": {
+        "dense_attention": 0.005436667463291139,
+        "dense_qkv": 0.05237764995121951,
+        "dense_total": 0.05781431741451065,
+        "structured_attention_optimistic": 0.0013591668658227848,
+        "structured_qkv_optimistic": 0.7706281033492823,
+        "structured_total_without_fft": 0.7719872702151052
+      },
+      "predicted_speedup": 0.11467171930383119,
+      "relative_error": 0.8994417230550075,
+      "sequence_length": 512,
+      "structured_phase_slower_than_dense": true,
+      "target_speedup": 1.140350877,
+      "throughput_gflops": {
+        "bsmm": 10450.0,
+        "compressed_attention": 395000.0,
+        "dense_attention": 395000.0,
+        "dense_qkv": 492000.0
+      }
+    },
+    {
+      "baseline_32_layer_phase_ms": 3.588622237875292,
+      "mixed_32_layer_phase_ms_without_fft": 31.109016488238908,
+      "passes_10pct_gate": false,
+      "per_layer_time_ms": {
+        "dense_attention": 0.02035529524170616,
+        "dense_qkv": 0.09178914969189671,
+        "dense_total": 0.11214444493360287,
+        "structured_attention_optimistic": 0.005436667463291139,
+        "structured_qkv_optimistic": 1.4827274899884926,
+        "structured_total_without_fft": 1.4881641574517837
+      },
+      "predicted_speedup": 0.11535633854680068,
+      "relative_error": 0.9157011372384954,
+      "sequence_length": 1024,
+      "structured_phase_slower_than_dense": true,
+      "target_speedup": 1.368421053,
+      "throughput_gflops": {
+        "bsmm": 10862.5,
+        "compressed_attention": 395000.0,
+        "dense_attention": 422000.0,
+        "dense_qkv": 561500.0
+      }
+    },
+    {
+      "baseline_32_layer_phase_ms": 7.676273034074411,
+      "mixed_32_layer_phase_ms_without_fft": 60.42496278485149,
+      "passes_10pct_gate": false,
+      "per_layer_time_ms": {
+        "dense_attention": 0.0765250297728285,
+        "dense_qkv": 0.16335850254199685,
+        "dense_total": 0.23988353231482534,
+        "structured_attention_optimistic": 0.02035529524170616,
+        "structured_qkv_optimistic": 2.8569627246119733,
+        "structured_total_without_fft": 2.8773180198536794
+      },
+      "predicted_speedup": 0.1270381094218704,
+      "relative_error": 0.9396568980276288,
+      "sequence_length": 2048,
+      "structured_phase_slower_than_dense": true,
+      "target_speedup": 2.105263158,
+      "throughput_gflops": {
+        "bsmm": 11275.0,
+        "compressed_attention": 422000.0,
+        "dense_attention": 449000.0,
+        "dense_qkv": 631000.0
+      }
+    },
+    {
+      "baseline_32_layer_phase_ms": 18.6572519927441,
+      "mixed_32_layer_phase_ms_without_fft": 118.77211993658588,
+      "passes_10pct_gate": false,
+      "per_layer_time_ms": {
+        "dense_attention": 0.288737297210084,
+        "dense_qkv": 0.29430182756316914,
+        "dense_total": 0.5830391247732531,
+        "structured_attention_optimistic": 0.0765250297728285,
+        "structured_qkv_optimistic": 5.512257492192513,
+        "structured_total_without_fft": 5.588782521965342
+      },
+      "predicted_speedup": 0.15708444037797314,
+      "relative_error": 0.9308585861018075,
+      "sequence_length": 4096,
+      "structured_phase_slower_than_dense": true,
+      "target_speedup": 2.271929825,
+      "throughput_gflops": {
+        "bsmm": 11687.5,
+        "compressed_attention": 449000.0,
+        "dense_attention": 476000.0,
+        "dense_qkv": 700500.0
+      }
+    },
+    {
+      "baseline_32_layer_phase_ms": 52.10977108635526,
+      "mixed_32_layer_phase_ms_without_fft": 238.28949502720474,
+      "passes_10pct_gate": false,
+      "per_layer_time_ms": {
+        "dense_attention": 1.0929539043499006,
+        "dense_qkv": 0.5354764420987013,
+        "dense_total": 1.6284303464486019,
+        "structured_attention_optimistic": 0.288737297210084,
+        "structured_qkv_optimistic": 10.648679246280992,
+        "structured_total_without_fft": 10.937416543491075
+      },
+      "predicted_speedup": 0.21868261998039845,
+      "relative_error": 0.9198398113126256,
+      "sequence_length": 8192,
+      "structured_phase_slower_than_dense": true,
+      "target_speedup": 2.728070175,
+      "throughput_gflops": {
+        "bsmm": 12100.0,
+        "compressed_attention": 476000.0,
+        "dense_attention": 503000.0,
+        "dense_qkv": 770000.0
+      }
+    }
+  ],
+  "protocol": "experiments/h18-fig17-cross-figure/protocol.md",
+  "run_id": "run_021",
+  "source_qualification": {
+    "checks": [
+      {
+        "component": "dense_qkv",
+        "configured_gflops": [
+          492000.0,
+          770000.0
+        ],
+        "pass": true,
+        "point_names": [
+          "to_qkv_512",
+          "to_qkv_8K"
+        ],
+        "source_gflops": [
+          492000.0,
+          770000.0
+        ]
+      },
+      {
+        "component": "dense_attention",
+        "configured_gflops": [
+          395000.0,
+          503000.0
+        ],
+        "pass": true,
+        "point_names": [
+          "softmax_qkv_512",
+          "softmax_qkv_8K"
+        ],
+        "source_gflops": [
+          395000.0,
+          503000.0
+        ]
+      },
+      {
+        "component": "bsmm",
+        "configured_gflops": [
+          10450.0,
+          12100.0
+        ],
+        "pass": true,
+        "point_names": [
+          "bsmm_512",
+          "bsmm_8K"
+        ],
+        "source_gflops": [
+          10450.0,
+          12100.0
+        ]
+      },
+      {
+        "component": "fft",
+        "configured_gflops": [
+          12100.0,
+          14400.0
+        ],
+        "pass": true,
+        "point_names": [
+          "fft_512",
+          "fft_8K"
+        ],
+        "source_gflops": [
+          12100.0,
+          14400.0
+        ]
+      }
+    ],
+    "pass": true,
+    "path": "artifacts/results/fig3-run011.json"
+  },
+  "summary": {
+    "all_points_pass": false,
+    "mape": 0.9210996311471129,
+    "max_relative_error": 0.9396568980276288,
+    "pass": false,
+    "point_count": 5,
+    "source_qualification_pass": true
+  },
+  "validation_eligible": false
+}

@@ -163,7 +163,7 @@ hypotheses:
     priority: high
   - id: H18
     statement: "Fig. 3 H100 component throughputs plus the disclosed B=32 and s=0.5 work fractions predict all five Fig. 17 prefill-eager speedups within 10% without timing calibration."
-    status: pending
+    status: rejected
     motivation: "Test whether the paper's public H100 profiles are sufficient to reconstruct its native performance curve before attempting a non-H100 hardware boundary run."
     parent: H5
     priority: high
@@ -172,7 +172,7 @@ experiments:
   proxy_metric: "Maximum absolute percentage error across every numeric paper anchor; pass only when each reproducible point is <=10%, with unavailable measurements explicitly classified rather than fabricated."
   baseline_value: 0.2486
   best_value: 0.0123
-  total_runs: 20
+  total_runs: 21
   trajectory:
     - run_id: "run_001"
       hypothesis: "H2"
@@ -314,11 +314,18 @@ experiments:
       wall_time_min: 0.1
       change_summary: "Corrected Fig. 17 target recovery supported: all 20 bars, four prose anchors, image/axis checks, and canonical values pass; native H100 execution remains absent."
       timestamp: "2026-08-17"
+    - run_id: "run_021"
+      hypothesis: "H18"
+      metric_value: 0.9397
+      delta: null
+      wall_time_min: 0.1
+      change_summary: "Fig. 3-to-17 H100 transfer rejected: optimistic prefill predictions are 0.115-0.219x versus 1.140-2.728x targets; MAPE is 92.11% and maximum error is 93.97%."
+      timestamp: "2026-08-17"
 
 outer_loop:
-  cycle: 3
-  last_direction: "Use the corrected immutable Fig. 17 targets for a hardware-boundary experiment on the available RTX 4090s. Keep target recovery separate from native timing and do not infer H100 agreement from a different GPU."
-  last_reflection: "H17 resolves a real series-identity error: bar styles, the 1.64x prefill-FA maximum, and the decode range all agree after swapping the two middle canonical series. This closes target acquisition for Fig. 17 but supplies no compressed checkpoint, H100, or executable timing recipe."
+  cycle: 4
+  last_direction: "Treat Fig. 17 as non-identifiable from public H100 profiles and keep run021 as a rejection. Shift native GPU effort to an explicitly labeled RTX 4090 boundary benchmark or to the remaining model-quality experiments; do not fit Fig. 3 throughput to Fig. 17."
+  last_reflection: "H18's optimistic model predicts sub-unity speedup at every N because Fig. 3 BSMM throughput is 40-64x below dense QKV, overwhelming the 0.3125 operation fraction even before FFT. The >1x Fig. 17 curve therefore requires an undisclosed kernel/accounting/scope difference. Adding unchanged work cannot repair the sign of the speedup."
 
 workspace:
   findings: "findings.md"
