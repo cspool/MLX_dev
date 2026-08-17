@@ -1,0 +1,925 @@
+scons: Reading SConscript files ...
+Warning: Your compiler doesn't support incremental linking and lto at the same
+         time, so lto is being disabled. To force lto on anyway, use the
+         --force-lto option. That will disable partial linking.
+Info: Using Python config: python3-config
+Checking for C header file Python.h... (cached) yes
+Checking for C library python3.8... (cached) yes
+Checking for C library crypt... (cached) yes
+Checking for C library pthread... (cached) yes
+Checking for C library dl... (cached) yes
+Checking for C library util... (cached) yes
+Checking for C library m... (cached) yes
+Checking for accept(0,0,0) in C++ library None... (cached) yes
+Checking for zlibVersion() in C++ library z... (cached) yes
+Checking for GOOGLE_PROTOBUF_VERIFY_VERSION in C++ library protobuf... (cached) yes
+Checking for C header file valgrind/valgrind.h... (cached) no
+Checking for clock_nanosleep(0,0,NULL,NULL) in C library None... (cached) yes
+Checking for timer_create(CLOCK_MONOTONIC, NULL, NULL) in C library None... (cached) yes
+Checking for C library tcmalloc... (cached) yes
+Checking for char temp; backtrace_symbols_fd((void*)&temp, 0, 0) in C library None... (cached) no
+Checking for char temp; backtrace_symbols_fd((void*)&temp, 0, 0) in C library execinfo... (cached) no
+Warning: No suitable back trace implementation found.
+Checking for C header file fenv.h... (cached) yes
+Checking for C header file png.h... (cached) yes
+Checking for C header file linux/kvm.h... (cached) yes
+Checking for C header file linux/if_tun.h... (cached) yes
+Checking size of struct kvm_xsave ... (cached) yes
+Checking for member exclude_host in struct perf_event_attr...(cached) yes
+Checking for hdf5-serial using pkg-config... yes
+Checking for H5Fcreate("", 0, 0, 0) in C library hdf5... (cached) yes
+Checking for H5::H5File("", 0) in C++ library hdf5_cpp... (cached) yes
+Checking whether __i386__ is declared... (cached) no
+Checking whether __x86_64__ is declared... (cached) yes
+Building in /workspace/MLX_dev/third_party/dsa-framework/dsa-gem5/build/RISCV
+Using saved variables file /workspace/MLX_dev/third_party/dsa-framework/dsa-gem5/build/variables/RISCV
+warn: CheckedInt already exists in allParams. This may be caused by the Python 2.7 compatibility layer.
+warn: Enum already exists in allParams. This may be caused by the Python 2.7 compatibility layer.
+warn: ScopedEnum already exists in allParams. This may be caused by the Python 2.7 compatibility layer.
+scons: done reading SConscript files.
+scons: Building targets ...
+ [     CXX] RISCV/sim/main.cc -> .o
+ [ TRACING]  -> RISCV/debug/QOS.hh
+ [SO PARAM] QoSMemCtrl -> RISCV/params/QoSMemCtrl.hh
+ [SO PARAM] QoSFixedPriorityPolicy -> RISCV/params/QoSFixedPriorityPolicy.hh
+ [SO PARAM] QoSPropFairPolicy -> RISCV/params/QoSPropFairPolicy.hh
+ [SO PARAM] QoSTurnaroundPolicyIdeal -> RISCV/params/QoSTurnaroundPolicyIdeal.hh
+ [ENUMDECL] QoSQPolicy -> RISCV/enums/QoSQPolicy.hh
+ [SO PARAM] QoSMemSinkCtrl -> RISCV/params/QoSMemSinkCtrl.hh
+ [     CXX] RISCV/base/atomicio.cc -> .o
+ [     CXX] RISCV/base/bitfield.cc -> .o
+ [CONFIG H] USE_PNG, 1 -> RISCV/config/use_png.hh
+ [ENUMDECL] ImageFormat -> RISCV/enums/ImageFormat.hh
+ [     CXX] RISCV/base/callback.cc -> .o
+ [     CXX] RISCV/base/channel_addr.cc -> .o
+ [     CXX] RISCV/base/cprintf.cc -> .o
+ [     CXX] RISCV/base/debug.cc -> .o
+ [     CXX] RISCV/base/bmpwriter.cc -> .o
+ [     CXX] RISCV/base/imgwriter.cc -> .o
+ [SO PARAM] QoSPolicy -> RISCV/params/QoSPolicy.hh
+ [SO PARAM] QoSTurnaroundPolicy -> RISCV/params/QoSTurnaroundPolicy.hh
+ [      CC] RISCV/base/fenv.c -> .o
+ [     CXX] RISCV/base/pngwriter.cc -> .o
+ [CONFIG H] HAVE_VALGRIND, 0 -> RISCV/config/have_valgrind.hh
+ [     CXX] RISCV/base/framebuffer.cc -> .o
+ [     CXX] RISCV/base/hostinfo.cc -> .o
+ [     CXX] RISCV/base/inet.cc -> .o
+ [     CXX] RISCV/base/inifile.cc -> .o
+ [     CXX] RISCV/base/fiber.cc -> .o
+ [     CXX] RISCV/mem/qos/mem_ctrl.cc -> .o
+ [     CXX] RISCV/mem/qos/mem_sink.cc -> .o
+ [     CXX] RISCV/mem/qos/policy.cc -> .o
+ [     CXX] RISCV/mem/qos/policy_pf.cc -> .o
+ [     CXX] RISCV/mem/qos/policy_fixed_prio.cc -> .o
+ [     CXX] RISCV/mem/qos/turnaround_policy_ideal.cc -> .o
+ [     CXX] RISCV/mem/qos/q_policy.cc -> .o
+ [     CXX] RISCV/base/logging.cc -> .o
+ [     CXX] RISCV/base/match.cc -> .o
+ [     CXX] RISCV/base/output.cc -> .o
+ [     CXX] RISCV/base/pixel.cc -> .o
+ [     CXX] RISCV/base/pollevent.cc -> .o
+ [     CXX] RISCV/base/random.cc -> .o
+ [ TRACING]  -> RISCV/debug/GDBAll.hh
+ [     CXX] RISCV/base/remote_gdb.cc -> .o
+In file included from /usr/include/c++/11/cassert:44,
+                 from build/RISCV/base/intmath.hh:32,
+                 from build/RISCV/base/statistics.hh:81,
+                 from build/RISCV/sim/clock_domain.hh:49,
+                 from build/RISCV/sim/clocked_object.hh:50,
+                 from build/RISCV/mem/abstract_mem.hh:52,
+                 from build/RISCV/mem/qos/mem_ctrl.hh:39,
+                 from build/RISCV/mem/qos/mem_ctrl.cc:38:
+build/RISCV/base/statistics.hh: In instantiation of 'Stats::VectorDistBase<Derived, Stor>::Proxy Stats::VectorDistBase<Derived, Stor>::operator[](Stats::off_type) [with Derived = Stats::VectorStandardDeviation; Stor = Stats::SampleStor; Stats::VectorDistBase<Derived, Stor>::Proxy = Stats::DistProxy<Stats::VectorStandardDeviation>; Stats::off_type = unsigned int]':
+build/RISCV/mem/qos/mem_ctrl.cc:115:27:   required from here
+build/RISCV/base/statistics.hh:1998:22: warning: comparison of unsigned expression in '>= 0' is always true [-Wtype-limits]
+ 1998 |         assert(index >= 0 && index < size());
+      |                ~~~~~~^~~~
+build/RISCV/base/statistics.hh: In instantiation of 'Stats::VectorBase<Derived, Stor>::Proxy Stats::VectorBase<Derived, Stor>::operator[](Stats::off_type) [with Derived = Stats::Vector; Stor = Stats::StatStor; Stats::VectorBase<Derived, Stor>::Proxy = Stats::ScalarProxy<Stats::Vector>; Stats::off_type = unsigned int]':
+build/RISCV/mem/qos/mem_ctrl.cc:193:45:   required from here
+build/RISCV/base/statistics.hh:1164:23: warning: comparison of unsigned expression in '>= 0' is always true [-Wtype-limits]
+ 1164 |         assert (index >= 0 && index < size());
+      |                 ~~~~~~^~~~
+ [     CXX] RISCV/base/socket.cc -> .o
+ [SO PARAM] Root -> RISCV/params/Root.hh
+ [     CXX] RISCV/base/statistics.cc -> .o
+ [     CXX] RISCV/base/str.cc -> .o
+ [CONFIG H] USE_POSIX_CLOCK, 1 -> RISCV/config/use_posix_clock.hh
+ [     CXX] RISCV/base/time.cc -> .o
+ [     CXX] RISCV/base/version.cc -> .o
+ [ TRACING]  -> RISCV/debug/FmtFlag.hh
+ [ TRACING]  -> RISCV/debug/FmtStackTrace.hh
+ [ TRACING]  -> RISCV/debug/FmtTicksOff.hh
+ [     CXX] RISCV/base/trace.cc -> .o
+ [     CXX] RISCV/base/types.cc -> .o
+ [     CXX] RISCV/base/loader/dtb_file.cc -> .o
+ [ TRACING]  -> RISCV/debug/Loader.hh
+ [     CXX] RISCV/base/loader/elf_object.cc -> .o
+ [     CXX] RISCV/base/loader/image_file_data.cc -> .o
+ [     CXX] RISCV/base/loader/memory_image.cc -> .o
+ [     CXX] RISCV/base/loader/object_file.cc -> .o
+ [     CXX] RISCV/base/loader/symtab.cc -> .o
+ [ TRACING]  -> RISCV/debug/Stats.hh
+ [     CXX] RISCV/base/stats/group.cc -> .o
+ [     CXX] RISCV/base/stats/text.cc -> .o
+ [     CXX] RISCV/base/stats/hdf5.cc -> .o
+ [     CXX] RISCV/dev/serial/serial.cc -> .o
+ [     CXX] RISCV/dev/serial/simple.cc -> .o
+ [     CXX] RISCV/dev/serial/terminal.cc -> .o
+ [     CXX] RISCV/dev/serial/uart.cc -> .o
+ [     CXX] RISCV/dev/serial/uart8250.cc -> .o
+ [ TRACING]  -> RISCV/debug/MinorTrace.hh
+ [     CXX] RISCV/cpu/minor/activity.cc -> .o
+ [ TRACING]  -> RISCV/debug/MinorCPU.hh
+ [ENUMDECL] ThreadPolicy -> RISCV/enums/ThreadPolicy.hh
+ [SO PARAM] MinorCPU -> RISCV/params/MinorCPU.hh
+ [SO PARAM] RubyNetwork -> RISCV/params/RubyNetwork.hh
+ [SO PARAM] SimpleNetwork -> RISCV/params/SimpleNetwork.hh
+ [ TRACING]  -> RISCV/debug/RubySlicc.hh
+ [MAKE INC] RISCV/mem/ruby/common/BoolVec.hh -> protocol/BoolVec.hh
+ [MAKE INC] RISCV/mem/ruby/slicc_interface/Message.hh -> protocol/Message.hh
+ [SO PARAM] SimpleMemory -> RISCV/params/SimpleMemory.hh
+ [MAKE INC] RISCV/mem/ruby/slicc_interface/RubyRequest.hh -> protocol/RubyRequest.hh
+ [SO PARAM] BaseReplacementPolicy -> RISCV/params/BaseReplacementPolicy.hh
+ [SO PARAM] RubyDirectoryMemory -> RISCV/params/RubyDirectoryMemory.hh
+ [MAKE INC] RISCV/mem/ruby/structures/CacheMemory.hh -> protocol/CacheMemory.hh
+ [SO PARAM] DMASequencer -> RISCV/params/DMASequencer.hh
+ [MAKE INC] RISCV/mem/ruby/common/DataBlock.hh -> protocol/DataBlock.hh
+ [MAKE INC] RISCV/mem/ruby/structures/DirectoryMemory.hh -> protocol/DirectoryMemory.hh
+ [MAKE INC] RISCV/mem/ruby/system/DMASequencer.hh -> protocol/DMASequencer.hh
+ [MAKE INC] RISCV/mem/ruby/system/GPUCoalescer.hh -> protocol/GPUCoalescer.hh
+ [MAKE INC] RISCV/mem/ruby/common/MachineID.hh -> protocol/MachineID.hh
+ [MAKE INC] RISCV/mem/ruby/network/MessageBuffer.hh -> protocol/MessageBuffer.hh
+ [MAKE INC] RISCV/mem/ruby/common/NetDest.hh -> protocol/NetDest.hh
+ [SO PARAM] RubyPrefetcher -> RISCV/params/RubyPrefetcher.hh
+ [MAKE INC] RISCV/mem/ruby/system/Sequencer.hh -> protocol/Sequencer.hh
+ [MAKE INC] RISCV/mem/ruby/common/Set.hh -> protocol/Set.hh
+ [MAKE INC] RISCV/mem/ruby/structures/RubyPrefetcher.hh -> protocol/RubyPrefetcher.hh
+ [MAKE INC] RISCV/mem/ruby/structures/TBETable.hh -> protocol/TBETable.hh
+ [MAKE INC] RISCV/mem/ruby/structures/TimerTable.hh -> protocol/TimerTable.hh
+ [MAKE INC] RISCV/mem/ruby/system/VIPERCoalescer.hh -> protocol/VIPERCoalescer.hh
+ [SO PARAM] RubyWireBuffer -> RISCV/params/RubyWireBuffer.hh
+ [MAKE INC] RISCV/mem/ruby/common/WriteMask.hh -> protocol/WriteMask.hh
+ [ENUMDECL] TimingExprOp -> RISCV/enums/TimingExprOp.hh
+ [SO PARAM] TimingExpr -> RISCV/params/TimingExpr.hh
+ [MAKE INC] RISCV/mem/ruby/structures/WireBuffer.hh -> protocol/WireBuffer.hh
+ [SO PARAM] TimingExprBin -> RISCV/params/TimingExprBin.hh
+ [SO PARAM] TimingExprIf -> RISCV/params/TimingExprIf.hh
+ [SO PARAM] TimingExprLet -> RISCV/params/TimingExprLet.hh
+ [SO PARAM] TimingExprLiteral -> RISCV/params/TimingExprLiteral.hh
+ [SO PARAM] TimingExprReadIntReg -> RISCV/params/TimingExprReadIntReg.hh
+ [SO PARAM] TimingExprRef -> RISCV/params/TimingExprRef.hh
+ [SO PARAM] TimingExprSrcReg -> RISCV/params/TimingExprSrcReg.hh
+ [SO PARAM] TimingExprUn -> RISCV/params/TimingExprUn.hh
+ [MAKE INC] RISCV/mem/ruby/slicc_interface/AbstractCacheEntry.hh -> protocol/AbstractCacheEntry.hh
+ [SO PARAM] MinorFU -> RISCV/params/MinorFU.hh
+ [SO PARAM] MinorFUPool -> RISCV/params/MinorFUPool.hh
+ [SO PARAM] MinorOpClass -> RISCV/params/MinorOpClass.hh
+ [SO PARAM] MinorOpClassSet -> RISCV/params/MinorOpClassSet.hh
+ [SO PARAM] BasicExtLink -> RISCV/params/BasicExtLink.hh
+ [SO PARAM] BasicIntLink -> RISCV/params/BasicIntLink.hh
+ [SO PARAM] BasicLink -> RISCV/params/BasicLink.hh
+ [SO PARAM] SpuExtLink -> RISCV/params/SpuExtLink.hh
+ [SO PARAM] FUDesc -> RISCV/params/FUDesc.hh
+ [SO PARAM] OpDesc -> RISCV/params/OpDesc.hh
+ [SO PARAM] BasicRouter -> RISCV/params/BasicRouter.hh
+ [SO PARAM] MinorFUTiming -> RISCV/params/MinorFUTiming.hh
+ [     CXX] RISCV/cpu/minor/cpu.cc -> .o
+ [     CXX] RISCV/cpu/minor/decode.cc -> .o
+ [ TRACING]  -> RISCV/debug/MinorExecute.hh
+ [ TRACING]  -> RISCV/debug/Activity.hh
+ [ TRACING]  -> RISCV/debug/Branch.hh
+ [ TRACING]  -> RISCV/debug/MinorInterrupt.hh
+ [     CXX] RISCV/cpu/minor/dyn_inst.cc -> .o
+ [ TRACING]  -> RISCV/debug/MinorMem.hh
+ [ TRACING]  -> RISCV/debug/PCEvent.hh
+ [     CXX] RISCV/cpu/minor/fetch1.cc -> .o
+ [     CXX] RISCV/cpu/minor/fetch2.cc -> .o
+ [     CXX] RISCV/cpu/minor/execute.cc -> .o
+ [ TRACING]  -> RISCV/debug/MinorTiming.hh
+ [     CXX] RISCV/cpu/minor/func_unit.cc -> .o
+ [     CXX] RISCV/cpu/minor/lsq.cc -> .o
+ [     CXX] RISCV/cpu/minor/pipe_data.cc -> .o
+ [     CXX] RISCV/cpu/minor/pipeline.cc -> .o
+ [    LINK]  -> RISCV/mem/qos/lib.o.partial
+ [ TRACING]  -> RISCV/debug/MinorScoreboard.hh
+ [     CXX] RISCV/cpu/minor/scoreboard.cc -> .o
+ [     CXX] RISCV/cpu/minor/stats.cc -> .o
+ [     CXX] RISCV/cpu/minor/ssim/port.cc -> .o
+ [    LINK]  -> RISCV/base/lib.o.partial
+ [     CXX] RISCV/cpu/minor/ssim/stream.cc -> .o
+ [     CXX] RISCV/cpu/minor/ssim/ssim.cc -> .o
+ [    LINK]  -> RISCV/dev/serial/lib.o.partial
+ [     CXX] RISCV/cpu/minor/ssim/sim-debug.cc -> .o
+ [     CXX] RISCV/cpu/minor/ssim/accel.cc -> .o
+In file included from /usr/include/c++/11/cassert:44,
+                 from build/RISCV/base/intmath.hh:32,
+                 from build/RISCV/base/statistics.hh:81,
+                 from build/RISCV/cpu/minor/stats.hh:47,
+                 from build/RISCV/cpu/minor/cpu.hh:48,
+                 from build/RISCV/cpu/minor/execute.hh:49,
+                 from build/RISCV/cpu/minor/execute.cc:38:
+build/RISCV/base/statistics.hh: In instantiation of 'Stats::Vector2dBase<Derived, Stor>::Proxy Stats::Vector2dBase<Derived, Stor>::operator[](Stats::off_type) [with Derived = Stats::Vector2d; Stor = Stats::StatStor; Stats::Vector2dBase<Derived, Stor>::Proxy = Stats::VectorProxy<Stats::Vector2d>; Stats::off_type = unsigned int]':
+build/RISCV/cpu/minor/execute.cc:961:50:   required from here
+build/RISCV/base/statistics.hh:1314:23: warning: comparison of unsigned expression in '>= 0' is always true [-Wtype-limits]
+ 1314 |         assert (index >= 0 && offset + y <= size());
+      |                 ~~~~~~^~~~
+build/RISCV/base/statistics.hh: In instantiation of 'Stats::ScalarProxy<Derived> Stats::VectorProxy<Stat>::operator[](Stats::off_type) [with Stat = Stats::Vector2d; Stats::off_type = unsigned int]':
+build/RISCV/cpu/minor/execute.cc:962:60:   required from here
+build/RISCV/base/statistics.hh:1238:23: warning: comparison of unsigned expression in '>= 0' is always true [-Wtype-limits]
+ 1238 |         assert (index >= 0 && index < size());
+      |                 ~~~~~~^~~~
+ [     CXX] RISCV/cpu/minor/ssim/arbiter.cc -> .o
+ [     CXX] RISCV/cpu/minor/ssim/spad.cc -> .o
+ [     CXX] RISCV/cpu/minor/ssim/request.cc -> .o
+ [     CXX] RISCV/cpu/minor/ssim/statistics.cc -> .o
+ [ TRACING]  -> RISCV/debug/TraceCPUData.hh
+ [ TRACING]  -> RISCV/debug/TraceCPUInst.hh
+ [SO PARAM] TraceCPU -> RISCV/params/TraceCPU.hh
+ [  PROTOC] RISCV/proto/inst_dep_record.proto -> RISCV/proto/inst_dep_record.pb.cc, RISCV/proto/inst_dep_record.pb.h
+ [  PROTOC] RISCV/proto/packet.proto -> RISCV/proto/packet.pb.cc, RISCV/proto/packet.pb.h
+ [     CXX] RISCV/cpu/trace/trace_cpu.cc -> .o
+ [     CXX] RISCV/unittest/unittest.cc -> .o
+ [    LINK]  -> RISCV/unittest/lib.o.partial
+ [     CXX] RISCV/systemc/channel/messages.cc -> .o
+ [SO PARAM] SystemC_Kernel -> RISCV/params/SystemC_Kernel.hh
+ [     CXX] RISCV/systemc/channel/sc_clock.cc -> .o
+ [     CXX] RISCV/systemc/channel/sc_event_queue.cc -> .o
+ [     CXX] RISCV/systemc/channel/sc_in_resolved.cc -> .o
+ [     CXX] RISCV/systemc/channel/sc_inout_resolved.cc -> .o
+ [     CXX] RISCV/systemc/channel/sc_out_resolved.cc -> .o
+ [     CXX] RISCV/systemc/channel/sc_mutex.cc -> .o
+ [     CXX] RISCV/systemc/channel/sc_semaphore.cc -> .o
+ [     CXX] RISCV/systemc/channel/sc_signal.cc -> .o
+ [     CXX] RISCV/systemc/channel/sc_signal_resolved.cc -> .o
+ [SO PARAM] SimPoint -> RISCV/params/SimPoint.hh
+ [SO PARAM] ProbeListenerObject -> RISCV/params/ProbeListenerObject.hh
+ [     CXX] RISCV/cpu/simple/probes/simpoint.cc -> .o
+ [     CXX] RISCV/arch/riscv/decoder.cc -> .o
+ [     CXX] RISCV/arch/riscv/faults.cc -> .o
+ [     CXX] RISCV/arch/riscv/isa.cc -> .o
+ [     CXX] RISCV/arch/riscv/interrupts.cc -> .o
+ [     CXX] RISCV/arch/riscv/locked_mem.cc -> .o
+ [     CXX] RISCV/arch/riscv/process.cc -> .o
+ [    LINK]  -> RISCV/systemc/channel/lib.o.partial
+ [     CXX] RISCV/arch/riscv/pagetable.cc -> .o
+ [     CXX] RISCV/arch/riscv/pagetable_walker.cc -> .o
+ [     CXX] RISCV/arch/riscv/remote_gdb.cc -> .o
+ [     CXX] RISCV/arch/riscv/stacktrace.cc -> .o
+ [     CXX] RISCV/arch/riscv/tlb.cc -> .o
+ [     CXX] RISCV/arch/riscv/linux/process.cc -> .o
+ [     CXX] RISCV/arch/riscv/linux/linux.cc -> .o
+ [     CXX] RISCV/arch/riscv/bare_metal/fs_workload.cc -> .o
+ [     CXX] RISCV/arch/riscv/generated/decoder.cc -> .o
+ [    LINK]  -> RISCV/cpu/simple/probes/lib.o.partial
+ [     CXX] RISCV/arch/riscv/generated/inst-constrs.cc -> .o
+ [     CXX] RISCV/arch/riscv/generated/generic_cpu_exec.cc -> .o
+ [SO PARAM] BaseMemProbe -> RISCV/params/BaseMemProbe.hh
+ [SO PARAM] StackDistProbe -> RISCV/params/StackDistProbe.hh
+ [     CXX] RISCV/mem/probes/base.cc -> .o
+ [     CXX] RISCV/mem/probes/stack_dist.cc -> .o
+ [    LINK]  -> RISCV/cpu/trace/lib.o.partial
+ [SO PARAM] MemFootprintProbe -> RISCV/params/MemFootprintProbe.hh
+ [     CXX] RISCV/mem/probes/mem_footprint.cc -> .o
+ [SO PARAM] MemTraceProbe -> RISCV/params/MemTraceProbe.hh
+ [     CXX] RISCV/mem/probes/mem_trace.cc -> .o
+ [     CXX] RISCV/mem/ruby/common/Address.cc -> .o
+ [     CXX] RISCV/mem/ruby/common/BoolVec.cc -> .o
+ [     CXX] RISCV/mem/ruby/common/Consumer.cc -> .o
+ [     CXX] RISCV/mem/ruby/common/DataBlock.cc -> .o
+ [     CXX] RISCV/mem/ruby/common/Histogram.cc -> .o
+ [     CXX] RISCV/mem/ruby/common/IntVec.cc -> .o
+ [     CXX] RISCV/mem/ruby/common/NetDest.cc -> .o
+ [     CXX] RISCV/mem/ruby/common/SubBlock.cc -> .o
+ [     CXX] RISCV/mem/ruby/common/WriteMask.cc -> .o
+ [     CXX] RISCV/mem/ruby/profiler/AccessTraceForAddress.cc -> .o
+ [     CXX] RISCV/mem/ruby/profiler/AddressProfiler.cc -> .o
+ [     CXX] RISCV/mem/ruby/profiler/Profiler.cc -> .o
+ [     CXX] RISCV/mem/ruby/profiler/StoreTrace.cc -> .o
+ [     CXX] RISCV/mem/ruby/network/BasicLink.cc -> .o
+ [     CXX] RISCV/mem/ruby/network/BasicRouter.cc -> .o
+ [     CXX] RISCV/mem/ruby/network/MessageBuffer.cc -> .o
+ [     CXX] RISCV/mem/ruby/network/Network.cc -> .o
+ [    LINK]  -> RISCV/mem/ruby/common/lib.o.partial
+ [ TRACING]  -> RISCV/debug/RubyNetwork.hh
+ [     CXX] RISCV/mem/ruby/network/Topology.cc -> .o
+ [ TRACING]  -> RISCV/debug/CacheComp.hh
+ [SO PARAM] BaseCacheCompressor -> RISCV/params/BaseCacheCompressor.hh
+ [     CXX] RISCV/mem/cache/compressors/base.cc -> .o
+ [SO PARAM] BaseDictionaryCompressor -> RISCV/params/BaseDictionaryCompressor.hh
+ [     CXX] RISCV/mem/cache/compressors/base_dictionary_compressor.cc -> .o
+ [SO PARAM] Base16Delta8 -> RISCV/params/Base16Delta8.hh
+ [SO PARAM] Base32Delta16 -> RISCV/params/Base32Delta16.hh
+ [SO PARAM] Base32Delta8 -> RISCV/params/Base32Delta8.hh
+ [SO PARAM] Base64Delta16 -> RISCV/params/Base64Delta16.hh
+ [SO PARAM] Base64Delta32 -> RISCV/params/Base64Delta32.hh
+ [SO PARAM] Base64Delta8 -> RISCV/params/Base64Delta8.hh
+ [SO PARAM] CPack -> RISCV/params/CPack.hh
+ [SO PARAM] FPCD -> RISCV/params/FPCD.hh
+ [     CXX] RISCV/mem/cache/compressors/cpack.cc -> .o
+ [     CXX] RISCV/mem/cache/compressors/base_delta.cc -> .o
+ [     CXX] RISCV/mem/cache/compressors/fpcd.cc -> .o
+ [SO PARAM] MultiCompressor -> RISCV/params/MultiCompressor.hh
+ [     CXX] RISCV/mem/cache/compressors/multi.cc -> .o
+In file included from /usr/include/c++/11/cassert:44,
+                 from build/RISCV/base/logging.hh:44,
+                 from build/RISCV/base/intmath.hh:36,
+                 from build/RISCV/base/statistics.hh:81,
+                 from build/RISCV/mem/cache/compressors/base.hh:41,
+                 from build/RISCV/mem/cache/compressors/base.cc:33:
+build/RISCV/base/statistics.hh: In instantiation of 'Stats::VectorBase<Derived, Stor>::Proxy Stats::VectorBase<Derived, Stor>::operator[](Stats::off_type) [with Derived = Stats::Vector; Stor = Stats::StatStor; Stats::VectorBase<Derived, Stor>::Proxy = Stats::ScalarProxy<Stats::Vector>; Stats::off_type = unsigned int]':
+build/RISCV/mem/cache/compressors/base.cc:112:63:   required from here
+build/RISCV/base/statistics.hh:1164:23: warning: comparison of unsigned expression in '>= 0' is always true [-Wtype-limits]
+ 1164 |         assert (index >= 0 && index < size());
+      |                 ~~~~~~^~~~
+ [SO PARAM] PerfectCompressor -> RISCV/params/PerfectCompressor.hh
+ [     CXX] RISCV/mem/cache/compressors/perfect.cc -> .o
+ [    LINK]  -> RISCV/mem/probes/lib.o.partial
+In file included from /usr/include/c++/11/cassert:44,
+                 from build/RISCV/base/logging.hh:44,
+                 from build/RISCV/base/intmath.hh:36,
+                 from build/RISCV/base/statistics.hh:81,
+                 from build/RISCV/mem/cache/compressors/base.hh:41,
+                 from build/RISCV/mem/cache/compressors/dictionary_compressor.hh:55,
+                 from build/RISCV/mem/cache/compressors/fpcd.hh:48,
+                 from build/RISCV/mem/cache/compressors/fpcd.cc:33:
+build/RISCV/base/statistics.hh: In instantiation of 'Stats::VectorBase<Derived, Stor>::Proxy Stats::VectorBase<Derived, Stor>::operator[](Stats::off_type) [with Derived = Stats::Vector; Stor = Stats::StatStor; Stats::VectorBase<Derived, Stor>::Proxy = Stats::ScalarProxy<Stats::Vector>; Stats::off_type = unsigned int]':
+build/RISCV/mem/cache/compressors/dictionary_compressor_impl.hh:104:17:   required from 'std::unique_ptr<DictionaryCompressor<T>::Pattern> DictionaryCompressor<T>::compressValue(T) [with T = unsigned int]'
+build/RISCV/mem/cache/compressors/dictionary_compressor_impl.hh:128:44:   required from 'std::unique_ptr<BaseCacheCompressor::CompressionData> DictionaryCompressor<T>::compress(const uint64_t*) [with T = unsigned int; uint64_t = long unsigned int]'
+build/RISCV/mem/cache/compressors/fpcd.cc:59:49:   required from here
+build/RISCV/base/statistics.hh:1164:23: warning: comparison of unsigned expression in '>= 0' is always true [-Wtype-limits]
+ 1164 |         assert (index >= 0 && index < size());
+      |                 ~~~~~~^~~~
+In file included from /usr/include/c++/11/cassert:44,
+                 from build/RISCV/base/logging.hh:44,
+                 from build/RISCV/base/intmath.hh:36,
+                 from build/RISCV/base/statistics.hh:81,
+                 from build/RISCV/mem/cache/compressors/base.hh:41,
+                 from build/RISCV/mem/cache/compressors/multi.hh:41,
+                 from build/RISCV/mem/cache/compressors/multi.cc:34:
+build/RISCV/base/statistics.hh: In instantiation of 'Stats::Vector2dBase<Derived, Stor>::Proxy Stats::Vector2dBase<Derived, Stor>::operator[](Stats::off_type) [with Derived = Stats::Vector2d; Stor = Stats::StatStor; Stats::Vector2dBase<Derived, Stor>::Proxy = Stats::VectorProxy<Stats::Vector2d>; Stats::off_type = unsigned int]':
+build/RISCV/mem/cache/compressors/multi.cc:137:39:   required from here
+build/RISCV/base/statistics.hh:1314:23: warning: comparison of unsigned expression in '>= 0' is always true [-Wtype-limits]
+ 1314 |         assert (index >= 0 && offset + y <= size());
+      |                 ~~~~~~^~~~
+build/RISCV/base/statistics.hh: In instantiation of 'Stats::ScalarProxy<Derived> Stats::VectorProxy<Stat>::operator[](Stats::off_type) [with Stat = Stats::Vector2d; Stats::off_type = unsigned int]':
+build/RISCV/mem/cache/compressors/multi.cc:137:45:   required from here
+build/RISCV/base/statistics.hh:1238:23: warning: comparison of unsigned expression in '>= 0' is always true [-Wtype-limits]
+ 1238 |         assert (index >= 0 && index < size());
+      |                 ~~~~~~^~~~
+ [SO PARAM] RepeatedQwordsCompressor -> RISCV/params/RepeatedQwordsCompressor.hh
+ [     CXX] RISCV/mem/cache/compressors/repeated_qwords.cc -> .o
+In file included from /usr/include/c++/11/cassert:44,
+                 from build/RISCV/base/logging.hh:44,
+                 from build/RISCV/base/intmath.hh:36,
+                 from build/RISCV/base/statistics.hh:81,
+                 from build/RISCV/mem/cache/compressors/base.hh:41,
+                 from build/RISCV/mem/cache/compressors/dictionary_compressor.hh:55,
+                 from build/RISCV/mem/cache/compressors/cpack.hh:42,
+                 from build/RISCV/mem/cache/compressors/cpack.cc:33:
+build/RISCV/base/statistics.hh: In instantiation of 'Stats::VectorBase<Derived, Stor>::Proxy Stats::VectorBase<Derived, Stor>::operator[](Stats::off_type) [with Derived = Stats::Vector; Stor = Stats::StatStor; Stats::VectorBase<Derived, Stor>::Proxy = Stats::ScalarProxy<Stats::Vector>; Stats::off_type = unsigned int]':
+build/RISCV/mem/cache/compressors/dictionary_compressor_impl.hh:104:17:   required from 'std::unique_ptr<DictionaryCompressor<T>::Pattern> DictionaryCompressor<T>::compressValue(T) [with T = unsigned int]'
+build/RISCV/mem/cache/compressors/dictionary_compressor_impl.hh:128:44:   required from 'std::unique_ptr<BaseCacheCompressor::CompressionData> DictionaryCompressor<T>::compress(const uint64_t*) [with T = unsigned int; uint64_t = long unsigned int]'
+build/RISCV/mem/cache/compressors/cpack.cc:54:49:   required from here
+build/RISCV/base/statistics.hh:1164:23: warning: comparison of unsigned expression in '>= 0' is always true [-Wtype-limits]
+ 1164 |         assert (index >= 0 && index < size());
+      |                 ~~~~~~^~~~
+In file included from /usr/include/c++/11/cassert:44,
+                 from build/RISCV/base/logging.hh:44,
+                 from build/RISCV/base/intmath.hh:36,
+                 from build/RISCV/base/statistics.hh:81,
+                 from build/RISCV/mem/cache/compressors/base.hh:41,
+                 from build/RISCV/mem/cache/compressors/dictionary_compressor.hh:55,
+                 from build/RISCV/mem/cache/compressors/base_delta.hh:42,
+                 from build/RISCV/mem/cache/compressors/base_delta_impl.hh:37,
+                 from build/RISCV/mem/cache/compressors/base_delta.cc:33:
+build/RISCV/base/statistics.hh: In instantiation of 'Stats::VectorBase<Derived, Stor>::Proxy Stats::VectorBase<Derived, Stor>::operator[](Stats::off_type) [with Derived = Stats::Vector; Stor = Stats::StatStor; Stats::VectorBase<Derived, Stor>::Proxy = Stats::ScalarProxy<Stats::Vector>; Stats::off_type = unsigned int]':
+build/RISCV/mem/cache/compressors/dictionary_compressor_impl.hh:104:17:   required from 'std::unique_ptr<DictionaryCompressor<T>::Pattern> DictionaryCompressor<T>::compressValue(T) [with T = short unsigned int]'
+build/RISCV/mem/cache/compressors/dictionary_compressor_impl.hh:128:44:   required from 'std::unique_ptr<BaseCacheCompressor::CompressionData> DictionaryCompressor<T>::compress(const uint64_t*) [with T = short unsigned int; uint64_t = long unsigned int]'
+build/RISCV/mem/cache/compressors/base_delta_impl.hh:72:49:   required from 'std::unique_ptr<BaseCacheCompressor::CompressionData> BaseDelta<BaseType, DeltaSizeBits>::compress(const uint64_t*, Cycles&, Cycles&) [with BaseType = short unsigned int; long unsigned int DeltaSizeBits = 8; uint64_t = long unsigned int]'
+build/RISCV/mem/cache/compressors/base_delta.hh:117:5:   required from here
+build/RISCV/base/statistics.hh:1164:23: warning: comparison of unsigned expression in '>= 0' is always true [-Wtype-limits]
+ 1164 |         assert (index >= 0 && index < size());
+      |                 ~~~~~~^~~~
+ [SO PARAM] ZeroCompressor -> RISCV/params/ZeroCompressor.hh
+ [     CXX] RISCV/mem/cache/compressors/zero.cc -> .o
+ [    LINK]  -> RISCV/cpu/minor/lib.o.partial
+In file included from /usr/include/c++/11/cassert:44,
+                 from build/RISCV/base/logging.hh:44,
+                 from build/RISCV/base/intmath.hh:36,
+                 from build/RISCV/base/statistics.hh:81,
+                 from build/RISCV/mem/cache/compressors/base.hh:41,
+                 from build/RISCV/mem/cache/compressors/dictionary_compressor.hh:55,
+                 from build/RISCV/mem/cache/compressors/repeated_qwords.hh:42,
+                 from build/RISCV/mem/cache/compressors/repeated_qwords.cc:34:
+build/RISCV/base/statistics.hh: In instantiation of 'Stats::VectorBase<Derived, Stor>::Proxy Stats::VectorBase<Derived, Stor>::operator[](Stats::off_type) [with Derived = Stats::Vector; Stor = Stats::StatStor; Stats::VectorBase<Derived, Stor>::Proxy = Stats::ScalarProxy<Stats::Vector>; Stats::off_type = unsigned int]':
+build/RISCV/mem/cache/compressors/dictionary_compressor_impl.hh:104:17:   required from 'std::unique_ptr<DictionaryCompressor<T>::Pattern> DictionaryCompressor<T>::compressValue(T) [with T = long unsigned int]'
+build/RISCV/mem/cache/compressors/dictionary_compressor_impl.hh:128:44:   required from 'std::unique_ptr<BaseCacheCompressor::CompressionData> DictionaryCompressor<T>::compress(const uint64_t*) [with T = long unsigned int; uint64_t = long unsigned int]'
+build/RISCV/mem/cache/compressors/repeated_qwords.cc:57:39:   required from here
+build/RISCV/base/statistics.hh:1164:23: warning: comparison of unsigned expression in '>= 0' is always true [-Wtype-limits]
+ 1164 |         assert (index >= 0 && index < size());
+      |                 ~~~~~~^~~~
+In file included from /usr/include/c++/11/cassert:44,
+                 from build/RISCV/base/logging.hh:44,
+                 from build/RISCV/base/intmath.hh:36,
+                 from build/RISCV/base/statistics.hh:81,
+                 from build/RISCV/mem/cache/compressors/base.hh:41,
+                 from build/RISCV/mem/cache/compressors/dictionary_compressor.hh:55,
+                 from build/RISCV/mem/cache/compressors/zero.hh:42,
+                 from build/RISCV/mem/cache/compressors/zero.cc:34:
+build/RISCV/base/statistics.hh: In instantiation of 'Stats::VectorBase<Derived, Stor>::Proxy Stats::VectorBase<Derived, Stor>::operator[](Stats::off_type) [with Derived = Stats::Vector; Stor = Stats::StatStor; Stats::VectorBase<Derived, Stor>::Proxy = Stats::ScalarProxy<Stats::Vector>; Stats::off_type = unsigned int]':
+build/RISCV/mem/cache/compressors/dictionary_compressor_impl.hh:104:17:   required from 'std::unique_ptr<DictionaryCompressor<T>::Pattern> DictionaryCompressor<T>::compressValue(T) [with T = long unsigned int]'
+build/RISCV/mem/cache/compressors/dictionary_compressor_impl.hh:128:44:   required from 'std::unique_ptr<BaseCacheCompressor::CompressionData> DictionaryCompressor<T>::compress(const uint64_t*) [with T = long unsigned int; uint64_t = long unsigned int]'
+build/RISCV/mem/cache/compressors/zero.cc:57:39:   required from here
+build/RISCV/base/statistics.hh:1164:23: warning: comparison of unsigned expression in '>= 0' is always true [-Wtype-limits]
+ 1164 |         assert (index >= 0 && index < size());
+      |                 ~~~~~~^~~~
+ [     CXX] RISCV/python/pybind11/core.cc -> .o
+ [     CXX] RISCV/python/pybind11/debug.cc -> .o
+ [     CXX] RISCV/python/pybind11/event.cc -> .o
+ [CONFIG H] USE_HDF5, 1 -> RISCV/config/use_hdf5.hh
+ [     CXX] RISCV/python/pybind11/stats.cc -> .o
+ [     CXX] RISCV/arch/generic/decode_cache.cc -> .o
+ [    LINK]  -> RISCV/mem/ruby/profiler/lib.o.partial
+ [     CXX] RISCV/arch/generic/pseudo_inst.cc -> .o
+ [SO PARAM] I2CBus -> RISCV/params/I2CBus.hh
+ [SO PARAM] I2CDevice -> RISCV/params/I2CDevice.hh
+ [     CXX] RISCV/dev/i2c/bus.cc -> .o
+ [ TRACING]  -> RISCV/debug/VNC.hh
+ [SO PARAM] VncInput -> RISCV/params/VncInput.hh
+ [SO PARAM] VncServer -> RISCV/params/VncServer.hh
+ [     CXX] RISCV/base/vnc/vncinput.cc -> .o
+ [     CXX] RISCV/base/vnc/vncserver.cc -> .o
+ [     CXX] RISCV/systemc/dt/int/messages.cc -> .o
+ [     CXX] RISCV/systemc/dt/int/sc_int_base.cc -> .o
+ [     CXX] RISCV/systemc/dt/int/sc_int_mask.cc -> .o
+ [     CXX] RISCV/systemc/dt/int/sc_length_param.cc -> .o
+ [     CXX] RISCV/systemc/dt/int/sc_nbexterns.cc -> .o
+ [     CXX] RISCV/systemc/dt/int/sc_nbutils.cc -> .o
+ [     CXX] RISCV/systemc/dt/int/sc_signed.cc -> .o
+ [     CXX] RISCV/systemc/dt/int/sc_uint_base.cc -> .o
+ [    LINK]  -> RISCV/mem/cache/compressors/lib.o.partial
+ [     CXX] RISCV/systemc/dt/int/sc_unsigned.cc -> .o
+ [ TRACING]  -> RISCV/debug/DirectedTest.hh
+ [SO PARAM] DirectedGenerator -> RISCV/params/DirectedGenerator.hh
+ [SO PARAM] RubyDirectedTester -> RISCV/params/RubyDirectedTester.hh
+ [     CXX] RISCV/cpu/testers/directedtest/RubyDirectedTester.cc -> .o
+ [    LINK]  -> RISCV/mem/ruby/network/lib.o.partial
+ [     CXX] RISCV/cpu/testers/directedtest/DirectedGenerator.cc -> .o
+ [    LINK]  -> RISCV/dev/i2c/lib.o.partial
+ [SO PARAM] SeriesRequestGenerator -> RISCV/params/SeriesRequestGenerator.hh
+ [     CXX] RISCV/cpu/testers/directedtest/SeriesRequestGenerator.cc -> .o
+ [    LINK]  -> RISCV/arch/generic/lib.o.partial
+ [SO PARAM] InvalidateGenerator -> RISCV/params/InvalidateGenerator.hh
+ [     CXX] RISCV/cpu/testers/directedtest/InvalidateGenerator.cc -> .o
+In file included from /usr/include/string.h:535,
+                 from /usr/include/c++/11/cstring:42,
+                 from build/RISCV/base/cprintf_formats.hh:32,
+                 from build/RISCV/base/cprintf.hh:38,
+                 from build/RISCV/base/trace.hh:37,
+                 from build/RISCV/arch/generic/types.hh:35,
+                 from build/RISCV/arch/riscv/registers.hh:54,
+                 from build/RISCV/arch/riscv/utility.hh:52,
+                 from build/RISCV/arch/riscv/linux/linux.hh:32,
+                 from build/RISCV/arch/riscv/linux/process.hh:35,
+                 from build/RISCV/arch/riscv/linux/process.cc:31:
+In function 'void* memcpy(void*, const void*, size_t)',
+    inlined from 'void copyOutStatfsBuf(PortProxy&, Addr, hst_statfs*) [with OS = RiscvLinux32]' at build/RISCV/sim/syscall_emul.hh:677:11:
+/usr/include/x86_64-linux-gnu/bits/string_fortified.h:29:33: warning: 'void* __builtin_memcpy(void*, const void*, long unsigned int)' forming offset [64, 79] is out of the bounds [0, 64] [-Warray-bounds]
+   29 |   return __builtin___memcpy_chk (__dest, __src, __len,
+      |          ~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~
+   30 |                                  __glibc_objsize0 (__dest));
+      |                                  ~~~~~~~~~~~~~~~~~~~~~~~~~~
+ [ TRACING]  -> RISCV/debug/RubyCache.hh
+ [ TRACING]  -> RISCV/debug/RubyStats.hh
+ [     CXX] RISCV/mem/ruby/structures/DirectoryMemory.cc -> .o
+ [ TRACING]  -> RISCV/debug/RubyResourceStalls.hh
+ [     CXX] RISCV/mem/ruby/structures/CacheMemory.cc -> .o
+In file included from build/RISCV/systemc/ext/dt/bit/../int/../fx/sc_fxdefs.hh:52,
+                 from build/RISCV/systemc/ext/dt/bit/../int/sc_length_param.hh:63,
+                 from build/RISCV/systemc/ext/dt/bit/sc_bv_base.hh:56,
+                 from build/RISCV/systemc/dt/int/sc_signed.cc:81:
+In function 'void sc_dt::vec_zero(int, int, sc_dt::sc_digit*)',
+    inlined from 'void sc_dt::vec_copy_and_zero(int, sc_dt::sc_digit*, int, const sc_digit*)' at build/RISCV/systemc/ext/dt/bit/../int/../fx/../int/sc_nbutils.hh:407:13,
+    inlined from 'sc_dt::sc_signed::sc_signed(sc_dt::small_type, int, int, sc_dt::sc_digit*, bool)' at build/RISCV/systemc/dt/int/sc_nbcommon.inc:2285:26:
+build/RISCV/systemc/ext/dt/bit/../int/../fx/../int/sc_nbutils.hh:379:14: warning: 'void* __builtin_memset(void*, int, long unsigned int)' offset [12, 15] is out of the bounds [0, 12] [-Warray-bounds]
+  379 |         u[i] = 0;
+      |         ~~~~~^~~
+ [     CXX] RISCV/mem/ruby/structures/WireBuffer.cc -> .o
+ [    LINK]  -> RISCV/base/vnc/lib.o.partial
+ [     CXX] RISCV/mem/ruby/structures/PersistentTable.cc -> .o
+In file included from build/RISCV/systemc/ext/dt/bit/../int/../fx/sc_fxdefs.hh:52,
+                 from build/RISCV/systemc/ext/dt/bit/../int/sc_length_param.hh:63,
+                 from build/RISCV/systemc/ext/dt/bit/sc_bv_base.hh:56,
+                 from build/RISCV/systemc/dt/int/sc_unsigned.cc:83:
+In function 'void sc_dt::vec_zero(int, int, sc_dt::sc_digit*)',
+    inlined from 'void sc_dt::vec_copy_and_zero(int, sc_dt::sc_digit*, int, const sc_digit*)' at build/RISCV/systemc/ext/dt/bit/../int/../fx/../int/sc_nbutils.hh:407:13,
+    inlined from 'sc_dt::sc_unsigned::sc_unsigned(sc_dt::small_type, int, int, sc_dt::sc_digit*, bool)' at build/RISCV/systemc/dt/int/sc_nbcommon.inc:2285:26:
+build/RISCV/systemc/ext/dt/bit/../int/../fx/../int/sc_nbutils.hh:379:14: warning: 'void* __builtin_memset(void*, int, long unsigned int)' offset [12, 15] is out of the bounds [0, 12] [-Warray-bounds]
+  379 |         u[i] = 0;
+      |         ~~~~~^~~
+ [ TRACING]  -> RISCV/debug/RubyPrefetcher.hh
+ [     CXX] RISCV/mem/ruby/structures/TimerTable.cc -> .o
+ [     CXX] RISCV/mem/ruby/structures/RubyPrefetcher.cc -> .o
+ [     CXX] RISCV/mem/ruby/structures/BankedArray.cc -> .o
+ [ TRACING]  -> RISCV/debug/SimpleTrace.hh
+ [SO PARAM] SimpleTrace -> RISCV/params/SimpleTrace.hh
+ [SO PARAM] DerivO3CPU -> RISCV/params/DerivO3CPU.hh
+ [ TRACING]  -> RISCV/debug/Scoreboard.hh
+ [ENUMDECL] CommitPolicy -> RISCV/enums/CommitPolicy.hh
+ [ENUMDECL] FetchPolicy -> RISCV/enums/FetchPolicy.hh
+ [ TRACING]  -> RISCV/debug/FreeList.hh
+ [ TRACING]  -> RISCV/debug/IEW.hh
+ [ENUMDECL] SMTQueuePolicy -> RISCV/enums/SMTQueuePolicy.hh
+ [ TRACING]  -> RISCV/debug/LSQUnit.hh
+ [ TRACING]  -> RISCV/debug/MemDepUnit.hh
+ [ENUMDECL] VecRegRenameMode -> RISCV/enums/VecRegRenameMode.hh
+ [SO PARAM] FUPool -> RISCV/params/FUPool.hh
+ [     CXX] RISCV/cpu/o3/probe/simple_trace.cc -> .o
+ [    LINK]  -> RISCV/cpu/testers/directedtest/lib.o.partial
+ [ TRACING]  -> RISCV/debug/ElasticTrace.hh
+ [SO PARAM] ElasticTrace -> RISCV/params/ElasticTrace.hh
+ [     CXX] RISCV/cpu/o3/probe/elastic_trace.cc -> .o
+ [ TRACING]  -> RISCV/debug/HWPrefetch.hh
+ [SO PARAM] AMPMPrefetcher -> RISCV/params/AMPMPrefetcher.hh
+ [SO PARAM] AccessMapPatternMatching -> RISCV/params/AccessMapPatternMatching.hh
+ [SO PARAM] BaseIndexingPolicy -> RISCV/params/BaseIndexingPolicy.hh
+ [SO PARAM] QueuedPrefetcher -> RISCV/params/QueuedPrefetcher.hh
+ [SO PARAM] BasePrefetcher -> RISCV/params/BasePrefetcher.hh
+ [     CXX] RISCV/mem/cache/prefetch/access_map_pattern_matching.cc -> .o
+ [ TRACING]  -> RISCV/debug/Cache.hh
+ [ TRACING]  -> RISCV/debug/CachePort.hh
+ [ENUMDECL] Clusivity -> RISCV/enums/Clusivity.hh
+ [SO PARAM] WriteAllocator -> RISCV/params/WriteAllocator.hh
+ [SO PARAM] BaseTags -> RISCV/params/BaseTags.hh
+ [     CXX] RISCV/mem/cache/prefetch/base.cc -> .o
+ [SO PARAM] MultiPrefetcher -> RISCV/params/MultiPrefetcher.hh
+ [     CXX] RISCV/mem/cache/prefetch/multi.cc -> .o
+ [SO PARAM] BOPPrefetcher -> RISCV/params/BOPPrefetcher.hh
+ [SO PARAM] DCPTPrefetcher -> RISCV/params/DCPTPrefetcher.hh
+ [     CXX] RISCV/mem/cache/prefetch/bop.cc -> .o
+ [SO PARAM] DeltaCorrelatingPredictionTables -> RISCV/params/DeltaCorrelatingPredictionTables.hh
+ [     CXX] RISCV/mem/cache/prefetch/delta_correlating_prediction_tables.cc -> .o
+ [SO PARAM] IrregularStreamBufferPrefetcher -> RISCV/params/IrregularStreamBufferPrefetcher.hh
+In file included from /usr/include/c++/11/cassert:44,
+                 from build/RISCV/base/intmath.hh:32,
+                 from build/RISCV/base/statistics.hh:81,
+                 from build/RISCV/mem/cache/prefetch/base.hh:53,
+                 from build/RISCV/mem/cache/prefetch/base.cc:46:
+build/RISCV/base/statistics.hh: In instantiation of 'Stats::VectorBase<Derived, Stor>::Proxy Stats::VectorBase<Derived, Stor>::operator[](Stats::off_type) [with Derived = Stats::AverageVector; Stor = Stats::AvgStor; Stats::VectorBase<Derived, Stor>::Proxy = Stats::ScalarProxy<Stats::AverageVector>; Stats::off_type = unsigned int]':
+build/RISCV/mem/cache/tags/base.hh:256:43:   required from here
+build/RISCV/base/statistics.hh:1164:23: warning: comparison of unsigned expression in '>= 0' is always true [-Wtype-limits]
+ 1164 |         assert (index >= 0 && index < size());
+      |                 ~~~~~~^~~~
+build/RISCV/base/statistics.hh: In instantiation of 'Stats::VectorBase<Derived, Stor>::Proxy Stats::VectorBase<Derived, Stor>::operator[](Stats::off_type) [with Derived = Stats::Vector; Stor = Stats::StatStor; Stats::VectorBase<Derived, Stor>::Proxy = Stats::ScalarProxy<Stats::Vector>; Stats::off_type = unsigned int]':
+build/RISCV/mem/cache/base.hh:1164:39:   required from here
+build/RISCV/base/statistics.hh:1164:23: warning: comparison of unsigned expression in '>= 0' is always true [-Wtype-limits]
+ [     CXX] RISCV/mem/cache/prefetch/irregular_stream_buffer.cc -> .o
+ [    LINK]  -> RISCV/systemc/dt/int/lib.o.partial
+ [SO PARAM] IndirectMemoryPrefetcher -> RISCV/params/IndirectMemoryPrefetcher.hh
+ [     CXX] RISCV/mem/cache/prefetch/indirect_memory.cc -> .o
+ [SO PARAM] PIFPrefetcher -> RISCV/params/PIFPrefetcher.hh
+ [     CXX] RISCV/mem/cache/prefetch/pif.cc -> .o
+ [     CXX] RISCV/mem/cache/prefetch/queued.cc -> .o
+ [SO PARAM] SBOOEPrefetcher -> RISCV/params/SBOOEPrefetcher.hh
+ [     CXX] RISCV/mem/cache/prefetch/sbooe.cc -> .o
+ [SO PARAM] SignaturePathPrefetcher -> RISCV/params/SignaturePathPrefetcher.hh
+ [     CXX] RISCV/mem/cache/prefetch/signature_path.cc -> .o
+In file included from /usr/include/c++/11/cassert:44,
+                 from build/RISCV/base/intmath.hh:32,
+                 from build/RISCV/base/statistics.hh:81,
+                 from build/RISCV/mem/cache/prefetch/queued.hh:45,
+                 from build/RISCV/mem/cache/prefetch/indirect_memory.hh:46,
+                 from build/RISCV/mem/cache/prefetch/indirect_memory.cc:29:
+build/RISCV/base/statistics.hh: In instantiation of 'Stats::VectorBase<Derived, Stor>::Proxy Stats::VectorBase<Derived, Stor>::operator[](Stats::off_type) [with Derived = Stats::AverageVector; Stor = Stats::AvgStor; Stats::VectorBase<Derived, Stor>::Proxy = Stats::ScalarProxy<Stats::AverageVector>; Stats::off_type = unsigned int]':
+build/RISCV/mem/cache/tags/base.hh:256:43:   required from here
+build/RISCV/base/statistics.hh:1164:23: warning: comparison of unsigned expression in '>= 0' is always true [-Wtype-limits]
+ 1164 |         assert (index >= 0 && index < size());
+      |                 ~~~~~~^~~~
+ [    LINK]  -> RISCV/arch/riscv/lib.o.partial
+ [    LINK]  -> RISCV/mem/ruby/structures/lib.o.partial
+build/RISCV/base/statistics.hh: In instantiation of 'Stats::VectorBase<Derived, Stor>::Proxy Stats::VectorBase<Derived, Stor>::operator[](Stats::off_type) [with Derived = Stats::Vector; Stor = Stats::StatStor; Stats::VectorBase<Derived, Stor>::Proxy = Stats::ScalarProxy<Stats::Vector>; Stats::off_type = unsigned int]':
+build/RISCV/mem/cache/base.hh:1164:39:   required from here
+build/RISCV/base/statistics.hh:1164:23: warning: comparison of unsigned expression in '>= 0' is always true [-Wtype-limits]
+ [SO PARAM] SignaturePathPrefetcherV2 -> RISCV/params/SignaturePathPrefetcherV2.hh
+ [SO PARAM] SlimAMPMPrefetcher -> RISCV/params/SlimAMPMPrefetcher.hh
+ [SO PARAM] STeMSPrefetcher -> RISCV/params/STeMSPrefetcher.hh
+ [SO PARAM] StridePrefetcher -> RISCV/params/StridePrefetcher.hh
+ [     CXX] RISCV/mem/cache/prefetch/spatio_temporal_memory_streaming.cc -> .o
+ [     CXX] RISCV/mem/cache/prefetch/slim_ampm.cc -> .o
+ [     CXX] RISCV/mem/cache/prefetch/signature_path_v2.cc -> .o
+ [SO PARAM] StridePrefetcherHashedSetAssociative -> RISCV/params/StridePrefetcherHashedSetAssociative.hh
+In file included from /usr/include/c++/11/cassert:44,
+                 from build/RISCV/base/logging.hh:44,
+                 from build/RISCV/base/intmath.hh:36,
+                 from build/RISCV/base/statistics.hh:81,
+                 from build/RISCV/mem/cache/prefetch/queued.hh:45,
+                 from build/RISCV/mem/cache/prefetch/queued.cc:38:
+build/RISCV/base/statistics.hh: In instantiation of 'Stats::VectorBase<Derived, Stor>::Proxy Stats::VectorBase<Derived, Stor>::operator[](Stats::off_type) [with Derived = Stats::AverageVector; Stor = Stats::AvgStor; Stats::VectorBase<Derived, Stor>::Proxy = Stats::ScalarProxy<Stats::AverageVector>; Stats::off_type = unsigned int]':
+build/RISCV/mem/cache/tags/base.hh:256:43:   required from here
+build/RISCV/base/statistics.hh:1164:23: warning: comparison of unsigned expression in '>= 0' is always true [-Wtype-limits]
+ 1164 |         assert (index >= 0 && index < size());
+      |                 ~~~~~~^~~~
+build/RISCV/base/statistics.hh: In instantiation of 'Stats::VectorBase<Derived, Stor>::Proxy Stats::VectorBase<Derived, Stor>::operator[](Stats::off_type) [with Derived = Stats::Vector; Stor = Stats::StatStor; Stats::VectorBase<Derived, Stor>::Proxy = Stats::ScalarProxy<Stats::Vector>; Stats::off_type = unsigned int]':
+build/RISCV/mem/cache/base.hh:1164:39:   required from here
+build/RISCV/base/statistics.hh:1164:23: warning: comparison of unsigned expression in '>= 0' is always true [-Wtype-limits]
+ [SO PARAM] SetAssociative -> RISCV/params/SetAssociative.hh
+ [SO PARAM] TaggedPrefetcher -> RISCV/params/TaggedPrefetcher.hh
+ [     CXX] RISCV/mem/cache/prefetch/stride.cc -> .o
+ [     CXX] RISCV/mem/cache/prefetch/tagged.cc -> .o
+ [     CXX] RISCV/mem/ruby/system/CacheRecorder.cc -> .o
+ [ TRACING]  -> RISCV/debug/RubyDma.hh
+ [     CXX] RISCV/mem/ruby/system/DMASequencer.cc -> .o
+ [ TRACING]  -> RISCV/debug/Ruby.hh
+ [SO PARAM] RubyTester -> RISCV/params/RubyTester.hh
+ [     CXX] RISCV/mem/ruby/system/RubyPort.cc -> .o
+ [SO PARAM] RubyPortProxy -> RISCV/params/RubyPortProxy.hh
+ [     CXX] RISCV/mem/ruby/system/RubyPortProxy.cc -> .o
+ [ TRACING]  -> RISCV/debug/RubySystem.hh
+ [     CXX] RISCV/mem/ruby/system/RubySystem.cc -> .o
+ [ TRACING]  -> RISCV/debug/MemoryAccess.hh
+ [ TRACING]  -> RISCV/debug/ProtocolTrace.hh
+ [ TRACING]  -> RISCV/debug/RubySequencer.hh
+ [     CXX] RISCV/mem/ruby/system/Sequencer.cc -> .o
+ [     CXX] RISCV/mem/ruby/protocol/AccessPermission.cc -> .o
+ [     CXX] RISCV/mem/ruby/protocol/AccessType.cc -> .o
+ [     CXX] RISCV/mem/ruby/protocol/CacheRequestType.cc -> .o
+ [     CXX] RISCV/mem/ruby/protocol/CacheResourceType.cc -> .o
+ [     CXX] RISCV/mem/ruby/protocol/CoherenceRequestType.cc -> .o
+ [     CXX] RISCV/mem/ruby/protocol/CoherenceResponseType.cc -> .o
+ [     CXX] RISCV/mem/ruby/protocol/DMARequestMsg.cc -> .o
+ [     CXX] RISCV/mem/ruby/protocol/DMARequestType.cc -> .o
+ [     CXX] RISCV/mem/ruby/protocol/DMAResponseMsg.cc -> .o
+ [     CXX] RISCV/mem/ruby/protocol/DMAResponseType.cc -> .o
+ [     CXX] RISCV/mem/ruby/protocol/DMASequencerRequestType.cc -> .o
+ [ TRACING]  -> RISCV/debug/RubyGenerated.hh
+ [SO PARAM] DMA_Controller -> RISCV/params/DMA_Controller.hh
+ [     CXX] RISCV/mem/ruby/protocol/DMA_Controller.cc -> .o
+ [     CXX] RISCV/mem/ruby/protocol/DMA_Event.cc -> .o
+ [     CXX] RISCV/mem/ruby/protocol/DMA_State.cc -> .o
+ [     CXX] RISCV/mem/ruby/protocol/DMA_TBE.cc -> .o
+ [     CXX] RISCV/mem/ruby/protocol/DMA_Transitions.cc -> .o
+ [    LINK]  -> RISCV/mem/cache/prefetch/lib.o.partial
+ [     CXX] RISCV/mem/ruby/protocol/DMA_Wakeup.cc -> .o
+ [     CXX] RISCV/mem/ruby/protocol/DirectoryRequestType.cc -> .o
+ [SO PARAM] Directory_Controller -> RISCV/params/Directory_Controller.hh
+ [     CXX] RISCV/mem/ruby/protocol/Directory_Controller.cc -> .o
+ [     CXX] RISCV/mem/ruby/protocol/Directory_Entry.cc -> .o
+ [     CXX] RISCV/mem/ruby/protocol/Directory_Event.cc -> .o
+ [     CXX] RISCV/mem/ruby/protocol/Directory_State.cc -> .o
+ [     CXX] RISCV/mem/ruby/protocol/Directory_TBE.cc -> .o
+ [    LINK]  -> RISCV/cpu/o3/probe/lib.o.partial
+ [     CXX] RISCV/mem/ruby/protocol/Directory_Transitions.cc -> .o
+ [     CXX] RISCV/mem/ruby/protocol/Directory_Wakeup.cc -> .o
+ [     CXX] RISCV/mem/ruby/protocol/HSAScope.cc -> .o
+ [     CXX] RISCV/mem/ruby/protocol/HSASegment.cc -> .o
+ [     CXX] RISCV/mem/ruby/protocol/InvalidateGeneratorStatus.cc -> .o
+In file included from /usr/include/c++/11/cassert:44,
+                 from build/RISCV/base/intmath.hh:32,
+                 from build/RISCV/base/statistics.hh:81,
+                 from build/RISCV/sim/clock_domain.hh:49,
+                 from build/RISCV/sim/clocked_object.hh:50,
+                 from build/RISCV/mem/ruby/network/BasicRouter.hh:37,
+                 from build/RISCV/mem/ruby/network/BasicLink.hh:36,
+                 from build/RISCV/mem/ruby/network/Topology.hh:48,
+                 from build/RISCV/mem/ruby/network/Network.hh:66,
+                 from build/RISCV/mem/ruby/protocol/DMA_Controller.cc:22:
+build/RISCV/base/statistics.hh: In instantiation of 'Stats::VectorBase<Derived, Stor>::Proxy Stats::VectorBase<Derived, Stor>::operator[](Stats::off_type) [with Derived = Stats::Vector; Stor = Stats::StatStor; Stats::VectorBase<Derived, Stor>::Proxy = Stats::ScalarProxy<Stats::Vector>; Stats::off_type = unsigned int]':
+build/RISCV/mem/ruby/protocol/DMA_Controller.cc:189:33:   required from here
+build/RISCV/base/statistics.hh:1164:23: warning: comparison of unsigned expression in '>= 0' is always true [-Wtype-limits]
+ 1164 |         assert (index >= 0 && index < size());
+      |                 ~~~~~~^~~~
+ [SO PARAM] L1Cache_Controller -> RISCV/params/L1Cache_Controller.hh
+ [     CXX] RISCV/mem/ruby/protocol/L1Cache_Controller.cc -> .o
+ [     CXX] RISCV/mem/ruby/protocol/L1Cache_Entry.cc -> .o
+In file included from /usr/include/c++/11/cassert:44,
+                 from build/RISCV/base/intmath.hh:32,
+                 from build/RISCV/base/statistics.hh:81,
+                 from build/RISCV/sim/clock_domain.hh:49,
+                 from build/RISCV/sim/clocked_object.hh:50,
+                 from build/RISCV/mem/ruby/network/BasicRouter.hh:37,
+                 from build/RISCV/mem/ruby/network/BasicLink.hh:36,
+                 from build/RISCV/mem/ruby/network/Topology.hh:48,
+                 from build/RISCV/mem/ruby/network/Network.hh:66,
+                 from build/RISCV/mem/ruby/protocol/Directory_Controller.cc:22:
+build/RISCV/base/statistics.hh: In instantiation of 'Stats::VectorBase<Derived, Stor>::Proxy Stats::VectorBase<Derived, Stor>::operator[](Stats::off_type) [with Derived = Stats::Vector; Stor = Stats::StatStor; Stats::VectorBase<Derived, Stor>::Proxy = Stats::ScalarProxy<Stats::Vector>; Stats::off_type = unsigned int]':
+build/RISCV/mem/ruby/protocol/Directory_Controller.cc:235:33:   required from here
+build/RISCV/base/statistics.hh:1164:23: warning: comparison of unsigned expression in '>= 0' is always true [-Wtype-limits]
+ 1164 |         assert (index >= 0 && index < size());
+      |                 ~~~~~~^~~~
+ [     CXX] RISCV/mem/ruby/protocol/L1Cache_Event.cc -> .o
+ [     CXX] RISCV/mem/ruby/protocol/L1Cache_State.cc -> .o
+ [     CXX] RISCV/mem/ruby/protocol/L1Cache_TBE.cc -> .o
+ [     CXX] RISCV/mem/ruby/protocol/L1Cache_Transitions.cc -> .o
+ [     CXX] RISCV/mem/ruby/protocol/L1Cache_Wakeup.cc -> .o
+ [     CXX] RISCV/mem/ruby/protocol/LinkDirection.cc -> .o
+ [     CXX] RISCV/mem/ruby/protocol/LockStatus.cc -> .o
+In file included from /usr/include/c++/11/cassert:44,
+                 from build/RISCV/base/intmath.hh:32,
+                 from build/RISCV/base/statistics.hh:81,
+                 from build/RISCV/sim/clock_domain.hh:49,
+                 from build/RISCV/sim/clocked_object.hh:50,
+                 from build/RISCV/mem/ruby/network/BasicRouter.hh:37,
+                 from build/RISCV/mem/ruby/network/BasicLink.hh:36,
+                 from build/RISCV/mem/ruby/network/Topology.hh:48,
+                 from build/RISCV/mem/ruby/network/Network.hh:66,
+                 from build/RISCV/mem/ruby/protocol/L1Cache_Controller.cc:22:
+build/RISCV/base/statistics.hh: In instantiation of 'Stats::VectorBase<Derived, Stor>::Proxy Stats::VectorBase<Derived, Stor>::operator[](Stats::off_type) [with Derived = Stats::Vector; Stor = Stats::StatStor; Stats::VectorBase<Derived, Stor>::Proxy = Stats::ScalarProxy<Stats::Vector>; Stats::off_type = unsigned int]':
+build/RISCV/mem/ruby/protocol/L1Cache_Controller.cc:212:33:   required from here
+build/RISCV/base/statistics.hh:1164:23: warning: comparison of unsigned expression in '>= 0' is always true [-Wtype-limits]
+ 1164 |         assert (index >= 0 && index < size());
+      |                 ~~~~~~^~~~
+ [     CXX] RISCV/mem/ruby/protocol/MachineType.cc -> .o
+ [     CXX] RISCV/mem/ruby/protocol/MaskPredictorIndex.cc -> .o
+ [     CXX] RISCV/mem/ruby/protocol/MaskPredictorTraining.cc -> .o
+ [     CXX] RISCV/mem/ruby/protocol/MaskPredictorType.cc -> .o
+ [     CXX] RISCV/mem/ruby/protocol/MemoryControlRequestType.cc -> .o
+ [    LINK]  -> RISCV/python/lib.o.partial
+ [     CXX] RISCV/mem/ruby/protocol/MemoryMsg.cc -> .o
+ [     CXX] RISCV/mem/ruby/protocol/MemoryRequestType.cc -> .o
+ [     CXX] RISCV/mem/ruby/protocol/MessageSizeType.cc -> .o
+ [     CXX] RISCV/mem/ruby/protocol/PrefetchBit.cc -> .o
+ [     CXX] RISCV/mem/ruby/protocol/RequestMsg.cc -> .o
+ [     CXX] RISCV/mem/ruby/protocol/RequestStatus.cc -> .o
+ [    LINK]  -> RISCV/mem/ruby/system/lib.o.partial
+ [     CXX] RISCV/mem/ruby/protocol/ResponseMsg.cc -> .o
+ [     CXX] RISCV/mem/ruby/protocol/RubyAccessMode.cc -> .o
+ [     CXX] RISCV/mem/ruby/protocol/RubyRequestType.cc -> .o
+ [     CXX] RISCV/mem/ruby/protocol/SequencerMsg.cc -> .o
+ [     CXX] RISCV/mem/ruby/protocol/SequencerRequestType.cc -> .o
+ [     CXX] RISCV/mem/ruby/protocol/SequencerStatus.cc -> .o
+ [     CXX] RISCV/mem/ruby/protocol/SeriesRequestGeneratorStatus.cc -> .o
+ [     CXX] RISCV/mem/ruby/protocol/SpuRequestMsg.cc -> .o
+ [     CXX] RISCV/mem/ruby/protocol/SpuRequestType.cc -> .o
+ [     CXX] RISCV/mem/ruby/protocol/TesterStatus.cc -> .o
+ [     CXX] RISCV/mem/ruby/protocol/TransitionResult.cc -> .o
+ [     CXX] RISCV/cpu/simple/atomic.cc -> .o
+ [     CXX] RISCV/cpu/simple/noncaching.cc -> .o
+ [     CXX] RISCV/cpu/simple/timing.cc -> .o
+ [     CXX] RISCV/cpu/simple/base.cc -> .o
+ [ TRACING]  -> RISCV/debug/AddrRanges.hh
+ [ TRACING]  -> RISCV/debug/IsaFake.hh
+ [     CXX] RISCV/dev/io_device.cc -> .o
+ [SO PARAM] IsaFake -> RISCV/params/IsaFake.hh
+ [     CXX] RISCV/dev/isa_fake.cc -> .o
+ [ TRACING]  -> RISCV/debug/DMA.hh
+ [SO PARAM] DmaDevice -> RISCV/params/DmaDevice.hh
+ [     CXX] RISCV/dev/dma_device.cc -> .o
+ [     CXX] RISCV/dev/intpin.cc -> .o
+ [     CXX] RISCV/dev/platform.cc -> .o
+ [SO PARAM] BadDevice -> RISCV/params/BadDevice.hh
+ [ TRACING]  -> RISCV/debug/Intel8254Timer.hh
+ [     CXX] RISCV/dev/baddev.cc -> .o
+ [     CXX] RISCV/dev/intel_8254_timer.cc -> .o
+ [ TRACING]  -> RISCV/debug/MC146818.hh
+ [     CXX] RISCV/dev/mc146818.cc -> .o
+ [     CXX] RISCV/dev/pixelpump.cc -> .o
+ [SO PARAM] BloomFilterBlock -> RISCV/params/BloomFilterBlock.hh
+ [SO PARAM] BloomFilterBase -> RISCV/params/BloomFilterBase.hh
+ [     CXX] RISCV/base/filters/block_bloom_filter.cc -> .o
+ [SO PARAM] BloomFilterBulk -> RISCV/params/BloomFilterBulk.hh
+ [SO PARAM] BloomFilterMultiBitSel -> RISCV/params/BloomFilterMultiBitSel.hh
+ [     CXX] RISCV/base/filters/bulk_bloom_filter.cc -> .o
+ [SO PARAM] BloomFilterH3 -> RISCV/params/BloomFilterH3.hh
+In file included from /usr/include/c++/11/cassert:44,
+                 from build/RISCV/base/logging.hh:44,
+                 from build/RISCV/base/intmath.hh:36,
+                 from build/RISCV/base/statistics.hh:81,
+                 from build/RISCV/cpu/simple/base.hh:45,
+                 from build/RISCV/cpu/simple/base.cc:42:
+build/RISCV/base/statistics.hh: In instantiation of 'Stats::VectorBase<Derived, Stor>::Proxy Stats::VectorBase<Derived, Stor>::operator[](Stats::off_type) [with Derived = Stats::Vector; Stor = Stats::StatStor; Stats::VectorBase<Derived, Stor>::Proxy = Stats::ScalarProxy<Stats::Vector>; Stats::off_type = unsigned int]':
+build/RISCV/cpu/simple/base.cc:634:57:   required from here
+build/RISCV/base/statistics.hh:1164:23: warning: comparison of unsigned expression in '>= 0' is always true [-Wtype-limits]
+ 1164 |         assert (index >= 0 && index < size());
+      |                 ~~~~~~^~~~
+ [     CXX] RISCV/base/filters/h3_bloom_filter.cc -> .o
+ [     CXX] RISCV/base/filters/multi_bit_sel_bloom_filter.cc -> .o
+ [    LINK]  -> RISCV/mem/ruby/protocol/lib.o.partial
+ [SO PARAM] BloomFilterMulti -> RISCV/params/BloomFilterMulti.hh
+ [     CXX] RISCV/base/filters/multi_bloom_filter.cc -> .o
+ [SO PARAM] BloomFilterPerfect -> RISCV/params/BloomFilterPerfect.hh
+ [     CXX] RISCV/systemc/tlm_utils/convenience_socket_bases.cc -> .o
+ [     CXX] RISCV/base/filters/perfect_bloom_filter.cc -> .o
+ [     CXX] RISCV/systemc/tlm_utils/instance_specific_extensions.cc -> .o
+ [     CXX] RISCV/systemc/tlm_core/2/quantum/global_quantum.cc -> .o
+ [     CXX] RISCV/systemc/tlm_core/2/quantum/global_quantum_python.cc -> .o
+ [ TRACING]  -> RISCV/debug/IdeCtrl.hh
+ [SO PARAM] IdeController -> RISCV/params/IdeController.hh
+ [SO PARAM] IdeDisk -> RISCV/params/IdeDisk.hh
+ [SO PARAM] PciDevice -> RISCV/params/PciDevice.hh
+ [SO PARAM] CowDiskImage -> RISCV/params/CowDiskImage.hh
+ [SO PARAM] DiskImage -> RISCV/params/DiskImage.hh
+ [SO PARAM] RawDiskImage -> RISCV/params/RawDiskImage.hh
+ [ENUMDECL] IdeID -> RISCV/enums/IdeID.hh
+ [SO PARAM] PciHost -> RISCV/params/PciHost.hh
+ [     CXX] RISCV/dev/storage/ide_ctrl.cc -> .o
+ [ TRACING]  -> RISCV/debug/IdeDisk.hh
+ [     CXX] RISCV/dev/storage/ide_disk.cc -> .o
+ [ TRACING]  -> RISCV/debug/DiskImageRead.hh
+ [ TRACING]  -> RISCV/debug/DiskImageWrite.hh
+ [     CXX] RISCV/dev/storage/disk_image.cc -> .o
+ [ TRACING]  -> RISCV/debug/SimpleDisk.hh
+ [ TRACING]  -> RISCV/debug/SimpleDiskData.hh
+ [SO PARAM] SimpleDisk -> RISCV/params/SimpleDisk.hh
+ [     CXX] RISCV/dev/storage/simple_disk.cc -> .o
+ [    LINK]  -> RISCV/systemc/tlm_utils/lib.o.partial
+ [SO PARAM] FaultModel -> RISCV/params/FaultModel.hh
+ [     CXX] RISCV/mem/ruby/network/fault_model/FaultModel.cc -> .o
+ [     CXX] RISCV/arch/riscv/insts/amo.cc -> .o
+ [    LINK]  -> RISCV/base/filters/lib.o.partial
+ [     CXX] RISCV/arch/riscv/insts/compressed.cc -> .o
+ [     CXX] RISCV/arch/riscv/insts/mem.cc -> .o
+ [     CXX] RISCV/arch/riscv/insts/standard.cc -> .o
+ [     CXX] RISCV/arch/riscv/insts/static_inst.cc -> .o
+ [     CXX] RISCV/systemc/core/channel.cc -> .o
+ [    LINK]  -> RISCV/mem/ruby/network/fault_model/lib.o.partial
+ [     CXX] RISCV/systemc/core/event.cc -> .o
+ [     CXX] RISCV/systemc/core/kernel.cc -> .o
+ [    LINK]  -> RISCV/dev/lib.o.partial
+ [     CXX] RISCV/systemc/core/messages.cc -> .o
+ [     CXX] RISCV/systemc/core/module.cc -> .o
+ [     CXX] RISCV/systemc/core/object.cc -> .o
+ [     CXX] RISCV/systemc/core/port.cc -> .o
+ [     CXX] RISCV/systemc/core/process.cc -> .o
+ [     CXX] RISCV/systemc/core/scheduler.cc -> .o
+ [     CXX] RISCV/systemc/core/sched_event.cc -> .o
+ [     CXX] RISCV/systemc/core/sensitivity.cc -> .o
+ [     CXX] RISCV/systemc/core/time.cc -> .o
+ [     CXX] RISCV/systemc/core/sc_attr.cc -> .o
+ [     CXX] RISCV/systemc/core/sc_event.cc -> .o
+ [     CXX] RISCV/systemc/core/sc_export.cc -> .o
+ [     CXX] RISCV/systemc/core/sc_interface.cc -> .o
+ [    LINK]  -> RISCV/arch/riscv/insts/lib.o.partial
+ [     CXX] RISCV/systemc/core/sc_join.cc -> .o
+ [     CXX] RISCV/systemc/core/sc_main.cc -> .o
+ [     CXX] RISCV/systemc/core/sc_main_fiber.cc -> .o
+ [     CXX] RISCV/systemc/core/sc_module.cc -> .o
+ [     CXX] RISCV/systemc/core/sc_module_name.cc -> .o
+ [     CXX] RISCV/systemc/core/sc_object.cc -> .o
+ [     CXX] RISCV/systemc/core/sc_port.cc -> .o
+ [     CXX] RISCV/systemc/core/sc_process_handle.cc -> .o
+ [     CXX] RISCV/systemc/core/sc_prim.cc -> .o
+ [     CXX] RISCV/systemc/core/sc_sensitive.cc -> .o
+ [     CXX] RISCV/systemc/core/sc_simcontext.cc -> .o
+ [     CXX] RISCV/systemc/core/sc_spawn.cc -> .o
+ [     CXX] RISCV/systemc/core/sc_time.cc -> .o
+ [     CXX] RISCV/systemc/core/python.cc -> .o
+ [    LINK]  -> RISCV/cpu/simple/lib.o.partial
+ [     CXX] RISCV/systemc/core/sc_main_python.cc -> .o
+ [     CXX] RISCV/systemc/core/sc_time_python.cc -> .o
+ [    LINK]  -> RISCV/systemc/tlm_core/2/quantum/lib.o.partial
+ [SO PARAM] Switch -> RISCV/params/Switch.hh
+ [SO PARAM] SimpleExtLink -> RISCV/params/SimpleExtLink.hh
+ [SO PARAM] SimpleIntLink -> RISCV/params/SimpleIntLink.hh
+ [     CXX] RISCV/mem/ruby/network/simple/PerfectSwitch.cc -> .o
+ [SO PARAM] SimpleSpuExtLink -> RISCV/params/SimpleSpuExtLink.hh
+ [     CXX] RISCV/mem/ruby/network/simple/Switch.cc -> .o
+ [     CXX] RISCV/mem/ruby/network/simple/SimpleLink.cc -> .o
+ [     CXX] RISCV/mem/ruby/network/simple/SimpleNetwork.cc -> .o
+ [    LINK]  -> RISCV/dev/storage/lib.o.partial
+In file included from build/RISCV/sim/core.hh:41,
+                 from build/RISCV/systemc/core/scheduler.hh:38,
+                 from build/RISCV/systemc/core/scheduler.cc:28:
+In destructor 'virtual EventWrapper<sc_gem5::Scheduler, &sc_gem5::Scheduler::runReady>::~EventWrapper()',
+    inlined from 'virtual void Event::releaseImpl()' at build/RISCV/sim/eventq.hh:395:20,
+    inlined from 'void Event::release()' at build/RISCV/sim/eventq.hh:388:24,
+    inlined from 'void EventQueue::deschedule(Event*)' at build/RISCV/sim/eventq_impl.hh:79:19,
+    inlined from 'void sc_gem5::Scheduler::deschedule(Event*)' at build/RISCV/systemc/core/scheduler.hh:406:27,
+    inlined from 'void sc_gem5::Scheduler::scheduleStarvationEvent()' at build/RISCV/systemc/core/scheduler.cc:282:23,
+    inlined from 'void sc_gem5::Scheduler::scheduleStarvationEvent()' at build/RISCV/systemc/core/scheduler.cc:277:1,
+    inlined from 'void sc_gem5::Scheduler::completeTimeSlot(sc_gem5::Scheduler::TimeSlot*)' at build/RISCV/systemc/core/scheduler.hh:294:36,
+    inlined from 'virtual void sc_gem5::Scheduler::TimeSlot::process()' at build/RISCV/systemc/core/scheduler.hh:518:31:
+build/RISCV/sim/eventq.hh:996:7: error: 'void operator delete(void*)' called on unallocated object 'sc_gem5::scheduler' [-Werror=free-nonheap-object]
+  996 | class EventWrapper : public Event
+      |       ^~~~~~~~~~~~
+build/RISCV/systemc/core/scheduler.cc: In member function 'virtual void sc_gem5::Scheduler::TimeSlot::process()':
+build/RISCV/systemc/core/scheduler.cc:489:11: note: declared here
+  489 | Scheduler scheduler;
+      |           ^~~~~~~~~
+ [     CXX] RISCV/mem/ruby/network/simple/Throttle.cc -> .o
+ [ TRACING]  -> RISCV/debug/ProbeVerbose.hh
+ [     CXX] RISCV/sim/probe/probe.cc -> .o
+ [     CXX] RISCV/mem/protocol/atomic.cc -> .o
+cc1plus: all warnings being treated as errors
+ [     CXX] RISCV/mem/protocol/functional.cc -> .o
+ [     CXX] RISCV/mem/protocol/timing.cc -> .o
+scons: *** [build/RISCV/systemc/core/scheduler.o] Error 1
+ [CONFIG H] HAVE_PROTOBUF, 1 -> RISCV/config/have_protobuf.hh
+In file included from /usr/include/c++/11/cassert:44,
+                 from build/RISCV/base/intmath.hh:32,
+                 from build/RISCV/base/statistics.hh:81,
+                 from build/RISCV/sim/clock_domain.hh:49,
+                 from build/RISCV/sim/clocked_object.hh:50,
+                 from build/RISCV/mem/ruby/common/Consumer.hh:41,
+                 from build/RISCV/mem/ruby/network/simple/Throttle.hh:45,
+                 from build/RISCV/mem/ruby/network/simple/Throttle.cc:29:
+build/RISCV/base/statistics.hh: In instantiation of 'Stats::VectorBase<Derived, Stor>::Proxy Stats::VectorBase<Derived, Stor>::operator[](Stats::off_type) [with Derived = Stats::Vector; Stor = Stats::StatStor; Stats::VectorBase<Derived, Stor>::Proxy = Stats::ScalarProxy<Stats::Vector>; Stats::off_type = unsigned int]':
+build/RISCV/mem/ruby/network/simple/Throttle.cc:142:61:   required from here
+build/RISCV/base/statistics.hh:1164:23: warning: comparison of unsigned expression in '>= 0' is always true [-Wtype-limits]
+ 1164 |         assert (index >= 0 && index < size());
+      |                 ~~~~~~^~~~
+scons: building terminated because of errors.
+*** Summary of Warnings ***
+Warning: Your compiler doesn't support incremental linking and lto at the same
+         time, so lto is being disabled. To force lto on anyway, use the
+         --force-lto option. That will disable partial linking.
+Warning: No suitable back trace implementation found.
