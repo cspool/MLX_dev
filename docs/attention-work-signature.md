@@ -27,5 +27,10 @@ H57 maps both components to one seven-stage FFT proxy. It therefore misses the
 paper-static engine already has physical FFT and SWA FU-class anchors, but
 those anchors are not yet matched to the Figure 20 shapes.
 
+The first matched topology execution is reported in
+[`matched-fft-cycle-estimator.md`](matched-fft-cycle-estimator.md). It conserves
+all H79 work exactly but rejects q=1/2 affine folding because neither anchor is
+at the later steady-state slope.
+
 No Figure 20 performance target is consumed. The immutable result is
 `artifacts/results/attention-work-signature-run084.json`.
