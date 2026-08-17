@@ -55,7 +55,8 @@ not permitted.
 
 H62 implements that source-derived Figure 10 mapping and passes its target-free
 mechanism gates; see [`fig10-mapping.md`](fig10-mapping.md). Its numerical
-Figure 22 transfer remains a separate held-out experiment.
+Figure 22 transfer is reported in
+[`fig10-fig22-transfer.md`](fig10-fig22-transfer.md).
 
 Artifacts:
 

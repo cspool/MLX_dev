@@ -43,3 +43,8 @@ The mechanism audit is supported. Its immutable result is
 `artifacts/results/fig10-mapping-run067.json`; the subsequent held-out
 experiment must decide whether this mapping improves the full 64-value Figure
 22 transfer without changing the compiler.
+
+That transfer is now complete in
+[`fig10-fig22-transfer.md`](fig10-fig22-transfer.md). The real-scratchpad
+primary remains rejected, while the fixed-memory compute subset reaches 11/16
+within 10%, localizing the next problem to data-supply mapping and timing.
