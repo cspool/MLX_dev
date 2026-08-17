@@ -1,0 +1,24 @@
+run:
+  id: run_028
+  hypothesis: H24
+  protocol: experiments/h24-fig19-fused-fft2d/protocol.md
+  output: artifacts/results/fig19-fused-fft2d-run028.json
+
+base_transfer_config: configs/analysis/fig19_mlx_event_transfer_v1.yaml
+
+fusion:
+  stage_order: [hidden_axis, token_axis]
+  remove_hidden_axis_final_store: true
+  remove_token_axis_initial_load: true
+  handoff: noc_transfer_on_hidden_axis_final_stage
+  intermediate_format: complex_fp16
+  intermediate_bytes_per_element: 4
+  launch_count: 1
+  preserve_operations: true
+  preserve_kernel_issue_scales: true
+  preserve_route_distances: true
+
+decision:
+  attention_relative_error_gate: 0.10
+  classification: mechanism_followup_same_target
+  validation_eligible: false

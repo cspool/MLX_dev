@@ -197,6 +197,12 @@ hypotheses:
     motivation: "Test whether the central event model transfers to a previously unsimulated end-to-end FPGA workload and localize any remaining cycle-semantics gap."
     parent: H2
     priority: high
+  - id: H24
+    statement: "A single-launch, array-resident composite of FABNet-Large's hidden- and token-axis FFT stages reproduces all four Fig. 19 MLX attention segments within 10% without changing operations or H2 issue rates."
+    status: pending
+    motivation: "Test whether H23's attention error comes from artificial inter-axis launch and store/load boundaries rather than an empirical throughput scale."
+    parent: H23
+    priority: high
 
 experiments:
   proxy_metric: "Maximum absolute percentage error across every numeric paper anchor; pass only when each reproducible point is <=10%, with unavailable measurements explicitly classified rather than fabricated."
