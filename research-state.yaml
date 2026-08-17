@@ -289,7 +289,7 @@ hypotheses:
     priority: high
   - id: H39
     statement: "All five saved H38 structured BERT checkpoints strictly reload and reproduce run043's full-validation F1/EM values within 0.02 percentage point."
-    status: pending
+    status: supported
     motivation: "Prove that H38's reported depth gains persist in independently reconstructed artifacts before using them as the new Fig. 15(b) evidence baseline."
     parent: H38
     priority: high
@@ -298,7 +298,7 @@ experiments:
   proxy_metric: "Maximum absolute percentage error across every numeric paper anchor; pass only when each reproducible point is <=10%, with unavailable measurements explicitly classified rather than fabricated."
   baseline_value: 0.2486
   best_value: 0.0123
-  total_runs: 41
+  total_runs: 42
   trajectory:
     - run_id: "run_001"
       hypothesis: "H2"
@@ -587,11 +587,18 @@ experiments:
       wall_time_min: 70.4
       change_summary: "Uniform patient distillation improves every H15 BERT setting and reduces full-curve MAPE 23.44%->18.41% and maximum error 81.47%->71.91%; k=1/3/6 pass, but k=9/12 remain at 19.83%/71.91% maximum error, so H38 is rejected."
       timestamp: "2026-08-17"
+    - run_id: "run_045"
+      hypothesis: "H39"
+      metric_value: 0.0
+      delta: null
+      wall_time_min: 1.2
+      change_summary: "Corrected full-validation reload audit supported: all five canonical-key H38 checkpoints strict-load with exact topology/density and reproduce all ten run043 F1/EM values with zero absolute difference."
+      timestamp: "2026-08-17"
 
 outer_loop:
-  cycle: 24
-  last_direction: "Before using run043 as the new Fig. 15(b) evidence, strictly reconstruct all five saved H38 students and require their full-validation F1/EM to reproduce the formal report within 0.02 percentage point. Then pivot from optimization-only KD to an independently justified structural/semantic hypothesis."
-  last_reflection: "H38 confirms that missing optimization signal is part of H15's depth failure: every setting improves, and k=9 gains 9.75 F1/10.66 EM points. Yet the uniform literature-grounded stage cannot close k=9/12, especially the all-layer setting at 71.91% maximum error. The KD weight/temperature/epoch space is now stopped by protocol. Preserve the improved checkpoints, audit their reload equivalence, then seek new information about structure or compressed-attention semantics rather than continuing residual-guided training."
+  cycle: 25
+  last_direction: "Return to the supplied primary paper and frozen H29 ambiguity evidence. Derive a source-constrained structural/semantic candidate for BERT compressed attention (Q/K/V scope, frequency retention, mask and decompression placement) before any new training; test functional and causal invariants first, then decide whether one new quality experiment is independently justified."
+  last_reflection: "H39 proves the H38 artifacts are byte-bound and perfectly reloadable, so the remaining k=9/12 gap is not checkpoint persistence. Optimization-only KD is stopped. The next useful information must come from the paper's algorithm graph/equations or an external primary operator source, not from choosing more epochs or weights. Re-examine exactly which tensors are transformed and where compression/decompression occurs; any candidate must be fixed before target-facing execution."
 
 completion_snapshot_run042:
   certificate_run: run_042
