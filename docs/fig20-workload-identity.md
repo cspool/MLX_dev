@@ -27,5 +27,8 @@ The repeat-folding mechanism is now validated in
 [`repeat-folding.md`](repeat-folding.md), with a maximum held-out cycle error of
 3.73% across three memory models.
 
+The first matched application covers all six projection points in
+[`matched-projection-estimator.md`](matched-projection-estimator.md).
+
 The immutable result is
 `artifacts/results/fig20-workload-identity-run080.json`.

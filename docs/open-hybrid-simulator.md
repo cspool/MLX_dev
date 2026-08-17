@@ -110,6 +110,8 @@ all 42 Figure 24 MLX cases in
 [`fu-fig24-transfer.md`](fu-fig24-transfer.md). Figure 20 matched-shape gaps are
 quantified in [`fig20-workload-identity.md`](fig20-workload-identity.md). The
 large-repeat estimator required for matched shapes is validated in
-[`repeat-folding.md`](repeat-folding.md). The remaining boundary
+[`repeat-folding.md`](repeat-folding.md), and the matched Figure 20 projection
+estimator in
+[`matched-projection-estimator.md`](matched-projection-estimator.md). The remaining boundary
 is independently defensible large-shape/per-kernel work scaling for Figures
 18--21 and 24--25. Paper result bars were not inputs to the invariant runs.
