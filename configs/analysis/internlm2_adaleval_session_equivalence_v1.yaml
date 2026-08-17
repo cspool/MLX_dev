@@ -1,0 +1,73 @@
+run:
+  id: run_036
+  hypothesis: H32
+  protocol: experiments/h32-internlm2-adaleval-session-equivalence/protocol.md
+  output: artifacts/results/internlm2-adaleval-session-equivalence-run036.json
+  samples: artifacts/results/internlm2-adaleval-session-equivalence-run036.samples.jsonl
+
+classification: runtime_equivalence_audit
+validation_eligible: true
+
+sources:
+  h30_config:
+    path: configs/analysis/internlm2_adaleval_v1.yaml
+    bytes: 8423
+    sha256: c73aa580151cb36551f9b165182def02c0583ab2423719753fc95d457fb4bd89
+  h31_result:
+    path: artifacts/results/internlm2-adaleval-seed-replicates-run035.json
+    bytes: 28744
+    sha256: 798824d79f18d697433dc983bd8953972027d7bc475ec795c550b3c4dedf0779
+  h31_rank1_samples:
+    path: artifacts/results/internlm2-adaleval-seed-replicates-run035-rank1.jsonl
+    bytes: 662376
+    sha256: fee65d35efc19697f8cbeecb5a6d937ad542b43dd9b4de2d166269e26d387f1d
+
+selection:
+  setting: 4k
+  baseline_replicate: 0
+  baseline_rank: 1
+  physical_gpu: 1
+  count: 32
+  formula: "sort replicate-0/rank-1 records by (input_token_len, dataset_position), then take index floor(i*(500-1)/(32-1)) for i=0..31"
+  positions: [979, 545, 857, 165, 915, 639, 879, 795, 697, 247, 847, 603, 999, 599, 845, 525, 55, 321, 187, 593, 665, 47, 891, 133, 31, 559, 193, 289, 79, 287, 131, 803]
+  input_token_lengths: [3455, 3597, 3714, 3829, 3917, 3949, 3992, 4035, 4073, 4103, 4126, 4146, 4161, 4182, 4191, 4201, 4220, 4229, 4238, 4251, 4261, 4269, 4279, 4287, 4296, 4301, 4306, 4314, 4326, 4338, 4362, 4451]
+  stream_encoding: "position:uint32_be || input_len:uint32_be || prompt_sha256:32bytes || seed:uint64_be"
+  stream_sha256: fa769226902d7cc6487e4c3a52f2ab2985a011f39535f992d97c0589551b4c0d
+
+baseline:
+  session_len: 8192
+  cache_max_entry_count: 0.8
+
+candidate:
+  session_len: 160000
+  cache_max_entry_count: 0.20
+  cache_block_seq_len: 128
+  expected_minimum_blocks_from_h30_gpu1_ratio: 98
+  expected_minimum_internal_tokens: 12544
+  required_tokens: 4963
+
+inference:
+  rope_scaling_factor: 2.0
+  max_prefill_token_num: 8192
+  max_new_tokens: 512
+  top_k: 40
+  top_p: 0.8
+  temperature: 0.8
+  repetition_penalty: 1.0
+  ignore_eos: false
+  log_level: WARNING
+
+gate:
+  require_all_source_and_h30_preflight_checks: true
+  require_selection_hash: true
+  require_same_physical_gpu: true
+  require_all_32_exact_prediction_texts: true
+  require_all_32_exact_extractions: true
+  require_all_32_exact_input_token_lengths: true
+  require_all_32_exact_output_token_lengths: true
+  require_all_32_exact_finish_reasons: true
+
+limitations:
+  - "H32 validates only H30's session-cap accommodation; it is not a new Ada-LEval accuracy run."
+  - "The 20% cache ratio is a resource-allocation accommodation needed to fit 160k prefill buffers on a 24-GB RTX 4090; all selected requests need fewer than 4,963 tokens."
+  - "Exact equivalence on 32 prompt-length quantiles does not prove equality for every possible prompt, model, GPU architecture, or LMDeploy release."
