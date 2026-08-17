@@ -1,0 +1,59 @@
+name: dsagen-mlx-fig25-transfer-v1
+experiment_id: H49
+run_id: run055
+classification: target_exposed_validation_ineligible_metric_transfer
+
+frozen_inputs:
+  full_block_result:
+    path: artifacts/results/dsagen-mlx-full-block-run054.json
+    bytes: 71102
+    sha256: c80b174192db67a64f76516427fddfc6230712d332e943e095af4e455f5d34fb
+    required_status: supported
+    required_integrity: true
+  targets:
+    path: artifacts/targets/paper_targets.yaml
+    bytes: 14931
+    sha256: c4a22ab8052ff8cb223a729b8ce07320c6826cfee0d37e1a664a8761e018b41e
+    section: fig25_roofline_utilization.heatmap.mlx
+    execution_visibility: audit_only
+
+cases:
+  - {name: BERT_512, sequence: 512, trip_count: 1}
+  - {name: Llama2_1K, sequence: 1024, trip_count: 2}
+  - {name: InternLM2_4K, sequence: 4096, trip_count: 8}
+  - {name: BERT_8K, sequence: 8192, trip_count: 16}
+
+operators:
+  - {name: fft_cmp, family: fft, stages: 7}
+  - {name: qkv_bsmm, family: qkv_bsmm, block_size: 16, stages: 4}
+  - {name: qkv_bsmm_b32, family: qkv_bsmm, block_size: 32, stages: 5}
+  - {name: qkv_bsmm_b64, family: qkv_bsmm, block_size: 64, stages: 6}
+  - {name: swa_w128_q32, family: swa, window: 128, query_tile: 32, fma_repeats: 1}
+  - {name: swa_w256_q64, family: swa, window: 256, query_tile: 64, fma_repeats: 2}
+
+simulator:
+  memory_backend: dsagen_dma
+  mesh: [4, 4]
+  active_window: 4
+  logical_lanes: 4
+  vector_bytes: 16
+  utilization_metric: global_compute_pipeline_busy_cycles_div_overlay_cycles
+  exact_fma_roofline_metric_available: false
+  target_values_visible_to_compiler: false
+
+source_layout:
+  compiler_core: src/mlxsim/dsagen_operator_sweep.py
+  compiler_cli: scripts/compile_dsagen_fig25_transfer.py
+  runner: scripts/run_dsagen_fig25_transfer.sh
+  auditor: scripts/audit_dsagen_fig25_transfer.py
+
+registered_checks:
+  - 24 configs are deterministic and target-independent
+  - BSMM depth equals log2 block size
+  - FFT and SWA phase graphs match the frozen paper-derived templates
+  - every dependency is adjacent-tag and all macro traffic uses dsagen_dma
+  - all 24 runs complete with exact request/response conservation
+  - target values are loaded only by the post-run auditor
+  - no per-cell per-case or per-operator fit is permitted
+
+result_path: artifacts/results/dsagen-mlx-fig25-transfer-run055.json
