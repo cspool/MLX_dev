@@ -1,0 +1,672 @@
+{
+  "audit_integrity": true,
+  "classification": "inferred_patient_distillation_followup",
+  "completed_at_utc": "2026-08-17T11:27:22Z",
+  "config_path": "/workspace/MLX_dev/configs/training/bert_structured_distillation_v1.yaml",
+  "git_commit": "81248676de6bc51f6e3b7a785f5c78b60fdd22cf",
+  "hypothesis": "H38",
+  "hypothesis_status": "rejected",
+  "integrity_checks": {
+    "all_initial_replays": true,
+    "all_losses_finite": true,
+    "all_settings": true,
+    "all_strict_restores": true,
+    "density": true,
+    "layernorm_alias_counts": true,
+    "preflight": true,
+    "projection_counts": true,
+    "source_commit_recorded": true
+  },
+  "preflight": {
+    "actual_outputs_absent": true,
+    "checkpoint_result_checks": {
+      "1": true,
+      "3": true,
+      "6": true,
+      "9": true,
+      "12": true
+    },
+    "checkpoint_root": "/workspace/MLX_dev/third_party/checkpoints/bert-structured-distilled-h38",
+    "checks": {
+      "all_source_files": true,
+      "all_student_checkpoints": true,
+      "checkpoint_hashes_match_parent_result": true,
+      "checkpoint_k_values": true,
+      "cuda_available": true,
+      "five_k_values": true,
+      "loss_weights_frozen": true,
+      "loss_weights_sum_to_one": true,
+      "output_state": true,
+      "parent_commit": true,
+      "parent_hypothesis": true,
+      "parent_max_error": true,
+      "parent_metric_k_values": true,
+      "parent_rejected": true,
+      "parent_run": true,
+      "protocol": true,
+      "runtime_versions": true,
+      "target_k_values": true,
+      "teacher_experiment": true,
+      "teacher_gate": true,
+      "temperature": true,
+      "tracked_worktree_clean": true
+    },
+    "files": {
+      "literature": {
+        "actual_bytes": 2745,
+        "actual_sha256": "dc295d0a454d0b6da57c842413728c7e7cb907489eb99258327ec1ef4c1ba174",
+        "checks": {
+          "bytes": true,
+          "is_file": true,
+          "sha256": true
+        },
+        "expected_bytes": 2745,
+        "expected_sha256": "dc295d0a454d0b6da57c842413728c7e7cb907489eb99258327ec1ef4c1ba174",
+        "pass": true,
+        "path": "/workspace/MLX_dev/literature/bert-structured-distillation.md"
+      },
+      "parent_config": {
+        "actual_bytes": 2008,
+        "actual_sha256": "c2989b1af02da87c2700dc7ef7d4623d2659974b6acabc2c49ca6de485afbdad",
+        "checks": {
+          "bytes": true,
+          "is_file": true,
+          "sha256": true
+        },
+        "expected_bytes": 2008,
+        "expected_sha256": "c2989b1af02da87c2700dc7ef7d4623d2659974b6acabc2c49ca6de485afbdad",
+        "pass": true,
+        "path": "/workspace/MLX_dev/configs/training/bert_structured_sweep_v1.yaml"
+      },
+      "parent_result": {
+        "actual_bytes": 50332,
+        "actual_sha256": "21565107d97d31aac4ded49a5cd770fe1b51c5b8cea633640e911f93eedab36d",
+        "checks": {
+          "bytes": true,
+          "is_file": true,
+          "sha256": true
+        },
+        "expected_bytes": 50332,
+        "expected_sha256": "21565107d97d31aac4ded49a5cd770fe1b51c5b8cea633640e911f93eedab36d",
+        "pass": true,
+        "path": "/workspace/MLX_dev/artifacts/results/bert-structured-sweep-run018.json"
+      },
+      "teacher_result": {
+        "actual_bytes": 3536,
+        "actual_sha256": "52a763ea37ef0aa2c73a9442de659b1c39017c701eb6ecf9b76395a58c3f1f96",
+        "checks": {
+          "bytes": true,
+          "is_file": true,
+          "sha256": true
+        },
+        "expected_bytes": 3536,
+        "expected_sha256": "52a763ea37ef0aa2c73a9442de659b1c39017c701eb6ecf9b76395a58c3f1f96",
+        "pass": true,
+        "path": "/workspace/MLX_dev/artifacts/results/bert-squad-baseline-run014.json"
+      },
+      "teacher_weights": {
+        "actual_bytes": 435596064,
+        "actual_sha256": "8d990314a6b4937b45a1183a22ef9155626e0bbb60073e8ba1cc5958ae9dc6d3",
+        "checks": {
+          "bytes": true,
+          "is_file": true,
+          "sha256": true
+        },
+        "expected_bytes": 435596064,
+        "expected_sha256": "8d990314a6b4937b45a1183a22ef9155626e0bbb60073e8ba1cc5958ae9dc6d3",
+        "pass": true,
+        "path": "/workspace/MLX_dev/third_party/checkpoints/bert-squad-baseline-run014/model.safetensors"
+      },
+      "train_dataset": {
+        "actual_bytes": 30288272,
+        "actual_sha256": "3527663986b8295af4f7fcdff1ba1ff3f72d07d61a20f487cb238a6ef92fd955",
+        "checks": {
+          "bytes": true,
+          "is_file": true,
+          "sha256": true
+        },
+        "expected_bytes": 30288272,
+        "expected_sha256": "3527663986b8295af4f7fcdff1ba1ff3f72d07d61a20f487cb238a6ef92fd955",
+        "pass": true,
+        "path": "/workspace/MLX_dev/third_party/data/squad/train-v1.1.json"
+      },
+      "validation_dataset": {
+        "actual_bytes": 4854279,
+        "actual_sha256": "95aa6a52d5d6a735563366753ca50492a658031da74f301ac5238b03966972c9",
+        "checks": {
+          "bytes": true,
+          "is_file": true,
+          "sha256": true
+        },
+        "expected_bytes": 4854279,
+        "expected_sha256": "95aa6a52d5d6a735563366753ca50492a658031da74f301ac5238b03966972c9",
+        "pass": true,
+        "path": "/workspace/MLX_dev/third_party/data/squad/dev-v1.1.json"
+      }
+    },
+    "output": "/workspace/MLX_dev/artifacts/results/bert-structured-distillation-run043.json",
+    "pass": true,
+    "runtime": {
+      "cuda_device": "NVIDIA GeForce RTX 4090",
+      "datasets": "5.0.1",
+      "safetensors": "0.8.0",
+      "torch": "2.13.0+cu130",
+      "transformers": "5.15.0"
+    },
+    "student_checkpoints": {
+      "1": {
+        "actual_bytes": 430730040,
+        "actual_sha256": "a7ca530b26f71a76622ed5621a1f007de846ca013d42df9e3159fe6f561ba254",
+        "checks": {
+          "bytes": true,
+          "is_file": true,
+          "sha256": true
+        },
+        "expected_bytes": 430730040,
+        "expected_sha256": "a7ca530b26f71a76622ed5621a1f007de846ca013d42df9e3159fe6f561ba254",
+        "pass": true,
+        "path": "/workspace/MLX_dev/third_party/checkpoints/bert-structured-h15/k1/model.safetensors"
+      },
+      "3": {
+        "actual_bytes": 420997992,
+        "actual_sha256": "449ac61491166a7103abec1f5a7f78aaf7ce39c573b29157f1565309af88a84f",
+        "checks": {
+          "bytes": true,
+          "is_file": true,
+          "sha256": true
+        },
+        "expected_bytes": 420997992,
+        "expected_sha256": "449ac61491166a7103abec1f5a7f78aaf7ce39c573b29157f1565309af88a84f",
+        "pass": true,
+        "path": "/workspace/MLX_dev/third_party/checkpoints/bert-structured-h15/k3/model.safetensors"
+      },
+      "6": {
+        "actual_bytes": 406399920,
+        "actual_sha256": "641031a0a6bfbda7fc06a27a0b637626e7d0ea6af3c31a03362a8fd86ce5b1b6",
+        "checks": {
+          "bytes": true,
+          "is_file": true,
+          "sha256": true
+        },
+        "expected_bytes": 406399920,
+        "expected_sha256": "641031a0a6bfbda7fc06a27a0b637626e7d0ea6af3c31a03362a8fd86ce5b1b6",
+        "pass": true,
+        "path": "/workspace/MLX_dev/third_party/checkpoints/bert-structured-h15/k6/model.safetensors"
+      },
+      "9": {
+        "actual_bytes": 391801848,
+        "actual_sha256": "c26df40869e176db9dcfbf8d8c941195ac30f4c572f310b13b7c56ea32075075",
+        "checks": {
+          "bytes": true,
+          "is_file": true,
+          "sha256": true
+        },
+        "expected_bytes": 391801848,
+        "expected_sha256": "c26df40869e176db9dcfbf8d8c941195ac30f4c572f310b13b7c56ea32075075",
+        "pass": true,
+        "path": "/workspace/MLX_dev/third_party/checkpoints/bert-structured-h15/k9/model.safetensors"
+      },
+      "12": {
+        "actual_bytes": 377203760,
+        "actual_sha256": "77f25db17e821a09d762a1c07a2e1c6f08895bd0849a91787f8ddf9ab34e573d",
+        "checks": {
+          "bytes": true,
+          "is_file": true,
+          "sha256": true
+        },
+        "expected_bytes": 377203760,
+        "expected_sha256": "77f25db17e821a09d762a1c07a2e1c6f08895bd0849a91787f8ddf9ab34e573d",
+        "pass": true,
+        "path": "/workspace/MLX_dev/third_party/checkpoints/bert-structured-h15/k12/model.safetensors"
+      }
+    }
+  },
+  "results": [
+    {
+      "checkpoint_sha256": "550e09e7c89d681a3b55010f51ff8c855d90861247124deca0c27c297f23ef27",
+      "distillation_component_means": {
+        "all_finite": true,
+        "hard_loss": 0.6107926368713379,
+        "hidden_mse": 0.14358796179294586,
+        "microbatch_count": 5533,
+        "output_kl": 0.24893337488174438,
+        "total_loss": 0.40352633595466614
+      },
+      "expected_layernorm_alias_count": 50,
+      "final_metrics_pct": {
+        "exact_match": 80.52034058656575,
+        "f1": 88.18464714105495
+      },
+      "final_prediction_metrics": {
+        "test_model_preparation_time": 0.0029,
+        "test_runtime": 8.0753,
+        "test_samples_per_second": 1335.429,
+        "test_steps_per_second": 41.732
+      },
+      "initial_metrics_pct": {
+        "exact_match": 80.35950804162725,
+        "f1": 88.03945367916548
+      },
+      "initial_prediction_metrics": {
+        "test_model_preparation_time": 0.0029,
+        "test_runtime": 8.3101,
+        "test_samples_per_second": 1297.703,
+        "test_steps_per_second": 40.553
+      },
+      "initial_replay_absolute_errors_pct": {
+        "exact_match": 0.0,
+        "f1": 0.0
+      },
+      "initial_replay_pass": true,
+      "layernorm_alias_count": 50,
+      "maximum_relative_error": 0.01896621413089263,
+      "metric_changes_from_parent_pct": {
+        "exact_match": 0.16083254493850063,
+        "f1": 0.1451934618894768
+      },
+      "modified_last_k_layers": 1,
+      "modified_layer_indices": [
+        11
+      ],
+      "paper_targets_pct": {
+        "exact_match": 79.0216,
+        "f1": 87.9353
+      },
+      "parameter_summary": {
+        "expected_b32_density": 0.3125,
+        "replaced_dense_weight_count": 1769472,
+        "structured_projection_count": 3,
+        "structured_weight_count": 552960,
+        "weight_density": 0.3125
+      },
+      "parent_metrics_pct": {
+        "exact_match": 80.35950804162725,
+        "f1": 88.03945367916548
+      },
+      "passes_10pct_gate": true,
+      "relative_errors": {
+        "exact_match": 0.01896621413089263,
+        "f1": 0.0028355750313577665
+      },
+      "seed": 251,
+      "strict_checkpoint_restore": true,
+      "target_metrics_excluded": false,
+      "train_metrics": {
+        "epoch": 1.0,
+        "total_flos": 1.3750448749089408e+16,
+        "train_loss": 0.40351500957504177,
+        "train_runtime": 522.0674,
+        "train_samples_per_second": 169.564,
+        "train_steps_per_second": 5.3
+      },
+      "wall_time_seconds": 551.061249891005
+    },
+    {
+      "checkpoint_sha256": "e12d489394f668193abfd12d9970b1facaac96bcb4dc8e1c15ee5940f23cca7c",
+      "distillation_component_means": {
+        "all_finite": true,
+        "hard_loss": 0.7225807309150696,
+        "hidden_mse": 0.20672059059143066,
+        "microbatch_count": 5533,
+        "output_kl": 0.45182788372039795,
+        "total_loss": 0.5259261727333069
+      },
+      "expected_layernorm_alias_count": 50,
+      "final_metrics_pct": {
+        "exact_match": 79.36613055818354,
+        "f1": 87.14294926017624
+      },
+      "final_prediction_metrics": {
+        "test_model_preparation_time": 0.002,
+        "test_runtime": 9.4908,
+        "test_samples_per_second": 1136.257,
+        "test_steps_per_second": 35.508
+      },
+      "initial_metrics_pct": {
+        "exact_match": 78.06054872280038,
+        "f1": 86.24192809758702
+      },
+      "initial_prediction_metrics": {
+        "test_model_preparation_time": 0.002,
+        "test_runtime": 9.8606,
+        "test_samples_per_second": 1093.65,
+        "test_steps_per_second": 34.177
+      },
+      "initial_replay_absolute_errors_pct": {
+        "exact_match": 0.0,
+        "f1": 0.0
+      },
+      "initial_replay_pass": true,
+      "layernorm_alias_count": 50,
+      "maximum_relative_error": 0.009621326579937044,
+      "metric_changes_from_parent_pct": {
+        "exact_match": 1.3055818353831654,
+        "f1": 0.9010211625892168
+      },
+      "modified_last_k_layers": 3,
+      "modified_layer_indices": [
+        9,
+        10,
+        11
+      ],
+      "paper_targets_pct": {
+        "exact_match": 78.6098,
+        "f1": 87.3667
+      },
+      "parameter_summary": {
+        "expected_b32_density": 0.3125,
+        "replaced_dense_weight_count": 5308416,
+        "structured_projection_count": 9,
+        "structured_weight_count": 1658880,
+        "weight_density": 0.3125
+      },
+      "parent_metrics_pct": {
+        "exact_match": 78.06054872280038,
+        "f1": 86.24192809758702
+      },
+      "passes_10pct_gate": true,
+      "relative_errors": {
+        "exact_match": 0.009621326579937044,
+        "f1": 0.002561052893422286
+      },
+      "seed": 253,
+      "strict_checkpoint_restore": true,
+      "target_metrics_excluded": false,
+      "train_metrics": {
+        "epoch": 1.0,
+        "total_flos": 1.3376160531372288e+16,
+        "train_loss": 0.5259344047874503,
+        "train_runtime": 634.8907,
+        "train_samples_per_second": 139.432,
+        "train_steps_per_second": 4.358
+      },
+      "wall_time_seconds": 666.2370786130195
+    },
+    {
+      "checkpoint_sha256": "b6cd7fb38d174e88bb03ffbc153738ba01936c6720b7b0b26bcd7e71e7dc967e",
+      "distillation_component_means": {
+        "all_finite": true,
+        "hard_loss": 1.0178512334823608,
+        "hidden_mse": 0.33091703057289124,
+        "microbatch_count": 5533,
+        "output_kl": 1.043041467666626,
+        "total_loss": 0.8524149656295776
+      },
+      "expected_layernorm_alias_count": 50,
+      "final_metrics_pct": {
+        "exact_match": 73.37748344370861,
+        "f1": 82.26785784213003
+      },
+      "final_prediction_metrics": {
+        "test_model_preparation_time": 0.0023,
+        "test_runtime": 12.8511,
+        "test_samples_per_second": 839.149,
+        "test_steps_per_second": 26.223
+      },
+      "initial_metrics_pct": {
+        "exact_match": 70.79470198675497,
+        "f1": 80.11508600771475
+      },
+      "initial_prediction_metrics": {
+        "test_model_preparation_time": 0.0023,
+        "test_runtime": 12.1986,
+        "test_samples_per_second": 884.037,
+        "test_steps_per_second": 27.626
+      },
+      "initial_replay_absolute_errors_pct": {
+        "exact_match": 0.0,
+        "f1": 0.0
+      },
+      "initial_replay_pass": true,
+      "layernorm_alias_count": 50,
+      "maximum_relative_error": 0.06586188025984888,
+      "metric_changes_from_parent_pct": {
+        "exact_match": 2.58278145695364,
+        "f1": 2.152771834415276
+      },
+      "modified_last_k_layers": 6,
+      "modified_layer_indices": [
+        6,
+        7,
+        8,
+        9,
+        10,
+        11
+      ],
+      "paper_targets_pct": {
+        "exact_match": 78.551,
+        "f1": 87.2882
+      },
+      "parameter_summary": {
+        "expected_b32_density": 0.3125,
+        "replaced_dense_weight_count": 10616832,
+        "structured_projection_count": 18,
+        "structured_weight_count": 3317760,
+        "weight_density": 0.3125
+      },
+      "parent_metrics_pct": {
+        "exact_match": 70.79470198675497,
+        "f1": 80.11508600771475
+      },
+      "passes_10pct_gate": true,
+      "relative_errors": {
+        "exact_match": 0.06586188025984888,
+        "f1": 0.05751455704058482
+      },
+      "seed": 256,
+      "strict_checkpoint_restore": true,
+      "target_metrics_excluded": false,
+      "train_metrics": {
+        "epoch": 1.0,
+        "total_flos": 1.2783551528901888e+16,
+        "train_loss": 0.8524305662783122,
+        "train_runtime": 775.457,
+        "train_samples_per_second": 114.157,
+        "train_steps_per_second": 3.568
+      },
+      "wall_time_seconds": 812.7954562969971
+    },
+    {
+      "checkpoint_sha256": "cc3b6936724212c8c6d0a42c2b5779b3b8ec84e05f5ad42ff3f6c8040ae0595a",
+      "distillation_component_means": {
+        "all_finite": true,
+        "hard_loss": 1.5746370553970337,
+        "hidden_mse": 0.4662105441093445,
+        "microbatch_count": 5533,
+        "output_kl": 2.2247939109802246,
+        "total_loss": 1.4600701332092285
+      },
+      "expected_layernorm_alias_count": 50,
+      "final_metrics_pct": {
+        "exact_match": 62.28003784295175,
+        "f1": 73.58405712786738
+      },
+      "final_prediction_metrics": {
+        "test_model_preparation_time": 0.0021,
+        "test_runtime": 17.0264,
+        "test_samples_per_second": 633.371,
+        "test_steps_per_second": 19.793
+      },
+      "initial_metrics_pct": {
+        "exact_match": 51.61778618732261,
+        "f1": 63.83307452371835
+      },
+      "initial_prediction_metrics": {
+        "test_model_preparation_time": 0.0021,
+        "test_runtime": 15.8112,
+        "test_samples_per_second": 682.049,
+        "test_steps_per_second": 21.314
+      },
+      "initial_replay_absolute_errors_pct": {
+        "exact_match": 0.0,
+        "f1": 0.0
+      },
+      "initial_replay_pass": true,
+      "layernorm_alias_count": 50,
+      "maximum_relative_error": 0.19833336538944454,
+      "metric_changes_from_parent_pct": {
+        "exact_match": 10.662251655629142,
+        "f1": 9.75098260414903
+      },
+      "modified_last_k_layers": 9,
+      "modified_layer_indices": [
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11
+      ],
+      "paper_targets_pct": {
+        "exact_match": 77.6882,
+        "f1": 86.6412
+      },
+      "parameter_summary": {
+        "expected_b32_density": 0.3125,
+        "replaced_dense_weight_count": 15925248,
+        "structured_projection_count": 27,
+        "structured_weight_count": 4976640,
+        "weight_density": 0.3125
+      },
+      "parent_metrics_pct": {
+        "exact_match": 51.61778618732261,
+        "f1": 63.83307452371835
+      },
+      "passes_10pct_gate": false,
+      "relative_errors": {
+        "exact_match": 0.19833336538944454,
+        "f1": 0.15070362451273317
+      },
+      "seed": 259,
+      "strict_checkpoint_restore": true,
+      "target_metrics_excluded": false,
+      "train_metrics": {
+        "epoch": 1.0,
+        "total_flos": 1.215537752791488e+16,
+        "train_loss": 1.4599923677378972,
+        "train_runtime": 975.9039,
+        "train_samples_per_second": 90.71,
+        "train_steps_per_second": 2.835
+      },
+      "wall_time_seconds": 1020.8739823990036
+    },
+    {
+      "checkpoint_sha256": "82ec8a10e6208b726f6fb9d9b6186d92d15e7e2d75ce4b47795a7b68ea2f0d36",
+      "distillation_component_means": {
+        "all_finite": true,
+        "hard_loss": 3.12431263923645,
+        "hidden_mse": 0.5971060395240784,
+        "microbatch_count": 5533,
+        "output_kl": 6.076030254364014,
+        "total_loss": 3.2304370403289795
+      },
+      "expected_layernorm_alias_count": 50,
+      "final_metrics_pct": {
+        "exact_match": 21.73131504257332,
+        "f1": 33.206803062818004
+      },
+      "final_prediction_metrics": {
+        "test_model_preparation_time": 0.0022,
+        "test_runtime": 20.331,
+        "test_samples_per_second": 530.421,
+        "test_steps_per_second": 16.576
+      },
+      "initial_metrics_pct": {
+        "exact_match": 14.33301797540208,
+        "f1": 24.89005304699451
+      },
+      "initial_prediction_metrics": {
+        "test_model_preparation_time": 0.0022,
+        "test_runtime": 19.1722,
+        "test_samples_per_second": 562.48,
+        "test_steps_per_second": 17.577
+      },
+      "initial_replay_absolute_errors_pct": {
+        "exact_match": 0.0,
+        "f1": 0.0
+      },
+      "initial_replay_pass": true,
+      "layernorm_alias_count": 50,
+      "maximum_relative_error": 0.7190521649311787,
+      "metric_changes_from_parent_pct": {
+        "exact_match": 7.3982970671712405,
+        "f1": 8.316750015823494
+      },
+      "modified_last_k_layers": 12,
+      "modified_layer_indices": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11
+      ],
+      "paper_targets_pct": {
+        "exact_match": 77.35,
+        "f1": 86.4
+      },
+      "parameter_summary": {
+        "expected_b32_density": 0.3125,
+        "replaced_dense_weight_count": 21233664,
+        "structured_projection_count": 36,
+        "structured_weight_count": 6635520,
+        "weight_density": 0.3125
+      },
+      "parent_metrics_pct": {
+        "exact_match": 14.33301797540208,
+        "f1": 24.89005304699451
+      },
+      "passes_10pct_gate": false,
+      "relative_errors": {
+        "exact_match": 0.7190521649311787,
+        "f1": 0.6156620015877546
+      },
+      "seed": 262,
+      "strict_checkpoint_restore": true,
+      "target_metrics_excluded": false,
+      "train_metrics": {
+        "epoch": 1.0,
+        "total_flos": 1.156181160674496e+16,
+        "train_loss": 3.2304557246079635,
+        "train_runtime": 1122.7307,
+        "train_samples_per_second": 78.847,
+        "train_steps_per_second": 2.465
+      },
+      "wall_time_seconds": 1173.9226382900379
+    }
+  ],
+  "run_id": "run_043",
+  "runtime": {
+    "cuda_device": "NVIDIA GeForce RTX 4090",
+    "datasets": "5.0.1",
+    "safetensors": "0.8.0",
+    "torch": "2.13.0+cu130",
+    "transformers": "5.15.0"
+  },
+  "schema_version": 1,
+  "smoke": false,
+  "summary": {
+    "all_points_pass": false,
+    "mape": 0.18411117623571543,
+    "max_relative_error": 0.7190521649311787,
+    "max_relative_error_delta": -0.09564702090719124,
+    "parent_max_relative_error": 0.81469918583837,
+    "point_count": 10,
+    "target_metrics_excluded": false
+  },
+  "train_examples": 87599,
+  "train_features": 88524,
+  "validation_eligible": false,
+  "validation_examples": 10570,
+  "validation_features": 10784,
+  "wall_time_seconds": 4226.864549494989
+}
