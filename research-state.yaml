@@ -1,7 +1,7 @@
 project:
   title: "MLX paper reproduction"
   question: "Can a transparent open surrogate of the unpublished MLX simulator reproduce every reported experiment within 10% while separating measured, digitized, inferred, and calibrated evidence?"
-  status: evidence_complete_publicly_blocked
+  status: active
   started: "2026-08-16"
   domain: "spatial accelerator architecture simulation and structured LLM inference"
 
@@ -280,6 +280,12 @@ hypotheses:
     status: supported
     motivation: "Turn the completed experiment ledger into a machine-auditable final certificate while preserving the false global all-experiments-within-10% verdict."
     parent: H5
+    priority: high
+  - id: H38
+    statement: "A uniform task-specific patient-distillation stage applied to every frozen H15 structured BERT checkpoint reproduces all five Fig. 15(b) F1/EM settings within 10% relative error."
+    status: pending
+    motivation: "Use an independently literature-grounded teacher constraint to address H15's depth-accumulated representation drift without changing MLX structure, selecting only failed k values, or tuning from run018 residuals."
+    parent: H15
     priority: high
 
 experiments:
@@ -570,11 +576,11 @@ experiments:
       timestamp: "2026-08-17"
 
 outer_loop:
-  cycle: 22
-  last_direction: "Terminal evidence handoff. Preserve run042 and its source/result hashes; do not reopen any rejected, replay-only, or publicly blocked row without independently new primary artifacts, author recipes/traces, or required hardware measurements."
-  last_reflection: "H37 qualifies all 40 frozen evidence files, the exact 18-row inventory, every category invariant, and one fresh 13-section CPU suite. The certificate itself is complete, but the user's all-experiment <=10% objective is false: only Fig. 22 is a complete surrogate pass, while 17 rows are rejected, replay-only, or publicly blocked. H33-H36 establish that the missing exact artifact/provenance channels are exhausted at this cutoff. Further residual-selected variants would be fitting, not reproduction."
+  cycle: 23
+  last_direction: "Run H38 on all five Fig. 15(b) settings: one uniform, literature-grounded task-specific distillation continuation from the exact H15 checkpoints, with frozen hard/output/hidden losses and no structural or per-k tuning."
+  last_reflection: "Run042 remains the authoritative baseline showing the all-paper objective false, but it does not end the user's continuing maximize-reproduction goal. Fig. 15(b) is the highest-leverage actionable gap because exact data, dense teacher, five structured checkpoints, and local GPUs exist. H15's flat projection MSE with depth-growing task loss motivates patient hidden/output distillation; PKD, TinyBERT, and an ACL objective comparison provide independent method support."
 
-completion:
+completion_snapshot_run042:
   certificate_run: run_042
   certificate: artifacts/results/full-paper-completion-certificate-run042.json
   certificate_sha256: 7182c5dd1612680f85912c6e96bf14e78b871a4d560f0f3610a6c0dc7de6b071

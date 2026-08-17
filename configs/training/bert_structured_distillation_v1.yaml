@@ -1,0 +1,149 @@
+version: 1
+experiment_id: H38
+run_id: run_043
+classification: inferred_patient_distillation_followup
+validation_eligible: false
+protocol: experiments/h38-bert-structured-distillation/protocol.md
+
+literature_basis:
+  path: literature/bert-structured-distillation.md
+  bytes: 2745
+  sha256: dc295d0a454d0b6da57c842413728c7e7cb907489eb99258327ec1ef4c1ba174
+
+parent:
+  result:
+    path: artifacts/results/bert-structured-sweep-run018.json
+    bytes: 50332
+    sha256: 21565107d97d31aac4ded49a5cd770fe1b51c5b8cea633640e911f93eedab36d
+    run_id: run_018
+    hypothesis: H15
+    git_commit: 45ad8fa0dba7417d37b85a4460b8cb4a450d0963
+    maximum_relative_error: 0.81469918583837
+  config:
+    path: configs/training/bert_structured_sweep_v1.yaml
+    bytes: 2008
+    sha256: c2989b1af02da87c2700dc7ef7d4623d2659974b6acabc2c49ca6de485afbdad
+
+teacher:
+  path: third_party/checkpoints/bert-squad-baseline-run014
+  weights:
+    path: third_party/checkpoints/bert-squad-baseline-run014/model.safetensors
+    bytes: 435596064
+    sha256: 8d990314a6b4937b45a1183a22ef9155626e0bbb60073e8ba1cc5958ae9dc6d3
+  result:
+    path: artifacts/results/bert-squad-baseline-run014.json
+    bytes: 3536
+    sha256: 52a763ea37ef0aa2c73a9442de659b1c39017c701eb6ecf9b76395a58c3f1f96
+    experiment_id: H11
+    passes_10pct_gate: true
+
+students:
+  checkpoint_root: third_party/checkpoints/bert-structured-h15
+  checkpoints:
+    1:
+      path: third_party/checkpoints/bert-structured-h15/k1/model.safetensors
+      bytes: 430730040
+      sha256: a7ca530b26f71a76622ed5621a1f007de846ca013d42df9e3159fe6f561ba254
+    3:
+      path: third_party/checkpoints/bert-structured-h15/k3/model.safetensors
+      bytes: 420997992
+      sha256: 449ac61491166a7103abec1f5a7f78aaf7ce39c573b29157f1565309af88a84f
+    6:
+      path: third_party/checkpoints/bert-structured-h15/k6/model.safetensors
+      bytes: 406399920
+      sha256: 641031a0a6bfbda7fc06a27a0b637626e7d0ea6af3c31a03362a8fd86ce5b1b6
+    9:
+      path: third_party/checkpoints/bert-structured-h15/k9/model.safetensors
+      bytes: 391801848
+      sha256: c26df40869e176db9dcfbf8d8c941195ac30f4c572f310b13b7c56ea32075075
+    12:
+      path: third_party/checkpoints/bert-structured-h15/k12/model.safetensors
+      bytes: 377203760
+      sha256: 77f25db17e821a09d762a1c07a2e1c6f08895bd0849a91787f8ddf9ab34e573d
+
+dataset:
+  train:
+    path: third_party/data/squad/train-v1.1.json
+    bytes: 30288272
+    sha256: 3527663986b8295af4f7fcdff1ba1ff3f72d07d61a20f487cb238a6ef92fd955
+  validation:
+    path: third_party/data/squad/dev-v1.1.json
+    bytes: 4854279
+    sha256: 95aa6a52d5d6a735563366753ca50492a658031da74f301ac5238b03966972c9
+
+preprocessing:
+  max_sequence_length: 384
+  document_stride: 128
+  pad_to_multiple_of: 8
+  question_whitespace: lstrip
+
+structured:
+  modified_last_k_layers: [1, 3, 6, 9, 12]
+  compression_ratio: 0.5
+  chunk_length: 32
+  butterfly_block_size: 32
+  projections: [query, key, value]
+  decompression: symmetric_before_attention_residual
+  compressed_padding_mask: any_valid_token_per_source_chunk
+  materialize_dense_for_autograd: true
+
+distillation:
+  teacher_mode: frozen_eval
+  output_divergence: kl_teacher_to_student
+  temperature: 2.0
+  valid_token_mask: attention_mask
+  hidden_mapping: same_encoder_layer_index
+  hidden_vector_normalization: l2
+  hidden_layers: every_modified_layer
+  weights:
+    hard_qa: 0.50
+    output_kl: 0.25
+    hidden_mse: 0.25
+
+optimization:
+  continuation_epochs: 1
+  seed_base: 250
+  per_device_train_batch_size: 16
+  gradient_accumulation_steps: 2
+  effective_batch_size: 32
+  learning_rate: 1.0e-5
+  weight_decay: 0.01
+  warmup_ratio: 0.1
+  scheduler: linear
+  optimizer: adamw_torch_fused
+  max_gradient_norm: 1.0
+  dtype: bfloat16
+  tf32: true
+  device: cuda:0
+  dataloader_workers: 4
+
+evaluation:
+  per_device_batch_size: 32
+  n_best_size: 20
+  max_answer_length: 30
+  metric: official_squad_v1_normalized_exact_and_token_f1
+  initial_replay_absolute_tolerance_pct: 0.02
+
+parent_metrics_pct:
+  1: {f1: 88.03945367916548, exact_match: 80.35950804162725}
+  3: {f1: 86.24192809758702, exact_match: 78.06054872280038}
+  6: {f1: 80.11508600771475, exact_match: 70.79470198675497}
+  9: {f1: 63.83307452371835, exact_match: 51.61778618732261}
+  12: {f1: 24.89005304699451, exact_match: 14.33301797540208}
+
+paper_targets:
+  modified_last_k_layers: [1, 3, 6, 9, 12]
+  f1_pct: [87.9353, 87.3667, 87.2882, 86.6412, 86.4]
+  exact_match_pct: [79.0216, 78.6098, 78.5510, 77.6882, 77.35]
+  maximum_relative_error: 0.10
+
+runtime:
+  torch: 2.13.0+cu130
+  transformers: 5.15.0
+  datasets: 5.0.1
+  safetensors: 0.8.0
+  cuda_device: NVIDIA GeForce RTX 4090
+
+outputs:
+  checkpoint_root: third_party/checkpoints/bert-structured-distilled-h38
+  report: artifacts/results/bert-structured-distillation-run043.json
