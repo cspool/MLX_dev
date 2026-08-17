@@ -1,0 +1,696 @@
+{
+  "audit_integrity": true,
+  "binaries": {
+    "accel_sim": {
+      "bytes": 7185272,
+      "checks": {
+        "executable": true,
+        "is_file": true
+      },
+      "pass": true,
+      "path": "third_party/accel-sim-framework/gpu-simulator/bin/release/accel-sim.out",
+      "sha256": "3212f2565873286e599bdce2280428f7c3d3de227b92a605dbf2e8d506bb4dad"
+    },
+    "dsagen_gem5": {
+      "bytes": 1295195616,
+      "checks": {
+        "executable": true,
+        "is_file": true
+      },
+      "pass": true,
+      "path": "third_party/dsa-framework/dsa-gem5/build/RISCV/gem5.opt",
+      "sha256": "552540239d50eb242008a037b45b16636d630be4cc444f175d15fe1f21080eeb"
+    },
+    "dsagen_vecadd": {
+      "bytes": 508392,
+      "checks": {
+        "executable": true,
+        "is_file": true
+      },
+      "pass": true,
+      "path": "third_party/dsa-framework/dsa-apps/sdk/compiled/ss-vecadd-gnu.out",
+      "sha256": "1ea18a4b4a47343557b41204850a5c98fd783e4b1bcc9d7c1c467253fd001fa9"
+    }
+  },
+  "dsa_instruction_encoding": {
+    "checks": {
+      "all_masks_encoded": true,
+      "executable": true,
+      "objdump": true,
+      "objdump_exit_zero": true
+    },
+    "markers": {
+      "ss_cfg_param\ta1,a4,1220": true,
+      "ss_cfg_param\ta1,a6,229": true,
+      "ss_cfg_param\ta3,a4,98": true,
+      "ss_wait\ta1,a0,0": true
+    },
+    "pass": true
+  },
+  "experiment_id": "H40",
+  "generated_at": "2026-08-17T13:22:06.717889+00:00",
+  "gpu_smoke": {
+    "checks": {
+      "evidence_file": true,
+      "normal_exit": true,
+      "real_gpu_work": true,
+      "required_markers": true,
+      "two_kernels": true
+    },
+    "evidence": {
+      "bytes": 317161,
+      "checks": {
+        "is_file": true
+      },
+      "pass": true,
+      "path": "artifacts/environment/h40/accelsim-smoke-backprop.log",
+      "sha256": "0a82b2fbecc3866c9e016539b26867d36543b55f07eaece569fbe5de1052a2c6"
+    },
+    "markers": {
+      "GPGPU-Sim: *** exit detected ***": true,
+      "GPGPU-Sim: *** simulation thread exiting ***": true,
+      "Processing kernel": true,
+      "gpu_tot_issued_cta = 512": true,
+      "gpu_tot_sim_cycle = 14903": true,
+      "gpu_tot_sim_insn = 9290080": true
+    },
+    "metrics": {
+      "cumulative_ctas": 512,
+      "cumulative_cycles": 14903,
+      "cumulative_instructions": 9290080,
+      "kernel_count": 2,
+      "kernel_traces": [
+        "/workspace/MLX_dev/third_party/accel-sim-framework/hw_run/rodinia_2.0-ft/11.0/backprop-rodinia-2.0-ft/4096___data_result_4096_txt/traces/kernel-1.traceg",
+        "/workspace/MLX_dev/third_party/accel-sim-framework/hw_run/rodinia_2.0-ft/11.0/backprop-rodinia-2.0-ft/4096___data_result_4096_txt/traces/kernel-2.traceg"
+      ],
+      "wall_seconds": 10.932
+    },
+    "pass": true
+  },
+  "hypothesis_status": "supported",
+  "licenses": {
+    "accel_sim": {
+      "bytes": 1762,
+      "checks": {
+        "is_file": true,
+        "redistribution_permission": true,
+        "warranty_disclaimer": true
+      },
+      "label": "permissive BSD text",
+      "pass": true,
+      "path": "third_party/accel-sim-framework/LICENSE",
+      "sha256": "edde45ed9edef82d6ab56d4844ce981b5be74505cbc9ddfe6b5af3695a616807"
+    },
+    "dsagen": {
+      "bytes": 1577,
+      "checks": {
+        "is_file": true,
+        "redistribution_permission": true,
+        "warranty_disclaimer": true
+      },
+      "label": "BSD-2-Clause",
+      "pass": true,
+      "path": "third_party/dsa-framework/LICENSE",
+      "sha256": "9fb9e01f0a992dd242b3c50ef17bcbf075c81598ec2be39597aae45d00bf510d"
+    },
+    "gpgpu_sim": {
+      "bytes": 4522,
+      "checks": {
+        "is_file": true,
+        "redistribution_permission": true,
+        "warranty_disclaimer": true
+      },
+      "label": "BSD-3-Clause-style",
+      "pass": true,
+      "path": "third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/COPYRIGHT",
+      "sha256": "19de140576b1333c9a06aa4c749d244f7c9b818ab7813bd10d0620429df92a36"
+    }
+  },
+  "mechanisms": [
+    {
+      "checks": {
+        "all_tokens": true,
+        "decision_registered": true,
+        "mlx_extension_registered": true,
+        "source_file": true
+      },
+      "decision": "reuse",
+      "id": "spatial_event_clock",
+      "mlx_extension": "Drive one MLX fabric cycle and invoke each active PE once.",
+      "pass": true,
+      "path": "third_party/dsa-framework/dsa-gem5/src/cpu/minor/ssim/ssim.cc",
+      "symbol": "ssim_t::step",
+      "tokens": {
+        "DispatchStream();": {
+          "line": 647,
+          "present": true
+        },
+        "lanes[i]->tick();": {
+          "line": 650,
+          "present": true
+        },
+        "void ssim_t::step()": {
+          "line": 642,
+          "present": true
+        }
+      },
+      "upstream": "dsagen"
+    },
+    {
+      "checks": {
+        "all_tokens": true,
+        "decision_registered": true,
+        "mlx_extension_registered": true,
+        "source_file": true
+      },
+      "decision": "adapt",
+      "id": "spatial_pe_cycle",
+      "mlx_extension": "Insert tag-window arbitration and programmable PE resources before CGRA firing.",
+      "pass": true,
+      "path": "third_party/dsa-framework/dsa-gem5/src/cpu/minor/ssim/accel.cc",
+      "symbol": "accel_t::tick",
+      "tokens": {
+        "arbiter->Arbit(this)": {
+          "line": 1124,
+          "present": true
+        },
+        "cycle_cgra();": {
+          "line": 1166,
+          "present": true
+        },
+        "void accel_t::tick()": {
+          "line": 1110,
+          "present": true
+        }
+      },
+      "upstream": "dsagen"
+    },
+    {
+      "checks": {
+        "all_tokens": true,
+        "decision_registered": true,
+        "mlx_extension_registered": true,
+        "source_file": true
+      },
+      "decision": "reuse",
+      "id": "architecture_graph",
+      "mlx_extension": "Represent the physical PE/FU fabric; layer blocks remain a separate MLX overlay.",
+      "pass": true,
+      "path": "third_party/dsa-framework/dsa-scheduler/include/dsa/arch/model.h",
+      "symbol": "dsa::SSModel",
+      "tokens": {
+        "SpatialFabric* subModel()": {
+          "line": 23,
+          "present": true
+        },
+        "class SSModel": {
+          "line": 18,
+          "present": true
+        },
+        "std::vector<Capability*> fu_types": {
+          "line": 64,
+          "present": true
+        }
+      },
+      "upstream": "dsagen"
+    },
+    {
+      "checks": {
+        "all_tokens": true,
+        "decision_registered": true,
+        "mlx_extension_registered": true,
+        "source_file": true
+      },
+      "decision": "adapt",
+      "id": "static_bitstream_schedule",
+      "mlx_extension": "Bind multiple immutable layer instruction blocks to one physical fabric.",
+      "pass": true,
+      "path": "third_party/dsa-framework/dsa-gem5/src/cpu/minor/ssim/bitstream.h",
+      "symbol": "dsa::sim::BitstreamWrapper",
+      "tokens": {
+        "SSDfg *dfg()": {
+          "line": 93,
+          "present": true
+        },
+        "Schedule *sched": {
+          "line": 25,
+          "present": true
+        },
+        "struct BitstreamWrapper": {
+          "line": 17,
+          "present": true
+        }
+      },
+      "upstream": "dsagen"
+    },
+    {
+      "checks": {
+        "all_tokens": true,
+        "decision_registered": true,
+        "mlx_extension_registered": true,
+        "source_file": true
+      },
+      "decision": "reuse",
+      "id": "stream_commands",
+      "mlx_extension": "Preserve load/store stream timing while attaching layer and tag identity.",
+      "pass": true,
+      "path": "third_party/dsa-framework/dsa-gem5/src/cpu/minor/ssim/stream.hh",
+      "symbol": "base_stream_t",
+      "tokens": {
+        "struct LinearReadStream": {
+          "line": 39,
+          "present": true
+        },
+        "struct LinearWriteStream": {
+          "line": 40,
+          "present": true
+        },
+        "struct base_stream_t": {
+          "line": 35,
+          "present": true
+        },
+        "virtual bool stream_active()": {
+          "line": 163,
+          "present": true
+        }
+      },
+      "upstream": "dsagen"
+    },
+    {
+      "checks": {
+        "all_tokens": true,
+        "decision_registered": true,
+        "mlx_extension_registered": true,
+        "source_file": true
+      },
+      "decision": "replace_policy",
+      "id": "stream_arbitration",
+      "mlx_extension": "Add readiness-first bounded tag-window selection without changing stream execution.",
+      "pass": true,
+      "path": "third_party/dsa-framework/dsa-gem5/src/cpu/minor/ssim/arbiter.cc",
+      "symbol": "RoundRobin::Arbit",
+      "tokens": {
+        "RoundRobin::Arbit": {
+          "line": 49,
+          "present": true
+        },
+        "last_executed": {
+          "line": 77,
+          "present": true
+        },
+        "stream_tables": {
+          "line": 51,
+          "present": true
+        }
+      },
+      "upstream": "dsagen"
+    },
+    {
+      "checks": {
+        "all_tokens": true,
+        "decision_registered": true,
+        "mlx_extension_registered": true,
+        "source_file": true
+      },
+      "decision": "extend",
+      "id": "timed_packets",
+      "mlx_extension": "Add layer/tag/source/destination metadata and explicit skip-hop route latency.",
+      "pass": true,
+      "path": "third_party/dsa-framework/dsa-scheduler/include/dsa/simulation/data.h",
+      "symbol": "SpatialPacket",
+      "tokens": {
+        "bool valid": {
+          "line": 24,
+          "present": true
+        },
+        "struct SpatialPacket": {
+          "line": 12,
+          "present": true
+        },
+        "uint64_t available_at": {
+          "line": 16,
+          "present": true
+        },
+        "uint64_t value": {
+          "line": 20,
+          "present": true
+        }
+      },
+      "upstream": "dsagen"
+    },
+    {
+      "checks": {
+        "all_tokens": true,
+        "decision_registered": true,
+        "mlx_extension_registered": true,
+        "source_file": true
+      },
+      "decision": "reuse",
+      "id": "scratchpad_banks",
+      "mlx_extension": "Retain bank conflicts and add per-tag ownership only where required.",
+      "pass": true,
+      "path": "third_party/dsa-framework/dsa-gem5/src/cpu/minor/ssim/spad.h",
+      "symbol": "ScratchMemory",
+      "tokens": {
+        "adg::ScratchMemory": {
+          "line": 68,
+          "present": true
+        },
+        "struct Bank": {
+          "line": 15,
+          "present": true
+        },
+        "struct ScratchMemory": {
+          "line": 10,
+          "present": true
+        }
+      },
+      "upstream": "dsagen"
+    },
+    {
+      "checks": {
+        "all_tokens": true,
+        "decision_registered": true,
+        "mlx_extension_registered": true,
+        "source_file": true
+      },
+      "decision": "derive_abstraction",
+      "id": "dependency_scoreboard",
+      "mlx_extension": "Track block-local register RAW/WAW hazards; do not import warp identity.",
+      "pass": true,
+      "path": "third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/src/gpgpu-sim/scoreboard.cc",
+      "symbol": "Scoreboard::checkCollision",
+      "tokens": {
+        "Scoreboard::checkCollision": {
+          "line": 128,
+          "present": true
+        },
+        "Scoreboard::releaseRegisters": {
+          "line": 110,
+          "present": true
+        },
+        "Scoreboard::reserveRegisters": {
+          "line": 83,
+          "present": true
+        }
+      },
+      "upstream": "gpgpu_sim"
+    },
+    {
+      "checks": {
+        "all_tokens": true,
+        "decision_registered": true,
+        "mlx_extension_registered": true,
+        "source_file": true
+      },
+      "decision": "derive_abstraction",
+      "id": "operand_register_banks",
+      "mlx_extension": "Model PE RF read/write ports and bank conflicts for SIMD block instructions.",
+      "pass": true,
+      "path": "third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/src/gpgpu-sim/shader.h",
+      "symbol": "opndcoll_rfu_t::step",
+      "tokens": {
+        "allocate_reads();": {
+          "line": 659,
+          "present": true
+        },
+        "class opndcoll_rfu_t": {
+          "line": 639,
+          "present": true
+        },
+        "process_banks();": {
+          "line": 661,
+          "present": true
+        },
+        "void step()": {
+          "line": 657,
+          "present": true
+        }
+      },
+      "upstream": "gpgpu_sim"
+    },
+    {
+      "checks": {
+        "all_tokens": true,
+        "decision_registered": true,
+        "mlx_extension_registered": true,
+        "source_file": true
+      },
+      "decision": "derive_abstraction",
+      "id": "functional_unit_pipeline",
+      "mlx_extension": "Use operation latency and initiation interval per heterogeneous PE FU.",
+      "pass": true,
+      "path": "third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/src/gpgpu-sim/shader.cc",
+      "symbol": "pipelined_simd_unit::cycle",
+      "tokens": {
+        "m_dispatch_reg": {
+          "line": 2352,
+          "present": true
+        },
+        "m_pipeline_reg": {
+          "line": 106,
+          "present": true
+        },
+        "void pipelined_simd_unit::cycle()": {
+          "line": 2544,
+          "present": true
+        }
+      },
+      "upstream": "gpgpu_sim"
+    },
+    {
+      "checks": {
+        "all_tokens": true,
+        "decision_registered": true,
+        "mlx_extension_registered": true,
+        "source_file": true
+      },
+      "decision": "derive_abstraction",
+      "id": "load_store_pipeline",
+      "mlx_extension": "Separate load/store occupancy from compute while retaining DSAGEN memory transactions.",
+      "pass": true,
+      "path": "third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/src/gpgpu-sim/shader.cc",
+      "symbol": "ldst_unit::cycle",
+      "tokens": {
+        "m_dispatch_reg": {
+          "line": 2352,
+          "present": true
+        },
+        "smem_latency": {
+          "line": 2629,
+          "present": true
+        },
+        "void ldst_unit::cycle()": {
+          "line": 2834,
+          "present": true
+        }
+      },
+      "upstream": "gpgpu_sim"
+    }
+  ],
+  "pass_criteria": {
+    "actionable_layer_arbitration_boundary": true,
+    "actionable_skip_hop_boundary": true,
+    "actionable_tagged_block_boundary": true,
+    "all_required_mechanisms_have_source_symbols": true,
+    "compatibility_patches_present": true,
+    "dsa_instruction_masks_correct": true,
+    "gpu_code_is_reference_not_simt_import": true,
+    "gpu_simulator_executes_real_trace": true,
+    "licensed_reused_sources": true,
+    "paper_target_values_consumed": false,
+    "pinned_recursive_sources": true,
+    "spatial_simulator_executes_real_dsa": true
+  },
+  "patches": {
+    "patches/dsagen/dsa-gem5-glibc-dynamic-sigstksz.patch": {
+      "bytes": 958,
+      "checks": {
+        "is_file": true
+      },
+      "pass": true,
+      "path": "patches/dsagen/dsa-gem5-glibc-dynamic-sigstksz.patch",
+      "sha256": "264da807240da50e7d33ccdb316b0289500f0b486f3dd1e790541f72d7bc6ad4"
+    },
+    "patches/dsagen/dsa-gem5-riscv-getrandom.patch": {
+      "bytes": 1799,
+      "checks": {
+        "is_file": true
+      },
+      "pass": true,
+      "path": "patches/dsagen/dsa-gem5-riscv-getrandom.patch",
+      "sha256": "85f89e8df4e2743fc4aa5fdafebeecc5a0a554b373b49f6ce06c522c37116ba4"
+    }
+  },
+  "project_commit": "af1805614906cadb67383d7c25fbcc15a7c9417a",
+  "repositories": {
+    "accel-sim": {
+      "actual_revision": "c5296df152c99a28dd64e5d9560bd58a8fd2e774",
+      "checks": {
+        "is_directory": true,
+        "revision": true
+      },
+      "expected_revision": "c5296df152c99a28dd64e5d9560bd58a8fd2e774",
+      "pass": true,
+      "path": "third_party/accel-sim-framework"
+    },
+    "accel-sim/gpgpu-sim": {
+      "actual_revision": "68e1cd30efaecbd71b496822f9d88a5803b33841",
+      "checks": {
+        "is_directory": true,
+        "revision": true
+      },
+      "expected_revision": "68e1cd30efaecbd71b496822f9d88a5803b33841",
+      "pass": true,
+      "path": "third_party/accel-sim-framework/gpu-simulator/gpgpu-sim"
+    },
+    "accel-sim/pybind11": {
+      "actual_revision": "a49c4dbfa478d98c8b43493d1c2a9699b9726909",
+      "checks": {
+        "is_directory": true,
+        "revision": true
+      },
+      "expected_revision": "a49c4dbfa478d98c8b43493d1c2a9699b9726909",
+      "pass": true,
+      "path": "third_party/accel-sim-framework/gpu-simulator/extern/pybind11"
+    },
+    "dsagen": {
+      "actual_revision": "273e141a519d12138ee0fbc9743059d13e9b5a64",
+      "checks": {
+        "is_directory": true,
+        "revision": true
+      },
+      "expected_revision": "273e141a519d12138ee0fbc9743059d13e9b5a64",
+      "pass": true,
+      "path": "third_party/dsa-framework"
+    },
+    "dsagen/chipyard": {
+      "actual_revision": "174875463458c22f90cec1be0b62f2bc8633791c",
+      "checks": {
+        "is_directory": true,
+        "revision": true
+      },
+      "expected_revision": "174875463458c22f90cec1be0b62f2bc8633791c",
+      "pass": true,
+      "path": "third_party/dsa-framework/chipyard"
+    },
+    "dsagen/dsa-apps": {
+      "actual_revision": "7160803e400ef88f9fdfc0910458901ef5153cd4",
+      "checks": {
+        "is_directory": true,
+        "revision": true
+      },
+      "expected_revision": "7160803e400ef88f9fdfc0910458901ef5153cd4",
+      "pass": true,
+      "path": "third_party/dsa-framework/dsa-apps"
+    },
+    "dsagen/dsa-gem5": {
+      "actual_revision": "1e5d2c3d48ecc1f9b7d42c7103d0705b0c98fb78",
+      "checks": {
+        "is_directory": true,
+        "revision": true
+      },
+      "expected_revision": "1e5d2c3d48ecc1f9b7d42c7103d0705b0c98fb78",
+      "pass": true,
+      "path": "third_party/dsa-framework/dsa-gem5"
+    },
+    "dsagen/dsa-llvm-project": {
+      "actual_revision": "2f17ed0c0678bbe6e8cf05cb54eeb39aac6f6496",
+      "checks": {
+        "is_directory": true,
+        "revision": true
+      },
+      "expected_revision": "2f17ed0c0678bbe6e8cf05cb54eeb39aac6f6496",
+      "pass": true,
+      "path": "third_party/dsa-framework/dsa-llvm-project"
+    },
+    "dsagen/dsa-riscv-ext": {
+      "actual_revision": "65822cda53c32f58c2c0c08bfe24f06b8f7e5bd8",
+      "checks": {
+        "is_directory": true,
+        "revision": true
+      },
+      "expected_revision": "65822cda53c32f58c2c0c08bfe24f06b8f7e5bd8",
+      "pass": true,
+      "path": "third_party/dsa-framework/dsa-riscv-ext"
+    },
+    "dsagen/dsa-scheduler": {
+      "actual_revision": "d0dd8163c336d2909c1aa11784e312cfdc7b3256",
+      "checks": {
+        "is_directory": true,
+        "revision": true
+      },
+      "expected_revision": "d0dd8163c336d2909c1aa11784e312cfdc7b3256",
+      "pass": true,
+      "path": "third_party/dsa-framework/dsa-scheduler"
+    },
+    "dsagen/riscv-binutils": {
+      "actual_revision": "d91cadb45f3ef9f96c6ebe8ffb20472824ed05a7",
+      "checks": {
+        "is_directory": true,
+        "revision": true
+      },
+      "expected_revision": "d91cadb45f3ef9f96c6ebe8ffb20472824ed05a7",
+      "pass": true,
+      "path": "third_party/dsa-framework/chipyard/toolchains/riscv-tools/riscv-gnu-toolchain/riscv-binutils"
+    },
+    "dsagen/riscv-gnu-toolchain": {
+      "actual_revision": "2855d823a6e93d50af604264b02ced951e80de67",
+      "checks": {
+        "is_directory": true,
+        "revision": true
+      },
+      "expected_revision": "2855d823a6e93d50af604264b02ced951e80de67",
+      "pass": true,
+      "path": "third_party/dsa-framework/chipyard/toolchains/riscv-tools/riscv-gnu-toolchain"
+    }
+  },
+  "run_id": "run046",
+  "schema_version": 1,
+  "selection": {
+    "analytical_crosscheck": "Timeloop (not the dynamic timing engine)",
+    "gpu_baseline": "Accel-Sim trace-driven GPGPU-Sim",
+    "inspect_only": "Assassyn (no code reuse at the frozen unlicensed checkout)",
+    "primary_timing_substrate": "DSAGEN dsa-gem5",
+    "programmable_pe_reference": "GPGPU-Sim resource mechanisms only"
+  },
+  "spatial_smoke": {
+    "checks": {
+      "evidence_file": true,
+      "normal_exit": true,
+      "real_cgra_work": true,
+      "real_dma_work": true,
+      "required_markers": true,
+      "sanity_check": true
+    },
+    "evidence": {
+      "bytes": 4324,
+      "checks": {
+        "is_file": true
+      },
+      "pass": true,
+      "path": "artifacts/environment/h40/dsagen-smoke-vecadd-attempt4.log",
+      "sha256": "6a74029fbf7ac377a23eedfa1b27eff8d74a39af431cbd5310a400a5b34801ea"
+    },
+    "markers": {
+      "CGRA Instances: 256": true,
+      "CGRA Insts / Cycle: 1024 / 569": true,
+      "Exiting @ tick 114277000 because exiting with last active thread context": true,
+      "Read DMA:\t16384 B": true,
+      "Write DMA:\t8192 B": true,
+      "sanity check passed successfully!": true
+    },
+    "metrics": {
+      "cgra_instances": 256,
+      "cgra_instructions": 1024,
+      "cycles": 569,
+      "dma_read_bytes": 16384,
+      "dma_write_bytes": 8192,
+      "exit_tick": 114277000,
+      "sanity_check_passed": true,
+      "simulated_exit_code_nonzero": false
+    },
+    "pass": true
+  },
+  "wall_seconds": 1.9946306080091745
+}
