@@ -1,0 +1,86 @@
+metadata:
+  purpose: "Frozen raster coordinates for exploratory full Figure 3 target recovery"
+  coordinate_origin: "top-left; y increases downward"
+  source: "MLX Multi-Layer Execution for Structured LLM Workload Acceleration on Spatial Architectures/_page_1_Figure_9.jpeg"
+  sha256: "86bd9284c3cd6905f37d561adbc61a87a62800fd7eae3a93c5eed3db26637350"
+  dimensions: [647, 310]
+  marker_uncertainty_relative: 0.08
+  cuda_utilization_uncertainty_abs: 0.006
+  qkv_attention_flops_uncertainty_abs_pct: 1.0
+
+plot_semantics:
+  sequence_lengths: [512, 1024, 2048, 4096, 8192]
+  marker_order:
+    - softmax_qkv_512
+    - softmax_qkv_8K
+    - fft_512
+    - fft_8K
+    - bsmm_512
+    - bsmm_8K
+    - to_qkv_512
+    - to_qkv_8K
+  marker_modes: [tensor, tensor, cuda, cuda, cuda, cuda, tensor, tensor]
+  bar_order_in_each_group: [cuda_utilization, qkv_attention_flops_pct]
+
+roofline_x_axis:
+  log10_value_to_x:
+    - [1.0, 71]
+    - [2.0, 234]
+    - [3.0, 397]
+  pixels_per_decade: 163.0
+
+roofline_y_axis:
+  log10_value_to_y:
+    - [4.0, 250]
+    - [5.0, 157]
+    - [6.0, 65]
+  pixels_per_decade: 92.5
+
+roofline_markers:
+  - {name: softmax_qkv_512, mode: tensor, center_x: 308, center_y: 103}
+  - {name: softmax_qkv_8K, mode: tensor, center_x: 356, center_y: 92}
+  - {name: fft_512, mode: cuda, center_x: 87, center_y: 243}
+  - {name: fft_8K, mode: cuda, center_x: 114, center_y: 236}
+  - {name: bsmm_512, mode: cuda, center_x: 72, center_y: 250}
+  - {name: bsmm_8K, mode: cuda, center_x: 97, center_y: 243}
+  - {name: to_qkv_512, mode: tensor, center_x: 347, center_y: 95}
+  - {name: to_qkv_8K, mode: tensor, center_x: 434, center_y: 76}
+
+cuda_axis:
+  value_to_y:
+    - [0.0, 276]
+    - [0.05, 224]
+    - [0.10, 172]
+    - [0.15, 120]
+    - [0.20, 68]
+  pixels_per_unit: 1040.0
+
+flops_axis:
+  value_pct_to_y:
+    - [0.0, 276]
+    - [10.0, 237]
+    - [20.0, 198]
+    - [30.0, 159]
+    - [40.0, 120]
+    - [50.0, 81]
+    - [60.0, 42]
+  pixels_per_pct: 3.9
+
+profile_bars:
+  - {sequence_length: 512, cuda_x_range: [507, 515], cuda_top_y: 150, flops_x_range: [517, 523], flops_top_y: 139}
+  - {sequence_length: 1024, cuda_x_range: [529, 536], cuda_top_y: 130, flops_x_range: [538, 544], flops_top_y: 133}
+  - {sequence_length: 2048, cuda_x_range: [549, 557], cuda_top_y: 139, flops_x_range: [559, 565], flops_top_y: 123}
+  - {sequence_length: 4096, cuda_x_range: [570, 578], cuda_top_y: 75, flops_x_range: [580, 586], flops_top_y: 105}
+  - {sequence_length: 8192, cuda_x_range: [591, 599], cuda_top_y: 114, flops_x_range: [601, 607], flops_top_y: 75}
+
+reported_roofline:
+  bandwidth_gbs: 2000.0
+  tensor_peak_gflops: 1513000.0
+  cuda_peak_gflops: 102000.0
+
+prior_canonical_cross_checks:
+  operational_intensity_flops_per_byte: [288.0, 558.0, 12.9, 18.7, 10.3, 14.8, 491.0, 1670.0]
+  performance_gflops: [395000.0, 503000.0, 12100.0, 14400.0, 10450.0, 12100.0, 492000.0, 770000.0]
+  cuda_utilization: [0.118, 0.136, 0.128, 0.188, 0.151]
+  marker_tolerance_relative: 0.08
+  cuda_tolerance_abs: 0.006
