@@ -1,0 +1,48 @@
+name: fig20-sparse-xavier-v1
+experiment_id: H57
+run_id: run063
+classification: target_exposed_validation_ineligible_partial_figure_transfer
+
+parents:
+  mlx:
+    path: artifacts/results/mlx-pe-semantics-correction-run058.json
+    sha256: 5573dcc3b4317077803ad135aa0be863b94db00aefdfeec545b9504cd9642d1e
+    required_status: supported
+    required_integrity: true
+  xavier:
+    path: artifacts/results/gpgpusim-xavier-proxy-run062.json
+    sha256: 443843b96d3f01cf27fee02413ae8d8cdc519233aca514cdaeb2d34d0373fe14
+    required_status: supported
+    required_integrity: true
+
+targets:
+  path: artifacts/targets/paper_targets.yaml
+  section: fig20_xavier_kernels.versus_sparse_cuda
+  execution_visibility: audit_only
+
+cases:
+  short: {label: N256, mlx_trip: 2, gpu_count: 1024}
+  long: {label: N8K, mlx_trip: 16, gpu_count: 16384}
+
+kernels:
+  QKV: {proxy: bsmm, block_size: 32, mlx_stages: 5, gpu_parameter: 5, gpu_fma_per_element_stage: 3}
+  Attn: {proxy: fft, mlx_stages: 7, gpu_parameter: 6, gpu_fma_per_element_stage: 2}
+  FFN1: {proxy: bsmm, block_size: 32, mlx_stages: 5, gpu_parameter: 5, gpu_fma_per_element_stage: 3}
+  FFN2: {proxy: bsmm, block_size: 32, mlx_stages: 5, gpu_parameter: 5, gpu_fma_per_element_stage: 3}
+
+normalization:
+  mlx_clock_hz: 1000000000
+  xavier_clock_hz: 1377000000
+  mlx_simd_lanes: 8
+  xavier_power_w: 15.0
+  mlx_power_w: 6.45
+  dense_tcu_available: false
+  per_kernel_activity_power_available: false
+
+source_layout:
+  compiler: scripts/compile_fig20_sparse_xavier.py
+  runner: scripts/run_fig20_sparse_xavier.sh
+  checker: scripts/check_fig24_gpu_run.py
+  auditor: scripts/audit_fig20_sparse_xavier.py
+
+result_path: artifacts/results/fig20-sparse-xavier-run063.json
