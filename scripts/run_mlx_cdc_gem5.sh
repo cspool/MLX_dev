@@ -34,7 +34,8 @@ run_config() {
       --cpu-clock=1GHz --sys-clock=1GHz --mem-type=DDR4_2400_16x4 \
       --cmd=./ss-vecadd-gnu.out > "$run_dir/run.log" 2>&1
   )
-  grep -Fq '"done":true,"memory_backend":"adapter"' "$run_dir/run.log"
+  grep -Fq '"done":true' "$run_dir/run.log"
+  grep -Fq '"memory_backend":"adapter"' "$run_dir/run.log"
   grep -Fq 'sanity check passed successfully!' "$run_dir/run.log"
 }
 

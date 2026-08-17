@@ -29,7 +29,8 @@ for kernel in bsmm fft; do
         --cpu-clock=1GHz --sys-clock=1GHz --mem-type=DDR4_2400_16x4 \
         --cmd="$WAIT_BINARY" > "$log" 2>&1
     )
-    grep -Fq '"done":true,"memory_backend":"adapter"' "$log"
+    grep -Fq '"done":true' "$log"
+    grep -Fq '"memory_backend":"adapter"' "$log"
     grep -Fq '[mlx-wait] sanity check passed successfully!' "$log"
     summary=$(grep -F 'MLX_OVERLAY_SUMMARY ' "$log" | tail -n 1)
     echo "[fig22] completed $name ${summary#MLX_OVERLAY_SUMMARY }"
