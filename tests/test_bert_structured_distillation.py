@@ -3,6 +3,7 @@ from __future__ import annotations
 from pathlib import Path
 
 import pytest
+import torch
 import yaml
 
 from scripts import train_bert_structured_distillation as h38
@@ -35,6 +36,24 @@ def test_h38_metric_errors_are_relative_and_pointwise() -> None:
     actual = {"f1": 81.0, "exact_match": 72.0}
     target = {"f1": 90.0, "exact_match": 80.0}
     assert h38.metric_errors(actual, target) == pytest.approx({"f1": 0.1, "exact_match": 0.1})
+
+
+def test_h38_layernorm_alias_normalization_is_value_preserving_and_collision_safe() -> None:
+    gamma = torch.tensor([1.0])
+    beta = torch.tensor([2.0])
+    state, count = h38.canonicalize_bert_layernorm_keys(
+        {"encoder.LayerNorm.gamma": gamma, "encoder.LayerNorm.beta": beta},
+        {"gamma": "weight", "beta": "bias"},
+    )
+    assert count == 2
+    assert state == {
+        "encoder.LayerNorm.weight": gamma,
+        "encoder.LayerNorm.bias": beta,
+    }
+    with pytest.raises(ValueError, match="collision"):
+        h38.canonicalize_bert_layernorm_keys(
+            {"x.gamma": gamma, "x.weight": beta}, {"gamma": "weight"}
+        )
 
 
 def test_h38_preflight_binds_parent_teacher_data_and_students() -> None:

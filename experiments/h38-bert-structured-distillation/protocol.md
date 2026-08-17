@@ -36,7 +36,10 @@ dimensions.
   `8d990314...6d3`, kept in evaluation mode with all parameters frozen.
 - Students: the five exact H15 `model.safetensors` checkpoints, individually
   hash-qualified against run018. Reconstruct the registered H15 topology and
-  require a strict state-dict load.
+  require a strict state-dict load. The H15 saver uses legacy BERT LayerNorm
+  suffixes `.gamma/.beta`; normalize exactly 50 keys one-to-one to
+  `.weight/.bias`, reject collisions or any other missing/unexpected key, and
+  record the alias count. This compatibility mapping changes no tensor value.
 - Data, tokenizer, 384-token preprocessing, stride 128, official SQuAD scorer,
   and all five paper targets remain byte-for-byte identical to H15.
 - Preserve every structured choice: last-k layer sets, `s=0.5`, `L=32`,

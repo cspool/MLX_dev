@@ -223,17 +223,49 @@ def inject_structured_topology(model: torch.nn.Module, config: dict[str, Any], k
         )
 
 
-def restore_student(config: dict[str, Any], k: int, *, device: torch.device) -> torch.nn.Module:
+def canonicalize_bert_layernorm_keys(
+    state: dict[str, torch.Tensor], aliases: dict[str, str]
+) -> tuple[dict[str, torch.Tensor], int]:
+    """Normalize legacy LayerNorm suffixes without changing tensor values."""
+
+    canonical: dict[str, torch.Tensor] = {}
+    renamed = 0
+    for key, value in state.items():
+        target_key = key
+        for old_suffix, new_suffix in aliases.items():
+            suffix = f".{old_suffix}"
+            if key.endswith(suffix):
+                target_key = f"{key[: -len(suffix)]}.{new_suffix}"
+                renamed += 1
+                break
+        if target_key in canonical:
+            raise ValueError(f"LayerNorm alias collision: {key} -> {target_key}")
+        canonical[target_key] = value
+    return canonical, renamed
+
+
+def restore_student(
+    config: dict[str, Any], k: int, *, device: torch.device
+) -> tuple[torch.nn.Module, dict[str, int | bool]]:
     model_config = AutoConfig.from_pretrained(resolve(config["teacher"]["path"]))
     model = AutoModelForQuestionAnswering.from_config(model_config)
     inject_structured_topology(model, config, k)
     checkpoint = resolve(config["students"]["checkpoints"][k]["path"])
     state = load_file(checkpoint, device="cpu")
+    compatibility = config["students"]["serialization_compatibility"]
+    state, renamed = canonicalize_bert_layernorm_keys(state, compatibility["layernorm_key_aliases"])
+    expected_renamed = int(compatibility["expected_renamed_key_count"])
+    if renamed != expected_renamed:
+        raise RuntimeError(f"expected {expected_renamed} LayerNorm aliases, restored {renamed}")
     incompatible = model.load_state_dict(state, strict=True)
     if incompatible.missing_keys or incompatible.unexpected_keys:
         raise RuntimeError(f"strict student restore failed: {incompatible}")
     del state
-    return model.to(device)
+    return model.to(device), {
+        "strict": True,
+        "layernorm_alias_count": renamed,
+        "expected_layernorm_alias_count": expected_renamed,
+    }
 
 
 class QADistillationTrainer(Trainer):
@@ -448,7 +480,7 @@ def main() -> int:
         setting_started = time.perf_counter()
         seed = int(config["optimization"]["seed_base"]) + k
         set_seed(seed)
-        student = restore_student(config, k, device=device)
+        student, restore_report = restore_student(config, k, device=device)
         modified_indices = list(range(12 - k, 12))
         output_dir = (
             Path("/tmp/mlx-h38-smoke") / f"k{k}" if args.smoke else checkpoint_root / f"k{k}"
@@ -508,7 +540,9 @@ def main() -> int:
             "modified_last_k_layers": k,
             "modified_layer_indices": modified_indices,
             "seed": seed,
-            "strict_checkpoint_restore": True,
+            "strict_checkpoint_restore": restore_report["strict"],
+            "layernorm_alias_count": restore_report["layernorm_alias_count"],
+            "expected_layernorm_alias_count": restore_report["expected_layernorm_alias_count"],
             "initial_metrics_pct": initial_metrics,
             "parent_metrics_pct": parent_metrics,
             "initial_replay_absolute_errors_pct": initial_replay_errors,
@@ -547,6 +581,10 @@ def main() -> int:
         "preflight": preflight_report["pass"],
         "all_settings": [result["modified_last_k_layers"] for result in results] == selected_k,
         "all_strict_restores": all(result["strict_checkpoint_restore"] for result in results),
+        "layernorm_alias_counts": all(
+            result["layernorm_alias_count"] == result["expected_layernorm_alias_count"] == 50
+            for result in results
+        ),
         "all_initial_replays": all(result["initial_replay_pass"] for result in results),
         "all_losses_finite": all(
             result["distillation_component_means"]["all_finite"] for result in results
