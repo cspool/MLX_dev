@@ -137,6 +137,13 @@ def preflight(
         "tokenizer": qualify_file(config["model_assets"]["tokenizer"]),
         "tokenizer_config": qualify_file(config["model_assets"]["tokenizer_config"]),
     }
+    prior_specification = config.get("prior_inconclusive")
+    prior_result: dict[str, Any] = {}
+    if prior_specification:
+        prior_file = qualify_file(prior_specification)
+        source_files["prior_inconclusive"] = prior_file
+        if prior_file["pass"]:
+            prior_result = json.loads(Path(prior_file["path"]).read_text(encoding="utf-8"))
     checkpoints = {
         int(k): qualify_file(specification) for k, specification in config["checkpoints"].items()
     }
@@ -163,6 +170,15 @@ def preflight(
         and config["structured"]["modified_last_k_layers"] == expected_k,
         "metric_k_values": sorted(config["expected_metrics_pct"]) == expected_k,
         "runtime": runtime_versions() == config["runtime"],
+        "prior_inconclusive": not prior_specification
+        or (
+            prior_result.get("run_id") == prior_specification["run_id"]
+            and prior_result.get("audit_integrity") is False
+            and prior_result.get("summary", {}).get("all_metrics_pass") is True
+            and all(
+                item.get("layernorm_alias_count") == 0 for item in prior_result.get("settings", [])
+            )
+        ),
         "cuda": torch.cuda.is_available(),
         "protocol": resolve(config["run"]["protocol"]).is_file(),
         "tracked_worktree_clean": tracked_worktree_clean() if require_clean else True,
