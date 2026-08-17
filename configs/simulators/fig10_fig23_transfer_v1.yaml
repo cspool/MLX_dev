@@ -1,0 +1,26 @@
+name: fig10-fig23-transfer-v1
+experiment_id: H65
+run_id: run070
+classification: target_exposed_frozen_mechanism_transfer
+validation_eligible: false
+
+frozen_inputs:
+  mechanism:
+    path: artifacts/results/fig10-scalability-run069.json
+    sha256: 520d152a792225dfe3ec6ba3189fa3048f226c977fb3ff4621fc8cc321bdc530
+    required_status: supported
+    required_integrity: true
+  targets:
+    path: artifacts/targets/paper_targets.yaml
+    bytes: 14931
+    sha256: c4a22ab8052ff8cb223a729b8ce07320c6826cfee0d37e1a664a8761e018b41e
+    key: fig23_scalability
+
+mapping:
+  sequence_lengths: [512, 1024, 2048, 4096, 8192]
+  series: [simd32_4x4, simd8_8x8, simd32_8x8]
+  relative_error_limit: 0.10
+  required_points: 15
+
+auditor: scripts/audit_fig10_fig23_transfer.py
+result_path: artifacts/results/fig10-fig23-transfer-run070.json
