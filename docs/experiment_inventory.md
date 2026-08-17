@@ -16,12 +16,12 @@ This is the completion checklist. `target` means a paper anchor is captured with
 | Fig. 17 | H100 prefill/decode speedup vs eager/FA | Native GPU benchmark | Native/trace GPU runner + audit | yes | target + cross-figure audit yes | H17 targets pass; H18 Fig. 3 transfer rejected (93.97% max error); native H100 unavailable |
 | Fig. 18 | Latency, energy, and algorithm-normalized speedup vs sparse accelerators | MLX cycle simulation + cited baselines | Reduced-design simulator + baseline replay | yes | yes | no (Fig. 18(c)/Table IV MLX values unreconciled) |
 | Table V / Fig. 19 | FPGA resources and FABNet latency breakdown | FPGA implementation/simulation | Resource replay + workload timing model | yes | yes | stacks complete; official FABNet rejected (288.2% max); H23 event transfer rejected (57.2% component max); H24 fused FFT2D worsens attention to 77.5% max; FPGA timing not reproduced |
-| Fig. 20 | Eight Llama2 kernels vs Xavier, dense and sparse GPU | Silicon/MLX + native GPU | Full-design timing/power + GPU targets | yes | yes | no (held-out proxy rejected; speed MAPE 65%/25%) |
+| Fig. 20 | Eight Llama2 kernels vs Xavier, dense and sparse GPU | Silicon/MLX + native GPU | Full-design timing/power + GPU targets | yes | yes | H88 closure: 0 reproduced, 6 projection failures, 2 Attention cells execution-incomplete |
 | Fig. 21 | Llama2 end-to-end speedup, GEMM share, and memory | Silicon/simulation + native GPU | End-to-end graph and capacity model | yes | target + proxy yes | H25 all 20 targets pass; native timing/GEMM share no; proxy speed and sparse memory rejected (75.5%/14.0% max), dense memory passes |
-| Fig. 22 | PE pipeline utilization on BSMM and chunk FFT | Cycle simulation | Event-simulator utilization sweep | yes | yes | yes (digitized targets, max error 7.1%) |
-| Fig. 23 | SIMD and mesh scalability | Cycle simulation | Architecture sweep | yes | yes | yes (exploratory calibration, max error 3.2%) |
-| Fig. 24 | FFT/BSMM/SWA workload sweep vs Orin/RTX 3090 | MLX simulation + native GPU | Workload sweep with GPU baseline manifest | yes | yes | calibration replay only; validation no |
-| Fig. 25 | Roofline utilization heatmaps | Derived from performance/traffic | Roofline audit | yes | yes | calibration replay only; validation no |
+| Fig. 22 | PE pipeline utilization on BSMM and chunk FFT | Cycle simulation | Event-simulator utilization sweep | yes | yes | H44 no-fit real-DSAGEN run rejected at 15/16 (4.25% MAPE, 13.83% max) |
+| Fig. 23 | SIMD and mesh scalability | Cycle simulation | Architecture sweep | yes | yes | H70 real multi-port SRAM transfer rejected at 7/15 (11.03% MAPE) |
+| Fig. 24 | FFT/BSMM/SWA workload sweep vs Orin/RTX 3090 | MLX simulation + native GPU | Workload sweep with GPU baseline manifest | yes | yes | H74 physical-counter transfer rejected at 3/42 |
+| Fig. 25 | Roofline utilization heatmaps | Derived from performance/traffic | Roofline audit | yes | yes | H72 physical-FMA transfer rejected at 0/24 |
 
 Conceptual figures 1, 4, 7-13 specify algorithms, architecture, or mappings rather than standalone numeric experiments. Their claims are covered by unit tests for FFT compression, hierarchical BSMM, CDC closure, routing, pipeline overlap, and dense/SWA mappings.
 

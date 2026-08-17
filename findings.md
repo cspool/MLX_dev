@@ -10,7 +10,7 @@ The paper is an ISCA 2026 work whose simulator and RTL are not released in the s
 
 This supports a hybrid reproduction strategy: use public spatial/GPU projects as validation references and optional detailed backends, but implement a small, inspectable MLX-specific discrete-event simulator locally. All calibration must be global or mechanism-level. Per-point lookup tables are acceptable only as immutable paper targets, never as simulator outputs.
 
-H37 closes the full-paper ledger with a machine certificate rather than a completion claim. All 18 numeric inventory rows have targets, executable audits, immutable evidence bindings, and one of four disjoint outcomes. Only Fig. 22 fully passes the open-surrogate 10% gate; the global all-paper reproduction verdict is false because the other 17 rows are rejected, calibration-only, or publicly blocked.
+H37 closed the first full-paper ledger with a machine certificate rather than a completion claim. H89 now supersedes its statuses with stronger source-integrated evidence: none of the 18 rows fully passes, 11 are executed attempts that fail strict gates, and 7 remain publicly blocked. The global all-paper reproduction verdict is false.
 
 ## Key Results
 
@@ -81,6 +81,7 @@ H37 closes the full-paper ledger with a machine certificate rather than a comple
 - H85 rejects saturated Xavier folding with `audit_integrity=false`. Complete-wave anchors improve cycle prediction to 4/6 holdouts (9.11% MAPE): both FFT shapes, shared QK, and long SV pass. Short SV misses by 6.83%, while the directly executed full 4096-row softmax takes 5,428,292 cycles and defeats its model by 37.74%. One long FFT checksum is `4.24e-5` versus the frozen `1e-5` gate. No partial full sum is admitted.
 - H86 fixes FFT numerical reproducibility with a separate stable source: all seven new checksums pass. Its 2048/4096→8192 cycle gate still passes only 1/3 points (5.26% MAPE), with long FFT and short SV just above 5%. H87's final 4096/8192→16384 gate also passes only 1/3 (5.91% MAPE, 7.35% max). The source and execution are valid; global affine full-count folding is not.
 - H88 supports a complete Figure 20 evidence ledger, not reproduction. All eight cells are accounted for: six matched projections are numerical failures and two Attention cells are execution-incomplete because no eligible Xavier denominator exists. Zero cells reproduce within 10%; the global Figure 20 verdict remains false.
+- H89 supports the updated full-paper certificate. Latest evidence changes Figure 22 from one early calibrated pass to a 15/16 strict rejection and Figures 23-25 from replay-only to real-execution rejections. Updated counts are 0 reproduced, 11 attempt-rejected, 0 replay-only, and 7 publicly blocked; all 18 remain incomplete.
 
 ## Patterns and Insights
 
@@ -240,3 +241,6 @@ long-softmax measurement is retained for a later direct component sum.
 Runs 091/092 remove the FFT checksum issue and test larger steady-state ranges,
 but both reject their all-point 5% gates. Run093 therefore closes Figure 20 at
 zero reproduced, six numerical failures, and two execution-incomplete cells.
+
+Run094 refreshes the full-paper certificate with H44/H70/H72/H74/H88. The
+truthful completion count is now zero of 18 rather than the old one of 18.
