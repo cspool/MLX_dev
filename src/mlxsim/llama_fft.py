@@ -179,3 +179,13 @@ def audit_trainable_parameters(
         and not outside_layer_names
         and fraction <= maximum_fraction,
     }
+
+
+def leakage_free_prediction_positions(
+    sequence_length: int, chunk_length: int
+) -> list[int]:
+    """Logit positions at chunk ends whose next-token labels lie outside the FFT chunk."""
+
+    if sequence_length < 2 or chunk_length <= 0:
+        raise ValueError("sequence_length must be >=2 and chunk_length must be positive")
+    return list(range(chunk_length - 1, sequence_length - 1, chunk_length))

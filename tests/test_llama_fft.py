@@ -6,6 +6,7 @@ from mlxsim.llama_fft import (
     CompressedLlamaAttention,
     audit_trainable_parameters,
     install_compressed_attention,
+    leakage_free_prediction_positions,
     make_lora_config,
 )
 
@@ -76,3 +77,11 @@ def test_compressed_attention_rejects_cache() -> None:
         assert "does not support KV cache" in str(error)
     else:
         raise AssertionError("compressed attention unexpectedly accepted KV cache")
+
+
+def test_chunk_end_positions_exclude_next_token_from_same_fft_chunk() -> None:
+    positions = leakage_free_prediction_positions(1024, 32)
+    assert positions[0] == 31
+    assert positions[-1] == 991
+    assert len(positions) == 31
+    assert all((position + 1) % 32 == 0 for position in positions)
