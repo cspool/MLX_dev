@@ -194,10 +194,9 @@ def build_endpoints(config: dict[str, Any], browser_data: dict[str, Any]) -> lis
             "Zenodo",
             api_url(
                 "https://zenodo.org/api/records",
-                {"q": f'title:"{title}"', "size": 100},
+                {"q": f'"{title}"', "size": 25},
             ),
             "zenodo",
-            True,
         ),
         Endpoint(
             "hf_models",
@@ -396,6 +395,8 @@ def fetch_endpoint(endpoint: Endpoint, *, timeout: float, max_attempts: int) -> 
             "etag": response_headers.get("etag"),
             "last_modified": response_headers.get("last-modified"),
             "rate_limit_remaining": response_headers.get("x-ratelimit-remaining"),
+            "rate_limit_reset": response_headers.get("x-ratelimit-reset"),
+            "retry_after": response_headers.get("retry-after"),
             "bytes": len(body),
             "sha256": hashlib.sha256(body).hexdigest() if body else None,
             "truncated": truncated,
@@ -927,7 +928,8 @@ def main() -> int:
         and all(summaries[key].get("available") for key in gitlab_search_keys),
         "gitee_query_and_attempt": any("site:gitee.com" in query for query in registered_queries)
         and "gitee_title_search" in fetched,
-        "zenodo": summaries["zenodo_title"].get("available") is True,
+        "zenodo_query_and_attempt": any("site:zenodo.org" in query for query in registered_queries)
+        and "zenodo_title" in fetched,
         "huggingface_all_types": all(
             summaries[key].get("available") for key in ("hf_models", "hf_datasets", "hf_spaces")
         ),

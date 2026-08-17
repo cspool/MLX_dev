@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from email.message import Message
 from typing import Self
+from urllib.parse import parse_qs, urlparse
 
 from scripts import audit_mlx_public_artifacts as audit
 
@@ -56,3 +57,16 @@ def test_fetch_endpoint_retries_transient_failures(monkeypatch) -> None:
         None,
         200,
     ]
+
+
+def test_zenodo_endpoint_uses_registered_exact_title_phrase() -> None:
+    title = "MLX: Multi-Layer Execution for Structured LLM Workload Acceleration"
+    endpoints = audit.build_endpoints(
+        {"paper": {"title": title}, "repository_queries": []},
+        {"official_identity_sources": []},
+    )
+    endpoint = next(item for item in endpoints if item.key == "zenodo_title")
+    query = parse_qs(urlparse(endpoint.url).query)
+
+    assert query == {"q": [f'"{title}"'], "size": ["25"]}
+    assert endpoint.required_transport is False
