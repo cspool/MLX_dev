@@ -1,0 +1,66 @@
+name: xavier-matched-attention-v1
+experiment_id: H84
+run_id: run089
+classification: target_free_execution_driven_xavier_matched_attention
+validation_eligible: false
+
+frozen_inputs:
+  mlx:
+    path: artifacts/results/combined-attention-memory-run088.json
+    sha256: a647443c82ae407b18f0253757b43cf245b1626593e03510895f9c87ecd5fa44
+    required_status: supported
+    required_integrity: true
+  xavier:
+    path: artifacts/results/gpgpusim-xavier-proxy-run062.json
+    sha256: 443843b96d3f01cf27fee02413ae8d8cdc519233aca514cdaeb2d34d0373fe14
+    required_status: supported
+    required_integrity: true
+  signature:
+    path: artifacts/results/attention-work-signature-run084.json
+    sha256: 109091f15841245b3d2727fbfa492ea1671cb053a30c0278359833026919c3c6
+    required_status: supported
+    required_integrity: true
+  xavier_config:
+    path: artifacts/environment/h56/config/gpgpusim.config
+    sha256: ec429eead39af0872a2a8e4020ddc3e47baf8edbf525fd5acf260ed00609c887
+  xavier_interconnect:
+    path: artifacts/environment/h56/config/config_volta_islip.icnt
+    sha256: e65e6a9d89db91fa90a20d9905cf15c61f2cd59e0d1babdbf8c29f0b86482fb0
+
+gpgpu_sim_revision: 68e1cd30efaecbd71b496822f9d88a5803b33841
+device_clock_hz: 1377000000
+toolchain: {cuda: '11.8', ptx: compute_70, mode: GPGPU_Sim_detailed_PTX}
+
+families:
+  fftcmp: {fit_counts: [512, 1024], holdout_counts: [2048, 4096]}
+  qk: {fit_counts: [128, 256], holdout_counts: [512, 1024]}
+  softmax: {fit_counts: [8, 16], holdout_counts: [32, 64]}
+  sv: {fit_counts: [128, 256], holdout_counts: [512, 1024]}
+
+shapes:
+  N256:
+    sequence_length: 256
+    retained_length: 128
+    hidden_dimension: 4096
+    forward_stages: 8
+    inverse_stages: 7
+    full_counts: {fftcmp: 1572864, qk: 16384, softmax: 128, sv: 524288}
+  N8192:
+    sequence_length: 8192
+    retained_length: 4096
+    hidden_dimension: 4096
+    forward_stages: 13
+    inverse_stages: 12
+    full_counts: {fftcmp: 50331648, qk: 16777216, softmax: 4096, sv: 16777216}
+
+cycle_relative_error_limit: 0.05
+checksum_relative_error_limit: 0.00001
+output_root: artifacts/environment/h84
+
+source_layout:
+  cuda_source: simulator_ext/accelsim/mlx_attention_proxy.cu
+  compiler: scripts/compile_xavier_matched_attention.py
+  runner: scripts/run_xavier_matched_attention.py
+  auditor: scripts/audit_xavier_matched_attention.py
+
+result_path: artifacts/results/xavier-matched-attention-run089.json
