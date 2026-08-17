@@ -16,3 +16,8 @@ execution. Remaining error reflects non-identical proxy kernels, work
 normalization, and an unvalidated Orin timing template. Those limitations must
 be resolved with author kernels/configuration evidence, not calibration to the
 42 target cells.
+
+H73/H74 later repeat all 42 MLX cases with physical FU counters and Fig.9
+column-port memory. The corrected audit in
+[`fu-fig24-transfer.md`](fu-fig24-transfer.md) still rejects, now isolating the
+dominant problem as unmatched MLX/GPU proxy work rather than PE hazards.
