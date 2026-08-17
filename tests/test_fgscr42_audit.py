@@ -1,6 +1,9 @@
 import base64
+import urllib.error
 from pathlib import Path
+from unittest.mock import Mock
 
+from mlxsim import fgscr42_audit
 from mlxsim.fgscr42_audit import (
     canonical_share_init,
     classify_download_value,
@@ -60,6 +63,17 @@ def test_pcs_error_parser_retains_only_stable_fields() -> None:
     )
     assert parsed == {"error_code": 31064, "error_msg": "file is not authorized"}
     assert parse_pcs_error(b"not-json") == {"error_code": None, "error_msg": None}
+
+
+def test_transport_timeout_is_a_sanitized_observation() -> None:
+    opener = Mock()
+    opener.open.side_effect = urllib.error.URLError(TimeoutError("timed out"))
+    status, body, headers = fgscr42_audit._request_bytes(
+        "https://example.invalid", opener=opener
+    )
+    assert status == 0
+    assert body == b""
+    assert headers == {"X-Audit-Transport-Error": "TimeoutError"}
 
 
 def test_decision_requires_corpus_and_exact_split() -> None:

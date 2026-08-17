@@ -178,6 +178,9 @@ def _request_bytes(
             return int(response.status), response.read(), dict(response.headers.items())
     except urllib.error.HTTPError as error:
         return int(error.code), error.read(), dict(error.headers.items())
+    except (TimeoutError, urllib.error.URLError) as error:
+        reason = error.reason if isinstance(error, urllib.error.URLError) else error
+        return 0, b"", {"X-Audit-Transport-Error": type(reason).__name__}
 
 
 def _request_json(
@@ -420,6 +423,7 @@ def _probe_ranges(
                         "http_status": status,
                         "response_bytes": len(body),
                         "content_type": headers.get("Content-Type"),
+                        "transport_error": headers.get("X-Audit-Transport-Error"),
                         **error,
                         "archive_byte_returned": status in {200, 206} and len(body) > 0,
                     }
