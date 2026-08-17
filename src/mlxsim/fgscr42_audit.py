@@ -22,11 +22,28 @@ DEFAULT_CONFIG = PROJECT_ROOT / "configs/analysis/fgscr42_input_audit_v1.yaml"
 DEFAULT_USER_AGENT = "MLX-paper-reproduction/0.1 public-input-audit"
 
 
+def _deep_merge(base: Mapping[str, Any], override: Mapping[str, Any]) -> dict[str, Any]:
+    merged = dict(base)
+    for key, value in override.items():
+        if key == "extends":
+            continue
+        if isinstance(value, Mapping) and isinstance(merged.get(key), Mapping):
+            merged[key] = _deep_merge(merged[key], value)
+        else:
+            merged[key] = value
+    return merged
+
+
 def load_input_audit_config(path: str | Path = DEFAULT_CONFIG) -> dict[str, Any]:
     """Load the frozen H21 manifest."""
 
-    with Path(path).open(encoding="utf-8") as handle:
-        return yaml.safe_load(handle)
+    manifest_path = Path(path)
+    with manifest_path.open(encoding="utf-8") as handle:
+        config = yaml.safe_load(handle)
+    if "extends" not in config:
+        return config
+    base_path = PROJECT_ROOT / str(config["extends"])
+    return _deep_merge(load_input_audit_config(base_path), config)
 
 
 def sha256_file(path: str | Path) -> str:
@@ -360,6 +377,18 @@ def _replace_host(url: str, host: str) -> str:
     )
 
 
+def canonical_share_init(short_url: str) -> tuple[str, str]:
+    """Convert `/s/1TOKEN` into the TOKEN-only share-init endpoint contract."""
+
+    path = urllib.parse.urlsplit(short_url).path
+    prefix = "/s/1"
+    if not path.startswith(prefix) or len(path) <= len(prefix):
+        raise ValueError("expected a Baidu short URL with /s/1TOKEN")
+    verify_surl = path[len(prefix) :]
+    init_url = f"https://pan.baidu.com/share/init?surl={verify_surl}"
+    return verify_surl, init_url
+
+
 def _probe_ranges(
     dlink: str,
     *,
@@ -424,7 +453,11 @@ def audit_baidu_share(
     timeout = float(baidu["timeout_seconds"])
     jar = http.cookiejar.CookieJar()
     opener = urllib.request.build_opener(urllib.request.HTTPCookieProcessor(jar))
-    _request_bytes(str(share["url"]), opener=opener, timeout=timeout)
+    if baidu.get("verify_surl_rule") == "strip_short_link_literal_prefix_1":
+        verify_surl, init_url = canonical_share_init(str(share["url"]))
+    else:
+        verify_surl, init_url = str(share["surl"]), str(share["url"])
+    _request_bytes(init_url, opener=opener, timeout=timeout)
 
     common = {
         "channel": "chunlei",
@@ -434,13 +467,26 @@ def audit_baidu_share(
     }
     verify_url = _query_url(
         str(baidu["verify_endpoint"]),
-        {**common, "surl": share["surl"], "t": int(time.time() * 1000)},
+        {
+            **common,
+            "surl": verify_surl,
+            "t": int(time.time() * 1000),
+            **baidu.get("verify_extra_query", {}),
+        },
     )
     verify_data = urllib.parse.urlencode(
         {"pwd": share["public_passcode"], "vcode": "", "vcode_str": ""}
     ).encode()
     verify_status, verify_payload = _request_json(
-        verify_url, opener=opener, data=verify_data, timeout=timeout
+        verify_url,
+        opener=opener,
+        data=verify_data,
+        headers={
+            "Referer": init_url,
+            "X-Requested-With": "XMLHttpRequest",
+            "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8",
+        },
+        timeout=timeout,
     )
 
     list_url = _query_url(

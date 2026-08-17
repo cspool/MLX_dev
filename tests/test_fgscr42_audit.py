@@ -1,9 +1,12 @@
 import base64
+from pathlib import Path
 
 from mlxsim.fgscr42_audit import (
+    canonical_share_init,
     classify_download_value,
     compare_share_metadata,
     evaluate_input_decision,
+    load_input_audit_config,
     parse_pcs_error,
 )
 
@@ -14,6 +17,23 @@ def test_download_value_classification_does_not_need_raw_value() -> None:
     assert classify_download_value("https://example.invalid/file") == "https_url"
     assert classify_download_value(None) == "missing"
     assert classify_download_value("not base64!") == "opaque_string"
+
+
+def test_v2_manifest_extends_v1_without_losing_frozen_sources() -> None:
+    config = load_input_audit_config(
+        Path("configs/analysis/fgscr42_input_audit_v2.yaml")
+    )
+    assert config["run"]["id"] == "run_025"
+    assert config["shares"]["official"]["fs_id"] == 90324070156283
+    assert config["baidu"]["verify_surl_rule"] == "strip_short_link_literal_prefix_1"
+
+
+def test_short_link_normalizes_to_token_only_init_url() -> None:
+    surl, init_url = canonical_share_init(
+        "https://pan.baidu.com/s/1eXplDfB5fCBPm7WMcFKZkg"
+    )
+    assert surl == "eXplDfB5fCBPm7WMcFKZkg"
+    assert init_url == "https://pan.baidu.com/share/init?surl=eXplDfB5fCBPm7WMcFKZkg"
 
 
 def test_share_metadata_matches_frozen_object() -> None:
