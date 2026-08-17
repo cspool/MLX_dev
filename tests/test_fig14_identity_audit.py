@@ -39,9 +39,19 @@ def base_observation() -> dict:
     }
 
 
-def test_preflight_binds_exact_figure_and_requires_observation_absent() -> None:
-    report = audit.preflight(load_config(), require_observation_absent=True)
-    assert report["pass"] is True
+def test_preflight_binds_exact_figure_and_tracks_frozen_artifacts() -> None:
+    config = load_config()
+    observation = PROJECT_ROOT / config["run"]["observation"]
+    output = PROJECT_ROOT / config["run"]["output"]
+    report = audit.preflight(
+        config, require_observation_absent=not observation.exists()
+    )
+    assert report["checks"]["observation_state"] is True
+    assert report["checks"]["output_absent"] is (not output.exists())
+    assert all(
+        value for name, value in report["checks"].items() if name != "output_absent"
+    )
+    assert report["pass"] is (not output.exists())
     assert report["figure14"]["actual_image"] == {
         "width": 266,
         "height": 213,

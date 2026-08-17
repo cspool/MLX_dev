@@ -52,7 +52,7 @@ literature:
     - "The paper omits many low-level latency, SRAM, DRAM, compiler schedule, and calibration parameters."
     - "Several plots must be digitized from raster figures before numerical reproduction can be audited."
   evidence_gaps:
-    - "H34 supports SimICT only at citation level; primary-text access gaps leave the DFU-E/M2-DFU family and exact taped-out parent unresolved."
+    - "H34-H36 support SimICT only at citation level; first-party access recovery and the supplied Fig. 14 text audit add no explicit derivation, leaving the DFU-E/M2-DFU family and exact taped-out parent unresolved."
     - "Need identify exact open GPU simulator suitable for the H100/Orin/Xavier comparison."
     - "Need recover all per-point targets from Figures 2, 3, and 15-25."
     - "No public evidence links MLX to Assassyn beyond related mechanisms and a shared author; MLX-specific tags, skip hops, and workload mapping are absent."
@@ -271,7 +271,7 @@ hypotheses:
     priority: high
   - id: H36
     statement: "The supplied Fig. 14 floorplan raster contains a clearly legible chip/project/family identifier or at least two exact parent-hardware values omitted from the Markdown extraction."
-    status: pending
+    status: rejected
     motivation: "Test the final supplied primary-source route for exact origin without inferring identity from floorplan layout resemblance."
     parent: H34
     priority: high
@@ -280,7 +280,7 @@ experiments:
   proxy_metric: "Maximum absolute percentage error across every numeric paper anchor; pass only when each reproducible point is <=10%, with unavailable measurements explicitly classified rather than fabricated."
   baseline_value: 0.2486
   best_value: 0.0123
-  total_runs: 38
+  total_runs: 39
   trajectory:
     - run_id: "run_001"
       hypothesis: "H2"
@@ -548,11 +548,18 @@ experiments:
       wall_time_min: 0.1
       change_summary: "First-party source recovery rejected: 17 fixed Crossref/IEEE/ACM/DOI/UCAS representations recover zero feature-eligible DFU-E/M2-DFU primary texts; UCAS HTML establishes identity only, family remains inconclusive, and exact parent unresolved."
       timestamp: "2026-08-17"
+    - run_id: "run_041"
+      hypothesis: "H36"
+      metric_value: 1.0
+      delta: null
+      wall_time_min: 0.1
+      change_summary: "One frozen original-detail Fig. 14 inspection is schema-valid but finds zero clear non-generic identifiers, zero numeric parent values, and zero exact-parent candidates; H36 is rejected and the supplied-figure origin route closes."
+      timestamp: "2026-08-17"
 
 outer_loop:
-  cycle: 20
-  last_direction: "Audit the user-supplied Fig. 14 full-chip floorplan raster for explicit legible chip/family text or exact hardware labels omitted from Markdown. Use only image text/labels, not visual resemblance, and retain H34's exact-parent gates."
-  last_reflection: "H35 executes every frozen first-party representation with full integrity and recovers zero feature-eligible DFU-E/M2-DFU text. IEEE PDF links resolve to HTML shells, all ACM representations return 403, and DOI landings are 26-word HTTP-202 shells. HTML-only UCAS succeeds and formally identifies DFU-E, M2-DFU, and the transfer paper, but remains a bibliography with no derivation claim. Stop network representation variants. Before closing exact origin entirely, inspect the supplied primary floorplan raster for an explicit identifier lost during text extraction."
+  cycle: 21
+  last_direction: "Build a clean, machine-auditable full-paper completion certificate from the frozen inventory, immutable results, and lightweight executable reproduction suite. Verify that every paper item is bound to evidence and classified as reproduced, rejected, replay-only, or publicly blocked without reopening stopped origin/training/native-hardware variants."
+  last_reflection: "H36's only permitted original-detail view is inspectable but contains no clearly transcribable identifier or numeric parent value. With H33-H36, exact-artifact search, accessible lineage sources, record-derived publisher representations, and supplied-figure text are exhausted. Family attribution remains access-limited, exact parent unresolved, and code provenance unsupported. Stop provenance variants unless genuinely new primary evidence appears; next consolidate and execute the repository-wide completion audit."
 
 workspace:
   findings: "findings.md"
