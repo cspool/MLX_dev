@@ -1,0 +1,44 @@
+name: gpgpusim-xavier-proxy-v1
+experiment_id: H56
+run_id: run062
+classification: mechanism_confirmatory_gpu_proxy_no_paper_target
+
+parent:
+  path: artifacts/results/gpgpusim-rtx3090-proxy-run057.json
+  sha256: 4b654a898455057240ac9fd0c3e6efbb382b8eec394c609f0dd1e0629a1bf358
+  required_status: supported
+  required_integrity: true
+
+source:
+  base_config: third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/configs/tested-cfgs/SM7_TITANV/gpgpusim.config
+  interconnect: third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/configs/tested-cfgs/SM7_TITANV/config_volta_islip.icnt
+  nvidia_specs:
+    product: https://www.nvidia.com/autonomous-machines/embedded-systems/jetson-agx-xavier/
+    technical_blog: https://developer.nvidia.com/blog/nvidia-jetson-agx-xavier-32-teraops-ai-robotics/
+
+registered_substitutions:
+  - {field: gpgpu_n_clusters, from: 40, to: 8}
+  - {field: gpgpu_n_cores_per_cluster, from: 2, to: 1}
+  - {field: gpgpu_n_mem, from: 24, to: 16}
+  - {field: clocks, from: '1200.0:1200.0:1200.0:850.0', to: '1377:1377:1377:2133'}
+
+toolchain:
+  CUDA: 11.8
+  PTX: compute_70
+  simulator: GPGPU_Sim_detailed_PTX
+  timing_template: tested_SM7_TITANV
+  actual_Xavier_compute_capability: 7.2
+  simulated_compute_capability: 7.0
+
+workloads:
+  vectoradd: {elements: 1024, parameter: 1}
+  bsmm: {elements: 10496, parameter: 4}
+  fft: {elements: 10496, parameter: 4}
+  swa: {elements: 10496, parameter: 16}
+
+source_layout:
+  config_builder: scripts/build_gpgpusim_xavier_config.py
+  runner: scripts/run_gpgpusim_xavier_proxy.sh
+  auditor: scripts/audit_gpgpusim_xavier_proxy.py
+
+result_path: artifacts/results/gpgpusim-xavier-proxy-run062.json
