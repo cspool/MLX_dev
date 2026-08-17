@@ -24,3 +24,7 @@ inferred MLX candidate rather than author-source implementation evidence.
 
 The target-free mechanism result is
 `artifacts/results/multiport-spad-run074.json`.
+
+Its frozen comparison is reported in
+[`multiport-fig23-transfer.md`](multiport-fig23-transfer.md): the mechanism
+improves to 7/15 but remains outside the strict gate.
