@@ -48,12 +48,18 @@ python scripts/audit_quality_inputs.py --output artifacts/environment/quality-in
 The frozen native perplexity runner consumes only local, audited inputs. For example:
 
 ```bash
-python scripts/evaluate_perplexity.py \
+scripts/bootstrap_internlm_eval.sh
+PYTHONPATH=src CUDA_VISIBLE_DEVICES=1 \
+  third_party/envs/internlm441/bin/python scripts/evaluate_perplexity.py \
   --model third_party/models/internlm2-7b-msdownload \
   --dataset-parquet third_party/data/wikitext-msdownload/wikitext-2-raw-v1/test-00000-of-00001.parquet \
-  --sequence-length 1024 --device cuda:1 \
+  --sequence-length 1024 --device cuda:0 \
   --output artifacts/results/internlm2-wikitext2.json
 ```
+
+The separate environment is intentional: the checkpoint declares Transformers
+4.41.0, while its remote model code produces incompatible logits under the main
+Transformers 5 training stack.
 
 The pre-registered BERT-base/SQuAD 1.1 baseline (H11) uses the fully pinned
 recipe in `configs/training/bert_squad_baseline_v1.yaml`:

@@ -6,6 +6,7 @@ import json
 from pathlib import Path
 
 import bitsandbytes as bnb
+import einops
 import google.protobuf
 import modelscope
 import torch
@@ -88,6 +89,7 @@ def main() -> int:
         "protobuf": google.protobuf.__version__,
         "accelerate": accelerate_version,
         "datasets": datasets_version,
+        "einops": einops.__version__,
         "modelscope": modelscope.__version__,
         "bitsandbytes": bnb.__version__,
         "cuda_available": torch.cuda.is_available(),
