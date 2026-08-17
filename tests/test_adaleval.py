@@ -1,11 +1,15 @@
 import json
+import math
 from pathlib import Path
 
 from mlxsim.adaleval import (
     aggregate_records,
+    aggregate_replicate_records,
     build_stackselect_prompt,
     extract_stackselect_answer,
+    fixed_replication_seed,
     load_stackselect,
+    replication_seed_stream_sha256,
     utf8_stream_sha256,
     validate_generation_result,
     wrap_internlm2_prompt,
@@ -110,3 +114,49 @@ def test_generation_result_validation_rejects_engine_garbage() -> None:
         assert "outside valid bounds" in str(error)
     else:
         raise AssertionError("invalid TurboMind response was accepted")
+
+
+def test_registered_replication_seed_stream_is_stable() -> None:
+    namespace = "H31|internlm2-adaleval-4k"
+    assert fixed_replication_seed(namespace, 0, 0) == 16_401_114_298_343_750_778
+    assert fixed_replication_seed(namespace, 2, 999) == 16_069_441_306_084_588_667
+    assert (
+        replication_seed_stream_sha256(
+            namespace, replicate_count=3, rows_per_replicate=1000
+        )
+        == "daa62375cb5a52782118a93beebf45ba21eb2544fb803e2a7484544a4bb945b0"
+    )
+
+
+def test_replicate_aggregate_uses_all_registered_draws() -> None:
+    records = []
+    for replicate, correct_positions in enumerate(({0, 1}, {0}, {1})):
+        for position in range(2):
+            correct = position in correct_positions
+            records.append(
+                {
+                    "replicate": replicate,
+                    "dataset_position": position,
+                    "correct": correct,
+                    "extracted": "A1" if correct else "A2",
+                }
+            )
+    report = aggregate_replicate_records(
+        records,
+        replicate_count=3,
+        rows_per_replicate=2,
+        paper_target=100.0 * 4 / 6,
+        official_target=100.0 * 4 / 6,
+        tolerance=0.10,
+    )
+    assert report["total_correct"] == 4
+    assert report["mean_accuracy_pct"] == 100.0 * 4 / 6
+    assert math.isclose(
+        report["sample_mean_accuracy_pct"],
+        100.0 * 4 / 6,
+        rel_tol=0.0,
+        abs_tol=1e-12,
+    )
+    assert report["primary_pass"] is True
+    assert report["unanimous_prediction_positions"] == 0
+    assert report["unanimous_correctness_positions"] == 0

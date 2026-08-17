@@ -253,6 +253,144 @@ def validate_generation_result(
         )
 
 
+def fixed_replication_seed(namespace: str, replicate: int, position: int) -> int:
+    """Derive a timing-independent unsigned 64-bit seed from stable labels."""
+    if replicate < 0 or position < 0:
+        raise ValueError("replicate and position must be non-negative")
+    payload = (
+        f"{namespace}|replicate={replicate}|position={position}".encode("ascii")
+    )
+    return int.from_bytes(hashlib.sha256(payload).digest()[:8], "big")
+
+
+def replication_seed_stream_sha256(
+    namespace: str, *, replicate_count: int, rows_per_replicate: int
+) -> str:
+    """Hash replicate-major fixed seeds as unsigned big-endian uint64 values."""
+    digest = hashlib.sha256()
+    for replicate in range(replicate_count):
+        for position in range(rows_per_replicate):
+            seed = fixed_replication_seed(namespace, replicate, position)
+            digest.update(seed.to_bytes(8, "big"))
+    return digest.hexdigest()
+
+
+def aggregate_replicate_records(
+    records: Sequence[Mapping[str, Any]],
+    *,
+    replicate_count: int,
+    rows_per_replicate: int,
+    paper_target: float,
+    official_target: float,
+    tolerance: float,
+) -> dict[str, Any]:
+    """Aggregate equal-sized stochastic replicates without favorable selection."""
+    keys = [
+        (int(record["replicate"]), int(record["dataset_position"]))
+        for record in records
+    ]
+    if len(keys) != len(set(keys)):
+        raise ValueError("duplicate replicate/position records")
+
+    replicate_reports: dict[str, dict[str, Any]] = {}
+    accuracies: list[float] = []
+    by_replicate_position: dict[tuple[int, int], Mapping[str, Any]] = {}
+    for record in records:
+        key = (int(record["replicate"]), int(record["dataset_position"]))
+        by_replicate_position[key] = record
+
+    for replicate in range(replicate_count):
+        selected = [
+            record for record in records if int(record["replicate"]) == replicate
+        ]
+        if len(selected) != rows_per_replicate:
+            raise ValueError(
+                f"replicate {replicate} has {len(selected)} records, "
+                f"expected {rows_per_replicate}"
+            )
+        positions = sorted(int(record["dataset_position"]) for record in selected)
+        if positions != list(range(rows_per_replicate)):
+            raise ValueError(f"replicate {replicate} positions are incomplete")
+        correct = sum(bool(record["correct"]) for record in selected)
+        accuracy_pct = 100.0 * correct / rows_per_replicate
+        accuracies.append(accuracy_pct)
+        replicate_reports[str(replicate)] = {
+            "rows": rows_per_replicate,
+            "correct": correct,
+            "accuracy_pct": accuracy_pct,
+            "sample_mean_accuracy_pct": 100.0
+            * statistics.fmean(float(bool(record["correct"])) for record in selected),
+            "standard_error_pct": 100.0
+            * math.sqrt(
+                (accuracy_pct / 100.0)
+                * (1.0 - accuracy_pct / 100.0)
+                / rows_per_replicate
+            ),
+            "unextracted": sum(record["extracted"] == "???" for record in selected),
+        }
+
+    expected_total = replicate_count * rows_per_replicate
+    if len(records) != expected_total:
+        raise ValueError(f"got {len(records)} records, expected {expected_total}")
+    correct = sum(bool(record["correct"]) for record in records)
+    mean_accuracy_pct = 100.0 * correct / expected_total
+
+    unanimous_predictions = 0
+    unanimous_correctness = 0
+    for position in range(rows_per_replicate):
+        position_records = [
+            by_replicate_position[(replicate, position)]
+            for replicate in range(replicate_count)
+        ]
+        if len({str(record["extracted"]) for record in position_records}) == 1:
+            unanimous_predictions += 1
+        if len({bool(record["correct"]) for record in position_records}) == 1:
+            unanimous_correctness += 1
+
+    pairwise: dict[str, Any] = {}
+    for left in range(replicate_count):
+        for right in range(left + 1, replicate_count):
+            pairs = [
+                (
+                    by_replicate_position[(left, position)],
+                    by_replicate_position[(right, position)],
+                )
+                for position in range(rows_per_replicate)
+            ]
+            pairwise[f"{left}-{right}"] = {
+                "prediction_agreement": sum(
+                    str(a["extracted"]) == str(b["extracted"]) for a, b in pairs
+                ),
+                "correctness_agreement": sum(
+                    bool(a["correct"]) == bool(b["correct"]) for a, b in pairs
+                ),
+            }
+
+    paper_error = relative_error(mean_accuracy_pct, paper_target)
+    official_error = relative_error(mean_accuracy_pct, official_target)
+    return {
+        "replicates": replicate_reports,
+        "total_records": len(records),
+        "total_correct": correct,
+        "mean_accuracy_pct": mean_accuracy_pct,
+        "sample_mean_accuracy_pct": 100.0
+        * statistics.fmean(float(bool(record["correct"])) for record in records),
+        "replicate_min_accuracy_pct": min(accuracies),
+        "replicate_max_accuracy_pct": max(accuracies),
+        "between_replicate_sample_std_pct": statistics.stdev(accuracies),
+        "paper_target_pct": paper_target,
+        "paper_relative_error": paper_error,
+        "paper_pass": paper_error <= tolerance,
+        "official_target_pct": official_target,
+        "official_relative_error": official_error,
+        "official_pass": official_error <= tolerance,
+        "primary_pass": paper_error <= tolerance and official_error <= tolerance,
+        "unanimous_prediction_positions": unanimous_predictions,
+        "unanimous_correctness_positions": unanimous_correctness,
+        "pairwise": pairwise,
+    }
+
+
 def extract_stackselect_answer(prediction: str, num_choice: int) -> str:
     designations = [f"A{i}" for i in range(1, num_choice + 1)]
     finds = [prediction.find(candidate) for candidate in designations]
