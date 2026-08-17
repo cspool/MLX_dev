@@ -1,0 +1,189 @@
+{
+  "audit_integrity": true,
+  "classification": "target_free_matched_projection_estimator",
+  "coverage": {
+    "excluded": {
+      "attention": "requires_fft_and_compressed_attention_anchors"
+    },
+    "kernels": [
+      "qkv",
+      "ffn1",
+      "ffn2"
+    ],
+    "sequence_lengths": [
+      256,
+      8192
+    ]
+  },
+  "estimates": {
+    "ffn1-N256": {
+      "logical_fma_equivalents": 3607101440.0,
+      "logical_offchip_bytes": 35913728.0,
+      "logical_output_elements": 2818048,
+      "mlx_cycles": 23483738.333333336,
+      "mlx_full_simd32_trips": 469674.6666666667,
+      "sparse_cuda_speedup": 2.020893436898263,
+      "xavier_cycles": 65349848.68888889
+    },
+    "ffn1-N8192": {
+      "logical_fma_equivalents": 115427246080.0,
+      "logical_offchip_bytes": 275644416.0,
+      "logical_output_elements": 90177536,
+      "mlx_cycles": 751479471.6666667,
+      "mlx_full_simd32_trips": 15029589.333333334,
+      "sparse_cuda_speedup": 2.0208205548587723,
+      "xavier_cycles": 2091119309.3111112
+    },
+    "ffn2-N256": {
+      "logical_fma_equivalents": 3607101440.0,
+      "logical_offchip_bytes": 35913728.0,
+      "logical_output_elements": 1048576,
+      "mlx_cycles": 23483738.333333336,
+      "mlx_full_simd32_trips": 469674.6666666667,
+      "sparse_cuda_speedup": 2.020893436898263,
+      "xavier_cycles": 65349848.68888889
+    },
+    "ffn2-N8192": {
+      "logical_fma_equivalents": 115427246080.0,
+      "logical_offchip_bytes": 275644416.0,
+      "logical_output_elements": 33554432,
+      "mlx_cycles": 751479471.6666667,
+      "mlx_full_simd32_trips": 15029589.333333334,
+      "sparse_cuda_speedup": 2.0208205548587723,
+      "xavier_cycles": 2091119309.3111112
+    },
+    "qkv-N256": {
+      "logical_fma_equivalents": 4026531840.0,
+      "logical_offchip_bytes": 39845888.0,
+      "logical_output_elements": 3145728,
+      "mlx_cycles": 26214405.0,
+      "mlx_full_simd32_trips": 524288.0,
+      "sparse_cuda_speedup": 2.020885600121266,
+      "xavier_cycles": 72948383.8
+    },
+    "qkv-N8192": {
+      "logical_fma_equivalents": 128849018880.0,
+      "logical_offchip_bytes": 299892736.0,
+      "logical_output_elements": 100663296,
+      "mlx_cycles": 838860805.0,
+      "mlx_full_simd32_trips": 16777216.0,
+      "sparse_cuda_speedup": 2.020820309959395,
+      "xavier_cycles": 2334272432.8666663
+    }
+  },
+  "experiment_id": "H77",
+  "frozen_inputs": {
+    "logical_work": {
+      "bytes": 14034,
+      "checks": {
+        "is_file": true,
+        "sha256": true
+      },
+      "pass": true,
+      "path": "artifacts/results/fig20-workload-identity-run080.json",
+      "sha256": "464215470b8d56f944d85bf9ef419fddb3977072b1511735e9adc9ddc16b66af"
+    },
+    "mlx_anchors": {
+      "bytes": 154240,
+      "checks": {
+        "is_file": true,
+        "sha256": true
+      },
+      "pass": true,
+      "path": "artifacts/results/fig24-fu-rerun-run078.json",
+      "sha256": "c25a72a32d8ed37bbb9d09b0747167c712f7fbbf5c0ca54edc580e9a6c0203c1"
+    },
+    "repeat_model": {
+      "bytes": 12448,
+      "checks": {
+        "is_file": true,
+        "sha256": true
+      },
+      "pass": true,
+      "path": "artifacts/results/repeat-folding-run081.json",
+      "sha256": "8aff122ca8a7c797030742c0035cf18626962c746d105c57dd2136bacaa6b3d6"
+    },
+    "xavier_anchors": {
+      "bytes": 7991,
+      "checks": {
+        "is_file": true,
+        "sha256": true
+      },
+      "pass": true,
+      "path": "artifacts/results/fig20-sparse-xavier-run063.json",
+      "sha256": "5688d439bbe21b68380238b60b983bcb59236368c63056524a8d66ffdd36a4e2"
+    }
+  },
+  "generated_at": "2026-08-17T21:42:53.510261+00:00",
+  "hypothesis_status": "supported",
+  "integrity_checks": {
+    "attention_excluded": true,
+    "coverage": true,
+    "frozen_files": true,
+    "mlx_anchor_validation": true,
+    "parents": true,
+    "positive_models": true,
+    "targets_consumed": false
+  },
+  "mlx_model": {
+    "fma_equivalents_per_full_simd32_trip": 7680,
+    "intercept": 5.0,
+    "slope_cycles_per_trip": 50.0,
+    "validation": [
+      {
+        "actual_cycles": 805.0,
+        "key": "qkv_bsmm_b32--Llama2_4K",
+        "predicted_cycles": 805.0,
+        "relative_error": 0.0
+      },
+      {
+        "actual_cycles": 805.0,
+        "key": "qkv_bsmm_b32--BERT_8K",
+        "predicted_cycles": 805.0,
+        "relative_error": 0.0
+      }
+    ]
+  },
+  "parent_checks": {
+    "logical_work": true,
+    "mlx_anchors": true,
+    "repeat_model": true,
+    "xavier_anchors": true
+  },
+  "project_commit": "a3d8396a63e695cecd09c50e6607d1758ee9ab84",
+  "run_id": "run082",
+  "schema_version": 1,
+  "source_files": {
+    "auditor": {
+      "path": "scripts/audit_matched_projection_estimator.py",
+      "sha256": "621a79afd8f13206449fd8c6e8958f210fa1d650e64f5e39c7097cd6920d86d0"
+    },
+    "repeat_module": {
+      "path": "src/mlxsim/repeat_folding.py",
+      "sha256": "827aaf92240c2fa4bdc0239655327861fcbddbbbdcce904c47d468d10d901c51"
+    }
+  },
+  "summary": {
+    "covered_projection_points": 6,
+    "excluded_attention_points": 2,
+    "logical_fma_exact": true,
+    "max_mlx_anchor_relative_error": 0.0
+  },
+  "validation_eligible": false,
+  "xavier_model": {
+    "anchors": [
+      [
+        15360.0,
+        2725.0,
+        "artifacts/environment/h57/runs/xavier/bsmm--short/measurement.json"
+      ],
+      [
+        245760.0,
+        6899.0,
+        "artifacts/environment/h57/runs/xavier/bsmm--long/measurement.json"
+      ]
+    ],
+    "intercept": 2446.7333333333336,
+    "slope_cycles_per_fma": 0.018116319444444445
+  }
+}
