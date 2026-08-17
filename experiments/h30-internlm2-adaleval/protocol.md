@@ -65,10 +65,22 @@ stored answer and report the unweighted percentage over all 1,000 rows.
 
 ## Historical inference semantics
 
-Launch two ranks on the two physical RTX 4090 GPUs. For each setting, preserve
-the official tups[rank::world_size] even/odd partition and process requests
-sequentially. Instantiate TurbomindEngineConfig with only
-rope_scaling_factor=2.0 and session_len=160000 changed from defaults.
+Launch two ranks on the two physical RTX 4090 GPUs. LMDeploy 0.2.6 internally
+resets its TurboMind device index to zero, so isolate each rank in a one-device
+CUDA_VISIBLE_DEVICES namespace rather than relying on torch.cuda.set_device.
+For each setting, preserve the official tups[rank::world_size] even/odd
+partition and process requests sequentially. Instantiate
+TurbomindEngineConfig with rope_scaling_factor=2.0. The official runner asks
+for session_len=160000. Before any valid model response, a compatibility smoke
+showed that LMDeploy 0.2.6 couples that logical limit to 160k-token prefill
+buffers: after reserving 438 16-MiB KV blocks, the first instance exhausted a
+24-GB RTX 4090 and the old background thread silently created a zero-capacity
+replacement. H30 therefore freezes an effective session_len=8192 as a
+target-independent hardware cap. The audited maximum request is only
+4,451+512=4,963 tokens and max_prefill_token_num remains 8,192, so every H30
+request has the same tokens, positions, single-prefill path, and generation
+limit as under 160,000. Both the official and effective capacities are
+recorded and gated.
 
 The official pipe(prompt) call in LMDeploy 0.2.6 constructs max_new_tokens=512,
 top_k=40, top_p=0.8, temperature=0.8, repetition_penalty=1.0,
@@ -104,7 +116,11 @@ only after exactly 3,000 unique sample records pass qualification.
 
 After implementation, one fixed prompt per rank may be generated to verify
 historical TurboMind compatibility. Smoke predictions are not persisted and
-cannot alter any frozen choice.
+cannot alter any frozen choice. A response is accepted only when its input
+length exactly matches the independently tokenized wrapped prompt, its output
+length is in [1, 512], and its final stop/length reason is internally
+consistent. This rejects LMDeploy 0.2.6's uninitialized return object when a
+background TurboMind request is rejected.
 
 After any smoke or formal output, do not change the checkpoint, subset, prompt,
 template, engine version, generation defaults, seed distribution, or extractor

@@ -33,6 +33,8 @@ from mlxsim.adaleval import (
     prompt_canary_checks,
     qualify_file,
     sha256_file,
+    validate_generation_result,
+    wrap_internlm2_prompt,
 )
 
 DEFAULT_CONFIG = PROJECT_ROOT / "configs/analysis/internlm2_adaleval_v1.yaml"
@@ -43,6 +45,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--config", type=Path, default=DEFAULT_CONFIG)
     parser.add_argument("--smoke", action="store_true")
     parser.add_argument("--preflight-only", action="store_true")
+    parser.add_argument("--worker-rank", type=int, choices=[0, 1])
     return parser.parse_args()
 
 
@@ -238,6 +241,33 @@ def preflight(config: dict[str, Any]) -> dict[str, Any]:
         audit["pass"] = all(checks.values())
         prompt_audits[setting] = audit
 
+    inference = config["inference"]
+    maximum_prompt_tokens = max(
+        int(audit["wrapped_token_length"]["max"])
+        for audit in prompt_audits.values()
+    )
+    required_session_tokens = maximum_prompt_tokens + int(
+        inference["request_output_len"]
+    )
+    capacity_checks = {
+        "effective_covers_every_request": int(inference["effective_session_len"])
+        >= required_session_tokens,
+        "effective_not_above_official": int(inference["effective_session_len"])
+        <= int(inference["official_session_len"]),
+        "every_prompt_is_single_prefill": maximum_prompt_tokens
+        <= int(inference["max_prefill_token_num"]),
+    }
+    inference_capacity = {
+        "official_session_len": int(inference["official_session_len"]),
+        "effective_session_len": int(inference["effective_session_len"]),
+        "maximum_prompt_tokens": maximum_prompt_tokens,
+        "request_output_len": int(inference["request_output_len"]),
+        "required_session_tokens": required_session_tokens,
+        "max_prefill_token_num": int(inference["max_prefill_token_num"]),
+        "checks": capacity_checks,
+        "pass": all(capacity_checks.values()),
+    }
+
     checks = {
         "paper_target": paper_target["pass"],
         "official_source": official_source["pass"],
@@ -246,6 +276,7 @@ def preflight(config: dict[str, Any]) -> dict[str, Any]:
         "lmdeploy_sources": lmdeploy_sources["pass"],
         "runtime": runtime["pass"],
         "prompt_audits": all(item["pass"] for item in prompt_audits.values()),
+        "inference_capacity": inference_capacity["pass"],
     }
     return {
         "paper_target": paper_target,
@@ -255,6 +286,7 @@ def preflight(config: dict[str, Any]) -> dict[str, Any]:
         "lmdeploy_sources": lmdeploy_sources,
         "runtime": runtime,
         "prompt_audits": prompt_audits,
+        "inference_capacity": inference_capacity,
         "checks": checks,
         "pass": all(checks.values()),
     }
@@ -287,14 +319,22 @@ def run_inference(
     smoke: bool,
 ) -> None:
     import torch
-    from lmdeploy import GenerationConfig, TurbomindEngineConfig, pipeline
+    from lmdeploy import GenerationConfig, Tokenizer, TurbomindEngineConfig, pipeline
 
     model_root = PROJECT_ROOT / config["model"]["historical_view_root"]
+    if torch.cuda.device_count() != 1:
+        raise RuntimeError(
+            f"isolated H30 worker must see one GPU, got {torch.cuda.device_count()}"
+        )
+    if torch.cuda.get_device_name(0) != config["runtime"]["gpu_name"]:
+        raise RuntimeError("isolated H30 worker GPU identity mismatch")
+    torch.cuda.set_device(0)
     backend_config = TurbomindEngineConfig(
         rope_scaling_factor=float(config["inference"]["rope_scaling_factor"]),
-        session_len=int(config["inference"]["session_len"]),
+        session_len=int(config["inference"]["effective_session_len"]),
     )
     pipe = pipeline(str(model_root), backend_config=backend_config, log_level="INFO")
+    tokenizer = Tokenizer(str(model_root))
     dataset_root = PROJECT_ROOT / config["datasets"]["root"]
 
     if smoke:
@@ -313,8 +353,21 @@ def run_inference(
             ignore_eos=bool(config["inference"]["ignore_eos"]),
             random_seed=seed,
         )
+        prompt = build_stackselect_prompt(item)
+        expected_input_token_len = len(
+            tokenizer.encode(wrap_internlm2_prompt(prompt))
+        )
         with torch.no_grad():
-            response = pipe(build_stackselect_prompt(item), gen_config=generation)
+            response = pipe(prompt, gen_config=generation)
+        finish_reason = response_finish_reason(response)
+        validate_generation_result(
+            text=response.text,
+            input_token_len=int(response.input_token_len),
+            generate_token_len=int(response.generate_token_len),
+            finish_reason=finish_reason,
+            expected_input_token_len=expected_input_token_len,
+            max_new_tokens=int(config["inference"]["request_output_len"]),
+        )
         print(
             json.dumps(
                 {
@@ -325,6 +378,7 @@ def run_inference(
                     "seed": seed,
                     "input_token_len": int(response.input_token_len),
                     "generate_token_len": int(response.generate_token_len),
+                    "finish_reason": finish_reason,
                     "extracted": extract_stackselect_answer(
                         response.text, len(item["all_answers"])
                     ),
@@ -355,9 +409,21 @@ def run_inference(
                     random_seed=seed,
                 )
                 prompt = build_stackselect_prompt(item)
+                expected_input_token_len = len(
+                    tokenizer.encode(wrap_internlm2_prompt(prompt))
+                )
                 started = time.perf_counter()
                 with torch.no_grad():
                     response = pipe(prompt, gen_config=generation)
+                finish_reason = response_finish_reason(response)
+                validate_generation_result(
+                    text=response.text,
+                    input_token_len=int(response.input_token_len),
+                    generate_token_len=int(response.generate_token_len),
+                    finish_reason=finish_reason,
+                    expected_input_token_len=expected_input_token_len,
+                    max_new_tokens=int(config["inference"]["request_output_len"]),
+                )
                 prediction = response.text
                 extracted = extract_stackselect_answer(
                     prediction, len(item["all_answers"])
@@ -373,7 +439,7 @@ def run_inference(
                     "random_seed": seed,
                     "input_token_len": int(response.input_token_len),
                     "generate_token_len": int(response.generate_token_len),
-                    "finish_reason": response_finish_reason(response),
+                    "finish_reason": finish_reason,
                     "prediction": prediction,
                     "extracted": extracted,
                     "correct": extracted == item["answer"],
@@ -510,6 +576,47 @@ def write_aggregate_report(
     return bool(report["pass"])
 
 
+def launch_isolated_workers(
+    *,
+    config_path: Path,
+    smoke: bool,
+    worker_count: int,
+) -> list[int]:
+    processes: list[subprocess.Popen[str]] = []
+    for rank in range(worker_count):
+        environment = os.environ.copy()
+        environment["CUDA_VISIBLE_DEVICES"] = str(rank)
+        environment["PYTHONUNBUFFERED"] = "1"
+        for name in (
+            "RANK",
+            "LOCAL_RANK",
+            "WORLD_SIZE",
+            "LOCAL_WORLD_SIZE",
+            "MASTER_ADDR",
+            "MASTER_PORT",
+        ):
+            environment.pop(name, None)
+        command = [
+            sys.executable,
+            str(Path(__file__).resolve()),
+            "--config",
+            str(config_path.resolve()),
+            "--worker-rank",
+            str(rank),
+        ]
+        if smoke:
+            command.append("--smoke")
+        processes.append(
+            subprocess.Popen(
+                command,
+                cwd=PROJECT_ROOT,
+                env=environment,
+                text=True,
+            )
+        )
+    return [process.wait() for process in processes]
+
+
 def main() -> int:
     args = parse_args()
     config = load_yaml(args.config)
@@ -519,60 +626,37 @@ def main() -> int:
         print(json.dumps(report, indent=2, sort_keys=True))
         return 0 if report["pass"] else 1
 
-    import torch
-    import torch.distributed as dist
-
-    rank = int(os.environ.get("RANK", "0"))
-    local_rank = int(os.environ.get("LOCAL_RANK", str(rank)))
-    world_size = int(os.environ.get("WORLD_SIZE", "1"))
     expected_world_size = int(config["inference"]["nproc"])
-    if world_size != expected_world_size:
-        raise SystemExit(
-            f"H30 requires torchrun world size {expected_world_size}, got {world_size}"
+    if args.worker_rank is not None:
+        run_inference(
+            config,
+            rank=int(args.worker_rank),
+            world_size=expected_world_size,
+            smoke=bool(args.smoke),
         )
-    torch.cuda.set_device(local_rank)
-    dist.init_process_group(backend="nccl")
-    started = time.perf_counter()
-
-    payload: list[dict[str, Any] | None] = [None]
-    if rank == 0:
-        try:
-            if not args.smoke:
-                assert_formal_outputs_absent(config)
-            payload[0] = {"preflight": preflight(config)}
-        except Exception as error:  # noqa: BLE001 - broadcast failures to every rank
-            payload[0] = {"error": f"{type(error).__name__}: {error}"}
-    dist.broadcast_object_list(payload, src=0)
-    shared = payload[0]
-    if shared is None or "error" in shared:
-        dist.destroy_process_group()
-        raise SystemExit("H30 preflight failed: " + str(shared))
-    preflight_report = shared["preflight"]
-    if not preflight_report["pass"]:
-        dist.destroy_process_group()
-        raise SystemExit("H30 preflight qualification gate failed")
-
-    run_inference(
-        config,
-        rank=rank,
-        world_size=world_size,
-        smoke=bool(args.smoke),
-    )
-    dist.barrier()
-    if args.smoke:
-        dist.destroy_process_group()
         return 0
 
-    final_payload: list[bool | None] = [None]
-    if rank == 0:
-        final_payload[0] = write_aggregate_report(
-            config,
-            preflight_report,
-            wall_time_seconds=time.perf_counter() - started,
-        )
-    dist.broadcast_object_list(final_payload, src=0)
-    dist.destroy_process_group()
-    return 0 if final_payload[0] else 1
+    started = time.perf_counter()
+    if not args.smoke:
+        assert_formal_outputs_absent(config)
+    preflight_report = preflight(config)
+    if not preflight_report["pass"]:
+        raise SystemExit("H30 preflight qualification gate failed")
+    return_codes = launch_isolated_workers(
+        config_path=args.config,
+        smoke=bool(args.smoke),
+        worker_count=expected_world_size,
+    )
+    if any(return_code != 0 for return_code in return_codes):
+        raise SystemExit(f"H30 isolated workers failed: {return_codes}")
+    if args.smoke:
+        return 0
+    passed = write_aggregate_report(
+        config,
+        preflight_report,
+        wall_time_seconds=time.perf_counter() - started,
+    )
+    return 0 if passed else 1
 
 
 if __name__ == "__main__":

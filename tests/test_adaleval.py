@@ -7,6 +7,7 @@ from mlxsim.adaleval import (
     extract_stackselect_answer,
     load_stackselect,
     utf8_stream_sha256,
+    validate_generation_result,
     wrap_internlm2_prompt,
 )
 
@@ -84,3 +85,28 @@ def test_load_stackselect_adds_stable_index(tmp_path: Path) -> None:
         encoding="utf-8",
     )
     assert load_stackselect(source)[0]["index"] == "7_A2"
+
+
+def test_generation_result_validation_rejects_engine_garbage() -> None:
+    validate_generation_result(
+        text="A2",
+        input_token_len=1126,
+        generate_token_len=3,
+        finish_reason="stop",
+        expected_input_token_len=1126,
+        max_new_tokens=512,
+    )
+
+    try:
+        validate_generation_result(
+            text="",
+            input_token_len=1126,
+            generate_token_len=525_663_136,
+            finish_reason="length",
+            expected_input_token_len=1126,
+            max_new_tokens=512,
+        )
+    except ValueError as error:
+        assert "outside valid bounds" in str(error)
+    else:
+        raise AssertionError("invalid TurboMind response was accepted")

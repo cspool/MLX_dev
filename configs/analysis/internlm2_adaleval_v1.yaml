@@ -143,8 +143,11 @@ runtime:
 
 inference:
   nproc: 2
+  launcher: "two independent one-GPU workers isolated by CUDA_VISIBLE_DEVICES"
   rank_partition: "official tups[rank::world_size] over each setting"
-  session_len: 160000
+  official_session_len: 160000
+  effective_session_len: 8192
+  max_prefill_token_num: 8192
   rope_scaling_factor: 2.0
   do_preprocess: true
   request_output_len: 512

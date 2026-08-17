@@ -217,6 +217,42 @@ def prompt_canary_checks(
     }
 
 
+def validate_generation_result(
+    *,
+    text: Any,
+    input_token_len: int,
+    generate_token_len: int,
+    finish_reason: str | None,
+    expected_input_token_len: int,
+    max_new_tokens: int,
+) -> None:
+    """Reject malformed or engine-rejected LMDeploy generation results."""
+    if not isinstance(text, str):
+        raise TypeError("generation text must be a string")
+    if input_token_len != expected_input_token_len:
+        raise ValueError(
+            "generation input length mismatch: "
+            f"{input_token_len} != {expected_input_token_len}"
+        )
+    if not 1 <= generate_token_len <= max_new_tokens:
+        raise ValueError(
+            "generation token count outside valid bounds: "
+            f"{generate_token_len} not in [1, {max_new_tokens}]"
+        )
+    if finish_reason not in {"stop", "length"}:
+        raise ValueError(f"invalid generation finish reason: {finish_reason!r}")
+    if finish_reason == "length" and generate_token_len != max_new_tokens:
+        raise ValueError(
+            "length-finished generation did not reach max_new_tokens: "
+            f"{generate_token_len} != {max_new_tokens}"
+        )
+    if finish_reason == "stop" and generate_token_len >= max_new_tokens:
+        raise ValueError(
+            "stop-finished generation reached max_new_tokens: "
+            f"{generate_token_len} >= {max_new_tokens}"
+        )
+
+
 def extract_stackselect_answer(prediction: str, num_choice: int) -> str:
     designations = [f"A{i}" for i in range(1, num_choice + 1)]
     finds = [prediction.find(candidate) for candidate in designations]
