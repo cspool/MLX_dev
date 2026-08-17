@@ -1,0 +1,21 @@
+extends: configs/analysis/fgscr42_input_audit_v1.yaml
+
+run:
+  id: run_025
+  hypothesis: H21
+  protocol: experiments/h21-fgscr42-input-availability/protocol-run025.md
+  output: artifacts/results/fgscr42-input-audit-run025.json
+
+baidu:
+  verify_surl_rule: strip_short_link_literal_prefix_1
+  endpoint_reference:
+    repository: https://github.com/PeterDing/BaiduPCS-Py.git
+    revision: e81e9b65c4b35fc8f7f2993a81e25e0bc24608db
+    source: baidupcs_py/baidupcs/pcs.py
+    lines: [710, 742]
+  verify_headers:
+    referer: canonical_share_init_url
+    x_requested_with: XMLHttpRequest
+    content_type: application/x-www-form-urlencoded; charset=UTF-8
+  verify_extra_query:
+    bdstoken: "null"
