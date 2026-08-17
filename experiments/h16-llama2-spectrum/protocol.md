@@ -37,7 +37,10 @@ frozen below before loading the checkpoint or observing any model spectrum.
   the 1024-token dimension, discard DC, and compute squared magnitude.
 - Mean power over the 32 windows and all projection features. Split the 512
   remaining frequency bins into 21 contiguous, nearly equal-width groups and
-  sum each group. Normalize every layer/projection curve by its own maximum.
+  sum each group. For the numeric Fig. 6 audit, normalize the Layer-1 and
+  Layer-16 K curves by their shared maximum group energy. The shared scale is
+  required by the frozen raster itself: Layer-1 peaks near 0.783 while Layer-16
+  reaches 1.0. Fig. 5's dominant-peak positions are scale invariant.
 - Define the dominant group as the highest-frequency local peak with energy at
   least half of that curve's global peak; endpoints count as local peaks. The
   0.5 threshold is frozen from the paper's stated relative-threshold example,
