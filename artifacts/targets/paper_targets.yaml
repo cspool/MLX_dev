@@ -19,24 +19,26 @@ fig2_orin_profile:
   digitization_method: "Linear y axes recovered from the supplied raster; stack boundaries and cache-bar tops were sampled away from hatch strokes."
 
 fig3_h100_profile:
-  provenance: digitized
-  uncertainty_abs_cuda_utilization: 0.004
+  provenance: frozen_raster_digitization
+  uncertainty_abs_cuda_utilization: 0.006
+  uncertainty_abs_qkv_attention_flops_pct: 1.0
   sequence_lengths: [512, 1024, 2048, 4096, 8192]
-  cuda_utilization: [0.118, 0.136, 0.128, 0.188, 0.151]
+  cuda_utilization: [0.121153846, 0.140384615, 0.131730769, 0.193269231, 0.155769231]
+  qkv_attention_flops_pct: [35.128205128, 36.666666667, 39.230769231, 43.846153846, 51.538461538]
   tensor_peak_gflops: 1513000
   to_qkv_sequence_lengths: [512, 8192]
-  to_qkv_gflops: [492000, 770000]
-  to_qkv_implied_tensor_efficiency: [0.325, 0.509]
+  to_qkv_gflops: [473887.960972, 760468.240134]
+  to_qkv_implied_tensor_efficiency: [0.313210814, 0.502622763]
   roofline:
     bandwidth_gbs: 2000.0
     tensor_peak_gflops: 1513000.0
     cuda_peak_gflops: 102000.0
   point_names: [softmax_qkv_512, softmax_qkv_8K, fft_512, fft_8K, bsmm_512, bsmm_8K, to_qkv_512, to_qkv_8K]
   point_modes: [tensor, tensor, cuda, cuda, cuda, cuda, tensor, tensor]
-  operational_intensity_flops_per_byte: [288.0, 558.0, 12.9, 18.7, 10.3, 14.8, 491.0, 1670.0]
-  performance_gflops: [395000.0, 503000.0, 12100.0, 14400.0, 10450.0, 12100.0, 492000.0, 770000.0]
+  operational_intensity_flops_per_byte: [284.438074522, 560.358878820, 12.536015176, 18.357083399, 10.142265364, 14.438071974, 493.459522029, 1686.529200822]
+  performance_gflops: [388319.490521, 510632.094842, 11903.527392, 14169.396438, 10000.0, 11903.527392, 473887.960972, 760468.240134]
   uncertainty_relative_points: 0.08
-  digitization_method: "Bar tops and marker centers were mapped through the plotted linear/log axes of the supplied raster; these are not author raw data."
+  digitization_method: "Frozen marker centers and dual-axis bar tops mapped through the source raster in H26/run030; these are not author raw data."
 
 fig15_algorithm_compute:
   provenance: digitized_and_reported_formula

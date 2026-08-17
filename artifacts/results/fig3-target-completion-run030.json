@@ -1,0 +1,486 @@
+{
+  "axis_checks": {
+    "cuda_utilization": {
+      "expected_pixels_per_unit": 1040.0,
+      "intervals_pixels_per_unit": [
+        1040.0,
+        1040.0,
+        1040.0000000000002,
+        1039.9999999999995
+      ],
+      "pass": true
+    },
+    "pass": true,
+    "qkv_attention_flops": {
+      "expected_pixels_per_pct": 3.9,
+      "intervals_pixels_per_pct": [
+        3.9,
+        3.9,
+        3.9,
+        3.9,
+        3.9,
+        3.9
+      ],
+      "pass": true
+    },
+    "roofline_x": {
+      "expected_pixels_per_decade": 163.0,
+      "intervals_pixels_per_decade": [
+        163.0,
+        163.0
+      ],
+      "pass": true
+    },
+    "roofline_y": {
+      "expected_pixels_per_decade": 92.5,
+      "intervals_pixels_per_decade": [
+        93.0,
+        92.0
+      ],
+      "pass": true
+    }
+  },
+  "classification": "exploratory-raster-target-recovery",
+  "derived_targets": {
+    "cuda_utilization": [
+      0.12115384615384615,
+      0.14038461538461539,
+      0.13173076923076923,
+      0.19326923076923078,
+      0.15576923076923077
+    ],
+    "cuda_utilization_uncertainty_abs": 0.006,
+    "marker_uncertainty_relative": 0.08,
+    "operational_intensity_flops_per_byte": [
+      284.4380745224324,
+      560.3588788200542,
+      12.5360151756584,
+      18.357083398807035,
+      10.142265364188484,
+      14.438071974230198,
+      493.45952202895853,
+      1686.5292008217125
+    ],
+    "performance_gflops": [
+      388319.4905206402,
+      510632.0948424493,
+      11903.527392207192,
+      14169.396437702695,
+      10000.0,
+      11903.527392207192,
+      473887.9609717651,
+      760468.2401337371
+    ],
+    "point_modes": [
+      "tensor",
+      "tensor",
+      "cuda",
+      "cuda",
+      "cuda",
+      "cuda",
+      "tensor",
+      "tensor"
+    ],
+    "point_names": [
+      "softmax_qkv_512",
+      "softmax_qkv_8K",
+      "fft_512",
+      "fft_8K",
+      "bsmm_512",
+      "bsmm_8K",
+      "to_qkv_512",
+      "to_qkv_8K"
+    ],
+    "provenance": "frozen_raster_digitization",
+    "qkv_attention_flops_pct": [
+      35.12820512820513,
+      36.666666666666664,
+      39.23076923076923,
+      43.84615384615385,
+      51.53846153846154
+    ],
+    "qkv_attention_flops_uncertainty_abs_pct": 1.0,
+    "roofline_points": [
+      {
+        "center_x": 308,
+        "center_y": 103,
+        "mode": "tensor",
+        "name": "softmax_qkv_512",
+        "operational_intensity_flops_per_byte": 284.4380745224324,
+        "performance_gflops": 388319.4905206402
+      },
+      {
+        "center_x": 356,
+        "center_y": 92,
+        "mode": "tensor",
+        "name": "softmax_qkv_8K",
+        "operational_intensity_flops_per_byte": 560.3588788200542,
+        "performance_gflops": 510632.0948424493
+      },
+      {
+        "center_x": 87,
+        "center_y": 243,
+        "mode": "cuda",
+        "name": "fft_512",
+        "operational_intensity_flops_per_byte": 12.5360151756584,
+        "performance_gflops": 11903.527392207192
+      },
+      {
+        "center_x": 114,
+        "center_y": 236,
+        "mode": "cuda",
+        "name": "fft_8K",
+        "operational_intensity_flops_per_byte": 18.357083398807035,
+        "performance_gflops": 14169.396437702695
+      },
+      {
+        "center_x": 72,
+        "center_y": 250,
+        "mode": "cuda",
+        "name": "bsmm_512",
+        "operational_intensity_flops_per_byte": 10.142265364188484,
+        "performance_gflops": 10000.0
+      },
+      {
+        "center_x": 97,
+        "center_y": 243,
+        "mode": "cuda",
+        "name": "bsmm_8K",
+        "operational_intensity_flops_per_byte": 14.438071974230198,
+        "performance_gflops": 11903.527392207192
+      },
+      {
+        "center_x": 347,
+        "center_y": 95,
+        "mode": "tensor",
+        "name": "to_qkv_512",
+        "operational_intensity_flops_per_byte": 493.45952202895853,
+        "performance_gflops": 473887.9609717651
+      },
+      {
+        "center_x": 434,
+        "center_y": 76,
+        "mode": "tensor",
+        "name": "to_qkv_8K",
+        "operational_intensity_flops_per_byte": 1686.5292008217125,
+        "performance_gflops": 760468.2401337371
+      }
+    ],
+    "sequence_lengths": [
+      512,
+      1024,
+      2048,
+      4096,
+      8192
+    ]
+  },
+  "hypothesis": "H26",
+  "native_profile_reproduced": false,
+  "prior_canonical_cross_checks": [
+    {
+      "absolute_relative_error": 0.012367796797109816,
+      "actual": 284.4380745224324,
+      "expected": 288.0,
+      "index": 0,
+      "pass": true,
+      "series": "operational_intensity_flops_per_byte",
+      "tolerance": 0.08
+    },
+    {
+      "absolute_relative_error": 0.004227381397946597,
+      "actual": 560.3588788200542,
+      "expected": 558.0,
+      "index": 1,
+      "pass": true,
+      "series": "operational_intensity_flops_per_byte",
+      "tolerance": 0.08
+    },
+    {
+      "absolute_relative_error": 0.028215877855937963,
+      "actual": 12.5360151756584,
+      "expected": 12.9,
+      "index": 2,
+      "pass": true,
+      "series": "operational_intensity_flops_per_byte",
+      "tolerance": 0.08
+    },
+    {
+      "absolute_relative_error": 0.018337786160051578,
+      "actual": 18.357083398807035,
+      "expected": 18.7,
+      "index": 3,
+      "pass": true,
+      "series": "operational_intensity_flops_per_byte",
+      "tolerance": 0.08
+    },
+    {
+      "absolute_relative_error": 0.015314042311797747,
+      "actual": 10.142265364188484,
+      "expected": 10.3,
+      "index": 4,
+      "pass": true,
+      "series": "operational_intensity_flops_per_byte",
+      "tolerance": 0.08
+    },
+    {
+      "absolute_relative_error": 0.0244545963357975,
+      "actual": 14.438071974230198,
+      "expected": 14.8,
+      "index": 5,
+      "pass": true,
+      "series": "operational_intensity_flops_per_byte",
+      "tolerance": 0.08
+    },
+    {
+      "absolute_relative_error": 0.005009209834946092,
+      "actual": 493.45952202895853,
+      "expected": 491.0,
+      "index": 6,
+      "pass": true,
+      "series": "operational_intensity_flops_per_byte",
+      "tolerance": 0.08
+    },
+    {
+      "absolute_relative_error": 0.009897725042941613,
+      "actual": 1686.5292008217125,
+      "expected": 1670.0,
+      "index": 7,
+      "pass": true,
+      "series": "operational_intensity_flops_per_byte",
+      "tolerance": 0.08
+    },
+    {
+      "absolute_relative_error": 0.016912682226227296,
+      "actual": 388319.4905206402,
+      "expected": 395000.0,
+      "index": 0,
+      "pass": true,
+      "series": "performance_gflops",
+      "tolerance": 0.08
+    },
+    {
+      "absolute_relative_error": 0.015173150780217288,
+      "actual": 510632.0948424493,
+      "expected": 503000.0,
+      "index": 1,
+      "pass": true,
+      "series": "performance_gflops",
+      "tolerance": 0.08
+    },
+    {
+      "absolute_relative_error": 0.01623740560271141,
+      "actual": 11903.527392207192,
+      "expected": 12100.0,
+      "index": 2,
+      "pass": true,
+      "series": "performance_gflops",
+      "tolerance": 0.08
+    },
+    {
+      "absolute_relative_error": 0.016014136270646177,
+      "actual": 14169.396437702695,
+      "expected": 14400.0,
+      "index": 3,
+      "pass": true,
+      "series": "performance_gflops",
+      "tolerance": 0.08
+    },
+    {
+      "absolute_relative_error": 0.0430622009569378,
+      "actual": 10000.0,
+      "expected": 10450.0,
+      "index": 4,
+      "pass": true,
+      "series": "performance_gflops",
+      "tolerance": 0.08
+    },
+    {
+      "absolute_relative_error": 0.01623740560271141,
+      "actual": 11903.527392207192,
+      "expected": 12100.0,
+      "index": 5,
+      "pass": true,
+      "series": "performance_gflops",
+      "tolerance": 0.08
+    },
+    {
+      "absolute_relative_error": 0.036813087455761985,
+      "actual": 473887.9609717651,
+      "expected": 492000.0,
+      "index": 6,
+      "pass": true,
+      "series": "performance_gflops",
+      "tolerance": 0.08
+    },
+    {
+      "absolute_relative_error": 0.012378908917224549,
+      "actual": 760468.2401337371,
+      "expected": 770000.0,
+      "index": 7,
+      "pass": true,
+      "series": "performance_gflops",
+      "tolerance": 0.08
+    },
+    {
+      "absolute_error": 0.00315384615384616,
+      "actual": 0.12115384615384615,
+      "expected": 0.118,
+      "index": 0,
+      "pass": true,
+      "series": "cuda_utilization",
+      "tolerance": 0.006
+    },
+    {
+      "absolute_error": 0.004384615384615376,
+      "actual": 0.14038461538461539,
+      "expected": 0.136,
+      "index": 1,
+      "pass": true,
+      "series": "cuda_utilization",
+      "tolerance": 0.006
+    },
+    {
+      "absolute_error": 0.003730769230769232,
+      "actual": 0.13173076923076923,
+      "expected": 0.128,
+      "index": 2,
+      "pass": true,
+      "series": "cuda_utilization",
+      "tolerance": 0.006
+    },
+    {
+      "absolute_error": 0.005269230769230776,
+      "actual": 0.19326923076923078,
+      "expected": 0.188,
+      "index": 3,
+      "pass": true,
+      "series": "cuda_utilization",
+      "tolerance": 0.006
+    },
+    {
+      "absolute_error": 0.004769230769230776,
+      "actual": 0.15576923076923077,
+      "expected": 0.151,
+      "index": 4,
+      "pass": true,
+      "series": "cuda_utilization",
+      "tolerance": 0.006
+    }
+  ],
+  "project_git_revision": "216e1f1e8af6b80dfc56e94bc491f5a624f66425",
+  "protocol": "experiments/h26-fig3-target-completion/protocol.md",
+  "reported_roofline": {
+    "bandwidth_gbs": 2000.0,
+    "cuda_peak_gflops": 102000.0,
+    "tensor_peak_gflops": 1513000.0
+  },
+  "roofline_audit": {
+    "maximum_utilization": 0.6826081409330016,
+    "minimum_utilization": 0.38593811799709743,
+    "pass": true,
+    "points": [
+      {
+        "mode": "tensor",
+        "name": "softmax_qkv_512",
+        "operational_intensity_flops_per_byte": 284.4380745224324,
+        "pass": true,
+        "performance_gflops": 388319.4905206402,
+        "roofline_limit_gflops": 568876.1490448647,
+        "roofline_utilization": 0.6826081409330016
+      },
+      {
+        "mode": "tensor",
+        "name": "softmax_qkv_8K",
+        "operational_intensity_flops_per_byte": 560.3588788200542,
+        "pass": true,
+        "performance_gflops": 510632.0948424493,
+        "roofline_limit_gflops": 1120717.7576401085,
+        "roofline_utilization": 0.4556295207793312
+      },
+      {
+        "mode": "cuda",
+        "name": "fft_512",
+        "operational_intensity_flops_per_byte": 12.5360151756584,
+        "pass": true,
+        "performance_gflops": 11903.527392207192,
+        "roofline_limit_gflops": 25072.0303513168,
+        "roofline_utilization": 0.47477317255170004
+      },
+      {
+        "mode": "cuda",
+        "name": "fft_8K",
+        "operational_intensity_flops_per_byte": 18.357083398807035,
+        "pass": true,
+        "performance_gflops": 14169.396437702695,
+        "roofline_limit_gflops": 36714.16679761407,
+        "roofline_utilization": 0.38593811799709743
+      },
+      {
+        "mode": "cuda",
+        "name": "bsmm_512",
+        "operational_intensity_flops_per_byte": 10.142265364188484,
+        "pass": true,
+        "performance_gflops": 10000.0,
+        "roofline_limit_gflops": 20284.53072837697,
+        "roofline_utilization": 0.49298650946903777
+      },
+      {
+        "mode": "cuda",
+        "name": "bsmm_8K",
+        "operational_intensity_flops_per_byte": 14.438071974230198,
+        "pass": true,
+        "performance_gflops": 11903.527392207192,
+        "roofline_limit_gflops": 28876.143948460394,
+        "roofline_utilization": 0.4122270415832949
+      },
+      {
+        "mode": "tensor",
+        "name": "to_qkv_512",
+        "operational_intensity_flops_per_byte": 493.45952202895853,
+        "pass": true,
+        "performance_gflops": 473887.9609717651,
+        "roofline_limit_gflops": 986919.0440579171,
+        "roofline_utilization": 0.48016903090984947
+      },
+      {
+        "mode": "tensor",
+        "name": "to_qkv_8K",
+        "operational_intensity_flops_per_byte": 1686.5292008217125,
+        "pass": true,
+        "performance_gflops": 760468.2401337371,
+        "roofline_limit_gflops": 1513000.0,
+        "roofline_utilization": 0.5026227628114588
+      }
+    ]
+  },
+  "run_id": "run_030",
+  "source_check": {
+    "actual_dimensions": [
+      647,
+      310
+    ],
+    "actual_sha256": "86bd9284c3cd6905f37d561adbc61a87a62800fd7eae3a93c5eed3db26637350",
+    "expected_dimensions": [
+      647,
+      310
+    ],
+    "expected_sha256": "86bd9284c3cd6905f37d561adbc61a87a62800fd7eae3a93c5eed3db26637350",
+    "pass": true,
+    "path": "MLX Multi-Layer Execution for Structured LLM Workload Acceleration on Spatial Architectures/_page_1_Figure_9.jpeg"
+  },
+  "summary": {
+    "axis_pass": true,
+    "bar_count": 10,
+    "marker_count": 8,
+    "max_cuda_absolute_cross_check_error": 0.005269230769230776,
+    "max_marker_relative_cross_check_error": 0.0430622009569378,
+    "numeric_value_count": 26,
+    "pass": true,
+    "prior_canonical_cross_checks_pass": true,
+    "range_pass": true,
+    "roofline_pass": true,
+    "source_pass": true
+  },
+  "validation_eligible": false,
+  "verdict": "supported"
+}

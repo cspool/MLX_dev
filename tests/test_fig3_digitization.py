@@ -6,7 +6,10 @@ from mlxsim.fig3_digitization import (
     audit_fig3_target_completion,
     derive_fig3_targets,
     load_fig3_pixel_manifest,
+    load_yaml,
 )
+
+ROOT = Path(__file__).resolve().parents[1]
 
 
 def test_frozen_log_markers_recover_all_eight_roofline_points() -> None:
@@ -74,3 +77,15 @@ def test_full_source_axis_crosscheck_and_roofline_audit_pass() -> None:
 def test_manifest_source_is_project_relative() -> None:
     source = load_fig3_pixel_manifest()["metadata"]["source"]
     assert not Path(source).is_absolute()
+
+
+def test_completed_targets_are_promoted_to_canonical_manifest() -> None:
+    derived = derive_fig3_targets(load_fig3_pixel_manifest())
+    canonical = load_yaml(ROOT / "artifacts/targets/paper_targets.yaml")["fig3_h100_profile"]
+    for series in (
+        "operational_intensity_flops_per_byte",
+        "performance_gflops",
+        "cuda_utilization",
+        "qkv_attention_flops_pct",
+    ):
+        assert canonical[series] == pytest.approx(derived[series])

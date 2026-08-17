@@ -211,7 +211,7 @@ hypotheses:
     priority: high
   - id: H26
     statement: "Frozen Figure 3 pixels recover all eight H100 roofline markers, five CUDA-utilization bars, and five QKV-plus-attention FLOP-share bars while preserving the printed roofline constraints."
-    status: pending
+    status: supported
     motivation: "Close the inventory's last partial target and add the previously omitted orange-bar series before any native H100 comparison."
     parent: H5
     priority: high
@@ -220,7 +220,7 @@ experiments:
   proxy_metric: "Maximum absolute percentage error across every numeric paper anchor; pass only when each reproducible point is <=10%, with unavailable measurements explicitly classified rather than fabricated."
   baseline_value: 0.2486
   best_value: 0.0123
-  total_runs: 28
+  total_runs: 29
   trajectory:
     - run_id: "run_001"
       hypothesis: "H2"
@@ -418,11 +418,18 @@ experiments:
       wall_time_min: 0.1
       change_summary: "Full Figure 21 raster target recovery supported: all 20 bars, GEMM colorbar, 16-GB line, and projected-bar semantics pass; prior coarse discrepancies max at 0.0549x and 0.3012 GB."
       timestamp: "2026-08-17"
+    - run_id: "run_030"
+      hypothesis: "H26"
+      metric_value: 0.0431
+      delta: null
+      wall_time_min: 0.1
+      change_summary: "Full Figure 3 raster target recovery supported: eight markers and ten bars yield 26 values, the missing FLOP-share series is 35.13%-51.54%, and maximum coarse-marker correction is 4.31%."
+      timestamp: "2026-08-17"
 
 outer_loop:
-  cycle: 10
-  last_direction: "Complete the remaining partial Figure 3 target provenance from its source raster before selecting another native or surrogate timing experiment. Keep target recovery separate from CUDA validation."
-  last_reflection: "H25 closes Figure 21 target coverage and recovers the previously omitted GEMM-time shares. The corrected pixels also move the plotted 16-GB crossover to N=512: H6 dense-memory values now pass numerically, but the crossover is one step late and speed/sparse memory remain rejected. The inventory's other partial target is Figure 3, whose values exist but lack a frozen source-pixel audit."
+  cycle: 11
+  last_direction: "With every inventory row now target-complete, return to uncovered native quality evidence. Audit a standard, source-qualified Llama2-7B WinoGrande evaluation path before registering the Fig. 15(c) original-answering baseline."
+  last_reflection: "H26 closes the final partial target and adds five omitted QKV-plus-attention FLOP-share bars. All eight corrected H100 markers remain physically consistent, but target recovery cannot substitute for native profiling. The next useful independent result is an original-model quality baseline: unlike compressed recipes, it can be tested against public model/data bytes and an explicit evaluation harness."
 
 workspace:
   findings: "findings.md"
