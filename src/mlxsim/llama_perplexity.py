@@ -5,6 +5,7 @@ from __future__ import annotations
 import hashlib
 import json
 import math
+import struct
 from pathlib import Path
 from typing import Any
 
@@ -116,4 +117,38 @@ def audit_perplexity(
         "relative_error": relative_error,
         "relative_error_gate": relative_error_gate,
         "pass": relative_error <= relative_error_gate,
+    }
+
+
+def token_id_sha256(token_ids: list[int]) -> str:
+    """Hash token IDs with a stable unsigned big-endian 32-bit encoding."""
+
+    digest = hashlib.sha256()
+    for token_id in token_ids:
+        if not 0 <= token_id <= 0xFFFFFFFF:
+            raise ValueError(f"token ID out of uint32 range: {token_id}")
+        digest.update(struct.pack(">I", token_id))
+    return digest.hexdigest()
+
+
+def compare_token_sequences(actual: list[int], reference: list[int]) -> dict[str, Any]:
+    first_difference = next(
+        (
+            index
+            for index, (actual_id, reference_id) in enumerate(
+                zip(actual, reference, strict=False)
+            )
+            if actual_id != reference_id
+        ),
+        None,
+    )
+    if first_difference is None and len(actual) != len(reference):
+        first_difference = min(len(actual), len(reference))
+    return {
+        "actual_count": len(actual),
+        "reference_count": len(reference),
+        "actual_sha256_uint32be": token_id_sha256(actual),
+        "reference_sha256_uint32be": token_id_sha256(reference),
+        "first_difference_index": first_difference,
+        "equal": actual == reference,
     }

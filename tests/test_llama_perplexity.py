@@ -7,6 +7,7 @@ import pytest
 
 from mlxsim.llama_perplexity import (
     audit_perplexity,
+    compare_token_sequences,
     complete_window_ranges,
     git_blob_sha1,
     qualify_model_files,
@@ -39,6 +40,15 @@ def test_perplexity_audit_uses_token_weighted_nll() -> None:
     assert report["perplexity"] == pytest.approx(target)
     assert report["relative_error"] == pytest.approx(0.0)
     assert report["pass"] is True
+
+
+def test_token_sequence_comparison_detects_backend_differences() -> None:
+    equal = compare_token_sequences([1, 2, 3], [1, 2, 3])
+    assert equal["equal"] is True
+    assert equal["actual_sha256_uint32be"] == equal["reference_sha256_uint32be"]
+    different = compare_token_sequences([1, 2, 3], [1, 9, 3])
+    assert different["equal"] is False
+    assert different["first_difference_index"] == 1
 
 
 def test_model_qualification_checks_hash_blobs_and_signature(tmp_path: Path) -> None:
