@@ -1,0 +1,44 @@
+name: gpgpusim-orin-proxy-v1
+experiment_id: H54
+run_id: run060
+classification: mechanism_confirmatory_gpu_proxy_no_paper_target
+
+parent:
+  path: artifacts/results/gpgpusim-rtx3090-proxy-run057.json
+  bytes: 9156
+  sha256: 4b654a898455057240ac9fd0c3e6efbb382b8eec394c609f0dd1e0629a1bf358
+  required_status: supported
+  required_integrity: true
+
+source:
+  base_config: third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/configs/tested-cfgs/SM86_RTX3070/gpgpusim.config
+  interconnect: third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/configs/tested-cfgs/SM86_RTX3070/config_ampere_islip.icnt
+  nvidia_specs:
+    technical_brief: https://www.nvidia.com/content/dam/en-zz/Solutions/gtcf21/jetson-orin/nvidia-jetson-agx-orin-technical-brief.pdf
+    product: https://www.nvidia.com/autonomous-machines/embedded-systems/jetson-orin/
+
+registered_substitutions:
+  - {field: gpgpu_n_clusters, from: 46, to: 16, basis: 2048_div_128_cores_per_SM}
+  - {field: core_clock_mhz, from: 1132, to: 1300, basis: NVIDIA_max_GPU_clock}
+  - {field: icnt_clock_mhz, from: 1132, to: 1300, basis: frozen_equal_clock_proxy}
+  - {field: l2_clock_mhz, from: 1132, to: 1300, basis: frozen_equal_clock_proxy}
+  - {field: dram_clock_mhz, from: 3500.5, to: 1600, basis: LPDDR5_6400_div_4}
+
+unchanged:
+  memory_partitions: 16
+  memory_interface_bits: 256
+  SM_timing_template: SM86_RTX3070
+  CUDA_workloads: simulator_ext/accelsim/mlx_gpu_proxy.cu
+
+workloads:
+  vectoradd: {elements: 1024, parameter: 1}
+  bsmm: {elements: 10496, parameter: 4}
+  fft: {elements: 10496, parameter: 4}
+  swa: {elements: 10496, parameter: 16}
+
+source_layout:
+  config_builder: scripts/build_gpgpusim_orin_config.py
+  runner: scripts/run_gpgpusim_orin_proxy.sh
+  auditor: scripts/audit_gpgpusim_orin_proxy.py
+
+result_path: artifacts/results/gpgpusim-orin-proxy-run060.json
