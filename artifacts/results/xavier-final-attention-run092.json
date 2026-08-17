@@ -1,0 +1,244 @@
+{
+  "schema_version": 1,
+  "experiment_id": "H87",
+  "run_id": "run092",
+  "classification": "target_free_final_xavier_attention_folding",
+  "validation_eligible": false,
+  "generated_at": "2026-08-17T23:46:15.221362+00:00",
+  "project_commit": "d19d4d726fdf2d110944ad6e9cb4d8adecedc5c6",
+  "hypothesis_status": "rejected",
+  "audit_integrity": true,
+  "frozen_inputs": {
+    "h86": {
+      "path": "artifacts/results/xavier-qualified-attention-run091.json",
+      "bytes": 10898,
+      "sha256": "e22c0b3155cdfcb2dbd30e00bc17f2c17bf1166e025f95d9f47630e713474344",
+      "checks": {
+        "is_file": true,
+        "sha256": true
+      },
+      "pass": true
+    },
+    "h86_run_manifest": {
+      "path": "artifacts/environment/h86/xavier-qualified-run-manifest.json",
+      "bytes": 2544,
+      "sha256": "e114aac60046894274e38bfe5dd55fe552b93cbd0c161639796a1ca896ad099d",
+      "checks": {
+        "is_file": true,
+        "sha256": true
+      },
+      "pass": true
+    },
+    "stable_fft_source": {
+      "path": "simulator_ext/accelsim/mlx_fft_stable_proxy.cu",
+      "bytes": 6004,
+      "sha256": "11c83400213067531c863eb94af9dcea877b2eb4b806353f04da15d1fe5f9b59",
+      "checks": {
+        "is_file": true,
+        "sha256": true
+      },
+      "pass": true
+    },
+    "attention_source": {
+      "path": "simulator_ext/accelsim/mlx_attention_proxy.cu",
+      "bytes": 13751,
+      "sha256": "e96786969a7c5a4daba2e984e85768b18d3fbde692db337b4493dc91a7a25bbc",
+      "checks": {
+        "is_file": true,
+        "sha256": true
+      },
+      "pass": true
+    }
+  },
+  "parent_check": true,
+  "run_manifest": {
+    "path": "artifacts/environment/h87/xavier-final-run-manifest.json",
+    "bytes": 1451,
+    "sha256": "ab6ffeddd899fd1d33cbfbc54ad5a6d597de1cf08fde7a2fdea5693037b6c7b9",
+    "checks": {
+      "is_file": true
+    },
+    "pass": true
+  },
+  "run_checks": {
+    "N256-stablefft-c16384": true,
+    "N8192-stablefft-c16384": true,
+    "N256-sv-c16384": true
+  },
+  "measurements": {
+    "N256-stablefft-c16384": {
+      "artifact": {
+        "path": "artifacts/environment/h87/runs/N256-stablefft-c16384/measurement.json",
+        "bytes": 1046,
+        "sha256": "07b70492145000dd98883767b6b88397504ac5c27ed729594921e8985490f39e",
+        "checks": {
+          "is_file": true,
+          "sha256": true
+        },
+        "pass": true
+      },
+      "cycles": 50934,
+      "instructions": 6870656,
+      "ctas": 1600,
+      "checksum_relative_error": 0.0,
+      "checks": {
+        "artifact": true,
+        "job": true,
+        "cycles": true,
+        "pass": true,
+        "checksum": true,
+        "detailed": true,
+        "exit": true
+      }
+    },
+    "N8192-stablefft-c16384": {
+      "artifact": {
+        "path": "artifacts/environment/h87/runs/N8192-stablefft-c16384/measurement.json",
+        "bytes": 1056,
+        "sha256": "408c16744bd44ce7e8758555b0b1fff19d11813dad92c1477106e30f914b3020",
+        "checks": {
+          "is_file": true,
+          "sha256": true
+        },
+        "pass": true
+      },
+      "cycles": 82466,
+      "instructions": 11180384,
+      "ctas": 2560,
+      "checksum_relative_error": 0.0,
+      "checks": {
+        "artifact": true,
+        "job": true,
+        "cycles": true,
+        "pass": true,
+        "checksum": true,
+        "detailed": true,
+        "exit": true
+      }
+    },
+    "N256-sv-c16384": {
+      "artifact": {
+        "path": "artifacts/environment/h87/runs/N256-sv-c16384/measurement.json",
+        "bytes": 1027,
+        "sha256": "7f0518d30493bfebc736dd35d2d1e216a043531ad341d909e33ee79c9578c425",
+        "checks": {
+          "is_file": true,
+          "sha256": true
+        },
+        "pass": true
+      },
+      "cycles": 337750,
+      "instructions": 10010624,
+      "ctas": 128,
+      "checksum_relative_error": 0.0,
+      "checks": {
+        "artifact": true,
+        "job": true,
+        "cycles": true,
+        "pass": true,
+        "checksum": true,
+        "detailed": true,
+        "exit": true
+      }
+    }
+  },
+  "models": {
+    "N256_fftcmp": {
+      "fit": [
+        {
+          "count": 4096,
+          "measurement": "N256-stablefft-c4096",
+          "cycles": 16690
+        },
+        {
+          "count": 8192,
+          "measurement": "N256-stablefft-c8192",
+          "cycles": 26856
+        }
+      ],
+      "intercept": 6524.0,
+      "slope_cycles_per_count": 2.48193359375,
+      "holdout": {
+        "count": 16384,
+        "measurement": "N256-stablefft-c16384",
+        "actual_cycles": 50934,
+        "predicted_cycles": 47188.0,
+        "relative_error": 0.07354615777280402,
+        "pass_5pct": false
+      }
+    },
+    "N8192_fftcmp": {
+      "fit": [
+        {
+          "count": 4096,
+          "measurement": "N8192-stablefft-c4096",
+          "cycles": 26900
+        },
+        {
+          "count": 8192,
+          "measurement": "N8192-stablefft-c8192",
+          "cycles": 43628
+        }
+      ],
+      "intercept": 10172.0,
+      "slope_cycles_per_count": 4.083984375,
+      "holdout": {
+        "count": 16384,
+        "measurement": "N8192-stablefft-c16384",
+        "actual_cycles": 82466,
+        "predicted_cycles": 77084.0,
+        "relative_error": 0.06526326001018602,
+        "pass_5pct": false
+      }
+    },
+    "N256_sv": {
+      "fit": [
+        {
+          "count": 4096,
+          "measurement": "N256-sv-c4096",
+          "cycles": 72123
+        },
+        {
+          "count": 8192,
+          "measurement": "N256-sv-c8192",
+          "cycles": 156347
+        }
+      ],
+      "intercept": -12101.0,
+      "slope_cycles_per_count": 20.5625,
+      "holdout": {
+        "count": 16384,
+        "measurement": "N256-sv-c16384",
+        "actual_cycles": 337750,
+        "predicted_cycles": 324795.0,
+        "relative_error": 0.03835677276091784,
+        "pass_5pct": true
+      }
+    }
+  },
+  "numerical": {
+    "passing_holdouts": 1,
+    "total_holdouts": 3,
+    "mape": 0.05905539684796929,
+    "max_error": 0.07354615777280402,
+    "all_holdouts_pass": false
+  },
+  "reuse_checks": {
+    "shared_qk": true,
+    "N8192_sv": true,
+    "N256_softmax_direct": true,
+    "N8192_softmax_direct": true
+  },
+  "integrity_checks": {
+    "frozen_files": true,
+    "parent": true,
+    "run_manifest": true,
+    "runs": true,
+    "reuse": true,
+    "source_files": true,
+    "targets_absent": true
+  },
+  "paper_performance_targets_consumed": false,
+  "stopping_rule_applied": true,
+  "conclusion": "final affine Xavier folding remains above the 5% gate"
+}
