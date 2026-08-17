@@ -85,9 +85,18 @@ models:
       - {path: model-00008-of-00008.safetensors, sha256: eb488551289c4630b7b1fb015acf2ff52a206383c96370a7664b42253a007eae, bytes: 1748035640}
       - {path: tokenizer.model, sha256: f868398fc4e05ee1e8aeba95ddf18ddcc45b8bce55d5093bead5bbf80429b48b, bytes: 1477754}
   llama2_7b:
+    paper_role: "literal Llama2-7B checkpoint candidate for WikiText perplexity and activation measurements"
     source: "huggingface://meta-llama/Llama-2-7b-hf"
     revision: "01c7f73d771dfac7d292323805ebc428287df4f9"
-    availability: "manual access gate; HF_TOKEN is absent on this host"
+    mirror_source: "modelscope://f541119578/Llama-2-7b-hf"
+    mirror_revision: master
+    local_root: third_party/models/llama2-7b-hf-msmirror
+    availability: "downloaded through mirror and byte-qualified against official Hugging Face hashes/blob IDs"
+    config_signature: {hidden_size: 4096, num_hidden_layers: 32, num_attention_heads: 32, num_key_value_heads: 32, vocab_size: 32000, max_position_embeddings: 4096}
+    files:
+      - {path: model-00001-of-00002.safetensors, sha256: 4ec71fd53e99766de38f24753b30c9e8942630e9e576a1ba27b0ec531e87be41, bytes: 9976578928}
+      - {path: model-00002-of-00002.safetensors, sha256: 41780b5dac322ac35598737e99208d90bdc632a1ba3389ebedbb46a1d8385a7f, bytes: 3500297344}
+      - {path: tokenizer.model, sha256: 9e556afd44213b6bd1be2b850ebbbd98f5481437a8021afaf58ee7fb1818d347, bytes: 499723}
 
 paper_recipe_gaps:
   - "No exact modified-layer indices beyond more than 60 percent of layers."
