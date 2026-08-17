@@ -3,9 +3,8 @@
 The simulator now models MLX as a spatial overlay whose PEs retain local,
 programmable load, store, compute, and transfer pipelines. DSAGEN/dsa-gem5
 owns tag scheduling, the PE mesh, skip-hop routing, scratchpads, and the clock.
-The Accel-Sim/GPGPU-Sim source study informs PE-local resource concepts only;
-the implementation does not import warps, SIMT reconvergence, CTAs, or GPU
-coherence into MLX.
+The PE follows the paper's static tagged-block control. Accel-Sim/GPGPU-Sim is
+not required by this path and is used only for separate GPU baselines.
 
 For `memory_backend=dsagen_dma`, an overlay memory instruction enters a
 dedicated MinorCPU LSQ transfer queue. Loads pass through address translation,

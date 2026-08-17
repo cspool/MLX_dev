@@ -1,0 +1,198 @@
+diff --git a/src/cpu/minor/ssim/mlx_overlay.hh b/src/cpu/minor/ssim/mlx_overlay.hh
+--- a/src/cpu/minor/ssim/mlx_overlay.hh
++++ b/src/cpu/minor/ssim/mlx_overlay.hh
+@@ -54,9 +54,15 @@
+   DmaAdapter = 2
+ };
+ 
++enum class PeDependencyModel {
++  PaperStatic = 0,
++  ScoreboardExperimental = 1
++};
++
+ const char *PipelineName(PipelineKind pipeline);
+ PipelineKind ParsePipeline(const std::string &name);
+ MemoryBackend ParseMemoryBackend(const std::string &name);
++PeDependencyModel ParsePeDependencyModel(const std::string &name);
+ 
+ struct Timing {
+   uint64_t latency{1};
+@@ -107,6 +113,8 @@
+   bool record_events{true};
+   bool start_in_roi{false};
+   MemoryBackend memory_backend{MemoryBackend::FixedLatency};
++  PeDependencyModel pe_dependency_model{
++      PeDependencyModel::ScoreboardExperimental};
+   RegisterFileConfig register_file;
+   std::map<PipelineKind, Timing> pipeline_timing;
+   std::map<std::string, FunctionalUnit> functional_units;
+@@ -323,6 +331,10 @@
+       const Instruction &instruction) const;
+   std::string fuClass(const Instruction &instruction) const;
+   unsigned registerBank(unsigned reg) const;
++  bool usesExperimentalScoreboard() const {
++    return config_.pe_dependency_model ==
++        PeDependencyModel::ScoreboardExperimental;
++  }
+   bool tagFinished(uint64_t tag) const;
+   bool predecessorsComplete(uint64_t tag) const;
+   bool iterationEventsReady(std::size_t block_index) const;
+diff --git a/src/cpu/minor/ssim/mlx_overlay.cc b/src/cpu/minor/ssim/mlx_overlay.cc
+--- a/src/cpu/minor/ssim/mlx_overlay.cc
++++ b/src/cpu/minor/ssim/mlx_overlay.cc
+@@ -130,6 +130,17 @@
+   throw std::runtime_error("unknown MLX memory backend: " + name);
+ }
+ 
++PeDependencyModel
++ParsePeDependencyModel(const std::string &name)
++{
++  if (name == "paper_static") return PeDependencyModel::PaperStatic;
++  if (name.empty() || name == "scoreboard_experimental" ||
++      name == "scoreboard") {
++    return PeDependencyModel::ScoreboardExperimental;
++  }
++  throw std::runtime_error("unknown MLX PE dependency model: " + name);
++}
++
+ Overlay::Overlay(Config config, std::vector<TaggedBlock> blocks)
+     : config_(std::move(config)), blocks_(std::move(blocks)),
+       states_(blocks_.size())
+@@ -162,6 +173,8 @@
+   config.record_events = root.get("record_events", true).asBool();
+   config.start_in_roi = root.get("start_in_roi", false).asBool();
+   config.memory_backend = ParseMemoryBackend(root.get("memory_backend", "fixed").asString());
++  config.pe_dependency_model = ParsePeDependencyModel(
++      root.get("pe_dependency_model", "scoreboard_experimental").asString());
+   const auto &rf = root["register_file"];
+   config.register_file.banks =
+       static_cast<unsigned>(PositiveUInt(rf["banks"], "register_file.banks"));
+@@ -577,10 +590,14 @@
+   auto &block = blocks_[block_index];
+   auto &state = states_[block_index];
+   const auto &instruction = block.instructions[state.pc];
+-  reserveWritePorts(block, instruction);
++  if (usesExperimentalScoreboard()) {
++    reserveWritePorts(block, instruction);
++  }
+   Coord destination = writebackPe(block, instruction);
+-  for (unsigned reg : instruction.writes) {
+-    pending_writers_.erase({destination, block.tag, reg});
++  if (usesExperimentalScoreboard()) {
++    for (unsigned reg : instruction.writes) {
++      pending_writers_.erase({destination, block.tag, reg});
++    }
+   }
+   recordEvent("complete", block_index);
+   ++stats_.instructions_completed;
+@@ -789,34 +806,37 @@
+       return false;
+     }
+   }
+-  for (unsigned reg : instruction.reads) {
+-    if (pending_writers_.count({block.pe, block.tag, reg})) {
+-      *reason = "register_pending";
+-      return false;
+-    }
+-  }
+-  Coord destination = writebackPe(block, instruction);
+-  for (unsigned reg : instruction.writes) {
+-    if (pending_writers_.count({destination, block.tag, reg})) {
+-      *reason = "register_waw";
++  if (usesExperimentalScoreboard()) {
++    for (unsigned reg : instruction.reads) {
++      if (pending_writers_.count({block.pe, block.tag, reg})) {
++        *reason = "register_pending";
++        return false;
++      }
++    }
++    Coord destination = writebackPe(block, instruction);
++    for (unsigned reg : instruction.writes) {
++      if (pending_writers_.count({destination, block.tag, reg})) {
++        *reason = "register_waw";
++        return false;
++      }
++    }
++    unsigned reads_used = 0;
++    auto reads = rf_reads_this_cycle_.find(block.pe);
++    if (reads != rf_reads_this_cycle_.end()) {
++      reads_used = reads->second;
++    }
++    if (reads_used + instruction.reads.size() >
++        config_.register_file.read_ports) {
++      *reason = "rf_read_ports";
+       return false;
+     }
+-  }
+-  unsigned reads_used = 0;
+-  auto reads = rf_reads_this_cycle_.find(block.pe);
+-  if (reads != rf_reads_this_cycle_.end()) {
+-    reads_used = reads->second;
+-  }
+-  if (reads_used + instruction.reads.size() > config_.register_file.read_ports) {
+-    *reason = "rf_read_ports";
+-    return false;
+-  }
+-  for (unsigned reg : instruction.reads) {
+-    auto key = std::make_pair(block.pe, registerBank(reg));
+-    auto used = rf_read_banks_this_cycle_.find(key);
+-    if (used != rf_read_banks_this_cycle_.end() && used->second >= 1) {
+-      *reason = "rf_read_bank";
+-      return false;
++    for (unsigned reg : instruction.reads) {
++      auto key = std::make_pair(block.pe, registerBank(reg));
++      auto used = rf_read_banks_this_cycle_.find(key);
++      if (used != rf_read_banks_this_cycle_.end() && used->second >= 1) {
++        *reason = "rf_read_bank";
++        return false;
++      }
+     }
+   }
+   return true;
+@@ -835,6 +855,9 @@
+ bool
+ Overlay::canWriteback(std::size_t block_index, std::string *reason) const
+ {
++  if (!usesExperimentalScoreboard()) {
++    return true;
++  }
+   const auto &block = blocks_[block_index];
+   const auto &state = states_[block_index];
+   const auto &instruction = block.instructions[state.pc];
+@@ -887,7 +910,9 @@
+       }
+     }
+   }
+-  reserveReadPorts(block, instruction);
++  if (usesExperimentalScoreboard()) {
++    reserveReadPorts(block, instruction);
++  }
+   PipelineKey pipeline_key{block.pe, instruction.pipeline};
+   pipeline_next_issue_[pipeline_key] =
+       cycle_ + pipeline_timing.initiation_interval;
+@@ -895,9 +920,11 @@
+     fu_next_issue_[{block.pe, fuClass(instruction)}] =
+         cycle_ + timing.initiation_interval;
+   }
+-  Coord destination = writebackPe(block, instruction);
+-  for (unsigned reg : instruction.writes) {
+-    pending_writers_.insert({destination, block.tag, reg});
++  if (usesExperimentalScoreboard()) {
++    Coord destination = writebackPe(block, instruction);
++    for (unsigned reg : instruction.writes) {
++      pending_writers_.insert({destination, block.tag, reg});
++    }
+   }
+   state.inflight = true;
+   state.routing = false;
+@@ -1083,6 +1110,9 @@
+       << ",\"done\":" << (done() ? "true" : "false")
+       << ",\"record_events\":" << (config_.record_events ? "true" : "false")
+       << ",\"start_in_roi\":" << (config_.start_in_roi ? "true" : "false")
++      << ",\"pe_dependency_model\":"
++      << Quote(config_.pe_dependency_model == PeDependencyModel::PaperStatic ?
++               "paper_static" : "scoreboard_experimental")
+       << ",\"memory_backend\":"
+       << Quote(config_.memory_backend == MemoryBackend::DmaAdapter ?
+                "dsagen_dma" :
+

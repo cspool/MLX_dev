@@ -2,11 +2,11 @@
 
 ## Outcome
 
-The executable second-development substrate is DSAGEN/dsa-gem5 for the
-spatial fabric, with Accel-Sim/GPGPU-Sim retained as a separately executable
-GPU baseline and as a source-level reference for programmable-PE resource
-hazards. This is an engineering reconstruction, not a claim that the
-unpublished MLX simulator was derived from either repository.
+The executable second-development substrate is DSAGEN/dsa-gem5 for the MLX
+spatial fabric and tagged-block PE. Accel-Sim/GPGPU-Sim is retained as a
+separately executable GPU baseline only. This is an engineering reconstruction,
+not a claim that the unpublished MLX simulator was derived from either
+repository.
 
 MLX is spatial between PEs, but its PE is more programmable than a fixed
 systolic MAC. The resulting split is intentional:
@@ -16,13 +16,17 @@ systolic MAC. The resulting split is intentional:
 - The MLX extension will add immutable per-layer instruction blocks, tag
   readiness/windows, resource-aware issue, and skip-hop packet timing inside
   that spatial clock.
-- GPGPU-Sim's scoreboard, operand collector, register banks, pipelined SIMD
-  units, and load/store unit constrain the new PE resource abstraction.
-- GPU warps, SIMT reconvergence, CTA residency, and GPU cache coherence are
-  excluded from the MLX PE.
+- The MLX extension implements Fig. 9's tagged instruction buffers, loop and
+  bookkeeping state, lower-tag arbitration, and independent xfer/load/store/
+  compute pipelines. Static intra-block order replaces dynamic scoreboarding.
+- GPGPU-Sim does not define MLX PE semantics. Its warp, SIMT, CTA, operand-
+  collector, scoreboard, register-bank, and cache-coherence behavior belongs
+  only to the GPU comparison backend.
 
-The exact source revisions and machine-auditable mechanism map are in
-[`open_hybrid_v1.yaml`](../configs/simulators/open_hybrid_v1.yaml).
+The historical H40 source-selection record is in
+[`open_hybrid_v1.yaml`](../configs/simulators/open_hybrid_v1.yaml). Its
+GPGPU-derived PE-hazard hypothesis is superseded by the paper audit in
+[`mlx_pe_semantics_correction_v1.yaml`](../configs/simulators/mlx_pe_semantics_correction_v1.yaml).
 
 ## Executed upstream gates
 
@@ -76,6 +80,7 @@ scratchpad callbacks, real MinorCPU LSQ/L1/L2/DDR traffic, and a 28-tag reduced
 full-Transformer-block proxy. See [`dsagen-mlx-overlay.md`](dsagen-mlx-overlay.md),
 [`dsagen-mlx-cdc-memory.md`](dsagen-mlx-cdc-memory.md),
 [`dsagen-mlx-dma-memory.md`](dsagen-mlx-dma-memory.md), and
-[`dsagen-mlx-full-block.md`](dsagen-mlx-full-block.md). The remaining boundary
+[`dsagen-mlx-full-block.md`](dsagen-mlx-full-block.md), and
+[`mlx-pe-paper-contract.md`](mlx-pe-paper-contract.md). The remaining boundary
 is independently defensible large-shape/per-kernel work scaling for Figures
 18--21 and 24--25. Paper result bars were not inputs to the invariant runs.

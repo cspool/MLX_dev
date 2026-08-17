@@ -1,5 +1,11 @@
 # DSAGEN MLX overlay v1
 
+> Historical note: H41's RF scoreboard/bank constraints were an exploratory
+> inference. H52 shows that Fig. 9 and Sec. IV-C instead specify static
+> intra-block order with tag-level arbitration. New paper-facing runs use
+> `pe_dependency_model=paper_static`; the old behavior is retained only as
+> `scoreboard_experimental` for replay and sensitivity.
+
 The first MLX-specific simulator layer now lives inside the pinned DSAGEN
 timing source. It models the architecture at the paper's scheduling boundary:
 static layer-tagged blocks over a spatial mesh, not GPU warps.
@@ -13,8 +19,8 @@ static layer-tagged blocks over a spatial mesh, not GPU warps.
 - Every PE has independent load, store, compute, and transfer issue resources.
   Smaller ready tags win; equal-tag blocks use persistent round-robin order.
 - Compute operations select heterogeneous FU classes with independent latency
-  and initiation interval. Per-PE RF ports, banks, and per-tag pending writers
-  constrain issue/writeback.
+  and initiation interval. In paper-static mode, the ordered block frontier
+  supplies local dependency correctness without dynamic RF hazard stalls.
 - Transfer packets follow deterministic XY routing. Each router consumes the
   largest configured signed step no greater than the residual distance;
   directed unit/skip links have explicit per-cycle capacity.
@@ -50,7 +56,7 @@ cycles, 256 CGRA instances, 1,024 DFG instructions, and a numerical pass.
 
 ## Current boundary
 
-V1 validates control, PE resource, and NoC timing semantics. H42 subsequently
+V1 validates an exploratory control/resource model and NoC timing. H42 subsequently
 adds counted cross-layer wakeup, a radix-2 FFT/BSMM compiler, and an opt-in
 DSAGEN scratchpad callback adapter; see
 [`dsagen-mlx-cdc-memory.md`](dsagen-mlx-cdc-memory.md). Off-chip traffic and
