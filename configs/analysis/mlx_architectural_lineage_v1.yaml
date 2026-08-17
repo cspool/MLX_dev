@@ -14,6 +14,19 @@ local_sources:
     path: "MLX Multi-Layer Execution for Structured LLM Workload Acceleration on Spatial Architectures/MLX Multi-Layer Execution for Structured LLM Workload Acceleration on Spatial Architectures.md"
     bytes: 85855
     sha256: 5785eb81b28741a3806ca42749d7b556bbcd2404e1622ae644a32bae2ade7745
+    title: "MLX: Multi-Layer Execution for Structured LLM Workload Acceleration on Spatial Architectures"
+    authors:
+      - Haibin Wu
+      - Wenming Li
+      - Zhihua Fan
+      - Zirui Ma
+      - Yuqun Liu
+      - Tengfei Xia
+      - Yanhuan Liu
+      - Kunming Zhang
+      - Xiaochun Ye
+      - Dongrui Fan
+      - Jian Weng
   h33_browser_snapshot:
     path: artifacts/source-snapshots/mlx-public-browser-search-20260817.yaml
     bytes: 5791
@@ -22,22 +35,42 @@ local_sources:
     path: artifacts/results/mlx-public-artifact-discovery-run038.json
     bytes: 88807
     sha256: 462df17b15a8acdeee8820f59b476a60939a795d9efd69991d0fabfe0eccff09
+  browser_discovery_snapshot:
+    path: artifacts/source-snapshots/mlx-lineage-browser-search-20260817.yaml
+    bytes: 6300
+    sha256: 0c442412494e98052fae934cca713a91cd84d9167628ad8e832707a508a265e4
+
+control_repositories:
+  dsagen:
+    path: third_party/dsa-framework
+    commit: 273e141a519d12138ee0fbc9743059d13e9b5a64
+  assassyn:
+    path: third_party/assassyn
+    commit: 6a99ade0e9380c93d4817f7de51b7edd8a473dd2
 
 candidates:
   - id: simict
     title: "SimICT: A Fast and Flexible Framework for Performance and Power Evaluation of Large-Scale Architecture"
+    doi: 10.1109/ISLPED.2013.6629308
     expected_role: simulation_framework
   - id: dfu_e
     title: "DFU-E: A Dataflow Architecture for Edge DSP and AI Applications"
+    doi: 10.1109/TPDS.2025.3555329
     expected_role: parent_family_candidate
   - id: dfgas
     title: "DFGAS: Exploring the Balance of HW-SW Scheduling through the DFG-Aware Scheme"
+    doi: 10.1145/3773768
     expected_role: scheduling_lineage_candidate
   - id: m2_dfu
     title: "M2-DFU: Multi-Mode Dataflow Architecture for Adaptive and High-Efficiency Data Processing"
+    title_aliases:
+      - "M2-DFU: Multi-Mode Dataflow Architecture for Adaptive and High-Efficency Data Processing"
     expected_role: parent_family_candidate
   - id: transfer_latency
     title: "Alleviating Transfer Latency in Dataflow Accelerator for DSP Applications"
+    title_aliases:
+      - "Alleviating Transfer Latency in DataFlow Accelerator for DSP Applications"
+    doi: 10.1109/ICCD58817.2023.00073
     expected_role: interconnect_lineage_candidate
   - id: cn202510992730_2
     identifier: CN202510992730.2
@@ -50,7 +83,89 @@ candidates:
     expected_role: external_control
   - id: assassyn
     title: "Assassyn: Unified Software and Hardware Simulation with Asynchronous Semantics"
+    doi: 10.1145/3695053.3731004
     expected_role: external_control
+
+primary_endpoints:
+  - id: ucas_author_bibliography
+    candidate_ids: [dfu_e, dfgas, m2_dfu, transfer_latency, cn202510992730_2, cn202511751816_2]
+    url: "https://people.ucas.ac.cn/~liwenming"
+    source_class: primary_institutional_record
+    parser: html
+    feature_eligible: false
+    required_transport: true
+  - id: iccd_2023_toc
+    candidate_ids: [transfer_latency]
+    url: "https://www.proceedings.com/content/072/072344webtoc.pdf"
+    source_class: official_proceedings_toc
+    parser: pdf
+    feature_eligible: false
+  - id: islped_2013_program
+    candidate_ids: [simict]
+    url: "https://islped.org/2013/files/islped13-final-program.pdf"
+    source_class: official_venue_program
+    parser: pdf
+    feature_eligible: false
+  - id: islped_2013_toc
+    candidate_ids: [simict]
+    url: "https://www.proceedings.com/content/019/019697webtoc.pdf"
+    source_class: official_proceedings_toc
+    parser: pdf
+    feature_eligible: false
+  - id: dfu_e_ieee_pdf
+    candidate_ids: [dfu_e]
+    url: "https://ieeexplore.ieee.org/stampPDF/getPDF.jsp?tp=&arnumber=10944490&ref="
+    source_class: publisher_full_text
+    parser: pdf
+    feature_eligible: true
+  - id: dfgas_acm_pdf
+    candidate_ids: [dfgas]
+    url: "https://dl.acm.org/doi/pdf/10.1145/3773768"
+    source_class: publisher_full_text
+    parser: pdf
+    feature_eligible: true
+  - id: simict_ieee_pdf
+    candidate_ids: [simict]
+    url: "https://ieeexplore.ieee.org/stampPDF/getPDF.jsp?tp=&arnumber=6629308&ref="
+    source_class: publisher_full_text
+    parser: pdf
+    feature_eligible: true
+  - id: assassyn_author_pdf
+    candidate_ids: [assassyn]
+    url: "https://were.github.io/pdfs/isca25-18.pdf"
+    source_class: author_hosted_full_text
+    parser: pdf
+    feature_eligible: true
+  - id: dsagen_repository_readme
+    candidate_ids: [dsagen]
+    url: "https://raw.githubusercontent.com/PolyArch/dsa-framework/273e141a519d12138ee0fbc9743059d13e9b5a64/README.md"
+    source_class: official_repository
+    parser: text
+    feature_eligible: true
+    identity_required: false
+    required_transport: true
+  - id: assassyn_repository_readme
+    candidate_ids: [assassyn]
+    url: "https://raw.githubusercontent.com/Synthesys-Lab/assassyn/6a99ade0e9380c93d4817f7de51b7edd8a473dd2/README.md"
+    source_class: official_repository
+    parser: text
+    feature_eligible: true
+    identity_required: false
+    required_transport: true
+
+patent_metadata_lookups:
+  - id: cn202510992730_2_google
+    candidate_id: cn202510992730_2
+    identifier: CN202510992730.2
+    url: "https://patents.google.com/?q=CN202510992730.2"
+  - id: cn202511751816_2_google
+    candidate_id: cn202511751816_2
+    identifier: CN202511751816.2
+    url: "https://patents.google.com/?q=CN202511751816.2"
+  - id: cn202510744787_0_google
+    candidate_id: bibliography_followup_only
+    identifier: CN202510744787.0
+    url: "https://patents.google.com/?q=CN202510744787.0"
 
 registered_queries:
   - '"M2-DFU: Multi-Mode Dataflow Architecture for Adaptive and High-Efficiency Data Processing"'

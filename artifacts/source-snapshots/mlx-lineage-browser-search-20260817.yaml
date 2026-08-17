@@ -1,0 +1,103 @@
+snapshot:
+  provider_class: general_web_index_via_codex_connector
+  completed_at_utc: "2026-08-17T08:57:58Z"
+  cutoff_utc: "2026-08-17T23:59:59Z"
+  evidence_scope: discovery_only
+  note: >-
+    All fourteen pre-registered queries were executed. Search-result snippets
+    are discovery aids only and cannot satisfy a feature, family, exact-parent,
+    simulator-code, or provenance gate. The formal runner directly retrieves,
+    hashes, and parses retained primary or bibliographic records.
+
+registered_queries:
+  - query: '"M2-DFU: Multi-Mode Dataflow Architecture for Adaptive and High-Efficiency Data Processing"'
+    observation: "No exact generic-index hit; the official UCAS author bibliography follow-up lists the title with the site's spelling 'High-Efficency', five authors, TOCS, and just accepted in 2026."
+    retained_urls: ["https://people.ucas.ac.cn/~liwenming"]
+  - query: '"DFU-E: A Dataflow Architecture for Edge DSP and AI Applications"'
+    observation: "Exact bibliographic identity found; DOI 10.1109/TPDS.2025.3555329 and IEEE document 10944490."
+    retained_urls:
+      - "https://doi.org/10.1109/TPDS.2025.3555329"
+      - "https://ieeexplore.ieee.org/document/10944490/"
+      - "https://people.ucas.ac.cn/~liwenming"
+  - query: '"DFGAS: Exploring the Balance of HW-SW Scheduling through the DFG-Aware Scheme"'
+    observation: "Exact bibliographic identity found; DOI 10.1145/3773768."
+    retained_urls:
+      - "https://doi.org/10.1145/3773768"
+      - "https://dl.acm.org/doi/10.1145/3773768"
+      - "https://people.ucas.ac.cn/~liwenming"
+  - query: '"Alleviating Transfer Latency in Dataflow Accelerator for DSP Applications"'
+    observation: "Exact 2023 ICCD paper found; DOI 10.1109/ICCD58817.2023.00073 and pages 440-443."
+    retained_urls:
+      - "https://doi.org/10.1109/ICCD58817.2023.00073"
+      - "https://www.proceedings.com/content/072/072344webtoc.pdf"
+      - "https://people.ucas.ac.cn/~liwenming"
+  - query: '"SimICT: A Fast and Flexible Framework for Performance and Power Evaluation of Large-Scale Architecture"'
+    observation: "Exact 2013 ISLPED invited paper found; DOI 10.1109/ISLPED.2013.6629308 and pages 273-278."
+    retained_urls:
+      - "https://doi.org/10.1109/ISLPED.2013.6629308"
+      - "https://islped.org/2013/files/islped13-final-program.pdf"
+      - "https://www.proceedings.com/content/019/019697webtoc.pdf"
+  - query: '"CN202510992730.2"'
+    observation: "No exact indexed record; the official author bibliography follow-up lists the unprefixed application number 202510992730.2 and a data/instruction-reuse processor title."
+    retained_urls: ["https://people.ucas.ac.cn/~liwenming"]
+  - query: '"CN202511751816.2"'
+    observation: "No exact indexed record; the official author bibliography follow-up lists the application number and a RISC-V FFT dataflow title."
+    retained_urls: ["https://people.ucas.ac.cn/~liwenming"]
+  - query: '"MLX" "DFU-E" dataflow'
+    observation: "No primary record explicitly links MLX to DFU-E."
+    retained_urls: []
+  - query: '"MLX" "M2-DFU" dataflow'
+    observation: "No primary record explicitly links MLX to M2-DFU."
+    retained_urls: []
+  - query: '"general-purpose dataflow design" "Wenming Li"'
+    observation: "No primary record names MLX's general-purpose parent."
+    retained_urls: []
+  - query: '"12 nm" "DFU-E" dataflow'
+    observation: "No exact process-node fingerprint tied to DFU-E was found."
+    retained_urls: []
+  - query: '"7.712" dataflow accelerator'
+    observation: "No exact PE-array-area fingerprint was found outside the supplied MLX manuscript."
+    retained_urls: []
+  - query: '"SIMD32" "DFU-E"'
+    observation: "No exact SIMD-width fingerprint tied to DFU-E was found."
+    retained_urls: []
+  - query: 'site:people.ucas.ac.cn/~liwenming "M2-DFU" OR "DFU-E"'
+    observation: "The official bibliography lists MLX, M2-DFU, DFGAS, DFU-E, and the ICCD transfer paper in the same research record; list adjacency and shared authorship are identity/chronology leads only."
+    retained_urls: ["https://people.ucas.ac.cn/~liwenming"]
+
+direct_record_followups:
+  - id: ucas_author_bibliography
+    url: "https://people.ucas.ac.cn/~liwenming"
+    source_class: primary_institutional_record
+    observations:
+      - "Lists MLX as just accepted at ISCA 2026."
+      - "Lists M2-DFU as just accepted at ACM TOCS 2026 with Wenming Li, Zhihua Fan, Haibin Wu, Dongrui Fan, and Xiaochun Ye."
+      - "Lists DFU-E in IEEE TPDS 36(6), 2025 and the ICCD 2023 transfer paper."
+      - "Lists dataflow-related chip projects and a multi-layer dataflow-fusion patent, but does not explicitly state which candidate is MLX's parent."
+  - id: cn202510744787_0
+    identifier: CN202510744787.0
+    source_class: institutional_bibliography_patent_followup
+    title_zh: "一种基于多层数据流融合执行模型的计算方法及其系统"
+    inventors: ["Wenming Li", "Zhihua Fan", "Haibin Wu", "Xiaochun Ye"]
+    observation: "Discovered by following the frozen official bibliography, not by adding a feature or candidate after search. Identity only until an official patent record is retrieved."
+  - id: zl201810939096_6
+    identifier: ZL201810939096.6
+    source_class: institutional_bibliography_patent_followup
+    title_zh: "一种面向神经网络的数据重用指令映射方法、系统及装置"
+    observation: "Older data-reuse lineage context; not evidence of MLX derivation by itself."
+  - id: zl201910171401_6
+    identifier: ZL201910171401.6
+    source_class: institutional_bibliography_patent_followup
+    title_zh: "基于数据流架构的快速傅里叶变换方法、系统和存储介质"
+    observation: "Older FFT/dataflow lineage context; not evidence of MLX derivation by itself."
+
+discovery_only_candidate_status:
+  explicit_mlx_to_candidate_link: []
+  exact_parent_hardware_fingerprint_matches: []
+  qualifying_family_attributions: []
+  code_provenance_records: []
+
+rejected_inferences:
+  - "Shared authorship, institutional ownership, bibliography order, and generic dataflow terminology do not satisfy a lineage feature."
+  - "The two 2025 patent-title leads do not establish implementation use, RTL reuse, or code provenance."
+  - "A SimICT citation establishes the referenced simulation framework only at the level stated by MLX."
