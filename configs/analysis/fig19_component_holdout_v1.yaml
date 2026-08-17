@@ -1,0 +1,35 @@
+run:
+  id: run_026
+  hypothesis: H22
+  protocol: experiments/h22-fig19-component-holdout/protocol.md
+  output: artifacts/results/fig19-components-run026.json
+
+targets:
+  components: artifacts/targets/fig19_components_digitization_pixels.yaml
+  totals: artifacts/targets/fig19_digitization_pixels.yaml
+  all_point_relative_error_gate: 0.10
+
+upstream:
+  repository: https://github.com/os-hxfan/Butterfly_Acc
+  revision: d5e313605fed593c8765c70acbf78231cfab3e00
+  local_root: third_party/butterfly-acc
+  simulator_module: hardware/npu_design/simulator/bfly_accelerator.py
+
+configuration:
+  model_version: large
+  num_layers: 24
+  hidden_dim: 1024
+  ffn_inner_dim: 4096
+  head_dim: 32
+  frequency_mhz: 200
+  implementation_efficiency: 0.85
+  fpga_board: zcu128
+  offchip_memory: hbm
+  indata_dram_bw_bits_per_cycle: 2048
+  coefficient_dram_bw_bits_per_cycle: 256
+  outdata_dram_bw_bits_per_cycle: 2048
+  parallel_butterfly_units_per_engine: 4
+  parallel_butterfly_engines: 40
+
+classification: exploratory_external_simulator_component_diagnosis
+validation_eligible: false
