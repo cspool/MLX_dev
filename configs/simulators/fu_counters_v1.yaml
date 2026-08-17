@@ -1,0 +1,30 @@
+name: fu-counters-v1
+experiment_id: H71
+run_id: run076
+classification: target_free_physical_fu_counter_validation
+validation_eligible: false
+
+frozen_inputs:
+  operators:
+    path: artifacts/results/dsagen-mlx-fig25-paper-static-run059.json
+    sha256: b5bf0221b375435eb686a0bb51881ac4f9a273165c306ec7e173ff5d0122db1d
+    required_integrity: true
+  memory:
+    path: artifacts/results/multiport-spad-run074.json
+    sha256: a58c37a45111a8928fd98df8eb52ee8db48b2d1032766351020d11344b16f562
+    required_status: supported
+    required_integrity: true
+
+parent_configs: artifacts/environment/h53
+output_root: artifacts/environment/h71
+result_path: artifacts/results/fu-counters-run076.json
+
+backends:
+  fixed: {memory_backend: fixed}
+  column_port: {memory_backend: dsagen_spad, ports: 4, axis: x}
+
+source_layout:
+  compiler: scripts/compile_fu_counter_configs.py
+  runner: scripts/run_fu_counters.py
+  auditor: scripts/audit_fu_counters.py
+  patch: patches/dsagen/dsa-gem5-mlx-fu-counters-v1.patch
