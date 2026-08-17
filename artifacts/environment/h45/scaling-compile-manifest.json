@@ -1,0 +1,132 @@
+{
+  "checks": {
+    "four_configs": true,
+    "instruction_footprint": true,
+    "mesh_slot_expansion": true,
+    "mesh_trip_reduction": true,
+    "paper_targets_consumed": false,
+    "simd_issue_reduction": true,
+    "work_conserved": true
+  },
+  "conservation": {
+    "baseline": {
+      "logical_pair_iterations": true,
+      "memory_request_lane_work": true,
+      "transfer_lane_work": true,
+      "vector_instruction_lane_work": true
+    },
+    "simd32_4x4": {
+      "logical_pair_iterations": true,
+      "memory_request_lane_work": true,
+      "transfer_lane_work": true,
+      "vector_instruction_lane_work": true
+    },
+    "simd32_8x8": {
+      "logical_pair_iterations": true,
+      "memory_request_lane_work": true,
+      "transfer_lane_work": true,
+      "vector_instruction_lane_work": true
+    },
+    "simd8_8x8": {
+      "logical_pair_iterations": true,
+      "memory_request_lane_work": true,
+      "transfer_lane_work": true,
+      "vector_instruction_lane_work": true
+    }
+  },
+  "experiment_id": "H45",
+  "logical_work": {
+    "baseline": {
+      "active_instruction_footprint": 18,
+      "active_slots_per_stage": 16,
+      "logical_pair_iterations": 32768,
+      "max_trip_count": 256,
+      "memory_request_lane_work": 98304,
+      "transfer_lane_work": 32768,
+      "vector_instruction_lane_work": 196608
+    },
+    "simd32_4x4": {
+      "active_instruction_footprint": 18,
+      "active_slots_per_stage": 16,
+      "logical_pair_iterations": 32768,
+      "max_trip_count": 64,
+      "memory_request_lane_work": 98304,
+      "transfer_lane_work": 32768,
+      "vector_instruction_lane_work": 196608
+    },
+    "simd32_8x8": {
+      "active_instruction_footprint": 18,
+      "active_slots_per_stage": 64,
+      "logical_pair_iterations": 32768,
+      "max_trip_count": 16,
+      "memory_request_lane_work": 98304,
+      "transfer_lane_work": 32768,
+      "vector_instruction_lane_work": 196608
+    },
+    "simd8_8x8": {
+      "active_instruction_footprint": 18,
+      "active_slots_per_stage": 64,
+      "logical_pair_iterations": 32768,
+      "max_trip_count": 64,
+      "memory_request_lane_work": 98304,
+      "transfer_lane_work": 32768,
+      "vector_instruction_lane_work": 196608
+    }
+  },
+  "outputs": {
+    "baseline": {
+      "bytes": 2180031,
+      "metadata": {
+        "active_slots_per_stage": 16,
+        "block_count": 128,
+        "instruction_count": 196608,
+        "max_trip_count": 256,
+        "memory_requests": 98304,
+        "transfers": 32768
+      },
+      "path": "scaling-baseline.json",
+      "sha256": "fbbdcf541257a4aa09a4286627b0c35c654485c6654224b9cec434212e8048e1"
+    },
+    "simd32_4x4": {
+      "bytes": 824142,
+      "metadata": {
+        "active_slots_per_stage": 16,
+        "block_count": 128,
+        "instruction_count": 49152,
+        "max_trip_count": 64,
+        "memory_requests": 24576,
+        "transfers": 8192
+      },
+      "path": "scaling-simd32_4x4.json",
+      "sha256": "65c1ed64f864903a2cb3aac9fcd35fbf4454402684810a1120f1291664e8e7b7"
+    },
+    "simd32_8x8": {
+      "bytes": 1990866,
+      "metadata": {
+        "active_slots_per_stage": 64,
+        "block_count": 512,
+        "instruction_count": 49152,
+        "max_trip_count": 16,
+        "memory_requests": 24576,
+        "transfers": 8192
+      },
+      "path": "scaling-simd32_8x8.json",
+      "sha256": "1f903074b0d72525caf25737fc5bc1f97038b6a1df6d4b770ef8a112faa170bd"
+    },
+    "simd8_8x8": {
+      "bytes": 3346387,
+      "metadata": {
+        "active_slots_per_stage": 64,
+        "block_count": 512,
+        "instruction_count": 196608,
+        "max_trip_count": 64,
+        "memory_requests": 98304,
+        "transfers": 32768
+      },
+      "path": "scaling-simd8_8x8.json",
+      "sha256": "1948e46978a9351177c90bc9d4a39256e9b610d549460612dee77d94061d999e"
+    }
+  },
+  "run_id": "run051",
+  "schema_version": 1
+}
