@@ -122,6 +122,7 @@ variable-depth FFT execution and rejected small-anchor estimator are in
 [`matched-fft-cycle-estimator.md`](matched-fft-cycle-estimator.md). Its
 target-free steady-state repair passes in
 [`fft-steady-state-folding.md`](fft-steady-state-folding.md). The remaining
-boundary is a correct compressed-attention reduction schedule plus real-memory
-and Xavier counterparts for Figures 18--21 and 24--25. Paper result bars were
-not inputs to the invariant runs.
+compressed-attention reduction is implemented in
+[`grouped-attention-cdc.md`](grouped-attention-cdc.md). The remaining boundary
+is real data-transfer/memory timing and Xavier counterparts for Figures 18--21
+and 24--25. Paper result bars were not inputs to the invariant runs.

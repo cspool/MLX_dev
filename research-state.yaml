@@ -687,9 +687,9 @@ experiments:
       timestamp: "2026-08-17"
 
 outer_loop:
-  cycle: 43
-  last_direction: "Implement a target-free compressed-attention CDC whose QK/SV events fire only after complete dot-product groups and whose rowmax/FEXP/ADD/FDIV counts match H79. Validate grouped-event semantics and repeat folding before adding memory or Xavier timing."
-  last_reflection: "H81 confirms the independently observed steady-state boundary: unchanged q=4/8 anchors predict q=16/32 with 0.157% MAPE and 0.291% max. Fixed-memory FFT-CMP full-work timing is now defensible, but it remains only one of two Attention components and excludes memory/GPU behavior. No Figure 20 target has been consumed."
+  cycle: 44
+  last_direction: "Connect H81 FFT-CMP and H82 compressed-Attention through explicit boundary data and the validated DSAGEN scratchpad/column-port path. Validate a combined target-free schedule and memory work before building matched Xavier FFT+attention anchors."
+  last_reflection: "H82 adds reversible grouped CDC events, preserves legacy summaries exactly, conserves all five H79 FU classes, and gives exact q=1/2→4/8 cycle folding. Both Attention components now have defensible fixed-memory estimators. The remaining MLX-side gap is their data-transfer/memory composition; the cross-device gap is a matched Xavier two-component execution."
 
 recent_milestones_after_h46:
   architecture_contract: "H52 supersedes the GPU-SM analogy with the paper's specialized spatial tagged-block PE; GPGPU-Sim is baseline-only."
@@ -701,6 +701,7 @@ recent_milestones_after_h46:
   attention_signature: "H79 supports exact target-free N=256/8192 FFT-CMP and compressed-attention per-FU signatures; H57's seven-stage FFT proxy lacks the required 16/26 stages and FMAX/FEXP/FDIV classes."
   matched_fft: "H80 executes both variable-depth FFT topologies with exact q-linear work and replay, but rejects q=1/2 affine folding at 0/4 holdouts, 36.60% MAPE, and 53.19% maximum error."
   fft_steady_state: "H81 supports q=4/8 folding on four new q=16/32 holdouts at 0.157% MAPE and 0.291% max; fixed-memory full-work FFT cycles are 1,751,157/100,401,211."
+  grouped_attention: "H82 supports default-preserving grouped CDC events and exact compressed-attention FU work; q=1/2 predicts q=4/8 exactly and fixed-memory full cycles are 8,421,396/8,590,475,284."
 
 completion_snapshot_run042:
   certificate_run: run_042

@@ -1,0 +1,1256 @@
+{
+  "schema_version": 1,
+  "experiment_id": "H82",
+  "run_id": "run087",
+  "classification": "target_free_grouped_compressed_attention_cdc",
+  "validation_eligible": false,
+  "generated_at": "2026-08-17T22:17:47.547063+00:00",
+  "project_commit": "8972824b5bd9635b1c248a159b5943a88947bdc6",
+  "hypothesis_status": "supported",
+  "audit_integrity": true,
+  "frozen_inputs": {
+    "signature": {
+      "path": "artifacts/results/attention-work-signature-run084.json",
+      "bytes": 7936,
+      "sha256": "109091f15841245b3d2727fbfa492ea1671cb053a30c0278359833026919c3c6",
+      "checks": {
+        "is_file": true,
+        "sha256": true
+      },
+      "pass": true
+    },
+    "fft_estimator": {
+      "path": "artifacts/results/fft-steady-state-folding-run086.json",
+      "bytes": 38154,
+      "sha256": "bc05cd96eb6cc12aa2d5b7894c09bf291e23694ce1316a287b627d3128548e6f",
+      "checks": {
+        "is_file": true,
+        "sha256": true
+      },
+      "pass": true
+    },
+    "pe_contract": {
+      "path": "artifacts/results/mlx-pe-semantics-correction-run058.json",
+      "bytes": 13215,
+      "sha256": "5573dcc3b4317077803ad135aa0be863b94db00aefdfeec545b9504cd9642d1e",
+      "checks": {
+        "is_file": true,
+        "sha256": true
+      },
+      "pass": true
+    },
+    "legacy_summary": {
+      "path": "artifacts/environment/h80/runs/N256-q4-first.json",
+      "bytes": 1176,
+      "sha256": "a7f480f91697cc1c7274e694b110ba75b5ab6c6c9047f9521ee40df564bc1310",
+      "checks": {
+        "is_file": true,
+        "sha256": true
+      },
+      "pass": true
+    },
+    "prior_patch": {
+      "path": "patches/dsagen/dsa-gem5-mlx-fu-counters-v1.patch",
+      "bytes": 2131,
+      "sha256": "5b3887e5644c77aa11afd7701c7a33c78d23b95971066bda7ff3e26d4f78e88e",
+      "checks": {
+        "is_file": true,
+        "sha256": true
+      },
+      "pass": true
+    }
+  },
+  "parent_checks": {
+    "signature": true,
+    "fft_estimator": true,
+    "pe_contract": true
+  },
+  "compile_manifest": {
+    "path": "artifacts/environment/h82/grouped-attention-compile-manifest.json",
+    "bytes": 8992,
+    "sha256": "bd216ae89f5311df24de429267177a9fb502c025980a48fe0bc96404a699df9e",
+    "checks": {
+      "is_file": true
+    },
+    "pass": true
+  },
+  "run_manifest": {
+    "path": "artifacts/environment/h82/grouped-attention-run-manifest.json",
+    "bytes": 39571,
+    "sha256": "6b8e2dfdefaabc0fa89cd560dc2220ab01acd1d865c3d90958653163f0f2b00e",
+    "checks": {
+      "is_file": true
+    },
+    "pass": true
+  },
+  "compile_checks": {
+    "N256-q1": true,
+    "N256-q2": true,
+    "N256-q4": true,
+    "N256-q8": true,
+    "N8192-q1": true,
+    "N8192-q2": true,
+    "N8192-q4": true,
+    "N8192-q8": true
+  },
+  "structure_checks": {
+    "N256-q1": true,
+    "N256-q2": true,
+    "N256-q4": true,
+    "N256-q8": true,
+    "N8192-q1": true,
+    "N8192-q2": true,
+    "N8192-q4": true,
+    "N8192-q8": true
+  },
+  "execution_checks": {
+    "N256-q1": true,
+    "N256-q2": true,
+    "N256-q4": true,
+    "N256-q8": true,
+    "N8192-q1": true,
+    "N8192-q2": true,
+    "N8192-q4": true,
+    "N8192-q8": true
+  },
+  "legacy_regression": {
+    "artifact": {
+      "path": "artifacts/environment/h82/legacy-N256-q4.json",
+      "bytes": 1176,
+      "sha256": "a7f480f91697cc1c7274e694b110ba75b5ab6c6c9047f9521ee40df564bc1310",
+      "checks": {
+        "is_file": true,
+        "sha256": true
+      },
+      "pass": true
+    },
+    "exact": true
+  },
+  "work_linearity_checks": {
+    "N256-q1": true,
+    "N256-q2": true,
+    "N256-q4": true,
+    "N256-q8": true,
+    "N8192-q1": true,
+    "N8192-q2": true,
+    "N8192-q4": true,
+    "N8192-q8": true
+  },
+  "full_work_conservation": {
+    "N256": {
+      "full_scale": 512,
+      "expected": {
+        "fma": 134217728,
+        "fmax": 16384,
+        "fexp": 16384,
+        "alu_add": 16384,
+        "fdiv": 524288
+      },
+      "derived": {
+        "fma": 134217728,
+        "fmax": 16384,
+        "fexp": 16384,
+        "alu_add": 16384,
+        "fdiv": 524288
+      },
+      "checks": {
+        "fma": true,
+        "fmax": true,
+        "fexp": true,
+        "alu_add": true,
+        "fdiv": true
+      },
+      "pass": true
+    },
+    "N8192": {
+      "full_scale": 524288,
+      "expected": {
+        "fma": 137438953472,
+        "fmax": 16777216,
+        "fexp": 16777216,
+        "alu_add": 16777216,
+        "fdiv": 16777216
+      },
+      "derived": {
+        "fma": 137438953472,
+        "fmax": 16777216,
+        "fexp": 16777216,
+        "alu_add": 16777216,
+        "fdiv": 16777216
+      },
+      "checks": {
+        "fma": true,
+        "fmax": true,
+        "fexp": true,
+        "alu_add": true,
+        "fdiv": true
+      },
+      "pass": true
+    }
+  },
+  "measurements": {
+    "N256-q1": {
+      "cycles": 32820,
+      "summary": {
+        "boundary_events_emitted": 268,
+        "busy_cycles_by_pipeline": {
+          "compute": 32819,
+          "load": 0,
+          "store": 0,
+          "xfer": 0
+        },
+        "cycles": 32820,
+        "done": true,
+        "event_unblocked_issues_before_tag_complete": 128,
+        "external_memory_completions": 0,
+        "external_memory_requests": 0,
+        "external_memory_wait_cycles": 0,
+        "instructions_completed": 32908,
+        "instructions_issued": 32908,
+        "issue_cycles_by_pipeline": {
+          "compute": 8227,
+          "load": 0,
+          "store": 0,
+          "xfer": 0
+        },
+        "issued_by_pipeline": {
+          "compute": 32908,
+          "load": 0,
+          "store": 0,
+          "xfer": 0
+        },
+        "link_stalls": 0,
+        "mapped_pe_count": 16,
+        "max_active_tags": 4,
+        "max_pipeline_issues_in_cycle": 4,
+        "memory_backend": "fixed",
+        "pe_dependency_model": "paper_static",
+        "physical_pe_count": 16,
+        "productive_global_cycles_by_pipeline": {
+          "compute": 32819,
+          "load": 0,
+          "store": 0,
+          "xfer": 0
+        },
+        "productive_pe_cycles_by_fu_class": {
+          "alu": 8,
+          "fma": 131072,
+          "reduce": 8,
+          "transcendental": 1056
+        },
+        "productive_pe_cycles_by_pipeline": {
+          "compute": 131276,
+          "load": 0,
+          "store": 0,
+          "xfer": 0
+        },
+        "record_events": false,
+        "resident_pe_cycles_by_pipeline": {
+          "compute": 131276,
+          "load": 0,
+          "store": 0,
+          "xfer": 0
+        },
+        "route_hops": 0,
+        "scenario": "json_driver",
+        "skip_hops": 0,
+        "stalls_by_reason": {
+          "event_dependency": 326912,
+          "pipeline_contention": 128
+        },
+        "start_in_roi": true,
+        "unit_hops": 0
+      },
+      "metadata": {
+        "experiment_id": "H82",
+        "compiler": "mlxsim.dsagen_grouped_attention.compile_grouped_attention",
+        "paper_target_values_consumed": false,
+        "name": "N256-q1",
+        "retained_length": 128,
+        "hidden_dimension": 4096,
+        "scale": 1,
+        "full_scale_formula": "retained_length_squared_div_32",
+        "stage_count": 4,
+        "tag_count": 4,
+        "block_count": 20,
+        "operation_counts": {
+          "fma": 32768,
+          "fmax": 4,
+          "fexp": 4,
+          "add": 4,
+          "fdiv": 128
+        },
+        "pipeline_counts": {
+          "load": 0,
+          "store": 0,
+          "compute": 32908,
+          "xfer": 0
+        },
+        "dynamic_event_count": 268,
+        "qk_emit_period": 4096,
+        "sv_wait_period": 4096,
+        "sv_emit_period": 128,
+        "simd_width": 8
+      },
+      "checks": {
+        "files": true,
+        "replay": true,
+        "done": true,
+        "paper_static": true,
+        "fixed_memory": true,
+        "instructions": true,
+        "pipelines": true,
+        "events": true,
+        "no_routes": true
+      }
+    },
+    "N256-q2": {
+      "cycles": 49236,
+      "summary": {
+        "boundary_events_emitted": 536,
+        "busy_cycles_by_pipeline": {
+          "compute": 49235,
+          "load": 0,
+          "store": 0,
+          "xfer": 0
+        },
+        "cycles": 49236,
+        "done": true,
+        "event_unblocked_issues_before_tag_complete": 16620,
+        "external_memory_completions": 0,
+        "external_memory_requests": 0,
+        "external_memory_wait_cycles": 0,
+        "instructions_completed": 65816,
+        "instructions_issued": 65816,
+        "issue_cycles_by_pipeline": {
+          "compute": 15421,
+          "load": 0,
+          "store": 0,
+          "xfer": 0
+        },
+        "issued_by_pipeline": {
+          "compute": 65816,
+          "load": 0,
+          "store": 0,
+          "xfer": 0
+        },
+        "link_stalls": 0,
+        "mapped_pe_count": 16,
+        "max_active_tags": 4,
+        "max_pipeline_issues_in_cycle": 8,
+        "memory_backend": "fixed",
+        "pe_dependency_model": "paper_static",
+        "physical_pe_count": 16,
+        "productive_global_cycles_by_pipeline": {
+          "compute": 49235,
+          "load": 0,
+          "store": 0,
+          "xfer": 0
+        },
+        "productive_pe_cycles_by_fu_class": {
+          "alu": 16,
+          "fma": 262144,
+          "reduce": 16,
+          "transcendental": 2112
+        },
+        "productive_pe_cycles_by_pipeline": {
+          "compute": 262524,
+          "load": 0,
+          "store": 0,
+          "xfer": 0
+        },
+        "record_events": false,
+        "resident_pe_cycles_by_pipeline": {
+          "compute": 262524,
+          "load": 0,
+          "store": 0,
+          "xfer": 0
+        },
+        "route_hops": 0,
+        "scenario": "json_driver",
+        "skip_hops": 0,
+        "stalls_by_reason": {
+          "event_dependency": 522576,
+          "pipeline_contention": 256
+        },
+        "start_in_roi": true,
+        "unit_hops": 0
+      },
+      "metadata": {
+        "experiment_id": "H82",
+        "compiler": "mlxsim.dsagen_grouped_attention.compile_grouped_attention",
+        "paper_target_values_consumed": false,
+        "name": "N256-q2",
+        "retained_length": 128,
+        "hidden_dimension": 4096,
+        "scale": 2,
+        "full_scale_formula": "retained_length_squared_div_32",
+        "stage_count": 4,
+        "tag_count": 4,
+        "block_count": 20,
+        "operation_counts": {
+          "fma": 65536,
+          "fmax": 8,
+          "fexp": 8,
+          "add": 8,
+          "fdiv": 256
+        },
+        "pipeline_counts": {
+          "load": 0,
+          "store": 0,
+          "compute": 65816,
+          "xfer": 0
+        },
+        "dynamic_event_count": 536,
+        "qk_emit_period": 4096,
+        "sv_wait_period": 4096,
+        "sv_emit_period": 128,
+        "simd_width": 8
+      },
+      "checks": {
+        "files": true,
+        "replay": true,
+        "done": true,
+        "paper_static": true,
+        "fixed_memory": true,
+        "instructions": true,
+        "pipelines": true,
+        "events": true,
+        "no_routes": true
+      }
+    },
+    "N256-q4": {
+      "cycles": 82068,
+      "summary": {
+        "boundary_events_emitted": 1072,
+        "busy_cycles_by_pipeline": {
+          "compute": 82067,
+          "load": 0,
+          "store": 0,
+          "xfer": 0
+        },
+        "cycles": 82068,
+        "done": true,
+        "event_unblocked_issues_before_tag_complete": 49596,
+        "external_memory_completions": 0,
+        "external_memory_requests": 0,
+        "external_memory_wait_cycles": 0,
+        "instructions_completed": 131632,
+        "instructions_issued": 131632,
+        "issue_cycles_by_pipeline": {
+          "compute": 29809,
+          "load": 0,
+          "store": 0,
+          "xfer": 0
+        },
+        "issued_by_pipeline": {
+          "compute": 131632,
+          "load": 0,
+          "store": 0,
+          "xfer": 0
+        },
+        "link_stalls": 0,
+        "mapped_pe_count": 16,
+        "max_active_tags": 4,
+        "max_pipeline_issues_in_cycle": 8,
+        "memory_backend": "fixed",
+        "pe_dependency_model": "paper_static",
+        "physical_pe_count": 16,
+        "productive_global_cycles_by_pipeline": {
+          "compute": 82067,
+          "load": 0,
+          "store": 0,
+          "xfer": 0
+        },
+        "productive_pe_cycles_by_fu_class": {
+          "alu": 32,
+          "fma": 524288,
+          "reduce": 32,
+          "transcendental": 4224
+        },
+        "productive_pe_cycles_by_pipeline": {
+          "compute": 525020,
+          "load": 0,
+          "store": 0,
+          "xfer": 0
+        },
+        "record_events": false,
+        "resident_pe_cycles_by_pipeline": {
+          "compute": 525020,
+          "load": 0,
+          "store": 0,
+          "xfer": 0
+        },
+        "route_hops": 0,
+        "scenario": "json_driver",
+        "skip_hops": 0,
+        "stalls_by_reason": {
+          "event_dependency": 913904,
+          "pipeline_contention": 512
+        },
+        "start_in_roi": true,
+        "unit_hops": 0
+      },
+      "metadata": {
+        "experiment_id": "H82",
+        "compiler": "mlxsim.dsagen_grouped_attention.compile_grouped_attention",
+        "paper_target_values_consumed": false,
+        "name": "N256-q4",
+        "retained_length": 128,
+        "hidden_dimension": 4096,
+        "scale": 4,
+        "full_scale_formula": "retained_length_squared_div_32",
+        "stage_count": 4,
+        "tag_count": 4,
+        "block_count": 20,
+        "operation_counts": {
+          "fma": 131072,
+          "fmax": 16,
+          "fexp": 16,
+          "add": 16,
+          "fdiv": 512
+        },
+        "pipeline_counts": {
+          "load": 0,
+          "store": 0,
+          "compute": 131632,
+          "xfer": 0
+        },
+        "dynamic_event_count": 1072,
+        "qk_emit_period": 4096,
+        "sv_wait_period": 4096,
+        "sv_emit_period": 128,
+        "simd_width": 8
+      },
+      "checks": {
+        "files": true,
+        "replay": true,
+        "done": true,
+        "paper_static": true,
+        "fixed_memory": true,
+        "instructions": true,
+        "pipelines": true,
+        "events": true,
+        "no_routes": true
+      }
+    },
+    "N256-q8": {
+      "cycles": 147732,
+      "summary": {
+        "boundary_events_emitted": 2144,
+        "busy_cycles_by_pipeline": {
+          "compute": 147731,
+          "load": 0,
+          "store": 0,
+          "xfer": 0
+        },
+        "cycles": 147732,
+        "done": true,
+        "event_unblocked_issues_before_tag_complete": 115548,
+        "external_memory_completions": 0,
+        "external_memory_requests": 0,
+        "external_memory_wait_cycles": 0,
+        "instructions_completed": 263264,
+        "instructions_issued": 263264,
+        "issue_cycles_by_pipeline": {
+          "compute": 58585,
+          "load": 0,
+          "store": 0,
+          "xfer": 0
+        },
+        "issued_by_pipeline": {
+          "compute": 263264,
+          "load": 0,
+          "store": 0,
+          "xfer": 0
+        },
+        "link_stalls": 0,
+        "mapped_pe_count": 16,
+        "max_active_tags": 4,
+        "max_pipeline_issues_in_cycle": 8,
+        "memory_backend": "fixed",
+        "pe_dependency_model": "paper_static",
+        "physical_pe_count": 16,
+        "productive_global_cycles_by_pipeline": {
+          "compute": 147731,
+          "load": 0,
+          "store": 0,
+          "xfer": 0
+        },
+        "productive_pe_cycles_by_fu_class": {
+          "alu": 64,
+          "fma": 1048576,
+          "reduce": 64,
+          "transcendental": 8448
+        },
+        "productive_pe_cycles_by_pipeline": {
+          "compute": 1050012,
+          "load": 0,
+          "store": 0,
+          "xfer": 0
+        },
+        "record_events": false,
+        "resident_pe_cycles_by_pipeline": {
+          "compute": 1050012,
+          "load": 0,
+          "store": 0,
+          "xfer": 0
+        },
+        "route_hops": 0,
+        "scenario": "json_driver",
+        "skip_hops": 0,
+        "stalls_by_reason": {
+          "event_dependency": 1696560,
+          "pipeline_contention": 1024
+        },
+        "start_in_roi": true,
+        "unit_hops": 0
+      },
+      "metadata": {
+        "experiment_id": "H82",
+        "compiler": "mlxsim.dsagen_grouped_attention.compile_grouped_attention",
+        "paper_target_values_consumed": false,
+        "name": "N256-q8",
+        "retained_length": 128,
+        "hidden_dimension": 4096,
+        "scale": 8,
+        "full_scale_formula": "retained_length_squared_div_32",
+        "stage_count": 4,
+        "tag_count": 4,
+        "block_count": 20,
+        "operation_counts": {
+          "fma": 262144,
+          "fmax": 32,
+          "fexp": 32,
+          "add": 32,
+          "fdiv": 1024
+        },
+        "pipeline_counts": {
+          "load": 0,
+          "store": 0,
+          "compute": 263264,
+          "xfer": 0
+        },
+        "dynamic_event_count": 2144,
+        "qk_emit_period": 4096,
+        "sv_wait_period": 4096,
+        "sv_emit_period": 128,
+        "simd_width": 8
+      },
+      "checks": {
+        "files": true,
+        "replay": true,
+        "done": true,
+        "paper_static": true,
+        "fixed_memory": true,
+        "instructions": true,
+        "pipelines": true,
+        "events": true,
+        "no_routes": true
+      }
+    },
+    "N8192-q1": {
+      "cycles": 32789,
+      "summary": {
+        "boundary_events_emitted": 20,
+        "busy_cycles_by_pipeline": {
+          "compute": 32788,
+          "load": 0,
+          "store": 0,
+          "xfer": 0
+        },
+        "cycles": 32789,
+        "done": true,
+        "event_unblocked_issues_before_tag_complete": 4,
+        "external_memory_completions": 0,
+        "external_memory_requests": 0,
+        "external_memory_wait_cycles": 0,
+        "instructions_completed": 32784,
+        "instructions_issued": 32784,
+        "issue_cycles_by_pipeline": {
+          "compute": 8196,
+          "load": 0,
+          "store": 0,
+          "xfer": 0
+        },
+        "issued_by_pipeline": {
+          "compute": 32784,
+          "load": 0,
+          "store": 0,
+          "xfer": 0
+        },
+        "link_stalls": 0,
+        "mapped_pe_count": 16,
+        "max_active_tags": 4,
+        "max_pipeline_issues_in_cycle": 4,
+        "memory_backend": "fixed",
+        "pe_dependency_model": "paper_static",
+        "physical_pe_count": 16,
+        "productive_global_cycles_by_pipeline": {
+          "compute": 32788,
+          "load": 0,
+          "store": 0,
+          "xfer": 0
+        },
+        "productive_pe_cycles_by_fu_class": {
+          "alu": 8,
+          "fma": 131072,
+          "reduce": 8,
+          "transcendental": 64
+        },
+        "productive_pe_cycles_by_pipeline": {
+          "compute": 131152,
+          "load": 0,
+          "store": 0,
+          "xfer": 0
+        },
+        "record_events": false,
+        "resident_pe_cycles_by_pipeline": {
+          "compute": 131152,
+          "load": 0,
+          "store": 0,
+          "xfer": 0
+        },
+        "route_hops": 0,
+        "scenario": "json_driver",
+        "skip_hops": 0,
+        "stalls_by_reason": {
+          "event_dependency": 327780,
+          "pipeline_contention": 4
+        },
+        "start_in_roi": true,
+        "unit_hops": 0
+      },
+      "metadata": {
+        "experiment_id": "H82",
+        "compiler": "mlxsim.dsagen_grouped_attention.compile_grouped_attention",
+        "paper_target_values_consumed": false,
+        "name": "N8192-q1",
+        "retained_length": 4096,
+        "hidden_dimension": 4096,
+        "scale": 1,
+        "full_scale_formula": "retained_length_squared_div_32",
+        "stage_count": 4,
+        "tag_count": 4,
+        "block_count": 20,
+        "operation_counts": {
+          "fma": 32768,
+          "fmax": 4,
+          "fexp": 4,
+          "add": 4,
+          "fdiv": 4
+        },
+        "pipeline_counts": {
+          "load": 0,
+          "store": 0,
+          "compute": 32784,
+          "xfer": 0
+        },
+        "dynamic_event_count": 20,
+        "qk_emit_period": 4096,
+        "sv_wait_period": 4096,
+        "sv_emit_period": 4096,
+        "simd_width": 8
+      },
+      "checks": {
+        "files": true,
+        "replay": true,
+        "done": true,
+        "paper_static": true,
+        "fixed_memory": true,
+        "instructions": true,
+        "pipelines": true,
+        "events": true,
+        "no_routes": true
+      }
+    },
+    "N8192-q2": {
+      "cycles": 49174,
+      "summary": {
+        "boundary_events_emitted": 40,
+        "busy_cycles_by_pipeline": {
+          "compute": 49173,
+          "load": 0,
+          "store": 0,
+          "xfer": 0
+        },
+        "cycles": 49174,
+        "done": true,
+        "event_unblocked_issues_before_tag_complete": 16400,
+        "external_memory_completions": 0,
+        "external_memory_requests": 0,
+        "external_memory_wait_cycles": 0,
+        "instructions_completed": 65568,
+        "instructions_issued": 65568,
+        "issue_cycles_by_pipeline": {
+          "compute": 12297,
+          "load": 0,
+          "store": 0,
+          "xfer": 0
+        },
+        "issued_by_pipeline": {
+          "compute": 65568,
+          "load": 0,
+          "store": 0,
+          "xfer": 0
+        },
+        "link_stalls": 0,
+        "mapped_pe_count": 16,
+        "max_active_tags": 4,
+        "max_pipeline_issues_in_cycle": 8,
+        "memory_backend": "fixed",
+        "pe_dependency_model": "paper_static",
+        "physical_pe_count": 16,
+        "productive_global_cycles_by_pipeline": {
+          "compute": 49173,
+          "load": 0,
+          "store": 0,
+          "xfer": 0
+        },
+        "productive_pe_cycles_by_fu_class": {
+          "alu": 16,
+          "fma": 262144,
+          "reduce": 16,
+          "transcendental": 128
+        },
+        "productive_pe_cycles_by_pipeline": {
+          "compute": 262276,
+          "load": 0,
+          "store": 0,
+          "xfer": 0
+        },
+        "record_events": false,
+        "resident_pe_cycles_by_pipeline": {
+          "compute": 262276,
+          "load": 0,
+          "store": 0,
+          "xfer": 0
+        },
+        "route_hops": 0,
+        "scenario": "json_driver",
+        "skip_hops": 0,
+        "stalls_by_reason": {
+          "event_dependency": 524312,
+          "pipeline_contention": 8
+        },
+        "start_in_roi": true,
+        "unit_hops": 0
+      },
+      "metadata": {
+        "experiment_id": "H82",
+        "compiler": "mlxsim.dsagen_grouped_attention.compile_grouped_attention",
+        "paper_target_values_consumed": false,
+        "name": "N8192-q2",
+        "retained_length": 4096,
+        "hidden_dimension": 4096,
+        "scale": 2,
+        "full_scale_formula": "retained_length_squared_div_32",
+        "stage_count": 4,
+        "tag_count": 4,
+        "block_count": 20,
+        "operation_counts": {
+          "fma": 65536,
+          "fmax": 8,
+          "fexp": 8,
+          "add": 8,
+          "fdiv": 8
+        },
+        "pipeline_counts": {
+          "load": 0,
+          "store": 0,
+          "compute": 65568,
+          "xfer": 0
+        },
+        "dynamic_event_count": 40,
+        "qk_emit_period": 4096,
+        "sv_wait_period": 4096,
+        "sv_emit_period": 4096,
+        "simd_width": 8
+      },
+      "checks": {
+        "files": true,
+        "replay": true,
+        "done": true,
+        "paper_static": true,
+        "fixed_memory": true,
+        "instructions": true,
+        "pipelines": true,
+        "events": true,
+        "no_routes": true
+      }
+    },
+    "N8192-q4": {
+      "cycles": 81944,
+      "summary": {
+        "boundary_events_emitted": 80,
+        "busy_cycles_by_pipeline": {
+          "compute": 81943,
+          "load": 0,
+          "store": 0,
+          "xfer": 0
+        },
+        "cycles": 81944,
+        "done": true,
+        "event_unblocked_issues_before_tag_complete": 49192,
+        "external_memory_completions": 0,
+        "external_memory_requests": 0,
+        "external_memory_wait_cycles": 0,
+        "instructions_completed": 131136,
+        "instructions_issued": 131136,
+        "issue_cycles_by_pipeline": {
+          "compute": 28682,
+          "load": 0,
+          "store": 0,
+          "xfer": 0
+        },
+        "issued_by_pipeline": {
+          "compute": 131136,
+          "load": 0,
+          "store": 0,
+          "xfer": 0
+        },
+        "link_stalls": 0,
+        "mapped_pe_count": 16,
+        "max_active_tags": 4,
+        "max_pipeline_issues_in_cycle": 12,
+        "memory_backend": "fixed",
+        "pe_dependency_model": "paper_static",
+        "physical_pe_count": 16,
+        "productive_global_cycles_by_pipeline": {
+          "compute": 81943,
+          "load": 0,
+          "store": 0,
+          "xfer": 0
+        },
+        "productive_pe_cycles_by_fu_class": {
+          "alu": 32,
+          "fma": 524288,
+          "reduce": 32,
+          "transcendental": 256
+        },
+        "productive_pe_cycles_by_pipeline": {
+          "compute": 524524,
+          "load": 0,
+          "store": 0,
+          "xfer": 0
+        },
+        "record_events": false,
+        "resident_pe_cycles_by_pipeline": {
+          "compute": 524524,
+          "load": 0,
+          "store": 0,
+          "xfer": 0
+        },
+        "route_hops": 0,
+        "scenario": "json_driver",
+        "skip_hops": 0,
+        "stalls_by_reason": {
+          "event_dependency": 917376,
+          "pipeline_contention": 16
+        },
+        "start_in_roi": true,
+        "unit_hops": 0
+      },
+      "metadata": {
+        "experiment_id": "H82",
+        "compiler": "mlxsim.dsagen_grouped_attention.compile_grouped_attention",
+        "paper_target_values_consumed": false,
+        "name": "N8192-q4",
+        "retained_length": 4096,
+        "hidden_dimension": 4096,
+        "scale": 4,
+        "full_scale_formula": "retained_length_squared_div_32",
+        "stage_count": 4,
+        "tag_count": 4,
+        "block_count": 20,
+        "operation_counts": {
+          "fma": 131072,
+          "fmax": 16,
+          "fexp": 16,
+          "add": 16,
+          "fdiv": 16
+        },
+        "pipeline_counts": {
+          "load": 0,
+          "store": 0,
+          "compute": 131136,
+          "xfer": 0
+        },
+        "dynamic_event_count": 80,
+        "qk_emit_period": 4096,
+        "sv_wait_period": 4096,
+        "sv_emit_period": 4096,
+        "simd_width": 8
+      },
+      "checks": {
+        "files": true,
+        "replay": true,
+        "done": true,
+        "paper_static": true,
+        "fixed_memory": true,
+        "instructions": true,
+        "pipelines": true,
+        "events": true,
+        "no_routes": true
+      }
+    },
+    "N8192-q8": {
+      "cycles": 147484,
+      "summary": {
+        "boundary_events_emitted": 160,
+        "busy_cycles_by_pipeline": {
+          "compute": 147483,
+          "load": 0,
+          "store": 0,
+          "xfer": 0
+        },
+        "cycles": 147484,
+        "done": true,
+        "event_unblocked_issues_before_tag_complete": 114772,
+        "external_memory_completions": 0,
+        "external_memory_requests": 0,
+        "external_memory_wait_cycles": 0,
+        "instructions_completed": 262272,
+        "instructions_issued": 262272,
+        "issue_cycles_by_pipeline": {
+          "compute": 57363,
+          "load": 0,
+          "store": 0,
+          "xfer": 0
+        },
+        "issued_by_pipeline": {
+          "compute": 262272,
+          "load": 0,
+          "store": 0,
+          "xfer": 0
+        },
+        "link_stalls": 0,
+        "mapped_pe_count": 16,
+        "max_active_tags": 4,
+        "max_pipeline_issues_in_cycle": 12,
+        "memory_backend": "fixed",
+        "pe_dependency_model": "paper_static",
+        "physical_pe_count": 16,
+        "productive_global_cycles_by_pipeline": {
+          "compute": 147483,
+          "load": 0,
+          "store": 0,
+          "xfer": 0
+        },
+        "productive_pe_cycles_by_fu_class": {
+          "alu": 64,
+          "fma": 1048576,
+          "reduce": 64,
+          "transcendental": 512
+        },
+        "productive_pe_cycles_by_pipeline": {
+          "compute": 1049020,
+          "load": 0,
+          "store": 0,
+          "xfer": 0
+        },
+        "record_events": false,
+        "resident_pe_cycles_by_pipeline": {
+          "compute": 1049020,
+          "load": 0,
+          "store": 0,
+          "xfer": 0
+        },
+        "route_hops": 0,
+        "scenario": "json_driver",
+        "skip_hops": 0,
+        "stalls_by_reason": {
+          "event_dependency": 1703504,
+          "pipeline_contention": 32
+        },
+        "start_in_roi": true,
+        "unit_hops": 0
+      },
+      "metadata": {
+        "experiment_id": "H82",
+        "compiler": "mlxsim.dsagen_grouped_attention.compile_grouped_attention",
+        "paper_target_values_consumed": false,
+        "name": "N8192-q8",
+        "retained_length": 4096,
+        "hidden_dimension": 4096,
+        "scale": 8,
+        "full_scale_formula": "retained_length_squared_div_32",
+        "stage_count": 4,
+        "tag_count": 4,
+        "block_count": 20,
+        "operation_counts": {
+          "fma": 262144,
+          "fmax": 32,
+          "fexp": 32,
+          "add": 32,
+          "fdiv": 32
+        },
+        "pipeline_counts": {
+          "load": 0,
+          "store": 0,
+          "compute": 262272,
+          "xfer": 0
+        },
+        "dynamic_event_count": 160,
+        "qk_emit_period": 4096,
+        "sv_wait_period": 4096,
+        "sv_emit_period": 4096,
+        "simd_width": 8
+      },
+      "checks": {
+        "files": true,
+        "replay": true,
+        "done": true,
+        "paper_static": true,
+        "fixed_memory": true,
+        "instructions": true,
+        "pipelines": true,
+        "events": true,
+        "no_routes": true
+      }
+    }
+  },
+  "models": {
+    "N256": {
+      "intercept": 16404.0,
+      "slope_cycles_per_scale": 16416.0,
+      "holdouts": [
+        {
+          "scale": 4,
+          "actual_cycles": 82068,
+          "predicted_cycles": 82068.0,
+          "relative_error": 0.0,
+          "pass_5pct": true
+        },
+        {
+          "scale": 8,
+          "actual_cycles": 147732,
+          "predicted_cycles": 147732.0,
+          "relative_error": 0.0,
+          "pass_5pct": true
+        }
+      ],
+      "full_scale": 512,
+      "full_work_predicted_cycles": 8421396.0
+    },
+    "N8192": {
+      "intercept": 16404.0,
+      "slope_cycles_per_scale": 16385.0,
+      "holdouts": [
+        {
+          "scale": 4,
+          "actual_cycles": 81944,
+          "predicted_cycles": 81944.0,
+          "relative_error": 0.0,
+          "pass_5pct": true
+        },
+        {
+          "scale": 8,
+          "actual_cycles": 147484,
+          "predicted_cycles": 147484.0,
+          "relative_error": 0.0,
+          "pass_5pct": true
+        }
+      ],
+      "full_scale": 524288,
+      "full_work_predicted_cycles": 8590475284.0
+    }
+  },
+  "numerical": {
+    "passing_holdouts": 4,
+    "total_holdouts": 4,
+    "mape": 0.0,
+    "max_error": 0.0,
+    "all_holdouts_pass": true
+  },
+  "source_files": {
+    "overlay_header": {
+      "path": "third_party/dsa-framework/dsa-gem5/src/cpu/minor/ssim/mlx_overlay.hh",
+      "bytes": 12602,
+      "sha256": "698fee9d192d7d0cb4262bb2617aa2b748277a2612a0b6dc3fc5ec8b5ec3f080",
+      "checks": {
+        "is_file": true
+      },
+      "pass": true
+    },
+    "overlay_source": {
+      "path": "third_party/dsa-framework/dsa-gem5/src/cpu/minor/ssim/mlx_overlay.cc",
+      "bytes": 45016,
+      "sha256": "6040e8f0df87d034fe9547a0508c469d9925d7e07539f383e389320456e0ca48",
+      "checks": {
+        "is_file": true
+      },
+      "pass": true
+    },
+    "tracked_patch": {
+      "path": "patches/dsagen/dsa-gem5-mlx-grouped-events-v1.patch",
+      "bytes": 3510,
+      "sha256": "ec4ae7995e6c0459908335a2bfe85e74e00fa2dd450cd7f0514ffd3bf8e3b405",
+      "checks": {
+        "is_file": true
+      },
+      "pass": true
+    },
+    "compiler_core": {
+      "path": "src/mlxsim/dsagen_grouped_attention.py",
+      "bytes": 7046,
+      "sha256": "5131ddd0f0f74cf1950791efa11b9bd70c1ccadeafc56be71ba0eca57880d06f",
+      "checks": {
+        "is_file": true
+      },
+      "pass": true
+    },
+    "compiler": {
+      "path": "scripts/compile_grouped_attention_cdc.py",
+      "bytes": 2407,
+      "sha256": "6c289c2d4007f2d5f9450327d3737be65b8c613ec3f0065bca7e93584ac66797",
+      "checks": {
+        "is_file": true
+      },
+      "pass": true
+    },
+    "runner": {
+      "path": "scripts/run_grouped_attention_cdc.py",
+      "bytes": 4892,
+      "sha256": "e2944ccbe5af3ef432e69cbb3eefb44bb7fce908ada0b6354336cbfdd9b2f1aa",
+      "checks": {
+        "is_file": true
+      },
+      "pass": true
+    },
+    "auditor": {
+      "path": "scripts/audit_grouped_attention_cdc.py",
+      "bytes": 15669,
+      "sha256": "4017ca1b54c01dc586dfa168b022ecb6d892fa4fee9dedfb015d2dbdd746dadb",
+      "checks": {
+        "is_file": true
+      },
+      "pass": true
+    }
+  },
+  "source_checks": {
+    "fields": true,
+    "emit_group": true,
+    "wait_group": true,
+    "validation": true,
+    "patch_reverse": true
+  },
+  "integrity_checks": {
+    "frozen_files": true,
+    "parents": true,
+    "compile_manifest": true,
+    "compiler_replay": true,
+    "group_structure": true,
+    "run_manifest": true,
+    "run_replays": true,
+    "executions": true,
+    "legacy_exact": true,
+    "work_linear": true,
+    "full_work_conserved": true,
+    "source_files": true,
+    "source_semantics": true,
+    "targets_absent": true,
+    "targets_consumed": true
+  },
+  "paper_performance_targets_consumed": false
+}

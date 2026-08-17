@@ -32,5 +32,10 @@ The first matched topology execution is reported in
 all H79 work exactly but rejects q=1/2 affine folding because neither anchor is
 at the later steady-state slope.
 
+The second component now has an exact-work grouped implementation in
+[`grouped-attention-cdc.md`](grouped-attention-cdc.md). Its QK/SV events fire
+only at complete reduction groups, and all H79 FMA/FMAX/FEXP/ADD/FDIV counts
+are conserved.
+
 No Figure 20 performance target is consumed. The immutable result is
 `artifacts/results/attention-work-signature-run084.json`.
