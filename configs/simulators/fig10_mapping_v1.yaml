@@ -1,0 +1,35 @@
+name: fig10-mapping-v1
+experiment_id: H62
+run_id: run067
+classification: paper_constrained_mapping_reconstruction
+validation_eligible: false
+
+paper_contract:
+  mesh: [4, 4]
+  simd_width: 32
+  instructions_per_pe: 32
+  closed_set_outputs: 64
+  local_i1_trip: 4
+  spatial_i2_trip: 16
+  cdc_layers: 6
+  bsmm_compute: [mul, fma]
+  fft_compute: [mul, add, add]
+  horizontal_strides: [1, 2]
+  vertical_strides: [4, 8]
+  local_strides: [16, 32]
+
+experiment:
+  sizes: [64, 128, 256, 512, 1024, 2048, 4096, 8192]
+  operators: [bsmm, fft]
+  active_window: 3
+  memory_backend: dsagen_spad
+  output_root: artifacts/environment/h62
+
+source_layout:
+  compiler_module: src/mlxsim/fig10_mapping.py
+  compiler: scripts/compile_fig10_mapping.py
+  runner: scripts/run_fig10_mapping.sh
+  auditor: scripts/audit_fig10_mapping.py
+  memory_patch: patches/dsagen/dsa-gem5-mlx-local-memory-v1.patch
+
+result_path: artifacts/results/fig10-mapping-run067.json
