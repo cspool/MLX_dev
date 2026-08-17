@@ -1,0 +1,34 @@
+metadata:
+  purpose: "Frozen raster coordinates and qualitative anchors for Llama2-7B Q/K/V spectra"
+  coordinate_origin: "top-left; y increases downward"
+  fig5:
+    source: "MLX Multi-Layer Execution for Structured LLM Workload Acceleration on Spatial Architectures/_page_3_Figure_0.jpeg"
+    sha256: "2dec65903d8f6459539af35047f3e4d2fc42e24c06f6abff0ddd1942ceb5fae1"
+    dimensions: [632, 179]
+  fig6:
+    source: "MLX Multi-Layer Execution for Structured LLM Workload Acceleration on Spatial Architectures/_page_3_Figure_2.jpeg"
+    sha256: "1ad6eb88a7be612b501a2ef198b9a9d635980b15a12d735ad3f3bc6abc1f1e7f"
+    dimensions: [626, 212]
+
+fig5:
+  provenance: "qualitative_raster_and_paper_text"
+  layer_count: 32
+  projections: [q, k, v]
+  numerical_y_axis: false
+  checks:
+    - "Layer-1 K has a higher dominant-frequency position than Layer-16 K."
+    - "Layer-1 orders dominant-frequency position as K above Q above V."
+    - "The aggregate Q/K/V dominant-frequency position is higher in layers 1-4 than in layers 13-16."
+
+fig6:
+  provenance: "digitized"
+  layers_one_indexed: [1, 16]
+  frequency_groups: 21
+  axis:
+    y_at_one: 31
+    y_at_zero: 183
+  endpoint_uncertainty_y_pixels: 1.5
+  endpoint_y:
+    layer1_k: [71, 126, 86, 76, 132, 100, 132, 134, 64, 135, 136, 137, 64, 136, 132, 139, 135, 64, 138, 142, 137]
+    layer16_k: [31, 48, 42, 51, 65, 59, 71, 75, 83, 90, 93, 105, 105, 108, 116, 127, 123, 128, 130, 133, 132]
+  maximum_relative_error: 0.10
