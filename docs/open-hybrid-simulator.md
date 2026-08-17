@@ -69,8 +69,10 @@ These fixes do not alter modeled PE, stream, memory, or network latency.
 
 ## Current boundary
 
-The upstream execution gates are complete. The next code layer is deliberately
-small and auditable: an MLX overlay in `dsa-gem5/src/cpu/minor/ssim` that
-retains DSAGEN memory/stream timing and introduces only the missing tag-block,
-programmable-PE resource, and skip-hop semantics. Paper result bars are not
-inputs to this substrate selection or smoke validation.
+The upstream execution gates are complete, and the first source-integrated MLX
+overlay now implements tag blocks, programmable-PE resources, and skip-hop
+semantics; see [`dsagen-mlx-overlay.md`](dsagen-mlx-overlay.md). Its v1
+load/store latency is still configuration-driven rather than callback-driven
+from DSAGEN's LSQ/scratchpad. Connecting those paths and compiling real
+FFT/BSMM CDCs are the next boundary. Paper result bars were not inputs to
+substrate selection or the overlay invariant suite.

@@ -1,0 +1,77 @@
+{
+  "active_window": 3,
+  "register_file": {
+    "banks": 4,
+    "read_ports": 2,
+    "write_ports": 1
+  },
+  "pipelines": {
+    "load": {"latency": 3, "initiation_interval": 1},
+    "store": {"latency": 2, "initiation_interval": 1},
+    "compute": {"latency": 1, "initiation_interval": 1},
+    "xfer": {"latency": 1, "initiation_interval": 1}
+  },
+  "functional_units": {
+    "add": {"class": "alu", "latency": 2, "initiation_interval": 1},
+    "mul": {"class": "mul", "latency": 3, "initiation_interval": 1},
+    "fma": {"class": "fma", "latency": 4, "initiation_interval": 1},
+    "fexp": {"class": "transcendental", "latency": 8, "initiation_interval": 4}
+  },
+  "routing": {
+    "mesh_width": 4,
+    "mesh_height": 4,
+    "skip_steps": [2, 1],
+    "latency_per_hop": 1,
+    "link_capacity": 1
+  },
+  "blocks": [
+    {
+      "id": "load_block",
+      "tag": 1,
+      "pe": [0, 0],
+      "trip_count": 1,
+      "predecessors": [],
+      "instructions": [
+        {"id": "load", "pipeline": "load", "operation": "load", "reads": [], "writes": []}
+      ]
+    },
+    {
+      "id": "store_block",
+      "tag": 1,
+      "pe": [0, 0],
+      "trip_count": 1,
+      "predecessors": [],
+      "instructions": [
+        {"id": "store", "pipeline": "store", "operation": "store", "reads": [], "writes": []}
+      ]
+    },
+    {
+      "id": "compute_block",
+      "tag": 2,
+      "pe": [0, 0],
+      "trip_count": 1,
+      "predecessors": [],
+      "instructions": [
+        {"id": "fma", "pipeline": "compute", "operation": "fma", "reads": [], "writes": []}
+      ]
+    },
+    {
+      "id": "xfer_block",
+      "tag": 3,
+      "pe": [0, 0],
+      "trip_count": 1,
+      "predecessors": [],
+      "instructions": [
+        {
+          "id": "xfer",
+          "pipeline": "xfer",
+          "operation": "xfer",
+          "reads": [],
+          "writes": [0],
+          "destination": [1, 0],
+          "destination_register": 0
+        }
+      ]
+    }
+  ]
+}

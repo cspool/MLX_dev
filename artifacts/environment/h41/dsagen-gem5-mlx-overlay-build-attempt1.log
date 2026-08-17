@@ -1,0 +1,323 @@
+scons: Reading SConscript files ...
+Warning: Your compiler doesn't support incremental linking and lto at the same
+         time, so lto is being disabled. To force lto on anyway, use the
+         --force-lto option. That will disable partial linking.
+Info: Using Python config: python3-config
+Checking for C header file Python.h... (cached) yes
+Checking for C library python3.8... (cached) yes
+Checking for C library crypt... (cached) yes
+Checking for C library pthread... (cached) yes
+Checking for C library dl... (cached) yes
+Checking for C library util... (cached) yes
+Checking for C library m... (cached) yes
+Checking for accept(0,0,0) in C++ library None... (cached) yes
+Checking for zlibVersion() in C++ library z... (cached) yes
+Checking for GOOGLE_PROTOBUF_VERIFY_VERSION in C++ library protobuf... (cached) yes
+Checking for C header file valgrind/valgrind.h... (cached) no
+Checking for clock_nanosleep(0,0,NULL,NULL) in C library None... (cached) yes
+Checking for timer_create(CLOCK_MONOTONIC, NULL, NULL) in C library None... (cached) yes
+Checking for C library tcmalloc... (cached) yes
+Checking for char temp; backtrace_symbols_fd((void*)&temp, 0, 0) in C library None... (cached) no
+Checking for char temp; backtrace_symbols_fd((void*)&temp, 0, 0) in C library execinfo... (cached) no
+Warning: No suitable back trace implementation found.
+Checking for C header file fenv.h... (cached) yes
+Checking for C header file png.h... (cached) yes
+Checking for C header file linux/kvm.h... (cached) yes
+Checking for C header file linux/if_tun.h... (cached) yes
+Checking size of struct kvm_xsave ... (cached) yes
+Checking for member exclude_host in struct perf_event_attr...(cached) yes
+Checking for hdf5-serial using pkg-config... yes
+Checking for H5Fcreate("", 0, 0, 0) in C library hdf5... (cached) yes
+Checking for H5::H5File("", 0) in C++ library hdf5_cpp... (cached) yes
+Checking whether __i386__ is declared... (cached) no
+Checking whether __x86_64__ is declared... (cached) yes
+Building in /workspace/MLX_dev/third_party/dsa-framework/dsa-gem5/build/RISCV
+Using saved variables file /workspace/MLX_dev/third_party/dsa-framework/dsa-gem5/build/variables/RISCV
+warn: CheckedInt already exists in allParams. This may be caused by the Python 2.7 compatibility layer.
+warn: Enum already exists in allParams. This may be caused by the Python 2.7 compatibility layer.
+warn: ScopedEnum already exists in allParams. This may be caused by the Python 2.7 compatibility layer.
+scons: done reading SConscript files.
+scons: Building targets ...
+ [VER TAGS]  -> RISCV/sim/tags.cc
+ [     CXX] RISCV/cpu/minor/cpu.cc -> .o
+ [     CXX] RISCV/cpu/minor/decode.cc -> .o
+ [     CXX] RISCV/cpu/minor/execute.cc -> .o
+ [     CXX] RISCV/cpu/minor/fetch1.cc -> .o
+ [     CXX] RISCV/cpu/minor/fetch2.cc -> .o
+ [     CXX] RISCV/cpu/minor/lsq.cc -> .o
+ [     CXX] RISCV/cpu/minor/pipeline.cc -> .o
+ [     CXX] RISCV/sim/tags.cc -> .o
+ [    LINK]  -> RISCV/sim/lib.o.partial
+ [     CXX] RISCV/cpu/minor/ssim/port.cc -> .o
+In file included from /usr/include/c++/11/cassert:44,
+                 from build/RISCV/base/intmath.hh:32,
+                 from build/RISCV/base/statistics.hh:81,
+                 from build/RISCV/cpu/minor/stats.hh:47,
+                 from build/RISCV/cpu/minor/cpu.hh:48,
+                 from build/RISCV/cpu/minor/execute.hh:49,
+                 from build/RISCV/cpu/minor/execute.cc:38:
+build/RISCV/base/statistics.hh: In instantiation of 'Stats::Vector2dBase<Derived, Stor>::Proxy Stats::Vector2dBase<Derived, Stor>::operator[](Stats::off_type) [with Derived = Stats::Vector2d; Stor = Stats::StatStor; Stats::Vector2dBase<Derived, Stor>::Proxy = Stats::VectorProxy<Stats::Vector2d>; Stats::off_type = unsigned int]':
+build/RISCV/cpu/minor/execute.cc:961:50:   required from here
+build/RISCV/base/statistics.hh:1314:23: warning: comparison of unsigned expression in '>= 0' is always true [-Wtype-limits]
+ 1314 |         assert (index >= 0 && offset + y <= size());
+      |                 ~~~~~~^~~~
+build/RISCV/base/statistics.hh: In instantiation of 'Stats::ScalarProxy<Derived> Stats::VectorProxy<Stat>::operator[](Stats::off_type) [with Stat = Stats::Vector2d; Stats::off_type = unsigned int]':
+build/RISCV/cpu/minor/execute.cc:962:60:   required from here
+build/RISCV/base/statistics.hh:1238:23: warning: comparison of unsigned expression in '>= 0' is always true [-Wtype-limits]
+ 1238 |         assert (index >= 0 && index < size());
+      |                 ~~~~~~^~~~
+ [     CXX] RISCV/cpu/minor/ssim/stream.cc -> .o
+ [     CXX] RISCV/cpu/minor/ssim/ssim.cc -> .o
+ [     CXX] RISCV/cpu/minor/ssim/mlx_overlay.cc -> .o
+ [     CXX] RISCV/cpu/minor/ssim/accel.cc -> .o
+build/RISCV/cpu/minor/ssim/mlx_overlay.cc: In function 'dsa::sim::mlx::Coord dsa::sim::mlx::{anonymous}::ParseCoord(const Json::Value&, const string&)':
+build/RISCV/cpu/minor/ssim/mlx_overlay.cc:58:45: error: could not convert '{(&(& value)->Json::Value::operator[](0))->Json::Value::asInt(), (&(& value)->Json::Value::operator[](1))->Json::Value::asInt()}' from '<brace-enclosed initializer list>' to 'dsa::sim::mlx::Coord'
+   58 |   return {value[0].asInt(), value[1].asInt()};
+      |                                             ^
+      |                                             |
+      |                                             <brace-enclosed initializer list>
+ [     CXX] RISCV/cpu/minor/ssim/arbiter.cc -> .o
+build/RISCV/cpu/minor/ssim/mlx_overlay.cc: In static member function 'static std::unique_ptr<dsa::sim::mlx::Overlay> dsa::sim::mlx::Overlay::FromJsonFile(const string&)':
+build/RISCV/cpu/minor/ssim/mlx_overlay.cc:168:58: error: no match for 'operator=' (operand types are 'std::map<dsa::sim::mlx::PipelineKind, dsa::sim::mlx::Timing>::mapped_type' {aka 'dsa::sim::mlx::Timing'} and '<brace-enclosed initializer list>')
+  168 |             "pipelines." + name + ".initiation_interval")};
+      |                                                          ^
+In file included from build/RISCV/cpu/minor/ssim/mlx_overlay.cc:3:
+build/RISCV/cpu/minor/ssim/mlx_overlay.hh:51:8: note: candidate: 'dsa::sim::mlx::Timing& dsa::sim::mlx::Timing::operator=(const dsa::sim::mlx::Timing&)'
+   51 | struct Timing {
+      |        ^~~~~~
+build/RISCV/cpu/minor/ssim/mlx_overlay.hh:51:8: note:   no known conversion for argument 1 from '<brace-enclosed initializer list>' to 'const dsa::sim::mlx::Timing&'
+build/RISCV/cpu/minor/ssim/mlx_overlay.hh:51:8: note: candidate: 'dsa::sim::mlx::Timing& dsa::sim::mlx::Timing::operator=(dsa::sim::mlx::Timing&&)'
+build/RISCV/cpu/minor/ssim/mlx_overlay.hh:51:8: note:   no known conversion for argument 1 from '<brace-enclosed initializer list>' to 'dsa::sim::mlx::Timing&&'
+build/RISCV/cpu/minor/ssim/mlx_overlay.cc:182:67: error: no match for 'operator=' (operand types are 'std::map<std::__cxx11::basic_string<char>, dsa::sim::mlx::FunctionalUnit>::mapped_type' {aka 'dsa::sim::mlx::FunctionalUnit'} and '<brace-enclosed initializer list>')
+  182 |              "functional_units." + name + ".initiation_interval")}};
+      |                                                                   ^
+In file included from build/RISCV/cpu/minor/ssim/mlx_overlay.cc:3:
+build/RISCV/cpu/minor/ssim/mlx_overlay.hh:56:8: note: candidate: 'dsa::sim::mlx::FunctionalUnit& dsa::sim::mlx::FunctionalUnit::operator=(const dsa::sim::mlx::FunctionalUnit&)'
+   56 | struct FunctionalUnit {
+      |        ^~~~~~~~~~~~~~
+build/RISCV/cpu/minor/ssim/mlx_overlay.hh:56:8: note:   no known conversion for argument 1 from '<brace-enclosed initializer list>' to 'const dsa::sim::mlx::FunctionalUnit&'
+build/RISCV/cpu/minor/ssim/mlx_overlay.hh:56:8: note: candidate: 'dsa::sim::mlx::FunctionalUnit& dsa::sim::mlx::FunctionalUnit::operator=(dsa::sim::mlx::FunctionalUnit&&)'
+build/RISCV/cpu/minor/ssim/mlx_overlay.hh:56:8: note:   no known conversion for argument 1 from '<brace-enclosed initializer list>' to 'dsa::sim::mlx::FunctionalUnit&&'
+build/RISCV/cpu/minor/ssim/mlx_overlay.cc: In member function 'void dsa::sim::mlx::Overlay::completeInstruction(std::size_t)':
+build/RISCV/cpu/minor/ssim/mlx_overlay.cc:505:27: error: no matching function for call to 'std::set<dsa::sim::mlx::Overlay::RegisterKey>::erase(<brace-enclosed initializer list>)'
+  505 |     pending_writers_.erase({destination, block.tag, reg});
+      |     ~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+In file included from /usr/include/c++/11/set:61,
+                 from build/RISCV/cpu/minor/ssim/mlx_overlay.hh:22,
+                 from build/RISCV/cpu/minor/ssim/mlx_overlay.cc:3:
+/usr/include/c++/11/bits/stl_set.h:654:7: note: candidate: 'std::set<_Key, _Compare, _Alloc>::iterator std::set<_Key, _Compare, _Alloc>::erase(std::set<_Key, _Compare, _Alloc>::const_iterator) [with _Key = dsa::sim::mlx::Overlay::RegisterKey; _Compare = std::less<dsa::sim::mlx::Overlay::RegisterKey>; _Alloc = std::allocator<dsa::sim::mlx::Overlay::RegisterKey>; std::set<_Key, _Compare, _Alloc>::iterator = std::_Rb_tree<dsa::sim::mlx::Overlay::RegisterKey, dsa::sim::mlx::Overlay::RegisterKey, std::_Identity<dsa::sim::mlx::Overlay::RegisterKey>, std::less<dsa::sim::mlx::Overlay::RegisterKey>, std::allocator<dsa::sim::mlx::Overlay::RegisterKey> >::const_iterator; std::set<_Key, _Compare, _Alloc>::const_iterator = std::_Rb_tree<dsa::sim::mlx::Overlay::RegisterKey, dsa::sim::mlx::Overlay::RegisterKey, std::_Identity<dsa::sim::mlx::Overlay::RegisterKey>, std::less<dsa::sim::mlx::Overlay::RegisterKey>, std::allocator<dsa::sim::mlx::Overlay::RegisterKey> >::const_iterator]'
+  654 |       erase(const_iterator __position)
+      |       ^~~~~
+/usr/include/c++/11/bits/stl_set.h:654:28: note:   no known conversion for argument 1 from '<brace-enclosed initializer list>' to 'std::set<dsa::sim::mlx::Overlay::RegisterKey>::const_iterator' {aka 'std::_Rb_tree<dsa::sim::mlx::Overlay::RegisterKey, dsa::sim::mlx::Overlay::RegisterKey, std::_Identity<dsa::sim::mlx::Overlay::RegisterKey>, std::less<dsa::sim::mlx::Overlay::RegisterKey>, std::allocator<dsa::sim::mlx::Overlay::RegisterKey> >::const_iterator'}
+  654 |       erase(const_iterator __position)
+      |             ~~~~~~~~~~~~~~~^~~~~~~~~~
+/usr/include/c++/11/bits/stl_set.h:684:7: note: candidate: 'std::set<_Key, _Compare, _Alloc>::size_type std::set<_Key, _Compare, _Alloc>::erase(const key_type&) [with _Key = dsa::sim::mlx::Overlay::RegisterKey; _Compare = std::less<dsa::sim::mlx::Overlay::RegisterKey>; _Alloc = std::allocator<dsa::sim::mlx::Overlay::RegisterKey>; std::set<_Key, _Compare, _Alloc>::size_type = long unsigned int; std::set<_Key, _Compare, _Alloc>::key_type = dsa::sim::mlx::Overlay::RegisterKey]'
+  684 |       erase(const key_type& __x)
+      |       ^~~~~
+/usr/include/c++/11/bits/stl_set.h:684:29: note:   no known conversion for argument 1 from '<brace-enclosed initializer list>' to 'const key_type&' {aka 'const dsa::sim::mlx::Overlay::RegisterKey&'}
+  684 |       erase(const key_type& __x)
+      |             ~~~~~~~~~~~~~~~~^~~
+/usr/include/c++/11/bits/stl_set.h:706:7: note: candidate: 'std::set<_Key, _Compare, _Alloc>::iterator std::set<_Key, _Compare, _Alloc>::erase(std::set<_Key, _Compare, _Alloc>::const_iterator, std::set<_Key, _Compare, _Alloc>::const_iterator) [with _Key = dsa::sim::mlx::Overlay::RegisterKey; _Compare = std::less<dsa::sim::mlx::Overlay::RegisterKey>; _Alloc = std::allocator<dsa::sim::mlx::Overlay::RegisterKey>; std::set<_Key, _Compare, _Alloc>::iterator = std::_Rb_tree<dsa::sim::mlx::Overlay::RegisterKey, dsa::sim::mlx::Overlay::RegisterKey, std::_Identity<dsa::sim::mlx::Overlay::RegisterKey>, std::less<dsa::sim::mlx::Overlay::RegisterKey>, std::allocator<dsa::sim::mlx::Overlay::RegisterKey> >::const_iterator; std::set<_Key, _Compare, _Alloc>::const_iterator = std::_Rb_tree<dsa::sim::mlx::Overlay::RegisterKey, dsa::sim::mlx::Overlay::RegisterKey, std::_Identity<dsa::sim::mlx::Overlay::RegisterKey>, std::less<dsa::sim::mlx::Overlay::RegisterKey>, std::allocator<dsa::sim::mlx::Overlay::RegisterKey> >::const_iterator]'
+  706 |       erase(const_iterator __first, const_iterator __last)
+      |       ^~~~~
+/usr/include/c++/11/bits/stl_set.h:706:7: note:   candidate expects 2 arguments, 1 provided
+build/RISCV/cpu/minor/ssim/mlx_overlay.cc:515:22: error: no matching function for call to 'std::vector<dsa::sim::mlx::Event>::push_back(<brace-enclosed initializer list>)'
+  515 |     events_.push_back(
+      |     ~~~~~~~~~~~~~~~~~^
+  516 |         {cycle_, "iteration_complete", block.tag, block.id, state.iteration,
+      |         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  517 |          instruction.id, block.pe, PipelineName(instruction.pipeline),
+      |          ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  518 |          {{"completed_iterations", std::to_string(state.iteration)}}});
+      |          ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+In file included from /usr/include/c++/11/vector:67,
+                 from build/RISCV/cpu/minor/ssim/mlx_overlay.hh:25,
+                 from build/RISCV/cpu/minor/ssim/mlx_overlay.cc:3:
+/usr/include/c++/11/bits/stl_vector.h:1187:7: note: candidate: 'void std::vector<_Tp, _Alloc>::push_back(const value_type&) [with _Tp = dsa::sim::mlx::Event; _Alloc = std::allocator<dsa::sim::mlx::Event>; std::vector<_Tp, _Alloc>::value_type = dsa::sim::mlx::Event]'
+ 1187 |       push_back(const value_type& __x)
+      |       ^~~~~~~~~
+/usr/include/c++/11/bits/stl_vector.h:1187:35: note:   no known conversion for argument 1 from '<brace-enclosed initializer list>' to 'const value_type&' {aka 'const dsa::sim::mlx::Event&'}
+ 1187 |       push_back(const value_type& __x)
+      |                 ~~~~~~~~~~~~~~~~~~^~~
+/usr/include/c++/11/bits/stl_vector.h:1203:7: note: candidate: 'void std::vector<_Tp, _Alloc>::push_back(std::vector<_Tp, _Alloc>::value_type&&) [with _Tp = dsa::sim::mlx::Event; _Alloc = std::allocator<dsa::sim::mlx::Event>; std::vector<_Tp, _Alloc>::value_type = dsa::sim::mlx::Event]'
+ 1203 |       push_back(value_type&& __x)
+      |       ^~~~~~~~~
+/usr/include/c++/11/bits/stl_vector.h:1203:30: note:   no known conversion for argument 1 from '<brace-enclosed initializer list>' to 'std::vector<dsa::sim::mlx::Event>::value_type&&' {aka 'dsa::sim::mlx::Event&&'}
+ 1203 |       push_back(value_type&& __x)
+      |                 ~~~~~~~~~~~~~^~~
+build/RISCV/cpu/minor/ssim/mlx_overlay.cc:522:24: error: no matching function for call to 'std::vector<dsa::sim::mlx::Event>::push_back(<brace-enclosed initializer list>)'
+  522 |       events_.push_back(
+      |       ~~~~~~~~~~~~~~~~~^
+  523 |           {cycle_, "block_complete", block.tag, block.id, state.iteration,
+      |           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  524 |            instruction.id, block.pe, PipelineName(instruction.pipeline), {}});
+      |            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+In file included from /usr/include/c++/11/vector:67,
+                 from build/RISCV/cpu/minor/ssim/mlx_overlay.hh:25,
+                 from build/RISCV/cpu/minor/ssim/mlx_overlay.cc:3:
+/usr/include/c++/11/bits/stl_vector.h:1187:7: note: candidate: 'void std::vector<_Tp, _Alloc>::push_back(const value_type&) [with _Tp = dsa::sim::mlx::Event; _Alloc = std::allocator<dsa::sim::mlx::Event>; std::vector<_Tp, _Alloc>::value_type = dsa::sim::mlx::Event]'
+ 1187 |       push_back(const value_type& __x)
+      |       ^~~~~~~~~
+/usr/include/c++/11/bits/stl_vector.h:1187:35: note:   no known conversion for argument 1 from '<brace-enclosed initializer list>' to 'const value_type&' {aka 'const dsa::sim::mlx::Event&'}
+ 1187 |       push_back(const value_type& __x)
+      |                 ~~~~~~~~~~~~~~~~~~^~~
+/usr/include/c++/11/bits/stl_vector.h:1203:7: note: candidate: 'void std::vector<_Tp, _Alloc>::push_back(std::vector<_Tp, _Alloc>::value_type&&) [with _Tp = dsa::sim::mlx::Event; _Alloc = std::allocator<dsa::sim::mlx::Event>; std::vector<_Tp, _Alloc>::value_type = dsa::sim::mlx::Event]'
+ 1203 |       push_back(value_type&& __x)
+      |       ^~~~~~~~~
+/usr/include/c++/11/bits/stl_vector.h:1203:30: note:   no known conversion for argument 1 from '<brace-enclosed initializer list>' to 'std::vector<dsa::sim::mlx::Event>::value_type&&' {aka 'dsa::sim::mlx::Event&&'}
+ 1203 |       push_back(value_type&& __x)
+      |                 ~~~~~~~~~~~~~^~~
+build/RISCV/cpu/minor/ssim/mlx_overlay.cc: In member function 'bool dsa::sim::mlx::Overlay::canIssue(std::size_t, std::string*) const':
+build/RISCV/cpu/minor/ssim/mlx_overlay.cc:641:58: error: no matching function for call to 'dsa::sim::mlx::Overlay::PipelineKey::PipelineKey(<brace-enclosed initializer list>)'
+  641 |   PipelineKey pipeline_key{block.pe, instruction.pipeline};
+      |                                                          ^
+In file included from build/RISCV/cpu/minor/ssim/mlx_overlay.cc:3:
+build/RISCV/cpu/minor/ssim/mlx_overlay.hh:164:10: note: candidate: 'constexpr dsa::sim::mlx::Overlay::PipelineKey::PipelineKey()'
+  164 |   struct PipelineKey {
+      |          ^~~~~~~~~~~
+build/RISCV/cpu/minor/ssim/mlx_overlay.hh:164:10: note:   candidate expects 0 arguments, 2 provided
+build/RISCV/cpu/minor/ssim/mlx_overlay.hh:164:10: note: candidate: 'constexpr dsa::sim::mlx::Overlay::PipelineKey::PipelineKey(const dsa::sim::mlx::Overlay::PipelineKey&)'
+build/RISCV/cpu/minor/ssim/mlx_overlay.hh:164:10: note:   candidate expects 1 argument, 2 provided
+build/RISCV/cpu/minor/ssim/mlx_overlay.hh:164:10: note: candidate: 'constexpr dsa::sim::mlx::Overlay::PipelineKey::PipelineKey(dsa::sim::mlx::Overlay::PipelineKey&&)'
+build/RISCV/cpu/minor/ssim/mlx_overlay.hh:164:10: note:   candidate expects 1 argument, 2 provided
+build/RISCV/cpu/minor/ssim/mlx_overlay.cc:656:31: error: cannot convert '<brace-enclosed initializer list>' to 'const key_type&' {aka 'const dsa::sim::mlx::Overlay::RegisterKey&'}
+  656 |     if (pending_writers_.count({block.pe, block.tag, reg})) {
+      |         ~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~
+In file included from /usr/include/c++/11/set:61,
+                 from build/RISCV/cpu/minor/ssim/mlx_overlay.hh:22,
+                 from build/RISCV/cpu/minor/ssim/mlx_overlay.cc:3:
+/usr/include/c++/11/bits/stl_set.h:748:29: note:   initializing argument 1 of 'std::set<_Key, _Compare, _Alloc>::size_type std::set<_Key, _Compare, _Alloc>::count(const key_type&) const [with _Key = dsa::sim::mlx::Overlay::RegisterKey; _Compare = std::less<dsa::sim::mlx::Overlay::RegisterKey>; _Alloc = std::allocator<dsa::sim::mlx::Overlay::RegisterKey>; std::set<_Key, _Compare, _Alloc>::size_type = long unsigned int; std::set<_Key, _Compare, _Alloc>::key_type = dsa::sim::mlx::Overlay::RegisterKey]'
+  748 |       count(const key_type& __x) const
+      |             ~~~~~~~~~~~~~~~~^~~
+build/RISCV/cpu/minor/ssim/mlx_overlay.cc:663:31: error: cannot convert '<brace-enclosed initializer list>' to 'const key_type&' {aka 'const dsa::sim::mlx::Overlay::RegisterKey&'}
+  663 |     if (pending_writers_.count({destination, block.tag, reg})) {
+      |         ~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+In file included from /usr/include/c++/11/set:61,
+                 from build/RISCV/cpu/minor/ssim/mlx_overlay.hh:22,
+                 from build/RISCV/cpu/minor/ssim/mlx_overlay.cc:3:
+/usr/include/c++/11/bits/stl_set.h:748:29: note:   initializing argument 1 of 'std::set<_Key, _Compare, _Alloc>::size_type std::set<_Key, _Compare, _Alloc>::count(const key_type&) const [with _Key = dsa::sim::mlx::Overlay::RegisterKey; _Compare = std::less<dsa::sim::mlx::Overlay::RegisterKey>; _Alloc = std::allocator<dsa::sim::mlx::Overlay::RegisterKey>; std::set<_Key, _Compare, _Alloc>::size_type = long unsigned int; std::set<_Key, _Compare, _Alloc>::key_type = dsa::sim::mlx::Overlay::RegisterKey]'
+  748 |       count(const key_type& __x) const
+      |             ~~~~~~~~~~~~~~~~^~~
+build/RISCV/cpu/minor/ssim/mlx_overlay.cc: In member function 'void dsa::sim::mlx::Overlay::issueInstruction(std::size_t)':
+build/RISCV/cpu/minor/ssim/mlx_overlay.cc:745:58: error: no matching function for call to 'dsa::sim::mlx::Overlay::PipelineKey::PipelineKey(<brace-enclosed initializer list>)'
+  745 |   PipelineKey pipeline_key{block.pe, instruction.pipeline};
+      |                                                          ^
+In file included from build/RISCV/cpu/minor/ssim/mlx_overlay.cc:3:
+build/RISCV/cpu/minor/ssim/mlx_overlay.hh:164:10: note: candidate: 'constexpr dsa::sim::mlx::Overlay::PipelineKey::PipelineKey()'
+  164 |   struct PipelineKey {
+      |          ^~~~~~~~~~~
+build/RISCV/cpu/minor/ssim/mlx_overlay.hh:164:10: note:   candidate expects 0 arguments, 2 provided
+build/RISCV/cpu/minor/ssim/mlx_overlay.hh:164:10: note: candidate: 'constexpr dsa::sim::mlx::Overlay::PipelineKey::PipelineKey(const dsa::sim::mlx::Overlay::PipelineKey&)'
+build/RISCV/cpu/minor/ssim/mlx_overlay.hh:164:10: note:   candidate expects 1 argument, 2 provided
+build/RISCV/cpu/minor/ssim/mlx_overlay.hh:164:10: note: candidate: 'constexpr dsa::sim::mlx::Overlay::PipelineKey::PipelineKey(dsa::sim::mlx::Overlay::PipelineKey&&)'
+build/RISCV/cpu/minor/ssim/mlx_overlay.hh:164:10: note:   candidate expects 1 argument, 2 provided
+build/RISCV/cpu/minor/ssim/mlx_overlay.cc:754:28: error: no matching function for call to 'std::set<dsa::sim::mlx::Overlay::RegisterKey>::insert(<brace-enclosed initializer list>)'
+  754 |     pending_writers_.insert({destination, block.tag, reg});
+      |     ~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+In file included from /usr/include/c++/11/set:61,
+                 from build/RISCV/cpu/minor/ssim/mlx_overlay.hh:22,
+                 from build/RISCV/cpu/minor/ssim/mlx_overlay.cc:3:
+/usr/include/c++/11/bits/stl_set.h:566:9: note: candidate: 'template<class _InputIterator> void std::set<_Key, _Compare, _Alloc>::insert(_InputIterator, _InputIterator) [with _InputIterator = _InputIterator; _Key = dsa::sim::mlx::Overlay::RegisterKey; _Compare = std::less<dsa::sim::mlx::Overlay::RegisterKey>; _Alloc = std::allocator<dsa::sim::mlx::Overlay::RegisterKey>]'
+  566 |         insert(_InputIterator __first, _InputIterator __last)
+      |         ^~~~~~
+/usr/include/c++/11/bits/stl_set.h:566:9: note:   template argument deduction/substitution failed:
+build/RISCV/cpu/minor/ssim/mlx_overlay.cc:754:28: note:   candidate expects 2 arguments, 1 provided
+  754 |     pending_writers_.insert({destination, block.tag, reg});
+      |     ~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+In file included from /usr/include/c++/11/set:61,
+                 from build/RISCV/cpu/minor/ssim/mlx_overlay.hh:22,
+                 from build/RISCV/cpu/minor/ssim/mlx_overlay.cc:3:
+/usr/include/c++/11/bits/stl_set.h:509:7: note: candidate: 'std::pair<typename std::_Rb_tree<_Key, _Key, std::_Identity<_Tp>, _Compare, typename __gnu_cxx::__alloc_traits<_Allocator>::rebind<_Key>::other>::const_iterator, bool> std::set<_Key, _Compare, _Alloc>::insert(const value_type&) [with _Key = dsa::sim::mlx::Overlay::RegisterKey; _Compare = std::less<dsa::sim::mlx::Overlay::RegisterKey>; _Alloc = std::allocator<dsa::sim::mlx::Overlay::RegisterKey>; typename std::_Rb_tree<_Key, _Key, std::_Identity<_Tp>, _Compare, typename __gnu_cxx::__alloc_traits<_Allocator>::rebind<_Key>::other>::const_iterator = std::_Rb_tree<dsa::sim::mlx::Overlay::RegisterKey, dsa::sim::mlx::Overlay::RegisterKey, std::_Identity<dsa::sim::mlx::Overlay::RegisterKey>, std::less<dsa::sim::mlx::Overlay::RegisterKey>, std::allocator<dsa::sim::mlx::Overlay::RegisterKey> >::const_iterator; typename __gnu_cxx::__alloc_traits<_Allocator>::rebind<_Key>::other = std::allocator<dsa::sim::mlx::Overlay::RegisterKey>; typename __gnu_cxx::__alloc_traits<_Allocator>::rebind<_Key> = __gnu_cxx::__alloc_traits<std::allocator<dsa::sim::mlx::Overlay::RegisterKey>, dsa::sim::mlx::Overlay::RegisterKey>::rebind<dsa::sim::mlx::Overlay::RegisterKey>; typename _Allocator::value_type = dsa::sim::mlx::Overlay::RegisterKey; std::set<_Key, _Compare, _Alloc>::value_type = dsa::sim::mlx::Overlay::RegisterKey]'
+  509 |       insert(const value_type& __x)
+      |       ^~~~~~
+/usr/include/c++/11/bits/stl_set.h:509:32: note:   no known conversion for argument 1 from '<brace-enclosed initializer list>' to 'const value_type&' {aka 'const dsa::sim::mlx::Overlay::RegisterKey&'}
+  509 |       insert(const value_type& __x)
+      |              ~~~~~~~~~~~~~~~~~~^~~
+/usr/include/c++/11/bits/stl_set.h:518:7: note: candidate: 'std::pair<typename std::_Rb_tree<_Key, _Key, std::_Identity<_Tp>, _Compare, typename __gnu_cxx::__alloc_traits<_Allocator>::rebind<_Key>::other>::const_iterator, bool> std::set<_Key, _Compare, _Alloc>::insert(std::set<_Key, _Compare, _Alloc>::value_type&&) [with _Key = dsa::sim::mlx::Overlay::RegisterKey; _Compare = std::less<dsa::sim::mlx::Overlay::RegisterKey>; _Alloc = std::allocator<dsa::sim::mlx::Overlay::RegisterKey>; typename std::_Rb_tree<_Key, _Key, std::_Identity<_Tp>, _Compare, typename __gnu_cxx::__alloc_traits<_Allocator>::rebind<_Key>::other>::const_iterator = std::_Rb_tree<dsa::sim::mlx::Overlay::RegisterKey, dsa::sim::mlx::Overlay::RegisterKey, std::_Identity<dsa::sim::mlx::Overlay::RegisterKey>, std::less<dsa::sim::mlx::Overlay::RegisterKey>, std::allocator<dsa::sim::mlx::Overlay::RegisterKey> >::const_iterator; typename __gnu_cxx::__alloc_traits<_Allocator>::rebind<_Key>::other = std::allocator<dsa::sim::mlx::Overlay::RegisterKey>; typename __gnu_cxx::__alloc_traits<_Allocator>::rebind<_Key> = __gnu_cxx::__alloc_traits<std::allocator<dsa::sim::mlx::Overlay::RegisterKey>, dsa::sim::mlx::Overlay::RegisterKey>::rebind<dsa::sim::mlx::Overlay::RegisterKey>; typename _Allocator::value_type = dsa::sim::mlx::Overlay::RegisterKey; std::set<_Key, _Compare, _Alloc>::value_type = dsa::sim::mlx::Overlay::RegisterKey]'
+  518 |       insert(value_type&& __x)
+      |       ^~~~~~
+/usr/include/c++/11/bits/stl_set.h:518:27: note:   no known conversion for argument 1 from '<brace-enclosed initializer list>' to 'std::set<dsa::sim::mlx::Overlay::RegisterKey>::value_type&&' {aka 'dsa::sim::mlx::Overlay::RegisterKey&&'}
+  518 |       insert(value_type&& __x)
+      |              ~~~~~~~~~~~~~^~~
+/usr/include/c++/11/bits/stl_set.h:546:7: note: candidate: 'std::set<_Key, _Compare, _Alloc>::iterator std::set<_Key, _Compare, _Alloc>::insert(std::set<_Key, _Compare, _Alloc>::const_iterator, const value_type&) [with _Key = dsa::sim::mlx::Overlay::RegisterKey; _Compare = std::less<dsa::sim::mlx::Overlay::RegisterKey>; _Alloc = std::allocator<dsa::sim::mlx::Overlay::RegisterKey>; std::set<_Key, _Compare, _Alloc>::iterator = std::_Rb_tree<dsa::sim::mlx::Overlay::RegisterKey, dsa::sim::mlx::Overlay::RegisterKey, std::_Identity<dsa::sim::mlx::Overlay::RegisterKey>, std::less<dsa::sim::mlx::Overlay::RegisterKey>, std::allocator<dsa::sim::mlx::Overlay::RegisterKey> >::const_iterator; std::set<_Key, _Compare, _Alloc>::const_iterator = std::_Rb_tree<dsa::sim::mlx::Overlay::RegisterKey, dsa::sim::mlx::Overlay::RegisterKey, std::_Identity<dsa::sim::mlx::Overlay::RegisterKey>, std::less<dsa::sim::mlx::Overlay::RegisterKey>, std::allocator<dsa::sim::mlx::Overlay::RegisterKey> >::const_iterator; std::set<_Key, _Compare, _Alloc>::value_type = dsa::sim::mlx::Overlay::RegisterKey]'
+  546 |       insert(const_iterator __position, const value_type& __x)
+      |       ^~~~~~
+/usr/include/c++/11/bits/stl_set.h:546:7: note:   candidate expects 2 arguments, 1 provided
+/usr/include/c++/11/bits/stl_set.h:551:7: note: candidate: 'std::set<_Key, _Compare, _Alloc>::iterator std::set<_Key, _Compare, _Alloc>::insert(std::set<_Key, _Compare, _Alloc>::const_iterator, std::set<_Key, _Compare, _Alloc>::value_type&&) [with _Key = dsa::sim::mlx::Overlay::RegisterKey; _Compare = std::less<dsa::sim::mlx::Overlay::RegisterKey>; _Alloc = std::allocator<dsa::sim::mlx::Overlay::RegisterKey>; std::set<_Key, _Compare, _Alloc>::iterator = std::_Rb_tree<dsa::sim::mlx::Overlay::RegisterKey, dsa::sim::mlx::Overlay::RegisterKey, std::_Identity<dsa::sim::mlx::Overlay::RegisterKey>, std::less<dsa::sim::mlx::Overlay::RegisterKey>, std::allocator<dsa::sim::mlx::Overlay::RegisterKey> >::const_iterator; std::set<_Key, _Compare, _Alloc>::const_iterator = std::_Rb_tree<dsa::sim::mlx::Overlay::RegisterKey, dsa::sim::mlx::Overlay::RegisterKey, std::_Identity<dsa::sim::mlx::Overlay::RegisterKey>, std::less<dsa::sim::mlx::Overlay::RegisterKey>, std::allocator<dsa::sim::mlx::Overlay::RegisterKey> >::const_iterator; std::set<_Key, _Compare, _Alloc>::value_type = dsa::sim::mlx::Overlay::RegisterKey]'
+  551 |       insert(const_iterator __position, value_type&& __x)
+      |       ^~~~~~
+/usr/include/c++/11/bits/stl_set.h:551:7: note:   candidate expects 2 arguments, 1 provided
+/usr/include/c++/11/bits/stl_set.h:578:7: note: candidate: 'void std::set<_Key, _Compare, _Alloc>::insert(std::initializer_list<_Tp>) [with _Key = dsa::sim::mlx::Overlay::RegisterKey; _Compare = std::less<dsa::sim::mlx::Overlay::RegisterKey>; _Alloc = std::allocator<dsa::sim::mlx::Overlay::RegisterKey>]'
+  578 |       insert(initializer_list<value_type> __l)
+      |       ^~~~~~
+/usr/include/c++/11/bits/stl_set.h:578:43: note:   no known conversion for argument 1 from '<brace-enclosed initializer list>' to 'std::initializer_list<dsa::sim::mlx::Overlay::RegisterKey>'
+  578 |       insert(initializer_list<value_type> __l)
+      |              ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~
+build/RISCV/cpu/minor/ssim/mlx_overlay.cc: In member function 'void dsa::sim::mlx::Overlay::issueInstructions()':
+build/RISCV/cpu/minor/ssim/mlx_overlay.cc:787:25: error: no matching function for call to 'std::vector<dsa::sim::mlx::Overlay::Candidate>::push_back(<brace-enclosed initializer list>)'
+  787 |     candidates.push_back({index, {block.pe, instruction.pipeline}});
+      |     ~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+In file included from /usr/include/c++/11/vector:67,
+                 from build/RISCV/cpu/minor/ssim/mlx_overlay.hh:25,
+                 from build/RISCV/cpu/minor/ssim/mlx_overlay.cc:3:
+/usr/include/c++/11/bits/stl_vector.h:1187:7: note: candidate: 'void std::vector<_Tp, _Alloc>::push_back(const value_type&) [with _Tp = dsa::sim::mlx::Overlay::Candidate; _Alloc = std::allocator<dsa::sim::mlx::Overlay::Candidate>; std::vector<_Tp, _Alloc>::value_type = dsa::sim::mlx::Overlay::Candidate]'
+ 1187 |       push_back(const value_type& __x)
+      |       ^~~~~~~~~
+/usr/include/c++/11/bits/stl_vector.h:1187:35: note:   no known conversion for argument 1 from '<brace-enclosed initializer list>' to 'const value_type&' {aka 'const dsa::sim::mlx::Overlay::Candidate&'}
+ 1187 |       push_back(const value_type& __x)
+      |                 ~~~~~~~~~~~~~~~~~~^~~
+/usr/include/c++/11/bits/stl_vector.h:1203:7: note: candidate: 'void std::vector<_Tp, _Alloc>::push_back(std::vector<_Tp, _Alloc>::value_type&&) [with _Tp = dsa::sim::mlx::Overlay::Candidate; _Alloc = std::allocator<dsa::sim::mlx::Overlay::Candidate>; std::vector<_Tp, _Alloc>::value_type = dsa::sim::mlx::Overlay::Candidate]'
+ 1203 |       push_back(value_type&& __x)
+      |       ^~~~~~~~~
+/usr/include/c++/11/bits/stl_vector.h:1203:30: note:   no known conversion for argument 1 from '<brace-enclosed initializer list>' to 'std::vector<dsa::sim::mlx::Overlay::Candidate>::value_type&&' {aka 'dsa::sim::mlx::Overlay::Candidate&&'}
+ 1203 |       push_back(value_type&& __x)
+      |                 ~~~~~~~~~~~~~^~~
+build/RISCV/cpu/minor/ssim/mlx_overlay.cc: In member function 'void dsa::sim::mlx::Overlay::recordEvent(const string&, std::size_t, const std::map<std::__cxx11::basic_string<char>, std::__cxx11::basic_string<char> >&)':
+build/RISCV/cpu/minor/ssim/mlx_overlay.cc:847:20: error: no matching function for call to 'std::vector<dsa::sim::mlx::Event>::push_back(<brace-enclosed initializer list>)'
+  847 |   events_.push_back(
+      |   ~~~~~~~~~~~~~~~~~^
+  848 |       {cycle_, kind, block.tag, block.id, state.iteration, instruction.id,
+      |       ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  849 |        block.pe, PipelineName(instruction.pipeline), detail});
+      |        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+In file included from /usr/include/c++/11/vector:67,
+                 from build/RISCV/cpu/minor/ssim/mlx_overlay.hh:25,
+                 from build/RISCV/cpu/minor/ssim/mlx_overlay.cc:3:
+/usr/include/c++/11/bits/stl_vector.h:1187:7: note: candidate: 'void std::vector<_Tp, _Alloc>::push_back(const value_type&) [with _Tp = dsa::sim::mlx::Event; _Alloc = std::allocator<dsa::sim::mlx::Event>; std::vector<_Tp, _Alloc>::value_type = dsa::sim::mlx::Event]'
+ 1187 |       push_back(const value_type& __x)
+      |       ^~~~~~~~~
+/usr/include/c++/11/bits/stl_vector.h:1187:35: note:   no known conversion for argument 1 from '<brace-enclosed initializer list>' to 'const value_type&' {aka 'const dsa::sim::mlx::Event&'}
+ 1187 |       push_back(const value_type& __x)
+      |                 ~~~~~~~~~~~~~~~~~~^~~
+/usr/include/c++/11/bits/stl_vector.h:1203:7: note: candidate: 'void std::vector<_Tp, _Alloc>::push_back(std::vector<_Tp, _Alloc>::value_type&&) [with _Tp = dsa::sim::mlx::Event; _Alloc = std::allocator<dsa::sim::mlx::Event>; std::vector<_Tp, _Alloc>::value_type = dsa::sim::mlx::Event]'
+ 1203 |       push_back(value_type&& __x)
+      |       ^~~~~~~~~
+/usr/include/c++/11/bits/stl_vector.h:1203:30: note:   no known conversion for argument 1 from '<brace-enclosed initializer list>' to 'std::vector<dsa::sim::mlx::Event>::value_type&&' {aka 'dsa::sim::mlx::Event&&'}
+ 1203 |       push_back(value_type&& __x)
+      |                 ~~~~~~~~~~~~~^~~
+build/RISCV/cpu/minor/ssim/mlx_overlay.cc: In member function 'void dsa::sim::mlx::Overlay::recordTagEvent(const string&, uint64_t, const std::map<std::__cxx11::basic_string<char>, std::__cxx11::basic_string<char> >&)':
+build/RISCV/cpu/minor/ssim/mlx_overlay.cc:857:20: error: no matching function for call to 'std::vector<dsa::sim::mlx::Event>::push_back(<brace-enclosed initializer list>)'
+  857 |   events_.push_back({cycle_, kind, tag, "", 0, "", {}, "", detail});
+      |   ~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+In file included from /usr/include/c++/11/vector:67,
+                 from build/RISCV/cpu/minor/ssim/mlx_overlay.hh:25,
+                 from build/RISCV/cpu/minor/ssim/mlx_overlay.cc:3:
+/usr/include/c++/11/bits/stl_vector.h:1187:7: note: candidate: 'void std::vector<_Tp, _Alloc>::push_back(const value_type&) [with _Tp = dsa::sim::mlx::Event; _Alloc = std::allocator<dsa::sim::mlx::Event>; std::vector<_Tp, _Alloc>::value_type = dsa::sim::mlx::Event]'
+ 1187 |       push_back(const value_type& __x)
+      |       ^~~~~~~~~
+/usr/include/c++/11/bits/stl_vector.h:1187:35: note:   no known conversion for argument 1 from '<brace-enclosed initializer list>' to 'const value_type&' {aka 'const dsa::sim::mlx::Event&'}
+ 1187 |       push_back(const value_type& __x)
+      |                 ~~~~~~~~~~~~~~~~~~^~~
+/usr/include/c++/11/bits/stl_vector.h:1203:7: note: candidate: 'void std::vector<_Tp, _Alloc>::push_back(std::vector<_Tp, _Alloc>::value_type&&) [with _Tp = dsa::sim::mlx::Event; _Alloc = std::allocator<dsa::sim::mlx::Event>; std::vector<_Tp, _Alloc>::value_type = dsa::sim::mlx::Event]'
+ 1203 |       push_back(value_type&& __x)
+      |       ^~~~~~~~~
+/usr/include/c++/11/bits/stl_vector.h:1203:30: note:   no known conversion for argument 1 from '<brace-enclosed initializer list>' to 'std::vector<dsa::sim::mlx::Event>::value_type&&' {aka 'dsa::sim::mlx::Event&&'}
+ 1203 |       push_back(value_type&& __x)
+      |                 ~~~~~~~~~~~~~^~~
+scons: *** [build/RISCV/cpu/minor/ssim/mlx_overlay.o] Error 1
+scons: building terminated because of errors.
+*** Summary of Warnings ***
+Warning: Your compiler doesn't support incremental linking and lto at the same
+         time, so lto is being disabled. To force lto on anyway, use the
+         --force-lto option. That will disable partial linking.
+Warning: No suitable back trace implementation found.
