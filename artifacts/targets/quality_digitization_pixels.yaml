@@ -1,0 +1,70 @@
+metadata:
+  purpose: "Frozen raster coordinates for exploratory Fig. 15/16 quality-target recovery"
+  coordinate_origin: "top-left; y increases downward"
+  fig15:
+    source: "MLX Multi-Layer Execution for Structured LLM Workload Acceleration on Spatial Architectures/_page_10_Figure_0.jpeg"
+    sha256: "a7b9aa55d963b212f5bff3ffeb580e62d636b4af0c342cac859509691648f18b"
+    dimensions: [961, 414]
+  fig16:
+    source: "MLX Multi-Layer Execution for Structured LLM Workload Acceleration on Spatial Architectures/_page_10_Figure_1.jpeg"
+    sha256: "0111f75cf7d8c3b1f38f83be07411a5f88e034161036f0b9bba65f8eff38b92c"
+    dimensions: [334, 359]
+
+fig15:
+  accuracy_pixels_per_percentage_point: 51.0
+  vit:
+    methods: [orig, bd_qkv, bd_ffn, fnet_fft, mlx_s075, mlx_s05]
+    reported_original_pct: {top1: 78.7, top5: 91.0}
+    endpoint_y:
+      top1: [67, 87, 118, 189, 133, 148]
+      top5: [87, 123, 108, 135, 138, 149]
+  bert_squad11:
+    modified_last_k_layers: [0, 1, 3, 6, 9, 12]
+    reported_original_pct: {f1: 87.7, exact_match: 79.1}
+    reported_all12_loss_pct: {f1: 1.3, exact_match: 1.75}
+    endpoint_y:
+      f1: [77, 65, 94, 98, 131, 148]
+      exact_match: [59, 63, 84, 87, 131, 148]
+  llm_answering:
+    llama2_winogrande_512:
+      compression_ratio: 0.75
+      reported_original_pct: 90.1
+      endpoint_y: {original: 74, compressed: 98}
+    internlm2_adaleval_1k:
+      compression_ratio: 0.5
+      reported_original_pct: 52.8
+      endpoint_y: {original: 102, compressed: 133}
+    internlm2_adaleval_2k:
+      compression_ratio: 0.5
+      reported_original_pct: 40.6
+      endpoint_y: {original: 82, compressed: 119}
+    internlm2_adaleval_4k:
+      compression_ratio: 0.5
+      reported_original_pct: 35.9
+      endpoint_y: {original: 78, compressed: 114}
+  llm_generation:
+    axis: {y_at_zero: 182, y_at_eight: 45}
+    llama2_wikitext2_1k:
+      reported_original_perplexity: 6.62
+      endpoint_y: {s075: 83, s05: 90}
+    internlm2_wikitext2_1k:
+      reported_original_perplexity: 8.02
+      endpoint_y: {s075: 67, s05: 73}
+    llama2_wikitext103_2k:
+      reported_original_perplexity: 6.41
+      endpoint_y: {s075: 86, s05: 90}
+
+fig16:
+  block_sizes: [16, 32, 64]
+  accuracy_pixels_per_percentage_point: 48.0
+  vit:
+    reported_b16_pct: {top1: 78.4, top5: 90.7}
+    endpoint_y:
+      top1: [67, 96, 116]
+      top5: [83, 116, 135]
+  llama2_winogrande_512:
+    provenance: reported_annotations
+    accuracy_pct: [89.7, 89.4, 88.3]
+  internlm2_wikitext103_2k:
+    provenance: reported_annotations
+    perplexity: [5.52, 5.69, 6.04]
