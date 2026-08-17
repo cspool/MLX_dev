@@ -27,5 +27,9 @@ This exact agreement occurs without reading a paper target. It confirms that
 the expensive DSAGEN scratchpad behavior can be reproduced at the overlay
 level and makes full long-sequence memory experiments practical.
 
+The full scalability stress is documented in
+[`spad-scalability.md`](spad-scalability.md). It demonstrates that the exact
+DSAGEN single-buffer mechanism does not provide MLX's reported mesh scaling.
+
 The immutable result is
 `artifacts/results/standalone-dsagen-spad-run071.json`.

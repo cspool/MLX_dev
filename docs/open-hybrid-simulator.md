@@ -96,6 +96,7 @@ SIMD/mesh scaling is documented in
 [`fig10-scalability.md`](fig10-scalability.md), with its frozen Figure 23
 comparison in [`fig10-fig23-transfer.md`](fig10-fig23-transfer.md). The exact
 standalone reproduction of DSAGEN scratchpad timing is documented in
-[`standalone-dsagen-spad.md`](standalone-dsagen-spad.md). The remaining boundary
+[`standalone-dsagen-spad.md`](standalone-dsagen-spad.md), and its scalability
+limit in [`spad-scalability.md`](spad-scalability.md). The remaining boundary
 is independently defensible large-shape/per-kernel work scaling for Figures
 18--21 and 24--25. Paper result bars were not inputs to the invariant runs.
