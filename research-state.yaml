@@ -139,7 +139,7 @@ hypotheses:
     priority: high
   - id: H14
     statement: "An explicitly inferred real-preserving chunked FFT compressor/decompressor and tiled log-depth butterfly projection satisfy all paper-testable tensor, parameter-count, identity, and numerical-equivalence invariants."
-    status: pending
+    status: supported
     motivation: "Establish a transparent executable operator contract before any target-facing structured-model training, while separating inferred semantics from author-disclosed facts."
     parent: H4
     priority: high
@@ -148,7 +148,7 @@ experiments:
   proxy_metric: "Maximum absolute percentage error across every numeric paper anchor; pass only when each reproducible point is <=10%, with unavailable measurements explicitly classified rather than fabricated."
   baseline_value: 0.2486
   best_value: 0.0123
-  total_runs: 16
+  total_runs: 17
   trajectory:
     - run_id: "run_001"
       hypothesis: "H2"
@@ -262,11 +262,18 @@ experiments:
       wall_time_min: 0.1
       change_summary: "Pinned official FABNet-Large/BE-40 simulator rejected: all four absolute Fig. 19 bars fail, with 233.5% MAPE and 284.6% maximum error."
       timestamp: "2026-08-17"
+    - run_id: "run_017"
+      hypothesis: "H14"
+      metric_value: 0.0000009537
+      delta: null
+      wall_time_min: 0.1
+      change_summary: "All ten inferred operator-contract checks pass; max FP32 error is 9.54e-7 and B=16/32/64 densities exactly match 50%/31.25%/18.75%."
+      timestamp: "2026-08-17"
 
 outer_loop:
   cycle: 0
   last_direction: null
-  last_reflection: "H13 rejects direct transfer of the open FABNet simulator. H14 now freezes a real-preserving Fourier-resampling interpretation and independent tiled butterfly factors before implementation, so subsequent BERT quality work has a testable operator contract rather than residual-selected semantics."
+  last_reflection: "H14 supports the inferred operator contract with 10/10 checks and 9.54e-7 max numerical error. This removes implementation-shape ambiguity but not training identifiability; the next run must pre-register dense-to-factor fitting, BERT layer wiring, and retraining before comparing any Fig. 15(b) quality target."
 
 workspace:
   findings: "findings.md"

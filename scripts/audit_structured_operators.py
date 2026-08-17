@@ -76,7 +76,7 @@ def main() -> int:
     checks.append(
         _check(
             "butterfly_dense_factorized_max_abs",
-            float((dense_output - factor_output).abs().max()),
+            float((dense_output - factor_output).abs().max().detach()),
             1e-5,
         )
     )
@@ -143,4 +143,3 @@ def main() -> int:
 
 if __name__ == "__main__":
     raise SystemExit(main())
-

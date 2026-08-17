@@ -50,7 +50,8 @@ def fourier_resample_real(value: torch.Tensor, output_length: int, *, dim: int =
     if input_length <= 0:
         raise ValueError("input length must be positive")
     if output_length == input_length:
-        return value.clone()
+        result = torch.fft.irfft(torch.fft.rfft(moved, dim=-1), n=input_length, dim=-1)
+        return result.movedim(-1, dim)
 
     spectrum = torch.fft.rfft(moved, dim=-1)
     if output_length < input_length:
