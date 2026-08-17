@@ -17,6 +17,8 @@ Exploratory target-recovery audit. The plots have already been visually inspecte
 - Fig. 15(d) uses `(y=182, perplexity=0)` and `(y=45, perplexity=8)`.
 - Fig. 16 accuracy panels use 48 raster pixels per percentage point. Printed Llama2 and InternLM2 values remain reported values rather than digitized estimates.
 
+The original-perplexity endpoints in Fig. 15(d) and the three annotated Llama2 endpoints in Fig. 16 are retained only as independent raster-to-label cross-checks. Their printed annotations remain the acceptance targets.
+
 ## Plot semantics
 
 - Fig. 15(a) bars are accuracy margins; printed original top-1/top-5 scores provide absolute anchors.
