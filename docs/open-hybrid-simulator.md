@@ -70,9 +70,12 @@ These fixes do not alter modeled PE, stream, memory, or network latency.
 ## Current boundary
 
 The upstream execution gates are complete, and the source-integrated MLX
-overlay implements tag blocks, programmable-PE resources, skip-hop semantics,
-counted cross-layer events, a radix-2 CDC compiler, and callback-driven DSAGEN
-scratchpad requests; see [`dsagen-mlx-overlay.md`](dsagen-mlx-overlay.md) and
-[`dsagen-mlx-cdc-memory.md`](dsagen-mlx-cdc-memory.md). Off-chip DMA/LSQ
-traffic, large-shape aggregation, and independently calibrated timing remain
-the next boundary. Paper result bars were not inputs to these invariant runs.
+overlay now implements tag blocks, programmable-PE resources, skip-hop
+semantics, counted cross-layer events, radix-2 CDC compilation, DSAGEN
+scratchpad callbacks, real MinorCPU LSQ/L1/L2/DDR traffic, and a 28-tag reduced
+full-Transformer-block proxy. See [`dsagen-mlx-overlay.md`](dsagen-mlx-overlay.md),
+[`dsagen-mlx-cdc-memory.md`](dsagen-mlx-cdc-memory.md),
+[`dsagen-mlx-dma-memory.md`](dsagen-mlx-dma-memory.md), and
+[`dsagen-mlx-full-block.md`](dsagen-mlx-full-block.md). The remaining boundary
+is independently defensible large-shape/per-kernel work scaling for Figures
+18--21 and 24--25. Paper result bars were not inputs to the invariant runs.
