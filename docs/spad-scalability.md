@@ -27,3 +27,7 @@ The immutable mechanism result is
 `artifacts/results/spad-scalability-run072.json`. It prevents treating DSAGEN's
 single-buffer memory as an MLX parameter merely because DSAGEN is the spatial
 simulator substrate.
+
+The frozen numerical comparison in
+[`spad-fig23-transfer.md`](spad-fig23-transfer.md) confirms this boundary:
+SIMD passes 5/5, while all ten 8x8 points fail.
