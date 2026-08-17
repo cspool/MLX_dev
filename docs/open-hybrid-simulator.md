@@ -132,3 +132,9 @@ folding is rejected in
 [`xavier-matched-attention.md`](xavier-matched-attention.md); saturated GPU
 anchors are still required. Figures 18--21 and 24--25 also require broader
 shape/device coverage. Paper result bars were not inputs to the invariant runs.
+
+The Xavier follow-up trajectory is closed in
+[`xavier-final-attention.md`](xavier-final-attention.md), and the resulting
+eight-cell Figure 20 ledger is in
+[`fig20-matched-evidence-closure.md`](fig20-matched-evidence-closure.md): six
+numerical failures and two execution-incomplete Attention cells.

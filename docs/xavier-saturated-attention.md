@@ -28,3 +28,7 @@ larger N=256 SV holdout.
 
 The immutable result is
 `artifacts/results/xavier-saturated-attention-run090.json`.
+
+The numerical-stability and final-anchor follow-ups are summarized in
+[`xavier-final-attention.md`](xavier-final-attention.md). They remove the
+checksum problem but still reject the all-point cycle-folding gate.

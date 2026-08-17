@@ -1,0 +1,181 @@
+{
+  "schema_version": 1,
+  "experiment_id": "H88",
+  "run_id": "run093",
+  "classification": "target_exposed_figure20_matched_evidence_closure",
+  "validation_eligible": false,
+  "generated_at": "2026-08-17T23:47:48.012458+00:00",
+  "project_commit": "2fc483a60ef9560a7f99a460dbd2c44d0b03cc93",
+  "hypothesis_status": "supported",
+  "audit_integrity": true,
+  "figure20_reproduced_within_10pct": false,
+  "frozen_inputs": {
+    "projections": {
+      "path": "artifacts/results/matched-projection-fig20-transfer-run083.json",
+      "bytes": 3456,
+      "sha256": "a73cfe533b873617cf7eea1913b5fffb64e1caac13aba020d944d04b73127706",
+      "checks": {
+        "is_file": true,
+        "sha256": true
+      },
+      "pass": true
+    },
+    "mlx_attention": {
+      "path": "artifacts/results/combined-attention-memory-run088.json",
+      "bytes": 48441,
+      "sha256": "a647443c82ae407b18f0253757b43cf245b1626593e03510895f9c87ecd5fa44",
+      "checks": {
+        "is_file": true,
+        "sha256": true
+      },
+      "pass": true
+    },
+    "xavier_attention": {
+      "path": "artifacts/results/xavier-final-attention-run092.json",
+      "bytes": 6489,
+      "sha256": "bbe024a575a4b7283817ff9ffd5c869e6a311bd8c85d03d635e291638a659c81",
+      "checks": {
+        "is_file": true,
+        "sha256": true
+      },
+      "pass": true
+    },
+    "targets": {
+      "path": "artifacts/targets/paper_targets.yaml",
+      "bytes": 14931,
+      "sha256": "c4a22ab8052ff8cb223a729b8ce07320c6826cfee0d37e1a664a8761e018b41e",
+      "checks": {
+        "is_file": true,
+        "sha256": true
+      },
+      "pass": true
+    }
+  },
+  "parent_checks": {
+    "projections": true,
+    "mlx_attention": true,
+    "xavier_attention": true
+  },
+  "cells": [
+    {
+      "paper_group": "QKV_256",
+      "target_index": 0,
+      "target_speedup": 4.3,
+      "estimated_speedup": 2.020885600121266,
+      "relative_error": 0.5300266046229614,
+      "pass_10pct": false,
+      "status": "numerical_failure",
+      "evidence": "matched_projection_estimator"
+    },
+    {
+      "paper_group": "Attn_256",
+      "target_index": 1,
+      "target_speedup": 1.4,
+      "estimated_speedup": null,
+      "relative_error": null,
+      "pass_10pct": null,
+      "status": "execution_incomplete",
+      "evidence": "mlx_complete_xavier_folding_rejected",
+      "mlx_cycles": 4984864,
+      "xavier_cycles": null,
+      "xavier_holdout_gate": {
+        "passing_holdouts": 1,
+        "total_holdouts": 3,
+        "mape": 0.05905539684796929,
+        "max_error": 0.07354615777280402,
+        "all_holdouts_pass": false
+      }
+    },
+    {
+      "paper_group": "FFN1_256",
+      "target_index": 2,
+      "target_speedup": 4.1,
+      "estimated_speedup": 2.020893436898263,
+      "relative_error": 0.507099161732131,
+      "pass_10pct": false,
+      "status": "numerical_failure",
+      "evidence": "matched_projection_estimator"
+    },
+    {
+      "paper_group": "FFN2_256",
+      "target_index": 3,
+      "target_speedup": 3.5,
+      "estimated_speedup": 2.020893436898263,
+      "relative_error": 0.4226018751719249,
+      "pass_10pct": false,
+      "status": "numerical_failure",
+      "evidence": "matched_projection_estimator"
+    },
+    {
+      "paper_group": "QKV_8K",
+      "target_index": 4,
+      "target_speedup": 4.0,
+      "estimated_speedup": 2.020820309959395,
+      "relative_error": 0.4947949225101512,
+      "pass_10pct": false,
+      "status": "numerical_failure",
+      "evidence": "matched_projection_estimator"
+    },
+    {
+      "paper_group": "Attn_8K",
+      "target_index": 5,
+      "target_speedup": 3.1,
+      "estimated_speedup": null,
+      "relative_error": null,
+      "pass_10pct": null,
+      "status": "execution_incomplete",
+      "evidence": "mlx_complete_xavier_folding_rejected",
+      "mlx_cycles": 4339007525,
+      "xavier_cycles": null,
+      "xavier_holdout_gate": {
+        "passing_holdouts": 1,
+        "total_holdouts": 3,
+        "mape": 0.05905539684796929,
+        "max_error": 0.07354615777280402,
+        "all_holdouts_pass": false
+      }
+    },
+    {
+      "paper_group": "FFN1_8K",
+      "target_index": 6,
+      "target_speedup": 3.2,
+      "estimated_speedup": 2.0208205548587723,
+      "relative_error": 0.3684935766066337,
+      "pass_10pct": false,
+      "status": "numerical_failure",
+      "evidence": "matched_projection_estimator"
+    },
+    {
+      "paper_group": "FFN2_8K",
+      "target_index": 7,
+      "target_speedup": 3.9,
+      "estimated_speedup": 2.0208205548587723,
+      "relative_error": 0.48184088336954556,
+      "pass_10pct": false,
+      "status": "numerical_failure",
+      "evidence": "matched_projection_estimator"
+    }
+  ],
+  "summary": {
+    "total_cells": 8,
+    "status_counts": {
+      "reproduced": 0,
+      "numerical_failure": 6,
+      "execution_incomplete": 2
+    },
+    "numerically_compared_cells": 6,
+    "cells_within_10pct": 0,
+    "all_eight_reproduced_within_10pct": false
+  },
+  "integrity_checks": {
+    "frozen_files": true,
+    "parents": true,
+    "all_indices": true,
+    "six_projection_failures": true,
+    "two_attention_incomplete": true,
+    "no_attention_speedup": true,
+    "global_false": true
+  },
+  "paper_target_values_consumed_during_audit": true,
+  "stopping_rule_applied": true
+}

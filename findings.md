@@ -79,6 +79,8 @@ H37 closes the full-paper ledger with a machine certificate rather than a comple
 - H83 supports the first full-design SIMD32 combined MLX Attention schedule. Per-event periods and multiplicities preserve two-packet inverse butterflies and distinct Q/K/V reuse. Four column SRAM ports service only original input/final output while 3.15/100.66 MB compressed boundaries stay on NoC. All FU work, 7.34/234.88 MB SRAM bytes, 26-entry maximum PE footprint, and replay gates pass exactly; u=4/8 predicts u=16/32 with `1.18e-7` MAPE. Full estimates are 4,984,864 and 4,339,007,525 cycles at 1 GHz. Xavier remains independently unmodeled.
 - H84 rejects the first matched Xavier component folding while supporting all execution evidence. Thirty-two detailed PTX runs and checksums pass, and FFT/QK/softmax/SV work matches H79 exactly. Only 6/16 held-out cycles pass (13.07% MAPE, 53.17% max): small-count affine fits cross CTA/SM occupancy regimes. Failed full sums are ineligible, so H83 remains unpaired with Xavier.
 - H85 rejects saturated Xavier folding with `audit_integrity=false`. Complete-wave anchors improve cycle prediction to 4/6 holdouts (9.11% MAPE): both FFT shapes, shared QK, and long SV pass. Short SV misses by 6.83%, while the directly executed full 4096-row softmax takes 5,428,292 cycles and defeats its model by 37.74%. One long FFT checksum is `4.24e-5` versus the frozen `1e-5` gate. No partial full sum is admitted.
+- H86 fixes FFT numerical reproducibility with a separate stable source: all seven new checksums pass. Its 2048/4096→8192 cycle gate still passes only 1/3 points (5.26% MAPE), with long FFT and short SV just above 5%. H87's final 4096/8192→16384 gate also passes only 1/3 (5.91% MAPE, 7.35% max). The source and execution are valid; global affine full-count folding is not.
+- H88 supports a complete Figure 20 evidence ledger, not reproduction. All eight cells are accounted for: six matched projections are numerical failures and two Attention cells are execution-incomplete because no eligible Xavier denominator exists. Zero cells reproduce within 10%; the global Figure 20 verdict remains false.
 
 ## Patterns and Insights
 
@@ -120,6 +122,7 @@ H37 closes the full-paper ledger with a machine certificate rather than a comple
 - Logical packets require both reuse and consumption cardinality. H83 uses per-event periods for reuse and multiplicities for two-packet inverse butterflies; omitting either silently drops or duplicates readiness while aggregate FLOPs remain unchanged.
 - GPU outer-count scaling is piecewise, not globally affine from sub-saturation anchors. H84 observes nearly flat QK/SV cycles while one wave occupies the eight SMs, then changing FFT/softmax slopes as CTA and launch counts grow.
 - Executing the full small-enough component can be stronger than another fold. H85's complete long-softmax run removes model uncertainty for that component even though it falsifies the registered linear extrapolation.
+- More anchors do not guarantee a global GPU model. H86/H87 remove checksum and sub-wave confounders, yet FFT slopes continue changing beyond 16,384 pairs; detailed GPU cache/memory/scheduler state must be modeled rather than collapsed into one affine count.
 
 ## Lessons and Constraints
 
@@ -165,6 +168,7 @@ H37 closes the full-paper ledger with a machine certificate rather than a comple
 - H83 supersedes the isolated SIMD8 cycle sum for MLX Figure 20 Attention, but its 4.985 ms/4.339 s values remain target-free MLX-only estimates until an independently held-out Xavier execution exists.
 - Do not use H84's full-count extrapolations. They are generated only as rejected diagnostics; saturated anchors and new larger holdouts must pass before computing MLX/Xavier speedup.
 - Do not relax H85's FFT checksum threshold or discard the 4096-row softmax residual. A new source-qualified stable FFT reference and direct softmax use must be registered independently.
+- Stop the Figure 20 Xavier affine-anchor trajectory after H87. H88 must retain null Attention speedups until a genuinely different source-derived scheduler/cache model or direct full execution becomes available.
 
 ## Open Questions
 
@@ -232,3 +236,7 @@ No invalid full-size GPU estimate is consumed downstream.
 Run090 tests complete SM waves. Four of six cycle holdouts pass, but short SV
 and long softmax fail; one long FFT checksum also breaks integrity. The full
 long-softmax measurement is retained for a later direct component sum.
+
+Runs 091/092 remove the FFT checksum issue and test larger steady-state ranges,
+but both reject their all-point 5% gates. Run093 therefore closes Figure 20 at
+zero reproduced, six numerical failures, and two execution-incomplete cells.
