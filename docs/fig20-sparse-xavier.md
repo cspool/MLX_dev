@@ -12,3 +12,8 @@ bars remain unavailable because H56 has no WMMA/Tensor Core kernel.
 H57 is therefore an honest partial rejection, not a full Figure 20
 reproduction. Author kernel definitions, Tensor Core baselines, and activity
 power are required before the missing series can be validated.
+
+H75 subsequently quantifies the proxy-shape mismatch in
+[`fig20-workload-identity.md`](fig20-workload-identity.md). The current runs
+represent far below 1% of logical work and reuse one BSMM shape for three
+different projection kernels.

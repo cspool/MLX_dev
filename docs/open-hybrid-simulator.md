@@ -107,6 +107,7 @@ counters required by Figure 25 are documented in
 [`fma-fig25-transfer.md`](fma-fig25-transfer.md). The same counters now cover
 all 42 Figure 24 MLX cases in
 [`fig24-fu-rerun.md`](fig24-fu-rerun.md), with the cross-simulator audit in
-[`fu-fig24-transfer.md`](fu-fig24-transfer.md). The remaining boundary
+[`fu-fig24-transfer.md`](fu-fig24-transfer.md). Figure 20 matched-shape gaps are
+quantified in [`fig20-workload-identity.md`](fig20-workload-identity.md). The remaining boundary
 is independently defensible large-shape/per-kernel work scaling for Figures
 18--21 and 24--25. Paper result bars were not inputs to the invariant runs.
