@@ -55,6 +55,16 @@ python scripts/evaluate_perplexity.py \
   --output artifacts/results/internlm2-wikitext2.json
 ```
 
+The pre-registered BERT-base/SQuAD 1.1 baseline (H11) uses the fully pinned
+recipe in `configs/training/bert_squad_baseline_v1.yaml`:
+
+```bash
+CUDA_VISIBLE_DEVICES=0 python scripts/train_bert_squad.py
+```
+
+Use `--smoke --output-dir /tmp/mlx-bert-smoke` for a two-step compatibility
+check; smoke metrics are explicitly excluded from the experiment ledger.
+
 ## Evidence policy
 
 - Paper target values live only under `artifacts/targets/`.

@@ -92,6 +92,12 @@ hypotheses:
     motivation: "Establish a native checkpoint/data quality baseline before introducing reconstructed FFT compression, hierarchical BSMM, or LoRA training."
     parent: H5
     priority: high
+  - id: H11
+    statement: "A pinned public BERT-base checkpoint fine-tuned once on official SQuAD 1.1 with a frozen standard QA recipe reproduces Fig. 15(b)'s annotated original F1 87.7 and exact match 79.1 within 10%."
+    status: pending
+    motivation: "Establish a native BERT quality baseline before reconstructing the paper's undisclosed layer-wise FFT compression and hierarchical-BSMM retraining."
+    parent: H5
+    priority: high
 
 experiments:
   proxy_metric: "Maximum absolute percentage error across every numeric paper anchor; pass only when each reproducible point is <=10%, with unavailable measurements explicitly classified rather than fabricated."
@@ -187,7 +193,7 @@ experiments:
 outer_loop:
   cycle: 0
   last_direction: null
-  last_reflection: "H10 freezes the first native model-quality run on public InternLM2 and WikiText-2. This isolates checkpoint/data/evaluation reproducibility from the paper's undisclosed compression initialization and LoRA recipe."
+  last_reflection: "H10 and H11 freeze native public-checkpoint quality baselines before any structured retraining. H11 explicitly treats the BERT checkpoint and QA recipe as an inferred reconstruction because the paper does not disclose them."
 
 workspace:
   findings: "findings.md"
