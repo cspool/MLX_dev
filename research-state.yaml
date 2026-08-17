@@ -247,7 +247,7 @@ hypotheses:
     priority: high
   - id: H32
     statement: "On 32 fixed prompt-length quantiles and identical H31 seeds, the official 160,000-token LMDeploy session produces exact raw-output equivalence with H30's 8,192-token effective session under a frozen low-cache hardware allocation."
-    status: pending
+    status: supported
     motivation: "Close the only remaining H30 runtime caveat before assigning the persistent Ada-LEval 4k gap to an unidentified checkpoint, evaluator, or task-adaptation detail."
     parent: H30
     priority: high
@@ -256,7 +256,7 @@ experiments:
   proxy_metric: "Maximum absolute percentage error across every numeric paper anchor; pass only when each reproducible point is <=10%, with unavailable measurements explicitly classified rather than fabricated."
   baseline_value: 0.2486
   best_value: 0.0123
-  total_runs: 34
+  total_runs: 35
   trajectory:
     - run_id: "run_001"
       hypothesis: "H2"
@@ -496,11 +496,18 @@ experiments:
       wall_time_min: 15.4
       change_summary: "Three fixed-seed 4k replications score 28.7/30.3/27.6%, mean 28.8667%; the mean misses the official/MLX targets by 14.85%/19.59% relative despite strong prediction-level seed variation."
       timestamp: "2026-08-17"
+    - run_id: "run_036"
+      hypothesis: "H32"
+      metric_value: 0.0
+      delta: null
+      wall_time_min: 0.5
+      change_summary: "Fixed-seed session-cap audit supported: all 32 length-quantile prompts exactly match baseline raw text, extraction, input/output token counts, and finish reason under the registered 160k request with 20% cache allocation."
+      timestamp: "2026-08-17"
 
 outer_loop:
-  cycle: 16
-  last_direction: "Close the sole remaining H30 runtime caveat with a fixed-prompt, exact-seed equivalence audit between the 8,192-token effective session and the official 160,000-token setting under a separately frozen low-cache hardware allocation. If outputs match, classify the persistent Ada 4k gap as checkpoint/evaluator underidentification rather than continue seed trials."
-  last_reflection: "H31's three fixed schedules vary predictions heavily but yield only 27.6%-30.3% accuracy and a 28.8667% mean. H30's 27.4% is not an outlier, every non-target gate passes, and even the best replicate misses the official pass floor, so favorable stochastic variation is not a supported explanation."
+  cycle: 17
+  last_direction: "Run a fresh, source-qualified post-acceptance discovery audit across the paper title, authors, institutional pages, GitHub, DOI/artifact indexes, and cited simulator lineages. Only a newly identified public artifact may reopen the stopped compressed-model, Ada evaluator, or architecture-timing paths."
+  last_reflection: "H32 obtains 32/32 exact output equivalence after raising serviceable capacity from 8,192 to 13,952 tokens under the official 160k request configuration. The cap cannot explain H30/H31's 4k residual; ordinary seed and capacity variants are now both closed, leaving an independently identifiable checkpoint/evaluator or task-adaptation detail as the required evidence."
 
 workspace:
   findings: "findings.md"
