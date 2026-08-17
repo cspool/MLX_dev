@@ -1,0 +1,76 @@
+diff --git a/src/cpu/minor/ssim/mlx_overlay.hh b/src/cpu/minor/ssim/mlx_overlay.hh
+--- a/src/cpu/minor/ssim/mlx_overlay.hh
++++ b/src/cpu/minor/ssim/mlx_overlay.hh
+@@ -130,6 +130,7 @@ struct Instruction {
+   unsigned memory_bytes{8};
+   bool memory_external{true};
+   std::string emit_event;
++  uint64_t emit_event_period{1};
+ };
+ 
+ struct TaggedBlock {
+@@ -139,5 +140,6 @@ struct TaggedBlock {
+   uint64_t trip_count{1};
+   std::vector<uint64_t> predecessors;
+   std::vector<std::string> wait_events;
++  uint64_t wait_event_period{1};
+   std::vector<Instruction> instructions;
+ };
+diff --git a/src/cpu/minor/ssim/mlx_overlay.cc b/src/cpu/minor/ssim/mlx_overlay.cc
+--- a/src/cpu/minor/ssim/mlx_overlay.cc
++++ b/src/cpu/minor/ssim/mlx_overlay.cc
+@@ -241,6 +241,8 @@ Overlay::FromJsonFile(const std::string &path)
+     block.tag = PositiveUInt(block_root["tag"], "blocks[].tag");
+     block.pe = ParseCoord(block_root["pe"], "blocks[].pe");
+     block.trip_count = PositiveUInt(block_root["trip_count"], "blocks[].trip_count");
++    block.wait_event_period = PositiveUInt(
++        block_root.get("wait_event_period", 1), "blocks[].wait_event_period");
+     if (!block_root["predecessors"].isNull()) {
+       for (const auto &predecessor : block_root["predecessors"]) {
+         block.predecessors.push_back(predecessor.asUInt64());
+@@ -284,6 +286,9 @@ Overlay::FromJsonFile(const std::string &path)
+       instruction.memory_external =
+           instruction_root.get("memory_external", true).asBool();
+       instruction.emit_event = instruction_root.get("emit_event", "").asString();
++      instruction.emit_event_period = PositiveUInt(
++          instruction_root.get("emit_event_period", 1),
++          "instructions[].emit_event_period");
+       if (instruction.pipeline == PipelineKind::Xfer) {
+         instruction.destination =
+             ParseCoord(instruction_root["destination"], "destination");
+@@ -447,6 +452,15 @@ Overlay::validate() const
+         throw std::runtime_error(
+             "MLX memory address sequence must match block trip count");
+       }
++      if (instruction.emit_event.empty() && instruction.emit_event_period != 1) {
++        throw std::runtime_error(
++            "MLX emit-event period requires a nonempty event");
++      }
++      if (!instruction.emit_event.empty() &&
++          block.trip_count % instruction.emit_event_period != 0) {
++        throw std::runtime_error(
++            "MLX emit-event period must divide block trip count");
++      }
+       for (const auto &registers : {instruction.reads, instruction.writes}) {
+         std::set<unsigned> banks;
+         for (unsigned reg : registers) {
+@@ -614,7 +629,8 @@ Overlay::completeInstruction(std::size_t block_index)
+   }
+   recordEvent("complete", block_index);
+   ++stats_.instructions_completed;
+-  if (!instruction.emit_event.empty()) {
++  if (!instruction.emit_event.empty() &&
++      (state.iteration + 1) % instruction.emit_event_period == 0) {
+     uint64_t count = ++event_counts_[instruction.emit_event];
+     ++stats_.boundary_events_emitted;
+     recordEvent(
+@@ -703,7 +719,8 @@ Overlay::iterationEventsReady(std::size_t block_index) const
+   for (const auto &event : block.wait_events) {
+     auto iterator = event_counts_.find(event);
+     uint64_t count = iterator == event_counts_.end() ? 0 : iterator->second;
+-    if (count <= state.iteration) {
++    uint64_t required_event = state.iteration / block.wait_event_period;
++    if (count <= required_event) {
+       return false;
+     }
+   }
