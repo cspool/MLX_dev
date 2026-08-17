@@ -1,0 +1,48 @@
+name: matched-projection-estimator-v1
+experiment_id: H77
+run_id: run082
+classification: target_free_matched_projection_estimator
+validation_eligible: false
+
+frozen_inputs:
+  mlx_anchors:
+    path: artifacts/results/fig24-fu-rerun-run078.json
+    sha256: c25a72a32d8ed37bbb9d09b0747167c712f7fbbf5c0ca54edc580e9a6c0203c1
+    required_status: supported
+    required_integrity: true
+  xavier_anchors:
+    path: artifacts/results/fig20-sparse-xavier-run063.json
+    sha256: 5688d439bbe21b68380238b60b983bcb59236368c63056524a8d66ffdd36a4e2
+    required_integrity: true
+  logical_work:
+    path: artifacts/results/fig20-workload-identity-run080.json
+    sha256: 464215470b8d56f944d85bf9ef419fddb3977072b1511735e9adc9ddc16b66af
+    required_status: supported
+    required_integrity: true
+  repeat_model:
+    path: artifacts/results/repeat-folding-run081.json
+    sha256: 8aff122ca8a7c797030742c0035cf18626962c746d105c57dd2136bacaa6b3d6
+    required_status: supported
+    required_integrity: true
+
+mlx:
+  fit_keys: [qkv_bsmm_b32--Llama2_512, qkv_bsmm_b32--Llama2_1K]
+  fit_trips: [4, 8]
+  validation_keys: [qkv_bsmm_b32--Llama2_4K, qkv_bsmm_b32--BERT_8K]
+  validation_trip: 16
+  fma_equivalents_per_simd8_trip: 1920
+  full_design_simd_scale: 4
+  clock_hz: 1000000000
+
+xavier:
+  measurements: artifacts/environment/h57/runs/xavier
+  fit_keys: [bsmm--short, bsmm--long]
+  clock_hz: 1377000000
+
+coverage:
+  kernels: [qkv, ffn1, ffn2]
+  sequence_lengths: [256, 8192]
+  excluded: {attention: requires_fft_and_compressed_attention_anchors}
+
+auditor: scripts/audit_matched_projection_estimator.py
+result_path: artifacts/results/matched-projection-estimator-run082.json
