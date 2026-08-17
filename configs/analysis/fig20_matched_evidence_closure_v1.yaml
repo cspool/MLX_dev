@@ -1,0 +1,33 @@
+name: fig20-matched-evidence-closure-v1
+experiment_id: H88
+run_id: run093
+classification: target_exposed_figure20_matched_evidence_closure
+validation_eligible: false
+
+frozen_inputs:
+  projections:
+    path: artifacts/results/matched-projection-fig20-transfer-run083.json
+    sha256: a73cfe533b873617cf7eea1913b5fffb64e1caac13aba020d944d04b73127706
+    required_status: rejected
+    required_integrity: true
+  mlx_attention:
+    path: artifacts/results/combined-attention-memory-run088.json
+    sha256: a647443c82ae407b18f0253757b43cf245b1626593e03510895f9c87ecd5fa44
+    required_status: supported
+    required_integrity: true
+  xavier_attention:
+    path: artifacts/results/xavier-final-attention-run092.json
+    sha256: bbe024a575a4b7283817ff9ffd5c869e6a311bd8c85d03d635e291638a659c81
+    required_status: rejected
+    required_integrity: true
+  targets:
+    path: artifacts/targets/paper_targets.yaml
+    sha256: c4a22ab8052ff8cb223a729b8ce07320c6826cfee0d37e1a664a8761e018b41e
+
+attention_cells:
+  - {paper_group: Attn_256, target_index: 1, mlx_shape: N256}
+  - {paper_group: Attn_8K, target_index: 5, mlx_shape: N8192}
+
+target_section: fig20_xavier_kernels.versus_sparse_cuda.speedup
+auditor: scripts/audit_fig20_matched_evidence_closure.py
+result_path: artifacts/results/fig20-matched-evidence-closure-run093.json
