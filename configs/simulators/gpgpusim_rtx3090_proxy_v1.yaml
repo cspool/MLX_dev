@@ -1,0 +1,51 @@
+name: gpgpusim-rtx3090-proxy-v1
+experiment_id: H51
+run_id: run057
+classification: mechanism_confirmatory_gpu_proxy_no_paper_target
+
+parent:
+  path: artifacts/results/open-hybrid-simulator-audit-run046.json
+  sha256: a4393d85e4deea39544b7a198c13e45319195580bdbb43931838f9d47726c424
+  required_status: supported
+  required_integrity: true
+
+source:
+  accelsim_revision: c5296df152c99a28dd64e5d9560bd58a8fd2e774
+  gpgpu_sim_revision: 68e1cd30efaecbd71b496822f9d88a5803b33841
+  base_config: third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/configs/tested-cfgs/SM86_RTX3070/gpgpusim.config
+  interconnect: third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/configs/tested-cfgs/SM86_RTX3070/config_ampere_islip.icnt
+  nvidia_specs:
+    product: https://www.nvidia.com/en-us/geforce/graphics-cards/30-series/rtx-3090-3090ti/
+    architecture: https://www.nvidia.com/content/dam/en-zz/Solutions/geforce/ampere/pdf/NVIDIA-ampere-GA102-GPU-Architecture-Whitepaper-V1.pdf
+
+registered_substitutions:
+  - {field: gpgpu_n_clusters, from: 46, to: 82, basis: RTX3090_SM_count}
+  - {field: gpgpu_n_mem, from: 16, to: 24, basis: 384_div_256_memory_width}
+  - {field: core_clock_mhz, from: 1132, to: 1695, basis: NVIDIA_boost_clock}
+  - {field: icnt_clock_mhz, from: 1132, to: 1695, basis: frozen_equal_clock_proxy}
+  - {field: l2_clock_mhz, from: 1132, to: 1695, basis: frozen_equal_clock_proxy}
+  - {field: dram_clock_mhz, from: 3500.5, to: 5250, basis: 21Gbps_div_4}
+
+toolchain:
+  compile: CUDA_11.8_PTX_compute_86
+  execution: GPGPU_Sim_detailed_PTX
+  cuobjdump: CUDA_13.2_project_local_shim
+  nvbit_attempt:
+    version: 1.7.3
+    host_driver: 595.84
+    status: unsupported
+    error: CUDA_ERROR_NOT_SUPPORTED
+
+workloads:
+  vectoradd: {elements: 1024, block_threads: 128}
+  bsmm: {elements: 10496, stages: 4, block_threads: 128}
+  fft: {elements: 10496, stages: 4, block_threads: 128}
+  swa: {queries: 10496, window: 16, block_threads: 128}
+
+source_layout:
+  config_builder: scripts/build_gpgpusim_rtx3090_config.py
+  cuda_source: simulator_ext/accelsim/mlx_gpu_proxy.cu
+  build_runner: scripts/run_gpgpusim_rtx3090_proxy.sh
+  auditor: scripts/audit_gpgpusim_rtx3090_proxy.py
+
+result_path: artifacts/results/gpgpusim-rtx3090-proxy-run057.json
