@@ -60,6 +60,12 @@
 - MLX cites QA-LoRA at the sentence saying its compressed LLM layers receive "LoRA fine-tuning," but does not say that quantization-aware adaptation is used.
 - The public QA-LoRA recipe assumes GPTQ 4-bit weights with group size 32 and defaults to `r=64`, `alpha=16`. MLX evaluates FP16 operators and discloses none of rank, alpha, target modules, optimizer, data mixture, epochs, seed, or structured-weight initialization. The citation therefore constrains possible provenance but does not uniquely recover the MLX training recipe.
 
+### Llama2 WinoGrande reference
+
+- Touvron et al., *Llama 2: Open Foundation and Fine-Tuned Chat Models*, arXiv:2307.09288v2. Official source: https://arxiv.org/abs/2307.09288; the downloaded official v2 PDF SHA-256 is `1df284ce95f783002074bfe8f21d47c646b396ceb1736ea3ec0ea212fc070d91`.
+- Its standard-benchmark table reports 69.2% WinoGrande accuracy for pretrained Llama2-7B. H27's byte-qualified lm-eval run obtains 69.613%, only 0.597% relative away, while MLX Fig. 15(c) annotates 90.1%.
+- This independent agreement supports the public checkpoint/evaluator path and makes a task-adapted dense reference the most plausible interpretation of MLX's `original` bar. The interpretation remains inferential because MLX does not state how that bar is adapted or provide its LoRA/training recipe.
+
 ### Recipe-identifiability conclusion
 
 - Public references determine useful primitives and external-baseline settings, but not a unique executable MLX model. Still missing are the spectral-peak threshold and all per-layer `L` values; the exact modified LLM layers; complex-to-real normalization and residual/decompression wiring; hierarchical-butterfly factor order and dense-to-factor initialization; and the complete LoRA/data/training recipe.

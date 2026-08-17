@@ -217,7 +217,7 @@ hypotheses:
     priority: high
   - id: H27
     statement: "The byte-qualified official Llama2-7B checkpoint evaluated by lm-eval 0.4.12 on pinned WinoGrande-xl validation with zero-shot partial scoring reproduces Fig. 15(c)'s original 90.1% accuracy within 10%."
-    status: pending
+    status: rejected
     motivation: "Establish the missing native answering-quality baseline with public model/data bytes and a standardized, source-qualified harness before considering compressed-model training."
     parent: H5
     priority: high
@@ -226,7 +226,7 @@ experiments:
   proxy_metric: "Maximum absolute percentage error across every numeric paper anchor; pass only when each reproducible point is <=10%, with unavailable measurements explicitly classified rather than fabricated."
   baseline_value: 0.2486
   best_value: 0.0123
-  total_runs: 29
+  total_runs: 30
   trajectory:
     - run_id: "run_001"
       hypothesis: "H2"
@@ -431,11 +431,18 @@ experiments:
       wall_time_min: 0.1
       change_summary: "Full Figure 3 raster target recovery supported: eight markers and ten bars yield 26 values, the missing FLOP-share series is 35.13%-51.54%, and maximum coarse-marker correction is 4.31%."
       timestamp: "2026-08-17"
+    - run_id: "run_031"
+      hypothesis: "H27"
+      metric_value: 0.2274
+      delta: null
+      wall_time_min: 0.8
+      change_summary: "Standard zero-shot unmodified Llama2-7B WinoGrande baseline rejected at 69.613% versus 90.1%; it independently matches Llama2's published 69.2% baseline within 0.60%."
+      timestamp: "2026-08-17"
 
 outer_loop:
-  cycle: 11
-  last_direction: "With every inventory row now target-complete, return to uncovered native quality evidence. Audit a standard, source-qualified Llama2-7B WinoGrande evaluation path before registering the Fig. 15(c) original-answering baseline."
-  last_reflection: "H26 closes the final partial target and adds five omitted QKV-plus-attention FLOP-share bars. All eight corrected H100 markers remain physically consistent, but target recovery cannot substitute for native profiling. The next useful independent result is an original-model quality baseline: unlike compressed recipes, it can be tested against public model/data bytes and an explicit evaluation harness."
+  cycle: 12
+  last_direction: "Treat Fig. 15(c)'s 90.1% original bar as a likely task-adapted dense reference, not an untouched checkpoint. Register one source-independent WinoGrande-supervised dense LoRA recipe against the same frozen validation harness; do not sweep prompts or hyperparameters from run031's residual."
+  last_reflection: "H27's 69.613% result misses MLX by 22.74% relative but matches the official Llama2-7B 69.2% WinoGrande benchmark within 0.60%. The execution path is credible; the missing variable is task adaptation. MLX's LoRA sentence does not disclose whether the dense baseline is adapted or provide a recoverable training recipe."
 
 workspace:
   findings: "findings.md"
