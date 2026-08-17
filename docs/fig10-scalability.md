@@ -30,3 +30,7 @@ Joint scaling composes with the two independent mechanisms within 1%.
 H64 is supported as a mechanism experiment only. Its immutable result is
 `artifacts/results/fig10-scalability-run069.json`; numerical Figure 23 target
 comparison is intentionally deferred to a frozen follow-up.
+
+The frozen comparison is complete in
+[`fig10-fig23-transfer.md`](fig10-fig23-transfer.md): 12/15 points pass, with
+the remaining error isolated to long-sequence 8x8 stage/shuffle overhead.
