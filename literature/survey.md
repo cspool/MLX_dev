@@ -65,6 +65,7 @@
 - Touvron et al., *Llama 2: Open Foundation and Fine-Tuned Chat Models*, arXiv:2307.09288v2. Official source: https://arxiv.org/abs/2307.09288; the downloaded official v2 PDF SHA-256 is `1df284ce95f783002074bfe8f21d47c646b396ceb1736ea3ec0ea212fc070d91`.
 - Its standard-benchmark table reports 69.2% WinoGrande accuracy for pretrained Llama2-7B. H27's byte-qualified lm-eval run obtains 69.613%, only 0.597% relative away, while MLX Fig. 15(c) annotates 90.1%.
 - This independent agreement supports the public checkpoint/evaluator path and makes a task-adapted dense reference the most plausible interpretation of MLX's `original` bar. The interpretation remains inferential because MLX does not state how that bar is adapted or provide its LoRA/training recipe.
+- H28 tests that interpretation with one target-independent, pre-registered generic PEFT recipe and reaches 87.845% (2.502% relative from MLX). This establishes feasibility of a task-adapted dense reference, not provenance of the authors' checkpoint or hyperparameters.
 
 ### Recipe-identifiability conclusion
 

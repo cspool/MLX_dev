@@ -223,7 +223,7 @@ hypotheses:
     priority: high
   - id: H28
     statement: "A frozen task-supervised dense Llama2-7B LoRA adapter trained once on pinned WinoGrande-xl with H27's partial-likelihood objective reproduces Fig. 15(c)'s original 90.1% accuracy within 10%."
-    status: pending
+    status: supported
     motivation: "Test the task-adaptation mechanism implied by H27's independent agreement with Llama2's 69.2% base benchmark, without introducing compression or selecting hyperparameters from the target residual."
     parent: H5
     priority: high
@@ -232,7 +232,7 @@ experiments:
   proxy_metric: "Maximum absolute percentage error across every numeric paper anchor; pass only when each reproducible point is <=10%, with unavailable measurements explicitly classified rather than fabricated."
   baseline_value: 0.2486
   best_value: 0.0123
-  total_runs: 30
+  total_runs: 31
   trajectory:
     - run_id: "run_001"
       hypothesis: "H2"
@@ -444,11 +444,18 @@ experiments:
       wall_time_min: 0.8
       change_summary: "Standard zero-shot unmodified Llama2-7B WinoGrande baseline rejected at 69.613% versus 90.1%; it independently matches Llama2's published 69.2% baseline within 0.60%."
       timestamp: "2026-08-17"
+    - run_id: "run_032"
+      hypothesis: "H28"
+      metric_value: 0.0250
+      delta: null
+      wall_time_min: 20.9
+      change_summary: "One frozen dense WinoGrande LoRA reconstruction supported at 87.845% versus 90.1% (2.50% relative error); all 448 adapter tensors survive exact save/reload qualification."
+      timestamp: "2026-08-17"
 
 outer_loop:
-  cycle: 12
-  last_direction: "Treat Fig. 15(c)'s 90.1% original bar as a likely task-adapted dense reference, not an untouched checkpoint. Register one source-independent WinoGrande-supervised dense LoRA recipe against the same frozen validation harness; do not sweep prompts or hyperparameters from run031's residual."
-  last_reflection: "H27's 69.613% result misses MLX by 22.74% relative but matches the official Llama2-7B 69.2% WinoGrande benchmark within 0.60%. The execution path is credible; the missing variable is task adaptation. MLX's LoRA sentence does not disclose whether the dense baseline is adapted or provide a recoverable training recipe."
+  cycle: 13
+  last_direction: "Treat task-adapted dense WinoGrande as a supported inferred baseline, not an author-recipe recovery. Before any s=0.75/s=0.5 model run, resolve a source-consistent causal FFT graph and hierarchical-BSMM initialization; do not reuse H20's leakage-prone graph or tune H28 from its remaining residual."
+  last_reflection: "H28's single frozen recipe reaches 87.845%, only 2.50% relative from MLX, and improves the exact H27 sample set by a net 231 examples. Task supervision explains most of the original-bar gap, but compression remains wholly untested and the paper still does not identify its dense adapter recipe."
 
 workspace:
   findings: "findings.md"
