@@ -55,7 +55,7 @@ markers.
 
 Before model loading, require all three UTF-8 prompt-stream hashes, raw-token
 hashes, and wrapped-token hashes in the config. The wrapped lengths are
-511-1,262, 1,362-2,334, and 3,478-4,474 tokens for 1k/2k/4k respectively, so
+488-1,239, 1,339-2,311, and 3,455-4,451 tokens for 1k/2k/4k respectively, so
 no input approaches even the checkpoint's native 32k context.
 
 Preserve the official extractor exactly. Search for A1 through An in the
@@ -78,12 +78,14 @@ distribution of seeds immediately before inference and pass them explicitly
 solely so each sample is recorded and replayable; all other semantics remain
 identical. Do not substitute modern greedy defaults or shorten generation.
 
-Pin Python 3.10.20, PyTorch 2.1.2, Transformers 4.38.1, Triton 2.1.0, and
-NumPy 1.26.4 in an isolated ignored environment. Record the GPU names, driver,
-package versions, per-request seed, prompt length, output token count, finish
-reason, raw prediction, extracted designation, and correctness. Each rank
-writes a no-overwrite JSONL log; rank zero produces the aggregate report only
-after exactly 3,000 unique sample records pass qualification.
+Pin Python 3.10.20, PyTorch 2.1.2, Transformers 4.38.1, Triton 2.1.0,
+NumPy 1.26.4, and SentencePiece 0.2.1 in an isolated ignored environment.
+Also pin Protobuf 4.25.3, which LMDeploy 0.2.6 lists in its serving extras and
+the historical fast-tokenizer converter requires. Record the GPU names,
+driver, package versions, per-request seed, prompt length, output token count,
+finish reason, raw prediction, extracted designation, and correctness. Each
+rank writes a no-overwrite JSONL log; rank zero produces the aggregate report
+only after exactly 3,000 unique sample records pass qualification.
 
 ## Acceptance gates
 

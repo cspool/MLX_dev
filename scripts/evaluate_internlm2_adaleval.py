@@ -79,7 +79,15 @@ def nvidia_driver_version() -> str | None:
 
 
 def package_versions() -> dict[str, str | None]:
-    names = ["lmdeploy", "torch", "transformers", "triton", "numpy"]
+    names = [
+        "lmdeploy",
+        "torch",
+        "transformers",
+        "triton",
+        "numpy",
+        "sentencepiece",
+        "protobuf",
+    ]
     versions: dict[str, str | None] = {}
     for name in names:
         try:
@@ -200,6 +208,9 @@ def preflight(config: dict[str, Any]) -> dict[str, Any]:
         "transformers": versions["transformers"] == str(runtime_expected["transformers"]),
         "triton": versions["triton"] == str(runtime_expected["triton"]),
         "numpy": versions["numpy"] == str(runtime_expected["numpy"]),
+        "sentencepiece": versions["sentencepiece"]
+        == str(runtime_expected["sentencepiece"]),
+        "protobuf": versions["protobuf"] == str(runtime_expected["protobuf"]),
         "gpu_count": len(gpu_names) == int(runtime_expected["gpu_count"]),
         "gpu_names": all(name == runtime_expected["gpu_name"] for name in gpu_names),
         "driver": nvidia_driver_version() == str(runtime_expected["driver"]),
