@@ -21,3 +21,6 @@ current global compute-busy proxy.
 That physical FU-class counter is now implemented and target-free validated in
 [`fu-counters.md`](fu-counters.md). A new frozen numerical audit supersedes the
 global-compute interpretation.
+
+The frozen audit in [`fma-fig25-transfer.md`](fma-fig25-transfer.md) rejects
+0/24, demonstrating that the remaining problem is per-PE workload mapping.

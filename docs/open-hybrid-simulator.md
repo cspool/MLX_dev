@@ -103,6 +103,7 @@ candidate is documented in [`multiport-spad.md`](multiport-spad.md), with its
 frozen comparison in
 [`multiport-fig23-transfer.md`](multiport-fig23-transfer.md). Physical per-FU
 counters required by Figure 25 are documented in
-[`fu-counters.md`](fu-counters.md). The remaining boundary
+[`fu-counters.md`](fu-counters.md), with the corrected transfer in
+[`fma-fig25-transfer.md`](fma-fig25-transfer.md). The remaining boundary
 is independently defensible large-shape/per-kernel work scaling for Figures
 18--21 and 24--25. Paper result bars were not inputs to the invariant runs.
