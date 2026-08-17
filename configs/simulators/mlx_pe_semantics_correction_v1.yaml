@@ -1,0 +1,71 @@
+name: mlx-pe-semantics-correction-v1
+experiment_id: H52
+run_id: run058
+classification: corrective_paper_semantics_no_performance_target
+
+frozen_inputs:
+  paper:
+    path: MLX Multi-Layer Execution for Structured LLM Workload Acceleration on Spatial Architectures/MLX Multi-Layer Execution for Structured LLM Workload Acceleration on Spatial Architectures.md
+    bytes: 85855
+    sha256: 5785eb81b28741a3806ca42749d7b556bbcd2404e1622ae644a32bae2ade7745
+    sections: [IV-C, V-A, V-B, V-C, VI-A]
+  full_block_result:
+    path: artifacts/results/dsagen-mlx-full-block-run054.json
+    bytes: 71102
+    sha256: c80b174192db67a64f76516427fddfc6230712d332e943e095af4e455f5d34fb
+    required_status: supported
+    required_integrity: true
+
+dependency_models:
+  paper_static:
+    paper_facing: true
+    intra_block_order: one_frontier_instruction_and_one_inflight_instruction_per_block
+    cross_block_dependencies: tag_events_and_pipeline_arbitration
+    modeled_constraints:
+      - per_PE load store compute xfer pipeline initiation
+      - heterogeneous compute FU initiation and latency
+      - active tag window and lower tag priority
+      - event readiness and skip-hop link capacity
+      - real memory availability and completion
+    excluded_inferred_constraints:
+      - dynamic register scoreboard stalls
+      - register WAW arbitration across tagged blocks
+      - RF bank conflicts
+      - RF read/write port arbitration
+  scoreboard_experimental:
+    paper_facing: false
+    purpose: historical_replay_and_sensitivity_only
+    provenance: inferred_from_generic_GPU_resource_models_not_MLX_paper
+
+explicitly_not_MLX_PE_semantics:
+  - warp scheduling
+  - SIMT reconvergence
+  - CTA residency
+  - operand collector
+  - GPU scoreboard
+  - GPU cache coherence
+
+source_layout:
+  overlay_header: third_party/dsa-framework/dsa-gem5/src/cpu/minor/ssim/mlx_overlay.hh
+  overlay_source: third_party/dsa-framework/dsa-gem5/src/cpu/minor/ssim/mlx_overlay.cc
+  config_compiler: scripts/compile_mlx_pe_semantics.py
+  runner: scripts/run_mlx_pe_semantics.sh
+  auditor: scripts/audit_mlx_pe_semantics.py
+  tracked_patch: patches/dsagen/dsa-gem5-mlx-paper-static-pe-v1.patch
+
+compiled_outputs:
+  fixed: artifacts/environment/h52/mlx-full-block-fixed.json
+  dma: artifacts/environment/h52/mlx-full-block-dma.json
+  manifest: artifacts/environment/h52/mlx-pe-semantics-compile-manifest.json
+
+registered_checks:
+  - paper_static is explicit in every H52 document and runtime summary
+  - scoreboard_experimental remains parseable but is not used by H52 runs
+  - full-block instruction event route and memory counts match H48
+  - paper_static reports zero register and RF hazard stall categories
+  - fixed and DMA runs complete with deterministic summaries
+  - DMA request response data and DDR attribution remain exact
+  - no GPGPU-Sim mechanism is required to execute the MLX overlay
+  - no paper performance target is consumed
+
+result_path: artifacts/results/mlx-pe-semantics-correction-run058.json
