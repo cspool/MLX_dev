@@ -1,0 +1,33 @@
+name: repeat-folding-v1
+experiment_id: H76
+run_id: run081
+classification: target_free_repeat_folding_validation
+validation_eligible: false
+
+frozen_inputs:
+  fixed:
+    path: artifacts/results/fig10-scalability-run069.json
+    sha256: 520d152a792225dfe3ec6ba3189fa3048f226c977fb3ff4621fc8cc321bdc530
+    required_status: supported
+    required_integrity: true
+  single_buffer:
+    path: artifacts/results/spad-scalability-run072.json
+    sha256: 155617045946636df624d304acef03e0033fc03b80b6144efe8355fe83844b9d
+    required_status: supported
+    required_integrity: true
+  column_port:
+    path: artifacts/results/multiport-spad-run074.json
+    sha256: a58c37a45111a8928fd98df8eb52ee8db48b2d1032766351020d11344b16f562
+    required_status: supported
+    required_integrity: true
+
+fit_sequences: [512, 1024]
+holdout_sequences: [2048, 4096, 8192]
+hardware: [baseline, simd32_4x4, simd8_8x8, simd32_8x8]
+cycle_relative_error_limit: 0.05
+
+source_layout:
+  module: src/mlxsim/repeat_folding.py
+  auditor: scripts/audit_repeat_folding.py
+
+result_path: artifacts/results/repeat-folding-run081.json
