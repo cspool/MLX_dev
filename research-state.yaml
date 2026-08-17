@@ -199,7 +199,7 @@ hypotheses:
     priority: high
   - id: H24
     statement: "A single-launch, array-resident composite of FABNet-Large's hidden- and token-axis FFT stages reproduces all four Fig. 19 MLX attention segments within 10% without changing operations or H2 issue rates."
-    status: pending
+    status: rejected
     motivation: "Test whether H23's attention error comes from artificial inter-axis launch and store/load boundaries rather than an empirical throughput scale."
     parent: H23
     priority: high
@@ -208,7 +208,7 @@ experiments:
   proxy_metric: "Maximum absolute percentage error across every numeric paper anchor; pass only when each reproducible point is <=10%, with unavailable measurements explicitly classified rather than fabricated."
   baseline_value: 0.2486
   best_value: 0.0123
-  total_runs: 26
+  total_runs: 27
   trajectory:
     - run_id: "run_001"
       hypothesis: "H2"
@@ -392,11 +392,18 @@ experiments:
       wall_time_min: 0.1
       change_summary: "Data-exposed no-fit MLX event transfer rejected: attention MAPE/max is 40.08%/57.23%, FFN is 11.03%/17.19% with 2/4 passing, and totals have 12.34% MAPE with 2/4 passing."
       timestamp: "2026-08-17"
+    - run_id: "run_028"
+      hypothesis: "H24"
+      metric_value: 0.7749
+      delta: null
+      wall_time_min: 0.1
+      change_summary: "Fused two-axis FFT mechanism rejected: attention MAPE/max worsens to 55.24%/77.49%, all four points fail, and diagnostic total MAPE/max is 13.21%/29.79%."
+      timestamp: "2026-08-17"
 
 outer_loop:
-  cycle: 8
-  last_direction: "Deepen the Fig. 19 mechanism diagnosis with one no-fit composite 2D-FFT execution that removes only the artificial inter-axis launch and off-chip boundary. Preserve the near-transfer of global-BSMM FFN and do not introduce residual-derived scales."
-  last_reflection: "H22 shows the official FABNet model misses both components by about 233%, while H23's H2-calibrated MLX model reduces FFN MAPE to 11.0% and total MAPE to 12.3%. Its remaining failure is concentrated in attention (40.1% MAPE), where the current mapping executes the two FFT axes as isolated workloads despite MLX's claimed cross-stage pipeline. This supplies a specific structural follow-up rather than a free calibration knob."
+  cycle: 9
+  last_direction: "Stop Figure 19 residual-guided boundary variants and move to an independent uncovered paper item. Prefer a target-completion or source-grounded consistency audit that does not reuse the H23/H24 residuals."
+  last_reflection: "H24 preserves operations and stages but makes every attention point worse: MAPE rises from 40.08% to 55.24% and maximum error from 57.23% to 77.49%. The complex handoff plus shared dependency schedule costs more than the removed launch/store/load boundary. The specific fused-FFT explanation is falsified; additional boundary changes selected against the same four targets would become target-guided tuning."
 
 workspace:
   findings: "findings.md"
