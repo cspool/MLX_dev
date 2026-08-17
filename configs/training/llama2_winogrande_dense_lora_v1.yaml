@@ -1,0 +1,116 @@
+run:
+  id: run_032
+  hypothesis: H28
+  protocol: experiments/h28-llama2-winogrande-dense-lora/protocol.md
+  output: artifacts/results/llama2-winogrande-dense-lora-run032.json
+  samples_output: artifacts/results/llama2-winogrande-dense-lora-run032.samples.jsonl
+  checkpoint: third_party/checkpoints/llama2-winogrande-dense-lora-run032
+
+base_evaluation_config: configs/analysis/llama2_winogrande_v1.yaml
+
+training_data:
+  official_source: huggingface://datasets/allenai/winogrande
+  official_revision: 01e74176c63542e6b0bcb004dcdea22d94fb67b5
+  dataset_name: winogrande_xl
+  split: train
+  official_relative_path: winogrande_xl/train-00000-of-00001.parquet
+  path: third_party/datasets/winogrande/winogrande_xl/train-00000-of-00001.parquet
+  parquet_bytes: 2058506
+  parquet_sha256: 5d8c38ad12b9a6c88f79b6e00aaf0f40781f93d4f94816f6cff2b67625d67399
+  canonical_content_sha256: 582ceddc671f1dd68ca3fc05aafc93c7d33764d20c40ea89952c8aef73dab86a
+  expected_rows: 40398
+  expected_columns: [sentence, option1, option2, answer]
+  expected_label_counts: {"1": 20199, "2": 20199}
+  first_row_sha256: 3a13f665be8d9cce323ec02a49bcb4299527055a4e1679215a4f018277364be0
+  last_row_sha256: e96d0ad909404d078b600d0af32ba48d8977dd4c9540594dffc67c2c07162db8
+
+objective:
+  type: pairwise_partial_log_likelihood_cross_entropy
+  choices_per_example: 2
+  context: sentence_prefix_plus_candidate
+  continuation: space_plus_stripped_sentence_suffix
+  score: sum_continuation_log_likelihood
+  loss: cross_entropy_over_two_choice_scores
+  loss_dtype: float32
+  target_delimiter: " "
+  tokenizer_add_special_tokens: default_true
+  tokenizer_add_bos_token: null
+  maximum_length: 512
+  expected_requests: 80796
+  expected_min_sequence_tokens: 16
+  expected_max_sequence_tokens: 52
+  expected_max_context_tokens: 46
+  expected_min_continuation_tokens: 1
+  expected_max_continuation_tokens: 44
+  tokenization_sha256: ed7bb0c8a4c2e8307dcb4f25221b15793558ab8a217673c2948ae58faa494c40
+  first_request_ids: [1, 22291, 27886, 14561, 304, 17545, 27974, 29915, 29879, 1757, 5333, 1156, 2307, 2534, 263, 12580, 29880, 1363, 22291, 553, 3334, 287, 321, 1218, 938, 342, 457, 29889]
+  first_request_context_tokens: 19
+  last_request_ids: [1, 1619, 11315, 5148, 2253, 297, 263, 4105, 333, 1135, 263, 282, 2592, 18237, 541, 306, 26758, 278, 282, 2592, 18237, 304, 278, 14837, 8497, 8763, 29889]
+  last_request_context_tokens: 21
+
+lora:
+  library: peft
+  peft_version: 0.20.0
+  task_type: CAUSAL_LM
+  rank: 16
+  alpha: 32
+  dropout: 0.05
+  bias: none
+  init_lora_weights: true
+  target_modules: [q_proj, k_proj, v_proj, o_proj, gate_proj, up_proj, down_proj]
+  layers_to_transform: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31]
+  layers_pattern: layers
+  expected_trainable_parameters: 39976960
+  expected_trainable_tensors: 448
+  expected_total_parameters_with_adapter: 6778392576
+  maximum_trainable_fraction: 0.006
+
+optimization:
+  epochs: 1
+  source_rows: 40398
+  shuffled_selected_rows: 40384
+  dropped_tail_rows: 14
+  dropped_indices: [1181, 21803, 29860, 18951, 32002, 21631, 18646, 29999, 21972, 29966, 23430, 29577, 12080, 40043]
+  selected_indices_sha256_uint32be: a24eae7462a79e2c0d01410b34135321cfaea92c8bbb52c74b82fcf8cb4e837a
+  shuffle_seed: 42
+  model_seed: 42
+  micro_batch_examples: 16
+  sequences_per_micro_batch: 32
+  gradient_accumulation_steps: 4
+  effective_batch_examples: 64
+  micro_steps: 2524
+  optimizer_steps: 631
+  optimizer: AdamW
+  fused_optimizer: true
+  learning_rate: 0.0002
+  weight_decay: 0.0
+  adam_beta1: 0.9
+  adam_beta2: 0.999
+  adam_epsilon: 1.0e-8
+  scheduler: cosine
+  warmup_ratio: 0.03
+  warmup_steps: 19
+  max_grad_norm: 1.0
+  gradient_checkpointing: true
+  gradient_checkpointing_use_reentrant: false
+  model_dtype: bfloat16
+  device: cuda:0
+  required_cuda_visible_devices: "1"
+  log_optimizer_steps: 25
+
+evaluation:
+  protocol: inherit_H27_exactly_plus_reloaded_adapter
+  expected_samples: 1267
+  target_accuracy_pct: 90.1
+  target_source: artifacts/targets/paper_targets.yaml
+  target_key: fig15_quality.answering_original_accuracy_pct.llama2_winogrande_512
+  relative_error_gate: 0.10
+  save_all_samples: true
+  require_adapter_reload: true
+
+classification: inferred_task_supervised_dense_lora_baseline
+validation_eligible: true
+limitations:
+  - "The paper does not disclose whether or how its dense original bar was task-adapted."
+  - "This is a source-independent single LoRA recipe, not recovery of the authors' recipe."
+  - "No FFT compression or hierarchical BSMM is present, so compressed bars remain out of scope."

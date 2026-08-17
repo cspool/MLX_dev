@@ -221,6 +221,12 @@ hypotheses:
     motivation: "Establish the missing native answering-quality baseline with public model/data bytes and a standardized, source-qualified harness before considering compressed-model training."
     parent: H5
     priority: high
+  - id: H28
+    statement: "A frozen task-supervised dense Llama2-7B LoRA adapter trained once on pinned WinoGrande-xl with H27's partial-likelihood objective reproduces Fig. 15(c)'s original 90.1% accuracy within 10%."
+    status: pending
+    motivation: "Test the task-adaptation mechanism implied by H27's independent agreement with Llama2's 69.2% base benchmark, without introducing compression or selecting hyperparameters from the target residual."
+    parent: H5
+    priority: high
 
 experiments:
   proxy_metric: "Maximum absolute percentage error across every numeric paper anchor; pass only when each reproducible point is <=10%, with unavailable measurements explicitly classified rather than fabricated."
