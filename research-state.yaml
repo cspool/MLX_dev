@@ -319,7 +319,7 @@ hypotheses:
     priority: high
   - id: H44
     statement: "The frozen source-integrated DSAGEN/MLX implementation and provenance-labeled no-fit parameters reproduce all 16 Figure 22 BSMM/FFT compute-utilization points within 10% using compute-busy/overlay-cycle utilization."
-    status: active
+    status: rejected
     motivation: "Make the first paper-facing comparison with the real open simulator while preventing the legacy target calibration from leaking into execution."
     parent: H43
     priority: high
@@ -328,7 +328,7 @@ experiments:
   proxy_metric: "Maximum absolute percentage error across every numeric paper anchor; pass only when each reproducible point is <=10%, with unavailable measurements explicitly classified rather than fabricated."
   baseline_value: 0.2486
   best_value: 0.0123
-  total_runs: 46
+  total_runs: 47
   trajectory:
     - run_id: "run_001"
       hypothesis: "H2"
@@ -652,11 +652,18 @@ experiments:
       wall_time_min: 0.04
       change_summary: "Tagged-block aggregation supported: exact B8 event/cycle replay, seven-fixture count/address/route conservation, real-scratchpad B64 completion, and bounded 208-block FFT8192 compilation pass all gates without paper performance targets."
       timestamp: "2026-08-17"
+    - run_id: "run_050"
+      hypothesis: "H44"
+      metric_value: 0.1382799325463744
+      delta: null
+      wall_time_min: 15.6
+      change_summary: "No-fit real-DSAGEN Figure 22 transfer rejected with integrity intact: 15/16 pass and overall MAPE is 4.25%, but FFT-64 reaches 95.62% versus 84% (13.83% error); no launch/residual correction follows."
+      timestamp: "2026-08-17"
 
 outer_loop:
-  cycle: 29
-  last_direction: "Build a provenance-labeled timing manifest that separates paper-disclosed MLX hardware parameters, DSAGEN-native memory timings, GPGPU-Sim-derived PE-resource priors, and still-unidentified quantities. Use it to map one architecture-only paper experiment without residual fitting; reject rather than calibrate any missing parameter from the target bars."
-  last_reflection: "H43 realizes the constant-footprint instruction hierarchy: FFT8192 is structurally representable with 208 blocks and 21 active instructions per PE. Workload representation is no longer the immediate blocker. The next scientific risk is parameter provenance. Before comparing cycles, classify every frequency, SIMD, FU latency/II, memory bandwidth, link latency, active-window, and workload-trip field as disclosed, upstream measured, independently inferred, or unavailable."
+  cycle: 30
+  last_direction: "Do not tune the isolated FFT-64 utilization residual. Add source-derived SIMD grouping and mesh-slot scaling to the compiler, prove exact work conservation and ideal-capacity bounds without Figure 23, then decide whether the real simulator can support a no-fit scalability transfer. Keep off-chip/DMA-dependent figures out of scope until an adapter exists."
+  last_reflection: "H44 is a strong but correctly rejected first paper-facing transfer: the real open simulator passes 15/16 points with 4.25% MAPE, and all BSMM points pass. The only miss is exactly where the paper reports ~17% small-kernel launch overhead, a field intentionally unavailable in the no-fit model. Preserve that diagnosis; importing a one-point launch correction would be target replay. The next independent mechanism is paper-disclosed 8-to-32 SIMD and 4x4-to-8x8 scaling."
 
 completion_snapshot_run042:
   certificate_run: run_042
