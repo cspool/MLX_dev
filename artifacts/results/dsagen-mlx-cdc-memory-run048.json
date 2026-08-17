@@ -1,0 +1,1308 @@
+{
+  "audit_integrity": true,
+  "builds": {
+    "attempt3": {
+      "bytes": 9450,
+      "checks": {
+        "is_file": true
+      },
+      "pass": true,
+      "path": "artifacts/environment/h42/dsagen-gem5-cdc-memory-build-attempt3.log",
+      "sha256": "b1c40b2b5f940ba0bc420571b36718071ec769d2914d440ac3f3d41255d9e2c7"
+    },
+    "attempt4": {
+      "bytes": 5234,
+      "checks": {
+        "is_file": true
+      },
+      "pass": true,
+      "path": "artifacts/environment/h42/dsagen-gem5-cdc-memory-build-attempt4.log",
+      "sha256": "8781b2cad4522baf28d758b8c722c2cea134a17763c7403ed5ae8a1e9e641801"
+    }
+  },
+  "compiler": {
+    "checks": {
+      "manifest": true,
+      "manifest_bindings": true,
+      "manifest_no_targets": true,
+      "manifest_replay": true,
+      "operator_replays": true,
+      "operators": true,
+      "stress": true
+    },
+    "files": {
+      "bsmm": {
+        "bytes": 31541,
+        "checks": {
+          "is_file": true
+        },
+        "pass": true,
+        "path": "artifacts/environment/h42/mlx-bsmm-b8.json",
+        "sha256": "d965f665985696d81557e00a4b6607be3834e4c6b5f549896c10628055cb0b65"
+      },
+      "fft": {
+        "bytes": 34126,
+        "checks": {
+          "is_file": true
+        },
+        "pass": true,
+        "path": "artifacts/environment/h42/mlx-fft-l8.json",
+        "sha256": "1a2a756c843d373354cbb0889b1fbd8e92926ac274c8949dc3ed29a2f22bde94"
+      }
+    },
+    "manifest": {
+      "bytes": 35733,
+      "checks": {
+        "is_file": true
+      },
+      "pass": true,
+      "path": "artifacts/environment/h42/mlx-cdc-compiler-manifest.json",
+      "sha256": "b6222d3858548f332e8041af77b06292f1e732b14a1d08ecd2c96a3918812483"
+    },
+    "manifest_bindings": {
+      "bsmm": true,
+      "bsmm_b16_memory_stress": true,
+      "fft": true
+    },
+    "operators": {
+      "bsmm": {
+        "checks": {
+          "addresses": true,
+          "adjacent_wait_events": true,
+          "block_count": true,
+          "memory_backend": true,
+          "memory_requests": true,
+          "pairs_per_stage": true,
+          "paper_targets_absent": true,
+          "parameters": true,
+          "routes": true,
+          "scalar_adds": true,
+          "scalar_multiplies": true,
+          "stages": true,
+          "static_layout": true,
+          "total_pairs": true,
+          "transfers": true,
+          "unique_emitters": true
+        },
+        "emitted_event_count": 12,
+        "metadata": {
+          "block_count": 12,
+          "compiler": "mlxsim.dsagen_overlay.compile_radix2_cdc",
+          "event_edges": [
+            {
+              "consumer_block": "bsmm_stage1_pair0",
+              "consumer_stage": 1,
+              "event": "bsmm_s0_p0_ready",
+              "producer_stage": 0
+            },
+            {
+              "consumer_block": "bsmm_stage1_pair1",
+              "consumer_stage": 1,
+              "event": "bsmm_s0_p1_ready",
+              "producer_stage": 0
+            },
+            {
+              "consumer_block": "bsmm_stage1_pair2",
+              "consumer_stage": 1,
+              "event": "bsmm_s0_p2_ready",
+              "producer_stage": 0
+            },
+            {
+              "consumer_block": "bsmm_stage1_pair3",
+              "consumer_stage": 1,
+              "event": "bsmm_s0_p3_ready",
+              "producer_stage": 0
+            },
+            {
+              "consumer_block": "bsmm_stage2_pair0",
+              "consumer_stage": 2,
+              "event": "bsmm_s1_p0_ready",
+              "producer_stage": 1
+            },
+            {
+              "consumer_block": "bsmm_stage2_pair1",
+              "consumer_stage": 2,
+              "event": "bsmm_s1_p1_ready",
+              "producer_stage": 1
+            },
+            {
+              "consumer_block": "bsmm_stage2_pair2",
+              "consumer_stage": 2,
+              "event": "bsmm_s1_p2_ready",
+              "producer_stage": 1
+            },
+            {
+              "consumer_block": "bsmm_stage2_pair3",
+              "consumer_stage": 2,
+              "event": "bsmm_s1_p3_ready",
+              "producer_stage": 1
+            }
+          ],
+          "instruction_count": 72,
+          "instructions_per_block": 6,
+          "memory_requests": 36,
+          "operation_counts": {
+            "parameters": 48,
+            "scalar_adds": 24,
+            "scalar_multiplies": 48
+          },
+          "operator": "bsmm",
+          "pairs_per_stage": 4,
+          "paper_performance_targets_consumed": false,
+          "routes": [
+            {
+              "destination": [
+                0,
+                2
+              ],
+              "pair": 0,
+              "source": [
+                0,
+                0
+              ],
+              "stage": 0,
+              "steps": [
+                {
+                  "axis": "y",
+                  "from_x": 0,
+                  "from_y": 0,
+                  "step": 2,
+                  "to_x": 0,
+                  "to_y": 2
+                }
+              ]
+            },
+            {
+              "destination": [
+                1,
+                2
+              ],
+              "pair": 1,
+              "source": [
+                1,
+                0
+              ],
+              "stage": 0,
+              "steps": [
+                {
+                  "axis": "y",
+                  "from_x": 1,
+                  "from_y": 0,
+                  "step": 2,
+                  "to_x": 1,
+                  "to_y": 2
+                }
+              ]
+            },
+            {
+              "destination": [
+                2,
+                2
+              ],
+              "pair": 2,
+              "source": [
+                2,
+                0
+              ],
+              "stage": 0,
+              "steps": [
+                {
+                  "axis": "y",
+                  "from_x": 2,
+                  "from_y": 0,
+                  "step": 2,
+                  "to_x": 2,
+                  "to_y": 2
+                }
+              ]
+            },
+            {
+              "destination": [
+                3,
+                2
+              ],
+              "pair": 3,
+              "source": [
+                3,
+                0
+              ],
+              "stage": 0,
+              "steps": [
+                {
+                  "axis": "y",
+                  "from_x": 3,
+                  "from_y": 0,
+                  "step": 2,
+                  "to_x": 3,
+                  "to_y": 2
+                }
+              ]
+            },
+            {
+              "destination": [
+                0,
+                0
+              ],
+              "pair": 0,
+              "source": [
+                0,
+                2
+              ],
+              "stage": 1,
+              "steps": [
+                {
+                  "axis": "y",
+                  "from_x": 0,
+                  "from_y": 2,
+                  "step": -2,
+                  "to_x": 0,
+                  "to_y": 0
+                }
+              ]
+            },
+            {
+              "destination": [
+                1,
+                0
+              ],
+              "pair": 1,
+              "source": [
+                1,
+                2
+              ],
+              "stage": 1,
+              "steps": [
+                {
+                  "axis": "y",
+                  "from_x": 1,
+                  "from_y": 2,
+                  "step": -2,
+                  "to_x": 1,
+                  "to_y": 0
+                }
+              ]
+            },
+            {
+              "destination": [
+                2,
+                0
+              ],
+              "pair": 2,
+              "source": [
+                2,
+                2
+              ],
+              "stage": 1,
+              "steps": [
+                {
+                  "axis": "y",
+                  "from_x": 2,
+                  "from_y": 2,
+                  "step": -2,
+                  "to_x": 2,
+                  "to_y": 0
+                }
+              ]
+            },
+            {
+              "destination": [
+                3,
+                0
+              ],
+              "pair": 3,
+              "source": [
+                3,
+                2
+              ],
+              "stage": 1,
+              "steps": [
+                {
+                  "axis": "y",
+                  "from_x": 3,
+                  "from_y": 2,
+                  "step": -2,
+                  "to_x": 3,
+                  "to_y": 0
+                }
+              ]
+            },
+            {
+              "destination": [
+                0,
+                2
+              ],
+              "pair": 0,
+              "source": [
+                0,
+                0
+              ],
+              "stage": 2,
+              "steps": [
+                {
+                  "axis": "y",
+                  "from_x": 0,
+                  "from_y": 0,
+                  "step": 2,
+                  "to_x": 0,
+                  "to_y": 2
+                }
+              ]
+            },
+            {
+              "destination": [
+                1,
+                2
+              ],
+              "pair": 1,
+              "source": [
+                1,
+                0
+              ],
+              "stage": 2,
+              "steps": [
+                {
+                  "axis": "y",
+                  "from_x": 1,
+                  "from_y": 0,
+                  "step": 2,
+                  "to_x": 1,
+                  "to_y": 2
+                }
+              ]
+            },
+            {
+              "destination": [
+                2,
+                2
+              ],
+              "pair": 2,
+              "source": [
+                2,
+                0
+              ],
+              "stage": 2,
+              "steps": [
+                {
+                  "axis": "y",
+                  "from_x": 2,
+                  "from_y": 0,
+                  "step": 2,
+                  "to_x": 2,
+                  "to_y": 2
+                }
+              ]
+            },
+            {
+              "destination": [
+                3,
+                2
+              ],
+              "pair": 3,
+              "source": [
+                3,
+                0
+              ],
+              "stage": 2,
+              "steps": [
+                {
+                  "axis": "y",
+                  "from_x": 3,
+                  "from_y": 0,
+                  "step": 2,
+                  "to_x": 3,
+                  "to_y": 2
+                }
+              ]
+            }
+          ],
+          "schema_version": 1,
+          "stages": 3,
+          "template_provenance": "inferred load-compute-store-xfer realization",
+          "total_pairs": 12,
+          "transfers": 12,
+          "width": 8
+        },
+        "pass": true,
+        "wait_event_count": 8
+      },
+      "fft": {
+        "checks": {
+          "addresses": true,
+          "adjacent_wait_events": true,
+          "block_count": true,
+          "complex_adds": true,
+          "complex_multiplies": true,
+          "memory_backend": true,
+          "memory_requests": true,
+          "pairs_per_stage": true,
+          "paper_targets_absent": true,
+          "real_adds": true,
+          "real_multiplies": true,
+          "routes": true,
+          "stages": true,
+          "static_layout": true,
+          "total_pairs": true,
+          "transfers": true,
+          "unique_emitters": true
+        },
+        "emitted_event_count": 12,
+        "metadata": {
+          "block_count": 12,
+          "compiler": "mlxsim.dsagen_overlay.compile_radix2_cdc",
+          "event_edges": [
+            {
+              "consumer_block": "fft_stage1_pair0",
+              "consumer_stage": 1,
+              "event": "fft_s0_p0_ready",
+              "producer_stage": 0
+            },
+            {
+              "consumer_block": "fft_stage1_pair1",
+              "consumer_stage": 1,
+              "event": "fft_s0_p1_ready",
+              "producer_stage": 0
+            },
+            {
+              "consumer_block": "fft_stage1_pair2",
+              "consumer_stage": 1,
+              "event": "fft_s0_p2_ready",
+              "producer_stage": 0
+            },
+            {
+              "consumer_block": "fft_stage1_pair3",
+              "consumer_stage": 1,
+              "event": "fft_s0_p3_ready",
+              "producer_stage": 0
+            },
+            {
+              "consumer_block": "fft_stage2_pair0",
+              "consumer_stage": 2,
+              "event": "fft_s1_p0_ready",
+              "producer_stage": 1
+            },
+            {
+              "consumer_block": "fft_stage2_pair1",
+              "consumer_stage": 2,
+              "event": "fft_s1_p1_ready",
+              "producer_stage": 1
+            },
+            {
+              "consumer_block": "fft_stage2_pair2",
+              "consumer_stage": 2,
+              "event": "fft_s1_p2_ready",
+              "producer_stage": 1
+            },
+            {
+              "consumer_block": "fft_stage2_pair3",
+              "consumer_stage": 2,
+              "event": "fft_s1_p3_ready",
+              "producer_stage": 1
+            }
+          ],
+          "instruction_count": 84,
+          "instructions_per_block": 7,
+          "memory_requests": 36,
+          "operation_counts": {
+            "complex_adds": 24,
+            "complex_multiplies": 12,
+            "real_adds": 72,
+            "real_multiplies": 48
+          },
+          "operator": "fft",
+          "pairs_per_stage": 4,
+          "paper_performance_targets_consumed": false,
+          "routes": [
+            {
+              "destination": [
+                0,
+                2
+              ],
+              "pair": 0,
+              "source": [
+                0,
+                0
+              ],
+              "stage": 0,
+              "steps": [
+                {
+                  "axis": "y",
+                  "from_x": 0,
+                  "from_y": 0,
+                  "step": 2,
+                  "to_x": 0,
+                  "to_y": 2
+                }
+              ]
+            },
+            {
+              "destination": [
+                1,
+                2
+              ],
+              "pair": 1,
+              "source": [
+                1,
+                0
+              ],
+              "stage": 0,
+              "steps": [
+                {
+                  "axis": "y",
+                  "from_x": 1,
+                  "from_y": 0,
+                  "step": 2,
+                  "to_x": 1,
+                  "to_y": 2
+                }
+              ]
+            },
+            {
+              "destination": [
+                2,
+                2
+              ],
+              "pair": 2,
+              "source": [
+                2,
+                0
+              ],
+              "stage": 0,
+              "steps": [
+                {
+                  "axis": "y",
+                  "from_x": 2,
+                  "from_y": 0,
+                  "step": 2,
+                  "to_x": 2,
+                  "to_y": 2
+                }
+              ]
+            },
+            {
+              "destination": [
+                3,
+                2
+              ],
+              "pair": 3,
+              "source": [
+                3,
+                0
+              ],
+              "stage": 0,
+              "steps": [
+                {
+                  "axis": "y",
+                  "from_x": 3,
+                  "from_y": 0,
+                  "step": 2,
+                  "to_x": 3,
+                  "to_y": 2
+                }
+              ]
+            },
+            {
+              "destination": [
+                0,
+                0
+              ],
+              "pair": 0,
+              "source": [
+                0,
+                2
+              ],
+              "stage": 1,
+              "steps": [
+                {
+                  "axis": "y",
+                  "from_x": 0,
+                  "from_y": 2,
+                  "step": -2,
+                  "to_x": 0,
+                  "to_y": 0
+                }
+              ]
+            },
+            {
+              "destination": [
+                1,
+                0
+              ],
+              "pair": 1,
+              "source": [
+                1,
+                2
+              ],
+              "stage": 1,
+              "steps": [
+                {
+                  "axis": "y",
+                  "from_x": 1,
+                  "from_y": 2,
+                  "step": -2,
+                  "to_x": 1,
+                  "to_y": 0
+                }
+              ]
+            },
+            {
+              "destination": [
+                2,
+                0
+              ],
+              "pair": 2,
+              "source": [
+                2,
+                2
+              ],
+              "stage": 1,
+              "steps": [
+                {
+                  "axis": "y",
+                  "from_x": 2,
+                  "from_y": 2,
+                  "step": -2,
+                  "to_x": 2,
+                  "to_y": 0
+                }
+              ]
+            },
+            {
+              "destination": [
+                3,
+                0
+              ],
+              "pair": 3,
+              "source": [
+                3,
+                2
+              ],
+              "stage": 1,
+              "steps": [
+                {
+                  "axis": "y",
+                  "from_x": 3,
+                  "from_y": 2,
+                  "step": -2,
+                  "to_x": 3,
+                  "to_y": 0
+                }
+              ]
+            },
+            {
+              "destination": [
+                0,
+                2
+              ],
+              "pair": 0,
+              "source": [
+                0,
+                0
+              ],
+              "stage": 2,
+              "steps": [
+                {
+                  "axis": "y",
+                  "from_x": 0,
+                  "from_y": 0,
+                  "step": 2,
+                  "to_x": 0,
+                  "to_y": 2
+                }
+              ]
+            },
+            {
+              "destination": [
+                1,
+                2
+              ],
+              "pair": 1,
+              "source": [
+                1,
+                0
+              ],
+              "stage": 2,
+              "steps": [
+                {
+                  "axis": "y",
+                  "from_x": 1,
+                  "from_y": 0,
+                  "step": 2,
+                  "to_x": 1,
+                  "to_y": 2
+                }
+              ]
+            },
+            {
+              "destination": [
+                2,
+                2
+              ],
+              "pair": 2,
+              "source": [
+                2,
+                0
+              ],
+              "stage": 2,
+              "steps": [
+                {
+                  "axis": "y",
+                  "from_x": 2,
+                  "from_y": 0,
+                  "step": 2,
+                  "to_x": 2,
+                  "to_y": 2
+                }
+              ]
+            },
+            {
+              "destination": [
+                3,
+                2
+              ],
+              "pair": 3,
+              "source": [
+                3,
+                0
+              ],
+              "stage": 2,
+              "steps": [
+                {
+                  "axis": "y",
+                  "from_x": 3,
+                  "from_y": 0,
+                  "step": 2,
+                  "to_x": 3,
+                  "to_y": 2
+                }
+              ]
+            }
+          ],
+          "schema_version": 1,
+          "stages": 3,
+          "template_provenance": "inferred load-compute-store-xfer realization",
+          "total_pairs": 12,
+          "transfers": 12,
+          "width": 8
+        },
+        "pass": true,
+        "wait_event_count": 8
+      }
+    },
+    "pass": true,
+    "replay_checks": {
+      "bsmm": true,
+      "fft": true
+    },
+    "stress_checks": {
+      "eight_initial_blocks": true,
+      "memory_requests": true,
+      "pairs_per_stage": true,
+      "stages": true
+    },
+    "stress_file": {
+      "bytes": 81844,
+      "checks": {
+        "is_file": true
+      },
+      "pass": true,
+      "path": "artifacts/environment/h42/mlx-bsmm-b16-memory-stress.json",
+      "sha256": "aee7e5e2b143a865771fb99fdcfc8e457385863e65056ab7a40b568ed3fa55dd"
+    }
+  },
+  "experiment_id": "H42",
+  "frozen_inputs": {
+    "overlay_result": {
+      "bytes": 11427,
+      "checks": {
+        "bytes": true,
+        "is_file": true,
+        "sha256": true
+      },
+      "pass": true,
+      "path": "artifacts/results/dsagen-mlx-overlay-microtrace-run047.json",
+      "sha256": "bbbc50aea2080e44be53a2163ca3b73af8d140ffdc5b034095a5e085ec735872"
+    },
+    "paper": {
+      "bytes": 85855,
+      "checks": {
+        "bytes": true,
+        "is_file": true,
+        "sha256": true
+      },
+      "pass": true,
+      "path": "MLX Multi-Layer Execution for Structured LLM Workload Acceleration on Spatial Architectures/MLX Multi-Layer Execution for Structured LLM Workload Acceleration on Spatial Architectures.md",
+      "sha256": "5785eb81b28741a3806ca42749d7b556bbcd2404e1622ae644a32bae2ade7745"
+    }
+  },
+  "gem5_binary": {
+    "bytes": 1302817928,
+    "checks": {
+      "is_file": true
+    },
+    "pass": true,
+    "path": "third_party/dsa-framework/dsa-gem5/build/RISCV/gem5.opt",
+    "sha256": "27ad9b81c4cff3f475cfaa45a675cbe47489870cf7ac4b4a90e4bdc92863665e"
+  },
+  "generated_at": "2026-08-17T14:35:03.346719+00:00",
+  "hypothesis_status": "supported",
+  "microtraces": {
+    "debug_report": {
+      "bytes": 2479,
+      "checks": {
+        "is_file": true
+      },
+      "pass": true,
+      "path": "artifacts/environment/h42/cdc-memory-debug-report.json",
+      "sha256": "6b240ed5b4423d170bf2ca52733796c8f6166065931c1c4742b0d3276ec90f9e"
+    },
+    "debug_trace": {
+      "bytes": 10879,
+      "checks": {
+        "is_file": true
+      },
+      "pass": true,
+      "path": "artifacts/environment/h42/cdc-memory-debug-trace.jsonl",
+      "sha256": "d4b01fd5d0277302c49aa2e5d5d385dd367e4fc557fc05d417051f64948bcdb2"
+    },
+    "evaluation": {
+      "checks": {
+        "adapter_backpressure": true,
+        "adapter_counts": true,
+        "all_pass": true,
+        "assertion_count": true,
+        "deterministic": true,
+        "event_overlap": true,
+        "integrity": true,
+        "no_targets": true,
+        "scenario_count": true
+      },
+      "pass": true
+    },
+    "optimized_report": {
+      "bytes": 2479,
+      "checks": {
+        "is_file": true
+      },
+      "pass": true,
+      "path": "artifacts/environment/h42/cdc-memory-opt-report.json",
+      "sha256": "6b240ed5b4423d170bf2ca52733796c8f6166065931c1c4742b0d3276ec90f9e"
+    },
+    "optimized_trace": {
+      "bytes": 10879,
+      "checks": {
+        "is_file": true
+      },
+      "pass": true,
+      "path": "artifacts/environment/h42/cdc-memory-opt-trace.jsonl",
+      "sha256": "d4b01fd5d0277302c49aa2e5d5d385dd367e4fc557fc05d417051f64948bcdb2"
+    },
+    "sanitized_report": {
+      "bytes": 2479,
+      "checks": {
+        "is_file": true
+      },
+      "pass": true,
+      "path": "artifacts/environment/h42/cdc-memory-sanitize-report.json",
+      "sha256": "6b240ed5b4423d170bf2ca52733796c8f6166065931c1c4742b0d3276ec90f9e"
+    },
+    "sanitized_trace": {
+      "bytes": 10879,
+      "checks": {
+        "is_file": true
+      },
+      "pass": true,
+      "path": "artifacts/environment/h42/cdc-memory-sanitize-trace.jsonl",
+      "sha256": "d4b01fd5d0277302c49aa2e5d5d385dd367e4fc557fc05d417051f64948bcdb2"
+    },
+    "sanitizer_stderr": {
+      "bytes": 0,
+      "checks": {
+        "is_file": true
+      },
+      "pass": true,
+      "path": "artifacts/environment/h42/cdc-memory-sanitize-stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  "pass_criteria": {
+    "compiler": true,
+    "frozen_inputs": true,
+    "gem5_binary": true,
+    "gem5_build": true,
+    "h41_supported": true,
+    "micro_byte_identity": true,
+    "micro_debug": true,
+    "micro_optimized": true,
+    "micro_sanitized": true,
+    "operator_runs": true,
+    "paper_performance_targets_consumed": false,
+    "regressions": true,
+    "source": true,
+    "stress_run": true
+  },
+  "project_commit": "b920b0d8061940e5dcb9bda4167b6c8a9d2a87e8",
+  "run_id": "run048",
+  "schema_version": 1,
+  "simulator_runs": {
+    "bsmm_b16_stress": {
+      "adapter": {
+        "bank_backpressure_cycles": 0,
+        "max_response_cycles": 5,
+        "max_response_ticks": 5000,
+        "requests": 96,
+        "responses": 96,
+        "unavailable_checks": 162
+      },
+      "artifact": {
+        "bytes": 5159,
+        "checks": {
+          "is_file": true
+        },
+        "pass": true,
+        "path": "artifacts/environment/h42/dsagen-bsmm-b16-memory-stress.log",
+        "sha256": "f7e0290ddafdf3152ed27409bd8c4ce4b3f2f97c3b74f4ca2a033386cb521e2b"
+      },
+      "dsagen": {
+        "cgra_instances": 256,
+        "cgra_instructions": 1024,
+        "normal_exit": true,
+        "roi_cycles": 569,
+        "sanity_check_passed": true
+      },
+      "overlay": {
+        "boundary_events_emitted": 32,
+        "busy_cycles_by_pipeline": {
+          "compute": 92,
+          "load": 93,
+          "store": 75,
+          "xfer": 47
+        },
+        "cycles": 105,
+        "done": true,
+        "event_unblocked_issues_before_tag_complete": 15,
+        "external_memory_completions": 96,
+        "external_memory_requests": 96,
+        "external_memory_wait_cycles": 286,
+        "instructions_completed": 192,
+        "instructions_issued": 192,
+        "issued_by_pipeline": {
+          "compute": 64,
+          "load": 64,
+          "store": 32,
+          "xfer": 32
+        },
+        "link_stalls": 0,
+        "max_active_tags": 3,
+        "max_pipeline_issues_in_cycle": 4,
+        "memory_backend": "adapter",
+        "route_hops": 32,
+        "scenario": "gem5",
+        "skip_hops": 32,
+        "stalls_by_reason": {
+          "event_dependency": 881,
+          "memory_queue_full": 162,
+          "pipeline_contention": 23
+        },
+        "unit_hops": 0
+      }
+    },
+    "bsmm_b8": {
+      "adapter": {
+        "bank_backpressure_cycles": 0,
+        "max_response_cycles": 5,
+        "max_response_ticks": 5000,
+        "requests": 36,
+        "responses": 36,
+        "unavailable_checks": 0
+      },
+      "artifact": {
+        "bytes": 5112,
+        "checks": {
+          "is_file": true
+        },
+        "pass": true,
+        "path": "artifacts/environment/h42/dsagen-bsmm-b8-spad-smoke.log",
+        "sha256": "86e80e7af9156a1ba4846f08d293931fc02a714de1039635be6f730e30611e68"
+      },
+      "dsagen": {
+        "cgra_instances": 256,
+        "cgra_instructions": 1024,
+        "normal_exit": true,
+        "roi_cycles": 569,
+        "sanity_check_passed": true
+      },
+      "overlay": {
+        "boundary_events_emitted": 12,
+        "busy_cycles_by_pipeline": {
+          "compute": 27,
+          "load": 31,
+          "store": 21,
+          "xfer": 17
+        },
+        "cycles": 55,
+        "done": true,
+        "event_unblocked_issues_before_tag_complete": 6,
+        "external_memory_completions": 36,
+        "external_memory_requests": 36,
+        "external_memory_wait_cycles": 88,
+        "instructions_completed": 72,
+        "instructions_issued": 72,
+        "issued_by_pipeline": {
+          "compute": 24,
+          "load": 24,
+          "store": 12,
+          "xfer": 12
+        },
+        "link_stalls": 0,
+        "max_active_tags": 3,
+        "max_pipeline_issues_in_cycle": 4,
+        "memory_backend": "adapter",
+        "route_hops": 12,
+        "scenario": "gem5",
+        "skip_hops": 12,
+        "stalls_by_reason": {
+          "event_dependency": 207,
+          "pipeline_contention": 8
+        },
+        "unit_hops": 0
+      }
+    },
+    "disabled_regression": {
+      "adapter": null,
+      "artifact": {
+        "bytes": 4330,
+        "checks": {
+          "is_file": true
+        },
+        "pass": true,
+        "path": "artifacts/environment/h42/disabled-overlay-regression.log",
+        "sha256": "601bb18070e433597b7c5ab2aa3bbddd04b2c44d210b3d87299b4947a54b5805"
+      },
+      "dsagen": {
+        "cgra_instances": 256,
+        "cgra_instructions": 1024,
+        "normal_exit": true,
+        "roi_cycles": 569,
+        "sanity_check_passed": true
+      },
+      "overlay": null
+    },
+    "fft_l8": {
+      "adapter": {
+        "bank_backpressure_cycles": 0,
+        "max_response_cycles": 5,
+        "max_response_ticks": 5000,
+        "requests": 36,
+        "responses": 36,
+        "unavailable_checks": 0
+      },
+      "artifact": {
+        "bytes": 5111,
+        "checks": {
+          "is_file": true
+        },
+        "pass": true,
+        "path": "artifacts/environment/h42/dsagen-fft-l8-spad-smoke.log",
+        "sha256": "9e7505b7a9b4af3a7994a3b8c375a8c8b58fa23d71bcfaf75ab98c864189b9a2"
+      },
+      "dsagen": {
+        "cgra_instances": 256,
+        "cgra_instructions": 1024,
+        "normal_exit": true,
+        "roi_cycles": 569,
+        "sanity_check_passed": true
+      },
+      "overlay": {
+        "boundary_events_emitted": 12,
+        "busy_cycles_by_pipeline": {
+          "compute": 33,
+          "load": 31,
+          "store": 21,
+          "xfer": 17
+        },
+        "cycles": 61,
+        "done": true,
+        "event_unblocked_issues_before_tag_complete": 6,
+        "external_memory_completions": 36,
+        "external_memory_requests": 36,
+        "external_memory_wait_cycles": 88,
+        "instructions_completed": 84,
+        "instructions_issued": 84,
+        "issued_by_pipeline": {
+          "compute": 36,
+          "load": 24,
+          "store": 12,
+          "xfer": 12
+        },
+        "link_stalls": 0,
+        "max_active_tags": 3,
+        "max_pipeline_issues_in_cycle": 4,
+        "memory_backend": "adapter",
+        "route_hops": 12,
+        "scenario": "gem5",
+        "skip_hops": 12,
+        "stalls_by_reason": {
+          "event_dependency": 231,
+          "pipeline_contention": 8
+        },
+        "unit_hops": 0
+      }
+    },
+    "fixed_regression": {
+      "adapter": null,
+      "artifact": {
+        "bytes": 4901,
+        "checks": {
+          "is_file": true
+        },
+        "pass": true,
+        "path": "artifacts/environment/h42/fixed-backend-regression.log",
+        "sha256": "ad17264b39f0adf655e6734080a60b7bec71e2f7f837dc4e9adc96bad5eda2d2"
+      },
+      "dsagen": {
+        "cgra_instances": 256,
+        "cgra_instructions": 1024,
+        "normal_exit": true,
+        "roi_cycles": 569,
+        "sanity_check_passed": true
+      },
+      "overlay": {
+        "boundary_events_emitted": 0,
+        "busy_cycles_by_pipeline": {
+          "compute": 4,
+          "load": 3,
+          "store": 2,
+          "xfer": 2
+        },
+        "cycles": 5,
+        "done": true,
+        "event_unblocked_issues_before_tag_complete": 0,
+        "external_memory_completions": 0,
+        "external_memory_requests": 0,
+        "external_memory_wait_cycles": 0,
+        "instructions_completed": 4,
+        "instructions_issued": 4,
+        "issued_by_pipeline": {
+          "compute": 1,
+          "load": 1,
+          "store": 1,
+          "xfer": 1
+        },
+        "link_stalls": 0,
+        "max_active_tags": 3,
+        "max_pipeline_issues_in_cycle": 4,
+        "memory_backend": "fixed",
+        "route_hops": 1,
+        "scenario": "gem5",
+        "skip_hops": 0,
+        "stalls_by_reason": {},
+        "unit_hops": 1
+      }
+    },
+    "operator_checks": {
+      "bsmm_base_workload": true,
+      "bsmm_done": true,
+      "bsmm_events_and_routes": true,
+      "bsmm_instructions": true,
+      "bsmm_memory": true,
+      "fft_base_workload": true,
+      "fft_done": true,
+      "fft_events_and_routes": true,
+      "fft_extra_compute_is_visible": true,
+      "fft_instructions": true,
+      "fft_memory": true
+    },
+    "regression_checks": {
+      "disabled_overlay": true,
+      "fixed_backend": true
+    },
+    "stress_checks": {
+      "base_workload": true,
+      "done": true,
+      "real_queue_backpressure": true,
+      "real_response_delay": true,
+      "request_completion_exact": true
+    }
+  },
+  "source": {
+    "files": {
+      "compiler": {
+        "pass": true,
+        "path": "src/mlxsim/dsagen_overlay.py",
+        "tokens": {
+          "compile_radix2_cdc": true,
+          "emit_event": true,
+          "memory_backend": true,
+          "pair_indices": true,
+          "wait_events": true
+        }
+      },
+      "compiler_cli": {
+        "pass": true,
+        "path": "scripts/compile_mlx_cdc.py",
+        "tokens": {
+          "mlx-bsmm-b8.json": true,
+          "mlx-fft-l8.json": true
+        }
+      },
+      "memory_adapter_header": {
+        "pass": true,
+        "path": "third_party/dsa-framework/dsa-gem5/src/cpu/minor/ssim/mlx_spad_adapter.hh",
+        "tokens": {
+          "MemoryAdapter": true,
+          "ResponseBase": true,
+          "class Gem5ScratchpadAdapter": true,
+          "handleResponse": true
+        }
+      },
+      "memory_adapter_source": {
+        "pass": true,
+        "path": "third_party/dsa-framework/dsa-gem5/src/cpu/minor/ssim/mlx_spad_adapter.cc",
+        "tokens": {
+          "MemoryOperation::DMO_Read": true,
+          "MemoryOperation::DMO_Write": true,
+          "handleResponse": true,
+          "scratchpad.rb->Available()": true,
+          "scratchpad.rb->Decode": true
+        }
+      },
+      "overlay_header": {
+        "pass": true,
+        "path": "third_party/dsa-framework/dsa-gem5/src/cpu/minor/ssim/mlx_overlay.hh",
+        "tokens": {
+          "MemoryAdapter": true,
+          "MemoryBackend": true,
+          "emit_event": true,
+          "external_memory": true,
+          "wait_events": true
+        }
+      },
+      "overlay_source": {
+        "pass": true,
+        "path": "third_party/dsa-framework/dsa-gem5/src/cpu/minor/ssim/mlx_overlay.cc",
+        "tokens": {
+          "event_dependency": true,
+          "event_unblocked_issues_before_tag_complete": true,
+          "iterationEventsReady": true,
+          "memory_queue_full": true,
+          "takeCompletion": true
+        }
+      }
+    },
+    "pass": true,
+    "patch": {
+      "bytes": 60178,
+      "checks": {
+        "forbidden_gpu_state_absent": true,
+        "present": true,
+        "reverse_applies": true
+      },
+      "forbidden_gpu_tokens": [],
+      "pass": true,
+      "path": "patches/dsagen/dsa-gem5-mlx-cdc-memory-v1.patch",
+      "reverse_stderr": "",
+      "sha256": "012ca8cbb4cb41aeb34550c907e739396e4e904f9c79864f1d0f380f419845fc"
+    }
+  },
+  "wall_seconds": 1.7376986329909414
+}

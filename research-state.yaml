@@ -307,7 +307,7 @@ hypotheses:
     priority: high
   - id: H42
     statement: "Source-derived radix-2 FFT/BSMM CDCs can compile into H41 tagged blocks with adjacent-stage event wakeup, while an opt-in adapter drives load/store completion through DSAGEN's real banked scratchpad without changing fixed-backend or disabled-overlay regressions."
-    status: active
+    status: supported
     motivation: "Bridge validated MLX scheduling semantics to executable structured workloads and real DSAGEN memory timing before any paper-facing performance experiment."
     parent: H41
     priority: high
@@ -316,7 +316,7 @@ experiments:
   proxy_metric: "Maximum absolute percentage error across every numeric paper anchor; pass only when each reproducible point is <=10%, with unavailable measurements explicitly classified rather than fabricated."
   baseline_value: 0.2486
   best_value: 0.0123
-  total_runs: 44
+  total_runs: 45
   trajectory:
     - run_id: "run_001"
       hypothesis: "H2"
@@ -626,11 +626,18 @@ experiments:
       wall_time_min: 0.03
       change_summary: "Source-integrated DSAGEN MLX overlay supported: 7 deterministic microtraces/25 assertions, debug-opt-sanitizer byte equivalence, explicit gem5 activation, and exact 569-cycle disabled regression all pass without paper targets."
       timestamp: "2026-08-17"
+    - run_id: "run_048"
+      hypothesis: "H42"
+      metric_value: 0.0
+      delta: null
+      wall_time_min: 0.03
+      change_summary: "CDC/memory bridge supported: deterministic BSMM/FFT compilation, counted cross-layer wakeup, real DSAGEN scratchpad callbacks, B16 queue backpressure, and fixed/disabled regressions pass all 14 gates without paper performance targets."
+      timestamp: "2026-08-17"
 
 outer_loop:
-  cycle: 27
-  last_direction: "Compile source-derived FFT/BSMM closed-dependency components into H41's block JSON and replace fixed overlay load/store completion with an explicit DSAGEN memory-adapter contract. Validate operation counts, forward-only dependencies, route strides, and callback timing on small shapes before exposing any paper performance target."
-  last_reflection: "H41 proves the missing MLX control/PE/NoC semantics can live inside the real DSAGEN cycle loop without perturbing its default path. The remaining gap is workload and memory realism: v1 load/store latency is configured, not driven by DSAGEN LSQ/scratchpad events, and no FFT/BSMM compiler emits blocks yet. Build that bridge next; only then can simulator cycles carry end-to-end workload meaning."
+  cycle: 28
+  last_direction: "Scale H42's exact small CDCs into reusable per-stage/per-PE aggregate templates for B=16/32/64 and FFT lengths up to the paper's range, preserving work/traffic/event counts under trip-count folding. Then establish an independently justified timing-parameter manifest from paper-disclosed hardware plus open-source latency evidence before the first new paper-facing comparison."
+  last_reflection: "H42 turns overlay cycles into real structured-workload plus DSAGEN-scratchpad cycles and proves event-level multi-layer overlap. It still expands one block per radix pair and omits off-chip DMA/LSQ, so paper shapes would be unnecessarily large and incomplete. The next step is exact aggregation, not target fitting: prove folded templates preserve counts and small-shape cycles first, then separate scratchpad-resident and DMA-bound experiments."
 
 completion_snapshot_run042:
   certificate_run: run_042
