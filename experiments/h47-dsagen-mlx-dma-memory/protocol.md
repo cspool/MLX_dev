@@ -100,3 +100,10 @@ semantics in syscall-emulation mode. It is excluded as well. Before the formal
 run, the guest writes byte value 1 to the exact 64 eight-byte read targets,
 then performs the 2-MiB conditioner. This forces distinct writable backing and
 freezes an independent read-data gate: the adapter byte sum must be 512.
+
+The first long-wait formal candidate is retained but excluded: after successful
+overlay completion, 500,000 host iterations obscured the requestor command
+counters in gem5's final statistics. Since `accel_t::done()` now keeps the
+guest's accelerator call blocked until every overlay token completes, no host
+wait is required. The final build freezes it at zero so the post-reset window
+contains the overlay plus only its immediate checksum and exit code.
