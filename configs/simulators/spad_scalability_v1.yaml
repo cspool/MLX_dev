@@ -1,0 +1,29 @@
+name: spad-scalability-v1
+experiment_id: H67
+run_id: run072
+classification: target_free_dsagen_memory_scalability
+validation_eligible: false
+
+frozen_inputs:
+  scaling:
+    path: artifacts/results/fig10-scalability-run069.json
+    sha256: 520d152a792225dfe3ec6ba3189fa3048f226c977fb3ff4621fc8cc321bdc530
+    required_status: supported
+    required_integrity: true
+  adapter:
+    path: artifacts/results/standalone-dsagen-spad-run071.json
+    sha256: 2a816515bf6cb2dcdde3ba6972eb8d095b44a2fde2f2c01ad7d1c63c30f15db8
+    required_status: supported
+    required_integrity: true
+
+parent_configs: artifacts/environment/h64/configs
+compile_manifest: artifacts/environment/h64/fig10-scalability-compile-manifest.json
+output_root: artifacts/environment/h67
+result_path: artifacts/results/spad-scalability-run072.json
+
+allowed_change: {memory_backend: dsagen_spad}
+
+source_layout:
+  transformer: scripts/compile_spad_scalability.py
+  runner: scripts/run_spad_scalability.py
+  auditor: scripts/audit_spad_scalability.py
