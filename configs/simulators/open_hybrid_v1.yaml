@@ -9,6 +9,9 @@ build_toolchains:
     reason: GPGPU-Sim v4.2.1 declares CUDA 11 as tested; CUDA 13 removes textureReference
   dsagen:
     riscv_cross_prefix: riscv64-linux-gnu-
+    dsa_assembler_prefix: riscv64-unknown-linux-gnu-
+    dsa_assembler_install: third_party/dsa-framework/ss-tools/riscv-dsa-binutils
+    dsa_riscv_ext_compat_mode: 1
     gem5_riscv_host_include_shim: third_party/dsa-framework/ss-tools/riscv-host-shim
     host_compiler: gcc-11
     gem5_ccflags_extra:
@@ -18,6 +21,7 @@ build_toolchains:
       - -Wno-error=misleading-indentation
     compatibility_patches:
       - patches/dsagen/dsa-gem5-glibc-dynamic-sigstksz.patch
+      - patches/dsagen/dsa-gem5-riscv-getrandom.patch
 
 architecture_contract:
   target: MLX reduced spatial architecture
@@ -42,12 +46,17 @@ sources:
     role: primary_spatial_timing_substrate
     repository: https://github.com/PolyArch/dsa-framework.git
     revision: 273e141a519d12138ee0fbc9743059d13e9b5a64
-    license: BSD-2-Clause
+    license: BSD-3-Clause-compatible permissive text (top-level file is titled BSD 2-Clause)
     required_submodules:
       dsa-gem5: 1e5d2c3d48ecc1f9b7d42c7103d0705b0c98fb78
       dsa-scheduler: d0dd8163c336d2909c1aa11784e312cfdc7b3256
       dsa-apps: 7160803e400ef88f9fdfc0910458901ef5153cd4
       dsa-riscv-ext: 65822cda53c32f58c2c0c08bfe24f06b8f7e5bd8
+      dsa-llvm-project: 2f17ed0c0678bbe6e8cf05cb54eeb39aac6f6496
+      chipyard: 174875463458c22f90cec1be0b62f2bc8633791c
+    resolved_toolchain_dependencies:
+      riscv-gnu-toolchain: 2855d823a6e93d50af604264b02ced951e80de67
+      riscv-binutils: d91cadb45f3ef9f96c6ebe8ffb20472824ed05a7
   accel_sim:
     role: gpu_baseline_and_programmable_pe_reference
     repository: https://github.com/accel-sim/accel-sim-framework.git
@@ -85,6 +94,118 @@ required_source_mechanisms:
     - functional-unit latency and initiation interval
     - operand or register-file arbitration
     - load/store pipeline occupancy
+
+mechanism_map:
+  - id: spatial_event_clock
+    upstream: dsagen
+    path: third_party/dsa-framework/dsa-gem5/src/cpu/minor/ssim/ssim.cc
+    symbol: ssim_t::step
+    required_tokens: ["void ssim_t::step()", "DispatchStream();", "lanes[i]->tick();"]
+    decision: reuse
+    mlx_extension: Drive one MLX fabric cycle and invoke each active PE once.
+  - id: spatial_pe_cycle
+    upstream: dsagen
+    path: third_party/dsa-framework/dsa-gem5/src/cpu/minor/ssim/accel.cc
+    symbol: accel_t::tick
+    required_tokens: ["void accel_t::tick()", "arbiter->Arbit(this)", "cycle_cgra();"]
+    decision: adapt
+    mlx_extension: Insert tag-window arbitration and programmable PE resources before CGRA firing.
+  - id: architecture_graph
+    upstream: dsagen
+    path: third_party/dsa-framework/dsa-scheduler/include/dsa/arch/model.h
+    symbol: dsa::SSModel
+    required_tokens: ["class SSModel", "SpatialFabric* subModel()", "std::vector<Capability*> fu_types"]
+    decision: reuse
+    mlx_extension: Represent the physical PE/FU fabric; layer blocks remain a separate MLX overlay.
+  - id: static_bitstream_schedule
+    upstream: dsagen
+    path: third_party/dsa-framework/dsa-gem5/src/cpu/minor/ssim/bitstream.h
+    symbol: dsa::sim::BitstreamWrapper
+    required_tokens: ["struct BitstreamWrapper", "Schedule *sched", "SSDfg *dfg()"]
+    decision: adapt
+    mlx_extension: Bind multiple immutable layer instruction blocks to one physical fabric.
+  - id: stream_commands
+    upstream: dsagen
+    path: third_party/dsa-framework/dsa-gem5/src/cpu/minor/ssim/stream.hh
+    symbol: base_stream_t
+    required_tokens: ["struct base_stream_t", "virtual bool stream_active()", "struct LinearReadStream", "struct LinearWriteStream"]
+    decision: reuse
+    mlx_extension: Preserve load/store stream timing while attaching layer and tag identity.
+  - id: stream_arbitration
+    upstream: dsagen
+    path: third_party/dsa-framework/dsa-gem5/src/cpu/minor/ssim/arbiter.cc
+    symbol: RoundRobin::Arbit
+    required_tokens: ["RoundRobin::Arbit", "stream_tables", "last_executed"]
+    decision: replace_policy
+    mlx_extension: Add readiness-first bounded tag-window selection without changing stream execution.
+  - id: timed_packets
+    upstream: dsagen
+    path: third_party/dsa-framework/dsa-scheduler/include/dsa/simulation/data.h
+    symbol: SpatialPacket
+    required_tokens: ["struct SpatialPacket", "uint64_t available_at", "uint64_t value", "bool valid"]
+    decision: extend
+    mlx_extension: Add layer/tag/source/destination metadata and explicit skip-hop route latency.
+  - id: scratchpad_banks
+    upstream: dsagen
+    path: third_party/dsa-framework/dsa-gem5/src/cpu/minor/ssim/spad.h
+    symbol: ScratchMemory
+    required_tokens: ["struct Bank", "struct ScratchMemory", "adg::ScratchMemory"]
+    decision: reuse
+    mlx_extension: Retain bank conflicts and add per-tag ownership only where required.
+  - id: dependency_scoreboard
+    upstream: gpgpu_sim
+    path: third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/src/gpgpu-sim/scoreboard.cc
+    symbol: Scoreboard::checkCollision
+    required_tokens: ["Scoreboard::reserveRegisters", "Scoreboard::releaseRegisters", "Scoreboard::checkCollision"]
+    decision: derive_abstraction
+    mlx_extension: Track block-local register RAW/WAW hazards; do not import warp identity.
+  - id: operand_register_banks
+    upstream: gpgpu_sim
+    path: third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/src/gpgpu-sim/shader.h
+    symbol: opndcoll_rfu_t::step
+    required_tokens: ["class opndcoll_rfu_t", "void step()", "allocate_reads();", "process_banks();"]
+    decision: derive_abstraction
+    mlx_extension: Model PE RF read/write ports and bank conflicts for SIMD block instructions.
+  - id: functional_unit_pipeline
+    upstream: gpgpu_sim
+    path: third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/src/gpgpu-sim/shader.cc
+    symbol: pipelined_simd_unit::cycle
+    required_tokens: ["void pipelined_simd_unit::cycle()", "m_pipeline_reg", "m_dispatch_reg"]
+    decision: derive_abstraction
+    mlx_extension: Use operation latency and initiation interval per heterogeneous PE FU.
+  - id: load_store_pipeline
+    upstream: gpgpu_sim
+    path: third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/src/gpgpu-sim/shader.cc
+    symbol: ldst_unit::cycle
+    required_tokens: ["void ldst_unit::cycle()", "smem_latency", "m_dispatch_reg"]
+    decision: derive_abstraction
+    mlx_extension: Separate load/store occupancy from compute while retaining DSAGEN memory transactions.
+
+spatial_smoke:
+  workload_source: third_party/dsa-framework/dsa-apps/sdk/compiled/vecadd.c
+  adg: third_party/dsa-framework/dsa-scheduler/configs/DSAGenMesh.PE16-MaxI64-AddI64-MulI64-FAddD64-FMulD64-Copy-MinI64.SW25.DMA1.SPM1.REC1.GEN1.REG1.IVP3.OVP2.20220127-103840.json
+  executable: third_party/dsa-framework/dsa-apps/sdk/compiled/ss-vecadd-gnu.out
+  simulator: third_party/dsa-framework/dsa-gem5/build/RISCV/gem5.opt
+  evidence_log: artifacts/environment/h40/dsagen-smoke-vecadd-attempt4.log
+  required_markers:
+    - "CGRA Instances: 256"
+    - "CGRA Insts / Cycle: 1024 / 569"
+    - "Read DMA:\t16384 B"
+    - "Write DMA:\t8192 B"
+    - "sanity check passed successfully!"
+    - "Exiting @ tick 114277000 because exiting with last active thread context"
+
+gpu_smoke:
+  trace_list: third_party/accel-sim-framework/hw_run/rodinia_2.0-ft/11.0/backprop-rodinia-2.0-ft/4096___data_result_4096_txt/traces/kernelslist.g
+  simulator: third_party/accel-sim-framework/gpu-simulator/bin/release/accel-sim.out
+  evidence_log: artifacts/environment/h40/accelsim-smoke-backprop.log
+  required_markers:
+    - "gpu_tot_sim_cycle = 14903"
+    - "gpu_tot_sim_insn = 9290080"
+    - "gpu_tot_issued_cta = 512"
+    - "Processing kernel"
+    - "GPGPU-Sim: *** simulation thread exiting ***"
+    - "GPGPU-Sim: *** exit detected ***"
 
 smoke_gates:
   - pinned revisions and recursive dependency revisions are recorded

@@ -1,0 +1,55 @@
+diff --git a/src/arch/riscv/linux/process.cc b/src/arch/riscv/linux/process.cc
+index 2166a509e..2e860f6fe 100644
+--- a/src/arch/riscv/linux/process.cc
++++ b/src/arch/riscv/linux/process.cc
+@@ -379,7 +379,7 @@ SyscallDescTable<RiscvProcess::SyscallABI>
+     { 275,  "sched_getattr" },
+     { 276,  "renameat2" },
+     { 277,  "seccomp" },
+-    { 278,  "getrandom" },
++    { 278,  "getrandom", getrandomFunc<RiscvLinux64> },
+     { 279,  "memfd_create" },
+     { 280,  "bpf" },
+     { 281,  "execveat" },
+@@ -711,7 +711,7 @@ SyscallDescTable<RiscvProcess::SyscallABI>
+     { 275,  "sched_getattr" },
+     { 276,  "renameat2" },
+     { 277,  "seccomp" },
+-    { 278,  "getrandom" },
++    { 278,  "getrandom", getrandomFunc<RiscvLinux32> },
+     { 279,  "memfd_create" },
+     { 280,  "bpf" },
+     { 281,  "execveat" },
+diff --git a/src/sim/syscall_emul.hh b/src/sim/syscall_emul.hh
+index 5ead211b1..78f4a8aa0 100644
+--- a/src/sim/syscall_emul.hh
++++ b/src/sim/syscall_emul.hh
+@@ -90,6 +90,7 @@
+ #include "base/intmath.hh"
+ #include "base/loader/object_file.hh"
+ #include "base/logging.hh"
++#include "base/random.hh"
+ #include "base/trace.hh"
+ #include "base/types.hh"
+ #include "config/the_isa.hh"
+@@ -2720,4 +2721,20 @@ schedGetaffinityFunc(SyscallDesc *desc, ThreadContext *tc,
+ #endif
+ }
+ 
++/// Target getrandom() function.
++template <class OS>
++SyscallReturn
++getrandomFunc(SyscallDesc *desc, ThreadContext *tc, Addr buf_ptr,
++              typename OS::size_t count, unsigned int flags)
++{
++    BufferArg buf(buf_ptr, count);
++    auto *bytes = static_cast<uint8_t *>(buf.bufferPtr());
++    for (typename OS::size_t i = 0; i < count; ++i) {
++        bytes[i] = random_mt.random<uint8_t>();
++    }
++    buf.copyOut(tc->getVirtProxy());
++
++    return count;
++}
++
+ #endif // __SIM_SYSCALL_EMUL_HH__

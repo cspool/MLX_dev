@@ -1,0 +1,12 @@
+make: Entering directory '/workspace/MLX_dev/third_party/dsa-framework/dsa-apps/sdk/compiled'
+clang vecadd.c  -O1 -fno-inline -fno-vectorize -fno-slp-vectorize -fno-unroll-loops -stream-specialize -mllvm -no-loop-load-elim=1 -mllvm -disable-loop-idiom-all -emit-llvm -c -S -DGEM5 -I/workspace/MLX_dev/third_party/dsa-framework/ss-tools/include -I/workspace/MLX_dev/third_party/dsa-framework/ss-workloads/common/include --sysroot=/workspace/MLX_dev/third_party/dsa-framework/ss-tools/riscv-cross/sysroot/usr
+SBCONFIG=/workspace/MLX_dev/third_party/dsa-framework/dsa-scheduler/configs/DSAGenMesh.PE16-MaxI64-AddI64-MulI64-FAddD64-FMulD64-Copy-MinI64.SW25.DMA1.SPM1.REC1.GEN1.REG1.IVP3.OVP2.20220127-103840.json \
+opt -load /workspace/MLX_dev/third_party/dsa-framework/dsa-llvm-project/build/lib/DSAPass.so -stream-specialize  vecadd.ll -o ss-vecadd.ll -S
+[WARNING]model.cpp:244: ADG finest granularity is 64
+[WARNING]Pass.cpp:57: Granularity is overriden by ADG!
+[INFO]Pass.cpp:93: Profiled Time: (401191: (223632: 221507))
+"/workspace/MLX_dev/third_party/dsa-framework/ss-tools/bin"/llc -mcpu=rocket-rv64 -mattr=+m,+d,+f,+a --code-model=medium ss-vecadd.ll
+riscv64-unknown-linux-gnu-gcc ss-vecadd.s -o ss-vecadd.o -lm -fno-common -c
+make: riscv64-unknown-linux-gnu-gcc: No such file or directory
+make: *** [Makefile:84: ss-vecadd.o] Error 127
+make: Leaving directory '/workspace/MLX_dev/third_party/dsa-framework/dsa-apps/sdk/compiled'
