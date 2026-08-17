@@ -1,0 +1,59 @@
+name: fig24-cross-simulator-v1
+experiment_id: H55
+run_id: run061
+classification: target_exposed_validation_ineligible_cross_simulator_transfer
+
+parents:
+  mlx_semantics:
+    path: artifacts/results/mlx-pe-semantics-correction-run058.json
+    sha256: 5573dcc3b4317077803ad135aa0be863b94db00aefdfeec545b9504cd9642d1e
+    required_status: supported
+    required_integrity: true
+  orin_proxy:
+    path: artifacts/results/gpgpusim-orin-proxy-run060.json
+    sha256: 62eae2e80adb5c21b13d11b622ea1238818320e6db8e9b924472e8035193e193
+    required_status: supported
+    required_integrity: true
+  operator_surface:
+    path: artifacts/results/dsagen-mlx-fig25-paper-static-run059.json
+    sha256: b5bf0221b375435eb686a0bb51881ac4f9a273165c306ec7e173ff5d0122db1d
+    required_status: rejected
+    required_integrity: true
+
+targets:
+  path: artifacts/targets/paper_targets.yaml
+  section: fig24_structured_sweep.mlx_over_orin
+  execution_visibility: audit_only
+
+cases:
+  - {name: BERT_512, family: BERT, n: 512, d: 1024, trip: 1, gpu_count: 1024}
+  - {name: BERT_8K, family: BERT, n: 8192, d: 1024, trip: 16, gpu_count: 16384}
+  - {name: Llama2_512, family: Llama2, n: 512, d: 4096, trip: 4, gpu_count: 4096}
+  - {name: Llama2_1K, family: Llama2, n: 1024, d: 4096, trip: 8, gpu_count: 8192}
+  - {name: Llama2_4K, family: Llama2, n: 4096, d: 4096, trip: 16, gpu_count: 16384}
+  - {name: InternLM2_2K, family: InternLM2, n: 2048, d: 4096, trip: 16, gpu_count: 16384}
+  - {name: InternLM2_8K, family: InternLM2, n: 8192, d: 4096, trip: 16, gpu_count: 16384}
+
+operators:
+  - {name: fft_cmp, family: fft, mlx_stages: 7, gpu_operation: fft, gpu_parameter: 6, gpu_fma_per_element_stage: 2}
+  - {name: qkv_bsmm, family: qkv_bsmm, block_size: 16, mlx_stages: 4, gpu_operation: bsmm, gpu_parameter: 4, gpu_fma_per_element_stage: 3}
+  - {name: qkv_bsmm_b32, family: qkv_bsmm, block_size: 32, mlx_stages: 5, gpu_operation: bsmm, gpu_parameter: 5, gpu_fma_per_element_stage: 3}
+  - {name: qkv_bsmm_b64, family: qkv_bsmm, block_size: 64, mlx_stages: 6, gpu_operation: bsmm, gpu_parameter: 6, gpu_fma_per_element_stage: 3}
+  - {name: swa_w128_q32, family: swa, window: 128, query_tile: 32, mlx_score_fma_groups: 32, mlx_sv_fma_groups: 32, mlx_kv_load_waves: 4, gpu_operation: swa, gpu_parameter: 16, gpu_fma_per_element_parameter: 1}
+  - {name: swa_w256_q64, family: swa, window: 256, query_tile: 64, mlx_score_fma_groups: 128, mlx_sv_fma_groups: 128, mlx_kv_load_waves: 8, gpu_operation: swa, gpu_parameter: 32, gpu_fma_per_element_parameter: 1}
+
+normalization:
+  mlx_clock_hz: 1000000000
+  orin_clock_hz: 1300000000
+  mlx_simd_lanes: 8
+  ratio: orin_seconds_per_fma_div_mlx_seconds_per_fma
+  exact_kernel_identity: false
+  validation_eligible: false
+
+source_layout:
+  compiler: scripts/compile_fig24_cross_simulator.py
+  runner: scripts/run_fig24_cross_simulator.sh
+  checker: scripts/check_fig24_gpu_run.py
+  auditor: scripts/audit_fig24_cross_simulator.py
+
+result_path: artifacts/results/fig24-cross-simulator-run061.json
