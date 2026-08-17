@@ -48,11 +48,11 @@ literature:
       year: 2024
       relevance: "MLX's cited adapter reference, but its 4-bit recipe and defaults do not identify MLX's undisclosed FP16 LoRA setup."
   open_problems:
-    - "The target MLX simulator, RTL, compiler, model checkpoints, and raw plot data are not public."
+    - "H33 found no qualifying public MLX simulator, RTL, compiler, model/checkpoint manifest, or raw trace artifact as of 2026-08-17."
     - "The paper omits many low-level latency, SRAM, DRAM, compiler schedule, and calibration parameters."
     - "Several plots must be digitized from raster figures before numerical reproduction can be audited."
   evidence_gaps:
-    - "Need verify whether SimICT source is publicly obtainable."
+    - "H33's exact-paper audit found no SimICT or newer MLX artifact; an evidence-bounded ICT dataflow-lineage audit remains."
     - "Need identify exact open GPU simulator suitable for the H100/Orin/Xavier comparison."
     - "Need recover all per-point targets from Figures 2, 3, and 15-25."
     - "No public evidence links MLX to Assassyn beyond related mechanisms and a shared author; MLX-specific tags, skip hops, and workload mapping are absent."
@@ -253,7 +253,7 @@ hypotheses:
     priority: high
   - id: H33
     statement: "A publicly retrievable author- or venue-linked artifact for the exact MLX paper exposes at least one currently blocked simulator/RTL, structured-model/training, exact-evaluator, or native-trace domain."
-    status: pending
+    status: rejected
     motivation: "Re-audit public availability after the paper's acceptance and after H29-H32 exhausted source-free model, seed, and capacity variants; only a qualified new artifact can reopen those paths."
     parent: H1
     priority: high
@@ -262,7 +262,7 @@ experiments:
   proxy_metric: "Maximum absolute percentage error across every numeric paper anchor; pass only when each reproducible point is <=10%, with unavailable measurements explicitly classified rather than fabricated."
   baseline_value: 0.2486
   best_value: 0.0123
-  total_runs: 35
+  total_runs: 36
   trajectory:
     - run_id: "run_001"
       hypothesis: "H2"
@@ -509,11 +509,18 @@ experiments:
       wall_time_min: 0.5
       change_summary: "Fixed-seed session-cap audit supported: all 32 length-quantile prompts exactly match baseline raw text, extraction, input/output token counts, and finish reason under the registered 160k request with 20% cache allocation."
       timestamp: "2026-08-17"
+    - run_id: "run_038"
+      hypothesis: "H33"
+      metric_value: 1.0
+      delta: null
+      wall_time_min: 0.8
+      change_summary: "Source-diverse post-acceptance audit rejected public artifact availability: 31 endpoints and frozen web searches yield zero qualifying or unresolved exact artifacts across four reproduction-critical domains; all integrity gates pass."
+      timestamp: "2026-08-17"
 
 outer_loop:
-  cycle: 17
-  last_direction: "Run a fresh, source-qualified post-acceptance discovery audit across the paper title, authors, institutional pages, GitHub, DOI/artifact indexes, and cited simulator lineages. Only a newly identified public artifact may reopen the stopped compressed-model, Ada evaluator, or architecture-timing paths."
-  last_reflection: "H32 obtains 32/32 exact output equivalence after raising serviceable capacity from 8,192 to 13,952 tokens under the official 160k request configuration. The cap cannot explain H30/H31's 4k residual; ordinary seed and capacity variants are now both closed, leaving an independently identifiable checkpoint/evaluator or task-adaptation detail as the required evidence."
+  cycle: 18
+  last_direction: "Audit primary records for SimICT, DFU-E, DFGAS, M2-DFU, and the newly surfaced ICT reuse/FFT patents under explicit chronology and feature gates. Infer only the strongest evidence-bounded architectural origin; shared authorship or terminology alone cannot establish code, simulator, or RTL provenance."
+  last_reflection: "H33's corrected run038 completes every registered source channel with source-diverse identity and zero qualifying artifacts. No public package unlocks the stopped simulator, structured-model, evaluator, or trace paths; further execution variants require new author evidence, while the user's origin question can still be tightened through a primary-source lineage audit."
 
 workspace:
   findings: "findings.md"

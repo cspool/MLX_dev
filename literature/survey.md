@@ -6,6 +6,13 @@
 - Local source: `../MLX Multi-Layer Execution for Structured LLM Workload Acceleration on Spatial Architectures/MLX Multi-Layer Execution for Structured LLM Workload Acceleration on Spatial Architectures.md`.
 - Relevance: authoritative specification and numerical target, but not a simulator release.
 
+## Exact-paper public-artifact status
+
+- H33's corrected source audit is frozen at 2026-08-17. Crossref DOI `10.1109/ISCA66397.2026.00017`, OpenAlex `W7172417674`, Semantic Scholar, the official ISCA program, and Jian Weng's page independently identify the exact paper.
+- Crossref exposes only the IEEE paper PDF and no artifact relation. OpenAlex reports closed access, no repository full text, and no dataset; the author-page MLX entry has no paper/code/data/supplement link, and the ISCA artifact-policy page provides no per-paper artifact listing.
+- Six GitHub queries, six GitLab queries, three Hugging Face catalog types, Zenodo, arXiv, ModelScope, 30 author/lab repositories, and the frozen domain-restricted web searches yield zero qualifying or unresolved exact artifact candidates. The source-qualified run038 report is 88,807 bytes with SHA-256 `462df17b15a8acdeee8820f59b476a60939a795d9efd69991d0fabfe0eccff09`.
+- This is a cutoff-bounded availability result, not proof about private or future releases. M2-DFU, DFU-E, patents, SimICT, DSAGEN, Assassyn, and DFGAS remain lineage literature rather than MLX artifacts unless a primary record explicitly establishes the connection.
+
 ## SimICT
 
 - Ye et al., *SimICT: A Fast and Flexible Framework for Performance and Power Evaluation of Large-Scale Architecture*, ISLPED 2013, pp. 273-278.

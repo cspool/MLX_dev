@@ -24,3 +24,5 @@ This is the completion checklist. `target` means a paper anchor is captured with
 | Fig. 25 | Roofline utilization heatmaps | Derived from performance/traffic | Roofline audit | yes | yes | calibration replay only; validation no |
 
 Conceptual figures 1, 4, 7-13 specify algorithms, architecture, or mappings rather than standalone numeric experiments. Their claims are covered by unit tests for FFT compression, hierarchical BSMM, CDC closure, routing, pipeline overlap, and dense/SWA mappings.
+
+H33 separately audits whether a newly public exact-paper artifact can supply the missing implementation inputs. The corrected run038 completes 31 direct endpoints plus frozen web searches with zero qualifying simulator/RTL/mapping, structured-model/training, evaluator/checkpoint, or native-trace packages. Consequently the rows marked native/RTL/training unavailable remain unavailable; H33 changes no numeric pass cell and does not turn the calibrated surrogate into author-source reproduction.
