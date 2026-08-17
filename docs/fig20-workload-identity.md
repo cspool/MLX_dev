@@ -23,5 +23,9 @@ repeat-folded matched-shape execution: preserve full operation/byte/output
 counts while simulating recurring CDC schedules without expanding billions of
 individual instructions.
 
+The repeat-folding mechanism is now validated in
+[`repeat-folding.md`](repeat-folding.md), with a maximum held-out cycle error of
+3.73% across three memory models.
+
 The immutable result is
 `artifacts/results/fig20-workload-identity-run080.json`.
