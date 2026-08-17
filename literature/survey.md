@@ -67,6 +67,12 @@
 - This independent agreement supports the public checkpoint/evaluator path and makes a task-adapted dense reference the most plausible interpretation of MLX's `original` bar. The interpretation remains inferential because MLX does not state how that bar is adapted or provide its LoRA/training recipe.
 - H28 tests that interpretation with one target-independent, pre-registered generic PEFT recipe and reaches 87.845% (2.502% relative from MLX). This establishes feasibility of a task-adapted dense reference, not provenance of the authors' checkpoint or hyperparameters.
 
+### InternLM2 Ada-LEval reference
+
+- The official Ada-LEval repository is pinned at `2154258d5fa3969ac5429b3132d505570ef8a57a`. Its BestAnswer runner evaluates the first 1,000 StackSelect rows at each nominal length with `internlm/internlm2-chat-7b`, LMDeploy, `rope_scaling_factor=2.0`, and `session_len=160000`; its README reports 58.6%/49.5%/33.9%.
+- H30 reconstructs the runner with LMDeploy 0.2.6 and the last official InternLM2-Chat-7B revision available when the runner was published. All three dataset, prompt, tokenizer, model, engine, and response streams are hash- or record-qualified. The measured 57.8%/46.9%/27.4% passes the official table's 10% gate at 1k/2k but fails at 4k by 19.17% relative.
+- LMDeploy 0.2.6 draws an unpublished independent 64-bit random seed for every request. H30 records all seeds but cannot reconstruct the official draw. This makes the remaining 4k gap a stochastic-reproducibility question before it can be attributed to a different checkpoint or evaluation recipe; it does not license selection of a favorable seed run.
+
 ### Recipe-identifiability conclusion
 
 - Public references determine useful primitives and external-baseline settings, but not a unique executable MLX model. Still missing are the spectral-peak threshold and all per-layer `L` values; the exact modified LLM layers; complex-to-real normalization and residual/decompression wiring; hierarchical-butterfly factor order and dense-to-factor initialization; and the complete LoRA/data/training recipe.

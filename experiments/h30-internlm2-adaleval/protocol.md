@@ -4,7 +4,7 @@
 
 The byte-qualified official InternLM2-Chat-7B checkpoint, evaluated on the
 three exact public Ada-LEval BestAnswer files with the contemporaneous official
-runner semantics, reproduces all three MLX Fig. 15(d) original accuracies
+runner semantics, reproduces all three MLX Fig. 15(c) original accuracies
 (52.8%, 40.6%, and 35.9%) within 10% relative error.
 
 ## Status before execution

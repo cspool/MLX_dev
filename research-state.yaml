@@ -234,8 +234,8 @@ hypotheses:
     parent: H5
     priority: high
   - id: H30
-    statement: "The byte-qualified official InternLM2-Chat-7B checkpoint evaluated on exact public Ada-LEval BestAnswer 1k/2k/4k inputs with contemporaneous LMDeploy 0.2.6 semantics reproduces all three Fig. 15(d) original accuracies within 10%."
-    status: pending
+    statement: "The byte-qualified official InternLM2-Chat-7B checkpoint evaluated on exact public Ada-LEval BestAnswer 1k/2k/4k inputs with contemporaneous LMDeploy 0.2.6 semantics reproduces all three Fig. 15(c) original accuracies within 10%."
+    status: rejected
     motivation: "Complete the remaining source-identifiable native answering baseline and distinguish a public Ada-LEval reconstruction from the paper's undisclosed recipe."
     parent: H5
     priority: high
@@ -244,7 +244,7 @@ experiments:
   proxy_metric: "Maximum absolute percentage error across every numeric paper anchor; pass only when each reproducible point is <=10%, with unavailable measurements explicitly classified rather than fabricated."
   baseline_value: 0.2486
   best_value: 0.0123
-  total_runs: 32
+  total_runs: 33
   trajectory:
     - run_id: "run_001"
       hypothesis: "H2"
@@ -470,11 +470,18 @@ experiments:
       wall_time_min: 0.1
       change_summary: "Source-exposed identifiability audit supported: 10/10 necessary fields are missing across five domains; deterministic FFT witnesses show future-position leakage and 1.776 maximum ambiguity between plausible interpretations."
       timestamp: "2026-08-17"
+    - run_id: "run_034"
+      hypothesis: "H30"
+      metric_value: 0.2368
+      delta: null
+      wall_time_min: 11.0
+      change_summary: "Historical public InternLM2/Ada-LEval reconstruction rejected at 57.8/46.9/27.4%; 1k passes MLX and 1k/2k pass the official table, but the all-setting maxima are 23.68%/19.17%."
+      timestamp: "2026-08-17"
 
 outer_loop:
-  cycle: 14
-  last_direction: "Classify compressed Llama quality as source-underidentified until a causal graph, layer/L manifest, BSMM initializer, and training recipe are released. Move to the remaining independently public InternLM2/Ada-LEval original answering baselines before considering any new inferred structured recipe."
-  last_reflection: "H29 binds ten omissions to exact manuscript/Fig. 7 hashes and supplies numerical ambiguity witnesses: a final-token change perturbs 29 earlier reconstructed positions and two plausible FFT readings differ by 1.776. The source constrains high-level structure but cannot select an author-faithful executable graph."
+  cycle: 15
+  last_direction: "Treat H30 as a valid rejection of one historical public checkpoint run. Quantify the frozen LMDeploy decoder's stochastic 4k variability with independently fixed replicate seed schedules before attributing the 6.5-point official-table gap to an unpublished checkpoint or task adaptation; do not tune prompts or select a favorable replicate."
+  last_reflection: "H30 passes every source, runtime, prompt, partition, extraction, and capacity gate but reaches 57.8/46.9/27.4%. The curve agrees with the official Ada-LEval table at 1k/2k yet misses both official and MLX 4k anchors, so neither input corruption nor one global checkpoint offset explains the residual."
 
 workspace:
   findings: "findings.md"
