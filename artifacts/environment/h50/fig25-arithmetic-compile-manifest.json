@@ -1,0 +1,1192 @@
+{
+  "arithmetic_expansion": {
+    "bsmm_pair": {
+      "add": 2,
+      "fma": 4
+    },
+    "derivation": {
+      "swa_fma_groups": "W_times_Q_div_16PE_times_8SIMD",
+      "swa_load_waves": "W_div_4logical_lanes_times_8SIMD"
+    },
+    "fft_complex_pair": {
+      "add": 6,
+      "fma": 4
+    },
+    "swa_w128_q32": {
+      "kv_load_waves": 4,
+      "score_fma_groups": 32,
+      "sv_fma_groups": 32
+    },
+    "swa_w256_q64": {
+      "kv_load_waves": 8,
+      "score_fma_groups": 128,
+      "sv_fma_groups": 128
+    }
+  },
+  "experiment_id": "H50",
+  "output_count": 24,
+  "outputs": [
+    {
+      "bytes": 217460,
+      "case": "BERT_512",
+      "metadata": {
+        "arithmetic_expanded": true,
+        "block_count": 84,
+        "case": {
+          "name": "BERT_512",
+          "sequence": 512,
+          "trip_count": 1
+        },
+        "compiler": "mlxsim.dsagen_operator_sweep.compile_operator_proxy",
+        "event_edge_count": 72,
+        "experiment_id": "H49",
+        "memory_requests": 24,
+        "operation_counts": {
+          "add": 432,
+          "fma": 288,
+          "shuffle": 12
+        },
+        "operator": {
+          "family": "fft",
+          "name": "fft_cmp",
+          "stages": 7
+        },
+        "paper_target_values_consumed": false,
+        "pipeline_counts": {
+          "compute": 732,
+          "load": 12,
+          "store": 12,
+          "xfer": 72
+        },
+        "stage_count": 7,
+        "stage_groups": [
+          "fft_0",
+          "fft_1",
+          "fft_2",
+          "truncate_shuffle",
+          "ifft_0",
+          "ifft_1",
+          "ifft_2"
+        ],
+        "trip_count": 1
+      },
+      "operator": "fft_cmp",
+      "path": "/workspace/MLX_dev/artifacts/environment/h50/fft_cmp--BERT_512.json",
+      "sha256": "c916bb00dfaf3368def4777d53238a968b80d1b13d9176d82ebedc5de4ede4e2"
+    },
+    {
+      "bytes": 217968,
+      "case": "Llama2_1K",
+      "metadata": {
+        "arithmetic_expanded": true,
+        "block_count": 84,
+        "case": {
+          "name": "Llama2_1K",
+          "sequence": 1024,
+          "trip_count": 2
+        },
+        "compiler": "mlxsim.dsagen_operator_sweep.compile_operator_proxy",
+        "event_edge_count": 72,
+        "experiment_id": "H49",
+        "memory_requests": 48,
+        "operation_counts": {
+          "add": 864,
+          "fma": 576,
+          "shuffle": 24
+        },
+        "operator": {
+          "family": "fft",
+          "name": "fft_cmp",
+          "stages": 7
+        },
+        "paper_target_values_consumed": false,
+        "pipeline_counts": {
+          "compute": 1464,
+          "load": 24,
+          "store": 24,
+          "xfer": 144
+        },
+        "stage_count": 7,
+        "stage_groups": [
+          "fft_0",
+          "fft_1",
+          "fft_2",
+          "truncate_shuffle",
+          "ifft_0",
+          "ifft_1",
+          "ifft_2"
+        ],
+        "trip_count": 2
+      },
+      "operator": "fft_cmp",
+      "path": "/workspace/MLX_dev/artifacts/environment/h50/fft_cmp--Llama2_1K.json",
+      "sha256": "b8a9a1271117a72111aee82d1da6846c5de805b6a9ca48ad889d996b2ce61bcb"
+    },
+    {
+      "bytes": 220998,
+      "case": "InternLM2_4K",
+      "metadata": {
+        "arithmetic_expanded": true,
+        "block_count": 84,
+        "case": {
+          "name": "InternLM2_4K",
+          "sequence": 4096,
+          "trip_count": 8
+        },
+        "compiler": "mlxsim.dsagen_operator_sweep.compile_operator_proxy",
+        "event_edge_count": 72,
+        "experiment_id": "H49",
+        "memory_requests": 192,
+        "operation_counts": {
+          "add": 3456,
+          "fma": 2304,
+          "shuffle": 96
+        },
+        "operator": {
+          "family": "fft",
+          "name": "fft_cmp",
+          "stages": 7
+        },
+        "paper_target_values_consumed": false,
+        "pipeline_counts": {
+          "compute": 5856,
+          "load": 96,
+          "store": 96,
+          "xfer": 576
+        },
+        "stage_count": 7,
+        "stage_groups": [
+          "fft_0",
+          "fft_1",
+          "fft_2",
+          "truncate_shuffle",
+          "ifft_0",
+          "ifft_1",
+          "ifft_2"
+        ],
+        "trip_count": 8
+      },
+      "operator": "fft_cmp",
+      "path": "/workspace/MLX_dev/artifacts/environment/h50/fft_cmp--InternLM2_4K.json",
+      "sha256": "9c2b0e4ad9f35feba8fd1affa5952ea9b4a4ddf2859f347a0396b3a4e79aef86"
+    },
+    {
+      "bytes": 225116,
+      "case": "BERT_8K",
+      "metadata": {
+        "arithmetic_expanded": true,
+        "block_count": 84,
+        "case": {
+          "name": "BERT_8K",
+          "sequence": 8192,
+          "trip_count": 16
+        },
+        "compiler": "mlxsim.dsagen_operator_sweep.compile_operator_proxy",
+        "event_edge_count": 72,
+        "experiment_id": "H49",
+        "memory_requests": 384,
+        "operation_counts": {
+          "add": 6912,
+          "fma": 4608,
+          "shuffle": 192
+        },
+        "operator": {
+          "family": "fft",
+          "name": "fft_cmp",
+          "stages": 7
+        },
+        "paper_target_values_consumed": false,
+        "pipeline_counts": {
+          "compute": 11712,
+          "load": 192,
+          "store": 192,
+          "xfer": 1152
+        },
+        "stage_count": 7,
+        "stage_groups": [
+          "fft_0",
+          "fft_1",
+          "fft_2",
+          "truncate_shuffle",
+          "ifft_0",
+          "ifft_1",
+          "ifft_2"
+        ],
+        "trip_count": 16
+      },
+      "operator": "fft_cmp",
+      "path": "/workspace/MLX_dev/artifacts/environment/h50/fft_cmp--BERT_8K.json",
+      "sha256": "cc892262d24ca00d76701eb05ba9b92813ce524e30536bc888fb9056124d688c"
+    },
+    {
+      "bytes": 98433,
+      "case": "BERT_512",
+      "metadata": {
+        "arithmetic_expanded": true,
+        "block_count": 48,
+        "case": {
+          "name": "BERT_512",
+          "sequence": 512,
+          "trip_count": 1
+        },
+        "compiler": "mlxsim.dsagen_operator_sweep.compile_operator_proxy",
+        "event_edge_count": 36,
+        "experiment_id": "H49",
+        "memory_requests": 24,
+        "operation_counts": {
+          "add": 96,
+          "fma": 192
+        },
+        "operator": {
+          "block_size": 16,
+          "family": "qkv_bsmm",
+          "name": "qkv_bsmm",
+          "stages": 4
+        },
+        "paper_target_values_consumed": false,
+        "pipeline_counts": {
+          "compute": 288,
+          "load": 12,
+          "store": 12,
+          "xfer": 36
+        },
+        "stage_count": 4,
+        "stage_groups": [
+          "bsmm_0",
+          "bsmm_1",
+          "bsmm_2",
+          "bsmm_3"
+        ],
+        "trip_count": 1
+      },
+      "operator": "qkv_bsmm",
+      "path": "/workspace/MLX_dev/artifacts/environment/h50/qkv_bsmm--BERT_512.json",
+      "sha256": "270659a42271674edc0cb17a89ac7f93c749892bfbbabd51c567d6ab6e126628"
+    },
+    {
+      "bytes": 98940,
+      "case": "Llama2_1K",
+      "metadata": {
+        "arithmetic_expanded": true,
+        "block_count": 48,
+        "case": {
+          "name": "Llama2_1K",
+          "sequence": 1024,
+          "trip_count": 2
+        },
+        "compiler": "mlxsim.dsagen_operator_sweep.compile_operator_proxy",
+        "event_edge_count": 36,
+        "experiment_id": "H49",
+        "memory_requests": 48,
+        "operation_counts": {
+          "add": 192,
+          "fma": 384
+        },
+        "operator": {
+          "block_size": 16,
+          "family": "qkv_bsmm",
+          "name": "qkv_bsmm",
+          "stages": 4
+        },
+        "paper_target_values_consumed": false,
+        "pipeline_counts": {
+          "compute": 576,
+          "load": 24,
+          "store": 24,
+          "xfer": 72
+        },
+        "stage_count": 4,
+        "stage_groups": [
+          "bsmm_0",
+          "bsmm_1",
+          "bsmm_2",
+          "bsmm_3"
+        ],
+        "trip_count": 2
+      },
+      "operator": "qkv_bsmm",
+      "path": "/workspace/MLX_dev/artifacts/environment/h50/qkv_bsmm--Llama2_1K.json",
+      "sha256": "055e19fae3ecf0cb7a82678f09019ac6bf76986ffb4f43b6d112f3725e691a62"
+    },
+    {
+      "bytes": 101971,
+      "case": "InternLM2_4K",
+      "metadata": {
+        "arithmetic_expanded": true,
+        "block_count": 48,
+        "case": {
+          "name": "InternLM2_4K",
+          "sequence": 4096,
+          "trip_count": 8
+        },
+        "compiler": "mlxsim.dsagen_operator_sweep.compile_operator_proxy",
+        "event_edge_count": 36,
+        "experiment_id": "H49",
+        "memory_requests": 192,
+        "operation_counts": {
+          "add": 768,
+          "fma": 1536
+        },
+        "operator": {
+          "block_size": 16,
+          "family": "qkv_bsmm",
+          "name": "qkv_bsmm",
+          "stages": 4
+        },
+        "paper_target_values_consumed": false,
+        "pipeline_counts": {
+          "compute": 2304,
+          "load": 96,
+          "store": 96,
+          "xfer": 288
+        },
+        "stage_count": 4,
+        "stage_groups": [
+          "bsmm_0",
+          "bsmm_1",
+          "bsmm_2",
+          "bsmm_3"
+        ],
+        "trip_count": 8
+      },
+      "operator": "qkv_bsmm",
+      "path": "/workspace/MLX_dev/artifacts/environment/h50/qkv_bsmm--InternLM2_4K.json",
+      "sha256": "9efc3cf3a07b3463c150f18150bd329637bf45bfd4a1c2bb55ac00563429b533"
+    },
+    {
+      "bytes": 106051,
+      "case": "BERT_8K",
+      "metadata": {
+        "arithmetic_expanded": true,
+        "block_count": 48,
+        "case": {
+          "name": "BERT_8K",
+          "sequence": 8192,
+          "trip_count": 16
+        },
+        "compiler": "mlxsim.dsagen_operator_sweep.compile_operator_proxy",
+        "event_edge_count": 36,
+        "experiment_id": "H49",
+        "memory_requests": 384,
+        "operation_counts": {
+          "add": 1536,
+          "fma": 3072
+        },
+        "operator": {
+          "block_size": 16,
+          "family": "qkv_bsmm",
+          "name": "qkv_bsmm",
+          "stages": 4
+        },
+        "paper_target_values_consumed": false,
+        "pipeline_counts": {
+          "compute": 4608,
+          "load": 192,
+          "store": 192,
+          "xfer": 576
+        },
+        "stage_count": 4,
+        "stage_groups": [
+          "bsmm_0",
+          "bsmm_1",
+          "bsmm_2",
+          "bsmm_3"
+        ],
+        "trip_count": 16
+      },
+      "operator": "qkv_bsmm",
+      "path": "/workspace/MLX_dev/artifacts/environment/h50/qkv_bsmm--BERT_8K.json",
+      "sha256": "9fd65f34af194e29bfb0bef37bf15260ea34ccd3c957894581e1567fd8ed1fd8"
+    },
+    {
+      "bytes": 121842,
+      "case": "BERT_512",
+      "metadata": {
+        "arithmetic_expanded": true,
+        "block_count": 60,
+        "case": {
+          "name": "BERT_512",
+          "sequence": 512,
+          "trip_count": 1
+        },
+        "compiler": "mlxsim.dsagen_operator_sweep.compile_operator_proxy",
+        "event_edge_count": 48,
+        "experiment_id": "H49",
+        "memory_requests": 24,
+        "operation_counts": {
+          "add": 120,
+          "fma": 240
+        },
+        "operator": {
+          "block_size": 32,
+          "family": "qkv_bsmm",
+          "name": "qkv_bsmm_b32",
+          "stages": 5
+        },
+        "paper_target_values_consumed": false,
+        "pipeline_counts": {
+          "compute": 360,
+          "load": 12,
+          "store": 12,
+          "xfer": 48
+        },
+        "stage_count": 5,
+        "stage_groups": [
+          "bsmm_0",
+          "bsmm_1",
+          "bsmm_2",
+          "bsmm_3",
+          "bsmm_4"
+        ],
+        "trip_count": 1
+      },
+      "operator": "qkv_bsmm_b32",
+      "path": "/workspace/MLX_dev/artifacts/environment/h50/qkv_bsmm_b32--BERT_512.json",
+      "sha256": "9da2b26b2051befd4a105d87914f4065a0c3205f00c1ee67c43788a7891f6eaf"
+    },
+    {
+      "bytes": 122348,
+      "case": "Llama2_1K",
+      "metadata": {
+        "arithmetic_expanded": true,
+        "block_count": 60,
+        "case": {
+          "name": "Llama2_1K",
+          "sequence": 1024,
+          "trip_count": 2
+        },
+        "compiler": "mlxsim.dsagen_operator_sweep.compile_operator_proxy",
+        "event_edge_count": 48,
+        "experiment_id": "H49",
+        "memory_requests": 48,
+        "operation_counts": {
+          "add": 240,
+          "fma": 480
+        },
+        "operator": {
+          "block_size": 32,
+          "family": "qkv_bsmm",
+          "name": "qkv_bsmm_b32",
+          "stages": 5
+        },
+        "paper_target_values_consumed": false,
+        "pipeline_counts": {
+          "compute": 720,
+          "load": 24,
+          "store": 24,
+          "xfer": 96
+        },
+        "stage_count": 5,
+        "stage_groups": [
+          "bsmm_0",
+          "bsmm_1",
+          "bsmm_2",
+          "bsmm_3",
+          "bsmm_4"
+        ],
+        "trip_count": 2
+      },
+      "operator": "qkv_bsmm_b32",
+      "path": "/workspace/MLX_dev/artifacts/environment/h50/qkv_bsmm_b32--Llama2_1K.json",
+      "sha256": "2996a1c917813e68ff909e6b922f5c7e567c1b38fbeeeb3da8f17b266151c5a6"
+    },
+    {
+      "bytes": 125379,
+      "case": "InternLM2_4K",
+      "metadata": {
+        "arithmetic_expanded": true,
+        "block_count": 60,
+        "case": {
+          "name": "InternLM2_4K",
+          "sequence": 4096,
+          "trip_count": 8
+        },
+        "compiler": "mlxsim.dsagen_operator_sweep.compile_operator_proxy",
+        "event_edge_count": 48,
+        "experiment_id": "H49",
+        "memory_requests": 192,
+        "operation_counts": {
+          "add": 960,
+          "fma": 1920
+        },
+        "operator": {
+          "block_size": 32,
+          "family": "qkv_bsmm",
+          "name": "qkv_bsmm_b32",
+          "stages": 5
+        },
+        "paper_target_values_consumed": false,
+        "pipeline_counts": {
+          "compute": 2880,
+          "load": 96,
+          "store": 96,
+          "xfer": 384
+        },
+        "stage_count": 5,
+        "stage_groups": [
+          "bsmm_0",
+          "bsmm_1",
+          "bsmm_2",
+          "bsmm_3",
+          "bsmm_4"
+        ],
+        "trip_count": 8
+      },
+      "operator": "qkv_bsmm_b32",
+      "path": "/workspace/MLX_dev/artifacts/environment/h50/qkv_bsmm_b32--InternLM2_4K.json",
+      "sha256": "71657f0976070ec82052364c4280413c520d0dc976ac7a32cb372b0b89c6b626"
+    },
+    {
+      "bytes": 129471,
+      "case": "BERT_8K",
+      "metadata": {
+        "arithmetic_expanded": true,
+        "block_count": 60,
+        "case": {
+          "name": "BERT_8K",
+          "sequence": 8192,
+          "trip_count": 16
+        },
+        "compiler": "mlxsim.dsagen_operator_sweep.compile_operator_proxy",
+        "event_edge_count": 48,
+        "experiment_id": "H49",
+        "memory_requests": 384,
+        "operation_counts": {
+          "add": 1920,
+          "fma": 3840
+        },
+        "operator": {
+          "block_size": 32,
+          "family": "qkv_bsmm",
+          "name": "qkv_bsmm_b32",
+          "stages": 5
+        },
+        "paper_target_values_consumed": false,
+        "pipeline_counts": {
+          "compute": 5760,
+          "load": 192,
+          "store": 192,
+          "xfer": 768
+        },
+        "stage_count": 5,
+        "stage_groups": [
+          "bsmm_0",
+          "bsmm_1",
+          "bsmm_2",
+          "bsmm_3",
+          "bsmm_4"
+        ],
+        "trip_count": 16
+      },
+      "operator": "qkv_bsmm_b32",
+      "path": "/workspace/MLX_dev/artifacts/environment/h50/qkv_bsmm_b32--BERT_8K.json",
+      "sha256": "a041c5c9174d0589ddb1690dc240d5f03d308406bcc007964ad0476c33d1bdc3"
+    },
+    {
+      "bytes": 145054,
+      "case": "BERT_512",
+      "metadata": {
+        "arithmetic_expanded": true,
+        "block_count": 72,
+        "case": {
+          "name": "BERT_512",
+          "sequence": 512,
+          "trip_count": 1
+        },
+        "compiler": "mlxsim.dsagen_operator_sweep.compile_operator_proxy",
+        "event_edge_count": 60,
+        "experiment_id": "H49",
+        "memory_requests": 24,
+        "operation_counts": {
+          "add": 144,
+          "fma": 288
+        },
+        "operator": {
+          "block_size": 64,
+          "family": "qkv_bsmm",
+          "name": "qkv_bsmm_b64",
+          "stages": 6
+        },
+        "paper_target_values_consumed": false,
+        "pipeline_counts": {
+          "compute": 432,
+          "load": 12,
+          "store": 12,
+          "xfer": 60
+        },
+        "stage_count": 6,
+        "stage_groups": [
+          "bsmm_0",
+          "bsmm_1",
+          "bsmm_2",
+          "bsmm_3",
+          "bsmm_4",
+          "bsmm_5"
+        ],
+        "trip_count": 1
+      },
+      "operator": "qkv_bsmm_b64",
+      "path": "/workspace/MLX_dev/artifacts/environment/h50/qkv_bsmm_b64--BERT_512.json",
+      "sha256": "980b12092450ebbc2ae9d3f8f90d06daa331c800882462760edb1766dce1142b"
+    },
+    {
+      "bytes": 145561,
+      "case": "Llama2_1K",
+      "metadata": {
+        "arithmetic_expanded": true,
+        "block_count": 72,
+        "case": {
+          "name": "Llama2_1K",
+          "sequence": 1024,
+          "trip_count": 2
+        },
+        "compiler": "mlxsim.dsagen_operator_sweep.compile_operator_proxy",
+        "event_edge_count": 60,
+        "experiment_id": "H49",
+        "memory_requests": 48,
+        "operation_counts": {
+          "add": 288,
+          "fma": 576
+        },
+        "operator": {
+          "block_size": 64,
+          "family": "qkv_bsmm",
+          "name": "qkv_bsmm_b64",
+          "stages": 6
+        },
+        "paper_target_values_consumed": false,
+        "pipeline_counts": {
+          "compute": 864,
+          "load": 24,
+          "store": 24,
+          "xfer": 120
+        },
+        "stage_count": 6,
+        "stage_groups": [
+          "bsmm_0",
+          "bsmm_1",
+          "bsmm_2",
+          "bsmm_3",
+          "bsmm_4",
+          "bsmm_5"
+        ],
+        "trip_count": 2
+      },
+      "operator": "qkv_bsmm_b64",
+      "path": "/workspace/MLX_dev/artifacts/environment/h50/qkv_bsmm_b64--Llama2_1K.json",
+      "sha256": "2e0c0d3f16fb1badfe3fa00af43f4755549835ff40c072cc87c9204ed198914c"
+    },
+    {
+      "bytes": 148592,
+      "case": "InternLM2_4K",
+      "metadata": {
+        "arithmetic_expanded": true,
+        "block_count": 72,
+        "case": {
+          "name": "InternLM2_4K",
+          "sequence": 4096,
+          "trip_count": 8
+        },
+        "compiler": "mlxsim.dsagen_operator_sweep.compile_operator_proxy",
+        "event_edge_count": 60,
+        "experiment_id": "H49",
+        "memory_requests": 192,
+        "operation_counts": {
+          "add": 1152,
+          "fma": 2304
+        },
+        "operator": {
+          "block_size": 64,
+          "family": "qkv_bsmm",
+          "name": "qkv_bsmm_b64",
+          "stages": 6
+        },
+        "paper_target_values_consumed": false,
+        "pipeline_counts": {
+          "compute": 3456,
+          "load": 96,
+          "store": 96,
+          "xfer": 480
+        },
+        "stage_count": 6,
+        "stage_groups": [
+          "bsmm_0",
+          "bsmm_1",
+          "bsmm_2",
+          "bsmm_3",
+          "bsmm_4",
+          "bsmm_5"
+        ],
+        "trip_count": 8
+      },
+      "operator": "qkv_bsmm_b64",
+      "path": "/workspace/MLX_dev/artifacts/environment/h50/qkv_bsmm_b64--InternLM2_4K.json",
+      "sha256": "44f67e60fc7297c314db168dbff30601389e666abcb2026a387c7df0bdac78fc"
+    },
+    {
+      "bytes": 152695,
+      "case": "BERT_8K",
+      "metadata": {
+        "arithmetic_expanded": true,
+        "block_count": 72,
+        "case": {
+          "name": "BERT_8K",
+          "sequence": 8192,
+          "trip_count": 16
+        },
+        "compiler": "mlxsim.dsagen_operator_sweep.compile_operator_proxy",
+        "event_edge_count": 60,
+        "experiment_id": "H49",
+        "memory_requests": 384,
+        "operation_counts": {
+          "add": 2304,
+          "fma": 4608
+        },
+        "operator": {
+          "block_size": 64,
+          "family": "qkv_bsmm",
+          "name": "qkv_bsmm_b64",
+          "stages": 6
+        },
+        "paper_target_values_consumed": false,
+        "pipeline_counts": {
+          "compute": 6912,
+          "load": 192,
+          "store": 192,
+          "xfer": 960
+        },
+        "stage_count": 6,
+        "stage_groups": [
+          "bsmm_0",
+          "bsmm_1",
+          "bsmm_2",
+          "bsmm_3",
+          "bsmm_4",
+          "bsmm_5"
+        ],
+        "trip_count": 16
+      },
+      "operator": "qkv_bsmm_b64",
+      "path": "/workspace/MLX_dev/artifacts/environment/h50/qkv_bsmm_b64--BERT_8K.json",
+      "sha256": "c0be4ee2e91482028fd8d32181eeeb85cf560249db2cd564a0142196fcd85af5"
+    },
+    {
+      "bytes": 93443,
+      "case": "BERT_512",
+      "metadata": {
+        "arithmetic_expanded": true,
+        "block_count": 32,
+        "case": {
+          "name": "BERT_512",
+          "sequence": 512,
+          "trip_count": 1
+        },
+        "compiler": "mlxsim.dsagen_operator_sweep.compile_operator_proxy",
+        "event_edge_count": 28,
+        "experiment_id": "H49",
+        "memory_requests": 36,
+        "operation_counts": {
+          "add": 4,
+          "fdiv": 4,
+          "fexp": 4,
+          "fma": 256,
+          "fmax": 4
+        },
+        "operator": {
+          "family": "swa",
+          "fma_repeats": 1,
+          "kv_load_waves": 4,
+          "name": "swa_w128_q32",
+          "query_tile": 32,
+          "score_fma_groups": 32,
+          "sv_fma_groups": 32,
+          "window": 128
+        },
+        "paper_target_values_consumed": false,
+        "pipeline_counts": {
+          "compute": 272,
+          "load": 32,
+          "store": 4,
+          "xfer": 28
+        },
+        "stage_count": 4,
+        "stage_groups": [
+          "qk_score",
+          "row_max",
+          "exp_norm_stats",
+          "sv_normalize"
+        ],
+        "trip_count": 1
+      },
+      "operator": "swa_w128_q32",
+      "path": "/workspace/MLX_dev/artifacts/environment/h50/swa_w128_q32--BERT_512.json",
+      "sha256": "a759ddeeaf7fc5e4ec82ae76c6661d7a27144d2b9e68f7b1623be0f3a3b8e8d1"
+    },
+    {
+      "bytes": 94201,
+      "case": "Llama2_1K",
+      "metadata": {
+        "arithmetic_expanded": true,
+        "block_count": 32,
+        "case": {
+          "name": "Llama2_1K",
+          "sequence": 1024,
+          "trip_count": 2
+        },
+        "compiler": "mlxsim.dsagen_operator_sweep.compile_operator_proxy",
+        "event_edge_count": 28,
+        "experiment_id": "H49",
+        "memory_requests": 72,
+        "operation_counts": {
+          "add": 8,
+          "fdiv": 8,
+          "fexp": 8,
+          "fma": 512,
+          "fmax": 8
+        },
+        "operator": {
+          "family": "swa",
+          "fma_repeats": 1,
+          "kv_load_waves": 4,
+          "name": "swa_w128_q32",
+          "query_tile": 32,
+          "score_fma_groups": 32,
+          "sv_fma_groups": 32,
+          "window": 128
+        },
+        "paper_target_values_consumed": false,
+        "pipeline_counts": {
+          "compute": 544,
+          "load": 64,
+          "store": 8,
+          "xfer": 56
+        },
+        "stage_count": 4,
+        "stage_groups": [
+          "qk_score",
+          "row_max",
+          "exp_norm_stats",
+          "sv_normalize"
+        ],
+        "trip_count": 2
+      },
+      "operator": "swa_w128_q32",
+      "path": "/workspace/MLX_dev/artifacts/environment/h50/swa_w128_q32--Llama2_1K.json",
+      "sha256": "52fd17917a737acb5f684cea57ec3dfeb7e3042996589b1c23580c3877640762"
+    },
+    {
+      "bytes": 98750,
+      "case": "InternLM2_4K",
+      "metadata": {
+        "arithmetic_expanded": true,
+        "block_count": 32,
+        "case": {
+          "name": "InternLM2_4K",
+          "sequence": 4096,
+          "trip_count": 8
+        },
+        "compiler": "mlxsim.dsagen_operator_sweep.compile_operator_proxy",
+        "event_edge_count": 28,
+        "experiment_id": "H49",
+        "memory_requests": 288,
+        "operation_counts": {
+          "add": 32,
+          "fdiv": 32,
+          "fexp": 32,
+          "fma": 2048,
+          "fmax": 32
+        },
+        "operator": {
+          "family": "swa",
+          "fma_repeats": 1,
+          "kv_load_waves": 4,
+          "name": "swa_w128_q32",
+          "query_tile": 32,
+          "score_fma_groups": 32,
+          "sv_fma_groups": 32,
+          "window": 128
+        },
+        "paper_target_values_consumed": false,
+        "pipeline_counts": {
+          "compute": 2176,
+          "load": 256,
+          "store": 32,
+          "xfer": 224
+        },
+        "stage_count": 4,
+        "stage_groups": [
+          "qk_score",
+          "row_max",
+          "exp_norm_stats",
+          "sv_normalize"
+        ],
+        "trip_count": 8
+      },
+      "operator": "swa_w128_q32",
+      "path": "/workspace/MLX_dev/artifacts/environment/h50/swa_w128_q32--InternLM2_4K.json",
+      "sha256": "e1ec468af991127791b414a15a8360f2cb309ad9788a3d3b646c17fb84c0c639"
+    },
+    {
+      "bytes": 104827,
+      "case": "BERT_8K",
+      "metadata": {
+        "arithmetic_expanded": true,
+        "block_count": 32,
+        "case": {
+          "name": "BERT_8K",
+          "sequence": 8192,
+          "trip_count": 16
+        },
+        "compiler": "mlxsim.dsagen_operator_sweep.compile_operator_proxy",
+        "event_edge_count": 28,
+        "experiment_id": "H49",
+        "memory_requests": 576,
+        "operation_counts": {
+          "add": 64,
+          "fdiv": 64,
+          "fexp": 64,
+          "fma": 4096,
+          "fmax": 64
+        },
+        "operator": {
+          "family": "swa",
+          "fma_repeats": 1,
+          "kv_load_waves": 4,
+          "name": "swa_w128_q32",
+          "query_tile": 32,
+          "score_fma_groups": 32,
+          "sv_fma_groups": 32,
+          "window": 128
+        },
+        "paper_target_values_consumed": false,
+        "pipeline_counts": {
+          "compute": 4352,
+          "load": 512,
+          "store": 64,
+          "xfer": 448
+        },
+        "stage_count": 4,
+        "stage_groups": [
+          "qk_score",
+          "row_max",
+          "exp_norm_stats",
+          "sv_normalize"
+        ],
+        "trip_count": 16
+      },
+      "operator": "swa_w128_q32",
+      "path": "/workspace/MLX_dev/artifacts/environment/h50/swa_w128_q32--BERT_8K.json",
+      "sha256": "c2a9c1b6cd0b61b378f34667f86c7ffcfaa1d0f39945d318f57c7105ffd87a0d"
+    },
+    {
+      "bytes": 275563,
+      "case": "BERT_512",
+      "metadata": {
+        "arithmetic_expanded": true,
+        "block_count": 32,
+        "case": {
+          "name": "BERT_512",
+          "sequence": 512,
+          "trip_count": 1
+        },
+        "compiler": "mlxsim.dsagen_operator_sweep.compile_operator_proxy",
+        "event_edge_count": 28,
+        "experiment_id": "H49",
+        "memory_requests": 68,
+        "operation_counts": {
+          "add": 4,
+          "fdiv": 4,
+          "fexp": 4,
+          "fma": 1024,
+          "fmax": 4
+        },
+        "operator": {
+          "family": "swa",
+          "fma_repeats": 2,
+          "kv_load_waves": 8,
+          "name": "swa_w256_q64",
+          "query_tile": 64,
+          "score_fma_groups": 128,
+          "sv_fma_groups": 128,
+          "window": 256
+        },
+        "paper_target_values_consumed": false,
+        "pipeline_counts": {
+          "compute": 1040,
+          "load": 64,
+          "store": 4,
+          "xfer": 28
+        },
+        "stage_count": 4,
+        "stage_groups": [
+          "qk_score",
+          "row_max",
+          "exp_norm_stats",
+          "sv_normalize"
+        ],
+        "trip_count": 1
+      },
+      "operator": "swa_w256_q64",
+      "path": "/workspace/MLX_dev/artifacts/environment/h50/swa_w256_q64--BERT_512.json",
+      "sha256": "cbc4b35104f0fbda0a3859ba4dcca3b43d50a8e1c8ce5e68e17e942a70ab68b8"
+    },
+    {
+      "bytes": 276995,
+      "case": "Llama2_1K",
+      "metadata": {
+        "arithmetic_expanded": true,
+        "block_count": 32,
+        "case": {
+          "name": "Llama2_1K",
+          "sequence": 1024,
+          "trip_count": 2
+        },
+        "compiler": "mlxsim.dsagen_operator_sweep.compile_operator_proxy",
+        "event_edge_count": 28,
+        "experiment_id": "H49",
+        "memory_requests": 136,
+        "operation_counts": {
+          "add": 8,
+          "fdiv": 8,
+          "fexp": 8,
+          "fma": 2048,
+          "fmax": 8
+        },
+        "operator": {
+          "family": "swa",
+          "fma_repeats": 2,
+          "kv_load_waves": 8,
+          "name": "swa_w256_q64",
+          "query_tile": 64,
+          "score_fma_groups": 128,
+          "sv_fma_groups": 128,
+          "window": 256
+        },
+        "paper_target_values_consumed": false,
+        "pipeline_counts": {
+          "compute": 2080,
+          "load": 128,
+          "store": 8,
+          "xfer": 56
+        },
+        "stage_count": 4,
+        "stage_groups": [
+          "qk_score",
+          "row_max",
+          "exp_norm_stats",
+          "sv_normalize"
+        ],
+        "trip_count": 2
+      },
+      "operator": "swa_w256_q64",
+      "path": "/workspace/MLX_dev/artifacts/environment/h50/swa_w256_q64--Llama2_1K.json",
+      "sha256": "db0059dc7b18ecc38fa3f55b771ec2569c455f63ca0ac56e8c25fcbf2fd06c59"
+    },
+    {
+      "bytes": 285572,
+      "case": "InternLM2_4K",
+      "metadata": {
+        "arithmetic_expanded": true,
+        "block_count": 32,
+        "case": {
+          "name": "InternLM2_4K",
+          "sequence": 4096,
+          "trip_count": 8
+        },
+        "compiler": "mlxsim.dsagen_operator_sweep.compile_operator_proxy",
+        "event_edge_count": 28,
+        "experiment_id": "H49",
+        "memory_requests": 544,
+        "operation_counts": {
+          "add": 32,
+          "fdiv": 32,
+          "fexp": 32,
+          "fma": 8192,
+          "fmax": 32
+        },
+        "operator": {
+          "family": "swa",
+          "fma_repeats": 2,
+          "kv_load_waves": 8,
+          "name": "swa_w256_q64",
+          "query_tile": 64,
+          "score_fma_groups": 128,
+          "sv_fma_groups": 128,
+          "window": 256
+        },
+        "paper_target_values_consumed": false,
+        "pipeline_counts": {
+          "compute": 8320,
+          "load": 512,
+          "store": 32,
+          "xfer": 224
+        },
+        "stage_count": 4,
+        "stage_groups": [
+          "qk_score",
+          "row_max",
+          "exp_norm_stats",
+          "sv_normalize"
+        ],
+        "trip_count": 8
+      },
+      "operator": "swa_w256_q64",
+      "path": "/workspace/MLX_dev/artifacts/environment/h50/swa_w256_q64--InternLM2_4K.json",
+      "sha256": "c24cb8cb2053c2ac0309b9f6b4316e165d6c0acc67b02b008b1e31372b295628"
+    },
+    {
+      "bytes": 297029,
+      "case": "BERT_8K",
+      "metadata": {
+        "arithmetic_expanded": true,
+        "block_count": 32,
+        "case": {
+          "name": "BERT_8K",
+          "sequence": 8192,
+          "trip_count": 16
+        },
+        "compiler": "mlxsim.dsagen_operator_sweep.compile_operator_proxy",
+        "event_edge_count": 28,
+        "experiment_id": "H49",
+        "memory_requests": 1088,
+        "operation_counts": {
+          "add": 64,
+          "fdiv": 64,
+          "fexp": 64,
+          "fma": 16384,
+          "fmax": 64
+        },
+        "operator": {
+          "family": "swa",
+          "fma_repeats": 2,
+          "kv_load_waves": 8,
+          "name": "swa_w256_q64",
+          "query_tile": 64,
+          "score_fma_groups": 128,
+          "sv_fma_groups": 128,
+          "window": 256
+        },
+        "paper_target_values_consumed": false,
+        "pipeline_counts": {
+          "compute": 16640,
+          "load": 1024,
+          "store": 64,
+          "xfer": 448
+        },
+        "stage_count": 4,
+        "stage_groups": [
+          "qk_score",
+          "row_max",
+          "exp_norm_stats",
+          "sv_normalize"
+        ],
+        "trip_count": 16
+      },
+      "operator": "swa_w256_q64",
+      "path": "/workspace/MLX_dev/artifacts/environment/h50/swa_w256_q64--BERT_8K.json",
+      "sha256": "dfef638b61178be46ed0a911b6b10e73bf8d44af75af17af2ad01fdf0edc5f9c"
+    }
+  ],
+  "paper_target_values_consumed": false,
+  "schema_version": 1
+}

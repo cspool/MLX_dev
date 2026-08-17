@@ -17,6 +17,7 @@ def _branch(
     load: bool = False,
     store: bool = False,
     final: bool = False,
+    operations: tuple[str, ...] = ("fma", "add"),
 ) -> tuple[NodeSpec, ...]:
     nodes: list[NodeSpec] = []
     for branch_index, branch_name in enumerate(("q", "k", "v")):
@@ -25,7 +26,7 @@ def _branch(
                 name=f"{name}_{branch_name}",
                 inputs=() if input_prefix is None else (f"{input_prefix}_{branch_name}",),
                 outputs=() if output_prefix is None else (f"{output_prefix}_{branch_name}",),
-                operations=("fma", "add"),
+                operations=operations,
                 load_slot_group=branch_index if load else None,
                 store_slot_group=0 if store else None,
                 final_event=f"{name}_{branch_name}_done" if final else None,
@@ -34,9 +35,16 @@ def _branch(
     return tuple(nodes)
 
 
-def operator_stages(operator: Mapping[str, Any]) -> tuple[StageSpec, ...]:
+def operator_stages(
+    operator: Mapping[str, Any], *, arithmetic_expanded: bool = False
+) -> tuple[StageSpec, ...]:
     family = operator["family"]
     if family == "fft":
+        pair_operations = (
+            ("fma",) * 4 + ("add",) * 6
+            if arithmetic_expanded
+            else ("fma", "add")
+        )
         stages: list[StageSpec] = []
         previous: str | None = None
         for depth in range(3):
@@ -49,6 +57,7 @@ def operator_stages(operator: Mapping[str, Any]) -> tuple[StageSpec, ...]:
                         previous,
                         output,
                         load=depth == 0,
+                        operations=pair_operations,
                     ),
                 )
             )
@@ -80,12 +89,18 @@ def operator_stages(operator: Mapping[str, Any]) -> tuple[StageSpec, ...]:
                         output,
                         store=is_final,
                         final=is_final,
+                        operations=pair_operations,
                     ),
                 )
             )
             previous = output
         return tuple(stages)
     if family == "qkv_bsmm":
+        pair_operations = (
+            ("fma",) * 4 + ("add",) * 2
+            if arithmetic_expanded
+            else ("fma", "add")
+        )
         depth_count = int(operator["stages"])
         stages = []
         previous = None
@@ -102,13 +117,19 @@ def operator_stages(operator: Mapping[str, Any]) -> tuple[StageSpec, ...]:
                         load=depth == 0,
                         store=is_final,
                         final=is_final,
+                        operations=pair_operations,
                     ),
                 )
             )
             previous = output
         return tuple(stages)
     if family == "swa":
-        repeats = int(operator["fma_repeats"])
+        repeats = int(
+            operator["score_fma_groups"]
+            if arithmetic_expanded
+            else operator["fma_repeats"]
+        )
+        load_repeats = int(operator.get("kv_load_waves", 1)) if arithmetic_expanded else 1
         return (
             StageSpec(
                 "qk_score",
@@ -119,8 +140,15 @@ def operator_stages(operator: Mapping[str, Any]) -> tuple[StageSpec, ...]:
                         ("score",),
                         tuple("fma" for _ in range(repeats)),
                         load_slot_group=0,
+                        load_repeats=load_repeats,
                     ),
-                    NodeSpec("v_load", (), ("score_v",), load_slot_group=1),
+                    NodeSpec(
+                        "v_load",
+                        (),
+                        ("score_v",),
+                        load_slot_group=1,
+                        load_repeats=load_repeats,
+                    ),
                 ),
             ),
             StageSpec(
@@ -185,10 +213,11 @@ def compile_operator_proxy(
     symbols: dict[str, ElfSymbol],
     *,
     memory_backend: str = "dsagen_dma",
+    arithmetic_expanded: bool = False,
 ) -> tuple[dict[str, Any], dict[str, Any]]:
     if memory_backend not in {"fixed", "dsagen_dma"}:
         raise ValueError(f"unsupported operator backend: {memory_backend}")
-    stages = operator_stages(operator)
+    stages = operator_stages(operator, arithmetic_expanded=arithmetic_expanded)
     trip_count = int(case["trip_count"])
     cold = symbols["mlx_dma_cold_region"]
     write = symbols["mlx_dma_write_region"]
@@ -240,6 +269,7 @@ def compile_operator_proxy(
         "experiment_id": "H49",
         "compiler": "mlxsim.dsagen_operator_sweep.compile_operator_proxy",
         "paper_target_values_consumed": False,
+        "arithmetic_expanded": arithmetic_expanded,
         "operator": dict(operator),
         "case": dict(case),
         "stage_groups": [stage.name for stage in stages],

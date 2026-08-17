@@ -15,6 +15,7 @@ class NodeSpec:
     outputs: tuple[str, ...]
     operations: tuple[str, ...] = ()
     load_slot_group: int | None = None
+    load_repeats: int = 1
     store_slot_group: int | None = None
     final_event: str | None = None
 
@@ -291,25 +292,40 @@ def _node_instructions(
     event_edges: list[dict[str, Any]] = []
     input_registers = [_signal_register(signal) for signal in node.inputs]
     if node.load_slot_group is not None:
-        sequence = _memory_sequence(
-            cold,
-            slot=node.load_slot_group * 4 + lane,
-            trip_count=trip_count,
-            block_stride=4096,
-        )
+        if node.load_repeats <= 0:
+            raise ValueError("load repeats must be positive")
         load_register = 2 if input_registers else 0
-        instructions.append(
-            {
-                "id": f"{prefix}_load",
-                "pipeline": "load",
-                "operation": "load",
-                "reads": [],
-                "writes": [load_register],
-                "memory_address": sequence[0],
-                "memory_address_sequence": sequence,
-                "memory_bytes": 16,
-            }
-        )
+        for load_index in range(node.load_repeats):
+            if node.load_repeats == 1:
+                sequence = _memory_sequence(
+                    cold,
+                    slot=node.load_slot_group * 4 + lane,
+                    trip_count=trip_count,
+                    block_stride=4096,
+                )
+            else:
+                slot = node.load_slot_group * 4 + lane
+                sequence = [
+                    cold.address
+                    + ((slot * node.load_repeats + load_index) * trip_count + iteration)
+                    * 64
+                    for iteration in range(trip_count)
+                ]
+                if max(sequence) + 16 > cold.address + cold.size:
+                    raise ValueError("expanded load sequence exceeds guest symbol")
+            suffix = "" if node.load_repeats == 1 else f"_{load_index}"
+            instructions.append(
+                {
+                    "id": f"{prefix}_load{suffix}",
+                    "pipeline": "load",
+                    "operation": "load",
+                    "reads": [],
+                    "writes": [load_register],
+                    "memory_address": sequence[0],
+                    "memory_address_sequence": sequence,
+                    "memory_bytes": 16,
+                }
+            )
         input_registers.append(load_register)
 
     result_register = input_registers[0] if input_registers else 0

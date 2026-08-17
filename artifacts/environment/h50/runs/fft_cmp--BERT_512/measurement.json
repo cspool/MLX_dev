@@ -1,0 +1,127 @@
+{
+  "adapter": {
+    "failed_responses": 0,
+    "max_outstanding": 9,
+    "max_response_cycles": 120,
+    "max_response_ticks": 120000,
+    "outstanding": 0,
+    "queue_backpressure_checks": 0,
+    "read_byte_sum": 96,
+    "read_requests": 12,
+    "read_responses": 12,
+    "requests": 24,
+    "responses": 24,
+    "unavailable_checks": 0,
+    "write_requests": 12,
+    "write_responses": 12
+  },
+  "case": "BERT_512",
+  "checks": {
+    "backend": true,
+    "completion": true,
+    "concurrency": true,
+    "directions": true,
+    "done": true,
+    "dram": true,
+    "guest": true,
+    "l1_accesses": true,
+    "latency": true,
+    "no_targets": true,
+    "requests": true
+  },
+  "experiment_id": "H49",
+  "metadata": {
+    "arithmetic_expanded": true,
+    "block_count": 84,
+    "case": {
+      "name": "BERT_512",
+      "sequence": 512,
+      "trip_count": 1
+    },
+    "compiler": "mlxsim.dsagen_operator_sweep.compile_operator_proxy",
+    "event_edge_count": 72,
+    "experiment_id": "H49",
+    "memory_requests": 24,
+    "operation_counts": {
+      "add": 432,
+      "fma": 288,
+      "shuffle": 12
+    },
+    "operator": {
+      "family": "fft",
+      "name": "fft_cmp",
+      "stages": 7
+    },
+    "paper_target_values_consumed": false,
+    "pipeline_counts": {
+      "compute": 732,
+      "load": 12,
+      "store": 12,
+      "xfer": 72
+    },
+    "stage_count": 7,
+    "stage_groups": [
+      "fft_0",
+      "fft_1",
+      "fft_2",
+      "truncate_shuffle",
+      "ifft_0",
+      "ifft_1",
+      "ifft_2"
+    ],
+    "trip_count": 1
+  },
+  "metrics": {
+    "compute_busy_cycles": 561,
+    "compute_pipeline_occupancy": 0.6317567567567568,
+    "cycles": 888,
+    "dram_read_bytes": 768,
+    "dram_reads": 12,
+    "l1_read_accesses": 12,
+    "l1_write_accesses": 12
+  },
+  "operator": "fft_cmp",
+  "overlay": {
+    "boundary_events_emitted": 84,
+    "busy_cycles_by_pipeline": {
+      "compute": 561,
+      "load": 337,
+      "store": 65,
+      "xfer": 80
+    },
+    "cycles": 888,
+    "done": true,
+    "event_unblocked_issues_before_tag_complete": 43,
+    "external_memory_completions": 24,
+    "external_memory_requests": 24,
+    "external_memory_wait_cycles": 1593,
+    "instructions_completed": 828,
+    "instructions_issued": 828,
+    "issued_by_pipeline": {
+      "compute": 732,
+      "load": 12,
+      "store": 12,
+      "xfer": 72
+    },
+    "link_stalls": 0,
+    "max_active_tags": 4,
+    "max_pipeline_issues_in_cycle": 5,
+    "memory_backend": "dsagen_dma",
+    "record_events": false,
+    "route_hops": 84,
+    "scenario": "gem5",
+    "skip_hops": 12,
+    "stalls_by_reason": {
+      "event_dependency": 24072,
+      "pipeline_contention": 1464,
+      "register_pending": 2636,
+      "register_waw": 2624,
+      "rf_read_bank": 12,
+      "rf_write_ports": 4
+    },
+    "start_in_roi": true,
+    "unit_hops": 72
+  },
+  "pass": true,
+  "schema_version": 1
+}
