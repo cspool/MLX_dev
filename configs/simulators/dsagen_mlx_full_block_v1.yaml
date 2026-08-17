@@ -1,0 +1,115 @@
+name: dsagen-mlx-full-block-v1
+experiment_id: H48
+run_id: run054
+classification: mechanism_confirmatory_full_operator_proxy_no_paper_target
+
+frozen_inputs:
+  paper:
+    path: MLX Multi-Layer Execution for Structured LLM Workload Acceleration on Spatial Architectures/MLX Multi-Layer Execution for Structured LLM Workload Acceleration on Spatial Architectures.md
+    bytes: 85855
+    sha256: 5785eb81b28741a3806ca42749d7b556bbcd2404e1622ae644a32bae2ade7745
+    source_sections: [IV-C, V-A, V-B, V-C, VII-B]
+    consumed_performance_targets: []
+  dma_result:
+    path: artifacts/results/dsagen-mlx-dma-memory-run053.json
+    bytes: 24732
+    sha256: 0379360d14fb8f477a92ce66bd9426058da0a664aaae918362eae4820f36c797
+    required_status: supported
+    required_integrity: true
+  hybrid_result:
+    path: artifacts/results/open-hybrid-simulator-audit-run046.json
+    bytes: 20990
+    sha256: a4393d85e4deea39544b7a198c13e45319195580bdbb43931838f9d47726c424
+    required_status: supported
+    required_integrity: true
+  dsagen_revision: 1e5d2c3d48ecc1f9b7d42c7103d0705b0c98fb78
+  accelsim_revision: c5296df152c99a28dd64e5d9560bd58a8fd2e774
+  gpgpu_sim_revision: 68e1cd30efaecbd71b496822f9d88a5803b33841
+
+architecture_contract:
+  spatial_owner: DSAGEN/dsa-gem5
+  programmable_pe_reference: Accel-Sim/GPGPU-Sim source abstractions
+  explicitly_excluded: [warp, SIMT_reconvergence, CTA_residency, GPU_coherence]
+  mesh: [4, 4]
+  active_window: 4
+  logical_lanes: 4
+  trip_count: 2
+  fp16_lanes_per_packet: 8
+  vector_bytes: 16
+  memory_backend: dsagen_dma
+  intermediate_storage: array_register_and_xfer_only
+  macro_boundary_memory: MinorCPU_LSQ_L1D_L2_DDR
+
+functional_units:
+  add: {class: alu, latency: 2, initiation_interval: 1}
+  mul: {class: mul, latency: 2, initiation_interval: 1}
+  fma: {class: fma, latency: 4, initiation_interval: 1}
+  fmax: {class: reduce, latency: 2, initiation_interval: 1}
+  fexp: {class: transcendental, latency: 8, initiation_interval: 4}
+  fdiv: {class: transcendental, latency: 8, initiation_interval: 4}
+  frsqrt: {class: transcendental, latency: 8, initiation_interval: 4}
+  shuffle: {class: shuffle, latency: 2, initiation_interval: 1}
+
+stage_groups:
+  - pre_attention_rmsnorm
+  - qkv_bsmm_0
+  - qkv_bsmm_1
+  - qkv_bsmm_2
+  - rope
+  - fft_0
+  - fft_1
+  - fft_2
+  - truncate_shuffle
+  - ifft_0
+  - ifft_1
+  - ifft_2
+  - qk_score
+  - row_max
+  - exp_norm_stats
+  - sv_normalize
+  - output_bsmm_0
+  - output_bsmm_1
+  - output_bsmm_2
+  - attention_residual_rmsnorm
+  - ffn1_bsmm_0
+  - ffn1_bsmm_1
+  - ffn1_bsmm_2
+  - silu_gate
+  - ffn2_bsmm_0
+  - ffn2_bsmm_1
+  - ffn2_bsmm_2
+  - final_residual_store
+
+source_layout:
+  compiler_core: src/mlxsim/dsagen_full_block.py
+  compiler_cli: scripts/compile_mlx_full_block.py
+  runner: scripts/run_mlx_full_block.sh
+  auditor: scripts/audit_dsagen_mlx_full_block.py
+  overlay_header: third_party/dsa-framework/dsa-gem5/src/cpu/minor/ssim/mlx_overlay.hh
+  overlay_source: third_party/dsa-framework/dsa-gem5/src/cpu/minor/ssim/mlx_overlay.cc
+  dma_adapter: third_party/dsa-framework/dsa-gem5/src/cpu/minor/ssim/mlx_dma_adapter.cc
+  scoreboard_reference: third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/src/gpgpu-sim/scoreboard.cc
+  operand_collector_reference: third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/src/gpgpu-sim/shader.h
+  fu_pipeline_reference: third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/src/gpgpu-sim/shader.cc
+
+registered_checks:
+  - exact 28 consecutive stage groups with four folded logical lanes
+  - every event edge is same-tag or adjacent-tag and every wait has one emitter
+  - QKV and FFN gate/up branch splits and attention/activation joins are explicit
+  - V is relayed across QK/max/exp stages and no long-range event is used
+  - RMSNorm RoPE FFT iFFT softmax SV output projection FFN and residual/store are present
+  - all eight registered functional-unit operations are issued
+  - fixed and DMA documents differ only by memory_backend
+  - fixed debug optimized sanitized traces and summaries are byte identical
+  - DMA request and completion counts conserve exactly with zero failures
+  - cpu.mlx_dma L1D L2 and DDR evidence is positive and source-attributed
+  - active tag count never exceeds four and cross-layer issue overlap is observed
+  - H47 H42 and H41 regressions remain exact
+  - no MLX paper timing speedup utilization area or energy target is consumed
+
+compiled_outputs:
+  fixed: artifacts/environment/h48/mlx-full-block-fixed.json
+  dma: artifacts/environment/h48/mlx-full-block-dma.json
+  manifest: artifacts/environment/h48/mlx-full-block-compile-manifest.json
+
+result_path: artifacts/results/dsagen-mlx-full-block-run054.json
