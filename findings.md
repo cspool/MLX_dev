@@ -25,11 +25,14 @@ This supports a hybrid reproduction strategy: use public spatial/GPU projects as
 - Fig. 18(c)'s five prior-accelerator bars reconcile with Fig. 18(a)/Table IV within 10%, but the same published formula yields 3.00/2.85 for MLX(s=0.75/0.5), not the plotted 1.6/2.5. The available paper text does not explain the different MLX normalization.
 - Fig. 2's digitized stacks independently recover its 3.77x/2.56x annotations within 0.35%; all eight Fig. 3 markers lie under the stated H100 roofline at 38.5%-68.6% of the applicable limit.
 - The disclosed hierarchical-BSMM density `2*log2(B)/B` plus `s^2` attention scaling reproduces all 31 captured MLX-method compute bars in Figs. 15/16. Fig. 15 MAPE/max error is 4.34%/9.64%; Fig. 16 is 4.14%/7.85%. This validates operation-count consistency, not accuracy or perplexity.
+- H10's fully pinned InternLM2-7B/WikiText-2 evaluation scores 302,007 tokens in 295 non-overlapping 1024-token windows and yields PPL 8.3339 versus 8.02 annotated (3.91% error). This supports the original-model baseline only.
+- H11's single frozen BERT-base/SQuAD 1.1 fine-tune yields 87.824 F1 and 80.076 exact match versus 87.7/79.1 annotated (0.14%/1.23% error). The paper omits the checkpoint and recipe, so this is a successful inferred baseline reconstruction rather than recovery of the authors' setup.
 
 ## Patterns and Insights
 
 - SimICT is the explicit historical simulation framework; DSAGEN is the closest open full-stack spatial substitute found so far. These facts must not be collapsed into an unsupported claim that MLX was forked from DSAGEN.
 - A faithful model needs both work accounting (FLOPs/bytes/stages) and contention timing (pipeline readiness, tag priority, link occupancy, launch/fill/drain overhead). A pure roofline model cannot test MLX's central scheduling claim.
+- Model-declared framework versions are part of the checkpoint: InternLM2's remote code produced incompatible logits under Transformers 5.15 (first-window PPL 387.07) but PPL 5.69 under its declared 4.41.0. Smoke tests caught this before the registered run, and the official evaluator now refuses a different version.
 
 ## Lessons and Constraints
 
@@ -43,6 +46,7 @@ This supports a hybrid reproduction strategy: use public spatial/GPU projects as
 - Arithmetic agreement of reported rows is weaker evidence than regenerating synthesis or execution measurements; the result inventory labels these separately.
 - Raster-derived roofline consistency is useful for catching axis/series mistakes but says nothing about whether the CUDA implementation can be rebuilt; artifacts therefore carry `native_profile_reproduced: false`.
 - The Fig. 15/16 y label says computation reduction, but its original-model bar is 100% and the prose savings equal one minus the bar height. The target manifest therefore records normalized computation remaining and preserves a two-percentage-point digitization uncertainty.
+- Passing unmodified quality baselines does not validate the compressed models. The paper still omits spectral thresholds and chunk lengths, hierarchical-BSMM initialization, exact modified-layer indices, LoRA hyperparameters, and training splits needed for the remaining Fig. 15/16 quality bars.
 
 ## Open Questions
 
@@ -53,4 +57,4 @@ This supports a hybrid reproduction strategy: use public spatial/GPU projects as
 
 ## Optimization Trajectory
 
-H1 base selection completed. H2 maximum validation-eligible captured architecture error fell from 24.9% in run_001 to 7.1% in run_002. Run_003 added causal ablation evidence. Runs 004/005 added Fig. 25/24 replay coverage without changing the validation metric. Runs 006/007 rejected the first cross-device holdout and identified native GPU timing/power as a hard evidence gap. Runs 008/009 separated an unreconciled Fig. 18 normalization from otherwise consistent table arithmetic. Runs 010/011 completed Fig. 2/3 profile arithmetic. Run 012 supported the Fig. 15/16 equation-derived compute audit; training-dependent quality remains open. Full-paper coverage remains incomplete.
+H1 base selection completed. H2 maximum validation-eligible captured architecture error fell from 24.9% in run_001 to 7.1% in run_002. Run_003 added causal ablation evidence. Runs 004/005 added Fig. 25/24 replay coverage without changing the validation metric. Runs 006/007 rejected the first cross-device holdout and identified native GPU timing/power as a hard evidence gap. Runs 008/009 separated an unreconciled Fig. 18 normalization from otherwise consistent table arithmetic. Runs 010/011 completed Fig. 2/3 profile arithmetic. Run 012 supported the Fig. 15/16 equation-derived compute audit. Runs 013/014 support the public InternLM2 and inferred BERT original-quality baselines; structured-model training remains open. Full-paper coverage remains incomplete.

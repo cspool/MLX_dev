@@ -88,13 +88,13 @@ hypotheses:
     priority: high
   - id: H10
     statement: "The pinned unmodified InternLM2-7B checkpoint evaluated on the official WikiText-2 raw test split with frozen 1024-token BF16 causal-LM scoring reproduces Fig. 15(d)'s annotated original perplexity of 8.02 within 10%."
-    status: pending
+    status: supported
     motivation: "Establish a native checkpoint/data quality baseline before introducing reconstructed FFT compression, hierarchical BSMM, or LoRA training."
     parent: H5
     priority: high
   - id: H11
     statement: "A pinned public BERT-base checkpoint fine-tuned once on official SQuAD 1.1 with a frozen standard QA recipe reproduces Fig. 15(b)'s annotated original F1 87.7 and exact match 79.1 within 10%."
-    status: pending
+    status: supported
     motivation: "Establish a native BERT quality baseline before reconstructing the paper's undisclosed layer-wise FFT compression and hierarchical-BSMM retraining."
     parent: H5
     priority: high
@@ -102,8 +102,8 @@ hypotheses:
 experiments:
   proxy_metric: "Maximum absolute percentage error across every numeric paper anchor; pass only when each reproducible point is <=10%, with unavailable measurements explicitly classified rather than fabricated."
   baseline_value: 0.2486
-  best_value: 0.0710
-  total_runs: 12
+  best_value: 0.0123
+  total_runs: 14
   trajectory:
     - run_id: "run_001"
       hypothesis: "H2"
@@ -189,11 +189,25 @@ experiments:
       wall_time_min: 0.3
       change_summary: "Equation-derived Fig. 15/16 MLX compute audit passes 31 digitized bars; Fig. 15/16 max errors are 9.64%/7.85%."
       timestamp: "2026-08-16"
+    - run_id: "run_013"
+      hypothesis: "H10"
+      metric_value: 0.0391
+      delta: null
+      wall_time_min: 1.0
+      change_summary: "Pinned InternLM2-7B on all 295 WikiText-2 windows yields PPL 8.3339 versus 8.02 reported."
+      timestamp: "2026-08-17"
+    - run_id: "run_014"
+      hypothesis: "H11"
+      metric_value: 0.0123
+      delta: null
+      wall_time_min: 12.3
+      change_summary: "Frozen BERT-base/SQuAD 1.1 fine-tune yields 87.824 F1 and 80.076 EM versus 87.7/79.1 reported."
+      timestamp: "2026-08-17"
 
 outer_loop:
   cycle: 0
   last_direction: null
-  last_reflection: "H10 and H11 freeze native public-checkpoint quality baselines before any structured retraining. H11 explicitly treats the BERT checkpoint and QA recipe as an inferred reconstruction because the paper does not disclose them."
+  last_reflection: "H10 and H11 support the two public-checkpoint baseline anchors with 3.91% and 1.23% maximum error. They validate the data/model evaluation substrate, not the unpublished FFT/BSMM initialization or structured fine-tuning recipe."
 
 workspace:
   findings: "findings.md"
