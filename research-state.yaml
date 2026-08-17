@@ -173,6 +173,12 @@ hypotheses:
     motivation: "Complete the second native LLM baseline using already qualified public inputs before introducing reconstructed compression or LoRA."
     parent: H5
     priority: high
+  - id: H20
+    statement: "An inferred post-RoPE chunk-FFT wiring at s=0.75 plus rank-8 LoRA on the last 20 Llama2 layers reproduces Fig. 15(d)'s 5.781 WikiText-2 perplexity within 10%."
+    status: pending
+    motivation: "Isolate whether an executable semantic-FFT/LoRA path can recover the first compressed Llama quality point while explicitly excluding the still-unidentified B=32 BSMM initialization."
+    parent: H5
+    priority: high
 
 experiments:
   proxy_metric: "Maximum absolute percentage error across every numeric paper anchor; pass only when each reproducible point is <=10%, with unavailable measurements explicitly classified rather than fabricated."
