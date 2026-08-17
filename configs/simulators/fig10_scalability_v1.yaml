@@ -1,0 +1,35 @@
+name: fig10-scalability-v1
+experiment_id: H64
+run_id: run069
+classification: target_free_scalability_mechanism
+validation_eligible: false
+
+frozen_input:
+  mapping:
+    path: artifacts/results/fig10-mapping-run067.json
+    sha256: 8fad490e285c884fe2ed7b3c5856e628868cbc3e2db500eb1bde89adca79543e
+    required_status: supported
+    required_integrity: true
+
+workload:
+  operator: bsmm
+  hidden_width: 512
+  batch: 8
+  sequence_lengths: [512, 1024, 2048, 4096, 8192]
+  memory_backend: fixed
+  active_window: 3
+
+configurations:
+  baseline: {simd_width: 8, mesh: [4, 4]}
+  simd32_4x4: {simd_width: 32, mesh: [4, 4]}
+  simd8_8x8: {simd_width: 8, mesh: [8, 8]}
+  simd32_8x8: {simd_width: 32, mesh: [8, 8]}
+
+source_layout:
+  module: src/mlxsim/fig10_scaling.py
+  compiler: scripts/compile_fig10_scalability.py
+  runner: scripts/run_fig10_scalability.py
+  auditor: scripts/audit_fig10_scalability.py
+
+output_root: artifacts/environment/h64
+result_path: artifacts/results/fig10-scalability-run069.json
