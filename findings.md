@@ -29,6 +29,8 @@ This supports a hybrid reproduction strategy: use public spatial/GPU projects as
 - H10's fully pinned InternLM2-7B/WikiText-2 evaluation scores 302,007 tokens in 295 non-overlapping 1024-token windows and yields PPL 8.3339 versus 8.02 annotated (3.91% error). This supports the original-model baseline only.
 - H11's single frozen BERT-base/SQuAD 1.1 fine-tune yields 87.824 F1 and 80.076 exact match versus 87.7/79.1 annotated (0.14%/1.23% error). The paper omits the checkpoint and recipe, so this is a successful inferred baseline reconstruction rather than recovery of the authors' setup.
 - H12 freezes every one of the 53 visible Fig. 15/16 quality bars. Eight raster/text checks pass with maximum discrepancies of 0.092 accuracy percentage point and 0.045 perplexity. This completes quality-target acquisition but is explicitly not a model run.
+- The official FABNet artifact is now pinned as the authoritative external Fig. 19 baseline source: it includes a Python performance simulator, FPGA RTL, `rfft2`, and training instructions. Hazy Butterfly supplies the global pair-mixing primitive, while Monarch supplies a different analytical dense-to-structured projection. None contains MLX's hierarchical tile wrapper or initialization.
+- MLX cites QA-LoRA only at a generic LoRA-fine-tuning claim. QA-LoRA's public defaults (`r=64`, `alpha=16`) assume GPTQ 4-bit/group-32 weights, whereas MLX reports FP16 and omits adapter modules and training details; the citation cannot identify a unique MLX recipe.
 
 ## Patterns and Insights
 

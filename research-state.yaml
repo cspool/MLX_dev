@@ -27,6 +27,26 @@ literature:
       authors: "Weng et al."
       year: 2025
       relevance: "Open asynchronous cycle-simulation/RTL framework from an MLX coauthor; independent semantics reference, not evidence of MLX code reuse."
+    - id: fabnet2022
+      title: "Adaptable Butterfly Accelerator for Attention-based NNs via Hardware and Algorithm Co-design"
+      authors: "Fan et al."
+      year: 2022
+      relevance: "Official artifact is the strongest public source for the external FABNet model and FPGA latency baseline that MLX explicitly reimplements in Fig. 19."
+    - id: butterfly2019
+      title: "Learning Fast Algorithms for Linear Transforms Using Butterfly Factorizations"
+      authors: "Dao et al."
+      year: 2019
+      relevance: "Open global-butterfly primitive whose stage semantics and parameter count match MLX's analytical description, but not its hierarchical tiling."
+    - id: monarch2022
+      title: "Monarch: Expressive Structured Matrices for Efficient and Accurate Training"
+      authors: "Dao et al."
+      year: 2022
+      relevance: "Open dense-to-structured projection precedent; its two-factor structure is not MLX's local log-depth butterfly."
+    - id: qalora2024
+      title: "QA-LoRA: Quantization-Aware Low-Rank Adaptation of Large Language Models"
+      authors: "Xu et al."
+      year: 2024
+      relevance: "MLX's cited adapter reference, but its 4-bit recipe and defaults do not identify MLX's undisclosed FP16 LoRA setup."
   open_problems:
     - "The target MLX simulator, RTL, compiler, model checkpoints, and raw plot data are not public."
     - "The paper omits many low-level latency, SRAM, DRAM, compiler schedule, and calibration parameters."
@@ -36,6 +56,7 @@ literature:
     - "Need identify exact open GPU simulator suitable for the H100/Orin/Xavier comparison."
     - "Need recover all per-point targets from Figures 2, 3, and 15-25."
     - "No public evidence links MLX to Assassyn beyond related mechanisms and a shared author; MLX-specific tags, skip hops, and workload mapping are absent."
+    - "Open Butterfly, Monarch, FABNet, and QA-LoRA artifacts constrain operator and training precedents but do not disclose MLX's tile initialization, per-layer FFT lengths, decompression wiring, modified-layer identities, or LoRA recipe."
 
 hypotheses:
   - id: H1
