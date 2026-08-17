@@ -1,0 +1,36 @@
+name: dsagen-mlx-fig25-arithmetic-v1
+experiment_id: H50
+run_id: run056
+classification: target_exposed_validation_ineligible_source_arithmetic_transfer
+
+parent:
+  path: artifacts/results/dsagen-mlx-fig25-transfer-run055.json
+  bytes: 129567
+  sha256: 677650b3b148d8fb9e45e6144c5dc9c7dac1756f4f24a6b8a9b18100648bca5e
+  required_status: rejected
+  required_integrity: true
+
+mapping_config: configs/simulators/dsagen_mlx_fig25_transfer_v1.yaml
+targets:
+  path: artifacts/targets/paper_targets.yaml
+  section: fig25_roofline_utilization.heatmap.mlx
+  execution_visibility: audit_only
+
+arithmetic_expansion:
+  bsmm_pair: {fma: 4, add: 2}
+  fft_complex_pair: {fma: 4, add: 6}
+  swa_w128_q32: {score_fma_groups: 32, sv_fma_groups: 32, kv_load_waves: 4}
+  swa_w256_q64: {score_fma_groups: 128, sv_fma_groups: 128, kv_load_waves: 8}
+  derivation:
+    swa_fma_groups: W_times_Q_div_16PE_times_8SIMD
+    swa_load_waves: W_div_4logical_lanes_times_8SIMD
+
+unchanged:
+  - cases and trip counts
+  - operator stage counts
+  - mesh and active window
+  - functional-unit latency and initiation interval
+  - dsagen_dma memory backend
+  - utilization proxy definition
+
+result_path: artifacts/results/dsagen-mlx-fig25-arithmetic-run056.json
