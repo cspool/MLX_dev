@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Execute every H46 config twice with the optimized MLX JSON driver."""
+"""Execute every Figure 23 config twice with the optimized MLX JSON driver."""
 
 from __future__ import annotations
 
@@ -20,6 +20,7 @@ def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--config-root", type=Path, default=DEFAULT_ROOT)
     parser.add_argument("--output-dir", type=Path, default=DEFAULT_ROOT / "runs")
+    parser.add_argument("--experiment-id", default="H46")
     return parser.parse_args()
 
 
@@ -114,7 +115,7 @@ def main() -> int:
     checks["targets_consumed_by_runner"] = False
     manifest = {
         "schema_version": 1,
-        "experiment_id": "H46",
+        "experiment_id": args.experiment_id,
         "driver": {"bytes": binary.stat().st_size, "sha256": digest(binary)},
         "runs": runs,
         "cycles": cycles,

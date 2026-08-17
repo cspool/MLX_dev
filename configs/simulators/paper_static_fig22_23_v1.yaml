@@ -16,6 +16,19 @@ allowed_changes:
   root: {pe_dependency_model: paper_static}
   metadata: {pe_dependency_model: paper_static, scoreboard_is_paper_semantics: false}
 
+diagnostic_only_change:
+  patch: patches/dsagen/dsa-gem5-mlx-long-overlay-watchdog-v1.patch
+  upstream_default_cycles: 100000
+  h59_cycles: 10000000
+  progress_events: [instruction_issue, instruction_completion, route_hop, memory_completion]
+  timing_state_changed: false
+
+execution:
+  fig22_guest: third_party/dsa-framework/dsa-apps/sdk/compiled/ss-vecadd-gnu.out
+  fig22_memory_backend: dsa-gem5 scratchpad adapter
+  fig23_memory_backend: fixed-latency standalone proxy
+  targets_loaded_by_execution: false
+
 source_layout:
   compiler: scripts/compile_paper_static_fig22_23.py
   fig22_runner: scripts/run_dsagen_fig22.sh

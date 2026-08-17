@@ -1,0 +1,50 @@
+diff --git a/src/cpu/minor/execute.cc b/src/cpu/minor/execute.cc
+--- a/src/cpu/minor/execute.cc
++++ b/src/cpu/minor/execute.cc
+@@ -971,12 +971,22 @@ void Execute::timeout_check(bool should_commit, MinorDynInstPtr inst) {
+   uint64_t cyc = cpu.curCycle();
+   uint64_t last_event = std::max(last_sd_issue, ssim.forward_progress_cycle() / cpu.frequency());
++  uint64_t watchdog_cycles = 100000;
++  if (const char *value = std::getenv("MLX_WATCHDOG_CYCLES")) {
++    char *end = nullptr;
++    unsigned long long parsed = std::strtoull(value, &end, 10);
++    if (end != value && *end == '\0' && parsed > 0) {
++      watchdog_cycles = parsed;
++    }
++  }
+ 
+   if(!should_commit) {
+     DSA_LOG(TICK) << "Not commit: " << ssim.forward_progress_cycle() / cpu.frequency()
+       << ", " << cpu.curCycle();
+-    if (cyc > 100000 + last_event) {
++    if (cyc > watchdog_cycles + last_event) {
+       ssim.print_stats();
+-      DSA_CHECK(false) << "Instruction: " << *inst << " is stalled for too long!!! ABORTING";
++      DSA_CHECK(false) << "Instruction: " << *inst
++        << " is stalled for too long (watchdog=" << watchdog_cycles
++        << " cycles, last_event=" << last_event << ")!!! ABORTING";
+       exit(1);
+     }
+   } else {
+diff --git a/src/cpu/minor/ssim/accel.cc b/src/cpu/minor/ssim/accel.cc
+--- a/src/cpu/minor/ssim/accel.cc
++++ b/src/cpu/minor/ssim/accel.cc
+@@ -1136,7 +1136,18 @@ void accel_t::tick() {
+     _mlx_clock_start_printed = true;
+   }
+   if (mlx_can_step && !_mlx_overlay->done()) {
++    const auto &before = _mlx_overlay->stats();
++    uint64_t progress_before = before.instructions_issued +
++        before.instructions_completed + before.route_hops +
++        before.external_memory_completions;
+     _mlx_overlay->step();
++    const auto &after = _mlx_overlay->stats();
++    uint64_t progress_after = after.instructions_issued +
++        after.instructions_completed + after.route_hops +
++        after.external_memory_completions;
++    if (progress_after > progress_before) {
++      forward_progress();
++    }
+     if (_mlx_overlay->done() && !_mlx_summary_printed) {
+       std::cout << "MLX_OVERLAY_SUMMARY "
+                 << _mlx_overlay->summaryJson("gem5") << std::endl;

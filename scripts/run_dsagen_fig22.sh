@@ -7,6 +7,7 @@ TOOLS="$DSAGEN_ROOT/ss-tools"
 CONFIG_ROOT=${MLX_FIG22_CONFIG_ROOT:-$PROJECT_ROOT/artifacts/environment/h44}
 OUTPUT_ROOT=${MLX_FIG22_OUTPUT_ROOT:-$PROJECT_ROOT/artifacts/environment/h44/runs}
 WAIT_BINARY=${MLX_WAIT_BINARY:-$DSAGEN_ROOT/dsa-apps/sdk/compiled/ss-vecadd-gnu-wait.out}
+WATCHDOG_CYCLES=${MLX_WATCHDOG_CYCLES:-100000}
 ADG="$DSAGEN_ROOT/dsa-scheduler/configs/DSAGenMesh.PE16-MaxI64-AddI64-MulI64-FAddD64-FMulD64-Copy-MinI64.SW25.DMA1.SPM1.REC1.GEN1.REG1.IVP3.OVP2.20220127-103840.json"
 
 mkdir -p "$OUTPUT_ROOT"
@@ -22,6 +23,7 @@ for kernel in bsmm fft; do
       cd "$DSAGEN_ROOT/dsa-apps/sdk/compiled"
       LD_LIBRARY_PATH="$TOOLS/python38-runtime:$TOOLS/lib64:$TOOLS/lib:$DSAGEN_ROOT/dsa-scheduler/3rd-party/libtorch/lib" \
       SBCONFIG="$ADG" COMPAT_ADG=0 BACKCGRA=1 FU_FIFO_LEN=15 MLX_CONFIG="$config" \
+      MLX_WATCHDOG_CYCLES="$WATCHDOG_CYCLES" \
       "$DSAGEN_ROOT/dsa-gem5/build/RISCV/gem5.opt" -d "$run_dir/m5out" \
         "$DSAGEN_ROOT/dsa-gem5/configs/example/se.py" \
         --cpu-type=MinorCPU --l1d_size=32kB --l1d_assoc=8 --l1i_size=16kB \
@@ -31,7 +33,7 @@ for kernel in bsmm fft; do
     )
     grep -Fq '"done":true' "$log"
     grep -Fq '"memory_backend":"adapter"' "$log"
-    grep -Fq '[mlx-wait] sanity check passed successfully!' "$log"
+    grep -Eq '\[(mlx-wait|single-core)\] sanity check passed successfully!' "$log"
     summary=$(grep -F 'MLX_OVERLAY_SUMMARY ' "$log" | tail -n 1)
     echo "[fig22] completed $name ${summary#MLX_OVERLAY_SUMMARY }"
   done

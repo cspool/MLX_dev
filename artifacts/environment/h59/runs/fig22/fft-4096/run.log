@@ -1,0 +1,93 @@
+Global frequency set at 1000000000000 ticks per second
+warn: DRAM device capacity (32768 Mbytes) does not match the address range assigned (512 Mbytes)
+0: system.remote_gdb: listening for remote gdb on port 7000
+info: Entering event queue @ 0.  Starting simulation...
+warn: PowerState: Already in the requested power state, request ignored
+warn: ignoring syscall set_robust_list(...)
+      (further warnings will be suppressed)
+info: Increasing stack size by one page.
+warn: ignoring syscall mprotect(...)
+warn: fstatat64: first argument not AT_FDCWD; unlikely to work
+MLX_OVERLAY_CLOCK started_at_tick=89991000
+MLX_OVERLAY_SUMMARY {"scenario":"gem5","cycles":74557,"done":true,"record_events":true,"start_in_roi":false,"pe_dependency_model":"paper_static","memory_backend":"adapter","instructions_issued":172032,"instructions_completed":172032,"max_active_tags":3,"route_hops":24576,"skip_hops":24576,"unit_hops":0,"link_stalls":0,"max_pipeline_issues_in_cycle":5,"boundary_events_emitted":24576,"event_unblocked_issues_before_tag_complete":4327,"external_memory_requests":73728,"external_memory_completions":73728,"external_memory_wait_cycles":220404,"issued_by_pipeline":{"load":49152,"store":24576,"compute":73728,"xfer":24576},"busy_cycles_by_pipeline":{"load":73631,"store":65473,"compute":73485,"xfer":48109},"stalls_by_reason":{"event_dependency":1015479,"memory_queue_full":1140114,"pipeline_contention":78966}}
+MLX_SPAD_ADAPTER_SUMMARY {"requests":73728,"responses":73728,"unavailable_checks":1140114,"max_response_ticks":5000,"max_response_cycles":5,"bank_backpressure_cycles":0}
+
+*** ROI STATISTICS for CORE ID: 0 ***
+Simulator Time: 0.01029 seconds
+Cycles: 569
+Number of coalesced SPU requests: 0
+Control Core Insts Issued: 44
+Control Core Discarded Insts Issued: 20
+Control Core Intrinsics/Instruction Issued: 12/13
+Control Core Discarded Inst Stalls: 0.4545
+Control Core Config Stalls: 7.457e-05
+Control Core Wait Stalls:   0.001151 (GLOBAL_WAITSCR_RDSCR_WRSTREAM_WAIT)  
+Undispatched Streams:
+
+ACCEL 0 STATS ***
+Commands Issued: 0
+CGRA Instances: 256 -- Activity Ratio: 0.0007636, DFGs / Cycle: 0.0007636
+For backcgra, Average thoughput of all ports (overall): 0.0007636, CGRA outputs/cgra busy cycles: 1
+CGRA Insts / Computation Instance: 4
+CGRA Insts / Cycle: 1024 / 569 = 1.8 (overall activity factor)
+Mapped DFG utilization: 0.0007636
+Data availability ratio: 0
+input port imbalance (%age dgra nodes could not fire): 0
+Percentage bank conflicts: -nan
+L1 cache hit rate: 0
+Avg wait cycles on a byte read: 29.66
+Percentage cycles spent due to conflict in atomic scr: -nan
+Cycle Breakdown:
+CONFIGURE:	4.569%(26)
+MEMORY_BW:	4.569%(26)
+CONST_BW:	0%(0)
+SPAD_BW:	0%(0)
+REC_WAIT:	0%(0)
+COMPUTING:	44.99%(256)
+HOST_WAIT:	0%(0)
+SCR_BARRIER:	0%(0)
+CMD_QUEUE:	0%(0)
+BACKPRESSURE:	0%(0)
+DRAIN_PIPE:	19.16%(109)
+HOST:	26.71%(152)
+Bandwidth Table: (B/c=Bytes/cycle, B/r=Bytes/request) -- Breakdown (sources/destinatinos): 
+Read SPAD:	0 B (0 B/c, -nan B/r) 0
+R/Request SPAD:	0 B (0 B/c)
+Write SPAD:	0 B (0 B/c, -nan B/r) 0
+W/Request SPAD:	0 B (0 B/c)
+Read DMA:	16384 B (28.79 B/c, 64 B/r) 256
+R/Request DMA:	16384 B (28.79 B/c)
+Avg DMA Latency: 3.797 cycles , 3.797, 3.797, 3.797, 1.421
+Write DMA:	8192 B (14.4 B/c, 61.59 B/r) 133
+W/Request DMA:	8512 B (14.96 B/c)
+Bubbles Caused by TLB Transfer: 0
+Recur Bus:	0 B (0 B/c, -nan B/r) 0
+
+Cores used: 1bitmask: 1
+Total atomic updates: 0
+Total Memory Activity: 0
+
+ -- Parallelization Estimates --
+Multi-Pipeline Cycles (cores:cycles): 1:335268 2:167634 3:111756 4:83817 5:67053 6:55878 7:47895 8:41908 9:37252 10:33526 11:30478 12:27939 13:25789 14:23947 15:22351 16:20954 17:19721 18:18626 
+Multi-Pipeline Activity: (cores:cycles)1:0.0007636 2:0.0007636 3:0.0007636 4:0.0007636 5:0.0007636 6:0.0007636 7:0.0007636 8:0.0007636 9:0.0007636 10:0.0007636 11:0.0007636 12:0.0007636 13:0.0007636 14:0.0007636 15:0.0007636 16:0.0007636 17:0.0007636 18:0.0007636 
+
+[single-core] initialization finished
+[single-core] cpu pass finished, 12558 cycles passed! 
+[single-core] warm i-cache finished, 74711 cycles passed! 
+[single-core] accelerator finished ...
+[single-core] sanity check passed successfully! 
+gem5 Simulator System.  http://gem5.org
+gem5 is copyrighted software; use the --copyright option for details.
+
+gem5 version 20.0.0.2
+gem5 compiled Aug 17 2026 18:18:16
+gem5 started Aug 17 2026 18:19:51
+gem5 executing on ubuntu, pid 1291103
+command line: /workspace/MLX_dev/third_party/dsa-framework/dsa-gem5/build/RISCV/gem5.opt -d /workspace/MLX_dev/artifacts/environment/h59/runs/fig22/fft-4096/m5out /workspace/MLX_dev/third_party/dsa-framework/dsa-gem5/configs/example/se.py --cpu-type=MinorCPU --l1d_size=32kB --l1d_assoc=8 --l1i_size=16kB --caches --l2_size=512kB --l2cache --num-cpus=1 --cpu-clock=1GHz --sys-clock=1GHz --mem-type=DDR4_2400_16x4 --cmd=/workspace/MLX_dev/third_party/dsa-framework/dsa-apps/sdk/compiled/ss-vecadd-gnu.out
+
+**** REAL SIMULATION ****
+Exiting @ tick 189213000 because exiting with last active thread context
+warn: CheckedInt already exists in allParams. This may be caused by the Python 2.7 compatibility layer.
+warn: Enum already exists in allParams. This may be caused by the Python 2.7 compatibility layer.
+warn: ScopedEnum already exists in allParams. This may be caused by the Python 2.7 compatibility layer.
+warn: No dot file generated. Please install pydot to generate the dot file and pdf.

@@ -13,8 +13,8 @@ systolic MAC. The resulting split is intentional:
 
 - DSAGEN owns the event clock, physical graph, streams, ports, banked
   scratchpad, static schedules, and inter-PE data motion.
-- The MLX extension will add immutable per-layer instruction blocks, tag
-  readiness/windows, resource-aware issue, and skip-hop packet timing inside
+- The MLX extension adds immutable per-layer instruction blocks, tag
+  readiness/windows, pipeline/FU-aware issue, and skip-hop packet timing inside
   that spatial clock.
 - The MLX extension implements Fig. 9's tagged instruction buffers, loop and
   bookkeeping state, lower-tag arbitration, and independent xfer/load/store/
@@ -81,6 +81,8 @@ full-Transformer-block proxy. See [`dsagen-mlx-overlay.md`](dsagen-mlx-overlay.m
 [`dsagen-mlx-cdc-memory.md`](dsagen-mlx-cdc-memory.md),
 [`dsagen-mlx-dma-memory.md`](dsagen-mlx-dma-memory.md), and
 [`dsagen-mlx-full-block.md`](dsagen-mlx-full-block.md), and
-[`mlx-pe-paper-contract.md`](mlx-pe-paper-contract.md). The remaining boundary
+[`mlx-pe-paper-contract.md`](mlx-pe-paper-contract.md). The corrective Figure
+22/23 replay is reported in
+[`paper-static-fig22-23.md`](paper-static-fig22-23.md). The remaining boundary
 is independently defensible large-shape/per-kernel work scaling for Figures
 18--21 and 24--25. Paper result bars were not inputs to the invariant runs.

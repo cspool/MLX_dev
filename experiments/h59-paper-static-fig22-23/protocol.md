@@ -12,6 +12,18 @@ workloads. Targets are loaded after execution. Figure 22 support requires all
 proxy and requires all 15 speedups within 10%. No residual adjustment is
 allowed.
 
+Figure 22 uses the minimal `ss-vecadd-gnu.out` guest so host work does not hide
+overlay latency. The largest overlays legitimately keep `ss_wait` blocked for
+more than DSAGEN's default 100,000-cycle diagnostic limit. H59 therefore sets
+`MLX_WATCHDOG_CYCLES=10000000`. The incremental patch keeps 100,000 as the
+default, records only observable issue/completion/route/memory progress, and
+does not alter overlay clocks, pipeline state, memory latency, or reported
+cycles.
+
+The transformer and both runners read no target file. Target values are joined
+only by the auditor after every summary has been written. A failed 10% gate is
+retained as a rejection; H59 permits no post-run parameter change.
+
 ## Immutable output
 
 The sole formal output is
