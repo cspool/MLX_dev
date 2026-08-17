@@ -22,12 +22,16 @@ def parse_args() -> argparse.Namespace:
 
 def build_measurement(manifest_path: Path, name: str, log_path: Path) -> dict[str, Any]:
     manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
-    job = next(item for item in manifest["orin_jobs"] if item["name"] == name)
+    jobs = manifest.get("orin_jobs") or manifest["gpu_jobs"]
+    job = next(item for item in jobs if item["name"] == name)
     run = parse_run(log_path)
     summary = run["summary"] or {}
     fmas = int(job["gpu_fma_equivalents"])
     cycles = int(run["cycles"] or 0)
-    clock = int(manifest["normalization"]["orin_clock_hz"])
+    clock = int(
+        manifest["normalization"].get("orin_clock_hz")
+        or manifest["normalization"]["device_clock_hz"]
+    )
     checks = {
         "operator": summary.get("operator") == job["gpu_operation"],
         "count": summary.get("count") == job["gpu_count"],
