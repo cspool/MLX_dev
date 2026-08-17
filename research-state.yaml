@@ -687,9 +687,17 @@ experiments:
       timestamp: "2026-08-17"
 
 outer_loop:
-  cycle: 32
-  last_direction: "Preserve H46 as a target-exposed structured proxy, not a full transformer trace. Next design and validate an off-chip DMA/LSQ adapter using DSAGEN's existing MinorCPU request path, with exact response ownership and a synthetic latency/bandwidth microtrace before attempting Figures 18-21 or 24-25."
-  last_reflection: "H46 passes all Figure 23 points without any size term, and the mechanism was independently frozen in H45. This materially improves confidence in the SIMD/mesh model, but the proxy omits dense/attention phases and fixed memory intentionally removes bandwidth. The largest remaining simulator gap is now off-chip traffic; do not infer GPU/DRAM results from scratchpad-only scaling."
+  cycle: 40
+  last_direction: "Stop shared cycles/FMA and residual scaling after H78. Derive a target-free per-FU work signature for Figure 20 attention, then execute separate shape-specific FFT-compression and compressed-attention anchors on paper-static DSAGEN and Xavier GPGPU-Sim before another target comparison."
+  last_reflection: "H75 fixes workload identity and H76 proves repeat folding, but H78 still misses all six matched-work projection targets at 46.75% MAPE. Aggregate FMA count is therefore necessary but insufficient: kernel-specific FU mix, stages, launches, memory traffic, and GPU occupancy are now the highest-priority boundary. The PE contract remains spatial/tagged-block rather than GPU-SM/SIMT."
+
+recent_milestones_after_h46:
+  architecture_contract: "H52 supersedes the GPU-SM analogy with the paper's specialized spatial tagged-block PE; GPGPU-Sim is baseline-only."
+  memory_and_counters: "H66 exactly reproduces DSAGEN scratchpad timing; H69 adds a diagram-derived column-port candidate; H71 adds physical per-PE/FU counters."
+  rejected_transfers: "H72 rejects Figure 25 at 0/24 and H74 rejects Figure 24 at 3/42, proving the prior proxy normalization was unmatched."
+  workload_identity: "H75 proves H57 proxies cover below 1% of logical work and collapse distinct QKV/FFN/attention shapes."
+  repeat_folding: "H76 supports 36/36 held-out affine cycle estimates with 0.82% MAPE and 3.73% maximum error."
+  matched_projection: "H77 supports exact-work target-free estimates for six projection cells; H78 rejects their frozen Figure 20 transfer at 0/6, 46.75% MAPE, and 53.00% maximum error."
 
 completion_snapshot_run042:
   certificate_run: run_042

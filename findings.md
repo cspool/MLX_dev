@@ -67,6 +67,11 @@ H37 closes the full-paper ledger with a machine certificate rather than a comple
 - H44 is the first paper-facing run of the real open simulator and is correctly rejected with integrity intact. Without legacy issue/setup/mesh/launch calibration, all eight BSMM utilization points pass (2.44% MAPE), seven of eight FFT points pass, and the combined 16-point MAPE is 4.25%. FFT-64 alone yields 95.62% versus 84% (13.83% error). The result is target-exposed and validation-ineligible; no launch correction is fitted.
 - H45 supports target-independent SIMD/mesh mechanics. One BSMM-256 workload conserves exactly 32,768 logical pair-iterations and identical lane-normalized compute/memory/transfer work across four configurations. Frozen compute-only cycles yield 3.984x SIMD, 3.410x mesh, and 13.623x joint speedups under three byte-consistent, sanitizer-clean builds; no Figure 23 target appears in the compiler or runner.
 - H46 supports all 15 Figure 23 points as a target-exposed structured proxy: 4.31% MAPE and 9.81% maximum error, with no size-specific congestion/fill/launch term or legacy calibration. SIMD speedup approaches 4x, mesh stays 3.41-3.44x, and joint stays 13.62-13.84x. The mapping is BSMM-only with fixed memory and therefore is not held-out validation or an author-faithful full Transformer trace.
+- H52 corrects the PE abstraction from an earlier GPU-SM analogy. The paper specifies a spatial tagged-block PE with static intra-block order, tag/event cross-layer arbitration, decoupled xfer/load/store/compute pipelines, and heterogeneous FUs. Warp, SIMT, CTA, GPU scoreboard, and RF-bank timing are not MLX requirements; GPGPU-Sim remains a separate baseline backend.
+- H66 reproduces the upstream DSAGEN scratchpad exactly in a standalone adapter for all 16 frozen shapes: eight 8-byte banks, four request slots, one issue per bank per cycle, one-entry bank FIFOs, and ordered commit yield zero cycle/counter error. H69's Figure-9-derived column ports are an explicit reconstruction candidate, not a disclosed MLX queue design.
+- H71's physical `(PE,FU-class)` counters invalidate the earlier global-any-PE compute proxy. Their frozen transfers reject Figure 25 at 0/24 points (46.09% MAPE) and Figure 24 at 3/42 points (610.5% MAPE), proving that proxy-work identity and physical utilization cannot be repaired by renaming the metric.
+- H75 proves H57 did not execute matched Figure 20 shapes: all proxies represent below 1% of logical work, usually below 0.001%, and QKV/FFN rectangular shapes share one BSMM proxy. H76 then validates affine repeat folding independently at 36/36 held-out checks, 0.82% MAPE, and 3.73% maximum error.
+- H77 applies that folding to all six QKV/FFN projection cells with exact logical FMA work and no paper targets. H78 freezes the estimator before comparison and rejects it at 0/6 points: all predictions are about 2.021x versus 3.2x-4.3x, with 46.75% MAPE and 53.00% maximum error. Matched total work is necessary but not sufficient; per-kernel FU mix, stage/launch structure, memory traffic, and GPU execution shape must be modeled next.
 
 ## Patterns and Insights
 
@@ -100,6 +105,7 @@ H37 closes the full-paper ledger with a machine certificate rather than a comple
 - SIMD scaling should vectorize an orthogonal workload dimension, not merge radix dependencies. H45 reduces outer trip by four at SIMD32 and audits work after multiplying by the 4x lane factor; mesh scaling changes only active slots. This separates legitimate parallel issue reduction from dropping operations.
 - An independently frozen mechanism can support a later target-exposed curve without becoming held-out. H45 contains no Figure 23 values; H46 reuses it unchanged and passes, which is stronger than the old residual-calibrated replay but still limited by proxy workload scope.
 - Successful source compilation is weaker than instruction-stream qualification. DSAGEN's LLVM integrated assembler silently lost custom S-type immediates and produced zero-address streams; object disassembly of masks 98/229/1220 plus an application sanity check was necessary to validate the official custom-GNU assembly path.
+- Exact repeat folding is weaker than kernel identity. H76 can predict cycles for one recurring schedule while H78 still fails every projection target because one B32 CDC slope and one GPU cycles/FMA slope erase QKV/FFN shape, launch, memory, and occupancy differences.
 
 ## Lessons and Constraints
 
@@ -137,12 +143,14 @@ H37 closes the full-paper ledger with a machine certificate rather than a comple
 - H42 removes H41's scratchpad/compiler blockers but still is not paper-scale validation. Pair-wise JSON expansion, absent off-chip DMA/LSQ traffic, and inferred FU/placement choices must be resolved or explicitly bounded before comparing its cycles with Figures 18-25.
 - H43 removes pair-wise JSON expansion as a blocker, but timing provenance and off-chip traffic remain unresolved. The 593-cycle B64 result is a target-independent implementation check, not evidence that any plotted MLX bar is reproduced.
 - Preserve H44's FFT-64 failure. The paper mentions about 17% small-kernel launch overhead but publishes no exact launch/IF model; applying 17% only where the residual asks for it would turn the no-fit transfer into a calibration replay.
+- Do not divide H78 residuals into QKV/FFN correction factors. The next Figure 20 attempt must first produce target-free, per-kernel execution signatures and a separate two-component FFT-compression plus compressed-attention path.
 
 ## Open Questions
 
 - Can the authors provide a substantive MLX/DFU-E/M2-DFU primary text or explicit provenance statement that satisfies H34's unchanged lineage gates?
 - Can the authors provide native traces or a source-qualified simulator configuration spanning Volta Xavier, Ampere RTX 3090/Orin, and Hopper H100?
 - Which timing parameters are identifiable from cross-figure constraints rather than overfit?
+- Can target-free shape-specific FFT-compression and dense compressed-attention schedules provide separate MLX/Xavier anchors for the two uncovered Figure 20 attention cells?
 - Can the FGSCR-42 authors provide an anonymously retrievable archive plus the exact MLX train/validation/test manifest and ViT training configuration?
 - Was Fig. 15(c)'s dense `original` Llama2 bar trained with LoRA on WinoGrande, and if so, what objective, adapter placement/rank, optimizer, epochs, and seed produced 90.1%? H28 establishes feasibility but not the authors' answer.
 - Which unpublished checkpoint, evaluator revision, prompt detail, or task-adaptation step produced the higher Ada 4k table after ordinary seed variation and H30's session-cap accommodation were both excluded?
@@ -160,3 +168,15 @@ Run050 performs the first no-fit paper-facing transfer of the source-integrated 
 Run051 independently validates SIMD/mesh capacity scaling with exact work conservation, producing 3.984x/3.410x/13.623x ratios without Figure 23 inputs. It supports the mechanism but is not yet a transformer-block curve.
 
 Run052 transfers that frozen mechanism across five sequence lengths and passes all 15 Figure 23 bars with 4.31% MAPE and 9.81% maximum error. The result is kept as a target-exposed BSMM proxy rather than promoted to held-out full-Transformer reproduction.
+
+Runs 053-080 replace fixed memory with real LSQ/cache/DDR and exact DSAGEN
+scratchpad paths, correct the PE semantics, add full-block/operator/GPU proxy
+coverage, recover complete Figure 22 targets, add physical PE/FU counters, and
+prove the Figure 20 proxy-identity gap. These mechanisms materially improve
+the simulator while rejecting the unmatched Figure 24/25 transfers.
+
+Run081 validates affine repeat folding on 36 held-out checks. Run082 applies it
+to six exact-work projection shapes without targets. Run083 then rejects the
+frozen Figure 20 transfer at 0/6 points, 46.75% MAPE, and 53.00% maximum error;
+the next loop must deepen per-kernel execution identity rather than tune this
+shared slope.

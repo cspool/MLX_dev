@@ -17,3 +17,8 @@ compression and compressed attention, while H57 provides only an FFT anchor.
 
 The immutable target-free result is
 `artifacts/results/matched-projection-estimator-run082.json`.
+
+The frozen target comparison is reported in
+[`matched-projection-fig20-transfer.md`](matched-projection-fig20-transfer.md).
+It rejects the shared cycles-per-FMA model at 0/6 points and 46.75% MAPE; this
+does not invalidate the exact logical-work accounting or repeat-folding gate.
