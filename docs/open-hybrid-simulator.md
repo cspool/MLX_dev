@@ -123,6 +123,9 @@ variable-depth FFT execution and rejected small-anchor estimator are in
 target-free steady-state repair passes in
 [`fft-steady-state-folding.md`](fft-steady-state-folding.md). The remaining
 compressed-attention reduction is implemented in
-[`grouped-attention-cdc.md`](grouped-attention-cdc.md). The remaining boundary
-is real data-transfer/memory timing and Xavier counterparts for Figures 18--21
-and 24--25. Paper result bars were not inputs to the invariant runs.
+[`grouped-attention-cdc.md`](grouped-attention-cdc.md). Full SIMD32 composition,
+NoC packet flow, and four-port DSAGEN SRAM timing pass in
+[`combined-attention-memory.md`](combined-attention-memory.md). The remaining
+Figure 20 boundary is a matched Xavier FFT-CMP plus compressed-Attention
+execution; Figures 18--21 and 24--25 still require broader shape/device
+coverage. Paper result bars were not inputs to the invariant runs.

@@ -687,9 +687,9 @@ experiments:
       timestamp: "2026-08-17"
 
 outer_loop:
-  cycle: 44
-  last_direction: "Connect H81 FFT-CMP and H82 compressed-Attention through explicit boundary data and the validated DSAGEN scratchpad/column-port path. Validate a combined target-free schedule and memory work before building matched Xavier FFT+attention anchors."
-  last_reflection: "H82 adds reversible grouped CDC events, preserves legacy summaries exactly, conserves all five H79 FU classes, and gives exact q=1/2→4/8 cycle folding. Both Attention components now have defensible fixed-memory estimators. The remaining MLX-side gap is their data-transfer/memory composition; the cross-device gap is a matched Xavier two-component execution."
+  cycle: 45
+  last_direction: "Freeze and execute a target-free Xavier two-component Attention path with variable-depth FFT launches and grouped QK/FMAX/FEXP/ADD/SV/FDIV work. Validate small-anchor folding against larger heldouts before any Figure 20 target comparison."
+  last_reflection: "H83 closes the MLX-side shape boundary: full SIMD32 work, 64-byte packets, per-event token cardinality, four-port DSAGEN SRAM, NoC boundary bytes, 26-entry footprint, replay, and held-out cycles all pass. Full MLX cycles are now immutable; the only Figure 20 Attention comparison blocker is an independently matched Xavier execution."
 
 recent_milestones_after_h46:
   architecture_contract: "H52 supersedes the GPU-SM analogy with the paper's specialized spatial tagged-block PE; GPGPU-Sim is baseline-only."
@@ -702,6 +702,7 @@ recent_milestones_after_h46:
   matched_fft: "H80 executes both variable-depth FFT topologies with exact q-linear work and replay, but rejects q=1/2 affine folding at 0/4 holdouts, 36.60% MAPE, and 53.19% maximum error."
   fft_steady_state: "H81 supports q=4/8 folding on four new q=16/32 holdouts at 0.157% MAPE and 0.291% max; fixed-memory full-work FFT cycles are 1,751,157/100,401,211."
   grouped_attention: "H82 supports default-preserving grouped CDC events and exact compressed-attention FU work; q=1/2 predicts q=4/8 exactly and fixed-memory full cycles are 8,421,396/8,590,475,284."
+  combined_attention_memory: "H83 supports full SIMD32 FFT-CMP→Attention with exact FU/NoC/SRAM work and 4/4 heldouts; MLX full cycles are 4,984,864/4,339,007,525."
 
 completion_snapshot_run042:
   certificate_run: run_042

@@ -22,6 +22,10 @@ The result validates grouped CDC readiness and fixed-memory timing. It does not
 yet model attention data transfers, scratchpad/off-chip traffic, or Xavier, and
 therefore is not a Figure 20 speedup.
 
+The full-design SIMD32 composition with FFT-CMP, explicit Q/K/V packet
+boundaries, and four DSAGEN SRAM ports is now validated in
+[`combined-attention-memory.md`](combined-attention-memory.md).
+
 The source change is preserved as the reversible incremental patch
 `patches/dsagen/dsa-gem5-mlx-grouped-events-v1.patch`. The immutable result is
 `artifacts/results/grouped-attention-cdc-run087.json`.
