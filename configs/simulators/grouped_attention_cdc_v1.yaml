@@ -1,0 +1,56 @@
+name: grouped-attention-cdc-v1
+experiment_id: H82
+run_id: run087
+classification: target_free_grouped_compressed_attention_cdc
+validation_eligible: false
+
+frozen_inputs:
+  signature:
+    path: artifacts/results/attention-work-signature-run084.json
+    sha256: 109091f15841245b3d2727fbfa492ea1671cb053a30c0278359833026919c3c6
+    required_status: supported
+    required_integrity: true
+  fft_estimator:
+    path: artifacts/results/fft-steady-state-folding-run086.json
+    sha256: bc05cd96eb6cc12aa2d5b7894c09bf291e23694ce1316a287b627d3128548e6f
+    required_status: supported
+    required_integrity: true
+  pe_contract:
+    path: artifacts/results/mlx-pe-semantics-correction-run058.json
+    sha256: 5573dcc3b4317077803ad135aa0be863b94db00aefdfeec545b9504cd9642d1e
+    required_status: supported
+    required_integrity: true
+  legacy_summary:
+    path: artifacts/environment/h80/runs/N256-q4-first.json
+    sha256: a7f480f91697cc1c7274e694b110ba75b5ab6c6c9047f9521ee40df564bc1310
+  prior_patch:
+    path: patches/dsagen/dsa-gem5-mlx-fu-counters-v1.patch
+    sha256: 5b3887e5644c77aa11afd7701c7a33c78d23b95971066bda7ff3e26d4f78e88e
+
+hardware:
+  mesh: [4, 4]
+  lanes: 4
+  simd_width: 8
+  hidden_dimension: 4096
+  active_window: 4
+  memory_backend: fixed
+
+shapes:
+  N256: {sequence_length: 256, retained_length: 128, full_scale: 512}
+  N8192: {sequence_length: 8192, retained_length: 4096, full_scale: 524288}
+
+fit_scales: [1, 2]
+holdout_scales: [4, 8]
+cycle_relative_error_limit: 0.05
+output_root: artifacts/environment/h82
+
+source_layout:
+  overlay_header: third_party/dsa-framework/dsa-gem5/src/cpu/minor/ssim/mlx_overlay.hh
+  overlay_source: third_party/dsa-framework/dsa-gem5/src/cpu/minor/ssim/mlx_overlay.cc
+  tracked_patch: patches/dsagen/dsa-gem5-mlx-grouped-events-v1.patch
+  compiler_core: src/mlxsim/dsagen_grouped_attention.py
+  compiler: scripts/compile_grouped_attention_cdc.py
+  runner: scripts/run_grouped_attention_cdc.py
+  auditor: scripts/audit_grouped_attention_cdc.py
+
+result_path: artifacts/results/grouped-attention-cdc-run087.json
