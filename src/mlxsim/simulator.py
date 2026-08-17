@@ -59,6 +59,13 @@ class MLXSimulator:
 
     def simulate(self, workload: Workload) -> SimulationResult:
         profile = compile_workload(workload)
+        return self.simulate_profile(workload, profile)
+
+    def simulate_profile(
+        self, workload: Workload, profile: KernelProfile
+    ) -> SimulationResult:
+        """Simulate a precompiled profile using the normal scheduler and accounting."""
+
         waves = self._wave_count(profile)
         operations = self._build_operations(profile, workload, waves)
         schedule = self._run_scheduler(operations)
