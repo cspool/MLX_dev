@@ -80,7 +80,8 @@ def grouped_projected_power(projected: torch.Tensor, group_count: int) -> torch.
     if not 1 <= group_count <= positive_frequency_count:
         raise ValueError("group_count must fit the non-DC real-FFT bins")
 
-    centered = projected.float() - projected.float().mean(dim=1, keepdim=True)
+    projected_fp32 = projected.float()
+    centered = projected_fp32 - projected_fp32.mean(dim=1, keepdim=True)
     spectrum = torch.fft.rfft(centered, dim=1)[:, 1:, :]
     power = spectrum.real.square() + spectrum.imag.square()
     mean_feature_power = power.mean(dim=(0, 2))
@@ -146,6 +147,10 @@ def audit_measured_spectra(
             raise ValueError(f"every {projection} curve must contain {group_count} groups")
 
     targets = derive_fig6_targets(manifest)
+    target_uncertainty_abs = (
+        float(manifest["fig6"]["endpoint_uncertainty_y_pixels"])
+        / (manifest["fig6"]["axis"]["y_at_zero"] - manifest["fig6"]["axis"]["y_at_one"])
+    )
     raw_cases = {
         "layer1_k": [float(value) for value in curves["k"][0]],
         "layer16_k": [float(value) for value in curves["k"][15]],
@@ -168,6 +173,7 @@ def audit_measured_spectra(
                     "frequency_group": group,
                     "actual": actual,
                     "target": target,
+                    "target_uncertainty_abs": target_uncertainty_abs,
                     "relative_error": error,
                     "passes_10pct_gate": error <= manifest["fig6"]["maximum_relative_error"],
                 }
@@ -207,6 +213,7 @@ def audit_measured_spectra(
         "fig6": {
             "points": points,
             "shared_peak_group_energy": shared_peak,
+            "target_uncertainty_abs": target_uncertainty_abs,
             "mape": sum(errors) / len(errors),
             "max_relative_error": max(errors),
             "all_points_pass": numerical_pass,

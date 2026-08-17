@@ -70,6 +70,7 @@ def test_exact_fig6_curves_and_directional_fig5_checks_pass() -> None:
     curves["k"][15] = targets["layer16_k"]
     report = audit_measured_spectra(curves, manifest)
     assert report["fig6"]["max_relative_error"] == pytest.approx(0.0)
+    assert report["fig6"]["target_uncertainty_abs"] == pytest.approx(1.5 / 152)
     assert report["fig6"]["all_points_pass"] is True
     assert report["fig5"]["all_checks_pass"] is True
     assert report["summary"]["pass"] is True
