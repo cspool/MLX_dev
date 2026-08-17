@@ -87,6 +87,16 @@ def window_accounting(token_count: int, sequence_length: int) -> dict[str, int]:
     }
 
 
+def complete_window_ranges(token_count: int, sequence_length: int) -> list[tuple[int, int]]:
+    """Return only full non-overlapping windows, excluding any short tail."""
+
+    accounting = window_accounting(token_count, sequence_length)
+    return [
+        (index * sequence_length, (index + 1) * sequence_length)
+        for index in range(accounting["windows"])
+    ]
+
+
 def audit_perplexity(
     *, total_nll: float, predicted_tokens: int, target: float, relative_error_gate: float
 ) -> dict[str, Any]:

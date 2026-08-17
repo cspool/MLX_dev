@@ -7,6 +7,7 @@ import pytest
 
 from mlxsim.llama_perplexity import (
     audit_perplexity,
+    complete_window_ranges,
     git_blob_sha1,
     qualify_model_files,
     window_accounting,
@@ -20,6 +21,11 @@ def test_h19_frozen_window_accounting() -> None:
         "predicted_tokens": 340659,
         "discarded_tail_tokens": 476,
     }
+    ranges = complete_window_ranges(341468, 1024)
+    assert len(ranges) == 333
+    assert ranges[0] == (0, 1024)
+    assert ranges[-1] == (339968, 340992)
+    assert all(end - start == 1024 for start, end in ranges)
 
 
 def test_perplexity_audit_uses_token_weighted_nll() -> None:

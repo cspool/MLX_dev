@@ -20,11 +20,11 @@ from transformers import AutoConfig, AutoModelForCausalLM, AutoTokenizer
 
 from mlxsim.llama_perplexity import (
     audit_perplexity,
+    complete_window_ranges,
     qualify_model_files,
     sha256_file,
     window_accounting,
 )
-from mlxsim.quality import contiguous_window_ranges
 
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
 DEFAULT_CONFIG = PROJECT_ROOT / "configs/analysis/llama2_perplexity_v1.yaml"
@@ -115,7 +115,11 @@ def main() -> int:
         raise RuntimeError(f"window-count mismatch: {accounting}")
     if accounting["predicted_tokens"] != int(config["sampling"]["expected_predicted_tokens"]):
         raise RuntimeError(f"predicted-token mismatch: {accounting}")
-    ranges = contiguous_window_ranges(token_count, sequence_length)
+    ranges = complete_window_ranges(token_count, sequence_length)
+    if len(ranges) != accounting["windows"] or any(
+        end - start != sequence_length for start, end in ranges
+    ):
+        raise RuntimeError(f"complete-window construction mismatch: {accounting}")
     if args.smoke:
         ranges = ranges[:1]
 
