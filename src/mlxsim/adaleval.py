@@ -391,6 +391,27 @@ def aggregate_replicate_records(
     }
 
 
+def select_length_quantiles(
+    records: Sequence[Mapping[str, Any]], *, count: int
+) -> list[Mapping[str, Any]]:
+    """Select deterministic inclusive quantiles by input length and position."""
+    if count < 2:
+        raise ValueError("quantile selection requires at least two records")
+    if len(records) < count:
+        raise ValueError("quantile count exceeds available records")
+    ordered = sorted(
+        records,
+        key=lambda record: (
+            int(record["input_token_len"]),
+            int(record["dataset_position"]),
+        ),
+    )
+    return [
+        ordered[index * (len(ordered) - 1) // (count - 1)]
+        for index in range(count)
+    ]
+
+
 def extract_stackselect_answer(prediction: str, num_choice: int) -> str:
     designations = [f"A{i}" for i in range(1, num_choice + 1)]
     finds = [prediction.find(candidate) for candidate in designations]

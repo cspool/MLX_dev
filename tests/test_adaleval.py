@@ -10,6 +10,7 @@ from mlxsim.adaleval import (
     fixed_replication_seed,
     load_stackselect,
     replication_seed_stream_sha256,
+    select_length_quantiles,
     utf8_stream_sha256,
     validate_generation_result,
     wrap_internlm2_prompt,
@@ -160,3 +161,13 @@ def test_replicate_aggregate_uses_all_registered_draws() -> None:
     assert report["primary_pass"] is True
     assert report["unanimous_prediction_positions"] == 0
     assert report["unanimous_correctness_positions"] == 0
+
+
+def test_length_quantile_selection_is_inclusive_and_stable() -> None:
+    records = [
+        {"input_token_len": length, "dataset_position": position}
+        for position, length in enumerate((20, 10, 30, 20, 40))
+    ]
+    selected = select_length_quantiles(records, count=3)
+    assert [record["dataset_position"] for record in selected] == [1, 3, 4]
+    assert [record["input_token_len"] for record in selected] == [10, 20, 40]
