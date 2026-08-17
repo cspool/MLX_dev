@@ -687,9 +687,9 @@ experiments:
       timestamp: "2026-08-17"
 
 outer_loop:
-  cycle: 42
-  last_direction: "Register a target-free steady-state-onset experiment with larger q anchors and still-larger heldouts for both H80 topologies. Only after a held-out cycle model passes may it estimate full FFT work; compressed-attention reduction and Xavier anchors remain separate subsequent gates."
-  last_reflection: "H80 executes the exact 16/26-stage FFT topologies and conserves every H79 work counter, but q=1/2 fits miss q=4/8 by up to 53.19%. Incremental slopes are still rising, so fill/active-window wavefront behavior dominates the smallest anchors. This is an estimator failure, not a compiler or PE-semantics failure, and no invalid full-work latency may enter Figure 20."
+  cycle: 43
+  last_direction: "Implement a target-free compressed-attention CDC whose QK/SV events fire only after complete dot-product groups and whose rowmax/FEXP/ADD/FDIV counts match H79. Validate grouped-event semantics and repeat folding before adding memory or Xavier timing."
+  last_reflection: "H81 confirms the independently observed steady-state boundary: unchanged q=4/8 anchors predict q=16/32 with 0.157% MAPE and 0.291% max. Fixed-memory FFT-CMP full-work timing is now defensible, but it remains only one of two Attention components and excludes memory/GPU behavior. No Figure 20 target has been consumed."
 
 recent_milestones_after_h46:
   architecture_contract: "H52 supersedes the GPU-SM analogy with the paper's specialized spatial tagged-block PE; GPGPU-Sim is baseline-only."
@@ -700,6 +700,7 @@ recent_milestones_after_h46:
   matched_projection: "H77 supports exact-work target-free estimates for six projection cells; H78 rejects their frozen Figure 20 transfer at 0/6, 46.75% MAPE, and 53.00% maximum error."
   attention_signature: "H79 supports exact target-free N=256/8192 FFT-CMP and compressed-attention per-FU signatures; H57's seven-stage FFT proxy lacks the required 16/26 stages and FMAX/FEXP/FDIV classes."
   matched_fft: "H80 executes both variable-depth FFT topologies with exact q-linear work and replay, but rejects q=1/2 affine folding at 0/4 holdouts, 36.60% MAPE, and 53.19% maximum error."
+  fft_steady_state: "H81 supports q=4/8 folding on four new q=16/32 holdouts at 0.157% MAPE and 0.291% max; fixed-memory full-work FFT cycles are 1,751,157/100,401,211."
 
 completion_snapshot_run042:
   certificate_run: run_042

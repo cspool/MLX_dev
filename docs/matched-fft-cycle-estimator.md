@@ -25,5 +25,9 @@ This is a target-free negative result with audit integrity intact. A later
 experiment may independently pre-register larger anchors and saturation
 checks, but may not select them from Figure 20 residuals.
 
+That target-free follow-up is complete in
+[`fft-steady-state-folding.md`](fft-steady-state-folding.md): q=4/8 predicts
+new q=16/32 runs with 0.157% MAPE and 0.291% maximum error.
+
 The immutable result is
 `artifacts/results/matched-fft-cycle-estimator-run085.json`.

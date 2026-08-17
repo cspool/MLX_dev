@@ -119,8 +119,9 @@ showing that matched aggregate work alone is insufficient. The remaining
 attention work mismatch is now made explicit in
 [`attention-work-signature.md`](attention-work-signature.md). Its exact-work
 variable-depth FFT execution and rejected small-anchor estimator are in
-[`matched-fft-cycle-estimator.md`](matched-fft-cycle-estimator.md). The
-remaining boundary is a target-independent steady-state FFT estimator plus a
-correct compressed-attention reduction schedule and Xavier counterpart for
-Figures 18--21 and 24--25. Paper result bars were not inputs to the invariant
-runs.
+[`matched-fft-cycle-estimator.md`](matched-fft-cycle-estimator.md). Its
+target-free steady-state repair passes in
+[`fft-steady-state-folding.md`](fft-steady-state-folding.md). The remaining
+boundary is a correct compressed-attention reduction schedule plus real-memory
+and Xavier counterparts for Figures 18--21 and 24--25. Paper result bars were
+not inputs to the invariant runs.

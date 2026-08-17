@@ -1,0 +1,1549 @@
+{
+  "schema_version": 1,
+  "experiment_id": "H81",
+  "run_id": "run086",
+  "classification": "target_free_fft_steady_state_folding",
+  "validation_eligible": false,
+  "generated_at": "2026-08-17T22:09:01.460609+00:00",
+  "project_commit": "2aa56be2ac3fc961896bb3ac2dc34857311f53f8",
+  "hypothesis_status": "supported",
+  "audit_integrity": true,
+  "frozen_inputs": {
+    "signature": {
+      "path": "artifacts/results/attention-work-signature-run084.json",
+      "bytes": 7936,
+      "sha256": "109091f15841245b3d2727fbfa492ea1671cb053a30c0278359833026919c3c6",
+      "checks": {
+        "is_file": true,
+        "sha256": true
+      },
+      "pass": true
+    },
+    "repeat_folding": {
+      "path": "artifacts/results/repeat-folding-run081.json",
+      "bytes": 12448,
+      "sha256": "8aff122ca8a7c797030742c0035cf18626962c746d105c57dd2136bacaa6b3d6",
+      "checks": {
+        "is_file": true,
+        "sha256": true
+      },
+      "pass": true
+    },
+    "pe_contract": {
+      "path": "artifacts/results/mlx-pe-semantics-correction-run058.json",
+      "bytes": 13215,
+      "sha256": "5573dcc3b4317077803ad135aa0be863b94db00aefdfeec545b9504cd9642d1e",
+      "checks": {
+        "is_file": true,
+        "sha256": true
+      },
+      "pass": true
+    },
+    "h80": {
+      "path": "artifacts/results/matched-fft-cycle-estimator-run085.json",
+      "bytes": 36601,
+      "sha256": "20a95cb2ed124684912715b5d75b76b30d2e9732284dab3ebfb161371f0b8965",
+      "checks": {
+        "is_file": true,
+        "sha256": true
+      },
+      "pass": true
+    },
+    "overlay": {
+      "path": "third_party/dsa-framework/dsa-gem5/src/cpu/minor/ssim/mlx_overlay.cc",
+      "bytes": 44189,
+      "sha256": "d2fc094770e5d78c9f4ccde03835fbec9bd37c2476bc6ff0ae5d1349d19ea6b0",
+      "checks": {
+        "is_file": true,
+        "sha256": true
+      },
+      "pass": true
+    },
+    "driver": {
+      "path": "simulator_ext/dsagen/mlx_overlay_json_driver.cc",
+      "bytes": 4301,
+      "sha256": "39608457bd470e4c130c1aec7bd61ea87b00abf069195a6d9e601f221c1b790b",
+      "checks": {
+        "is_file": true,
+        "sha256": true
+      },
+      "pass": true
+    },
+    "compiler_core": {
+      "path": "src/mlxsim/dsagen_matched_fft.py",
+      "bytes": 6320,
+      "sha256": "b06b82d3294598d1c9c40348b130efcfdf6a7c1004658fc565ee007200c19880",
+      "checks": {
+        "is_file": true,
+        "sha256": true
+      },
+      "pass": true
+    },
+    "compiler_script": {
+      "path": "scripts/compile_matched_fft_cycle_estimator.py",
+      "bytes": 2657,
+      "sha256": "f5072ff58e6a1de3fd93434da4e88913d3608ddc5b43f1963619b177f7d9c20c",
+      "checks": {
+        "is_file": true,
+        "sha256": true
+      },
+      "pass": true
+    },
+    "runner_script": {
+      "path": "scripts/run_matched_fft_cycle_estimator.py",
+      "bytes": 4521,
+      "sha256": "96cb2a6b83b0c2236952c66d75b6e33f30cae9d10300658224179236707a8198",
+      "checks": {
+        "is_file": true,
+        "sha256": true
+      },
+      "pass": true
+    }
+  },
+  "parent_checks": {
+    "signature": true,
+    "repeat_folding": true,
+    "pe_contract": true,
+    "h80": true
+  },
+  "compile_manifest": {
+    "path": "artifacts/environment/h81/matched-fft-compile-manifest.json",
+    "bytes": 14030,
+    "sha256": "45496990ee625544129db5e28564a2e32e6550f2d38d9da59f8d0630ae6342ad",
+    "checks": {
+      "is_file": true
+    },
+    "pass": true
+  },
+  "run_manifest": {
+    "path": "artifacts/environment/h81/matched-fft-run-manifest.json",
+    "bytes": 37747,
+    "sha256": "149905166a7a159c121f9c6b622855bf7d4413025c2d3ad441f035774bdd6ad9",
+    "checks": {
+      "is_file": true
+    },
+    "pass": true
+  },
+  "compile_checks": {
+    "N256-q16": true,
+    "N256-q32": true,
+    "N256-q4": true,
+    "N256-q8": true,
+    "N8192-q16": true,
+    "N8192-q32": true,
+    "N8192-q4": true,
+    "N8192-q8": true
+  },
+  "execution_checks": {
+    "N256-q16": true,
+    "N256-q32": true,
+    "N256-q4": true,
+    "N256-q8": true,
+    "N8192-q16": true,
+    "N8192-q32": true,
+    "N8192-q4": true,
+    "N8192-q8": true
+  },
+  "work_linearity_checks": {
+    "N256-q4": true,
+    "N256-q8": true,
+    "N256-q16": true,
+    "N256-q32": true,
+    "N8192-q4": true,
+    "N8192-q8": true,
+    "N8192-q16": true,
+    "N8192-q32": true
+  },
+  "full_work_conservation": {
+    "N256": {
+      "full_scale": 8192,
+      "expected": {
+        "fma": 72351744,
+        "alu_add": 108527616,
+        "shuffle": 1572864
+      },
+      "derived": {
+        "fma": 72351744,
+        "alu_add": 108527616,
+        "shuffle": 1572864
+      },
+      "checks": {
+        "fma": true,
+        "alu_add": true,
+        "shuffle": true
+      },
+      "pass": true
+    },
+    "N8192": {
+      "full_scale": 262144,
+      "expected": {
+        "fma": 3825205248,
+        "alu_add": 5737807872,
+        "shuffle": 50331648
+      },
+      "derived": {
+        "fma": 3825205248,
+        "alu_add": 5737807872,
+        "shuffle": 50331648
+      },
+      "checks": {
+        "fma": true,
+        "alu_add": true,
+        "shuffle": true
+      },
+      "pass": true
+    }
+  },
+  "measurements": {
+    "N256-q16": {
+      "cycles": 3539,
+      "summary": {
+        "boundary_events_emitted": 4800,
+        "busy_cycles_by_pipeline": {
+          "compute": 3536,
+          "load": 96,
+          "store": 48,
+          "xfer": 811
+        },
+        "cycles": 3539,
+        "done": true,
+        "event_unblocked_issues_before_tag_complete": 3704,
+        "external_memory_completions": 0,
+        "external_memory_requests": 0,
+        "external_memory_wait_cycles": 0,
+        "instructions_completed": 49728,
+        "instructions_issued": 49728,
+        "issue_cycles_by_pipeline": {
+          "compute": 3479,
+          "load": 96,
+          "store": 48,
+          "xfer": 611
+        },
+        "issued_by_pipeline": {
+          "compute": 44544,
+          "load": 384,
+          "store": 192,
+          "xfer": 4608
+        },
+        "link_stalls": 0,
+        "mapped_pe_count": 16,
+        "max_active_tags": 4,
+        "max_pipeline_issues_in_cycle": 32,
+        "memory_backend": "fixed",
+        "pe_dependency_model": "paper_static",
+        "physical_pe_count": 16,
+        "productive_global_cycles_by_pipeline": {
+          "compute": 3536,
+          "load": 96,
+          "store": 48,
+          "xfer": 811
+        },
+        "productive_pe_cycles_by_fu_class": {
+          "alu": 27968,
+          "fma": 26496,
+          "shuffle": 512
+        },
+        "productive_pe_cycles_by_pipeline": {
+          "compute": 51972,
+          "load": 384,
+          "store": 192,
+          "xfer": 6464
+        },
+        "record_events": false,
+        "resident_pe_cycles_by_pipeline": {
+          "compute": 51972,
+          "load": 384,
+          "store": 192,
+          "xfer": 6464
+        },
+        "route_hops": 5568,
+        "scenario": "json_driver",
+        "skip_hops": 960,
+        "stalls_by_reason": {
+          "event_dependency": 3380,
+          "pipeline_contention": 22900
+        },
+        "start_in_roi": true,
+        "unit_hops": 4608
+      },
+      "metadata": {
+        "experiment_id": "H80",
+        "compiler": "mlxsim.dsagen_matched_fft.compile_matched_fft",
+        "paper_target_values_consumed": false,
+        "name": "N256-q16",
+        "forward_stages": 8,
+        "inverse_stages": 7,
+        "stage_count": 16,
+        "stage_groups": [
+          "fft_0",
+          "fft_1",
+          "fft_2",
+          "fft_3",
+          "fft_4",
+          "fft_5",
+          "fft_6",
+          "fft_7",
+          "truncate_shuffle",
+          "ifft_0",
+          "ifft_1",
+          "ifft_2",
+          "ifft_3",
+          "ifft_4",
+          "ifft_5",
+          "ifft_6"
+        ],
+        "stage_trip_counts": [
+          32,
+          32,
+          32,
+          32,
+          32,
+          32,
+          32,
+          32,
+          32,
+          16,
+          16,
+          16,
+          16,
+          16,
+          16,
+          16
+        ],
+        "scale": 16,
+        "block_count": 192,
+        "static_event_edge_count": 180,
+        "dynamic_event_count": 4800,
+        "operation_counts": {
+          "fma": 17664,
+          "add": 26496,
+          "shuffle": 384
+        },
+        "pipeline_counts": {
+          "load": 384,
+          "store": 192,
+          "compute": 44544,
+          "xfer": 4608
+        },
+        "memory_requests": 576,
+        "simd_width": 8
+      },
+      "checks": {
+        "files": true,
+        "replay": true,
+        "done": true,
+        "paper_static": true,
+        "fixed_memory": true,
+        "instructions": true,
+        "pipelines": true,
+        "events": true
+      }
+    },
+    "N256-q32": {
+      "cycles": 6963,
+      "summary": {
+        "boundary_events_emitted": 9600,
+        "busy_cycles_by_pipeline": {
+          "compute": 6960,
+          "load": 192,
+          "store": 96,
+          "xfer": 1709
+        },
+        "cycles": 6963,
+        "done": true,
+        "event_unblocked_issues_before_tag_complete": 7124,
+        "external_memory_completions": 0,
+        "external_memory_requests": 0,
+        "external_memory_wait_cycles": 0,
+        "instructions_completed": 99456,
+        "instructions_issued": 99456,
+        "issue_cycles_by_pipeline": {
+          "compute": 6878,
+          "load": 192,
+          "store": 96,
+          "xfer": 1296
+        },
+        "issued_by_pipeline": {
+          "compute": 89088,
+          "load": 768,
+          "store": 384,
+          "xfer": 9216
+        },
+        "link_stalls": 0,
+        "mapped_pe_count": 16,
+        "max_active_tags": 4,
+        "max_pipeline_issues_in_cycle": 32,
+        "memory_backend": "fixed",
+        "pe_dependency_model": "paper_static",
+        "physical_pe_count": 16,
+        "productive_global_cycles_by_pipeline": {
+          "compute": 6960,
+          "load": 192,
+          "store": 96,
+          "xfer": 1709
+        },
+        "productive_pe_cycles_by_fu_class": {
+          "alu": 55936,
+          "fma": 52992,
+          "shuffle": 1024
+        },
+        "productive_pe_cycles_by_pipeline": {
+          "compute": 103940,
+          "load": 768,
+          "store": 384,
+          "xfer": 12928
+        },
+        "record_events": false,
+        "resident_pe_cycles_by_pipeline": {
+          "compute": 103940,
+          "load": 768,
+          "store": 384,
+          "xfer": 12928
+        },
+        "route_hops": 11136,
+        "scenario": "json_driver",
+        "skip_hops": 1920,
+        "stalls_by_reason": {
+          "event_dependency": 3060,
+          "pipeline_contention": 45360
+        },
+        "start_in_roi": true,
+        "unit_hops": 9216
+      },
+      "metadata": {
+        "experiment_id": "H80",
+        "compiler": "mlxsim.dsagen_matched_fft.compile_matched_fft",
+        "paper_target_values_consumed": false,
+        "name": "N256-q32",
+        "forward_stages": 8,
+        "inverse_stages": 7,
+        "stage_count": 16,
+        "stage_groups": [
+          "fft_0",
+          "fft_1",
+          "fft_2",
+          "fft_3",
+          "fft_4",
+          "fft_5",
+          "fft_6",
+          "fft_7",
+          "truncate_shuffle",
+          "ifft_0",
+          "ifft_1",
+          "ifft_2",
+          "ifft_3",
+          "ifft_4",
+          "ifft_5",
+          "ifft_6"
+        ],
+        "stage_trip_counts": [
+          64,
+          64,
+          64,
+          64,
+          64,
+          64,
+          64,
+          64,
+          64,
+          32,
+          32,
+          32,
+          32,
+          32,
+          32,
+          32
+        ],
+        "scale": 32,
+        "block_count": 192,
+        "static_event_edge_count": 180,
+        "dynamic_event_count": 9600,
+        "operation_counts": {
+          "fma": 35328,
+          "add": 52992,
+          "shuffle": 768
+        },
+        "pipeline_counts": {
+          "load": 768,
+          "store": 384,
+          "compute": 89088,
+          "xfer": 9216
+        },
+        "memory_requests": 1152,
+        "simd_width": 8
+      },
+      "checks": {
+        "files": true,
+        "replay": true,
+        "done": true,
+        "paper_static": true,
+        "fixed_memory": true,
+        "instructions": true,
+        "pipelines": true,
+        "events": true
+      }
+    },
+    "N256-q4": {
+      "cycles": 972,
+      "summary": {
+        "boundary_events_emitted": 1200,
+        "busy_cycles_by_pipeline": {
+          "compute": 969,
+          "load": 24,
+          "store": 12,
+          "xfer": 217
+        },
+        "cycles": 972,
+        "done": true,
+        "event_unblocked_issues_before_tag_complete": 968,
+        "external_memory_completions": 0,
+        "external_memory_requests": 0,
+        "external_memory_wait_cycles": 0,
+        "instructions_completed": 12432,
+        "instructions_issued": 12432,
+        "issue_cycles_by_pipeline": {
+          "compute": 948,
+          "load": 24,
+          "store": 12,
+          "xfer": 165
+        },
+        "issued_by_pipeline": {
+          "compute": 11136,
+          "load": 96,
+          "store": 48,
+          "xfer": 1152
+        },
+        "link_stalls": 0,
+        "mapped_pe_count": 16,
+        "max_active_tags": 4,
+        "max_pipeline_issues_in_cycle": 32,
+        "memory_backend": "fixed",
+        "pe_dependency_model": "paper_static",
+        "physical_pe_count": 16,
+        "productive_global_cycles_by_pipeline": {
+          "compute": 969,
+          "load": 24,
+          "store": 12,
+          "xfer": 217
+        },
+        "productive_pe_cycles_by_fu_class": {
+          "alu": 6992,
+          "fma": 6624,
+          "shuffle": 128
+        },
+        "productive_pe_cycles_by_pipeline": {
+          "compute": 13000,
+          "load": 96,
+          "store": 48,
+          "xfer": 1616
+        },
+        "record_events": false,
+        "resident_pe_cycles_by_pipeline": {
+          "compute": 13000,
+          "load": 96,
+          "store": 48,
+          "xfer": 1616
+        },
+        "route_hops": 1392,
+        "scenario": "json_driver",
+        "skip_hops": 240,
+        "stalls_by_reason": {
+          "event_dependency": 4200,
+          "pipeline_contention": 5940
+        },
+        "start_in_roi": true,
+        "unit_hops": 1152
+      },
+      "metadata": {
+        "experiment_id": "H80",
+        "compiler": "mlxsim.dsagen_matched_fft.compile_matched_fft",
+        "paper_target_values_consumed": false,
+        "name": "N256-q4",
+        "forward_stages": 8,
+        "inverse_stages": 7,
+        "stage_count": 16,
+        "stage_groups": [
+          "fft_0",
+          "fft_1",
+          "fft_2",
+          "fft_3",
+          "fft_4",
+          "fft_5",
+          "fft_6",
+          "fft_7",
+          "truncate_shuffle",
+          "ifft_0",
+          "ifft_1",
+          "ifft_2",
+          "ifft_3",
+          "ifft_4",
+          "ifft_5",
+          "ifft_6"
+        ],
+        "stage_trip_counts": [
+          8,
+          8,
+          8,
+          8,
+          8,
+          8,
+          8,
+          8,
+          8,
+          4,
+          4,
+          4,
+          4,
+          4,
+          4,
+          4
+        ],
+        "scale": 4,
+        "block_count": 192,
+        "static_event_edge_count": 180,
+        "dynamic_event_count": 1200,
+        "operation_counts": {
+          "fma": 4416,
+          "add": 6624,
+          "shuffle": 96
+        },
+        "pipeline_counts": {
+          "load": 96,
+          "store": 48,
+          "compute": 11136,
+          "xfer": 1152
+        },
+        "memory_requests": 144,
+        "simd_width": 8
+      },
+      "checks": {
+        "files": true,
+        "replay": true,
+        "done": true,
+        "paper_static": true,
+        "fixed_memory": true,
+        "instructions": true,
+        "pipelines": true,
+        "events": true
+      }
+    },
+    "N256-q8": {
+      "cycles": 1827,
+      "summary": {
+        "boundary_events_emitted": 2400,
+        "busy_cycles_by_pipeline": {
+          "compute": 1824,
+          "load": 48,
+          "store": 24,
+          "xfer": 423
+        },
+        "cycles": 1827,
+        "done": true,
+        "event_unblocked_issues_before_tag_complete": 1876,
+        "external_memory_completions": 0,
+        "external_memory_requests": 0,
+        "external_memory_wait_cycles": 0,
+        "instructions_completed": 24864,
+        "instructions_issued": 24864,
+        "issue_cycles_by_pipeline": {
+          "compute": 1797,
+          "load": 48,
+          "store": 24,
+          "xfer": 319
+        },
+        "issued_by_pipeline": {
+          "compute": 22272,
+          "load": 192,
+          "store": 96,
+          "xfer": 2304
+        },
+        "link_stalls": 0,
+        "mapped_pe_count": 16,
+        "max_active_tags": 4,
+        "max_pipeline_issues_in_cycle": 32,
+        "memory_backend": "fixed",
+        "pe_dependency_model": "paper_static",
+        "physical_pe_count": 16,
+        "productive_global_cycles_by_pipeline": {
+          "compute": 1824,
+          "load": 48,
+          "store": 24,
+          "xfer": 423
+        },
+        "productive_pe_cycles_by_fu_class": {
+          "alu": 13984,
+          "fma": 13248,
+          "shuffle": 256
+        },
+        "productive_pe_cycles_by_pipeline": {
+          "compute": 25988,
+          "load": 192,
+          "store": 96,
+          "xfer": 3232
+        },
+        "record_events": false,
+        "resident_pe_cycles_by_pipeline": {
+          "compute": 25988,
+          "load": 192,
+          "store": 96,
+          "xfer": 3232
+        },
+        "route_hops": 2784,
+        "scenario": "json_driver",
+        "skip_hops": 480,
+        "stalls_by_reason": {
+          "event_dependency": 3784,
+          "pipeline_contention": 11552
+        },
+        "start_in_roi": true,
+        "unit_hops": 2304
+      },
+      "metadata": {
+        "experiment_id": "H80",
+        "compiler": "mlxsim.dsagen_matched_fft.compile_matched_fft",
+        "paper_target_values_consumed": false,
+        "name": "N256-q8",
+        "forward_stages": 8,
+        "inverse_stages": 7,
+        "stage_count": 16,
+        "stage_groups": [
+          "fft_0",
+          "fft_1",
+          "fft_2",
+          "fft_3",
+          "fft_4",
+          "fft_5",
+          "fft_6",
+          "fft_7",
+          "truncate_shuffle",
+          "ifft_0",
+          "ifft_1",
+          "ifft_2",
+          "ifft_3",
+          "ifft_4",
+          "ifft_5",
+          "ifft_6"
+        ],
+        "stage_trip_counts": [
+          16,
+          16,
+          16,
+          16,
+          16,
+          16,
+          16,
+          16,
+          16,
+          8,
+          8,
+          8,
+          8,
+          8,
+          8,
+          8
+        ],
+        "scale": 8,
+        "block_count": 192,
+        "static_event_edge_count": 180,
+        "dynamic_event_count": 2400,
+        "operation_counts": {
+          "fma": 8832,
+          "add": 13248,
+          "shuffle": 192
+        },
+        "pipeline_counts": {
+          "load": 192,
+          "store": 96,
+          "compute": 22272,
+          "xfer": 2304
+        },
+        "memory_requests": 288,
+        "simd_width": 8
+      },
+      "checks": {
+        "files": true,
+        "replay": true,
+        "done": true,
+        "paper_static": true,
+        "fixed_memory": true,
+        "instructions": true,
+        "pipelines": true,
+        "events": true
+      }
+    },
+    "N8192-q16": {
+      "cycles": 6199,
+      "summary": {
+        "boundary_events_emitted": 7680,
+        "busy_cycles_by_pipeline": {
+          "compute": 6196,
+          "load": 96,
+          "store": 48,
+          "xfer": 1575
+        },
+        "cycles": 6199,
+        "done": true,
+        "event_unblocked_issues_before_tag_complete": 5676,
+        "external_memory_completions": 0,
+        "external_memory_requests": 0,
+        "external_memory_wait_cycles": 0,
+        "instructions_completed": 81408,
+        "instructions_issued": 81408,
+        "issue_cycles_by_pipeline": {
+          "compute": 6060,
+          "load": 96,
+          "store": 48,
+          "xfer": 1139
+        },
+        "issued_by_pipeline": {
+          "compute": 73344,
+          "load": 384,
+          "store": 192,
+          "xfer": 7488
+        },
+        "link_stalls": 0,
+        "mapped_pe_count": 16,
+        "max_active_tags": 4,
+        "max_pipeline_issues_in_cycle": 32,
+        "memory_backend": "fixed",
+        "pe_dependency_model": "paper_static",
+        "physical_pe_count": 16,
+        "productive_global_cycles_by_pipeline": {
+          "compute": 6196,
+          "load": 96,
+          "store": 48,
+          "xfer": 1575
+        },
+        "productive_pe_cycles_by_fu_class": {
+          "alu": 46736,
+          "fma": 44712,
+          "shuffle": 512
+        },
+        "productive_pe_cycles_by_pipeline": {
+          "compute": 86400,
+          "load": 384,
+          "store": 192,
+          "xfer": 10652
+        },
+        "record_events": false,
+        "resident_pe_cycles_by_pipeline": {
+          "compute": 86400,
+          "load": 384,
+          "store": 192,
+          "xfer": 10652
+        },
+        "route_hops": 9216,
+        "scenario": "json_driver",
+        "skip_hops": 1728,
+        "stalls_by_reason": {
+          "event_dependency": 19012,
+          "pipeline_contention": 42312
+        },
+        "start_in_roi": true,
+        "unit_hops": 7488
+      },
+      "metadata": {
+        "experiment_id": "H80",
+        "compiler": "mlxsim.dsagen_matched_fft.compile_matched_fft",
+        "paper_target_values_consumed": false,
+        "name": "N8192-q16",
+        "forward_stages": 13,
+        "inverse_stages": 12,
+        "stage_count": 26,
+        "stage_groups": [
+          "fft_0",
+          "fft_1",
+          "fft_2",
+          "fft_3",
+          "fft_4",
+          "fft_5",
+          "fft_6",
+          "fft_7",
+          "fft_8",
+          "fft_9",
+          "fft_10",
+          "fft_11",
+          "fft_12",
+          "truncate_shuffle",
+          "ifft_0",
+          "ifft_1",
+          "ifft_2",
+          "ifft_3",
+          "ifft_4",
+          "ifft_5",
+          "ifft_6",
+          "ifft_7",
+          "ifft_8",
+          "ifft_9",
+          "ifft_10",
+          "ifft_11"
+        ],
+        "stage_trip_counts": [
+          32,
+          32,
+          32,
+          32,
+          32,
+          32,
+          32,
+          32,
+          32,
+          32,
+          32,
+          32,
+          32,
+          32,
+          16,
+          16,
+          16,
+          16,
+          16,
+          16,
+          16,
+          16,
+          16,
+          16,
+          16,
+          16
+        ],
+        "scale": 16,
+        "block_count": 312,
+        "static_event_edge_count": 300,
+        "dynamic_event_count": 7680,
+        "operation_counts": {
+          "fma": 29184,
+          "add": 43776,
+          "shuffle": 384
+        },
+        "pipeline_counts": {
+          "load": 384,
+          "store": 192,
+          "compute": 73344,
+          "xfer": 7488
+        },
+        "memory_requests": 576,
+        "simd_width": 8
+      },
+      "checks": {
+        "files": true,
+        "replay": true,
+        "done": true,
+        "paper_static": true,
+        "fixed_memory": true,
+        "instructions": true,
+        "pipelines": true,
+        "events": true
+      }
+    },
+    "N8192-q32": {
+      "cycles": 12351,
+      "summary": {
+        "boundary_events_emitted": 15360,
+        "busy_cycles_by_pipeline": {
+          "compute": 12348,
+          "load": 192,
+          "store": 96,
+          "xfer": 3121
+        },
+        "cycles": 12351,
+        "done": true,
+        "event_unblocked_issues_before_tag_complete": 11216,
+        "external_memory_completions": 0,
+        "external_memory_requests": 0,
+        "external_memory_wait_cycles": 0,
+        "instructions_completed": 162816,
+        "instructions_issued": 162816,
+        "issue_cycles_by_pipeline": {
+          "compute": 12047,
+          "load": 192,
+          "store": 96,
+          "xfer": 2274
+        },
+        "issued_by_pipeline": {
+          "compute": 146688,
+          "load": 768,
+          "store": 384,
+          "xfer": 14976
+        },
+        "link_stalls": 0,
+        "mapped_pe_count": 16,
+        "max_active_tags": 4,
+        "max_pipeline_issues_in_cycle": 32,
+        "memory_backend": "fixed",
+        "pe_dependency_model": "paper_static",
+        "physical_pe_count": 16,
+        "productive_global_cycles_by_pipeline": {
+          "compute": 12348,
+          "load": 192,
+          "store": 96,
+          "xfer": 3121
+        },
+        "productive_pe_cycles_by_fu_class": {
+          "alu": 93232,
+          "fma": 88968,
+          "shuffle": 1024
+        },
+        "productive_pe_cycles_by_pipeline": {
+          "compute": 172504,
+          "load": 768,
+          "store": 384,
+          "xfer": 21244
+        },
+        "record_events": false,
+        "resident_pe_cycles_by_pipeline": {
+          "compute": 172504,
+          "load": 768,
+          "store": 384,
+          "xfer": 21244
+        },
+        "route_hops": 18432,
+        "scenario": "json_driver",
+        "skip_hops": 3456,
+        "stalls_by_reason": {
+          "event_dependency": 35092,
+          "pipeline_contention": 85176
+        },
+        "start_in_roi": true,
+        "unit_hops": 14976
+      },
+      "metadata": {
+        "experiment_id": "H80",
+        "compiler": "mlxsim.dsagen_matched_fft.compile_matched_fft",
+        "paper_target_values_consumed": false,
+        "name": "N8192-q32",
+        "forward_stages": 13,
+        "inverse_stages": 12,
+        "stage_count": 26,
+        "stage_groups": [
+          "fft_0",
+          "fft_1",
+          "fft_2",
+          "fft_3",
+          "fft_4",
+          "fft_5",
+          "fft_6",
+          "fft_7",
+          "fft_8",
+          "fft_9",
+          "fft_10",
+          "fft_11",
+          "fft_12",
+          "truncate_shuffle",
+          "ifft_0",
+          "ifft_1",
+          "ifft_2",
+          "ifft_3",
+          "ifft_4",
+          "ifft_5",
+          "ifft_6",
+          "ifft_7",
+          "ifft_8",
+          "ifft_9",
+          "ifft_10",
+          "ifft_11"
+        ],
+        "stage_trip_counts": [
+          64,
+          64,
+          64,
+          64,
+          64,
+          64,
+          64,
+          64,
+          64,
+          64,
+          64,
+          64,
+          64,
+          64,
+          32,
+          32,
+          32,
+          32,
+          32,
+          32,
+          32,
+          32,
+          32,
+          32,
+          32,
+          32
+        ],
+        "scale": 32,
+        "block_count": 312,
+        "static_event_edge_count": 300,
+        "dynamic_event_count": 15360,
+        "operation_counts": {
+          "fma": 58368,
+          "add": 87552,
+          "shuffle": 768
+        },
+        "pipeline_counts": {
+          "load": 768,
+          "store": 384,
+          "compute": 146688,
+          "xfer": 14976
+        },
+        "memory_requests": 1152,
+        "simd_width": 8
+      },
+      "checks": {
+        "files": true,
+        "replay": true,
+        "done": true,
+        "paper_static": true,
+        "fixed_memory": true,
+        "instructions": true,
+        "pipelines": true,
+        "events": true
+      }
+    },
+    "N8192-q4": {
+      "cycles": 1591,
+      "summary": {
+        "boundary_events_emitted": 1920,
+        "busy_cycles_by_pipeline": {
+          "compute": 1588,
+          "load": 24,
+          "store": 12,
+          "xfer": 376
+        },
+        "cycles": 1591,
+        "done": true,
+        "event_unblocked_issues_before_tag_complete": 1504,
+        "external_memory_completions": 0,
+        "external_memory_requests": 0,
+        "external_memory_wait_cycles": 0,
+        "instructions_completed": 20352,
+        "instructions_issued": 20352,
+        "issue_cycles_by_pipeline": {
+          "compute": 1549,
+          "load": 24,
+          "store": 12,
+          "xfer": 272
+        },
+        "issued_by_pipeline": {
+          "compute": 18336,
+          "load": 96,
+          "store": 48,
+          "xfer": 1872
+        },
+        "link_stalls": 0,
+        "mapped_pe_count": 16,
+        "max_active_tags": 4,
+        "max_pipeline_issues_in_cycle": 32,
+        "memory_backend": "fixed",
+        "pe_dependency_model": "paper_static",
+        "physical_pe_count": 16,
+        "productive_global_cycles_by_pipeline": {
+          "compute": 1588,
+          "load": 24,
+          "store": 12,
+          "xfer": 376
+        },
+        "productive_pe_cycles_by_fu_class": {
+          "alu": 11852,
+          "fma": 11464,
+          "shuffle": 128
+        },
+        "productive_pe_cycles_by_pipeline": {
+          "compute": 21628,
+          "load": 96,
+          "store": 48,
+          "xfer": 2708
+        },
+        "record_events": false,
+        "resident_pe_cycles_by_pipeline": {
+          "compute": 21628,
+          "load": 96,
+          "store": 48,
+          "xfer": 2708
+        },
+        "route_hops": 2304,
+        "scenario": "json_driver",
+        "skip_hops": 432,
+        "stalls_by_reason": {
+          "event_dependency": 7412,
+          "pipeline_contention": 10380
+        },
+        "start_in_roi": true,
+        "unit_hops": 1872
+      },
+      "metadata": {
+        "experiment_id": "H80",
+        "compiler": "mlxsim.dsagen_matched_fft.compile_matched_fft",
+        "paper_target_values_consumed": false,
+        "name": "N8192-q4",
+        "forward_stages": 13,
+        "inverse_stages": 12,
+        "stage_count": 26,
+        "stage_groups": [
+          "fft_0",
+          "fft_1",
+          "fft_2",
+          "fft_3",
+          "fft_4",
+          "fft_5",
+          "fft_6",
+          "fft_7",
+          "fft_8",
+          "fft_9",
+          "fft_10",
+          "fft_11",
+          "fft_12",
+          "truncate_shuffle",
+          "ifft_0",
+          "ifft_1",
+          "ifft_2",
+          "ifft_3",
+          "ifft_4",
+          "ifft_5",
+          "ifft_6",
+          "ifft_7",
+          "ifft_8",
+          "ifft_9",
+          "ifft_10",
+          "ifft_11"
+        ],
+        "stage_trip_counts": [
+          8,
+          8,
+          8,
+          8,
+          8,
+          8,
+          8,
+          8,
+          8,
+          8,
+          8,
+          8,
+          8,
+          8,
+          4,
+          4,
+          4,
+          4,
+          4,
+          4,
+          4,
+          4,
+          4,
+          4,
+          4,
+          4
+        ],
+        "scale": 4,
+        "block_count": 312,
+        "static_event_edge_count": 300,
+        "dynamic_event_count": 1920,
+        "operation_counts": {
+          "fma": 7296,
+          "add": 10944,
+          "shuffle": 96
+        },
+        "pipeline_counts": {
+          "load": 96,
+          "store": 48,
+          "compute": 18336,
+          "xfer": 1872
+        },
+        "memory_requests": 144,
+        "simd_width": 8
+      },
+      "checks": {
+        "files": true,
+        "replay": true,
+        "done": true,
+        "paper_static": true,
+        "fixed_memory": true,
+        "instructions": true,
+        "pipelines": true,
+        "events": true
+      }
+    },
+    "N8192-q8": {
+      "cycles": 3123,
+      "summary": {
+        "boundary_events_emitted": 3840,
+        "busy_cycles_by_pipeline": {
+          "compute": 3120,
+          "load": 48,
+          "store": 24,
+          "xfer": 785
+        },
+        "cycles": 3123,
+        "done": true,
+        "event_unblocked_issues_before_tag_complete": 2888,
+        "external_memory_completions": 0,
+        "external_memory_requests": 0,
+        "external_memory_wait_cycles": 0,
+        "instructions_completed": 40704,
+        "instructions_issued": 40704,
+        "issue_cycles_by_pipeline": {
+          "compute": 3057,
+          "load": 48,
+          "store": 24,
+          "xfer": 570
+        },
+        "issued_by_pipeline": {
+          "compute": 36672,
+          "load": 192,
+          "store": 96,
+          "xfer": 3744
+        },
+        "link_stalls": 0,
+        "mapped_pe_count": 16,
+        "max_active_tags": 4,
+        "max_pipeline_issues_in_cycle": 32,
+        "memory_backend": "fixed",
+        "pe_dependency_model": "paper_static",
+        "physical_pe_count": 16,
+        "productive_global_cycles_by_pipeline": {
+          "compute": 3120,
+          "load": 48,
+          "store": 24,
+          "xfer": 785
+        },
+        "productive_pe_cycles_by_fu_class": {
+          "alu": 23484,
+          "fma": 22580,
+          "shuffle": 256
+        },
+        "productive_pe_cycles_by_pipeline": {
+          "compute": 43344,
+          "load": 192,
+          "store": 96,
+          "xfer": 5352
+        },
+        "record_events": false,
+        "resident_pe_cycles_by_pipeline": {
+          "compute": 43344,
+          "load": 192,
+          "store": 96,
+          "xfer": 5352
+        },
+        "route_hops": 4608,
+        "scenario": "json_driver",
+        "skip_hops": 864,
+        "stalls_by_reason": {
+          "event_dependency": 10996,
+          "pipeline_contention": 20848
+        },
+        "start_in_roi": true,
+        "unit_hops": 3744
+      },
+      "metadata": {
+        "experiment_id": "H80",
+        "compiler": "mlxsim.dsagen_matched_fft.compile_matched_fft",
+        "paper_target_values_consumed": false,
+        "name": "N8192-q8",
+        "forward_stages": 13,
+        "inverse_stages": 12,
+        "stage_count": 26,
+        "stage_groups": [
+          "fft_0",
+          "fft_1",
+          "fft_2",
+          "fft_3",
+          "fft_4",
+          "fft_5",
+          "fft_6",
+          "fft_7",
+          "fft_8",
+          "fft_9",
+          "fft_10",
+          "fft_11",
+          "fft_12",
+          "truncate_shuffle",
+          "ifft_0",
+          "ifft_1",
+          "ifft_2",
+          "ifft_3",
+          "ifft_4",
+          "ifft_5",
+          "ifft_6",
+          "ifft_7",
+          "ifft_8",
+          "ifft_9",
+          "ifft_10",
+          "ifft_11"
+        ],
+        "stage_trip_counts": [
+          16,
+          16,
+          16,
+          16,
+          16,
+          16,
+          16,
+          16,
+          16,
+          16,
+          16,
+          16,
+          16,
+          16,
+          8,
+          8,
+          8,
+          8,
+          8,
+          8,
+          8,
+          8,
+          8,
+          8,
+          8,
+          8
+        ],
+        "scale": 8,
+        "block_count": 312,
+        "static_event_edge_count": 300,
+        "dynamic_event_count": 3840,
+        "operation_counts": {
+          "fma": 14592,
+          "add": 21888,
+          "shuffle": 192
+        },
+        "pipeline_counts": {
+          "load": 192,
+          "store": 96,
+          "compute": 36672,
+          "xfer": 3744
+        },
+        "memory_requests": 288,
+        "simd_width": 8
+      },
+      "checks": {
+        "files": true,
+        "replay": true,
+        "done": true,
+        "paper_static": true,
+        "fixed_memory": true,
+        "instructions": true,
+        "pipelines": true,
+        "events": true
+      }
+    }
+  },
+  "models": {
+    "N256": {
+      "intercept": 117.0,
+      "slope_cycles_per_scale": 213.75,
+      "holdouts": [
+        {
+          "scale": 16,
+          "actual_cycles": 3539,
+          "predicted_cycles": 3537.0,
+          "relative_error": 0.0005651313930488839,
+          "pass_5pct": true
+        },
+        {
+          "scale": 32,
+          "actual_cycles": 6963,
+          "predicted_cycles": 6957.0,
+          "relative_error": 0.0008616975441619991,
+          "pass_5pct": true
+        }
+      ],
+      "full_scale": 8192,
+      "full_work_predicted_cycles": 1751157.0,
+      "observed_incremental_slopes": {
+        "q4_to_q8": 213.75,
+        "q8_to_q16": 214.0,
+        "q16_to_q32": 214.0
+      }
+    },
+    "N8192": {
+      "intercept": 59.0,
+      "slope_cycles_per_scale": 383.0,
+      "holdouts": [
+        {
+          "scale": 16,
+          "actual_cycles": 6199,
+          "predicted_cycles": 6187.0,
+          "relative_error": 0.0019357960961445394,
+          "pass_5pct": true
+        },
+        {
+          "scale": 32,
+          "actual_cycles": 12351,
+          "predicted_cycles": 12315.0,
+          "relative_error": 0.002914743745445713,
+          "pass_5pct": true
+        }
+      ],
+      "full_scale": 262144,
+      "full_work_predicted_cycles": 100401211.0,
+      "observed_incremental_slopes": {
+        "q4_to_q8": 383.0,
+        "q8_to_q16": 384.5,
+        "q16_to_q32": 384.5
+      }
+    }
+  },
+  "numerical": {
+    "passing_holdouts": 4,
+    "total_holdouts": 4,
+    "mape": 0.001569342194700284,
+    "max_error": 0.002914743745445713,
+    "all_holdouts_pass": true
+  },
+  "source_files": {
+    "compiler_core": {
+      "path": "src/mlxsim/dsagen_matched_fft.py",
+      "bytes": 6320,
+      "sha256": "b06b82d3294598d1c9c40348b130efcfdf6a7c1004658fc565ee007200c19880",
+      "checks": {
+        "is_file": true
+      },
+      "pass": true
+    },
+    "compiler": {
+      "path": "scripts/compile_matched_fft_cycle_estimator.py",
+      "bytes": 2657,
+      "sha256": "f5072ff58e6a1de3fd93434da4e88913d3608ddc5b43f1963619b177f7d9c20c",
+      "checks": {
+        "is_file": true
+      },
+      "pass": true
+    },
+    "runner": {
+      "path": "scripts/run_matched_fft_cycle_estimator.py",
+      "bytes": 4521,
+      "sha256": "96cb2a6b83b0c2236952c66d75b6e33f30cae9d10300658224179236707a8198",
+      "checks": {
+        "is_file": true
+      },
+      "pass": true
+    },
+    "auditor": {
+      "path": "scripts/audit_fft_steady_state_folding.py",
+      "bytes": 3299,
+      "sha256": "5401be4323792a9c4d09f6ce09375f8160499fa95f5ed13679386352b6c75f69",
+      "checks": {
+        "is_file": true
+      },
+      "pass": true
+    }
+  },
+  "integrity_checks": {
+    "frozen_files": true,
+    "parents": true,
+    "compile_manifest": true,
+    "compiler_replay": true,
+    "run_manifest": true,
+    "run_replays": true,
+    "executions": true,
+    "work_linear": true,
+    "full_work_conserved": true,
+    "source_files": true,
+    "targets_absent": true,
+    "targets_consumed": true,
+    "h80_parent": true
+  },
+  "paper_performance_targets_consumed": false,
+  "conclusion": "q4/q8 anchors reach a stable slope that predicts q16/q32 for both variable-depth FFT topologies"
+}

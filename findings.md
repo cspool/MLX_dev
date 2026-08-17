@@ -74,6 +74,7 @@ H37 closes the full-paper ledger with a machine certificate rather than a comple
 - H77 applies that folding to all six QKV/FFN projection cells with exact logical FMA work and no paper targets. H78 freezes the estimator before comparison and rejects it at 0/6 points: all predictions are about 2.021x versus 3.2x-4.3x, with 46.75% MAPE and 53.00% maximum error. Matched total work is necessary but not sufficient; per-kernel FU mix, stage/launch structure, memory traffic, and GPU execution shape must be modeled next.
 - H79 supports a target-free per-FU attention work contract. The matched FFT-CMP paths require 16/26 tagged stages rather than H57's seven, and the second component adds FMAX/FEXP/FDIV classes absent from the FFT proxy. It also exposes a convention boundary: H75's FFT analysis uses 10 real FLOPs per butterfly, while H50's executable template uses four FMA plus six ADD instructions (14 weighted FLOPs), and H75 omits 0.524M/16.78M final FDIV instructions at N=256/8192. All frozen analytical totals reconcile exactly; no performance target is read.
 - H80 rejects the first matched FFT-CMP affine estimator while supporting its execution evidence. Eight variable-depth configs replay byte-exactly and conserve all H79 FMA/ADD/SHUFFLE work, dynamic instructions, events, routes, and pipeline issues. Yet q=1/2 fits miss every q=4/8 holdout (36.60% MAPE, 53.19% max) because incremental slopes rise 74→181.5→213.75 cycles/q at N=256 and 82→310.5→383 at N=8192. The invalid full-work predictions are quarantined from Figure 20.
+- H81 supports target-free FFT steady-state folding. With the topology and work unchanged, q=4/8 fits predict newly executed q=16/32 at 4/4 points, 0.157% MAPE, and 0.291% maximum error. The validated fixed-memory full-work estimates are 1,751,157 cycles for N=256 and 100,401,211 for N=8192. They remain component-only and cannot enter Figure 20 until compressed Attention, memory, and Xavier gates exist.
 
 ## Patterns and Insights
 
@@ -110,6 +111,7 @@ H37 closes the full-paper ledger with a machine certificate rather than a comple
 - Exact repeat folding is weaker than kernel identity. H76 can predict cycles for one recurring schedule while H78 still fails every projection target because one B32 CDC slope and one GPU cycles/FMA slope erase QKV/FFN shape, launch, memory, and occupancy differences.
 - A paper's FLOP convention is not automatically an executable instruction mix. H79 preserves both the conventional 10-FLOP FFT-pair count and the source-derived four-FMA/six-ADD template instead of treating their 1.4x difference as simulator speed.
 - Exact q-linear work does not imply affine cycles from the smallest q. H80's event wavefront, active-tag window, and resource overlap change their effective slope between q=1 and q=8 even though every dynamic work counter scales exactly.
+- A failed small-anchor affine model can be repaired without target fitting when new holdouts test an independently observed steady-state boundary. H81 changes only the q range and achieves sub-0.3% held-out error on both stage depths.
 
 ## Lessons and Constraints
 
@@ -150,6 +152,7 @@ H37 closes the full-paper ledger with a machine certificate rather than a comple
 - Do not divide H78 residuals into QKV/FFN correction factors. The next Figure 20 attempt must first produce target-free, per-kernel execution signatures and a separate two-component FFT-compression plus compressed-attention path.
 - Do not count H79's newly explicit FDIV or FFT-template mix as extra paper work retroactively. They are execution-signature fields for the next simulator run; historical H75/H77 artifacts retain their original analytical convention.
 - Do not use H80's 606,669/21,496,614-cycle full-work extrapolations. Their registered anchors fail all held-out checks; any larger-anchor model needs a new target-free saturation protocol and new holdouts.
+- Do not promote H81's fixed-memory FFT estimates to total Attention or Figure 20. They exclude FMAX/FEXP/FDIV Attention work, scratchpad/off-chip stalls, GPU launch/stage behavior, and device-clock comparison.
 
 ## Open Questions
 
@@ -196,3 +199,7 @@ Run085 executes both variable-depth FFT topologies with exact full-work
 conservation. The q=1/2 affine estimator is rejected at 0/4 holdouts (36.60%
 MAPE, 53.19% max), isolating a steady-state-onset problem before any paper
 target is exposed.
+
+Run086 moves the fit to q=4/8 and passes four new q=16/32 holdouts with 0.157%
+MAPE and 0.291% maximum error. The resulting full-work cycles are retained as
+fixed-memory FFT-only estimates, not Figure 20 predictions.
