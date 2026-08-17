@@ -1,0 +1,78 @@
+metadata:
+  purpose: "Frozen raster coordinates for exploratory full Figure 21 target recovery"
+  coordinate_origin: "top-left; y increases downward; ranges are inclusive"
+  source: "MLX Multi-Layer Execution for Structured LLM Workload Acceleration on Spatial Architectures/_page_11_Figure_2.jpeg"
+  sha256: "ec3186cf804a841d495cf95979632e2d9fbe718f91aed49f0e8b439d5d54e2aa"
+  dimensions: [632, 242]
+  pixel_uncertainty_y: 1.5
+  uncertainty_abs_speedup: 0.06
+  uncertainty_abs_gemm_time_pct: 2.0
+  uncertainty_abs_memory_gb: 0.35
+
+plot_semantics:
+  sequence_lengths: [128, 256, 512, 1024, 2048]
+  speedup_style: "bar height on the left axis"
+  gemm_time_style: "bar luminance mapped through the adjacent 0%-80% grayscale colorbar"
+  overflow_style: "diagonal hatch marks projected points caused by Xavier memory overflow"
+  projected_sequence_lengths: [512, 1024, 2048]
+
+speedup_axis:
+  value_to_y:
+    - [0.0, 199]
+    - [1.0, 158]
+    - [2.0, 117]
+    - [3.0, 76]
+    - [4.0, 35]
+  pixels_per_unit: 41.0
+
+speedup_bars:
+  - {sequence_length: 128, x_range: [50, 78], top_y: 35}
+  - {sequence_length: 256, x_range: [85, 107], top_y: 84}
+  - {sequence_length: 512, x_range: [115, 137], top_y: 125}
+  - {sequence_length: 1024, x_range: [145, 167], top_y: 141}
+  - {sequence_length: 2048, x_range: [174, 197], top_y: 152}
+
+gemm_colorbar:
+  x_range: [209, 214]
+  y_range: [35, 198]
+  zero_pct_y: 199
+  eighty_pct_y: 35
+  pixels_per_pct: 2.05
+  bar_pixel_minimum: 80
+  inversion: "median ROI luminance; row-median colorbar; unweighted increasing PAVA; nearest fitted row"
+
+gemm_bar_rois:
+  - {sequence_length: 128, x_range: [60, 75], y_range: [100, 190]}
+  - {sequence_length: 256, x_range: [89, 104], y_range: [100, 190]}
+  - {sequence_length: 512, x_range: [118, 134], y_range: [160, 190]}
+  - {sequence_length: 1024, x_range: [148, 164], y_range: [165, 190]}
+  - {sequence_length: 2048, x_range: [178, 194], y_range: [170, 190]}
+
+memory_axis:
+  value_to_y:
+    - [0.0, 198]
+    - [5.0, 164]
+    - [10.0, 130]
+    - [15.0, 95]
+    - [20.0, 61]
+    - [25.0, 27]
+  pixels_per_gb: 6.84
+
+memory_bars:
+  - {sequence_length: 128, x_range: [356, 383], dense_top_y: 102, sparse_top_y: 152}
+  - {sequence_length: 256, x_range: [393, 421], dense_top_y: 92, sparse_top_y: 147}
+  - {sequence_length: 512, x_range: [430, 458], dense_top_y: 86, sparse_top_y: 137}
+  - {sequence_length: 1024, x_range: [468, 496], dense_top_y: 63, sparse_top_y: 121}
+  - {sequence_length: 2048, x_range: [505, 533], dense_top_y: 53, sparse_top_y: 112}
+
+capacity_line:
+  center_y: 88.5
+  expected_gb: 16.0
+  tolerance_gb: 0.2
+
+prior_canonical_cross_checks:
+  speedup_over_xavier: [4.0, 2.75, 1.8, 1.4, 1.12]
+  dense_memory_gb: [14.0, 15.4, 16.6, 20.0, 21.5]
+  sparse_memory_gb: [6.8, 7.7, 8.8, 11.2, 12.8]
+  speedup_tolerance_abs: 0.08
+  memory_tolerance_abs_gb: 0.35
