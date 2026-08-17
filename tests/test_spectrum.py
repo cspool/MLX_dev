@@ -7,12 +7,19 @@ from mlxsim.spectrum import (
     audit_measured_spectra,
     derive_fig6_targets,
     dominant_local_peak_group,
+    git_blob_sha1,
     grouped_projected_power,
     load_spectrum_targets,
     normalize_curve,
 )
 
 ROOT = Path(__file__).resolve().parents[1]
+
+
+def test_git_blob_sha1_matches_canonical_git_object_id(tmp_path: Path) -> None:
+    path = tmp_path / "hello.txt"
+    path.write_bytes(b"hello\n")
+    assert git_blob_sha1(path) == "ce013625030ba8dba906f756967f9e9ca394464a"
 
 
 def test_frozen_fig6_pixels_derive_42_bounded_targets() -> None:

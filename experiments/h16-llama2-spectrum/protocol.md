@@ -21,7 +21,9 @@ frozen below before loading the checkpoint or observing any model spectrum.
   in safetensors format. The host has no Hugging Face credential, so a public
   ModelScope mirror may transport the bytes, but both model shards and the
   tokenizer must match the SHA-256 values published by the official Hugging
-  Face repository. A size-only or config-only match is insufficient.
+  Face repository. Config, safetensors index, and tokenizer metadata must also
+  match the official repository's Git-blob IDs. A size-only or signature-only
+  match is insufficient.
 - Require the 32-layer/4096-hidden/32-head Llama2 config signature. Abort before
   inference on any hash or signature mismatch.
 - Use the already pinned WikiText-2 raw test parquet (SHA-256 `5f1bea...`) as an

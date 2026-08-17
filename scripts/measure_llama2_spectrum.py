@@ -20,6 +20,7 @@ from transformers import AutoConfig, AutoModel, AutoTokenizer
 from mlxsim.spectrum import (
     audit_measured_spectra,
     audit_spectrum_target_sources,
+    git_blob_sha1,
     grouped_projected_power,
     load_spectrum_targets,
     sha256_file,
@@ -69,6 +70,20 @@ def _qualify_model(model_cfg: dict[str, Any]) -> dict[str, Any]:
         }
         all_hashes_pass &= passed
 
+    git_blobs: dict[str, Any] = {}
+    all_blobs_pass = True
+    for filename, expected in model_cfg["required_official_git_blobs"].items():
+        path = model_path / filename
+        actual = git_blob_sha1(path) if path.is_file() else None
+        passed = actual == expected
+        git_blobs[filename] = {
+            "bytes": path.stat().st_size if path.is_file() else None,
+            "expected_git_blob_sha1": expected,
+            "actual_git_blob_sha1": actual,
+            "pass": passed,
+        }
+        all_blobs_pass &= passed
+
     config_path = model_path / "config.json"
     serialized = json.loads(config_path.read_text(encoding="utf-8")) if config_path.is_file() else {}
     signature = {
@@ -82,9 +97,10 @@ def _qualify_model(model_cfg: dict[str, Any]) -> dict[str, Any]:
         "mirror_source": model_cfg["mirror_source"],
         "mirror_revision": model_cfg["mirror_revision"],
         "files": files,
+        "git_blobs": git_blobs,
         "config_signature": signature,
         "config_signature_pass": signature_pass,
-        "pass": all_hashes_pass and signature_pass,
+        "pass": all_hashes_pass and all_blobs_pass and signature_pass,
     }
     if not report["pass"]:
         raise RuntimeError(f"model input qualification failed: {json.dumps(report, sort_keys=True)}")

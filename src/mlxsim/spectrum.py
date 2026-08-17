@@ -22,6 +22,18 @@ def sha256_file(path: str | Path) -> str:
     return digest.hexdigest()
 
 
+def git_blob_sha1(path: str | Path) -> str:
+    """Return Git's byte-identifying blob object ID for a local file."""
+
+    path = Path(path)
+    digest = hashlib.sha1(usedforsecurity=False)
+    digest.update(f"blob {path.stat().st_size}\0".encode())
+    with path.open("rb") as handle:
+        while chunk := handle.read(8 * 1024 * 1024):
+            digest.update(chunk)
+    return digest.hexdigest()
+
+
 def load_spectrum_targets(path: str | Path = TARGET_MANIFEST) -> dict[str, Any]:
     with Path(path).open(encoding="utf-8") as handle:
         return yaml.safe_load(handle)
