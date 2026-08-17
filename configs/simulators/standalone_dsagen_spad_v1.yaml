@@ -1,0 +1,37 @@
+name: standalone-dsagen-spad-v1
+experiment_id: H66
+run_id: run071
+classification: target_free_open_source_adapter_validation
+validation_eligible: false
+
+frozen_reference:
+  path: artifacts/results/fig10-fig22-transfer-run068.json
+  sha256: 7a60cc3a5e10e10666900a96e9139b7833e730fc3eb2a4026232af24b8d249a7
+  required_integrity: true
+
+mechanism:
+  bank_width_bytes: 8
+  banks: 8
+  aggregate_bandwidth_bytes: 64
+  request_buffer_entries: 4
+  request_issue_width: 16
+  bank_provision_per_cycle: 1
+  bank_fifo_entries: 1
+  ordered_commit: true
+
+configs: artifacts/environment/h62/configs
+output_root: artifacts/environment/h66
+result_path: artifacts/results/standalone-dsagen-spad-run071.json
+
+acceptance:
+  cycle_relative_error: 0.10
+  productive_utilization_absolute_error: 0.10
+  required_runs: 16
+
+source_layout:
+  adapter_hh: simulator_ext/dsagen/standalone_spad_adapter.hh
+  adapter_cc: simulator_ext/dsagen/standalone_spad_adapter.cc
+  driver: simulator_ext/dsagen/mlx_overlay_json_driver.cc
+  runner: scripts/run_standalone_dsagen_spad.py
+  auditor: scripts/audit_standalone_dsagen_spad.py
+  patch: patches/dsagen/dsa-gem5-mlx-adapter-advance-v1.patch
