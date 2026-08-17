@@ -1,0 +1,3698 @@
+{
+  "architecture_contract": {
+    "checks": {
+      "paper_decoupled_pipelines": true,
+      "paper_hop_encoded_network": true,
+      "paper_hybrid_schedule": true,
+      "paper_mesh_of_pes": true,
+      "paper_rejects_fine_grained_hazards": true,
+      "paper_static_tagged_blocks": true,
+      "simulator_has_explicit_paper_static_mode": true
+    },
+    "corrected_model": {
+      "cross_layer": "elastic tag/event-level arbitration within a bounded active window",
+      "inter_pe": "explicit hop-encoded spatial routing on a PE mesh",
+      "intra_pe": "static ordered tagged blocks over decoupled load/store, compute, and xfer pipelines with heterogeneous FUs",
+      "not_claimed_by_paper": [
+        "warp or SIMT execution",
+        "CTA scheduling",
+        "GPU operand collectors",
+        "fine-grained GPU scoreboard hazards",
+        "register-bank arbitration timing"
+      ]
+    },
+    "paper": {
+      "bytes": 85855,
+      "checks": {
+        "is_file": true
+      },
+      "pass": true,
+      "path": "MLX Multi-Layer Execution for Structured LLM Workload Acceleration on Spatial Architectures/MLX Multi-Layer Execution for Structured LLM Workload Acceleration on Spatial Architectures.md",
+      "sha256": "5785eb81b28741a3806ca42749d7b556bbcd2404e1622ae644a32bae2ade7745"
+    },
+    "pass": true,
+    "simulator": {
+      "bytes": 40200,
+      "checks": {
+        "is_file": true
+      },
+      "pass": true,
+      "path": "third_party/dsa-framework/dsa-gem5/src/cpu/minor/ssim/mlx_overlay.cc",
+      "sha256": "e0cf53e391d678a0490a13ce70c36fc13f6bf0ceb22881a372827e20d56d028c"
+    }
+  },
+  "audit_integrity": true,
+  "classification": "corrective_target_exposed_replay",
+  "diagnostic_checks": {
+    "h59_limit_registered": true,
+    "no_overlay_cycle_counter_in_progress_signal": true,
+    "progress_uses_observable_overlay_events": true,
+    "runner_default_preserved": true,
+    "upstream_default_preserved": true,
+    "watchdog_opt_in": true
+  },
+  "execution_sources": {
+    "fig22_runner": {
+      "bytes": 1946,
+      "checks": {
+        "is_file": true
+      },
+      "pass": true,
+      "path": "scripts/run_dsagen_fig22.sh",
+      "sha256": "461e40d595625d2b27f9ea3ca86ff342440a25a10b23e2a9c3eb8c4b77b15e62"
+    },
+    "fig23_runner": {
+      "bytes": 4337,
+      "checks": {
+        "is_file": true
+      },
+      "pass": true,
+      "path": "scripts/run_dsagen_fig23.py",
+      "sha256": "291bc755c6d0ffafeb424e0bb983ce9c1b697beb7df39567ea65a766f6ad0d78"
+    },
+    "gem5_accel": {
+      "bytes": 113717,
+      "checks": {
+        "is_file": true
+      },
+      "pass": true,
+      "path": "third_party/dsa-framework/dsa-gem5/src/cpu/minor/ssim/accel.cc",
+      "sha256": "0977b30f023c5a5a5b4d2c7e4227c361b878a1bf461d9b0d5d7ff72680502636"
+    },
+    "gem5_execute": {
+      "bytes": 95721,
+      "checks": {
+        "is_file": true
+      },
+      "pass": true,
+      "path": "third_party/dsa-framework/dsa-gem5/src/cpu/minor/execute.cc",
+      "sha256": "b04b64f193c0e6987c55e01b8417aed76dbe7b6d4c092516645970d5a99b3655"
+    },
+    "transformer": {
+      "bytes": 3046,
+      "checks": {
+        "is_file": true
+      },
+      "pass": true,
+      "path": "scripts/compile_paper_static_fig22_23.py",
+      "sha256": "747b7039601b6ccac54323e9e453654e26d2385ae87d16a6b01e8f2d1dcc1eed"
+    },
+    "watchdog_patch": {
+      "bytes": 2205,
+      "checks": {
+        "is_file": true
+      },
+      "pass": true,
+      "path": "patches/dsagen/dsa-gem5-mlx-long-overlay-watchdog-v1.patch",
+      "sha256": "da01b76f437d46e9f25d35d7545150d21dc6d0839a53d156c590bf9e79e95b1a"
+    }
+  },
+  "experiment_id": "H59",
+  "fig22": {
+    "artifacts": {
+      "bsmm-1024": {
+        "config": {
+          "bytes": 806294,
+          "checks": {
+            "is_file": true
+          },
+          "pass": true,
+          "path": "artifacts/environment/h59/fig22/fig22-bsmm-1024.json",
+          "sha256": "bfd6b8e1afc192cac1c441d258ffccad80440ca8ea1a826577c9a6ecbc99cd6c"
+        },
+        "log": {
+          "bytes": 5346,
+          "checks": {
+            "is_file": true
+          },
+          "pass": true,
+          "path": "artifacts/environment/h59/runs/fig22/bsmm-1024/run.log",
+          "sha256": "b7da0a99b182cab892e4bef5eceb87abead37b6738fea53d1247410ba5f5c900"
+        }
+      },
+      "bsmm-128": {
+        "config": {
+          "bytes": 343578,
+          "checks": {
+            "is_file": true
+          },
+          "pass": true,
+          "path": "artifacts/environment/h59/fig22/fig22-bsmm-128.json",
+          "sha256": "d386baea06ae5c0253f721985c0a55394274bff2cf74298c192f821b4c6614d2"
+        },
+        "log": {
+          "bytes": 5317,
+          "checks": {
+            "is_file": true
+          },
+          "pass": true,
+          "path": "artifacts/environment/h59/runs/fig22/bsmm-128/run.log",
+          "sha256": "bfceb2705ee4b821be49f62eae5fbc221106fb7b017c1559602684dc504303e3"
+        }
+      },
+      "bsmm-2048": {
+        "config": {
+          "bytes": 1298373,
+          "checks": {
+            "is_file": true
+          },
+          "pass": true,
+          "path": "artifacts/environment/h59/fig22/fig22-bsmm-2048.json",
+          "sha256": "5c64db121e62cfcd832b3fa5f6dece1ac79d7a3b6db8892bbe58a9cbb5a88860"
+        },
+        "log": {
+          "bytes": 5353,
+          "checks": {
+            "is_file": true
+          },
+          "pass": true,
+          "path": "artifacts/environment/h59/runs/fig22/bsmm-2048/run.log",
+          "sha256": "c5ea46e5f1c15366bbad8d832218698755bf5d84204eba974956dddd617f5345"
+        }
+      },
+      "bsmm-256": {
+        "config": {
+          "bytes": 428424,
+          "checks": {
+            "is_file": true
+          },
+          "pass": true,
+          "path": "artifacts/environment/h59/fig22/fig22-bsmm-256.json",
+          "sha256": "cb21c5558eb0097292da62dbc11b924aaa9de17190619a35051e9161958cd1c9"
+        },
+        "log": {
+          "bytes": 5326,
+          "checks": {
+            "is_file": true
+          },
+          "pass": true,
+          "path": "artifacts/environment/h59/runs/fig22/bsmm-256/run.log",
+          "sha256": "0418d4a3735b9f1f5b002e0b1f76ccdedb5d90fda3ba19484bd513dd5b02be8a"
+        }
+      },
+      "bsmm-4096": {
+        "config": {
+          "bytes": 2329602,
+          "checks": {
+            "is_file": true
+          },
+          "pass": true,
+          "path": "artifacts/environment/h59/fig22/fig22-bsmm-4096.json",
+          "sha256": "c9a6dc73070abfea186b87a50ec6917bf07da027b615b261ce98d909a1a8fb88"
+        },
+        "log": {
+          "bytes": 5380,
+          "checks": {
+            "is_file": true
+          },
+          "pass": true,
+          "path": "artifacts/environment/h59/runs/fig22/bsmm-4096/run.log",
+          "sha256": "1da5421ade034703c46a4755e792d8d84cfa046c2d3580b788090d5be1156a94"
+        }
+      },
+      "bsmm-512": {
+        "config": {
+          "bytes": 563733,
+          "checks": {
+            "is_file": true
+          },
+          "pass": true,
+          "path": "artifacts/environment/h59/fig22/fig22-bsmm-512.json",
+          "sha256": "c2183b73cb7f3b1272653ef6738dfea40490dc7bfef5f69436ce8deac5154187"
+        },
+        "log": {
+          "bytes": 5331,
+          "checks": {
+            "is_file": true
+          },
+          "pass": true,
+          "path": "artifacts/environment/h59/runs/fig22/bsmm-512/run.log",
+          "sha256": "22bea63290e901ddd76fdc5406a2da56a0c9c7c5f7a31c095b6947ca2368f348"
+        }
+      },
+      "bsmm-64": {
+        "config": {
+          "bytes": 281480,
+          "checks": {
+            "is_file": true
+          },
+          "pass": true,
+          "path": "artifacts/environment/h59/fig22/fig22-bsmm-64.json",
+          "sha256": "eb3a81a0913dcd70269df7224086fd034860416e26db73318ce415f614321d85"
+        },
+        "log": {
+          "bytes": 5302,
+          "checks": {
+            "is_file": true
+          },
+          "pass": true,
+          "path": "artifacts/environment/h59/runs/fig22/bsmm-64/run.log",
+          "sha256": "54cdff2a1a514bab5a352c3bf774ad88dbc58bbe7ec008a8b0621759c67a6c77"
+        }
+      },
+      "bsmm-8192": {
+        "config": {
+          "bytes": 4497930,
+          "checks": {
+            "is_file": true
+          },
+          "pass": true,
+          "path": "artifacts/environment/h59/fig22/fig22-bsmm-8192.json",
+          "sha256": "95bdd7a26d59703a6461b113537901e2a387dfc2acc4a534a52f5158472095f7"
+        },
+        "log": {
+          "bytes": 5396,
+          "checks": {
+            "is_file": true
+          },
+          "pass": true,
+          "path": "artifacts/environment/h59/runs/fig22/bsmm-8192/run.log",
+          "sha256": "aec95c15f30c78ba3b7a92592cc9f3af935e71b912af3b3d79bd03b7dd7532c1"
+        }
+      },
+      "fft-1024": {
+        "config": {
+          "bytes": 840354,
+          "checks": {
+            "is_file": true
+          },
+          "pass": true,
+          "path": "artifacts/environment/h59/fig22/fig22-fft-1024.json",
+          "sha256": "c2d49fbd39d804bc535f8c62d793486541b0ad7177b278c0105fb19d7c8c46e7"
+        },
+        "log": {
+          "bytes": 5344,
+          "checks": {
+            "is_file": true
+          },
+          "pass": true,
+          "path": "artifacts/environment/h59/runs/fig22/fft-1024/run.log",
+          "sha256": "235a92dd982f1e27e08855be4812aa26f1deae517082823f079ff65fe1234882"
+        }
+      },
+      "fft-128": {
+        "config": {
+          "bytes": 367442,
+          "checks": {
+            "is_file": true
+          },
+          "pass": true,
+          "path": "artifacts/environment/h59/fig22/fig22-fft-128.json",
+          "sha256": "b0cd44a5e2e178e2310d97b92dc119c905c7c1c0695cfcb6963c0431f3de5870"
+        },
+        "log": {
+          "bytes": 5317,
+          "checks": {
+            "is_file": true
+          },
+          "pass": true,
+          "path": "artifacts/environment/h59/runs/fig22/fft-128/run.log",
+          "sha256": "b17c87c40bcb999841e8cfce6cb936e6fd14bce1d86dabe349af3d9a51487a2a"
+        }
+      },
+      "fft-2048": {
+        "config": {
+          "bytes": 1335847,
+          "checks": {
+            "is_file": true
+          },
+          "pass": true,
+          "path": "artifacts/environment/h59/fig22/fig22-fft-2048.json",
+          "sha256": "21fea120ccd4296ad8351423cb9845f1177a1b083c7b6ad1904cf18279751a17"
+        },
+        "log": {
+          "bytes": 5353,
+          "checks": {
+            "is_file": true
+          },
+          "pass": true,
+          "path": "artifacts/environment/h59/runs/fig22/fft-2048/run.log",
+          "sha256": "5af72df27a13301983fe12d8c137c8089037b09357e431343bb00e43a1fbd2ec"
+        }
+      },
+      "fft-256": {
+        "config": {
+          "bytes": 455687,
+          "checks": {
+            "is_file": true
+          },
+          "pass": true,
+          "path": "artifacts/environment/h59/fig22/fig22-fft-256.json",
+          "sha256": "96dd3c4af4c230727afee199332eac4f1541d7c02a1ca5496fbb68daa0bb7e98"
+        },
+        "log": {
+          "bytes": 5325,
+          "checks": {
+            "is_file": true
+          },
+          "pass": true,
+          "path": "artifacts/environment/h59/runs/fig22/fft-256/run.log",
+          "sha256": "031c3a19a938a3c88f99084942798fc0c7e3372a5e53d5168cc1dcfb93b1c75b"
+        }
+      },
+      "fft-4096": {
+        "config": {
+          "bytes": 2370491,
+          "checks": {
+            "is_file": true
+          },
+          "pass": true,
+          "path": "artifacts/environment/h59/fig22/fig22-fft-4096.json",
+          "sha256": "e5c2f10617db208ead3c2d44b152652582e9e05b145ff066cef98191612cd65d"
+        },
+        "log": {
+          "bytes": 5381,
+          "checks": {
+            "is_file": true
+          },
+          "pass": true,
+          "path": "artifacts/environment/h59/runs/fig22/fft-4096/run.log",
+          "sha256": "4ed52afc04db3de86da5bda551cf3b361f0cf1071efe13c9f65ca4574e1b651c"
+        }
+      },
+      "fft-512": {
+        "config": {
+          "bytes": 594396,
+          "checks": {
+            "is_file": true
+          },
+          "pass": true,
+          "path": "artifacts/environment/h59/fig22/fig22-fft-512.json",
+          "sha256": "17cd4a03c816b90dbd8e401e096228bd636c296f2bb404722338acdf1ce9319a"
+        },
+        "log": {
+          "bytes": 5331,
+          "checks": {
+            "is_file": true
+          },
+          "pass": true,
+          "path": "artifacts/environment/h59/runs/fig22/fft-512/run.log",
+          "sha256": "4eb98a0a0b11cbf9c3cd4368536ca43c764238a2743c765661af0a1c7626b765"
+        }
+      },
+      "fft-64": {
+        "config": {
+          "bytes": 301947,
+          "checks": {
+            "is_file": true
+          },
+          "pass": true,
+          "path": "artifacts/environment/h59/fig22/fig22-fft-64.json",
+          "sha256": "4a2a469a7dbd3ad4e05e07a42248017b47da6135197ade1f8e5f33c8aa4b0fca"
+        },
+        "log": {
+          "bytes": 5301,
+          "checks": {
+            "is_file": true
+          },
+          "pass": true,
+          "path": "artifacts/environment/h59/runs/fig22/fft-64/run.log",
+          "sha256": "85a00cf4de1b9c4a4a092277804e69683681145fe570b64f9c40e8228f6b5b00"
+        }
+      },
+      "fft-8192": {
+        "config": {
+          "bytes": 4542232,
+          "checks": {
+            "is_file": true
+          },
+          "pass": true,
+          "path": "artifacts/environment/h59/fig22/fig22-fft-8192.json",
+          "sha256": "1a3de115f79a9a4860ba5f37534580bfe6bcaf68061690b2da41adb8bfbd99e8"
+        },
+        "log": {
+          "bytes": 5397,
+          "checks": {
+            "is_file": true
+          },
+          "pass": true,
+          "path": "artifacts/environment/h59/runs/fig22/fft-8192/run.log",
+          "sha256": "4ecef33013799e17b7a2ca94c1a2b0ca15692b3cb118c8a0a379a1036aa71e86"
+        }
+      }
+    },
+    "checks": {
+      "all_executions_valid": true,
+      "sixteen_executions": true,
+      "unscaled_compute_busy_over_cycles": true
+    },
+    "execution_checks": {
+      "bsmm-1024": true,
+      "bsmm-128": true,
+      "bsmm-2048": true,
+      "bsmm-256": true,
+      "bsmm-4096": true,
+      "bsmm-512": true,
+      "bsmm-64": true,
+      "bsmm-8192": true,
+      "fft-1024": true,
+      "fft-128": true,
+      "fft-2048": true,
+      "fft-256": true,
+      "fft-4096": true,
+      "fft-512": true,
+      "fft-64": true,
+      "fft-8192": true
+    },
+    "pass": true,
+    "points": {
+      "bsmm": [
+        {
+          "adapter": {
+            "bank_backpressure_cycles": 0,
+            "max_response_cycles": 5,
+            "max_response_ticks": 5000,
+            "requests": 576,
+            "responses": 576,
+            "unavailable_checks": 6664
+          },
+          "checks": {
+            "config": true,
+            "done": true,
+            "events": true,
+            "instructions": true,
+            "log": true,
+            "memory": true,
+            "no_experimental_register_stalls": true,
+            "no_watchdog_abort": true,
+            "normal_exit": true,
+            "paper_static": true,
+            "sanity": true,
+            "tag_window": true
+          },
+          "compute_busy_cycles": 501,
+          "compute_utilization": 0.8434343434343434,
+          "cycles": 594,
+          "overlay": {
+            "boundary_events_emitted": 192,
+            "busy_cycles_by_pipeline": {
+              "compute": 501,
+              "load": 570,
+              "store": 459,
+              "xfer": 312
+            },
+            "cycles": 594,
+            "done": true,
+            "event_unblocked_issues_before_tag_complete": 47,
+            "external_memory_completions": 576,
+            "external_memory_requests": 576,
+            "external_memory_wait_cycles": 1720,
+            "instructions_completed": 1152,
+            "instructions_issued": 1152,
+            "issued_by_pipeline": {
+              "compute": 384,
+              "load": 384,
+              "store": 192,
+              "xfer": 192
+            },
+            "link_stalls": 0,
+            "max_active_tags": 3,
+            "max_pipeline_issues_in_cycle": 4,
+            "memory_backend": "adapter",
+            "pe_dependency_model": "paper_static",
+            "record_events": true,
+            "route_hops": 192,
+            "scenario": "gem5",
+            "skip_hops": 192,
+            "stalls_by_reason": {
+              "event_dependency": 8848,
+              "memory_queue_full": 6664,
+              "pipeline_contention": 525
+            },
+            "start_in_roi": false,
+            "unit_hops": 0
+          },
+          "pass_10pct": true,
+          "relative_error": 0.04127696720289305,
+          "size": 64,
+          "target": 0.81
+        },
+        {
+          "adapter": {
+            "bank_backpressure_cycles": 0,
+            "max_response_cycles": 5,
+            "max_response_ticks": 5000,
+            "requests": 1344,
+            "responses": 1344,
+            "unavailable_checks": 17625
+          },
+          "checks": {
+            "config": true,
+            "done": true,
+            "events": true,
+            "instructions": true,
+            "log": true,
+            "memory": true,
+            "no_experimental_register_stalls": true,
+            "no_watchdog_abort": true,
+            "normal_exit": true,
+            "paper_static": true,
+            "sanity": true,
+            "tag_window": true
+          },
+          "compute_busy_cycles": 1157,
+          "compute_utilization": 0.8445255474452554,
+          "cycles": 1370,
+          "overlay": {
+            "boundary_events_emitted": 448,
+            "busy_cycles_by_pipeline": {
+              "compute": 1157,
+              "load": 1333,
+              "store": 1103,
+              "xfer": 764
+            },
+            "cycles": 1370,
+            "done": true,
+            "event_unblocked_issues_before_tag_complete": 92,
+            "external_memory_completions": 1344,
+            "external_memory_requests": 1344,
+            "external_memory_wait_cycles": 4011,
+            "instructions_completed": 2688,
+            "instructions_issued": 2688,
+            "issued_by_pipeline": {
+              "compute": 896,
+              "load": 896,
+              "store": 448,
+              "xfer": 448
+            },
+            "link_stalls": 0,
+            "max_active_tags": 3,
+            "max_pipeline_issues_in_cycle": 4,
+            "memory_backend": "adapter",
+            "pe_dependency_model": "paper_static",
+            "record_events": true,
+            "route_hops": 448,
+            "scenario": "gem5",
+            "skip_hops": 448,
+            "stalls_by_reason": {
+              "event_dependency": 19624,
+              "memory_queue_full": 17625,
+              "pipeline_contention": 1297
+            },
+            "start_in_roi": false,
+            "unit_hops": 0
+          },
+          "pass_10pct": true,
+          "relative_error": 0.006440532417346526,
+          "size": 128,
+          "target": 0.85
+        },
+        {
+          "adapter": {
+            "bank_backpressure_cycles": 0,
+            "max_response_cycles": 5,
+            "max_response_ticks": 5000,
+            "requests": 3072,
+            "responses": 3072,
+            "unavailable_checks": 43608
+          },
+          "checks": {
+            "config": true,
+            "done": true,
+            "events": true,
+            "instructions": true,
+            "log": true,
+            "memory": true,
+            "no_experimental_register_stalls": true,
+            "no_watchdog_abort": true,
+            "normal_exit": true,
+            "paper_static": true,
+            "sanity": true,
+            "tag_window": true
+          },
+          "compute_busy_cycles": 2622,
+          "compute_utilization": 0.8420038535645472,
+          "cycles": 3114,
+          "overlay": {
+            "boundary_events_emitted": 1024,
+            "busy_cycles_by_pipeline": {
+              "compute": 2622,
+              "load": 3021,
+              "store": 2419,
+              "xfer": 1707
+            },
+            "cycles": 3114,
+            "done": true,
+            "event_unblocked_issues_before_tag_complete": 199,
+            "external_memory_completions": 3072,
+            "external_memory_requests": 3072,
+            "external_memory_wait_cycles": 9167,
+            "instructions_completed": 6144,
+            "instructions_issued": 6144,
+            "issued_by_pipeline": {
+              "compute": 2048,
+              "load": 2048,
+              "store": 1024,
+              "xfer": 1024
+            },
+            "link_stalls": 0,
+            "max_active_tags": 3,
+            "max_pipeline_issues_in_cycle": 4,
+            "memory_backend": "adapter",
+            "pe_dependency_model": "paper_static",
+            "record_events": true,
+            "route_hops": 1024,
+            "scenario": "gem5",
+            "skip_hops": 1024,
+            "stalls_by_reason": {
+              "event_dependency": 43188,
+              "memory_queue_full": 43608,
+              "pipeline_contention": 3065
+            },
+            "start_in_roi": false,
+            "unit_hops": 0
+          },
+          "pass_10pct": true,
+          "relative_error": 0.020925751669131135,
+          "size": 256,
+          "target": 0.86
+        },
+        {
+          "adapter": {
+            "bank_backpressure_cycles": 0,
+            "max_response_cycles": 5,
+            "max_response_ticks": 5000,
+            "requests": 6912,
+            "responses": 6912,
+            "unavailable_checks": 103247
+          },
+          "checks": {
+            "config": true,
+            "done": true,
+            "events": true,
+            "instructions": true,
+            "log": true,
+            "memory": true,
+            "no_experimental_register_stalls": true,
+            "no_watchdog_abort": true,
+            "normal_exit": true,
+            "paper_static": true,
+            "sanity": true,
+            "tag_window": true
+          },
+          "compute_busy_cycles": 5994,
+          "compute_utilization": 0.8559188919034699,
+          "cycles": 7003,
+          "overlay": {
+            "boundary_events_emitted": 2304,
+            "busy_cycles_by_pipeline": {
+              "compute": 5994,
+              "load": 6874,
+              "store": 5563,
+              "xfer": 3929
+            },
+            "cycles": 7003,
+            "done": true,
+            "event_unblocked_issues_before_tag_complete": 412,
+            "external_memory_completions": 6912,
+            "external_memory_requests": 6912,
+            "external_memory_wait_cycles": 20653,
+            "instructions_completed": 13824,
+            "instructions_issued": 13824,
+            "issued_by_pipeline": {
+              "compute": 4608,
+              "load": 4608,
+              "store": 2304,
+              "xfer": 2304
+            },
+            "link_stalls": 0,
+            "max_active_tags": 3,
+            "max_pipeline_issues_in_cycle": 4,
+            "memory_backend": "adapter",
+            "pe_dependency_model": "paper_static",
+            "record_events": true,
+            "route_hops": 2304,
+            "scenario": "gem5",
+            "skip_hops": 2304,
+            "stalls_by_reason": {
+              "event_dependency": 95242,
+              "memory_queue_full": 103247,
+              "pipeline_contention": 7071
+            },
+            "start_in_roi": false,
+            "unit_hops": 0
+          },
+          "pass_10pct": true,
+          "relative_error": 0.03122758060659032,
+          "size": 512,
+          "target": 0.83
+        },
+        {
+          "adapter": {
+            "bank_backpressure_cycles": 0,
+            "max_response_cycles": 5,
+            "max_response_ticks": 5000,
+            "requests": 15360,
+            "responses": 15360,
+            "unavailable_checks": 242391
+          },
+          "checks": {
+            "config": true,
+            "done": true,
+            "events": true,
+            "instructions": true,
+            "log": true,
+            "memory": true,
+            "no_experimental_register_stalls": true,
+            "no_watchdog_abort": true,
+            "normal_exit": true,
+            "paper_static": true,
+            "sanity": true,
+            "tag_window": true
+          },
+          "compute_busy_cycles": 12384,
+          "compute_utilization": 0.7982467448755962,
+          "cycles": 15514,
+          "overlay": {
+            "boundary_events_emitted": 5120,
+            "busy_cycles_by_pipeline": {
+              "compute": 12384,
+              "load": 14523,
+              "store": 10647,
+              "xfer": 7715
+            },
+            "cycles": 15514,
+            "done": true,
+            "event_unblocked_issues_before_tag_complete": 873,
+            "external_memory_completions": 15360,
+            "external_memory_requests": 15360,
+            "external_memory_wait_cycles": 45884,
+            "instructions_completed": 30720,
+            "instructions_issued": 30720,
+            "issued_by_pipeline": {
+              "compute": 10240,
+              "load": 10240,
+              "store": 5120,
+              "xfer": 5120
+            },
+            "link_stalls": 0,
+            "max_active_tags": 3,
+            "max_pipeline_issues_in_cycle": 4,
+            "memory_backend": "adapter",
+            "pe_dependency_model": "paper_static",
+            "record_events": true,
+            "route_hops": 5120,
+            "scenario": "gem5",
+            "skip_hops": 5120,
+            "stalls_by_reason": {
+              "event_dependency": 207552,
+              "memory_queue_full": 242391,
+              "pipeline_contention": 16098
+            },
+            "start_in_roi": false,
+            "unit_hops": 0
+          },
+          "pass_10pct": true,
+          "relative_error": 0.04970625610048066,
+          "size": 1024,
+          "target": 0.84
+        },
+        {
+          "adapter": {
+            "bank_backpressure_cycles": 0,
+            "max_response_cycles": 5,
+            "max_response_ticks": 5000,
+            "requests": 33792,
+            "responses": 33792,
+            "unavailable_checks": 539087
+          },
+          "checks": {
+            "config": true,
+            "done": true,
+            "events": true,
+            "instructions": true,
+            "log": true,
+            "memory": true,
+            "no_experimental_register_stalls": true,
+            "no_watchdog_abort": true,
+            "normal_exit": true,
+            "paper_static": true,
+            "sanity": true,
+            "tag_window": true
+          },
+          "compute_busy_cycles": 28751,
+          "compute_utilization": 0.8417061888869372,
+          "cycles": 34158,
+          "overlay": {
+            "boundary_events_emitted": 11264,
+            "busy_cycles_by_pipeline": {
+              "compute": 28751,
+              "load": 33110,
+              "store": 26079,
+              "xfer": 18725
+            },
+            "cycles": 34158,
+            "done": true,
+            "event_unblocked_issues_before_tag_complete": 1881,
+            "external_memory_completions": 33792,
+            "external_memory_requests": 33792,
+            "external_memory_wait_cycles": 101047,
+            "instructions_completed": 67584,
+            "instructions_issued": 67584,
+            "issued_by_pipeline": {
+              "compute": 22528,
+              "load": 22528,
+              "store": 11264,
+              "xfer": 11264
+            },
+            "link_stalls": 0,
+            "max_active_tags": 3,
+            "max_pipeline_issues_in_cycle": 4,
+            "memory_backend": "adapter",
+            "pe_dependency_model": "paper_static",
+            "record_events": true,
+            "route_hops": 11264,
+            "scenario": "gem5",
+            "skip_hops": 11264,
+            "stalls_by_reason": {
+              "event_dependency": 460010,
+              "memory_queue_full": 539087,
+              "pipeline_contention": 35941
+            },
+            "start_in_roi": false,
+            "unit_hops": 0
+          },
+          "pass_10pct": true,
+          "relative_error": 0.02127187338728236,
+          "size": 2048,
+          "target": 0.86
+        },
+        {
+          "adapter": {
+            "bank_backpressure_cycles": 0,
+            "max_response_cycles": 5,
+            "max_response_ticks": 5000,
+            "requests": 73728,
+            "responses": 73728,
+            "unavailable_checks": 1204023
+          },
+          "checks": {
+            "config": true,
+            "done": true,
+            "events": true,
+            "instructions": true,
+            "log": true,
+            "memory": true,
+            "no_experimental_register_stalls": true,
+            "no_watchdog_abort": true,
+            "normal_exit": true,
+            "paper_static": true,
+            "sanity": true,
+            "tag_window": true
+          },
+          "compute_busy_cycles": 62038,
+          "compute_utilization": 0.8343599537348361,
+          "cycles": 74354,
+          "overlay": {
+            "boundary_events_emitted": 24576,
+            "busy_cycles_by_pipeline": {
+              "compute": 62038,
+              "load": 72206,
+              "store": 55822,
+              "xfer": 41082
+            },
+            "cycles": 74354,
+            "done": true,
+            "event_unblocked_issues_before_tag_complete": 4155,
+            "external_memory_completions": 73728,
+            "external_memory_requests": 73728,
+            "external_memory_wait_cycles": 220340,
+            "instructions_completed": 147456,
+            "instructions_issued": 147456,
+            "issued_by_pipeline": {
+              "compute": 49152,
+              "load": 49152,
+              "store": 24576,
+              "xfer": 24576
+            },
+            "link_stalls": 0,
+            "max_active_tags": 3,
+            "max_pipeline_issues_in_cycle": 4,
+            "memory_backend": "adapter",
+            "pe_dependency_model": "paper_static",
+            "record_events": true,
+            "route_hops": 24576,
+            "scenario": "gem5",
+            "skip_hops": 24576,
+            "stalls_by_reason": {
+              "event_dependency": 993442,
+              "memory_queue_full": 1204023,
+              "pipeline_contention": 79241
+            },
+            "start_in_roi": false,
+            "unit_hops": 0
+          },
+          "pass_10pct": true,
+          "relative_error": 0.040965570419728654,
+          "size": 4096,
+          "target": 0.87
+        },
+        {
+          "adapter": {
+            "bank_backpressure_cycles": 0,
+            "max_response_cycles": 5,
+            "max_response_ticks": 5000,
+            "requests": 159744,
+            "responses": 159744,
+            "unavailable_checks": 2685206
+          },
+          "checks": {
+            "config": true,
+            "done": true,
+            "events": true,
+            "instructions": true,
+            "log": true,
+            "memory": true,
+            "no_experimental_register_stalls": true,
+            "no_watchdog_abort": true,
+            "normal_exit": true,
+            "paper_static": true,
+            "sanity": true,
+            "tag_window": true
+          },
+          "compute_busy_cycles": 121256,
+          "compute_utilization": 0.7534049110249528,
+          "cycles": 160944,
+          "overlay": {
+            "boundary_events_emitted": 53248,
+            "busy_cycles_by_pipeline": {
+              "compute": 121256,
+              "load": 147932,
+              "store": 102285,
+              "xfer": 77391
+            },
+            "cycles": 160944,
+            "done": true,
+            "event_unblocked_issues_before_tag_complete": 9159,
+            "external_memory_completions": 159744,
+            "external_memory_requests": 159744,
+            "external_memory_wait_cycles": 477910,
+            "instructions_completed": 319488,
+            "instructions_issued": 319488,
+            "issued_by_pipeline": {
+              "compute": 106496,
+              "load": 106496,
+              "store": 53248,
+              "xfer": 53248
+            },
+            "link_stalls": 0,
+            "max_active_tags": 3,
+            "max_pipeline_issues_in_cycle": 4,
+            "memory_backend": "adapter",
+            "pe_dependency_model": "paper_static",
+            "record_events": true,
+            "route_hops": 53248,
+            "scenario": "gem5",
+            "skip_hops": 53248,
+            "stalls_by_reason": {
+              "event_dependency": 2119835,
+              "memory_queue_full": 2685206,
+              "pipeline_contention": 173212
+            },
+            "start_in_roi": false,
+            "unit_hops": 0
+          },
+          "pass_10pct": false,
+          "relative_error": 0.11364128114711436,
+          "size": 8192,
+          "target": 0.85
+        }
+      ],
+      "fft": [
+        {
+          "adapter": {
+            "bank_backpressure_cycles": 0,
+            "max_response_cycles": 5,
+            "max_response_ticks": 5000,
+            "requests": 576,
+            "responses": 576,
+            "unavailable_checks": 6470
+          },
+          "checks": {
+            "config": true,
+            "done": true,
+            "events": true,
+            "instructions": true,
+            "log": true,
+            "memory": true,
+            "no_experimental_register_stalls": true,
+            "no_watchdog_abort": true,
+            "normal_exit": true,
+            "paper_static": true,
+            "sanity": true,
+            "tag_window": true
+          },
+          "compute_busy_cycles": 562,
+          "compute_utilization": 0.9429530201342282,
+          "cycles": 596,
+          "overlay": {
+            "boundary_events_emitted": 192,
+            "busy_cycles_by_pipeline": {
+              "compute": 562,
+              "load": 568,
+              "store": 447,
+              "xfer": 302
+            },
+            "cycles": 596,
+            "done": true,
+            "event_unblocked_issues_before_tag_complete": 53,
+            "external_memory_completions": 576,
+            "external_memory_requests": 576,
+            "external_memory_wait_cycles": 1717,
+            "instructions_completed": 1344,
+            "instructions_issued": 1344,
+            "issued_by_pipeline": {
+              "compute": 576,
+              "load": 384,
+              "store": 192,
+              "xfer": 192
+            },
+            "link_stalls": 0,
+            "max_active_tags": 3,
+            "max_pipeline_issues_in_cycle": 4,
+            "memory_backend": "adapter",
+            "pe_dependency_model": "paper_static",
+            "record_events": true,
+            "route_hops": 192,
+            "scenario": "gem5",
+            "skip_hops": 192,
+            "stalls_by_reason": {
+              "event_dependency": 8934,
+              "memory_queue_full": 6470,
+              "pipeline_contention": 526
+            },
+            "start_in_roi": false,
+            "unit_hops": 0
+          },
+          "pass_10pct": false,
+          "relative_error": 0.12256311920741458,
+          "size": 64,
+          "target": 0.84
+        },
+        {
+          "adapter": {
+            "bank_backpressure_cycles": 0,
+            "max_response_cycles": 5,
+            "max_response_ticks": 5000,
+            "requests": 1344,
+            "responses": 1344,
+            "unavailable_checks": 17361
+          },
+          "checks": {
+            "config": true,
+            "done": true,
+            "events": true,
+            "instructions": true,
+            "log": true,
+            "memory": true,
+            "no_experimental_register_stalls": true,
+            "no_watchdog_abort": true,
+            "normal_exit": true,
+            "paper_static": true,
+            "sanity": true,
+            "tag_window": true
+          },
+          "compute_busy_cycles": 1318,
+          "compute_utilization": 0.9613420860685631,
+          "cycles": 1371,
+          "overlay": {
+            "boundary_events_emitted": 448,
+            "busy_cycles_by_pipeline": {
+              "compute": 1318,
+              "load": 1345,
+              "store": 1121,
+              "xfer": 788
+            },
+            "cycles": 1371,
+            "done": true,
+            "event_unblocked_issues_before_tag_complete": 98,
+            "external_memory_completions": 1344,
+            "external_memory_requests": 1344,
+            "external_memory_wait_cycles": 4010,
+            "instructions_completed": 3136,
+            "instructions_issued": 3136,
+            "issued_by_pipeline": {
+              "compute": 1344,
+              "load": 896,
+              "store": 448,
+              "xfer": 448
+            },
+            "link_stalls": 0,
+            "max_active_tags": 3,
+            "max_pipeline_issues_in_cycle": 4,
+            "memory_backend": "adapter",
+            "pe_dependency_model": "paper_static",
+            "record_events": true,
+            "route_hops": 448,
+            "scenario": "gem5",
+            "skip_hops": 448,
+            "stalls_by_reason": {
+              "event_dependency": 19132,
+              "memory_queue_full": 17361,
+              "pipeline_contention": 1279
+            },
+            "start_in_roi": false,
+            "unit_hops": 0
+          },
+          "pass_10pct": true,
+          "relative_error": 0.05641987480061874,
+          "size": 128,
+          "target": 0.91
+        },
+        {
+          "adapter": {
+            "bank_backpressure_cycles": 0,
+            "max_response_cycles": 5,
+            "max_response_ticks": 5000,
+            "requests": 3072,
+            "responses": 3072,
+            "unavailable_checks": 43375
+          },
+          "checks": {
+            "config": true,
+            "done": true,
+            "events": true,
+            "instructions": true,
+            "log": true,
+            "memory": true,
+            "no_experimental_register_stalls": true,
+            "no_watchdog_abort": true,
+            "normal_exit": true,
+            "paper_static": true,
+            "sanity": true,
+            "tag_window": true
+          },
+          "compute_busy_cycles": 2987,
+          "compute_utilization": 0.9567584881486226,
+          "cycles": 3122,
+          "overlay": {
+            "boundary_events_emitted": 1024,
+            "busy_cycles_by_pipeline": {
+              "compute": 2987,
+              "load": 3070,
+              "store": 2557,
+              "xfer": 1761
+            },
+            "cycles": 3122,
+            "done": true,
+            "event_unblocked_issues_before_tag_complete": 199,
+            "external_memory_completions": 3072,
+            "external_memory_requests": 3072,
+            "external_memory_wait_cycles": 9169,
+            "instructions_completed": 7168,
+            "instructions_issued": 7168,
+            "issued_by_pipeline": {
+              "compute": 3072,
+              "load": 2048,
+              "store": 1024,
+              "xfer": 1024
+            },
+            "link_stalls": 0,
+            "max_active_tags": 3,
+            "max_pipeline_issues_in_cycle": 4,
+            "memory_backend": "adapter",
+            "pe_dependency_model": "paper_static",
+            "record_events": true,
+            "route_hops": 1024,
+            "scenario": "gem5",
+            "skip_hops": 1024,
+            "stalls_by_reason": {
+              "event_dependency": 42502,
+              "memory_queue_full": 43375,
+              "pipeline_contention": 3061
+            },
+            "start_in_roi": false,
+            "unit_hops": 0
+          },
+          "pass_10pct": true,
+          "relative_error": 0.028772567901744713,
+          "size": 256,
+          "target": 0.93
+        },
+        {
+          "adapter": {
+            "bank_backpressure_cycles": 0,
+            "max_response_cycles": 5,
+            "max_response_ticks": 5000,
+            "requests": 6912,
+            "responses": 6912,
+            "unavailable_checks": 102542
+          },
+          "checks": {
+            "config": true,
+            "done": true,
+            "events": true,
+            "instructions": true,
+            "log": true,
+            "memory": true,
+            "no_experimental_register_stalls": true,
+            "no_watchdog_abort": true,
+            "normal_exit": true,
+            "paper_static": true,
+            "sanity": true,
+            "tag_window": true
+          },
+          "compute_busy_cycles": 6799,
+          "compute_utilization": 0.9705924339757316,
+          "cycles": 7005,
+          "overlay": {
+            "boundary_events_emitted": 2304,
+            "busy_cycles_by_pipeline": {
+              "compute": 6799,
+              "load": 6919,
+              "store": 5826,
+              "xfer": 4090
+            },
+            "cycles": 7005,
+            "done": true,
+            "event_unblocked_issues_before_tag_complete": 434,
+            "external_memory_completions": 6912,
+            "external_memory_requests": 6912,
+            "external_memory_wait_cycles": 20644,
+            "instructions_completed": 16128,
+            "instructions_issued": 16128,
+            "issued_by_pipeline": {
+              "compute": 6912,
+              "load": 4608,
+              "store": 2304,
+              "xfer": 2304
+            },
+            "link_stalls": 0,
+            "max_active_tags": 3,
+            "max_pipeline_issues_in_cycle": 4,
+            "memory_backend": "adapter",
+            "pe_dependency_model": "paper_static",
+            "record_events": true,
+            "route_hops": 2304,
+            "scenario": "gem5",
+            "skip_hops": 2304,
+            "stalls_by_reason": {
+              "event_dependency": 92730,
+              "memory_queue_full": 102542,
+              "pipeline_contention": 7029
+            },
+            "start_in_roi": false,
+            "unit_hops": 0
+          },
+          "pass_10pct": true,
+          "relative_error": 0.03254514252737408,
+          "size": 512,
+          "target": 0.94
+        },
+        {
+          "adapter": {
+            "bank_backpressure_cycles": 0,
+            "max_response_cycles": 5,
+            "max_response_ticks": 5000,
+            "requests": 15360,
+            "responses": 15360,
+            "unavailable_checks": 230835
+          },
+          "checks": {
+            "config": true,
+            "done": true,
+            "events": true,
+            "instructions": true,
+            "log": true,
+            "memory": true,
+            "no_experimental_register_stalls": true,
+            "no_watchdog_abort": true,
+            "normal_exit": true,
+            "paper_static": true,
+            "sanity": true,
+            "tag_window": true
+          },
+          "compute_busy_cycles": 15391,
+          "compute_utilization": 0.9874254186180792,
+          "cycles": 15587,
+          "overlay": {
+            "boundary_events_emitted": 5120,
+            "busy_cycles_by_pipeline": {
+              "compute": 15391,
+              "load": 15426,
+              "store": 13566,
+              "xfer": 9860
+            },
+            "cycles": 15587,
+            "done": true,
+            "event_unblocked_issues_before_tag_complete": 909,
+            "external_memory_completions": 15360,
+            "external_memory_requests": 15360,
+            "external_memory_wait_cycles": 45880,
+            "instructions_completed": 35840,
+            "instructions_issued": 35840,
+            "issued_by_pipeline": {
+              "compute": 15360,
+              "load": 10240,
+              "store": 5120,
+              "xfer": 5120
+            },
+            "link_stalls": 0,
+            "max_active_tags": 3,
+            "max_pipeline_issues_in_cycle": 4,
+            "memory_backend": "adapter",
+            "pe_dependency_model": "paper_static",
+            "record_events": true,
+            "route_hops": 5120,
+            "scenario": "gem5",
+            "skip_hops": 5120,
+            "stalls_by_reason": {
+              "event_dependency": 208998,
+              "memory_queue_full": 230835,
+              "pipeline_contention": 15987
+            },
+            "start_in_roi": false,
+            "unit_hops": 0
+          },
+          "pass_10pct": false,
+          "relative_error": 0.1094667624922238,
+          "size": 1024,
+          "target": 0.89
+        },
+        {
+          "adapter": {
+            "bank_backpressure_cycles": 0,
+            "max_response_cycles": 5,
+            "max_response_ticks": 5000,
+            "requests": 33792,
+            "responses": 33792,
+            "unavailable_checks": 516914
+          },
+          "checks": {
+            "config": true,
+            "done": true,
+            "events": true,
+            "instructions": true,
+            "log": true,
+            "memory": true,
+            "no_experimental_register_stalls": true,
+            "no_watchdog_abort": true,
+            "normal_exit": true,
+            "paper_static": true,
+            "sanity": true,
+            "tag_window": true
+          },
+          "compute_busy_cycles": 33793,
+          "compute_utilization": 0.9892274816310997,
+          "cycles": 34161,
+          "overlay": {
+            "boundary_events_emitted": 11264,
+            "busy_cycles_by_pipeline": {
+              "compute": 33793,
+              "load": 33860,
+              "store": 29971,
+              "xfer": 21876
+            },
+            "cycles": 34161,
+            "done": true,
+            "event_unblocked_issues_before_tag_complete": 1989,
+            "external_memory_completions": 33792,
+            "external_memory_requests": 33792,
+            "external_memory_wait_cycles": 100959,
+            "instructions_completed": 78848,
+            "instructions_issued": 78848,
+            "issued_by_pipeline": {
+              "compute": 33792,
+              "load": 22528,
+              "store": 11264,
+              "xfer": 11264
+            },
+            "link_stalls": 0,
+            "max_active_tags": 3,
+            "max_pipeline_issues_in_cycle": 5,
+            "memory_backend": "adapter",
+            "pe_dependency_model": "paper_static",
+            "record_events": true,
+            "route_hops": 11264,
+            "scenario": "gem5",
+            "skip_hops": 11264,
+            "stalls_by_reason": {
+              "event_dependency": 462062,
+              "memory_queue_full": 516914,
+              "pipeline_contention": 35753
+            },
+            "start_in_roi": false,
+            "unit_hops": 0
+          },
+          "pass_10pct": true,
+          "relative_error": 0.08706316662758211,
+          "size": 2048,
+          "target": 0.91
+        },
+        {
+          "adapter": {
+            "bank_backpressure_cycles": 0,
+            "max_response_cycles": 5,
+            "max_response_ticks": 5000,
+            "requests": 73728,
+            "responses": 73728,
+            "unavailable_checks": 1140114
+          },
+          "checks": {
+            "config": true,
+            "done": true,
+            "events": true,
+            "instructions": true,
+            "log": true,
+            "memory": true,
+            "no_experimental_register_stalls": true,
+            "no_watchdog_abort": true,
+            "normal_exit": true,
+            "paper_static": true,
+            "sanity": true,
+            "tag_window": true
+          },
+          "compute_busy_cycles": 73485,
+          "compute_utilization": 0.9856217390721194,
+          "cycles": 74557,
+          "overlay": {
+            "boundary_events_emitted": 24576,
+            "busy_cycles_by_pipeline": {
+              "compute": 73485,
+              "load": 73631,
+              "store": 65473,
+              "xfer": 48109
+            },
+            "cycles": 74557,
+            "done": true,
+            "event_unblocked_issues_before_tag_complete": 4327,
+            "external_memory_completions": 73728,
+            "external_memory_requests": 73728,
+            "external_memory_wait_cycles": 220404,
+            "instructions_completed": 172032,
+            "instructions_issued": 172032,
+            "issued_by_pipeline": {
+              "compute": 73728,
+              "load": 49152,
+              "store": 24576,
+              "xfer": 24576
+            },
+            "link_stalls": 0,
+            "max_active_tags": 3,
+            "max_pipeline_issues_in_cycle": 5,
+            "memory_backend": "adapter",
+            "pe_dependency_model": "paper_static",
+            "record_events": true,
+            "route_hops": 24576,
+            "scenario": "gem5",
+            "skip_hops": 24576,
+            "stalls_by_reason": {
+              "event_dependency": 1015479,
+              "memory_queue_full": 1140114,
+              "pipeline_contention": 78966
+            },
+            "start_in_roi": false,
+            "unit_hops": 0
+          },
+          "pass_10pct": true,
+          "relative_error": 0.07132797725230361,
+          "size": 4096,
+          "target": 0.92
+        },
+        {
+          "adapter": {
+            "bank_backpressure_cycles": 0,
+            "max_response_cycles": 5,
+            "max_response_ticks": 5000,
+            "requests": 159744,
+            "responses": 159744,
+            "unavailable_checks": 2486029
+          },
+          "checks": {
+            "config": true,
+            "done": true,
+            "events": true,
+            "instructions": true,
+            "log": true,
+            "memory": true,
+            "no_experimental_register_stalls": true,
+            "no_watchdog_abort": true,
+            "normal_exit": true,
+            "paper_static": true,
+            "sanity": true,
+            "tag_window": true
+          },
+          "compute_busy_cycles": 160295,
+          "compute_utilization": 0.9939788920169161,
+          "cycles": 161266,
+          "overlay": {
+            "boundary_events_emitted": 53248,
+            "busy_cycles_by_pipeline": {
+              "compute": 160295,
+              "load": 160446,
+              "store": 142644,
+              "xfer": 104866
+            },
+            "cycles": 161266,
+            "done": true,
+            "event_unblocked_issues_before_tag_complete": 9346,
+            "external_memory_completions": 159744,
+            "external_memory_requests": 159744,
+            "external_memory_wait_cycles": 477450,
+            "instructions_completed": 372736,
+            "instructions_issued": 372736,
+            "issued_by_pipeline": {
+              "compute": 159744,
+              "load": 106496,
+              "store": 53248,
+              "xfer": 53248
+            },
+            "link_stalls": 0,
+            "max_active_tags": 3,
+            "max_pipeline_issues_in_cycle": 5,
+            "memory_backend": "adapter",
+            "pe_dependency_model": "paper_static",
+            "record_events": true,
+            "route_hops": 53248,
+            "scenario": "gem5",
+            "skip_hops": 53248,
+            "stalls_by_reason": {
+              "event_dependency": 2222502,
+              "memory_queue_full": 2486029,
+              "pipeline_contention": 172877
+            },
+            "start_in_roi": false,
+            "unit_hops": 0
+          },
+          "pass_10pct": true,
+          "relative_error": 0.09228449672188582,
+          "size": 8192,
+          "target": 0.91
+        }
+      ]
+    },
+    "summary": {
+      "all_16_within_10pct": false,
+      "failing_points": [
+        "bsmm-8192",
+        "fft-64",
+        "fft-1024"
+      ],
+      "mape": 0.05786868253010716,
+      "max_relative_error": 0.12256311920741458,
+      "passing_points": 13,
+      "total_points": 16,
+      "validation_eligible": false
+    }
+  },
+  "fig23": {
+    "checks": {
+      "all_executions_valid": true,
+      "compiler_manifest": true,
+      "experiment_id": true,
+      "run_manifest": true,
+      "runner_checks": true,
+      "twenty_runs": true
+    },
+    "compiler": {
+      "bytes": 12178,
+      "checks": {
+        "is_file": true
+      },
+      "pass": true,
+      "path": "artifacts/environment/h59/fig23/fig23-compile-manifest.json",
+      "sha256": "e9b1e6edef014d6638db01c292fe33fd60ee09c66ffe524d1478d1b93ea2ef84"
+    },
+    "cycles": {
+      "1024": {
+        "baseline": 15373,
+        "simd32_4x4": 3853,
+        "simd32_8x8": 1163,
+        "simd8_8x8": 4619
+      },
+      "2048": {
+        "baseline": 30733,
+        "simd32_4x4": 7693,
+        "simd32_8x8": 2315,
+        "simd8_8x8": 9227
+      },
+      "4096": {
+        "baseline": 61453,
+        "simd32_4x4": 15373,
+        "simd32_8x8": 4619,
+        "simd8_8x8": 18443
+      },
+      "512": {
+        "baseline": 7693,
+        "simd32_4x4": 1933,
+        "simd32_8x8": 587,
+        "simd8_8x8": 2315
+      },
+      "8192": {
+        "baseline": 122893,
+        "simd32_4x4": 30733,
+        "simd32_8x8": 9227,
+        "simd8_8x8": 36875
+      }
+    },
+    "execution_checks": {
+      "1024-baseline": true,
+      "1024-simd32_4x4": true,
+      "1024-simd32_8x8": true,
+      "1024-simd8_8x8": true,
+      "2048-baseline": true,
+      "2048-simd32_4x4": true,
+      "2048-simd32_8x8": true,
+      "2048-simd8_8x8": true,
+      "4096-baseline": true,
+      "4096-simd32_4x4": true,
+      "4096-simd32_8x8": true,
+      "4096-simd8_8x8": true,
+      "512-baseline": true,
+      "512-simd32_4x4": true,
+      "512-simd32_8x8": true,
+      "512-simd8_8x8": true,
+      "8192-baseline": true,
+      "8192-simd32_4x4": true,
+      "8192-simd32_8x8": true,
+      "8192-simd8_8x8": true
+    },
+    "pass": true,
+    "points": {
+      "simd32_4x4": [
+        {
+          "actual": 3.9798241076047596,
+          "pass_10pct": true,
+          "relative_error": 0.025727862784731877,
+          "sequence_length": 512,
+          "target": 3.88
+        },
+        {
+          "actual": 3.9898780171295094,
+          "pass_10pct": true,
+          "relative_error": 0.023045645417822946,
+          "sequence_length": 1024,
+          "target": 3.9
+        },
+        {
+          "actual": 3.9949304562589365,
+          "pass_10pct": true,
+          "relative_error": 0.02172134431174843,
+          "sequence_length": 2048,
+          "target": 3.91
+        },
+        {
+          "actual": 3.9974630846288948,
+          "pass_10pct": true,
+          "relative_error": 0.02236907535265847,
+          "sequence_length": 4096,
+          "target": 3.91
+        },
+        {
+          "actual": 3.9987310057592818,
+          "pass_10pct": true,
+          "relative_error": 0.02531564250237996,
+          "sequence_length": 8192,
+          "target": 3.9
+        }
+      ],
+      "simd32_8x8": [
+        {
+          "actual": 13.105621805792163,
+          "pass_10pct": true,
+          "relative_error": 0.07052327618495295,
+          "sequence_length": 512,
+          "target": 14.1
+        },
+        {
+          "actual": 13.218400687876182,
+          "pass_10pct": true,
+          "relative_error": 0.08838615945681505,
+          "sequence_length": 1024,
+          "target": 14.5
+        },
+        {
+          "actual": 13.275593952483801,
+          "pass_10pct": false,
+          "relative_error": 0.10902054010175835,
+          "sequence_length": 2048,
+          "target": 14.9
+        },
+        {
+          "actual": 13.304394890668975,
+          "pass_10pct": true,
+          "relative_error": 0.02887628535262949,
+          "sequence_length": 4096,
+          "target": 13.7
+        },
+        {
+          "actual": 13.318846862468842,
+          "pass_10pct": true,
+          "relative_error": 0.040534911130378215,
+          "sequence_length": 8192,
+          "target": 12.8
+        }
+      ],
+      "simd8_8x8": [
+        {
+          "actual": 3.323110151187905,
+          "pass_10pct": true,
+          "relative_error": 0.0820137703900815,
+          "sequence_length": 512,
+          "target": 3.62
+        },
+        {
+          "actual": 3.328209569170816,
+          "pass_10pct": false,
+          "relative_error": 0.10048390022410382,
+          "sequence_length": 1024,
+          "target": 3.7
+        },
+        {
+          "actual": 3.3307683970954804,
+          "pass_10pct": false,
+          "relative_error": 0.11884433939273,
+          "sequence_length": 2048,
+          "target": 3.78
+        },
+        {
+          "actual": 3.3320501003090603,
+          "pass_10pct": true,
+          "relative_error": 0.04798568562598276,
+          "sequence_length": 4096,
+          "target": 3.5
+        },
+        {
+          "actual": 3.3326915254237286,
+          "pass_10pct": true,
+          "relative_error": 0.012976147545206249,
+          "sequence_length": 8192,
+          "target": 3.29
+        }
+      ]
+    },
+    "run_manifest": {
+      "bytes": 30975,
+      "checks": {
+        "is_file": true
+      },
+      "pass": true,
+      "path": "artifacts/environment/h59/fig23/fig23-run-manifest.json",
+      "sha256": "543afffd7511e4d0fb07f0fc57166cff50a2875cc5d654c57873fc2f33b27aec"
+    },
+    "speedups": {
+      "simd32_4x4": [
+        3.9798241076047596,
+        3.9898780171295094,
+        3.9949304562589365,
+        3.9974630846288948,
+        3.9987310057592818
+      ],
+      "simd32_8x8": [
+        13.105621805792163,
+        13.218400687876182,
+        13.275593952483801,
+        13.304394890668975,
+        13.318846862468842
+      ],
+      "simd8_8x8": [
+        3.323110151187905,
+        3.328209569170816,
+        3.3307683970954804,
+        3.3320501003090603,
+        3.3326915254237286
+      ]
+    },
+    "summaries": {
+      "1024-baseline": {
+        "checks": {
+          "deterministic": true,
+          "done": true,
+          "first": true,
+          "fixed_memory": true,
+          "instructions": true,
+          "manifest_binding": true,
+          "no_experimental_register_stalls": true,
+          "paper_static": true,
+          "second": true
+        },
+        "first": {
+          "bytes": 749,
+          "checks": {
+            "is_file": true
+          },
+          "pass": true,
+          "path": "artifacts/environment/h59/fig23/runs/1024-baseline-first.json",
+          "sha256": "40457beac2c3621650d9b22d03f05be808908b6427471632eb45d9186a377289"
+        },
+        "second": {
+          "bytes": 749,
+          "checks": {
+            "is_file": true
+          },
+          "pass": true,
+          "path": "artifacts/environment/h59/fig23/runs/1024-baseline-second.json",
+          "sha256": "40457beac2c3621650d9b22d03f05be808908b6427471632eb45d9186a377289"
+        }
+      },
+      "1024-simd32_4x4": {
+        "checks": {
+          "deterministic": true,
+          "done": true,
+          "first": true,
+          "fixed_memory": true,
+          "instructions": true,
+          "manifest_binding": true,
+          "no_experimental_register_stalls": true,
+          "paper_static": true,
+          "second": true
+        },
+        "first": {
+          "bytes": 743,
+          "checks": {
+            "is_file": true
+          },
+          "pass": true,
+          "path": "artifacts/environment/h59/fig23/runs/1024-simd32_4x4-first.json",
+          "sha256": "eef1aeba937e4afc94dd52f04dd525e0c1e2d36cb63171b48e08fa406e810b5b"
+        },
+        "second": {
+          "bytes": 743,
+          "checks": {
+            "is_file": true
+          },
+          "pass": true,
+          "path": "artifacts/environment/h59/fig23/runs/1024-simd32_4x4-second.json",
+          "sha256": "eef1aeba937e4afc94dd52f04dd525e0c1e2d36cb63171b48e08fa406e810b5b"
+        }
+      },
+      "1024-simd32_8x8": {
+        "checks": {
+          "deterministic": true,
+          "done": true,
+          "first": true,
+          "fixed_memory": true,
+          "instructions": true,
+          "manifest_binding": true,
+          "no_experimental_register_stalls": true,
+          "paper_static": true,
+          "second": true
+        },
+        "first": {
+          "bytes": 743,
+          "checks": {
+            "is_file": true
+          },
+          "pass": true,
+          "path": "artifacts/environment/h59/fig23/runs/1024-simd32_8x8-first.json",
+          "sha256": "3da77534a1d60d2c5f289843e543737ae38046e9741dd9ba55154a02db929ee2"
+        },
+        "second": {
+          "bytes": 743,
+          "checks": {
+            "is_file": true
+          },
+          "pass": true,
+          "path": "artifacts/environment/h59/fig23/runs/1024-simd32_8x8-second.json",
+          "sha256": "3da77534a1d60d2c5f289843e543737ae38046e9741dd9ba55154a02db929ee2"
+        }
+      },
+      "1024-simd8_8x8": {
+        "checks": {
+          "deterministic": true,
+          "done": true,
+          "first": true,
+          "fixed_memory": true,
+          "instructions": true,
+          "manifest_binding": true,
+          "no_experimental_register_stalls": true,
+          "paper_static": true,
+          "second": true
+        },
+        "first": {
+          "bytes": 752,
+          "checks": {
+            "is_file": true
+          },
+          "pass": true,
+          "path": "artifacts/environment/h59/fig23/runs/1024-simd8_8x8-first.json",
+          "sha256": "a3e1ea4ce03ad9e98349b94597b2d483f7af1a7d8708c7e6f08b3281665d78aa"
+        },
+        "second": {
+          "bytes": 752,
+          "checks": {
+            "is_file": true
+          },
+          "pass": true,
+          "path": "artifacts/environment/h59/fig23/runs/1024-simd8_8x8-second.json",
+          "sha256": "a3e1ea4ce03ad9e98349b94597b2d483f7af1a7d8708c7e6f08b3281665d78aa"
+        }
+      },
+      "2048-baseline": {
+        "checks": {
+          "deterministic": true,
+          "done": true,
+          "first": true,
+          "fixed_memory": true,
+          "instructions": true,
+          "manifest_binding": true,
+          "no_experimental_register_stalls": true,
+          "paper_static": true,
+          "second": true
+        },
+        "first": {
+          "bytes": 756,
+          "checks": {
+            "is_file": true
+          },
+          "pass": true,
+          "path": "artifacts/environment/h59/fig23/runs/2048-baseline-first.json",
+          "sha256": "55a27f399e56fcc3ae697efeccd0a83798b0084974726e2acf49417e9238bf2e"
+        },
+        "second": {
+          "bytes": 756,
+          "checks": {
+            "is_file": true
+          },
+          "pass": true,
+          "path": "artifacts/environment/h59/fig23/runs/2048-baseline-second.json",
+          "sha256": "55a27f399e56fcc3ae697efeccd0a83798b0084974726e2acf49417e9238bf2e"
+        }
+      },
+      "2048-simd32_4x4": {
+        "checks": {
+          "deterministic": true,
+          "done": true,
+          "first": true,
+          "fixed_memory": true,
+          "instructions": true,
+          "manifest_binding": true,
+          "no_experimental_register_stalls": true,
+          "paper_static": true,
+          "second": true
+        },
+        "first": {
+          "bytes": 745,
+          "checks": {
+            "is_file": true
+          },
+          "pass": true,
+          "path": "artifacts/environment/h59/fig23/runs/2048-simd32_4x4-first.json",
+          "sha256": "6082578fb0b2c42208f5d973cb3307133e47945a5bcde523edbccb0a703dcbf5"
+        },
+        "second": {
+          "bytes": 745,
+          "checks": {
+            "is_file": true
+          },
+          "pass": true,
+          "path": "artifacts/environment/h59/fig23/runs/2048-simd32_4x4-second.json",
+          "sha256": "6082578fb0b2c42208f5d973cb3307133e47945a5bcde523edbccb0a703dcbf5"
+        }
+      },
+      "2048-simd32_8x8": {
+        "checks": {
+          "deterministic": true,
+          "done": true,
+          "first": true,
+          "fixed_memory": true,
+          "instructions": true,
+          "manifest_binding": true,
+          "no_experimental_register_stalls": true,
+          "paper_static": true,
+          "second": true
+        },
+        "first": {
+          "bytes": 747,
+          "checks": {
+            "is_file": true
+          },
+          "pass": true,
+          "path": "artifacts/environment/h59/fig23/runs/2048-simd32_8x8-first.json",
+          "sha256": "32a918e9951590c9f2ed12c864437f53ee09e1b6ba222430fff68aad74e1eafe"
+        },
+        "second": {
+          "bytes": 747,
+          "checks": {
+            "is_file": true
+          },
+          "pass": true,
+          "path": "artifacts/environment/h59/fig23/runs/2048-simd32_8x8-second.json",
+          "sha256": "32a918e9951590c9f2ed12c864437f53ee09e1b6ba222430fff68aad74e1eafe"
+        }
+      },
+      "2048-simd8_8x8": {
+        "checks": {
+          "deterministic": true,
+          "done": true,
+          "first": true,
+          "fixed_memory": true,
+          "instructions": true,
+          "manifest_binding": true,
+          "no_experimental_register_stalls": true,
+          "paper_static": true,
+          "second": true
+        },
+        "first": {
+          "bytes": 757,
+          "checks": {
+            "is_file": true
+          },
+          "pass": true,
+          "path": "artifacts/environment/h59/fig23/runs/2048-simd8_8x8-first.json",
+          "sha256": "132387ae5557a36076fd9940070b82f876e440430c1683374c88a611e59e4639"
+        },
+        "second": {
+          "bytes": 757,
+          "checks": {
+            "is_file": true
+          },
+          "pass": true,
+          "path": "artifacts/environment/h59/fig23/runs/2048-simd8_8x8-second.json",
+          "sha256": "132387ae5557a36076fd9940070b82f876e440430c1683374c88a611e59e4639"
+        }
+      },
+      "4096-baseline": {
+        "checks": {
+          "deterministic": true,
+          "done": true,
+          "first": true,
+          "fixed_memory": true,
+          "instructions": true,
+          "manifest_binding": true,
+          "no_experimental_register_stalls": true,
+          "paper_static": true,
+          "second": true
+        },
+        "first": {
+          "bytes": 760,
+          "checks": {
+            "is_file": true
+          },
+          "pass": true,
+          "path": "artifacts/environment/h59/fig23/runs/4096-baseline-first.json",
+          "sha256": "fdb456d5f69855f73b03de6504758a9b5f6952be9198acb5c03b6361f331ba73"
+        },
+        "second": {
+          "bytes": 760,
+          "checks": {
+            "is_file": true
+          },
+          "pass": true,
+          "path": "artifacts/environment/h59/fig23/runs/4096-baseline-second.json",
+          "sha256": "fdb456d5f69855f73b03de6504758a9b5f6952be9198acb5c03b6361f331ba73"
+        }
+      },
+      "4096-simd32_4x4": {
+        "checks": {
+          "deterministic": true,
+          "done": true,
+          "first": true,
+          "fixed_memory": true,
+          "instructions": true,
+          "manifest_binding": true,
+          "no_experimental_register_stalls": true,
+          "paper_static": true,
+          "second": true
+        },
+        "first": {
+          "bytes": 749,
+          "checks": {
+            "is_file": true
+          },
+          "pass": true,
+          "path": "artifacts/environment/h59/fig23/runs/4096-simd32_4x4-first.json",
+          "sha256": "40457beac2c3621650d9b22d03f05be808908b6427471632eb45d9186a377289"
+        },
+        "second": {
+          "bytes": 749,
+          "checks": {
+            "is_file": true
+          },
+          "pass": true,
+          "path": "artifacts/environment/h59/fig23/runs/4096-simd32_4x4-second.json",
+          "sha256": "40457beac2c3621650d9b22d03f05be808908b6427471632eb45d9186a377289"
+        }
+      },
+      "4096-simd32_8x8": {
+        "checks": {
+          "deterministic": true,
+          "done": true,
+          "first": true,
+          "fixed_memory": true,
+          "instructions": true,
+          "manifest_binding": true,
+          "no_experimental_register_stalls": true,
+          "paper_static": true,
+          "second": true
+        },
+        "first": {
+          "bytes": 752,
+          "checks": {
+            "is_file": true
+          },
+          "pass": true,
+          "path": "artifacts/environment/h59/fig23/runs/4096-simd32_8x8-first.json",
+          "sha256": "a3e1ea4ce03ad9e98349b94597b2d483f7af1a7d8708c7e6f08b3281665d78aa"
+        },
+        "second": {
+          "bytes": 752,
+          "checks": {
+            "is_file": true
+          },
+          "pass": true,
+          "path": "artifacts/environment/h59/fig23/runs/4096-simd32_8x8-second.json",
+          "sha256": "a3e1ea4ce03ad9e98349b94597b2d483f7af1a7d8708c7e6f08b3281665d78aa"
+        }
+      },
+      "4096-simd8_8x8": {
+        "checks": {
+          "deterministic": true,
+          "done": true,
+          "first": true,
+          "fixed_memory": true,
+          "instructions": true,
+          "manifest_binding": true,
+          "no_experimental_register_stalls": true,
+          "paper_static": true,
+          "second": true
+        },
+        "first": {
+          "bytes": 764,
+          "checks": {
+            "is_file": true
+          },
+          "pass": true,
+          "path": "artifacts/environment/h59/fig23/runs/4096-simd8_8x8-first.json",
+          "sha256": "26bfa14332aa4ef106d19c7bc647a1df62b8ecd318e7510df07810716668eb00"
+        },
+        "second": {
+          "bytes": 764,
+          "checks": {
+            "is_file": true
+          },
+          "pass": true,
+          "path": "artifacts/environment/h59/fig23/runs/4096-simd8_8x8-second.json",
+          "sha256": "26bfa14332aa4ef106d19c7bc647a1df62b8ecd318e7510df07810716668eb00"
+        }
+      },
+      "512-baseline": {
+        "checks": {
+          "deterministic": true,
+          "done": true,
+          "first": true,
+          "fixed_memory": true,
+          "instructions": true,
+          "manifest_binding": true,
+          "no_experimental_register_stalls": true,
+          "paper_static": true,
+          "second": true
+        },
+        "first": {
+          "bytes": 745,
+          "checks": {
+            "is_file": true
+          },
+          "pass": true,
+          "path": "artifacts/environment/h59/fig23/runs/512-baseline-first.json",
+          "sha256": "6082578fb0b2c42208f5d973cb3307133e47945a5bcde523edbccb0a703dcbf5"
+        },
+        "second": {
+          "bytes": 745,
+          "checks": {
+            "is_file": true
+          },
+          "pass": true,
+          "path": "artifacts/environment/h59/fig23/runs/512-baseline-second.json",
+          "sha256": "6082578fb0b2c42208f5d973cb3307133e47945a5bcde523edbccb0a703dcbf5"
+        }
+      },
+      "512-simd32_4x4": {
+        "checks": {
+          "deterministic": true,
+          "done": true,
+          "first": true,
+          "fixed_memory": true,
+          "instructions": true,
+          "manifest_binding": true,
+          "no_experimental_register_stalls": true,
+          "paper_static": true,
+          "second": true
+        },
+        "first": {
+          "bytes": 736,
+          "checks": {
+            "is_file": true
+          },
+          "pass": true,
+          "path": "artifacts/environment/h59/fig23/runs/512-simd32_4x4-first.json",
+          "sha256": "185c39fd4daf7db1ebed3307444b40653c3c18c825bca58291d8460147ca5e3a"
+        },
+        "second": {
+          "bytes": 736,
+          "checks": {
+            "is_file": true
+          },
+          "pass": true,
+          "path": "artifacts/environment/h59/fig23/runs/512-simd32_4x4-second.json",
+          "sha256": "185c39fd4daf7db1ebed3307444b40653c3c18c825bca58291d8460147ca5e3a"
+        }
+      },
+      "512-simd32_8x8": {
+        "checks": {
+          "deterministic": true,
+          "done": true,
+          "first": true,
+          "fixed_memory": true,
+          "instructions": true,
+          "manifest_binding": true,
+          "no_experimental_register_stalls": true,
+          "paper_static": true,
+          "second": true
+        },
+        "first": {
+          "bytes": 737,
+          "checks": {
+            "is_file": true
+          },
+          "pass": true,
+          "path": "artifacts/environment/h59/fig23/runs/512-simd32_8x8-first.json",
+          "sha256": "55b5f87855a2f529f4e4164e6ed3f3155b01cc9e1b44591f1c3c9b50ab5be217"
+        },
+        "second": {
+          "bytes": 737,
+          "checks": {
+            "is_file": true
+          },
+          "pass": true,
+          "path": "artifacts/environment/h59/fig23/runs/512-simd32_8x8-second.json",
+          "sha256": "55b5f87855a2f529f4e4164e6ed3f3155b01cc9e1b44591f1c3c9b50ab5be217"
+        }
+      },
+      "512-simd8_8x8": {
+        "checks": {
+          "deterministic": true,
+          "done": true,
+          "first": true,
+          "fixed_memory": true,
+          "instructions": true,
+          "manifest_binding": true,
+          "no_experimental_register_stalls": true,
+          "paper_static": true,
+          "second": true
+        },
+        "first": {
+          "bytes": 747,
+          "checks": {
+            "is_file": true
+          },
+          "pass": true,
+          "path": "artifacts/environment/h59/fig23/runs/512-simd8_8x8-first.json",
+          "sha256": "32a918e9951590c9f2ed12c864437f53ee09e1b6ba222430fff68aad74e1eafe"
+        },
+        "second": {
+          "bytes": 747,
+          "checks": {
+            "is_file": true
+          },
+          "pass": true,
+          "path": "artifacts/environment/h59/fig23/runs/512-simd8_8x8-second.json",
+          "sha256": "32a918e9951590c9f2ed12c864437f53ee09e1b6ba222430fff68aad74e1eafe"
+        }
+      },
+      "8192-baseline": {
+        "checks": {
+          "deterministic": true,
+          "done": true,
+          "first": true,
+          "fixed_memory": true,
+          "instructions": true,
+          "manifest_binding": true,
+          "no_experimental_register_stalls": true,
+          "paper_static": true,
+          "second": true
+        },
+        "first": {
+          "bytes": 764,
+          "checks": {
+            "is_file": true
+          },
+          "pass": true,
+          "path": "artifacts/environment/h59/fig23/runs/8192-baseline-first.json",
+          "sha256": "3fbfd442f4af71e875d067227599474b16caa345f17980216408e874d899547c"
+        },
+        "second": {
+          "bytes": 764,
+          "checks": {
+            "is_file": true
+          },
+          "pass": true,
+          "path": "artifacts/environment/h59/fig23/runs/8192-baseline-second.json",
+          "sha256": "3fbfd442f4af71e875d067227599474b16caa345f17980216408e874d899547c"
+        }
+      },
+      "8192-simd32_4x4": {
+        "checks": {
+          "deterministic": true,
+          "done": true,
+          "first": true,
+          "fixed_memory": true,
+          "instructions": true,
+          "manifest_binding": true,
+          "no_experimental_register_stalls": true,
+          "paper_static": true,
+          "second": true
+        },
+        "first": {
+          "bytes": 756,
+          "checks": {
+            "is_file": true
+          },
+          "pass": true,
+          "path": "artifacts/environment/h59/fig23/runs/8192-simd32_4x4-first.json",
+          "sha256": "55a27f399e56fcc3ae697efeccd0a83798b0084974726e2acf49417e9238bf2e"
+        },
+        "second": {
+          "bytes": 756,
+          "checks": {
+            "is_file": true
+          },
+          "pass": true,
+          "path": "artifacts/environment/h59/fig23/runs/8192-simd32_4x4-second.json",
+          "sha256": "55a27f399e56fcc3ae697efeccd0a83798b0084974726e2acf49417e9238bf2e"
+        }
+      },
+      "8192-simd32_8x8": {
+        "checks": {
+          "deterministic": true,
+          "done": true,
+          "first": true,
+          "fixed_memory": true,
+          "instructions": true,
+          "manifest_binding": true,
+          "no_experimental_register_stalls": true,
+          "paper_static": true,
+          "second": true
+        },
+        "first": {
+          "bytes": 757,
+          "checks": {
+            "is_file": true
+          },
+          "pass": true,
+          "path": "artifacts/environment/h59/fig23/runs/8192-simd32_8x8-first.json",
+          "sha256": "132387ae5557a36076fd9940070b82f876e440430c1683374c88a611e59e4639"
+        },
+        "second": {
+          "bytes": 757,
+          "checks": {
+            "is_file": true
+          },
+          "pass": true,
+          "path": "artifacts/environment/h59/fig23/runs/8192-simd32_8x8-second.json",
+          "sha256": "132387ae5557a36076fd9940070b82f876e440430c1683374c88a611e59e4639"
+        }
+      },
+      "8192-simd8_8x8": {
+        "checks": {
+          "deterministic": true,
+          "done": true,
+          "first": true,
+          "fixed_memory": true,
+          "instructions": true,
+          "manifest_binding": true,
+          "no_experimental_register_stalls": true,
+          "paper_static": true,
+          "second": true
+        },
+        "first": {
+          "bytes": 769,
+          "checks": {
+            "is_file": true
+          },
+          "pass": true,
+          "path": "artifacts/environment/h59/fig23/runs/8192-simd8_8x8-first.json",
+          "sha256": "5b9c3be0f70b05c5b259ffc74fa07dde3d5ae5e2398ebc83e2b44b3a3cf92a52"
+        },
+        "second": {
+          "bytes": 769,
+          "checks": {
+            "is_file": true
+          },
+          "pass": true,
+          "path": "artifacts/environment/h59/fig23/runs/8192-simd8_8x8-second.json",
+          "sha256": "5b9c3be0f70b05c5b259ffc74fa07dde3d5ae5e2398ebc83e2b44b3a3cf92a52"
+        }
+      }
+    },
+    "summary": {
+      "all_15_within_10pct": false,
+      "failing_points": [
+        "simd32_8x8-2048",
+        "simd8_8x8-1024",
+        "simd8_8x8-2048"
+      ],
+      "mape": 0.05452163905159867,
+      "max_relative_error": 0.11884433939273,
+      "passing_points": 12,
+      "proxy_mapping": true,
+      "total_points": 15,
+      "validation_eligible": false
+    }
+  },
+  "generated_at": "2026-08-17T18:32:30.540700+00:00",
+  "historical_target_sources": {
+    "fig22": {
+      "bytes": 43611,
+      "checks": {
+        "is_file": true,
+        "sha256": true
+      },
+      "pass": true,
+      "path": "artifacts/results/dsagen-mlx-fig22-run050.json",
+      "sha256": "f2182c6113af7aff73be59eb76e1bc86a07cf5cbcbcb6a18bffcc5c264752950"
+    },
+    "fig23": {
+      "bytes": 21591,
+      "checks": {
+        "is_file": true,
+        "sha256": true
+      },
+      "pass": true,
+      "path": "artifacts/results/dsagen-mlx-fig23-run052.json",
+      "sha256": "3dffbeca8113ce770455c2cd883ec991084beb1c918660af126a8fcb40bcc4a6"
+    }
+  },
+  "hypothesis_status": "rejected",
+  "integrity_checks": {
+    "architecture_contract": true,
+    "diagnostic_watchdog_only": true,
+    "exact_target_independent_transform": true,
+    "execution_sources": true,
+    "fig22_execution": true,
+    "fig23_execution": true,
+    "historical_audits_valid": true,
+    "historical_target_sources": true,
+    "parent_semantics": true,
+    "post_result_adjustment": false,
+    "targets_loaded_only_by_auditor": true
+  },
+  "numerical_gate": {
+    "both_figures_within_10pct": false,
+    "fig22_all_16_within_10pct": false,
+    "fig23_all_15_within_10pct": false
+  },
+  "parent_semantics": {
+    "bytes": 13215,
+    "checks": {
+      "is_file": true
+    },
+    "pass": true,
+    "path": "artifacts/results/mlx-pe-semantics-correction-run058.json",
+    "sha256": "5573dcc3b4317077803ad135aa0be863b94db00aefdfeec545b9504cd9642d1e"
+  },
+  "project_commit": "72ca7ca6620308dacfccde75fec98f05e7da655a",
+  "run_id": "run064",
+  "schema_version": 1,
+  "transformation": {
+    "checks": {
+      "experiment_id": true,
+      "fig22_count": true,
+      "fig22_exact_transform": true,
+      "fig23_count": true,
+      "fig23_exact_transform": true,
+      "fig23_parent_manifest": true,
+      "manifest": true,
+      "paper_static": true,
+      "targets_not_consumed": true
+    },
+    "fig23_parent_manifest": {
+      "bytes": 12178,
+      "checks": {
+        "is_file": true
+      },
+      "pass": true,
+      "path": "artifacts/environment/h59/fig23/fig23-compile-manifest.json",
+      "sha256": "e9b1e6edef014d6638db01c292fe33fd60ee09c66ffe524d1478d1b93ea2ef84"
+    },
+    "manifest": {
+      "bytes": 16521,
+      "checks": {
+        "is_file": true
+      },
+      "pass": true,
+      "path": "artifacts/environment/h59/paper-static-fig22-23-compile-manifest.json",
+      "sha256": "0c93bc46373e3c870bc997f953b4f6e21d403068190cff294e0e78a1cee51903"
+    },
+    "pass": true,
+    "records": {
+      "fig22": [
+        {
+          "checks": {
+            "exact_allowed_transform": true,
+            "output": true,
+            "paper_static": true,
+            "parent": true,
+            "scoreboard_disclaimed": true
+          },
+          "output": {
+            "bytes": 806294,
+            "checks": {
+              "bytes": true,
+              "is_file": true,
+              "sha256": true
+            },
+            "pass": true,
+            "path": "artifacts/environment/h59/fig22/fig22-bsmm-1024.json",
+            "sha256": "bfd6b8e1afc192cac1c441d258ffccad80440ca8ea1a826577c9a6ecbc99cd6c"
+          },
+          "parent": {
+            "bytes": 806166,
+            "checks": {
+              "bytes": true,
+              "is_file": true,
+              "sha256": true
+            },
+            "pass": true,
+            "path": "artifacts/environment/h44/fig22-bsmm-1024.json",
+            "sha256": "e4fa6813971c767cd943bf0d93f1ec2bd13ea48a4615d4a778121da5b54a365d"
+          },
+          "pass": true
+        },
+        {
+          "checks": {
+            "exact_allowed_transform": true,
+            "output": true,
+            "paper_static": true,
+            "parent": true,
+            "scoreboard_disclaimed": true
+          },
+          "output": {
+            "bytes": 343578,
+            "checks": {
+              "bytes": true,
+              "is_file": true,
+              "sha256": true
+            },
+            "pass": true,
+            "path": "artifacts/environment/h59/fig22/fig22-bsmm-128.json",
+            "sha256": "d386baea06ae5c0253f721985c0a55394274bff2cf74298c192f821b4c6614d2"
+          },
+          "parent": {
+            "bytes": 343450,
+            "checks": {
+              "bytes": true,
+              "is_file": true,
+              "sha256": true
+            },
+            "pass": true,
+            "path": "artifacts/environment/h44/fig22-bsmm-128.json",
+            "sha256": "bcabc777261392e627d0ee28e0d0296025029a6d1cd3ddfb0eb99828760b84f9"
+          },
+          "pass": true
+        },
+        {
+          "checks": {
+            "exact_allowed_transform": true,
+            "output": true,
+            "paper_static": true,
+            "parent": true,
+            "scoreboard_disclaimed": true
+          },
+          "output": {
+            "bytes": 1298373,
+            "checks": {
+              "bytes": true,
+              "is_file": true,
+              "sha256": true
+            },
+            "pass": true,
+            "path": "artifacts/environment/h59/fig22/fig22-bsmm-2048.json",
+            "sha256": "5c64db121e62cfcd832b3fa5f6dece1ac79d7a3b6db8892bbe58a9cbb5a88860"
+          },
+          "parent": {
+            "bytes": 1298245,
+            "checks": {
+              "bytes": true,
+              "is_file": true,
+              "sha256": true
+            },
+            "pass": true,
+            "path": "artifacts/environment/h44/fig22-bsmm-2048.json",
+            "sha256": "12fab3be2640d469435e96fbbd89221ccc8e119a477a43df28e648d6b8a5d496"
+          },
+          "pass": true
+        },
+        {
+          "checks": {
+            "exact_allowed_transform": true,
+            "output": true,
+            "paper_static": true,
+            "parent": true,
+            "scoreboard_disclaimed": true
+          },
+          "output": {
+            "bytes": 428424,
+            "checks": {
+              "bytes": true,
+              "is_file": true,
+              "sha256": true
+            },
+            "pass": true,
+            "path": "artifacts/environment/h59/fig22/fig22-bsmm-256.json",
+            "sha256": "cb21c5558eb0097292da62dbc11b924aaa9de17190619a35051e9161958cd1c9"
+          },
+          "parent": {
+            "bytes": 428296,
+            "checks": {
+              "bytes": true,
+              "is_file": true,
+              "sha256": true
+            },
+            "pass": true,
+            "path": "artifacts/environment/h44/fig22-bsmm-256.json",
+            "sha256": "71ffef82f01d1737101b990bb484a9898b46bff3bac11c0f53cf28241b000f8e"
+          },
+          "pass": true
+        },
+        {
+          "checks": {
+            "exact_allowed_transform": true,
+            "output": true,
+            "paper_static": true,
+            "parent": true,
+            "scoreboard_disclaimed": true
+          },
+          "output": {
+            "bytes": 2329602,
+            "checks": {
+              "bytes": true,
+              "is_file": true,
+              "sha256": true
+            },
+            "pass": true,
+            "path": "artifacts/environment/h59/fig22/fig22-bsmm-4096.json",
+            "sha256": "c9a6dc73070abfea186b87a50ec6917bf07da027b615b261ce98d909a1a8fb88"
+          },
+          "parent": {
+            "bytes": 2329474,
+            "checks": {
+              "bytes": true,
+              "is_file": true,
+              "sha256": true
+            },
+            "pass": true,
+            "path": "artifacts/environment/h44/fig22-bsmm-4096.json",
+            "sha256": "89ca69b3bc8a117aea88f13c7c79218f829c98eee36493ace32ebb1acc3f530f"
+          },
+          "pass": true
+        },
+        {
+          "checks": {
+            "exact_allowed_transform": true,
+            "output": true,
+            "paper_static": true,
+            "parent": true,
+            "scoreboard_disclaimed": true
+          },
+          "output": {
+            "bytes": 563733,
+            "checks": {
+              "bytes": true,
+              "is_file": true,
+              "sha256": true
+            },
+            "pass": true,
+            "path": "artifacts/environment/h59/fig22/fig22-bsmm-512.json",
+            "sha256": "c2183b73cb7f3b1272653ef6738dfea40490dc7bfef5f69436ce8deac5154187"
+          },
+          "parent": {
+            "bytes": 563605,
+            "checks": {
+              "bytes": true,
+              "is_file": true,
+              "sha256": true
+            },
+            "pass": true,
+            "path": "artifacts/environment/h44/fig22-bsmm-512.json",
+            "sha256": "4c3543754eb87cde1f3ca294465a75a69e9d9ca75249ce418000ba651841b041"
+          },
+          "pass": true
+        },
+        {
+          "checks": {
+            "exact_allowed_transform": true,
+            "output": true,
+            "paper_static": true,
+            "parent": true,
+            "scoreboard_disclaimed": true
+          },
+          "output": {
+            "bytes": 281480,
+            "checks": {
+              "bytes": true,
+              "is_file": true,
+              "sha256": true
+            },
+            "pass": true,
+            "path": "artifacts/environment/h59/fig22/fig22-bsmm-64.json",
+            "sha256": "eb3a81a0913dcd70269df7224086fd034860416e26db73318ce415f614321d85"
+          },
+          "parent": {
+            "bytes": 281352,
+            "checks": {
+              "bytes": true,
+              "is_file": true,
+              "sha256": true
+            },
+            "pass": true,
+            "path": "artifacts/environment/h44/fig22-bsmm-64.json",
+            "sha256": "1b9d0cd37d8dc229349c5ec36465971274003b134b5e976e9572494297de0617"
+          },
+          "pass": true
+        },
+        {
+          "checks": {
+            "exact_allowed_transform": true,
+            "output": true,
+            "paper_static": true,
+            "parent": true,
+            "scoreboard_disclaimed": true
+          },
+          "output": {
+            "bytes": 4497930,
+            "checks": {
+              "bytes": true,
+              "is_file": true,
+              "sha256": true
+            },
+            "pass": true,
+            "path": "artifacts/environment/h59/fig22/fig22-bsmm-8192.json",
+            "sha256": "95bdd7a26d59703a6461b113537901e2a387dfc2acc4a534a52f5158472095f7"
+          },
+          "parent": {
+            "bytes": 4497802,
+            "checks": {
+              "bytes": true,
+              "is_file": true,
+              "sha256": true
+            },
+            "pass": true,
+            "path": "artifacts/environment/h44/fig22-bsmm-8192.json",
+            "sha256": "a91f17f1e66de750534eadae4496e4589725ff893ac14a0b2f0a46988ba0f81d"
+          },
+          "pass": true
+        },
+        {
+          "checks": {
+            "exact_allowed_transform": true,
+            "output": true,
+            "paper_static": true,
+            "parent": true,
+            "scoreboard_disclaimed": true
+          },
+          "output": {
+            "bytes": 840354,
+            "checks": {
+              "bytes": true,
+              "is_file": true,
+              "sha256": true
+            },
+            "pass": true,
+            "path": "artifacts/environment/h59/fig22/fig22-fft-1024.json",
+            "sha256": "c2d49fbd39d804bc535f8c62d793486541b0ad7177b278c0105fb19d7c8c46e7"
+          },
+          "parent": {
+            "bytes": 840226,
+            "checks": {
+              "bytes": true,
+              "is_file": true,
+              "sha256": true
+            },
+            "pass": true,
+            "path": "artifacts/environment/h44/fig22-fft-1024.json",
+            "sha256": "ee59119d2825f8ef3a810e7506a1a75a99885024d144aea5881b661a18fda712"
+          },
+          "pass": true
+        },
+        {
+          "checks": {
+            "exact_allowed_transform": true,
+            "output": true,
+            "paper_static": true,
+            "parent": true,
+            "scoreboard_disclaimed": true
+          },
+          "output": {
+            "bytes": 367442,
+            "checks": {
+              "bytes": true,
+              "is_file": true,
+              "sha256": true
+            },
+            "pass": true,
+            "path": "artifacts/environment/h59/fig22/fig22-fft-128.json",
+            "sha256": "b0cd44a5e2e178e2310d97b92dc119c905c7c1c0695cfcb6963c0431f3de5870"
+          },
+          "parent": {
+            "bytes": 367314,
+            "checks": {
+              "bytes": true,
+              "is_file": true,
+              "sha256": true
+            },
+            "pass": true,
+            "path": "artifacts/environment/h44/fig22-fft-128.json",
+            "sha256": "5c9261b23c260df3113f312e22ffeb871e50e3fdfef410850f4b367728c5a7d5"
+          },
+          "pass": true
+        },
+        {
+          "checks": {
+            "exact_allowed_transform": true,
+            "output": true,
+            "paper_static": true,
+            "parent": true,
+            "scoreboard_disclaimed": true
+          },
+          "output": {
+            "bytes": 1335847,
+            "checks": {
+              "bytes": true,
+              "is_file": true,
+              "sha256": true
+            },
+            "pass": true,
+            "path": "artifacts/environment/h59/fig22/fig22-fft-2048.json",
+            "sha256": "21fea120ccd4296ad8351423cb9845f1177a1b083c7b6ad1904cf18279751a17"
+          },
+          "parent": {
+            "bytes": 1335719,
+            "checks": {
+              "bytes": true,
+              "is_file": true,
+              "sha256": true
+            },
+            "pass": true,
+            "path": "artifacts/environment/h44/fig22-fft-2048.json",
+            "sha256": "f6dfffb898f6a77c6e8c56fe40c6dd074faceb4a707db56e598887fd0841c92b"
+          },
+          "pass": true
+        },
+        {
+          "checks": {
+            "exact_allowed_transform": true,
+            "output": true,
+            "paper_static": true,
+            "parent": true,
+            "scoreboard_disclaimed": true
+          },
+          "output": {
+            "bytes": 455687,
+            "checks": {
+              "bytes": true,
+              "is_file": true,
+              "sha256": true
+            },
+            "pass": true,
+            "path": "artifacts/environment/h59/fig22/fig22-fft-256.json",
+            "sha256": "96dd3c4af4c230727afee199332eac4f1541d7c02a1ca5496fbb68daa0bb7e98"
+          },
+          "parent": {
+            "bytes": 455559,
+            "checks": {
+              "bytes": true,
+              "is_file": true,
+              "sha256": true
+            },
+            "pass": true,
+            "path": "artifacts/environment/h44/fig22-fft-256.json",
+            "sha256": "7a914db0876d5fa66fc24b70c87777eee0cb09c9b1b55752d06b713181c1443d"
+          },
+          "pass": true
+        },
+        {
+          "checks": {
+            "exact_allowed_transform": true,
+            "output": true,
+            "paper_static": true,
+            "parent": true,
+            "scoreboard_disclaimed": true
+          },
+          "output": {
+            "bytes": 2370491,
+            "checks": {
+              "bytes": true,
+              "is_file": true,
+              "sha256": true
+            },
+            "pass": true,
+            "path": "artifacts/environment/h59/fig22/fig22-fft-4096.json",
+            "sha256": "e5c2f10617db208ead3c2d44b152652582e9e05b145ff066cef98191612cd65d"
+          },
+          "parent": {
+            "bytes": 2370363,
+            "checks": {
+              "bytes": true,
+              "is_file": true,
+              "sha256": true
+            },
+            "pass": true,
+            "path": "artifacts/environment/h44/fig22-fft-4096.json",
+            "sha256": "4e4c8b4c6cb20d2acd88ab3dcd8637db0f96fc5f2056de2b6693b4a786db2c5f"
+          },
+          "pass": true
+        },
+        {
+          "checks": {
+            "exact_allowed_transform": true,
+            "output": true,
+            "paper_static": true,
+            "parent": true,
+            "scoreboard_disclaimed": true
+          },
+          "output": {
+            "bytes": 594396,
+            "checks": {
+              "bytes": true,
+              "is_file": true,
+              "sha256": true
+            },
+            "pass": true,
+            "path": "artifacts/environment/h59/fig22/fig22-fft-512.json",
+            "sha256": "17cd4a03c816b90dbd8e401e096228bd636c296f2bb404722338acdf1ce9319a"
+          },
+          "parent": {
+            "bytes": 594268,
+            "checks": {
+              "bytes": true,
+              "is_file": true,
+              "sha256": true
+            },
+            "pass": true,
+            "path": "artifacts/environment/h44/fig22-fft-512.json",
+            "sha256": "9fea47e2edc40971316c9971cf3db3c1d36e3f020ba30588a89ed2f80176e428"
+          },
+          "pass": true
+        },
+        {
+          "checks": {
+            "exact_allowed_transform": true,
+            "output": true,
+            "paper_static": true,
+            "parent": true,
+            "scoreboard_disclaimed": true
+          },
+          "output": {
+            "bytes": 301947,
+            "checks": {
+              "bytes": true,
+              "is_file": true,
+              "sha256": true
+            },
+            "pass": true,
+            "path": "artifacts/environment/h59/fig22/fig22-fft-64.json",
+            "sha256": "4a2a469a7dbd3ad4e05e07a42248017b47da6135197ade1f8e5f33c8aa4b0fca"
+          },
+          "parent": {
+            "bytes": 301819,
+            "checks": {
+              "bytes": true,
+              "is_file": true,
+              "sha256": true
+            },
+            "pass": true,
+            "path": "artifacts/environment/h44/fig22-fft-64.json",
+            "sha256": "0628671049fa04dbdc28b4c682ebede74ab2ab276c0c93ae556cdd42b98ec677"
+          },
+          "pass": true
+        },
+        {
+          "checks": {
+            "exact_allowed_transform": true,
+            "output": true,
+            "paper_static": true,
+            "parent": true,
+            "scoreboard_disclaimed": true
+          },
+          "output": {
+            "bytes": 4542232,
+            "checks": {
+              "bytes": true,
+              "is_file": true,
+              "sha256": true
+            },
+            "pass": true,
+            "path": "artifacts/environment/h59/fig22/fig22-fft-8192.json",
+            "sha256": "1a3de115f79a9a4860ba5f37534580bfe6bcaf68061690b2da41adb8bfbd99e8"
+          },
+          "parent": {
+            "bytes": 4542104,
+            "checks": {
+              "bytes": true,
+              "is_file": true,
+              "sha256": true
+            },
+            "pass": true,
+            "path": "artifacts/environment/h44/fig22-fft-8192.json",
+            "sha256": "43ff692338d42ce47b2af67b3a9d84f8ca3fdc35185e2b87e5aee5207886c477"
+          },
+          "pass": true
+        }
+      ],
+      "fig23": [
+        {
+          "checks": {
+            "exact_allowed_transform": true,
+            "output": true,
+            "paper_static": true,
+            "parent": true,
+            "scoreboard_disclaimed": true
+          },
+          "output": {
+            "bytes": 353302,
+            "checks": {
+              "bytes": true,
+              "is_file": true,
+              "sha256": true
+            },
+            "pass": true,
+            "path": "artifacts/environment/h59/fig23/fig23-1024-baseline.json",
+            "sha256": "c637ad44a52f90960f2ac7fc21a1105f355145cca16cc2da13d47af8de87e598"
+          },
+          "parent": {
+            "bytes": 353174,
+            "checks": {
+              "bytes": true,
+              "is_file": true,
+              "sha256": true
+            },
+            "pass": true,
+            "path": "artifacts/environment/h46/fig23-1024-baseline.json",
+            "sha256": "7e4d232d74d8047a6510c1f9b4de8c1714aa431e7dd4672a8158f07fc7bccb3a"
+          },
+          "pass": true
+        },
+        {
+          "checks": {
+            "exact_allowed_transform": true,
+            "output": true,
+            "paper_static": true,
+            "parent": true,
+            "scoreboard_disclaimed": true
+          },
+          "output": {
+            "bytes": 353302,
+            "checks": {
+              "bytes": true,
+              "is_file": true,
+              "sha256": true
+            },
+            "pass": true,
+            "path": "artifacts/environment/h59/fig23/fig23-1024-simd32_4x4.json",
+            "sha256": "1e7d340468cb64a7e3a64a0e7e9baac255812d8cc575e70022d52eacd05c4ba5"
+          },
+          "parent": {
+            "bytes": 353174,
+            "checks": {
+              "bytes": true,
+              "is_file": true,
+              "sha256": true
+            },
+            "pass": true,
+            "path": "artifacts/environment/h46/fig23-1024-simd32_4x4.json",
+            "sha256": "66243a41fb922851dd48491a71ec332b43f394413e3186283b60fb0cf0b7b2cb"
+          },
+          "pass": true
+        },
+        {
+          "checks": {
+            "exact_allowed_transform": true,
+            "output": true,
+            "paper_static": true,
+            "parent": true,
+            "scoreboard_disclaimed": true
+          },
+          "output": {
+            "bytes": 1460905,
+            "checks": {
+              "bytes": true,
+              "is_file": true,
+              "sha256": true
+            },
+            "pass": true,
+            "path": "artifacts/environment/h59/fig23/fig23-1024-simd32_8x8.json",
+            "sha256": "b8c6f13f104a6f51c66a5ace2cc291ded435d2be6114a1f62495eef4f5c73cba"
+          },
+          "parent": {
+            "bytes": 1460777,
+            "checks": {
+              "bytes": true,
+              "is_file": true,
+              "sha256": true
+            },
+            "pass": true,
+            "path": "artifacts/environment/h46/fig23-1024-simd32_8x8.json",
+            "sha256": "60c6e5e9366e991648ebdd31a29e5e9311a86e71de126f7e65b425034300bac7"
+          },
+          "pass": true
+        },
+        {
+          "checks": {
+            "exact_allowed_transform": true,
+            "output": true,
+            "paper_static": true,
+            "parent": true,
+            "scoreboard_disclaimed": true
+          },
+          "output": {
+            "bytes": 1462379,
+            "checks": {
+              "bytes": true,
+              "is_file": true,
+              "sha256": true
+            },
+            "pass": true,
+            "path": "artifacts/environment/h59/fig23/fig23-1024-simd8_8x8.json",
+            "sha256": "97f313d467db27c73837c01590a2cbd261ecedc5503fd16b2a9d86eae060e1a5"
+          },
+          "parent": {
+            "bytes": 1462251,
+            "checks": {
+              "bytes": true,
+              "is_file": true,
+              "sha256": true
+            },
+            "pass": true,
+            "path": "artifacts/environment/h46/fig23-1024-simd8_8x8.json",
+            "sha256": "037e45f02c2b9513a6f028c9f929b318f73918d374332a1c7b235dea4cd7250b"
+          },
+          "pass": true
+        },
+        {
+          "checks": {
+            "exact_allowed_transform": true,
+            "output": true,
+            "paper_static": true,
+            "parent": true,
+            "scoreboard_disclaimed": true
+          },
+          "output": {
+            "bytes": 353674,
+            "checks": {
+              "bytes": true,
+              "is_file": true,
+              "sha256": true
+            },
+            "pass": true,
+            "path": "artifacts/environment/h59/fig23/fig23-2048-baseline.json",
+            "sha256": "753ce28549d1e3412c6bbd62ba55ab89e981086d0d525549bb65022b0af6e09d"
+          },
+          "parent": {
+            "bytes": 353546,
+            "checks": {
+              "bytes": true,
+              "is_file": true,
+              "sha256": true
+            },
+            "pass": true,
+            "path": "artifacts/environment/h46/fig23-2048-baseline.json",
+            "sha256": "15034b2679a5e882d7beaa9cf537954cb506e749146c556b8b46821437ea554a"
+          },
+          "pass": true
+        },
+        {
+          "checks": {
+            "exact_allowed_transform": true,
+            "output": true,
+            "paper_static": true,
+            "parent": true,
+            "scoreboard_disclaimed": true
+          },
+          "output": {
+            "bytes": 353305,
+            "checks": {
+              "bytes": true,
+              "is_file": true,
+              "sha256": true
+            },
+            "pass": true,
+            "path": "artifacts/environment/h59/fig23/fig23-2048-simd32_4x4.json",
+            "sha256": "0af319f10665913c78bf487fb45580947a1dce24d68a51a0e1ab1ca96f1326fc"
+          },
+          "parent": {
+            "bytes": 353177,
+            "checks": {
+              "bytes": true,
+              "is_file": true,
+              "sha256": true
+            },
+            "pass": true,
+            "path": "artifacts/environment/h46/fig23-2048-simd32_4x4.json",
+            "sha256": "26455ea36b6cddc08b6a917e8c993c95d2247e71f66c6a62c9f7158a87d3428a"
+          },
+          "pass": true
+        },
+        {
+          "checks": {
+            "exact_allowed_transform": true,
+            "output": true,
+            "paper_static": true,
+            "parent": true,
+            "scoreboard_disclaimed": true
+          },
+          "output": {
+            "bytes": 1460908,
+            "checks": {
+              "bytes": true,
+              "is_file": true,
+              "sha256": true
+            },
+            "pass": true,
+            "path": "artifacts/environment/h59/fig23/fig23-2048-simd32_8x8.json",
+            "sha256": "e480d6e3fca37e264c866f25199dcabf866b9e0a27984ca77c295a68b82d98a2"
+          },
+          "parent": {
+            "bytes": 1460780,
+            "checks": {
+              "bytes": true,
+              "is_file": true,
+              "sha256": true
+            },
+            "pass": true,
+            "path": "artifacts/environment/h46/fig23-2048-simd32_8x8.json",
+            "sha256": "f7a2045e7cedfaafb66ec1bca667836905804dfb37ae5f78747c72b5977413a5"
+          },
+          "pass": true
+        },
+        {
+          "checks": {
+            "exact_allowed_transform": true,
+            "output": true,
+            "paper_static": true,
+            "parent": true,
+            "scoreboard_disclaimed": true
+          },
+          "output": {
+            "bytes": 1462382,
+            "checks": {
+              "bytes": true,
+              "is_file": true,
+              "sha256": true
+            },
+            "pass": true,
+            "path": "artifacts/environment/h59/fig23/fig23-2048-simd8_8x8.json",
+            "sha256": "7d188c0a67d18b464812696096209dfb05391df1f7811c6b52a6f1c044a6483e"
+          },
+          "parent": {
+            "bytes": 1462254,
+            "checks": {
+              "bytes": true,
+              "is_file": true,
+              "sha256": true
+            },
+            "pass": true,
+            "path": "artifacts/environment/h46/fig23-2048-simd8_8x8.json",
+            "sha256": "87fd5048769369ee32443cffa4b31b7fe557b5dd94598a219104cec733972400"
+          },
+          "pass": true
+        },
+        {
+          "checks": {
+            "exact_allowed_transform": true,
+            "output": true,
+            "paper_static": true,
+            "parent": true,
+            "scoreboard_disclaimed": true
+          },
+          "output": {
+            "bytes": 353676,
+            "checks": {
+              "bytes": true,
+              "is_file": true,
+              "sha256": true
+            },
+            "pass": true,
+            "path": "artifacts/environment/h59/fig23/fig23-4096-baseline.json",
+            "sha256": "110e9b59d603c37ca8951e558f423d797b91e2823ea66e0214e5664b5e6c8a7d"
+          },
+          "parent": {
+            "bytes": 353548,
+            "checks": {
+              "bytes": true,
+              "is_file": true,
+              "sha256": true
+            },
+            "pass": true,
+            "path": "artifacts/environment/h46/fig23-4096-baseline.json",
+            "sha256": "6f7d6ff4f47ce97746670cba5a2a26ae5daa5a8464cf60928f2f148e3a1f9d53"
+          },
+          "pass": true
+        },
+        {
+          "checks": {
+            "exact_allowed_transform": true,
+            "output": true,
+            "paper_static": true,
+            "parent": true,
+            "scoreboard_disclaimed": true
+          },
+          "output": {
+            "bytes": 353306,
+            "checks": {
+              "bytes": true,
+              "is_file": true,
+              "sha256": true
+            },
+            "pass": true,
+            "path": "artifacts/environment/h59/fig23/fig23-4096-simd32_4x4.json",
+            "sha256": "9f5a45d0ba2208cc8250c0e2e1fded7848f482faff7361fb7b21084feaaf59df"
+          },
+          "parent": {
+            "bytes": 353178,
+            "checks": {
+              "bytes": true,
+              "is_file": true,
+              "sha256": true
+            },
+            "pass": true,
+            "path": "artifacts/environment/h46/fig23-4096-simd32_4x4.json",
+            "sha256": "5d4a1e87417fad84fac074873dd5e3bd0125c167445472f65f5c6dcd364a2a0b"
+          },
+          "pass": true
+        },
+        {
+          "checks": {
+            "exact_allowed_transform": true,
+            "output": true,
+            "paper_static": true,
+            "parent": true,
+            "scoreboard_disclaimed": true
+          },
+          "output": {
+            "bytes": 1462382,
+            "checks": {
+              "bytes": true,
+              "is_file": true,
+              "sha256": true
+            },
+            "pass": true,
+            "path": "artifacts/environment/h59/fig23/fig23-4096-simd32_8x8.json",
+            "sha256": "13af3f5dd4124e3014c55fd6e10a7c8b241410ab17f8bdc72f5d2cdd43902a2a"
+          },
+          "parent": {
+            "bytes": 1462254,
+            "checks": {
+              "bytes": true,
+              "is_file": true,
+              "sha256": true
+            },
+            "pass": true,
+            "path": "artifacts/environment/h46/fig23-4096-simd32_8x8.json",
+            "sha256": "3c500578e1b8d23d960c85e970d98f342881b3aa884529ae9d8dc22cbc2c6a98"
+          },
+          "pass": true
+        },
+        {
+          "checks": {
+            "exact_allowed_transform": true,
+            "output": true,
+            "paper_static": true,
+            "parent": true,
+            "scoreboard_disclaimed": true
+          },
+          "output": {
+            "bytes": 1462384,
+            "checks": {
+              "bytes": true,
+              "is_file": true,
+              "sha256": true
+            },
+            "pass": true,
+            "path": "artifacts/environment/h59/fig23/fig23-4096-simd8_8x8.json",
+            "sha256": "d2f6e740e619f1a93e8bb9e0808c1b4bcb4f8219b5155a7db0856baeda7b1780"
+          },
+          "parent": {
+            "bytes": 1462256,
+            "checks": {
+              "bytes": true,
+              "is_file": true,
+              "sha256": true
+            },
+            "pass": true,
+            "path": "artifacts/environment/h46/fig23-4096-simd8_8x8.json",
+            "sha256": "16521b0ae6dae136194ecc0f43c030fc4231f9445212733ea3e80b0c1323677d"
+          },
+          "pass": true
+        },
+        {
+          "checks": {
+            "exact_allowed_transform": true,
+            "output": true,
+            "paper_static": true,
+            "parent": true,
+            "scoreboard_disclaimed": true
+          },
+          "output": {
+            "bytes": 353300,
+            "checks": {
+              "bytes": true,
+              "is_file": true,
+              "sha256": true
+            },
+            "pass": true,
+            "path": "artifacts/environment/h59/fig23/fig23-512-baseline.json",
+            "sha256": "9554a0e8bd19e2a4afc26c1badf83e45bcdcb596ce36a653cfb3a0d4dc5a4105"
+          },
+          "parent": {
+            "bytes": 353172,
+            "checks": {
+              "bytes": true,
+              "is_file": true,
+              "sha256": true
+            },
+            "pass": true,
+            "path": "artifacts/environment/h46/fig23-512-baseline.json",
+            "sha256": "c151c58c192b92b1e485374c3c9bc1bfa8bedd0a43d76e4526c70dbf01c5d841"
+          },
+          "pass": true
+        },
+        {
+          "checks": {
+            "exact_allowed_transform": true,
+            "output": true,
+            "paper_static": true,
+            "parent": true,
+            "scoreboard_disclaimed": true
+          },
+          "output": {
+            "bytes": 352930,
+            "checks": {
+              "bytes": true,
+              "is_file": true,
+              "sha256": true
+            },
+            "pass": true,
+            "path": "artifacts/environment/h59/fig23/fig23-512-simd32_4x4.json",
+            "sha256": "498608a1e80fd102382147798685ce33ed613390e25b5cbb9ed0db8b265a52fc"
+          },
+          "parent": {
+            "bytes": 352802,
+            "checks": {
+              "bytes": true,
+              "is_file": true,
+              "sha256": true
+            },
+            "pass": true,
+            "path": "artifacts/environment/h46/fig23-512-simd32_4x4.json",
+            "sha256": "329e00f8044c7f93bbdd3b3b3cdd6262a0cac56ee0415916a15124b44f22b61f"
+          },
+          "pass": true
+        },
+        {
+          "checks": {
+            "exact_allowed_transform": true,
+            "output": true,
+            "paper_static": true,
+            "parent": true,
+            "scoreboard_disclaimed": true
+          },
+          "output": {
+            "bytes": 1460902,
+            "checks": {
+              "bytes": true,
+              "is_file": true,
+              "sha256": true
+            },
+            "pass": true,
+            "path": "artifacts/environment/h59/fig23/fig23-512-simd32_8x8.json",
+            "sha256": "7258ab6f92c057a71fb309e89826b82ca17793cedec065ff23100dc3712256b4"
+          },
+          "parent": {
+            "bytes": 1460774,
+            "checks": {
+              "bytes": true,
+              "is_file": true,
+              "sha256": true
+            },
+            "pass": true,
+            "path": "artifacts/environment/h46/fig23-512-simd32_8x8.json",
+            "sha256": "ebdf4947fb8e364b3bc2e2768ed55909b8aa0a8ba0d84e80b1081a864cc18275"
+          },
+          "pass": true
+        },
+        {
+          "checks": {
+            "exact_allowed_transform": true,
+            "output": true,
+            "paper_static": true,
+            "parent": true,
+            "scoreboard_disclaimed": true
+          },
+          "output": {
+            "bytes": 1460904,
+            "checks": {
+              "bytes": true,
+              "is_file": true,
+              "sha256": true
+            },
+            "pass": true,
+            "path": "artifacts/environment/h59/fig23/fig23-512-simd8_8x8.json",
+            "sha256": "539d0282754efa6b6be54eede5969945870d30767c8dc0e1d14da2cb71181c01"
+          },
+          "parent": {
+            "bytes": 1460776,
+            "checks": {
+              "bytes": true,
+              "is_file": true,
+              "sha256": true
+            },
+            "pass": true,
+            "path": "artifacts/environment/h46/fig23-512-simd8_8x8.json",
+            "sha256": "b8b06f45c23ff02b5bbb88c0b2983eb2ff5896998aadfced7edabe57b77350cc"
+          },
+          "pass": true
+        },
+        {
+          "checks": {
+            "exact_allowed_transform": true,
+            "output": true,
+            "paper_static": true,
+            "parent": true,
+            "scoreboard_disclaimed": true
+          },
+          "output": {
+            "bytes": 353677,
+            "checks": {
+              "bytes": true,
+              "is_file": true,
+              "sha256": true
+            },
+            "pass": true,
+            "path": "artifacts/environment/h59/fig23/fig23-8192-baseline.json",
+            "sha256": "aa147a78ed46b368c45cc1b96d1d30c6f7f1d0ea1dba658cd8f7911894362a72"
+          },
+          "parent": {
+            "bytes": 353549,
+            "checks": {
+              "bytes": true,
+              "is_file": true,
+              "sha256": true
+            },
+            "pass": true,
+            "path": "artifacts/environment/h46/fig23-8192-baseline.json",
+            "sha256": "6f0cc5649fb22426420e3062123dac8ba2e90f788b03917ba1cd54b1a44cb22e"
+          },
+          "pass": true
+        },
+        {
+          "checks": {
+            "exact_allowed_transform": true,
+            "output": true,
+            "paper_static": true,
+            "parent": true,
+            "scoreboard_disclaimed": true
+          },
+          "output": {
+            "bytes": 353677,
+            "checks": {
+              "bytes": true,
+              "is_file": true,
+              "sha256": true
+            },
+            "pass": true,
+            "path": "artifacts/environment/h59/fig23/fig23-8192-simd32_4x4.json",
+            "sha256": "1ad21d85990892aa55f98b4e49a1e3bfa339ca202d544af033093c479282e099"
+          },
+          "parent": {
+            "bytes": 353549,
+            "checks": {
+              "bytes": true,
+              "is_file": true,
+              "sha256": true
+            },
+            "pass": true,
+            "path": "artifacts/environment/h46/fig23-8192-simd32_4x4.json",
+            "sha256": "f039e9f8694bac1a610cd5eae6997b61960e79304bba535992953ceb187b4580"
+          },
+          "pass": true
+        },
+        {
+          "checks": {
+            "exact_allowed_transform": true,
+            "output": true,
+            "paper_static": true,
+            "parent": true,
+            "scoreboard_disclaimed": true
+          },
+          "output": {
+            "bytes": 1462384,
+            "checks": {
+              "bytes": true,
+              "is_file": true,
+              "sha256": true
+            },
+            "pass": true,
+            "path": "artifacts/environment/h59/fig23/fig23-8192-simd32_8x8.json",
+            "sha256": "9b8b73a38b18ff90e5bd46e978fb981e214ab3027852d97b663984177496e523"
+          },
+          "parent": {
+            "bytes": 1462256,
+            "checks": {
+              "bytes": true,
+              "is_file": true,
+              "sha256": true
+            },
+            "pass": true,
+            "path": "artifacts/environment/h46/fig23-8192-simd32_8x8.json",
+            "sha256": "75a9ac7c38f60e8304d18d5e7160fa8245a51450e06a58ed6fa9df6872361fe0"
+          },
+          "pass": true
+        },
+        {
+          "checks": {
+            "exact_allowed_transform": true,
+            "output": true,
+            "paper_static": true,
+            "parent": true,
+            "scoreboard_disclaimed": true
+          },
+          "output": {
+            "bytes": 1463858,
+            "checks": {
+              "bytes": true,
+              "is_file": true,
+              "sha256": true
+            },
+            "pass": true,
+            "path": "artifacts/environment/h59/fig23/fig23-8192-simd8_8x8.json",
+            "sha256": "8ec8c9b99104e9e8bab35ac235ebb6c6bf0ce5008f6d5816e43225f7d60615f9"
+          },
+          "parent": {
+            "bytes": 1463730,
+            "checks": {
+              "bytes": true,
+              "is_file": true,
+              "sha256": true
+            },
+            "pass": true,
+            "path": "artifacts/environment/h46/fig23-8192-simd8_8x8.json",
+            "sha256": "a6783c551ade86e4472c693260fc8136279f91d8fa6a6c4a80e99317660e180c"
+          },
+          "pass": true
+        }
+      ]
+    }
+  },
+  "wall_seconds": 2.1029610900441185
+}
