@@ -1,0 +1,95 @@
+name: combined-attention-memory-v1
+experiment_id: H83
+run_id: run088
+classification: target_free_combined_simd32_attention_memory
+validation_eligible: false
+
+frozen_inputs:
+  paper:
+    path: MLX Multi-Layer Execution for Structured LLM Workload Acceleration on Spatial Architectures/MLX Multi-Layer Execution for Structured LLM Workload Acceleration on Spatial Architectures.md
+    sha256: 5785eb81b28741a3806ca42749d7b556bbcd2404e1622ae644a32bae2ade7745
+  signature:
+    path: artifacts/results/attention-work-signature-run084.json
+    sha256: 109091f15841245b3d2727fbfa492ea1671cb053a30c0278359833026919c3c6
+    required_status: supported
+    required_integrity: true
+  fft_estimator:
+    path: artifacts/results/fft-steady-state-folding-run086.json
+    sha256: bc05cd96eb6cc12aa2d5b7894c09bf291e23694ce1316a287b627d3128548e6f
+    required_status: supported
+    required_integrity: true
+  grouped_attention:
+    path: artifacts/results/grouped-attention-cdc-run087.json
+    sha256: fa82703e92dddb814cbe47d4f9059cb3ba3011cdd68bcc9916c0d8af7484a0d3
+    required_status: supported
+    required_integrity: true
+  spad:
+    path: artifacts/results/standalone-dsagen-spad-run071.json
+    sha256: 2a816515bf6cb2dcdde3ba6972eb8d095b44a2fde2f2c01ad7d1c63c30f15db8
+    required_status: supported
+    required_integrity: true
+  column_ports:
+    path: artifacts/results/multiport-spad-run074.json
+    sha256: a58c37a45111a8928fd98df8eb52ee8db48b2d1032766351020d11344b16f562
+    required_status: supported
+    required_integrity: true
+  pe_contract:
+    path: artifacts/results/mlx-pe-semantics-correction-run058.json
+    sha256: 5573dcc3b4317077803ad135aa0be863b94db00aefdfeec545b9504cd9642d1e
+    required_status: supported
+    required_integrity: true
+  grouped_event_patch:
+    path: patches/dsagen/dsa-gem5-mlx-grouped-events-v1.patch
+    sha256: ec4ae7995e6c0459908335a2bfe85e74e00fa2dd450cd7f0514ffd3bf8e3b405
+  legacy_summary:
+    path: artifacts/environment/h82/runs/N256-q4-first.json
+    sha256: 3548092d64d57d3f329a862588bc986c3c9bd309351ed0b6218b93eb7653d8cb
+
+hardware:
+  mesh: [4, 4]
+  simd_width: 32
+  vector_bytes: 64
+  hidden_dimension: 4096
+  active_window: 2
+  memory_backend: dsagen_spad
+  spad_ports: 4
+  spad_axis: x
+  instruction_entries_per_pe: 32
+
+shapes:
+  N256:
+    sequence_length: 256
+    retained_length: 128
+    fft_forward_stages: 8
+    fft_inverse_stages: 7
+    fft_scale_per_u: 16
+    attention_scale_per_u: 1
+    full_scale: 128
+    full_offchip_bytes: 7340032
+    boundary_bytes: 3145728
+  N8192:
+    sequence_length: 8192
+    retained_length: 4096
+    fft_forward_stages: 13
+    fft_inverse_stages: 12
+    fft_scale_per_u: 1
+    attention_scale_per_u: 2
+    full_scale: 65536
+    full_offchip_bytes: 234881024
+    boundary_bytes: 100663296
+
+fit_scales: [4, 8]
+holdout_scales: [16, 32]
+cycle_relative_error_limit: 0.05
+output_root: artifacts/environment/h83
+
+source_layout:
+  overlay_header: third_party/dsa-framework/dsa-gem5/src/cpu/minor/ssim/mlx_overlay.hh
+  overlay_source: third_party/dsa-framework/dsa-gem5/src/cpu/minor/ssim/mlx_overlay.cc
+  tracked_patch: patches/dsagen/dsa-gem5-mlx-per-event-wait-v1.patch
+  compiler_core: src/mlxsim/dsagen_combined_attention.py
+  compiler: scripts/compile_combined_attention_memory.py
+  runner: scripts/run_combined_attention_memory.py
+  auditor: scripts/audit_combined_attention_memory.py
+
+result_path: artifacts/results/combined-attention-memory-run088.json
