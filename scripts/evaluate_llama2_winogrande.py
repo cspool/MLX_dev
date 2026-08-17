@@ -58,6 +58,26 @@ def _git_commit() -> str | None:
     return result.stdout.strip() if result.returncode == 0 else None
 
 
+def _configure_process_git_safe_directory() -> dict[str, Any]:
+    """Allow lm-eval's metadata subprocess to identify this shared-workspace repo."""
+
+    raw_count = os.environ.get("GIT_CONFIG_COUNT", "0")
+    try:
+        count = int(raw_count)
+    except ValueError as error:
+        raise RuntimeError(f"invalid GIT_CONFIG_COUNT={raw_count!r}") from error
+    for index in range(count):
+        if (
+            os.environ.get(f"GIT_CONFIG_KEY_{index}") == "safe.directory"
+            and os.environ.get(f"GIT_CONFIG_VALUE_{index}") == str(PROJECT_ROOT)
+        ):
+            return {"action": "already_present", "slot": index}
+    os.environ[f"GIT_CONFIG_KEY_{count}"] = "safe.directory"
+    os.environ[f"GIT_CONFIG_VALUE_{count}"] = str(PROJECT_ROOT)
+    os.environ["GIT_CONFIG_COUNT"] = str(count + 1)
+    return {"action": "appended_process_local", "slot": count}
+
+
 def _relative_or_absolute(path: Path) -> str:
     try:
         return str(path.resolve().relative_to(PROJECT_ROOT))
@@ -274,6 +294,7 @@ def main() -> int:
             f"canonical {canonical_target}"
         )
 
+    git_metadata_environment = _configure_process_git_safe_directory()
     model_path = (PROJECT_ROOT / config["model"]["path"]).resolve()
     evaluation = config["evaluation"]
     results = simple_evaluate(
@@ -359,6 +380,7 @@ def main() -> int:
         "harness_results": harness_results,
         "runtime": {
             **runtime_qualification,
+            "git_metadata_environment": git_metadata_environment,
             "wall_time_seconds": time.perf_counter() - started,
         },
     }
