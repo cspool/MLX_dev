@@ -6,8 +6,8 @@ This is the completion checklist. `target` means a paper anchor is captured with
 |---|---|---|---|---:|---:|---:|
 | Fig. 2 | AGX Orin dense vs FFT normalized execution time and L2/L1 hit rate at N=512/8K | Native GPU profile | GPU profile manifest + replay/native results | yes | yes | profile arithmetic pass; native run unavailable |
 | Fig. 3 | H100 roofline, OI/performance points, CUDA utilization and QKV+attention FLOPs | Native GPU profile + analytical roofline | GPU roofline runner and targets | partial | yes | roofline arithmetic pass; native run unavailable |
-| Fig. 5 | Dominant Q/K/V frequencies across Llama2-7B layers | Model activation measurement | Activation capture + spectrum runner | yes | yes | H16 native run pending |
-| Fig. 6 | K frequency energy at Llama2 layers 1 and 16 | Model activation measurement | Spectrum runner and digitized curves | yes | yes | H16 native run pending |
+| Fig. 5 | Dominant Q/K/V frequencies across Llama2-7B layers | Model activation measurement | Activation capture + spectrum runner | yes | yes | H16 native run rejected (2/3 qualitative checks pass) |
+| Fig. 6 | K frequency energy at Llama2 layers 1 and 16 | Model activation measurement | Spectrum runner and digitized curves | yes | yes | H16 native run rejected (1/42 points pass; 82.98% MAPE) |
 | Table II / Fig. 14 | 12-nm area and power breakdown | RTL synthesis + silicon | Exact table replay, component power model, provenance limitation | yes | yes | reported arithmetic pass; RTL unavailable |
 | Fig. 15(a) | ViT dense/BSMM/FNet/MLX accuracy and compute | Training from scratch | Training recipe + FLOP model + result audit | yes | compute + quality-target digitizer yes | MLX compute pass; training no |
 | Fig. 15(b) | BERT layer-count sensitivity | Retraining | Training recipe + FLOP model + audit | yes | yes | original baseline passes; inferred structured sweep rejected at k=9/12 (81.47% max error) |

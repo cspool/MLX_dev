@@ -151,7 +151,7 @@ hypotheses:
     priority: high
   - id: H16
     statement: "A byte-verified official Llama2-7B checkpoint and frozen WikiText-2 activation protocol reproduce the Fig. 6 K-energy bars within 10% and the qualitative Fig. 5 frequency-locality directions."
-    status: pending
+    status: rejected
     motivation: "Test the model-activation evidence used to motivate semantic Fourier compression without depending on the unpublished MLX simulator or training recipe."
     parent: H4
     priority: high
@@ -160,7 +160,7 @@ experiments:
   proxy_metric: "Maximum absolute percentage error across every numeric paper anchor; pass only when each reproducible point is <=10%, with unavailable measurements explicitly classified rather than fabricated."
   baseline_value: 0.2486
   best_value: 0.0123
-  total_runs: 18
+  total_runs: 19
   trajectory:
     - run_id: "run_001"
       hypothesis: "H2"
@@ -288,11 +288,18 @@ experiments:
       wall_time_min: 65.6
       change_summary: "Frozen native BERT structured sweep rejected: k=1/3/6 pass, but k=9/12 fail; ten-point MAPE is 23.44% and maximum error is 81.47%."
       timestamp: "2026-08-17"
+    - run_id: "run_019"
+      hypothesis: "H16"
+      metric_value: 0.9683
+      delta: null
+      wall_time_min: 0.4
+      change_summary: "Byte-verified native Llama2 spectrum run rejected: 1/42 Fig. 6 points and 2/3 Fig. 5 directions pass; MAPE is 82.98% and maximum error is 96.83%."
+      timestamp: "2026-08-17"
 
 outer_loop:
-  cycle: 1
-  last_direction: "Stop treating the disclosed operator formula as sufficient to identify the unpublished BERT recipe; preserve run018 as a rejection and prioritize independently constrained artifacts or unreproduced paper experiments."
-  last_reflection: "H15 rejects the inferred quality recipe despite H14's functional success. k=1/3/6 pass, whereas k=9/12 deteriorate to 33.56%/81.47% maximum error. Nearly constant factor-fit MSE across k and rising training loss indicate cumulative approximation, but residuals cannot identify the withheld per-layer FFT lengths, initialization, wiring, or retraining schedule. No post-hoc H15 retuning is allowed."
+  cycle: 2
+  last_direction: "Preserve H16 as a rejection of the frozen inferred spectrum statistic. Do not choose prompts, features, aggregation, or normalization from its residuals; move to an independently constrained unreproduced experiment while treating author spectrum code as the only route to exact Fig. 5/6 recovery."
+  last_reflection: "H16 uses byte-identical official Llama2 weights and reproduces the broad shallow-high/deep-low direction, but only 1/42 Fig. 6 bars and 2/3 Fig. 5 checks pass. The Layer-1 peak pattern and Layer-16 decay cannot be repaired by one scale factor. The paper omits enough of the activation-analysis protocol that run019 residuals cannot identify a unique replacement."
 
 workspace:
   findings: "findings.md"
