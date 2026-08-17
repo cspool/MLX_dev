@@ -687,9 +687,9 @@ experiments:
       timestamp: "2026-08-17"
 
 outer_loop:
-  cycle: 46
-  last_direction: "Register target-free saturated Xavier anchors with new larger holdouts per FFT-CMP/QK/softmax/SV family. Preserve H84 kernels and work exactly, deduplicate the shape-identical D=4096 QK path, and admit a full GPU sum only if every new holdout passes."
-  last_reflection: "H84 closes CUDA source/work/execution identity but rejects global affine folding from small counts: 32/32 runs pass while only 6/16 holdouts do. CTA/SM wave transitions, not missing operator work, are now the blocker. No Figure 20 target or invalid full estimate has been consumed."
+  cycle: 47
+  last_direction: "Register a separate numerically stable FFT-pair CUDA reference, run 2048/4096-to-8192 validation for both stage depths, and add an 8192-thread N=256 SV holdout. Reuse passed QK/long-SV models and direct full softmax measurements only after all new checks pass."
+  last_reflection: "H85 shows saturation-aware folding is partly sufficient: 4/6 cycle models pass. Full long softmax is now directly measured, not estimated. Remaining blockers are a source-level FFT checksum mismatch and one short-SV slope transition; both can be tested without Figure 20 targets."
 
 recent_milestones_after_h46:
   architecture_contract: "H52 supersedes the GPU-SM analogy with the paper's specialized spatial tagged-block PE; GPGPU-Sim is baseline-only."
@@ -704,6 +704,7 @@ recent_milestones_after_h46:
   grouped_attention: "H82 supports default-preserving grouped CDC events and exact compressed-attention FU work; q=1/2 predicts q=4/8 exactly and fixed-memory full cycles are 8,421,396/8,590,475,284."
   combined_attention_memory: "H83 supports full SIMD32 FFT-CMP→Attention with exact FU/NoC/SRAM work and 4/4 heldouts; MLX full cycles are 4,984,864/4,339,007,525."
   xavier_matched_attention: "H84 executes 32 exact-work Xavier component jobs but rejects small-anchor folding at 6/16 holdouts, 13.07% MAPE, and 53.17% max."
+  xavier_saturated_attention: "H85 reaches 4/6 cycle holdouts but rejects with integrity false due one `4.24e-5` FFT checksum; short SV and long softmax models fail."
 
 completion_snapshot_run042:
   certificate_run: run_042

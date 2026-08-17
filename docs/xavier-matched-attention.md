@@ -32,3 +32,8 @@ larger holdouts; paper residuals remain forbidden.
 
 The immutable result is
 `artifacts/results/xavier-matched-attention-run089.json`.
+
+The saturation follow-up is reported in
+[`xavier-saturated-attention.md`](xavier-saturated-attention.md). Four of six
+cycle models pass, but short SV and long softmax fail and one long FFT checksum
+exceeds the frozen limit; a full Xavier sum remains disallowed.
