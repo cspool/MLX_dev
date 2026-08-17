@@ -1,0 +1,39 @@
+run:
+  id: run_021
+  hypothesis: H18
+  protocol: experiments/h18-fig17-cross-figure/protocol.md
+  output: artifacts/results/fig17-cross-figure-run021.json
+
+model:
+  sequence_lengths: [512, 1024, 2048, 4096, 8192]
+  hidden_size: 4096
+  query_heads: 32
+  key_value_heads: 32
+  total_layers: 32
+  modified_layers: 20
+  block_size: 32
+  compression_ratio: 0.5
+
+fig3_h100_throughput_gflops:
+  endpoint_sequence_lengths: [512, 8192]
+  interpolation: linear_in_log2_sequence_length_clamped_to_endpoints
+  dense_qkv: [492000.0, 770000.0]
+  dense_attention: [395000.0, 503000.0]
+  bsmm: [10450.0, 12100.0]
+  fft: [12100.0, 14400.0]
+  provenance: artifacts/results/fig3-run011.json
+
+prediction:
+  qkv_remaining: "2*log2(B)/B"
+  attention_remaining: "s^2"
+  fft_time: omitted_for_optimistic_upper_bound
+  unchanged_work: omitted
+  mixed_layers: "(total-modified)*dense_time + modified*structured_time"
+
+targets:
+  source: artifacts/targets/paper_targets.yaml
+  series: prefill_eager
+  all_point_relative_error_gate: 0.10
+
+classification: exploratory_cross_figure_consistency
+validation_eligible: false
