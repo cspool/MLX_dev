@@ -1,0 +1,34 @@
+name: fu-fig24-transfer-v1
+experiment_id: H74
+run_id: run079
+classification: target_exposed_physical_counter_cross_simulator_transfer
+validation_eligible: false
+
+frozen_inputs:
+  mlx:
+    path: artifacts/results/fig24-fu-rerun-run078.json
+    sha256: c25a72a32d8ed37bbb9d09b0747167c712f7fbbf5c0ca54edc580e9a6c0203c1
+    required_status: supported
+    required_integrity: true
+  orin:
+    path: artifacts/results/fig24-cross-simulator-run061.json
+    sha256: 29ff5cbd78e6b69d7fdd7505f5ce4e6b14689b9ab0b64623653792311e84031a
+    required_integrity: true
+  targets:
+    path: artifacts/targets/paper_targets.yaml
+    bytes: 14931
+    sha256: c4a22ab8052ff8cb223a729b8ce07320c6826cfee0d37e1a664a8761e018b41e
+    key: fig24_structured_sweep.mlx_over_orin
+
+orin_measurements: artifacts/environment/h55/runs/orin
+normalization:
+  mlx_clock_hz: 1000000000
+  ratio: orin_seconds_per_fma_div_mlx_seconds_per_fma
+  exact_kernel_identity: false
+
+mapping:
+  relative_error_limit: 0.10
+  required_points: 42
+
+auditor: scripts/audit_fu_fig24_transfer.py
+result_path: artifacts/results/fu-fig24-transfer-run079.json
