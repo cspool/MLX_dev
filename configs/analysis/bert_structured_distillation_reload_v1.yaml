@@ -1,0 +1,105 @@
+run:
+  id: run_044
+  hypothesis: H39
+  protocol: experiments/h39-bert-distillation-reload/protocol.md
+  output: artifacts/results/bert-structured-distillation-reload-run044.json
+
+classification: checkpoint_reload_equivalence_audit
+validation_eligible: false
+
+h38:
+  result:
+    path: artifacts/results/bert-structured-distillation-run043.json
+    bytes: 21758
+    sha256: 599e43b2badfb15b1052f1e7603348e513a6e0f209690db795918c141d2d6f76
+    run_id: run_043
+    hypothesis: H38
+    git_commit: 81248676de6bc51f6e3b7a785f5c78b60fdd22cf
+    hypothesis_status: rejected
+  config:
+    path: configs/training/bert_structured_distillation_v1.yaml
+    bytes: 4903
+    sha256: 125ff8904c8c420eb1269d98f53d8c4596ece0ff9882d623b86276417785f1b1
+  script:
+    path: scripts/train_bert_structured_distillation.py
+    bytes: 28220
+    sha256: 9530acaa9dfb6fa59da8cfd3fd7fae9efcc37a9fe93850d90d31e1829e2a8ea5
+
+model_assets:
+  root: third_party/checkpoints/bert-squad-baseline-run014
+  config:
+    path: third_party/checkpoints/bert-squad-baseline-run014/config.json
+    bytes: 762
+    sha256: c76e4e753dcbabd8a227574274e1674f2c1cd150f5132428d643470eb4c1a053
+  tokenizer:
+    path: third_party/checkpoints/bert-squad-baseline-run014/tokenizer.json
+    bytes: 711494
+    sha256: 9f8c4b77d4a5a4a038f5e37c090692e65d9e8c009d3a8ef7612475f8d0ab567c
+  tokenizer_config:
+    path: third_party/checkpoints/bert-squad-baseline-run014/tokenizer_config.json
+    bytes: 350
+    sha256: 7bc1e642a85448bbbc320c3cf3caf717f546cf60d5d85f5d1b4406b5cec025cd
+
+validation_dataset:
+  path: third_party/data/squad/dev-v1.1.json
+  bytes: 4854279
+  sha256: 95aa6a52d5d6a735563366753ca50492a658031da74f301ac5238b03966972c9
+
+checkpoints:
+  1:
+    path: third_party/checkpoints/bert-structured-distilled-h38/k1/model.safetensors
+    bytes: 430730064
+    sha256: 550e09e7c89d681a3b55010f51ff8c855d90861247124deca0c27c297f23ef27
+  3:
+    path: third_party/checkpoints/bert-structured-distilled-h38/k3/model.safetensors
+    bytes: 420998016
+    sha256: e12d489394f668193abfd12d9970b1facaac96bcb4dc8e1c15ee5940f23cca7c
+  6:
+    path: third_party/checkpoints/bert-structured-distilled-h38/k6/model.safetensors
+    bytes: 406399944
+    sha256: b6cd7fb38d174e88bb03ffbc153738ba01936c6720b7b0b26bcd7e71e7dc967e
+  9:
+    path: third_party/checkpoints/bert-structured-distilled-h38/k9/model.safetensors
+    bytes: 391801872
+    sha256: cc3b6936724212c8c6d0a42c2b5779b3b8ec84e05f5ad42ff3f6c8040ae0595a
+  12:
+    path: third_party/checkpoints/bert-structured-distilled-h38/k12/model.safetensors
+    bytes: 377203784
+    sha256: 82ec8a10e6208b726f6fb9d9b6186d92d15e7e2d75ce4b47795a7b68ea2f0d36
+
+expected_metrics_pct:
+  1: {f1: 88.18464714105495, exact_match: 80.52034058656575}
+  3: {f1: 87.14294926017624, exact_match: 79.36613055818354}
+  6: {f1: 82.26785784213003, exact_match: 73.37748344370861}
+  9: {f1: 73.58405712786738, exact_match: 62.28003784295175}
+  12: {f1: 33.206803062818004, exact_match: 21.73131504257332}
+
+structured:
+  modified_last_k_layers: [1, 3, 6, 9, 12]
+  compression_ratio: 0.5
+  chunk_length: 32
+  butterfly_block_size: 32
+  expected_layernorm_alias_count: 50
+  layernorm_key_aliases: {gamma: weight, beta: bias}
+  expected_density: 0.3125
+
+preprocessing:
+  max_sequence_length: 384
+  document_stride: 128
+  pad_to_multiple_of: 8
+
+evaluation:
+  per_device_batch_size: 32
+  n_best_size: 20
+  max_answer_length: 30
+  absolute_metric_tolerance_pct: 0.02
+  device: cuda:0
+  dtype: bfloat16
+  tf32: true
+
+runtime:
+  torch: 2.13.0+cu130
+  transformers: 5.15.0
+  datasets: 5.0.1
+  safetensors: 0.8.0
+  cuda_device: NVIDIA GeForce RTX 4090
