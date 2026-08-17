@@ -13,12 +13,19 @@
 - Six GitHub queries, six GitLab queries, three Hugging Face catalog types, Zenodo, arXiv, ModelScope, 30 author/lab repositories, and the frozen domain-restricted web searches yield zero qualifying or unresolved exact artifact candidates. The source-qualified run038 report is 88,807 bytes with SHA-256 `462df17b15a8acdeee8820f59b476a60939a795d9efd69991d0fabfe0eccff09`.
 - This is a cutoff-bounded availability result, not proof about private or future releases. M2-DFU, DFU-E, patents, SimICT, DSAGEN, Assassyn, and DFGAS remain lineage literature rather than MLX artifacts unless a primary record explicitly establishes the connection.
 
+## ICT architectural lineage
+
+- H34 run039 deduplicates the primary metadata by normalized DOI. Crossref, OpenAlex, and Semantic Scholar agree on SimICT (`10.1109/ISLPED.2013.6629308`), DFU-E (`10.1109/TPDS.2025.3555329`), DFGAS (`10.1145/3773768`), the 2023 ICCD transfer paper (`10.1109/ICCD58817.2023.00073`), and DSAGEN (`10.1109/ISCA45697.2020.00032`).
+- DFU-E, DFGAS, and the ICCD paper predate MLX and are affiliated with ICT/CAS; their author overlap is substantial but explicitly scores zero as derivation evidence. M2-DFU remains a 2026 just-accepted TOCS item on the official UCAS bibliography without a DOI or accessible paper.
+- The formal feature audit cannot pass the DFU-E/M2-DFU family gate: IEEE returns empty HTTP-202 shells for DFU-E/SimICT, ACM returns 403 for DFGAS, and no M2-DFU full text exists. Publisher/index abstracts are retained as discovery and identity context, not counted as primary technical features.
+- Result boundary: architecture-family attribution is inconclusive, exact parent-chip identity is unresolved, and no candidate code/RTL provenance is supported. This does not contradict a DFU lineage; it prevents promoting plausibility into provenance.
+
 ## SimICT
 
 - Ye et al., *SimICT: A Fast and Flexible Framework for Performance and Power Evaluation of Large-Scale Architecture*, ISLPED 2013, pp. 273-278.
 - The framework is described as component-based, able to integrate performance/power models, and able to parallelize simulation with relaxed synchronization.
 - MLX cites it at the sentence describing the tuned 256-GOp/s simulator configuration.
-- Public source status: not found in the initial search; continue verification.
+- H34 source status: Crossref/OpenAlex/Semantic metadata and official ISLPED program/proceedings records establish identity and framework scope. The publisher full text and source code remain unavailable in run039; MLX supports only a citation-level relationship, not code reuse.
 
 ## DSAGEN
 
