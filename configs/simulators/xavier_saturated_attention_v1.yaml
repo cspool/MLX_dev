@@ -1,0 +1,56 @@
+name: xavier-saturated-attention-v1
+experiment_id: H85
+run_id: run090
+classification: target_free_saturated_xavier_attention_folding
+validation_eligible: false
+
+frozen_inputs:
+  h84:
+    path: artifacts/results/xavier-matched-attention-run089.json
+    sha256: a81faae8324159e2c0c2d93050e2dcb93268c61b878c2f2f561e0bc43c9e7bc8
+    required_status: rejected
+    required_integrity: true
+  mlx:
+    path: artifacts/results/combined-attention-memory-run088.json
+    sha256: a647443c82ae407b18f0253757b43cf245b1626593e03510895f9c87ecd5fa44
+    required_status: supported
+    required_integrity: true
+  h84_run_manifest:
+    path: artifacts/environment/h84/xavier-attention-run-manifest.json
+    sha256: 64c233fabb210d13f9e686f82d79437609b0b9cdb5e02e73a52412af24c52d8b
+  cuda_source:
+    path: simulator_ext/accelsim/mlx_attention_proxy.cu
+    sha256: e96786969a7c5a4daba2e984e85768b18d3fbde692db337b4493dc91a7a25bbc
+  h84_runner:
+    path: scripts/run_xavier_matched_attention.py
+    sha256: 109b852738426a329f57bfcef0d07a911b39baf5dd27c618e111488c3402e8bd
+
+device_clock_hz: 1377000000
+checksum_relative_error_limit: 0.00001
+cycle_relative_error_limit: 0.05
+output_root: artifacts/environment/h85
+
+jobs:
+  - {name: shared-qk-c2048, family: qk, count: 2048, parameter: 4096, parameter2: 0}
+  - {name: shared-qk-c4096, family: qk, count: 4096, parameter: 4096, parameter2: 0}
+  - {name: N256-fftcmp-c8192, family: fftcmp, count: 8192, parameter: 8, parameter2: 7}
+  - {name: N8192-fftcmp-c8192, family: fftcmp, count: 8192, parameter: 13, parameter2: 12}
+  - {name: N256-softmax-c128, family: softmax, count: 128, parameter: 128, parameter2: 0}
+  - {name: N256-sv-c2048, family: sv, count: 2048, parameter: 128, parameter2: 0}
+  - {name: N256-sv-c4096, family: sv, count: 4096, parameter: 128, parameter2: 0}
+  - {name: N8192-softmax-c1024, family: softmax, count: 1024, parameter: 4096, parameter2: 0}
+  - {name: N8192-softmax-c2048, family: softmax, count: 2048, parameter: 4096, parameter2: 0}
+  - {name: N8192-softmax-c4096, family: softmax, count: 4096, parameter: 4096, parameter2: 0}
+  - {name: N8192-sv-c2048, family: sv, count: 2048, parameter: 4096, parameter2: 0}
+  - {name: N8192-sv-c4096, family: sv, count: 4096, parameter: 4096, parameter2: 0}
+
+full_counts:
+  N256: {fftcmp: 1572864, qk: 16384, softmax: 128, sv: 524288}
+  N8192: {fftcmp: 50331648, qk: 16777216, softmax: 4096, sv: 16777216}
+
+source_layout:
+  cuda_source: simulator_ext/accelsim/mlx_attention_proxy.cu
+  runner: scripts/run_xavier_saturated_attention.py
+  auditor: scripts/audit_xavier_saturated_attention.py
+
+result_path: artifacts/results/xavier-saturated-attention-run090.json
