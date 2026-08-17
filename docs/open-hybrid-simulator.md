@@ -98,6 +98,7 @@ comparison in [`fig10-fig23-transfer.md`](fig10-fig23-transfer.md). The exact
 standalone reproduction of DSAGEN scratchpad timing is documented in
 [`standalone-dsagen-spad.md`](standalone-dsagen-spad.md), and its scalability
 limit in [`spad-scalability.md`](spad-scalability.md) and
-[`spad-fig23-transfer.md`](spad-fig23-transfer.md). The remaining boundary
+[`spad-fig23-transfer.md`](spad-fig23-transfer.md). The Fig.9-derived memory-port
+candidate is documented in [`multiport-spad.md`](multiport-spad.md). The remaining boundary
 is independently defensible large-shape/per-kernel work scaling for Figures
 18--21 and 24--25. Paper result bars were not inputs to the invariant runs.

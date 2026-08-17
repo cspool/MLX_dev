@@ -26,5 +26,8 @@ separate multi-port reconstruction, but the number and arbitration policy must
 be registered from the diagram before execution rather than fitted to these
 residuals.
 
+That target-free reconstruction is now complete in
+[`multiport-spad.md`](multiport-spad.md).
+
 The immutable result is
 `artifacts/results/spad-fig23-transfer-run073.json`.

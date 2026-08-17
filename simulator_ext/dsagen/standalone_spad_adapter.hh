@@ -5,6 +5,7 @@
 #include <cstdint>
 #include <deque>
 #include <map>
+#include <memory>
 #include <set>
 #include <string>
 #include <utility>
@@ -34,6 +35,8 @@ class StandaloneSpadAdapter : public MemoryAdapter {
   bool takeCompletion(uint64_t token) override;
 
   std::string summaryJson() const;
+  uint64_t requestsIssued() const { return requests_issued_; }
+  uint64_t responsesCompleted() const { return responses_completed_; }
 
  private:
   struct BankEntry {
@@ -64,6 +67,35 @@ class StandaloneSpadAdapter : public MemoryAdapter {
   std::deque<Pending> pending_;
   std::multimap<uint64_t, std::pair<uint64_t, unsigned>> scheduled_completions_;
   std::set<uint64_t> completed_tokens_;
+};
+
+class MultiPortSpadAdapter : public MemoryAdapter {
+ public:
+  enum class Axis { X, Y };
+
+  MultiPortSpadAdapter(unsigned ports, Axis axis);
+
+  void advance(uint64_t cycle) override;
+  bool available(const MemoryRequest &request) const override;
+  uint64_t issue(const MemoryRequest &request) override;
+  bool takeCompletion(uint64_t token) override;
+
+  std::string summaryJson() const;
+
+ private:
+  struct TokenRoute {
+    unsigned port{0};
+    uint64_t local_token{0};
+  };
+
+  unsigned selectPort(const MemoryRequest &request) const;
+
+  Axis axis_;
+  uint64_t next_token_{1};
+  uint64_t requests_issued_{0};
+  uint64_t responses_completed_{0};
+  std::vector<std::unique_ptr<StandaloneSpadAdapter>> ports_;
+  std::map<uint64_t, TokenRoute> token_routes_;
 };
 
 }  // namespace mlx

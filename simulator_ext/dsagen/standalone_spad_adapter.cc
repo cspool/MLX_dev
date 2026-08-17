@@ -146,6 +146,81 @@ StandaloneSpadAdapter::summaryJson() const
   return out.str();
 }
 
+MultiPortSpadAdapter::MultiPortSpadAdapter(unsigned ports, Axis axis) : axis_(axis)
+{
+  if (ports == 0) {
+    throw std::invalid_argument("multi-port scratchpad requires at least one port");
+  }
+  for (unsigned index = 0; index < ports; ++index) {
+    ports_.emplace_back(new StandaloneSpadAdapter());
+  }
+}
+
+unsigned
+MultiPortSpadAdapter::selectPort(const MemoryRequest &request) const
+{
+  int coordinate = axis_ == Axis::X ? request.pe.x : request.pe.y;
+  if (coordinate < 0) {
+    throw std::runtime_error("multi-port scratchpad received a negative PE coordinate");
+  }
+  return static_cast<unsigned>(coordinate) % ports_.size();
+}
+
+void
+MultiPortSpadAdapter::advance(uint64_t cycle)
+{
+  for (auto &port : ports_) {
+    port->advance(cycle);
+  }
+}
+
+bool
+MultiPortSpadAdapter::available(const MemoryRequest &request) const
+{
+  return ports_[selectPort(request)]->available(request);
+}
+
+uint64_t
+MultiPortSpadAdapter::issue(const MemoryRequest &request)
+{
+  unsigned port = selectPort(request);
+  uint64_t local_token = ports_[port]->issue(request);
+  uint64_t token = next_token_++;
+  token_routes_[token] = {port, local_token};
+  ++requests_issued_;
+  return token;
+}
+
+bool
+MultiPortSpadAdapter::takeCompletion(uint64_t token)
+{
+  auto route = token_routes_.find(token);
+  if (route == token_routes_.end()) return false;
+  if (!ports_[route->second.port]->takeCompletion(route->second.local_token)) {
+    return false;
+  }
+  token_routes_.erase(route);
+  ++responses_completed_;
+  return true;
+}
+
+std::string
+MultiPortSpadAdapter::summaryJson() const
+{
+  std::ostringstream out;
+  out << "{\"ports\":" << ports_.size()
+      << ",\"axis\":\"" << (axis_ == Axis::X ? "x" : "y") << "\""
+      << ",\"requests\":" << requests_issued_
+      << ",\"responses\":" << responses_completed_
+      << ",\"per_port\":[";
+  for (std::size_t index = 0; index < ports_.size(); ++index) {
+    if (index) out << ",";
+    out << ports_[index]->summaryJson();
+  }
+  out << "]}";
+  return out.str();
+}
+
 }  // namespace mlx
 }  // namespace sim
 }  // namespace dsa
