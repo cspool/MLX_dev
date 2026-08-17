@@ -333,7 +333,12 @@ def run_inference(
         rope_scaling_factor=float(config["inference"]["rope_scaling_factor"]),
         session_len=int(config["inference"]["effective_session_len"]),
     )
-    pipe = pipeline(str(model_root), backend_config=backend_config, log_level="INFO")
+    log_level = (
+        config["inference"]["smoke_log_level"]
+        if smoke
+        else config["inference"]["formal_log_level"]
+    )
+    pipe = pipeline(str(model_root), backend_config=backend_config, log_level=log_level)
     tokenizer = Tokenizer(str(model_root))
     dataset_root = PROJECT_ROOT / config["datasets"]["root"]
 

@@ -82,6 +82,11 @@ request has the same tokens, positions, single-prefill path, and generation
 limit as under 160,000. Both the official and effective capacities are
 recorded and gated.
 
+Use INFO logging for the two compatibility prompts and WARNING logging for the
+formal workers. This suppresses 3,000 verbatim prompt echoes only; worker
+progress, warnings, failures, and every per-sample result field remain
+available, and log verbosity is not an engine or generation parameter.
+
 The official pipe(prompt) call in LMDeploy 0.2.6 constructs max_new_tokens=512,
 top_k=40, top_p=0.8, temperature=0.8, repetition_penalty=1.0,
 ignore_eos=false, and applies the chat template. It then draws an independent
