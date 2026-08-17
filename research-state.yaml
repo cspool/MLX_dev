@@ -1,7 +1,7 @@
 project:
   title: "MLX paper reproduction"
   question: "Can a transparent open surrogate of the unpublished MLX simulator reproduce every reported experiment within 10% while separating measured, digitized, inferred, and calibrated evidence?"
-  status: active
+  status: evidence_complete_publicly_blocked
   started: "2026-08-16"
   domain: "spatial accelerator architecture simulation and structured LLM inference"
 
@@ -50,42 +50,42 @@ literature:
   open_problems:
     - "H33 found no qualifying public MLX simulator, RTL, compiler, model/checkpoint manifest, or raw trace artifact as of 2026-08-17."
     - "The paper omits many low-level latency, SRAM, DRAM, compiler schedule, and calibration parameters."
-    - "Several plots must be digitized from raster figures before numerical reproduction can be audited."
+    - "H37 completes target/evidence coverage, but 17 of 18 full experiment rows remain rejected, replay-only, or publicly blocked."
   evidence_gaps:
     - "H34-H36 support SimICT only at citation level; first-party access recovery and the supplied Fig. 14 text audit add no explicit derivation, leaving the DFU-E/M2-DFU family and exact taped-out parent unresolved."
-    - "Need identify exact open GPU simulator suitable for the H100/Orin/Xavier comparison."
-    - "Need recover all per-point targets from Figures 2, 3, and 15-25."
+    - "No source-qualified simulator or native trace spans the paper's Volta Xavier, Ampere RTX 3090/Orin, and Hopper H100 comparisons."
+    - "All per-point targets are recovered; the remaining gap is regenerating author measurements rather than target acquisition."
     - "No public evidence links MLX to Assassyn beyond related mechanisms and a shared author; MLX-specific tags, skip hops, and workload mapping are absent."
     - "Open Butterfly, Monarch, FABNet, and QA-LoRA artifacts constrain operator and training precedents but do not disclose MLX's tile initialization, per-layer FFT lengths, decompression wiring, modified-layer identities, or LoRA recipe."
 
 hypotheses:
   - id: H1
     statement: "MLX is most plausibly a SimICT-hosted specialization of the authors' DFU/DSA lineage; DSAGEN is the closest open spatial surrogate, while Accel-Sim/GPGPU-Sim can cover GPU baselines."
-    status: supported
+    status: inconclusive
     motivation: "Select an evidence-grounded, reproducible substrate without pretending the unpublished code is available."
     parent: null
     priority: high
   - id: H2
     statement: "A block/tag-level discrete-event model with decoupled load, compute, and transfer queues can reproduce MLX cycle results within 10% after calibrating only parameters not disclosed by the paper."
-    status: pending
+    status: rejected
     motivation: "This is the architectural mechanism claimed by the paper and the central simulator deliverable."
     parent: null
     priority: high
   - id: H3
     statement: "Closed dependency components, skip-hop routing, and bounded tag windows explain the reported 90% compute utilization and near-linear SIMD/mesh scaling."
-    status: pending
+    status: inconclusive
     motivation: "Tests whether calibrated agreement follows the proposed mechanism rather than per-figure constants."
     parent: H2
     priority: high
   - id: H4
     statement: "Analytical structured-operator FLOP/traffic models reproduce the reported FFT-CMP and hierarchical-BSMM reductions across model shapes."
-    status: pending
+    status: supported
     motivation: "Connect the algorithm and architecture experiments with common workload descriptions."
     parent: null
     priority: high
   - id: H5
     statement: "The complete reported experiment suite can be regenerated from versioned manifests with per-point provenance and <=10% absolute relative error."
-    status: pending
+    status: rejected
     motivation: "Defines full-paper completion rather than matching a few headline averages."
     parent: null
     priority: high
@@ -277,7 +277,7 @@ hypotheses:
     priority: high
   - id: H37
     statement: "Every numeric full-paper inventory row can be hash-bound to decisive evidence, classified without inflating replay/blockage into reproduction, and rechecked by one fresh 13-section lightweight suite."
-    status: pending
+    status: supported
     motivation: "Turn the completed experiment ledger into a machine-auditable final certificate while preserving the false global all-experiments-within-10% verdict."
     parent: H5
     priority: high
@@ -286,7 +286,7 @@ experiments:
   proxy_metric: "Maximum absolute percentage error across every numeric paper anchor; pass only when each reproducible point is <=10%, with unavailable measurements explicitly classified rather than fabricated."
   baseline_value: 0.2486
   best_value: 0.0123
-  total_runs: 39
+  total_runs: 40
   trajectory:
     - run_id: "run_001"
       hypothesis: "H2"
@@ -561,11 +561,34 @@ experiments:
       wall_time_min: 0.1
       change_summary: "One frozen original-detail Fig. 14 inspection is schema-valid but finds zero clear non-generic identifiers, zero numeric parent values, and zero exact-parent candidates; H36 is rejected and the supplied-figure origin route closes."
       timestamp: "2026-08-17"
+    - run_id: "run_042"
+      hypothesis: "H37"
+      metric_value: 1.0
+      delta: null
+      wall_time_min: 0.4
+      change_summary: "The machine completion certificate is supported with all 40 frozen evidence files and 13 fresh suite sections qualified; its truthful global verdict remains false: 1/18 rows reproduced, 7 rejected, 3 replay-only, and 7 publicly blocked."
+      timestamp: "2026-08-17"
 
 outer_loop:
-  cycle: 21
-  last_direction: "Build a clean, machine-auditable full-paper completion certificate from the frozen inventory, immutable results, and lightweight executable reproduction suite. Verify that every paper item is bound to evidence and classified as reproduced, rejected, replay-only, or publicly blocked without reopening stopped origin/training/native-hardware variants."
-  last_reflection: "H36's only permitted original-detail view is inspectable but contains no clearly transcribable identifier or numeric parent value. With H33-H36, exact-artifact search, accessible lineage sources, record-derived publisher representations, and supplied-figure text are exhausted. Family attribution remains access-limited, exact parent unresolved, and code provenance unsupported. Stop provenance variants unless genuinely new primary evidence appears; next consolidate and execute the repository-wide completion audit."
+  cycle: 22
+  last_direction: "Terminal evidence handoff. Preserve run042 and its source/result hashes; do not reopen any rejected, replay-only, or publicly blocked row without independently new primary artifacts, author recipes/traces, or required hardware measurements."
+  last_reflection: "H37 qualifies all 40 frozen evidence files, the exact 18-row inventory, every category invariant, and one fresh 13-section CPU suite. The certificate itself is complete, but the user's all-experiment <=10% objective is false: only Fig. 22 is a complete surrogate pass, while 17 rows are rejected, replay-only, or publicly blocked. H33-H36 establish that the missing exact artifact/provenance channels are exhausted at this cutoff. Further residual-selected variants would be fitting, not reproduction."
+
+completion:
+  certificate_run: run_042
+  certificate: artifacts/results/full-paper-completion-certificate-run042.json
+  certificate_sha256: 7182c5dd1612680f85912c6e96bf14e78b871a4d560f0f3610a6c0dc7de6b071
+  fresh_suite: artifacts/results/full-paper-lightweight-suite-run042.json
+  fresh_suite_sha256: 07d47946a391c5b1192eba4fa914a23ba36f2a0ccce33424a3d7d6f229a3877e
+  evidence_certificate_complete: true
+  all_paper_experiments_reproduced_within_10pct: false
+  exact_mlx_author_artifact_used: false
+  status_counts:
+    reproduced_within_10pct: 1
+    attempt_rejected: 7
+    calibration_replay_only: 3
+    publicly_blocked: 7
+  terminal_reason: "The exact MLX artifact, multiple author recipes/traces, RTL/synthesis inputs, dataset split, and required native hardware measurements are unavailable; registered public substitutes either fail or are calibration-only."
 
 workspace:
   findings: "findings.md"

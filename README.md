@@ -29,7 +29,11 @@ python scripts/audit_empirical_surface_fits.py
 python -m pytest
 ```
 
-The full-paper completion checklist is in `docs/experiment_inventory.md`. Research decisions and current limitations are in `findings.md` and `research-state.yaml`.
+The full-paper completion checklist is in `docs/experiment_inventory.md`. The
+machine certificate is in
+`artifacts/results/full-paper-completion-certificate-run042.json`, and the
+Chinese final report is in `to_human/MLX_reproduction_final_zh.md`. Research
+decisions and current limitations are in `findings.md` and `research-state.yaml`.
 After the frozen completion certificate has been generated, `make audit-completion`
 re-hashes its evidence and verifies it without overwriting any formal artifact.
 
