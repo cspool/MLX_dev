@@ -1,0 +1,104 @@
+version: 1
+
+run:
+  id: run_024
+  hypothesis: H21
+  protocol: experiments/h21-fgscr42-input-availability/protocol.md
+  output: artifacts/results/fgscr42-input-audit-run024.json
+
+paper:
+  source: "MLX Multi-Layer Execution for Structured LLM Workload Acceleration on Spatial Architectures/MLX Multi-Layer Execution for Structured LLM Workload Acceleration on Spatial Architectures.md"
+  sha256: 5785eb81b28741a3806ca42749d7b556bbcd2404e1622ae644a32bae2ade7745
+  disclosed_vit_phrases:
+    - "The ViT model [2, 42] is included because its modest size allows full training from scratch"
+    - "In contrast, our FFT-CMP at s=0.5 achieves a 65% FLOP reduction with only a 1.6% accuracy drop"
+  required_recipe_terms:
+    architecture: ["vit-base", "vit-small", "vit-tiny", "number of layers"]
+    data_split: ["train split", "training split", "test split", "validation split"]
+    preprocessing: ["augmentation", "image resolution", "crop", "normalization"]
+    optimization: ["optimizer", "learning rate", "epochs", "random seed"]
+
+official_repository:
+  url: https://github.com/DYH666/FGSCR-42.git
+  revision: ced49c37964c3c7c453602ba6e4ba2a812f67086
+  local_root: third_party/fgscr42
+  readme_sha256: 3eefd5aef9f55103481d5cbad42a06a607596f09a865d2e4e110d2110c8e2822
+  expected_head_files:
+    - README.md
+    - images/categories.png
+    - images/results.png
+    - images/shipdemo.png
+  expected_commit_count: 25
+  expected_branch_count: 1
+  expected_tag_count: 0
+  declared_images: 9320
+  declared_classes: 42
+  forbidden_tree_suffixes: [.zip, .tar, .tgz, .gz, .7z, .rar, .csv, .json, .xml]
+  split_name_patterns: [split, train, test, val, label, annotation]
+
+independent_index:
+  url: https://github.com/JACYI/Dataset-for-Remote-Sensing
+  revision: 29e6aac03ff44f811e84073d0c5ae6abb381141e
+  raw_readme_url: https://raw.githubusercontent.com/JACYI/Dataset-for-Remote-Sensing/29e6aac03ff44f811e84073d0c5ae6abb381141e/README.md
+  required_baidu_fragment: 15EYAMgGI7p5whntT_XqyXA
+  required_empty_google_link: "[Google Disk]()"
+
+shares:
+  official:
+    url: https://pan.baidu.com/s/1eXplDfB5fCBPm7WMcFKZkg
+    surl: 1eXplDfB5fCBPm7WMcFKZkg
+    public_passcode: 9xx8
+    share_uk: 2235530936
+    share_id: 1228421666
+    file_name: FGSCR.zip
+    fs_id: 90324070156283
+    size_bytes: 5112338338
+    server_ctime: 1608263618
+  mirror:
+    url: https://pan.baidu.com/s/15EYAMgGI7p5whntT_XqyXA?pwd=w3r3
+    surl: 15EYAMgGI7p5whntT_XqyXA
+    public_passcode: w3r3
+    share_uk: 1753454548
+    share_id: 45149118336
+    file_name: FGSCR_old.zip
+    fs_id: 868173698082419
+    size_bytes: 5112338338
+    server_ctime: 1608263618
+
+github_issues:
+  api_url: https://api.github.com/repos/DYH666/FGSCR-42/issues?state=all&per_page=100
+  expected_issue_numbers: [1, 2, 3, 4, 5, 6, 7, 8, 9]
+  download_or_completeness_issues: [1, 4, 6, 7, 8]
+  label_issues: [3, 9]
+
+huggingface_searches:
+  - https://huggingface.co/api/datasets?search=FGSCR-42&limit=100
+  - https://huggingface.co/api/datasets?search=FGSCR42&limit=100
+  - https://huggingface.co/api/datasets?search=fine-grained%20ship%20classification&limit=100
+
+baidu:
+  app_id: 250528
+  verify_endpoint: https://pan.baidu.com/share/verify
+  list_endpoint: https://pan.baidu.com/share/list
+  tplconfig_endpoint: https://pan.baidu.com/share/tplconfig
+  sharedownload_endpoint: https://pan.baidu.com/api/sharedownload
+  zip_list_endpoint: https://pan.baidu.com/api/zipfile/list
+  pcs_hosts: [www.baidupcs.com, d.pcs.baidu.com, pcs.baidu.com]
+  range_user_agents:
+    browser: "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 Chrome/140.0 Safari/537.36"
+    desktop: "netdisk;P2SP;2.2.60.26"
+    logstat: "LogStatistic"
+  range_header: bytes=0-0
+  timeout_seconds: 20
+  expected:
+    verify_errno: 0
+    list_errno: 0
+    individual_payload_kind: base64_desktop_task
+    range_http_status: 403
+    range_error_code: 31064
+    zip_errno: 120
+
+decision:
+  required_gates: [corpus, experiment_split]
+  all_required: true
+  validation_eligible: false
