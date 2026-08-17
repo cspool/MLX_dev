@@ -90,6 +90,42 @@ def test_invalid_width_is_rejected() -> None:
         compile_fig10_mapping("bsmm", 96, DEFAULT_FIXTURE)
 
 
+def test_8x8_spatially_unrolls_the_complete_closed_set() -> None:
+    fixture = type(DEFAULT_FIXTURE)(
+        mesh_width=8,
+        mesh_height=8,
+        active_window=3,
+        simd_width=8,
+        instructions_per_pe=32,
+        closed_set_outputs=64,
+        vector_request_bytes=16,
+        skip_steps=(2, 1),
+        memory_backend="fixed",
+    )
+    document, metadata = compile_fig10_mapping("bsmm", 512, fixture)
+    assert metadata["local_i1_trip"] == 1
+    assert metadata["outputs_per_pe_per_stage"] == 8
+    stage2 = next(
+        route
+        for route in metadata["routes"]
+        if route["stage"] == 2 and route["source"] == [0, 0]
+    )
+    stage3 = next(
+        route
+        for route in metadata["routes"]
+        if route["stage"] == 3 and route["source"] == [0, 0]
+    )
+    stage5 = next(
+        route
+        for route in metadata["routes"]
+        if route["stage"] == 5 and route["source"] == [0, 0]
+    )
+    assert stage2["destination"] == [4, 0]
+    assert stage3["destination"] == [0, 1]
+    assert stage5["destination"] == [0, 4]
+    assert len(document["blocks"]) == 64 * 9
+
+
 def test_compiler_digest_is_callable(tmp_path) -> None:
     path = tmp_path / "sample.json"
     path.write_text("{}\n", encoding="utf-8")

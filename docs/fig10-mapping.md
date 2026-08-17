@@ -48,3 +48,6 @@ That transfer is now complete in
 [`fig10-fig22-transfer.md`](fig10-fig22-transfer.md). The real-scratchpad
 primary remains rejected, while the fixed-memory compute subset reaches 11/16
 within 10%, localizing the next problem to data-supply mapping and timing.
+
+The same mapping has been generalized target-free to SIMD8/32 and 4x4/8x8 in
+[`fig10-scalability.md`](fig10-scalability.md).

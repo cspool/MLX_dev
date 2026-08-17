@@ -31,14 +31,18 @@ def _coord(slot: int, fixture: Fig10Fixture) -> tuple[int, int]:
     return slot % fixture.mesh_width, slot // fixture.mesh_width
 
 
-def _destination_slot(local_stage: int, source_slot: int) -> int:
-    if local_stage < 4:
+def _destination_slot(
+    local_stage: int, source_slot: int, physical_pes: int
+) -> int:
+    if (1 << local_stage) < physical_pes:
         return source_slot ^ (1 << local_stage)
     return source_slot
 
 
-def _producer_slot(previous_local_stage: int, consumer_slot: int) -> int:
-    return _destination_slot(previous_local_stage, consumer_slot)
+def _producer_slot(
+    previous_local_stage: int, consumer_slot: int, physical_pes: int
+) -> int:
+    return _destination_slot(previous_local_stage, consumer_slot, physical_pes)
 
 
 def _functional_units() -> dict[str, dict[str, int | str]]:
@@ -110,6 +114,7 @@ def _addresses(
     stage: int,
     slot: int,
     outputs_per_pe: int,
+    physical_pes: int,
     scalar_bytes: int,
 ) -> tuple[list[int], list[int], list[int]]:
     stride = 1 << stage
@@ -119,7 +124,7 @@ def _addresses(
     input_base = (stage % 2) * width * scalar_bytes
     output_base = ((stage + 1) % 2) * width * scalar_bytes
     for local_iteration in range(outputs_per_pe):
-        index = local_iteration * 16 + slot
+        index = local_iteration * physical_pes + slot
         partner = index ^ stride
         first.append(input_base + index * scalar_bytes)
         second.append(input_base + partner * scalar_bytes)
@@ -137,10 +142,10 @@ def compile_fig10_mapping(
     if width < fixture.closed_set_outputs or width & (width - 1):
         raise ValueError("Figure 10 width must be a power of two >= 64")
     physical_pes = fixture.mesh_width * fixture.mesh_height
-    if physical_pes != 16:
-        raise ValueError("Figure 10 reconstruction requires the paper's 4x4 mesh")
-    if fixture.closed_set_outputs != physical_pes * 4:
-        raise ValueError("Figure 10 closed set must contain four outputs per PE")
+    if physical_pes not in {16, 64}:
+        raise ValueError("Figure 10 reconstruction supports paper 4x4/8x8 meshes")
+    if fixture.closed_set_outputs % physical_pes:
+        raise ValueError("Figure 10 closed set must divide evenly across PEs")
 
     stages = int(math.log2(width))
     outputs_per_pe = width // physical_pes
@@ -161,7 +166,7 @@ def compile_fig10_mapping(
         cdc_end = stage in cdc_ends
         for slot in range(physical_pes):
             source = _coord(slot, fixture)
-            destination_slot = _destination_slot(local_stage, slot)
+            destination_slot = _destination_slot(local_stage, slot, physical_pes)
             destination = _coord(destination_slot, fixture)
             prefix = f"{operator}_fig10_s{stage}_pe{slot}"
             event = f"{operator}_fig10_s{stage}_pe{slot}_ready"
@@ -170,6 +175,7 @@ def compile_fig10_mapping(
                 stage,
                 slot,
                 outputs_per_pe,
+                physical_pes,
                 fixture.vector_request_bytes,
             )
             instructions: list[dict[str, Any]] = [
@@ -234,7 +240,9 @@ def compile_fig10_mapping(
                 wait_events: list[str] = []
             else:
                 previous_local_stage = (stage - 1) % cdc_layers
-                producer = _producer_slot(previous_local_stage, slot)
+                producer = _producer_slot(
+                    previous_local_stage, slot, physical_pes
+                )
                 wait_events = [f"{operator}_fig10_s{stage - 1}_pe{producer}_ready"]
             blocks.append(
                 {
@@ -301,7 +309,7 @@ def compile_fig10_mapping(
         "cdc_starts": cdc_starts,
         "cdc_ends": cdc_ends,
         "outer_i0_trip": width // fixture.closed_set_outputs,
-        "local_i1_trip": 4,
+        "local_i1_trip": fixture.closed_set_outputs // physical_pes,
         "spatial_i2_trip": physical_pes,
         "outputs_per_pe_per_stage": outputs_per_pe,
         "output_instances": output_instances,
