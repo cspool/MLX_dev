@@ -1,0 +1,28 @@
+name: fma-fig25-transfer-v1
+experiment_id: H72
+run_id: run077
+classification: target_exposed_physical_fma_transfer
+validation_eligible: false
+
+frozen_inputs:
+  counters:
+    path: artifacts/results/fu-counters-run076.json
+    sha256: 31b63a260a596bff6aafaa418bca877898683529f6f36ad04066757c254833c0
+    required_status: supported
+    required_integrity: true
+  targets:
+    path: artifacts/targets/paper_targets.yaml
+    bytes: 14931
+    sha256: c4a22ab8052ff8cb223a729b8ce07320c6826cfee0d37e1a664a8761e018b41e
+    key: fig25_roofline_utilization.heatmap.mlx
+
+mapping:
+  backend: column_port
+  diagnostic_backend: fixed
+  cases: [BERT_512, Llama2_1K, InternLM2_4K, BERT_8K]
+  operators: [fft_cmp, qkv_bsmm, qkv_bsmm_b32, qkv_bsmm_b64, swa_w128_q32, swa_w256_q64]
+  relative_error_limit: 0.10
+  required_points: 24
+
+auditor: scripts/audit_fma_fig25_transfer.py
+result_path: artifacts/results/fma-fig25-transfer-run077.json
