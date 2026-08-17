@@ -1,0 +1,47 @@
+name: dsagen-mlx-fig25-paper-static-v1
+experiment_id: H53
+run_id: run059
+classification: target_exposed_validation_ineligible_corrected_pe_transfer
+
+parents:
+  semantics:
+    path: artifacts/results/mlx-pe-semantics-correction-run058.json
+    bytes: 13215
+    sha256: 5573dcc3b4317077803ad135aa0be863b94db00aefdfeec545b9504cd9642d1e
+    required_status: supported
+    required_integrity: true
+  arithmetic:
+    path: artifacts/results/dsagen-mlx-fig25-arithmetic-run056.json
+    bytes: 130544
+    sha256: 886c3f7fdbda21d374349f9413c105fea8fa6bbe7f172ff3a61b170d21350905
+    required_status: rejected
+    required_integrity: true
+
+parent_config_dir: artifacts/environment/h50
+mapping_config: configs/simulators/dsagen_mlx_fig25_transfer_v1.yaml
+targets:
+  path: artifacts/targets/paper_targets.yaml
+  section: fig25_roofline_utilization.heatmap.mlx
+  execution_visibility: audit_only
+
+allowed_changes:
+  root: {pe_dependency_model: paper_static}
+  metadata:
+    pe_dependency_model: paper_static
+    scoreboard_is_paper_semantics: false
+
+forbidden_changes:
+  - blocks and instruction order
+  - operation and memory counts
+  - tags events routes and trip counts
+  - functional unit and pipeline timing
+  - active window mesh and DMA backend
+  - case or operator mapping
+
+source_layout:
+  compiler: scripts/compile_dsagen_fig25_paper_static.py
+  runner: scripts/run_dsagen_fig25_transfer.sh
+  checker: scripts/check_dsagen_fig25_run.py
+  auditor: scripts/audit_dsagen_fig25_paper_static.py
+
+result_path: artifacts/results/dsagen-mlx-fig25-paper-static-run059.json
