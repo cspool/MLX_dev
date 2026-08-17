@@ -47,13 +47,19 @@ def fourier_resample_real(value: torch.Tensor, output_length: int, *, dim: int =
     dim = dim % value.ndim
     moved = value.movedim(dim, -1)
     input_length = moved.shape[-1]
+    output_dtype = moved.dtype
+    fft_input = (
+        moved.float() if moved.dtype in {torch.float16, torch.bfloat16} else moved
+    )
     if input_length <= 0:
         raise ValueError("input length must be positive")
     if output_length == input_length:
-        result = torch.fft.irfft(torch.fft.rfft(moved, dim=-1), n=input_length, dim=-1)
-        return result.movedim(-1, dim)
+        result = torch.fft.irfft(
+            torch.fft.rfft(fft_input, dim=-1), n=input_length, dim=-1
+        )
+        return result.to(output_dtype).movedim(-1, dim)
 
-    spectrum = torch.fft.rfft(moved, dim=-1)
+    spectrum = torch.fft.rfft(fft_input, dim=-1)
     if output_length < input_length:
         output_bins = output_length // 2 + 1
         resized = spectrum[..., :output_bins]
@@ -69,7 +75,7 @@ def fourier_resample_real(value: torch.Tensor, output_length: int, *, dim: int =
 
     result = torch.fft.irfft(resized, n=output_length, dim=-1)
     result = result * (output_length / input_length)
-    return result.movedim(-1, dim)
+    return result.to(output_dtype).movedim(-1, dim)
 
 
 def chunked_fft_compress(

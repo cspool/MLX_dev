@@ -174,7 +174,8 @@ def main() -> int:
             max_steps=2 if args.smoke else -1,
             learning_rate=optimization["learning_rate"],
             lr_scheduler_type=optimization["scheduler"],
-            warmup_ratio=optimization["warmup_ratio"],
+            # Transformers 5.15 accepts a fractional warmup through warmup_steps.
+            warmup_steps=optimization["warmup_ratio"],
             optim=optimization["optimizer"],
             weight_decay=optimization["weight_decay"],
             max_grad_norm=optimization["max_gradient_norm"],

@@ -16,6 +16,13 @@ def test_fourier_resample_preserves_constant_amplitude() -> None:
         assert torch.allclose(output, torch.ones_like(output), atol=1e-6)
 
 
+def test_fourier_resample_promotes_unsupported_low_precision_fft() -> None:
+    value = torch.randn(2, 32, dtype=torch.bfloat16)
+    output = fourier_resample_real(value, 16)
+    assert output.dtype == torch.bfloat16
+    assert torch.isfinite(output).all()
+
+
 def test_chunked_s1_roundtrip_and_padding_shape() -> None:
     torch.manual_seed(1)
     value = torch.randn(2, 70, 5)
@@ -66,4 +73,3 @@ def test_identity_initialization() -> None:
     layer = HierarchicalButterflyLinear(64, 64, block_size=16, bias=True)
     value = torch.randn(3, 64)
     assert torch.equal(layer(value), value)
-
