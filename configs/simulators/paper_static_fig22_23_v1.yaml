@@ -1,0 +1,25 @@
+name: paper-static-fig22-23-v1
+experiment_id: H59
+run_id: run064
+classification: corrective_target_exposed_replay
+
+parent_semantics: artifacts/results/mlx-pe-semantics-correction-run058.json
+historical_results:
+  fig22: {path: artifacts/results/dsagen-mlx-fig22-run050.json, sha256: f2182c6113af7aff73be59eb76e1bc86a07cf5cbcbcb6a18bffcc5c264752950}
+  fig23: {path: artifacts/results/dsagen-mlx-fig23-run052.json, sha256: 3dffbeca8113ce770455c2cd883ec991084beb1c918660af126a8fcb40bcc4a6}
+
+parent_configs:
+  fig22: artifacts/environment/h44
+  fig23: artifacts/environment/h46
+
+allowed_changes:
+  root: {pe_dependency_model: paper_static}
+  metadata: {pe_dependency_model: paper_static, scoreboard_is_paper_semantics: false}
+
+source_layout:
+  compiler: scripts/compile_paper_static_fig22_23.py
+  fig22_runner: scripts/run_dsagen_fig22.sh
+  fig23_runner: scripts/run_dsagen_fig23.py
+  auditor: scripts/audit_paper_static_fig22_23.py
+
+result_path: artifacts/results/paper-static-fig22-23-run064.json
