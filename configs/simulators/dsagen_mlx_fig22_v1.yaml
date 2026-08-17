@@ -1,0 +1,97 @@
+name: dsagen-mlx-fig22-v1
+experiment_id: H44
+run_id: run050
+classification: target-exposed exploratory implementation transfer
+
+frozen_inputs:
+  aggregate_result:
+    path: artifacts/results/dsagen-mlx-aggregate-run049.json
+    bytes: 28394
+    sha256: 2d166e60b2e01cb13836860688a7a967b3377160e4217c2a682a0e3a4dca7b3c
+    required_status: supported
+    required_integrity: true
+  paper_targets:
+    path: artifacts/targets/paper_targets.yaml
+    bytes: 14931
+    sha256: c4a22ab8052ff8cb223a729b8ce07320c6826cfee0d37e1a664a8761e018b41e
+    key: fig22_compute_utilization
+  legacy_hardware_config:
+    path: configs/hardware/mlx_reduced.yaml
+    bytes: 534
+    sha256: 1d40daa7cfc57c45406a92d5d684663086512255e88ecc17a2ed6fff3b7a235b
+    role: comparison-only; values are not automatically accepted
+  legacy_calibration:
+    path: configs/calibration/paper_v1.yaml
+    bytes: 406
+    sha256: 8091a7eb8cf8ae0fcc249c99b9e78e6b58c9accef5cb355a6cc3c7fb5cb336da
+    forbidden_as_input: true
+
+parameter_manifest:
+  paper_disclosed:
+    frequency_ghz: 1.0
+    mesh: [4, 4]
+    simd_width: 8
+    instructions_per_pe: 32
+    precision: fp16
+    peak_ops_per_second: 256000000000
+    four_decoupled_pipelines: true
+    maximum_fft_length: 8192
+  dsagen_upstream:
+    scratchpad_capacity_bytes: 1048576
+    scratchpad_bank_width_bytes: 8
+    scratchpad_banks: 8
+    request_buffer_entries: 4
+    bank_fifo_entries: 1
+    derived_scratchpad_bytes_per_cycle: 64
+  gpgpu_sim_reference_only:
+    source: SM7_QV100/gpgpusim.config
+    imported_as_mlx_timing: false
+    reason: Volta SM opcode/RF timings are mechanism priors, not MLX measurements
+  independently_inferred_and_frozen:
+    active_window: 3
+    register_banks: 4
+    register_read_ports: 2
+    register_write_ports: 1
+    fu_timing:
+      add: {latency: 2, initiation_interval: 1}
+      mul: {latency: 3, initiation_interval: 1}
+    route_steps: [2, 1]
+    route_latency_per_hop: 1
+    link_capacity_per_direction: 1
+    placement: pair modulo 16 physical slots
+    block_template:
+      bsmm: [load, load, mul, add, store, xfer]
+      fft: [load, load, mul, add, add, store, xfer]
+  unavailable_and_not_fitted:
+    - exact MLX FU latency and initiation intervals
+    - exact MLX register bank and port counts
+    - exact active-tag window size
+    - exact scratchpad capacity, banks, and request queues
+    - exact skip-link width and physical distance
+    - kernel launch latency and instruction fetch timing
+    - off-chip DMA/LSQ traffic and bandwidth
+
+experiment:
+  figure: 22
+  sizes: [64, 128, 256, 512, 1024, 2048, 4096, 8192]
+  kernels: [bsmm, fft]
+  compiler: aggregate radix-2 CDC
+  memory_backend: dsagen_spad
+  outer_trip_count: 1
+  compute_utilization: compute busy cycles divided by total overlay cycles
+  targets:
+    bsmm: [0.81, 0.85, 0.86, 0.83, 0.84, 0.86, 0.87, 0.85]
+    fft: [0.84, 0.91, 0.93, 0.94, 0.89, 0.91, 0.92, 0.91]
+  uncertainty_abs: 0.02
+  host_wait_iterations: 500000
+
+pass_criteria:
+  - every parameter has one provenance class
+  - legacy paper calibration contributes no execution value
+  - all 16 configs compile deterministically and satisfy H43 conservation
+  - all 16 real dsa-gem5 overlays finish with exact scratchpad request/completion counts
+  - utilization is derived from emitted busy/total cycles without scaling
+  - every point has relative error at most 10 percent
+  - no post-result parameter or mapping change is permitted
+
+result_path: artifacts/results/dsagen-mlx-fig22-run050.json
