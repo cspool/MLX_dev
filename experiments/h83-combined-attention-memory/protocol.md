@@ -17,6 +17,14 @@ optional `blocks[].wait_event_periods` object mapping each named wait event to
 its positive period, falling back to H82's block-wide period. Defaults must
 preserve the frozen H82 summary exactly.
 
+Pre-execution structural review adds the complementary
+`blocks[].wait_event_multiplicities` object. It records how many tokens from a
+named event are required per authorized iteration group. Readiness for event e
+is `(floor(iteration / period[e]) + 1) * multiplicity[e]` tokens. This is
+necessary because an inverse butterfly consumes two retained packets per
+iteration, whereas QK/SV reuse one packet over many iterations. Missing entries
+default to one and remain backward compatible.
+
 For combined scale u:
 
 - N=256/R=128: FFT q=16u, Attention q=u, full u=128;
