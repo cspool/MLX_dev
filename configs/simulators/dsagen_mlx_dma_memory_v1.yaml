@@ -23,6 +23,7 @@ source_layout:
   lsq_header: third_party/dsa-framework/dsa-gem5/src/cpu/minor/lsq.hh
   lsq_source: third_party/dsa-framework/dsa-gem5/src/cpu/minor/lsq.cc
   guest_source: simulator_ext/dsagen/mlx_dma_harness.c
+  guest_compile_define: GEM5
   compiler: scripts/compile_mlx_dma_microtrace.py
   runner: scripts/run_mlx_dma_gem5.sh
   auditor: scripts/audit_dsagen_mlx_dma_memory.py
@@ -57,6 +58,11 @@ microtrace:
   guest_write_initial_byte: 165
   expected_fixed_store_checksum: 84480
   expected_dma_store_checksum: 0
+  cache_conditioning:
+    region_bytes: 2097152
+    read_stride_bytes: 64
+    execution: before_begin_roi_in_both_fixed_and_dma_runs
+    excluded_from_roi_stats: true
 
 gem5:
   cpu_type: MinorCPU
@@ -77,6 +83,7 @@ registered_checks:
   - store completion follows the real write response rather than store-buffer insertion
   - fixed and DMA guest checksums distinguish absent and completed writes
   - positive data-cache access delta and positive data-side DRAM evidence
+  - requestor-specific cpu.mlx_dma cache occupancy and DRAM counters are present
   - zero request failures and exact request/completion conservation
   - observable queue pressure or concurrent outstanding requests
   - fixed, scratchpad, and disabled-overlay regressions remain exact

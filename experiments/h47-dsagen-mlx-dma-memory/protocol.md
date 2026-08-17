@@ -83,3 +83,14 @@ The sole formal output is
 `artifacts/results/dsagen-mlx-dma-memory-run053.json`; generated configs,
 build manifests, paired gem5 logs, statistics, and regression logs are
 hash-qualified evidence inputs.
+
+## Pre-run cache-conditioning amendment
+
+Development attempts 1--6 are excluded from `run053`. Requestor-specific
+occupancy proved that all 64 MLX lines entered the cache hierarchy, but the ELF
+BSS lines were already L2-resident and therefore could not exercise DDR. Before
+the first formal run, the guest is amended to read one byte from every 64-byte
+line of a separate 2-MiB volatile BSS region before `begin_roi()`. This is four
+times the configured 512-KiB L2 capacity. Both fixed and DMA runs execute the
+identical conditioner, its checksum is checked, and the ROI reset excludes its
+traffic. No overlay count, address, latency, or paper-derived parameter changes.
