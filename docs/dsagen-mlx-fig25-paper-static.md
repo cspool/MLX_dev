@@ -17,3 +17,7 @@ are separate questions. The corrected PE model is retained even though the old
 experimental scoreboard happened to produce a slightly lower aggregate MAPE.
 Figure 25 still requires a true roofline-normalized FMA counter rather than the
 current global compute-busy proxy.
+
+That physical FU-class counter is now implemented and target-free validated in
+[`fu-counters.md`](fu-counters.md). A new frozen numerical audit supersedes the
+global-compute interpretation.

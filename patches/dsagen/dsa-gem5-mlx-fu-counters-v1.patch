@@ -1,0 +1,52 @@
+diff --git a/src/cpu/minor/ssim/mlx_overlay.hh b/src/cpu/minor/ssim/mlx_overlay.hh
+--- a/src/cpu/minor/ssim/mlx_overlay.hh
++++ b/src/cpu/minor/ssim/mlx_overlay.hh
+@@ -218,5 +218,6 @@ struct Stats {
+   std::map<PipelineKind, uint64_t> productive_pe_cycles_by_pipeline;
+   std::map<PipelineKind, uint64_t> productive_global_cycles_by_pipeline;
+   std::map<PipelineKind, uint64_t> issue_cycles_by_pipeline;
++  std::map<std::string, uint64_t> productive_pe_cycles_by_fu_class;
+   std::map<std::string, uint64_t> stalls_by_reason;
+ };
+diff --git a/src/cpu/minor/ssim/mlx_overlay.cc b/src/cpu/minor/ssim/mlx_overlay.cc
+--- a/src/cpu/minor/ssim/mlx_overlay.cc
++++ b/src/cpu/minor/ssim/mlx_overlay.cc
+@@ -1058,6 +1058,7 @@ Overlay::recordBusyCycles()
+   std::set<PipelineKind> productive;
+   std::set<PipelineKey> resident_pe;
+   std::set<PipelineKey> productive_pe;
++  std::set<FuKey> productive_fu;
+   for (std::size_t index = 0; index < states_.size(); ++index) {
+     const auto &state = states_[index];
+     if (state.inflight) {
+@@ -1073,6 +1074,10 @@ Overlay::recordBusyCycles()
+       if (!external_memory_wait) {
+         productive.insert(pipeline);
+         productive_pe.insert(key);
++        if (pipeline == PipelineKind::Compute) {
++          productive_fu.insert(
++              {blocks_[index].pe, fuClass(blocks_[index].instructions[state.pc])});
++        }
+       }
+     }
+   }
+@@ -1091,4 +1096,7 @@ Overlay::recordBusyCycles()
+   for (PipelineKind pipeline : issued_pipelines_this_cycle_) {
+     ++stats_.issue_cycles_by_pipeline[pipeline];
+   }
++  for (const auto &key : productive_fu) {
++    ++stats_.productive_pe_cycles_by_fu_class[key.resource_class];
++  }
+ }
+@@ -1248,4 +1256,11 @@ Overlay::summaryJson(const std::string &scenario) const
+         << MapValue(stats_.issue_cycles_by_pipeline, pipeline);
+     first = false;
+   }
++  out << "},\"productive_pe_cycles_by_fu_class\":{";
++  first = true;
++  for (const auto &item : stats_.productive_pe_cycles_by_fu_class) {
++    if (!first) out << ",";
++    out << Quote(item.first) << ":" << item.second;
++    first = false;
++  }
+   out << "},\"stalls_by_reason\":{";
