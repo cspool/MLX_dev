@@ -57,6 +57,16 @@ def _audit_files(
                 item["actual_records"] = actual_records
                 item["expected_records"] = int(expected["records"])
                 item["records_match"] = actual_records == int(expected["records"])
+            if "questions" in expected and item["size_matches"]:
+                payload = json.loads(path.read_text(encoding="utf-8"))
+                actual_questions = sum(
+                    len(paragraph["qas"])
+                    for article in payload["data"]
+                    for paragraph in article["paragraphs"]
+                )
+                item["actual_questions"] = actual_questions
+                item["expected_questions"] = int(expected["questions"])
+                item["questions_match"] = actual_questions == int(expected["questions"])
             should_hash = full_hash or actual_size < 100 * 1024 * 1024
             if should_hash and item["size_matches"]:
                 actual_hash = _sha256(path)
@@ -71,7 +81,10 @@ def _audit_files(
     return {
         "complete_by_size": all(item["size_matches"] for item in results),
         "complete_by_manifest": all(
-            item["size_matches"] and item.get("records_match", True) for item in results
+            item["size_matches"]
+            and item.get("records_match", True)
+            and item.get("questions_match", True)
+            for item in results
         ),
         "all_checked_hashes_match": all(item["sha256_matches"] is not False for item in results),
         "files": results,
@@ -88,14 +101,14 @@ def main() -> int:
         "models": {},
         "known_recipe_gaps": config["paper_recipe_gaps"],
     }
-    for name in ("ada_leval", "wikitext"):
+    for name in ("ada_leval", "wikitext", "squad"):
         entry = config["datasets"][name]
         report["datasets"][name] = _audit_files(
             PROJECT_ROOT / entry["local_root"],
             entry["files"],
             full_hash=True,
         )
-    for name in ("internlm2_7b", "internlm2_chat_7b"):
+    for name in ("bert_base_uncased", "internlm2_7b", "internlm2_chat_7b"):
         entry = config["models"][name]
         report["models"][name] = _audit_files(
             PROJECT_ROOT / entry["local_root"],
@@ -105,7 +118,6 @@ def main() -> int:
     report["blocked_inputs"] = {
         "fgscr42": config["datasets"]["fgscr42"]["availability"],
         "llama2_7b": config["models"]["llama2_7b"]["availability"],
-        "squad": config["datasets"]["squad"]["availability"],
     }
     report["all_quality_inputs_complete"] = (
         all(

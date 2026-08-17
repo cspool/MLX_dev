@@ -34,11 +34,26 @@ datasets:
     expected_classes: 42
     availability: "official repository contains only a Baidu Pan share; archive is not checked in and no split manifest is published"
   squad:
-    source: "huggingface://rajpurkar/squad"
-    revision: "7b6d24c440a36b6815f21b70d25016731768db1f"
-    availability: "public; download not yet materialized"
+    local_root: third_party/data/squad
+    source: "https://rajpurkar.github.io/SQuAD-explorer/"
+    version: "1.1"
+    files:
+      - {path: train-v1.1.json, sha256: 3527663986b8295af4f7fcdff1ba1ff3f72d07d61a20f487cb238a6ef92fd955, bytes: 30288272, questions: 87599}
+      - {path: dev-v1.1.json, sha256: 95aa6a52d5d6a735563366753ca50492a658031da74f301ac5238b03966972c9, bytes: 4854279, questions: 10570}
 
 models:
+  bert_base_uncased:
+    paper_role: "public BERT-base candidate for the SQuAD 1.1 original-quality baseline"
+    source: "modelscope://google-bert/bert-base-uncased"
+    revision: "fbb17953beb5f9627a4342b49b0f1ce9fa10596a"
+    local_root: third_party/models/bert-base-uncased-msdownload
+    config_signature: {hidden_size: 768, num_hidden_layers: 12, num_attention_heads: 12, intermediate_size: 3072, vocab_size: 30522}
+    files:
+      - {path: model.safetensors, sha256: 68d45e234eb4a928074dfd868cead0219ab85354cc53d20e772753c6bb9169d3, bytes: 440449768}
+      - {path: config.json, sha256: 7160e1553ad2ca51d8c1cb066be533db31826e12d173824c1bb0cb1a4f187d20, bytes: 570}
+      - {path: tokenizer.json, sha256: ce64fce797c24f68df90b40a3f74f579b336a493db14bd583fd520ea0d8c9a98, bytes: 466062}
+      - {path: tokenizer_config.json, sha256: a025160ef0431f1a392f6f050c1310f4c5d9fb6f275932dbccba73c4d214bf10, bytes: 48}
+      - {path: vocab.txt, sha256: 07eced375cec144d27c900241f3e339478dec958f92fddbc551f295c992038a3, bytes: 231508}
   internlm2_7b:
     paper_role: "literal InternLM2-7B checkpoint candidate for WikiText perplexity"
     source: "modelscope://Shanghai_AI_Laboratory/internlm2-7b"
@@ -75,4 +90,4 @@ paper_recipe_gaps:
   - "No dense-to-hierarchical-butterfly factor initialization algorithm."
   - "No LoRA rank, alpha, target modules, optimizer, learning rate, epochs, seed, or training split."
   - "No ViT architecture/augmentation recipe or FGSCR-42 train/test split manifest."
-  - "No BERT checkpoint, SQuAD version/evaluation script, or retraining recipe."
+  - "No BERT checkpoint, SQuAD version/evaluation script, or retraining recipe; the pinned BERT-base/SQuAD 1.1 candidate remains an inferred reconstruction."
