@@ -71,6 +71,7 @@
 
 - Public references determine useful primitives and external-baseline settings, but not a unique executable MLX model. Still missing are the spectral-peak threshold and all per-layer `L` values; the exact modified LLM layers; complex-to-real normalization and residual/decompression wiring; hierarchical-butterfly factor order and dense-to-factor initialization; and the complete LoRA/data/training recipe.
 - Any later structured-model run must label choices for these fields as inferred, freeze them before evaluation, and must not describe target-guided selection as author-recipe reproduction.
+- H29 binds this conclusion to the complete supplied-paper and Fig. 7 hashes. Ten necessary fields are absent across model identity, layer plan, FFT graph, BSMM initialization, and training/evaluation; numerical witnesses show that plausible frequency conventions are inequivalent and a full-chunk teacher-forcing graph is not causal at all token positions.
 
 ### FGSCR-42 public-input status
 
