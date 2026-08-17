@@ -507,14 +507,21 @@ def main() -> int:
             config,
         )
         parent_metrics = config["parent_metrics_pct"][k]
-        initial_replay_errors = {
-            name: abs(float(initial_metrics[name]) - float(value))
-            for name, value in parent_metrics.items()
-        }
-        initial_replay_pass = max(initial_replay_errors.values()) <= float(
-            config["evaluation"]["initial_replay_absolute_tolerance_pct"]
+        initial_replay_errors = (
+            {}
+            if args.smoke
+            else {
+                name: abs(float(initial_metrics[name]) - float(value))
+                for name, value in parent_metrics.items()
+            }
         )
-        if not initial_replay_pass and not args.smoke:
+        initial_replay_pass = (
+            None
+            if args.smoke
+            else max(initial_replay_errors.values())
+            <= float(config["evaluation"]["initial_replay_absolute_tolerance_pct"])
+        )
+        if initial_replay_pass is False:
             raise RuntimeError(f"k={k} does not replay H15 before distillation")
         set_seed(seed)
         train_result = trainer.train()
@@ -551,8 +558,11 @@ def main() -> int:
             "paper_targets_pct": targets,
             "relative_errors": relative_errors,
             "maximum_relative_error": max(relative_errors.values()),
-            "passes_10pct_gate": max(relative_errors.values())
+            "passes_10pct_gate": None
+            if args.smoke
+            else max(relative_errors.values())
             <= float(config["paper_targets"]["maximum_relative_error"]),
+            "target_metrics_excluded": args.smoke,
             "metric_changes_from_parent_pct": {
                 name: float(final_metrics[name]) - float(parent_metrics[name]) for name in targets
             },
@@ -585,7 +595,8 @@ def main() -> int:
             result["layernorm_alias_count"] == result["expected_layernorm_alias_count"] == 50
             for result in results
         ),
-        "all_initial_replays": all(result["initial_replay_pass"] for result in results),
+        "all_initial_replays": args.smoke
+        or all(result["initial_replay_pass"] is True for result in results),
         "all_losses_finite": all(
             result["distillation_component_means"]["all_finite"] for result in results
         ),
@@ -601,8 +612,10 @@ def main() -> int:
         "source_commit_recorded": git_commit() is not None,
     }
     audit_integrity = all(integrity_checks.values())
-    all_points_pass = all(result["passes_10pct_gate"] for result in results)
-    if not audit_integrity:
+    all_points_pass = None if args.smoke else all(result["passes_10pct_gate"] for result in results)
+    if args.smoke:
+        hypothesis_status = "not_evaluated"
+    elif not audit_integrity:
         hypothesis_status = "inconclusive"
     elif all_points_pass:
         hypothesis_status = "supported"
@@ -623,14 +636,16 @@ def main() -> int:
         "results": results,
         "summary": {
             "point_count": len(all_errors),
-            "mape": sum(all_errors) / len(all_errors),
-            "max_relative_error": max(all_errors),
+            "mape": None if args.smoke else sum(all_errors) / len(all_errors),
+            "max_relative_error": None if args.smoke else max(all_errors),
             "parent_max_relative_error": float(
                 config["parent"]["result"]["maximum_relative_error"]
             ),
-            "max_relative_error_delta": max(all_errors)
-            - float(config["parent"]["result"]["maximum_relative_error"]),
+            "max_relative_error_delta": None
+            if args.smoke
+            else max(all_errors) - float(config["parent"]["result"]["maximum_relative_error"]),
             "all_points_pass": all_points_pass,
+            "target_metrics_excluded": args.smoke,
         },
         "integrity_checks": integrity_checks,
         "audit_integrity": audit_integrity,
