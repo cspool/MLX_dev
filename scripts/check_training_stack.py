@@ -6,6 +6,7 @@ import json
 from pathlib import Path
 
 import bitsandbytes as bnb
+import google.protobuf
 import modelscope
 import torch
 import transformers
@@ -84,6 +85,7 @@ def main() -> int:
         "torch_cuda_runtime": torch.version.cuda,
         "transformers": transformers.__version__,
         "peft": peft_version,
+        "protobuf": google.protobuf.__version__,
         "accelerate": accelerate_version,
         "datasets": datasets_version,
         "modelscope": modelscope.__version__,
