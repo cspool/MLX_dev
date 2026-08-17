@@ -1,0 +1,30 @@
+run:
+  id: run_027
+  hypothesis: H23
+  protocol: experiments/h23-fig19-mlx-event-transfer/protocol.md
+  output: artifacts/results/fig19-mlx-event-transfer-run027.json
+
+hardware: configs/hardware/mlx_full.yaml
+calibration: configs/calibration/paper_v1.yaml
+targets: artifacts/targets/fig19_components_digitization_pixels.yaml
+
+model:
+  num_layers: 24
+  hidden_dim: 1024
+  ffn_inner_dim: 4096
+  batch: 1
+  sequence_lengths: [128, 256, 512, 1024]
+
+mapping:
+  attention:
+    - {kernel: fft, axis: hidden, n: hidden_dim, d: sequence_length, chunk_length: hidden_dim, projections: 1}
+    - {kernel: fft, axis: token, n: sequence_length, d: hidden_dim, chunk_length: sequence_length, projections: 1}
+  ffn:
+    - {kernel: bsmm, d: hidden_dim, output_dim: ffn_inner_dim, block_size: hidden_dim, projections: 1}
+    - {kernel: bsmm, d: ffn_inner_dim, output_dim: hidden_dim, block_size: ffn_inner_dim, projections: 1}
+
+decision:
+  component_relative_error_gate: 0.10
+  total_relative_error_gate: 0.10
+  validation_eligible: false
+  classification: exploratory_data_exposed_cross_figure_transfer
