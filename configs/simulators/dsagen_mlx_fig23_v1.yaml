@@ -1,0 +1,52 @@
+name: dsagen-mlx-fig23-v1
+experiment_id: H46
+run_id: run052
+classification: target-exposed structured-proxy transfer
+
+frozen_inputs:
+  scaling_result:
+    path: artifacts/results/dsagen-mlx-scaling-mechanism-run051.json
+    bytes: 8383
+    sha256: ccfc09bae5dacc9dee40487fd28b1281cbea9215be84ff64753b7e8e0b6f7df1
+    required_status: supported
+    required_integrity: true
+  targets:
+    path: artifacts/targets/paper_targets.yaml
+    bytes: 14931
+    sha256: c4a22ab8052ff8cb223a729b8ce07320c6826cfee0d37e1a664a8761e018b41e
+    key: fig23_scalability
+
+mapping:
+  proxy_operator: bsmm
+  radix_width: 256
+  sequence_lengths: [512, 1024, 2048, 4096, 8192]
+  logical_outer_iterations: sequence length divided by 16
+  memory_backend: fixed
+  active_window: 3
+  configurations:
+    baseline: {simd_width: 8, mesh: [4, 4], trip_divisor: 1}
+    simd32_4x4: {simd_width: 32, mesh: [4, 4], trip_divisor: 4}
+    simd8_8x8: {simd_width: 8, mesh: [8, 8], trip_divisor: 1}
+    simd32_8x8: {simd_width: 32, mesh: [8, 8], trip_divisor: 4}
+  forbidden_adjustments:
+    - size-specific mesh congestion
+    - fill or launch penalties
+    - speedup multipliers or intercepts
+    - target-derived active-window changes
+    - legacy paper_v1 calibration
+
+targets:
+  simd32_4x4: [3.88, 3.90, 3.91, 3.91, 3.90]
+  simd8_8x8: [3.62, 3.70, 3.78, 3.50, 3.29]
+  simd32_8x8: [14.1, 14.5, 14.9, 13.7, 12.8]
+  uncertainty_abs: 0.04
+
+tests:
+  - all 20 configs conserve per-sequence lane-normalized work
+  - compiler and execution replay are deterministic
+  - each optimized run completes with exact instruction/event counts
+  - speedups are baseline cycles divided by same-N configuration cycles
+  - no forbidden adjustment appears in compiler or runner
+  - every one of 15 speedups has relative error at most 10 percent
+
+result_path: artifacts/results/dsagen-mlx-fig23-run052.json
