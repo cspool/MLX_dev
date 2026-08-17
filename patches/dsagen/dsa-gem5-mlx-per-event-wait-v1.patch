@@ -1,0 +1,87 @@
+diff --git a/src/cpu/minor/ssim/mlx_overlay.hh b/src/cpu/minor/ssim/mlx_overlay.hh
+--- a/src/cpu/minor/ssim/mlx_overlay.hh
++++ b/src/cpu/minor/ssim/mlx_overlay.hh
+@@ -143,5 +143,7 @@ struct TaggedBlock {
+   std::vector<uint64_t> predecessors;
+   std::vector<std::string> wait_events;
+   uint64_t wait_event_period{1};
++  std::map<std::string, uint64_t> wait_event_periods;
++  std::map<std::string, uint64_t> wait_event_multiplicities;
+   std::vector<Instruction> instructions;
+ };
+diff --git a/src/cpu/minor/ssim/mlx_overlay.cc b/src/cpu/minor/ssim/mlx_overlay.cc
+--- a/src/cpu/minor/ssim/mlx_overlay.cc
++++ b/src/cpu/minor/ssim/mlx_overlay.cc
+@@ -257,6 +257,28 @@ Overlay::FromJsonFile(const std::string &path)
+         }
+         block.wait_events.push_back(event.asString());
+       }
+     }
++    if (!block_root["wait_event_periods"].isNull()) {
++      if (!block_root["wait_event_periods"].isObject()) {
++        throw std::runtime_error("blocks[].wait_event_periods must be an object");
++      }
++      for (const auto &event : block_root["wait_event_periods"].getMemberNames()) {
++        block.wait_event_periods[event] = PositiveUInt(
++            block_root["wait_event_periods"][event],
++            "blocks[].wait_event_periods." + event);
++      }
++    }
++    if (!block_root["wait_event_multiplicities"].isNull()) {
++      if (!block_root["wait_event_multiplicities"].isObject()) {
++        throw std::runtime_error(
++            "blocks[].wait_event_multiplicities must be an object");
++      }
++      for (const auto &event :
++           block_root["wait_event_multiplicities"].getMemberNames()) {
++        block.wait_event_multiplicities[event] = PositiveUInt(
++            block_root["wait_event_multiplicities"][event],
++            "blocks[].wait_event_multiplicities." + event);
++      }
++    }
+     if (!block_root["instructions"].isArray()) {
+       throw std::runtime_error("blocks[].instructions must be an array");
+@@ -425,6 +447,23 @@ Overlay::validate() const
+             "MLX boundary event must stay in-layer or advance one layer: " + event);
+       }
+     }
++    for (const auto &entry : block.wait_event_periods) {
++      if (std::find(
++              block.wait_events.begin(), block.wait_events.end(), entry.first) ==
++          block.wait_events.end()) {
++        throw std::runtime_error(
++            "MLX per-event wait period requires a named wait event: " + entry.first);
++      }
++    }
++    for (const auto &entry : block.wait_event_multiplicities) {
++      if (std::find(
++              block.wait_events.begin(), block.wait_events.end(), entry.first) ==
++          block.wait_events.end()) {
++        throw std::runtime_error(
++            "MLX per-event wait multiplicity requires a named wait event: " +
++            entry.first);
++      }
++    }
+     std::set<std::string> instruction_ids;
+     for (const auto &instruction : block.instructions) {
+       if (instruction.id.empty() || !instruction_ids.insert(instruction.id).second) {
+@@ -720,7 +758,18 @@ Overlay::iterationEventsReady(std::size_t block_index) const
+   for (const auto &event : block.wait_events) {
+     auto iterator = event_counts_.find(event);
+     uint64_t count = iterator == event_counts_.end() ? 0 : iterator->second;
+-    uint64_t required_event = state.iteration / block.wait_event_period;
++    uint64_t period = block.wait_event_period;
++    auto period_iterator = block.wait_event_periods.find(event);
++    if (period_iterator != block.wait_event_periods.end()) {
++      period = period_iterator->second;
++    }
++    uint64_t multiplicity = 1;
++    auto multiplicity_iterator = block.wait_event_multiplicities.find(event);
++    if (multiplicity_iterator != block.wait_event_multiplicities.end()) {
++      multiplicity = multiplicity_iterator->second;
++    }
++    uint64_t required_event =
++        (state.iteration / period + 1) * multiplicity - 1;
+     if (count <= required_event) {
+       return false;
+     }
