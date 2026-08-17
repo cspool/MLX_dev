@@ -1,0 +1,28 @@
+name: fig24-fu-rerun-v1
+experiment_id: H73
+run_id: run078
+classification: target_free_fig24_mlx_physical_counter_rerun
+validation_eligible: false
+
+frozen_inputs:
+  h55:
+    path: artifacts/results/fig24-cross-simulator-run061.json
+    sha256: 29ff5cbd78e6b69d7fdd7505f5ce4e6b14689b9ab0b64623653792311e84031a
+    required_integrity: true
+  counters:
+    path: artifacts/results/fu-counters-run076.json
+    sha256: 31b63a260a596bff6aafaa418bca877898683529f6f36ad04066757c254833c0
+    required_status: supported
+    required_integrity: true
+
+parent_configs: artifacts/environment/h55/mlx
+parent_manifest: artifacts/environment/h55/fig24-cross-simulator-compile-manifest.json
+output_root: artifacts/environment/h73
+result_path: artifacts/results/fig24-fu-rerun-run078.json
+
+backend: {memory_backend: dsagen_spad, ports: 4, axis: x}
+
+source_layout:
+  compiler: scripts/compile_fig24_fu_rerun.py
+  runner: scripts/run_fig24_fu_rerun.py
+  auditor: scripts/audit_fig24_fu_rerun.py
