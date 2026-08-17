@@ -22,6 +22,16 @@
 - Relevance: closest public implementation substrate for MLX's decoupled spatial control/data paths and RISC-V deployment model.
 - Important caveat: architectural and author overlap makes it a plausible surrogate, not proof that MLX directly forks DSAGEN.
 
+## Assassyn
+
+- Weng et al., *Assassyn: Unified Software and Hardware Simulation with Asynchronous Semantics*, ISCA 2025, DOI 10.1145/3695053.3731004.
+- Official project: https://github.com/Synthesys-Lab/assassyn
+- Author-hosted paper: https://were.github.io/pdfs/isca25-18.pdf
+- The public Git history begins at `ea7ef28289283bcd0c085114e506095cd798628d` on 2024-02-09, so the project predates MLX. The inspected head is `6a99ade0e9380c93d4817f7de51b7edd8a473dd2` from 2026-06-09.
+- Relevant mechanisms are asynchronous stage activation, per-stage event queues, credit-based flow control, FIFO stage registers, concurrent cycle simulation, and generation of both a Rust simulator and RTL. These provide a useful independent cycle-semantics/RTL cross-check for the local event model.
+- The inspected tree contains no MLX implementation, tag scheduler, skip-hop routing, or multi-layer workload mapper. MLX does not cite Assassyn, and common authorship is not lineage evidence.
+- The current upstream build recursively pulls CIRCT, Verilator, Ramulator2, and Agentize. Those dependencies are intentionally not initialized here. No top-level license file was visible at the inspected revision, so this project treats the repository as an inspect-only optional backend and does not copy its code.
+
 ## Candidate GPU substrate
 
 - Pending primary-source comparison of Accel-Sim/GPGPU-Sim support for Volta, Ampere, Hopper, trace-driven execution, and custom structured kernels.

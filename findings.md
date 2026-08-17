@@ -6,7 +6,7 @@ Can a transparent open surrogate of the unpublished MLX simulator reproduce ever
 
 ## Current Understanding
 
-The paper is an ISCA 2026 work whose simulator and RTL are not released in the supplied material. It explicitly states that the reduced 256-GOp/s architecture was tuned in a cycle-accurate MLX simulator and cites SimICT. SimICT is a component-based performance/power framework from the same institute, but no public source has yet been located. The architecture is also intellectually close to the open DSAGEN stack: a RISC-V host, ISA-exposed decoupled spatial pipelines, dataflow assembly/LLVM compilation, an architecture graph, and a cycle simulator. MLX adds the paper-specific mechanisms that the surrogate must model: closed dependency components, bounded-hop skip links, tag scheduling, and independent load/compute/transfer pipelines.
+The paper is an ISCA 2026 work whose simulator and RTL are not released in the supplied material. It explicitly states that the reduced 256-GOp/s architecture was tuned in a cycle-accurate MLX simulator and cites SimICT. SimICT is a component-based performance/power framework from the same institute, but no public source has yet been located. The architecture is also intellectually close to the open DSAGEN stack: a RISC-V host, ISA-exposed decoupled spatial pipelines, dataflow assembly/LLVM compilation, an architecture graph, and a cycle simulator. A second coauthor project, Assassyn, predates MLX and exposes asynchronous event queues, credit/FIFO stages, concurrent cycle semantics, and simulator/RTL generation. It is a strong semantic cross-check, but MLX does not cite it and its public tree contains none of MLX's named mechanisms. MLX adds the paper-specific mechanisms that the surrogate must model: closed dependency components, bounded-hop skip links, tag scheduling, and independent load/compute/transfer pipelines.
 
 This supports a hybrid reproduction strategy: use public spatial/GPU projects as validation references and optional detailed backends, but implement a small, inspectable MLX-specific discrete-event simulator locally. All calibration must be global or mechanism-level. Per-point lookup tables are acceptable only as immutable paper targets, never as simulator outputs.
 
@@ -16,6 +16,7 @@ This supports a hybrid reproduction strategy: use public spatial/GPU projects as
 - Headline anchors include 57-72% QKV+attention compute reduction, <1.45% LLM accuracy loss, about 90% compute utilization, 3.9x SIMD scaling, 3.6x mesh scaling, up to 14x joint scaling, 3.2x hardware speedup, and 3.1x energy saving.
 - Figures 15-25 contain many more acceptance points than the prose. Raster digitization is therefore a required first-class stage.
 - H1 is supported with caveat: DSAGEN is an evidence-grounded open spatial surrogate, Accel-Sim is the GPU surrogate, and Timeloop is an analytical cross-check. None is presented as proven original MLX source.
+- Assassyn is now pinned as an inspect-only optional semantics reference. Its public history starts in February 2024, but neither shared authorship nor mechanism similarity establishes MLX lineage; its recursive dependencies were not initialized and no code was copied because the inspected revision exposes no top-level license.
 - The local event simulator passes every captured Fig. 22/23 point within 7.1%; simulated scaling geometric means are 4.00x SIMD, 3.58x mesh, and 14.30x joint versus 3.9x/3.6x/14.0x reported.
 - On a communication-sensitive FFT, removing skip hops, tag overlap, or pipeline decoupling costs 57%, 8.5%, or 101% cycles. On a compute-heavy transformer, the skip-hop effect is hidden; this boundary condition is preserved rather than discarded.
 - Fig. 24 and Fig. 25 now have executable manifests covering 42 ratios and 72 utilization cells. Their exact matches are saturated empirical fits, so they improve pipeline coverage but contribute no held-out validation evidence.
@@ -30,7 +31,7 @@ This supports a hybrid reproduction strategy: use public spatial/GPU projects as
 
 ## Patterns and Insights
 
-- SimICT is the explicit historical simulation framework; DSAGEN is the closest open full-stack spatial substitute found so far. These facts must not be collapsed into an unsupported claim that MLX was forked from DSAGEN.
+- SimICT is the explicit historical simulation framework; DSAGEN is the closest open spatial compiler stack; Assassyn is the closest open asynchronous simulator/RTL semantics reference. These roles must not be collapsed into an unsupported fork or reuse claim.
 - A faithful model needs both work accounting (FLOPs/bytes/stages) and contention timing (pipeline readiness, tag priority, link occupancy, launch/fill/drain overhead). A pure roofline model cannot test MLX's central scheduling claim.
 - Model-declared framework versions are part of the checkpoint: InternLM2's remote code produced incompatible logits under Transformers 5.15 (first-window PPL 387.07) but PPL 5.69 under its declared 4.41.0. Smoke tests caught this before the registered run, and the official evaluator now refuses a different version.
 
