@@ -1,0 +1,32 @@
+name: matched-projection-fig20-transfer-v1
+experiment_id: H78
+run_id: run083
+classification: target_exposed_validation_ineligible_partial_figure_transfer
+
+parent:
+  path: artifacts/results/matched-projection-estimator-run082.json
+  sha256: e9df44d2b6c025fa141c71564e47708e68f9f306cb3992f495a65f9ce3c93ec7
+  required_status: supported
+  required_integrity: true
+
+targets:
+  path: artifacts/targets/paper_targets.yaml
+  sha256: c4a22ab8052ff8cb223a729b8ce07320c6826cfee0d37e1a664a8761e018b41e
+  section: fig20_xavier_kernels.versus_sparse_cuda.speedup
+  execution_visibility: audit_only
+
+cells:
+  - {estimate: qkv-N256, target_index: 0, paper_group: QKV_256}
+  - {estimate: ffn1-N256, target_index: 2, paper_group: FFN1_256}
+  - {estimate: ffn2-N256, target_index: 3, paper_group: FFN2_256}
+  - {estimate: qkv-N8192, target_index: 4, paper_group: QKV_8K}
+  - {estimate: ffn1-N8192, target_index: 6, paper_group: FFN1_8K}
+  - {estimate: ffn2-N8192, target_index: 7, paper_group: FFN2_8K}
+
+excluded_cells:
+  - {paper_group: Attn_256, target_index: 1, reason: no_matched_compressed_attention_anchor}
+  - {paper_group: Attn_8K, target_index: 5, reason: no_matched_compressed_attention_anchor}
+
+threshold_relative_error: 0.10
+auditor: scripts/audit_matched_projection_fig20_transfer.py
+result_path: artifacts/results/matched-projection-fig20-transfer-run083.json
