@@ -1,0 +1,484 @@
+run:
+  id: run_042
+  hypothesis: H37
+  protocol: experiments/h37-full-paper-completion-certificate/protocol.md
+  suite_output: artifacts/results/full-paper-lightweight-suite-run042.json
+  output: artifacts/results/full-paper-completion-certificate-run042.json
+
+classification: full_paper_completion_certificate
+validation_eligible: false
+
+status_taxonomy:
+  - reproduced_within_10pct
+  - attempt_rejected
+  - calibration_replay_only
+  - publicly_blocked
+
+expected_status_counts:
+  reproduced_within_10pct: 1
+  attempt_rejected: 7
+  calibration_replay_only: 3
+  publicly_blocked: 7
+
+required_fact_keys:
+  - numeric_targets_complete
+  - executable_audit_present
+  - full_measurement_gate_passed
+  - adequate_attempt_executed_and_failed
+  - target_guided_replay
+  - required_public_inputs_available
+  - exact_mlx_author_artifact_used
+
+frozen_files:
+  - id: inventory
+    path: docs/experiment_inventory.md
+    bytes: 6958
+    sha256: ba884a103aaaf684c464a42e4e38656e709c5b7539032d087387b99649ad02c1
+  - id: paper_targets
+    path: artifacts/targets/paper_targets.yaml
+    bytes: 14931
+    sha256: c4a22ab8052ff8cb223a729b8ce07320c6826cfee0d37e1a664a8761e018b41e
+  - id: mlx_reduced
+    path: configs/hardware/mlx_reduced.yaml
+    bytes: 534
+    sha256: 1d40daa7cfc57c45406a92d5d684663086512255e88ecc17a2ed6fff3b7a235b
+  - id: mlx_full
+    path: configs/hardware/mlx_full.yaml
+    bytes: 532
+    sha256: 97f8ed084c2f62eef41eb86de0b06ba43bf9947d301ac3b24d894d2f83d6053c
+  - id: xavier_paper
+    path: configs/hardware/xavier_paper.yaml
+    bytes: 611
+    sha256: 94a0c31d1a055a60c84ca7a783eb58e5e744fce1cd8d7b8148b0992579874c31
+  - id: paper_calibration
+    path: configs/calibration/paper_v1.yaml
+    bytes: 406
+    sha256: 8091a7eb8cf8ae0fcc249c99b9e78e6b58c9accef5cb355a6cc3c7fb5cb336da
+  - id: roofline_calibration
+    path: configs/calibration/roofline_v1.yaml
+    bytes: 2486
+    sha256: 3bbfab331519842b91d4989c27c22a9b4ae8dce3da53049634379c7aa0cba735
+  - id: public_artifact_audit
+    path: artifacts/results/mlx-public-artifact-discovery-run038.json
+    bytes: 88807
+    sha256: 462df17b15a8acdeee8820f59b476a60939a795d9efd69991d0fabfe0eccff09
+    assertions:
+      - {pointer: /audit_integrity, equals: true}
+      - {pointer: /hypothesis_status, equals: rejected}
+  - id: architecture_run002
+    path: artifacts/results/architecture-run002.json
+    bytes: 84709
+    sha256: 908d43779083e7aa5e96f398768f413db65917654db3c3d83b70e06abd8cd884
+    assertions:
+      - {pointer: /fig22/audit/bsmm/pass_10pct, equals: true}
+      - {pointer: /fig22/audit/chunk_fft/pass_10pct, equals: true}
+      - {pointer: /fig23/audit/simd32_4x4/pass_10pct, equals: true}
+      - {pointer: /fig23/audit/simd8_8x8/pass_10pct, equals: true}
+      - {pointer: /fig23/audit/simd32_8x8/pass_10pct, equals: true}
+  - id: fig2_run010
+    path: artifacts/results/fig2-run010.json
+    bytes: 1223
+    sha256: 467109b31d6297a404e3a52ed1b30849a5466a1f86da9cae533016b392a1e180
+    assertions:
+      - {pointer: /native_profile_reproduced, equals: false}
+      - {pointer: /audit/fft_speedup/pass_10pct, equals: true}
+  - id: fig3_run011
+    path: artifacts/results/fig3-run011.json
+    bytes: 2201
+    sha256: 3806d4ba40ae179e1f5e4f7cd79201ac7940c7bff624349e40281e4da229173d
+    assertions:
+      - {pointer: /native_profile_reproduced, equals: false}
+      - {pointer: /physical_audit/all_at_or_below_roofline_with_raster_tolerance, equals: true}
+  - id: fig3_target_run030
+    path: artifacts/results/fig3-target-completion-run030.json
+    bytes: 13092
+    sha256: 24b9e8952ceda78616cc43c4756c9c02ffad1f4f45962d23c9c59f0b03d57fb0
+    assertions:
+      - {pointer: /summary/pass, equals: true}
+      - {pointer: /summary/numeric_value_count, equals: 26}
+  - id: spectrum_run019
+    path: artifacts/results/llama2-spectrum-run019.json
+    bytes: 79966
+    sha256: 722585defd70d9f92c0b74aeaac6d07f0c52f11883d6a6891dd7fdfd11a90847
+    assertions:
+      - {pointer: /audit/fig5/all_checks_pass, equals: false}
+      - {pointer: /audit/fig6/all_points_pass, equals: false}
+  - id: tables_run009
+    path: artifacts/results/tables-fig19-run009.json
+    bytes: 2514
+    sha256: d74d3660cd630b600c4b4c8dd9259a111cc4c65c6c0ac1bfc45e453d202f11ee
+    assertions:
+      - {pointer: /table2/audit/pass_10pct, equals: true}
+      - {pointer: /table5/audit/pass_10pct, equals: true}
+      - {pointer: /fig19/audit/pass_10pct, equals: true}
+  - id: fig15_compute_run012
+    path: artifacts/results/fig15-run012.json
+    bytes: 6104
+    sha256: 799af9b0a1a1142c3b7b47a2f6a6c555aef6121eeff36fad04d758acd3fd014f
+    assertions:
+      - {pointer: /training_reproduced, equals: false}
+      - {pointer: /audit/all_mlx_compute_bars/pass_10pct, equals: true}
+  - id: fgscr_run025
+    path: artifacts/results/fgscr42-input-audit-run025.json
+    bytes: 25290
+    sha256: e990e19ee3e727bdcf472a4e0f3c312a2cc7a857feeaeb7a2f3c73858583bb45
+    assertions:
+      - {pointer: /decision/input_sufficient, equals: false}
+      - {pointer: /decision/verdict, equals: rejected}
+  - id: bert_baseline_run014
+    path: artifacts/results/bert-squad-baseline-run014.json
+    bytes: 3536
+    sha256: 52a763ea37ef0aa2c73a9442de659b1c39017c701eb6ecf9b76395a58c3f1f96
+    assertions:
+      - {pointer: /passes_10pct_gate, equals: true}
+      - {pointer: /smoke, equals: false}
+  - id: bert_sweep_run018
+    path: artifacts/results/bert-structured-sweep-run018.json
+    bytes: 50332
+    sha256: 21565107d97d31aac4ded49a5cd770fe1b51c5b8cea633640e911f93eedab36d
+    assertions:
+      - {pointer: /summary/all_points_pass, equals: false}
+  - id: quality_targets_run015
+    path: artifacts/results/fig15-16-quality-targets-run015.json
+    bytes: 8546
+    sha256: 7e00fd49614e154eba17c5ce158b0bd4ecede8e2ea3b62c8bc324bc0eb5eaffa
+    assertions:
+      - {pointer: /summary/pass, equals: true}
+      - {pointer: /summary/visible_quality_bars, equals: 53}
+  - id: internlm_ppl_run013
+    path: artifacts/results/internlm2-wikitext2-run013.json
+    bytes: 1457
+    sha256: 1a5c2ab6f5d8244f0e90d9211b4e30297be28cfd94277e803529acc8abd2df99
+    assertions:
+      - {pointer: /passes_10pct_gate, equals: true}
+  - id: llama_ppl_run022
+    path: artifacts/results/llama2-wikitext2-run022.json
+    bytes: 7359
+    sha256: 611e327c8d66686bc269809ba6e988d8adce1eb5d5807d05a75e797c27237fec
+    assertions:
+      - {pointer: /audit/pass, equals: true}
+  - id: llama_fft_run023
+    path: artifacts/results/llama2-fft-lora-s075-run023.json
+    bytes: 9700
+    sha256: cbf09e8bea254a2d85a777b5c10ca893dfd91305573c24e12d6d2d8d0b6026e8
+    assertions:
+      - {pointer: /summary/full_mlx_bar_reproduced, equals: false}
+      - {pointer: /summary/numerical_gate_pass, equals: false}
+  - id: winogrande_base_run031
+    path: artifacts/results/llama2-winogrande-run031.json
+    bytes: 24118
+    sha256: f92bf3cf82b4d50aa86b51724a0da4367a2bf77260c8116220a867c3e49ad30e
+    assertions:
+      - {pointer: /audit/pass, equals: false}
+  - id: winogrande_dense_run032
+    path: artifacts/results/llama2-winogrande-dense-lora-run032.json
+    bytes: 44387
+    sha256: f5727f967ef82f888ababeba1cb5bc6c74870004fe61ab17f486ab0f0f2389a9
+    assertions:
+      - {pointer: /summary/pass, equals: true}
+  - id: ada_run034
+    path: artifacts/results/internlm2-adaleval-run034.json
+    bytes: 24158
+    sha256: 816731c7c3f6465b1e8a1de0f97661d7e776bc4b2ee9afa0e5099a789afc67c3
+    assertions:
+      - {pointer: /pass, equals: false}
+      - {pointer: /source_and_runtime_qualification/pass, equals: true}
+  - id: ada_seed_run035
+    path: artifacts/results/internlm2-adaleval-seed-replicates-run035.json
+    bytes: 28744
+    sha256: 798824d79f18d697433dc983bd8953972027d7bc475ec795c550b3c4dedf0779
+    assertions:
+      - {pointer: /pass, equals: false}
+      - {pointer: /qualification/pass, equals: true}
+  - id: ada_session_run036
+    path: artifacts/results/internlm2-adaleval-session-equivalence-run036.json
+    bytes: 44511
+    sha256: 8e5eca2418ffad655b2dbcc11f734a0da9683fcab00760b0728ae6ce33b108af
+    assertions:
+      - {pointer: /pass, equals: true}
+  - id: compressed_identifiability_run033
+    path: artifacts/results/compressed-llm-identifiability-run033.json
+    bytes: 13268
+    sha256: e89f742561750352b9b5b3f34512bb5e92a6237df657b83d43ce767ecf509bbe
+    assertions:
+      - {pointer: /necessary_field_audit/pass, equals: true}
+      - {pointer: /necessary_field_audit/missing_field_count, equals: 10}
+  - id: fig16_compute_run012
+    path: artifacts/results/fig16-run012.json
+    bytes: 2556
+    sha256: 55c84206a2451d92bc180735754f006104e66ebaca8ffc07f7296b13fc7d4e10
+    assertions:
+      - {pointer: /training_reproduced, equals: false}
+      - {pointer: /audit/all_mlx_compute_bars/pass_10pct, equals: true}
+  - id: fig17_target_run020
+    path: artifacts/results/fig17-target-audit-run020.json
+    bytes: 6902
+    sha256: f22e6fc4c81135da7831e6461d35b7922054286441757999a2a23c4b4f8fb950
+    assertions:
+      - {pointer: /summary/pass, equals: true}
+      - {pointer: /summary/visible_bars, equals: 20}
+  - id: fig17_cross_run021
+    path: artifacts/results/fig17-cross-figure-run021.json
+    bytes: 8131
+    sha256: 4953bcf9ee6f6483c9a9ca29d32a6fb1dd78c8ba6df3dde45f286f7ba87b91a8
+    assertions:
+      - {pointer: /summary/all_points_pass, equals: false}
+  - id: fig18_run008
+    path: artifacts/results/fig18-run008.json
+    bytes: 1378
+    sha256: 210f7e5e91d203df3288a7fd3f971851180c1883df1c03b6ad53a8ac6e2c45bd
+    assertions:
+      - {pointer: /simulator_validation_eligible, equals: false}
+      - {pointer: /audit/algorithm_normalized_speedup/pass_10pct, equals: false}
+  - id: fig19_fabnet_run016
+    path: artifacts/results/fig19-fabnet-run016.json
+    bytes: 6536
+    sha256: fb00ed1c7546b8beedd3fe722f9e365fa5eec37984f7d5ee3f20eae0d46451b0
+    assertions:
+      - {pointer: /verdict, equals: rejected}
+      - {pointer: /comparison/summary/all_points_pass, equals: false}
+  - id: fig19_event_run027
+    path: artifacts/results/fig19-mlx-event-transfer-run027.json
+    bytes: 52104
+    sha256: 7e597b952392cc51011793cc58c3383808426dfc054b54bfe56ee0733479736d
+    assertions:
+      - {pointer: /verdict, equals: rejected}
+      - {pointer: /comparison/component_summary/all_points_pass, equals: false}
+  - id: fig19_fused_run028
+    path: artifacts/results/fig19-fused-fft2d-run028.json
+    bytes: 64683
+    sha256: 33462045501d46e81d6e87e3006941e2ad4dc39cdad5d11e91c9011222f5d30f
+    assertions:
+      - {pointer: /verdict, equals: rejected}
+      - {pointer: /attention_comparison/summary/all_points_pass, equals: false}
+  - id: fig20_run006
+    path: artifacts/results/fig20-run006.json
+    bytes: 41754
+    sha256: 1a349e197759607657a5ae3ff03ffa05a9af06f0c7ffbd4ec267db14c4d5976d
+    assertions:
+      - {pointer: /validation_eligible, equals: true}
+      - {pointer: /audit/versus_dense_tcu/speedup/pass_10pct, equals: false}
+  - id: fig21_run007
+    path: artifacts/results/fig21-run007.json
+    bytes: 161959
+    sha256: 506538bf657eea9e398eb70771e889ab752e81913e9510961abb4a80d9425817
+    assertions:
+      - {pointer: /validation_eligible, equals: true}
+      - {pointer: /audit/speedup_over_xavier/pass_10pct, equals: false}
+  - id: fig21_target_run029
+    path: artifacts/results/fig21-target-completion-run029.json
+    bytes: 14413
+    sha256: ec9b068b77113f8fe5af5f992f90fb6b4d8cf15d107873662a172bb2a3927a3f
+    assertions:
+      - {pointer: /summary/pass, equals: true}
+      - {pointer: /summary/numeric_bar_count, equals: 20}
+  - id: fig24_run005
+    path: artifacts/results/fig24-run005.json
+    bytes: 105340
+    sha256: c1d3c63240da8b743cd314462b27a352d9aaca292f89cce265f4fd563d0c5de4
+    assertions:
+      - {pointer: /classification, equals: calibration-replay-gpu-proxy}
+      - {pointer: /validation_eligible, equals: false}
+  - id: fig25_run004
+    path: artifacts/results/fig25-run004.json
+    bytes: 9901
+    sha256: f05bd39204ba834057634d97c686aa3fa4295b17b5a5b07fd1d987386d040545
+    assertions:
+      - {pointer: /classification, equals: calibration-replay}
+      - {pointer: /validation_eligible, equals: false}
+
+suite:
+  required_sections:
+    - fig2
+    - fig3
+    - fig15_compute
+    - fig16_compute
+    - fig18
+    - tables_and_fig19
+    - fig20
+    - fig21
+    - fig22
+    - fig23
+    - h2_ablations
+    - fig24
+    - fig25
+  assertions:
+    - {pointer: /fig2/native_profile_reproduced, equals: false}
+    - {pointer: /fig2/audit/fft_speedup/pass_10pct, equals: true}
+    - {pointer: /fig3/native_profile_reproduced, equals: false}
+    - {pointer: /fig3/physical_audit/all_at_or_below_roofline_with_raster_tolerance, equals: true}
+    - {pointer: /fig15_compute/training_reproduced, equals: false}
+    - {pointer: /fig15_compute/audit/all_mlx_compute_bars/pass_10pct, equals: true}
+    - {pointer: /fig16_compute/training_reproduced, equals: false}
+    - {pointer: /fig16_compute/audit/all_mlx_compute_bars/pass_10pct, equals: true}
+    - {pointer: /fig18/audit/algorithm_normalized_speedup/pass_10pct, equals: false}
+    - {pointer: /tables_and_fig19/table2/audit/pass_10pct, equals: true}
+    - {pointer: /tables_and_fig19/table5/audit/pass_10pct, equals: true}
+    - {pointer: /tables_and_fig19/fig19/audit/pass_10pct, equals: true}
+    - {pointer: /fig20/audit/versus_dense_tcu/speedup/pass_10pct, equals: false}
+    - {pointer: /fig21/audit/speedup_over_xavier/pass_10pct, equals: false}
+    - {pointer: /fig22/audit/bsmm/pass_10pct, equals: true}
+    - {pointer: /fig22/audit/chunk_fft/pass_10pct, equals: true}
+    - {pointer: /fig23/audit/simd32_4x4/pass_10pct, equals: true}
+    - {pointer: /fig23/audit/simd8_8x8/pass_10pct, equals: true}
+    - {pointer: /fig23/audit/simd32_8x8/pass_10pct, equals: true}
+    - {pointer: /fig24/classification, equals: calibration-replay-gpu-proxy}
+    - {pointer: /fig24/validation_eligible, equals: false}
+    - {pointer: /fig25/classification, equals: calibration-replay}
+    - {pointer: /fig25/validation_eligible, equals: false}
+
+items:
+  - id: fig2
+    paper_item: Fig. 2
+    status: publicly_blocked
+    suite_sections: [fig2]
+    evidence: [fig2_run010, public_artifact_audit]
+    facts: &blocked_facts
+      numeric_targets_complete: true
+      executable_audit_present: true
+      full_measurement_gate_passed: false
+      adequate_attempt_executed_and_failed: false
+      target_guided_replay: false
+      required_public_inputs_available: false
+      exact_mlx_author_artifact_used: false
+    note: "Reported stack arithmetic passes; native AGX Orin profiling inputs and traces are unavailable."
+  - id: fig3
+    paper_item: Fig. 3
+    status: publicly_blocked
+    suite_sections: [fig3]
+    evidence: [fig3_run011, fig3_target_run030, public_artifact_audit]
+    facts: *blocked_facts
+    note: "All raster targets and roofline constraints pass; the native H100 profile is not reproduced."
+  - id: fig5
+    paper_item: Fig. 5
+    status: attempt_rejected
+    suite_sections: []
+    evidence: [spectrum_run019]
+    facts: &rejected_facts
+      numeric_targets_complete: true
+      executable_audit_present: true
+      full_measurement_gate_passed: false
+      adequate_attempt_executed_and_failed: true
+      target_guided_replay: false
+      required_public_inputs_available: true
+      exact_mlx_author_artifact_used: false
+    note: "The byte-qualified native activation protocol fails one of three qualitative gates."
+  - id: fig6
+    paper_item: Fig. 6
+    status: attempt_rejected
+    suite_sections: []
+    evidence: [spectrum_run019]
+    facts: *rejected_facts
+    note: "The native spectrum reconstruction passes only 1/42 numeric points."
+  - id: table2_fig14
+    paper_item: Table II / Fig. 14
+    status: publicly_blocked
+    suite_sections: [tables_and_fig19]
+    evidence: [tables_run009, public_artifact_audit]
+    facts: *blocked_facts
+    note: "Reported area/power arithmetic passes; exact RTL, synthesis flow, and silicon collateral are unavailable."
+  - id: fig15a
+    paper_item: Fig. 15(a)
+    status: publicly_blocked
+    suite_sections: [fig15_compute]
+    evidence: [fig15_compute_run012, quality_targets_run015, fgscr_run025, public_artifact_audit]
+    facts: *blocked_facts
+    note: "Compute equations pass, but the exact FGSCR-42 corpus split and ViT recipe are unavailable."
+  - id: fig15b
+    paper_item: Fig. 15(b)
+    status: attempt_rejected
+    suite_sections: [fig15_compute]
+    evidence: [fig15_compute_run012, quality_targets_run015, bert_baseline_run014, bert_sweep_run018]
+    facts: *rejected_facts
+    note: "The inferred dense baseline passes, but the registered structured sweep fails the full curve."
+  - id: fig15cd
+    paper_item: Fig. 15(c,d)
+    status: publicly_blocked
+    suite_sections: [fig15_compute]
+    evidence: [quality_targets_run015, internlm_ppl_run013, llama_ppl_run022, llama_fft_run023, winogrande_base_run031, winogrande_dense_run032, ada_run034, ada_seed_run035, ada_session_run036, compressed_identifiability_run033, public_artifact_audit]
+    facts: *blocked_facts
+    note: "Several original/dense baselines pass, but ten necessary compressed-model fields and the exact author checkpoints/recipes remain absent."
+  - id: fig16
+    paper_item: Fig. 16
+    status: publicly_blocked
+    suite_sections: [fig16_compute]
+    evidence: [fig16_compute_run012, quality_targets_run015, fgscr_run025, compressed_identifiability_run033]
+    facts: *blocked_facts
+    note: "All disclosed compute bars pass; native block-size quality training is underidentified or input-blocked."
+  - id: fig17
+    paper_item: Fig. 17
+    status: publicly_blocked
+    suite_sections: []
+    evidence: [fig17_target_run020, fig17_cross_run021, public_artifact_audit]
+    facts: *blocked_facts
+    note: "All 20 targets are recovered, but native H100 eager/FA timing and traces are unavailable."
+  - id: fig18
+    paper_item: Fig. 18
+    status: attempt_rejected
+    suite_sections: [fig18]
+    evidence: [fig18_run008, tables_run009]
+    facts: *rejected_facts
+    note: "The published normalization remains inconsistent for the two MLX points under the registered formula."
+  - id: table5_fig19
+    paper_item: Table V / Fig. 19
+    status: attempt_rejected
+    suite_sections: [tables_and_fig19]
+    evidence: [tables_run009, fig19_fabnet_run016, fig19_event_run027, fig19_fused_run028]
+    facts: *rejected_facts
+    note: "Arithmetic passes, but public FABNet and both MLX event mappings fail the component-latency gate."
+  - id: fig20
+    paper_item: Fig. 20
+    status: attempt_rejected
+    suite_sections: [fig20]
+    evidence: [fig20_run006]
+    facts: *rejected_facts
+    note: "The pre-registered held-out cross-device prediction fails latency and energy gates."
+  - id: fig21
+    paper_item: Fig. 21
+    status: attempt_rejected
+    suite_sections: [fig21]
+    evidence: [fig21_target_run029, fig21_run007]
+    facts: *rejected_facts
+    note: "Targets are complete, but held-out speed and sparse-memory predictions fail."
+  - id: fig22
+    paper_item: Fig. 22
+    status: reproduced_within_10pct
+    suite_sections: [fig22]
+    evidence: [architecture_run002]
+    facts:
+      numeric_targets_complete: true
+      executable_audit_present: true
+      full_measurement_gate_passed: true
+      adequate_attempt_executed_and_failed: false
+      target_guided_replay: false
+      required_public_inputs_available: true
+      exact_mlx_author_artifact_used: false
+    note: "Both complete utilization series pass with 7.10% maximum error in the open surrogate."
+  - id: fig23
+    paper_item: Fig. 23
+    status: calibration_replay_only
+    suite_sections: [fig23]
+    evidence: [architecture_run002]
+    facts: &replay_facts
+      numeric_targets_complete: true
+      executable_audit_present: true
+      full_measurement_gate_passed: false
+      adequate_attempt_executed_and_failed: false
+      target_guided_replay: true
+      required_public_inputs_available: true
+      exact_mlx_author_artifact_used: false
+    note: "The scaling points pass numerically, but their residuals informed the mesh calibration."
+  - id: fig24
+    paper_item: Fig. 24
+    status: calibration_replay_only
+    suite_sections: [fig24]
+    evidence: [fig24_run005]
+    facts: *replay_facts
+    note: "All ratios replay a saturated per-operator GPU surface and are validation-ineligible."
+  - id: fig25
+    paper_item: Fig. 25
+    status: calibration_replay_only
+    suite_sections: [fig25]
+    evidence: [fig25_run004]
+    facts: *replay_facts
+    note: "All heatmap anchors replay saturated four-anchor surfaces and are validation-ineligible."

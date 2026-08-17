@@ -26,10 +26,12 @@ mlxsim reproduce --figure 16 --output artifacts/results/fig16-compute.json
 mlxsim reproduce --figure 24 --output artifacts/results/fig24.json
 mlxsim reproduce --figure 25 --output artifacts/results/fig25.json
 python scripts/audit_empirical_surface_fits.py
-pytest
+python -m pytest
 ```
 
 The full-paper completion checklist is in `docs/experiment_inventory.md`. Research decisions and current limitations are in `findings.md` and `research-state.yaml`.
+After the frozen completion certificate has been generated, `make audit-completion`
+re-hashes its evidence and verifies it without overwriting any formal artifact.
 
 For the optional training/fine-tuning stack (CUDA PyTorch, Transformers, PEFT, Accelerate, bitsandbytes, and a pinned ModelScope fallback for official InternLM weights), run:
 
