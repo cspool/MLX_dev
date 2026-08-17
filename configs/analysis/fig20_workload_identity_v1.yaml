@@ -1,0 +1,26 @@
+name: fig20-workload-identity-v1
+experiment_id: H75
+run_id: run080
+classification: target_free_workload_identity_audit
+validation_eligible: false
+
+frozen_inputs:
+  logical_model:
+    path: artifacts/results/fig20-run006.json
+    sha256: 1a349e197759607657a5ae3ff03ffa05a9af06f0c7ffbd4ec267db14c4d5976d
+  execution_proxy:
+    path: artifacts/results/fig20-sparse-xavier-run063.json
+    sha256: 5688d439bbe21b68380238b60b983bcb59236368c63056524a8d66ffdd36a4e2
+
+shape:
+  hidden: 4096
+  ffn: 11008
+  block_size: 32
+  compression_ratio: 0.5
+  batch: 1
+  sequence_lengths: [256, 8192]
+  kernels: [qkv, attention, ffn1, ffn2]
+
+h57_manifest: artifacts/environment/h57/fig20-sparse-xavier-compile-manifest.json
+auditor: scripts/audit_fig20_workload_identity.py
+result_path: artifacts/results/fig20-workload-identity-run080.json
