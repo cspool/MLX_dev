@@ -19,8 +19,10 @@ data-supply bar split into xfer, load, and store segments.
 
 This corrects target completeness, not the already digitized compute series.
 The legacy compute values must agree within the registered raster uncertainty.
-The prose checks are independent: small-size compute idle fraction should be
-approximately 17%, and large-size idle fraction must include values below 12%.
+The prose checks are independent: the compute series must reach approximately
+90%. The reported 17%/below-12% launch overhead is text-only; it is not equated
+with `1 - compute utilization`, which also contains pipeline idleness and other
+stalls and therefore cannot be recovered as a separate raster segment.
 
 ## Classification and gate
 
