@@ -1,0 +1,102 @@
+run:
+  id: run_031
+  hypothesis: H27
+  protocol: experiments/h27-llama2-winogrande/protocol.md
+  output: artifacts/results/llama2-winogrande-run031.json
+  samples_output: artifacts/results/llama2-winogrande-run031.samples.jsonl
+
+model:
+  path: third_party/models/llama2-7b-hf-msmirror
+  official_source: huggingface://meta-llama/Llama-2-7b-hf
+  official_revision: 01c7f73d771dfac7d292323805ebc428287df4f9
+  mirror_source: modelscope://f541119578/Llama-2-7b-hf
+  mirror_revision: master
+  required_official_hashes:
+    model-00001-of-00002.safetensors: 4ec71fd53e99766de38f24753b30c9e8942630e9e576a1ba27b0ec531e87be41
+    model-00002-of-00002.safetensors: 41780b5dac322ac35598737e99208d90bdc632a1ba3389ebedbb46a1d8385a7f
+    tokenizer.model: 9e556afd44213b6bd1be2b850ebbbd98f5481437a8021afaf58ee7fb1818d347
+  required_official_git_blobs:
+    config.json: 34f901200fa131819b355bc4bed876c957a77a5a
+    generation_config.json: aa1b3d3486df56a0699ce90c33283b13556fb5a3
+    model.safetensors.index.json: 8b6245796e966e50960a317e4a54aa7bf73b0186
+    special_tokens_map.json: 451134b2ddc2e78555d1e857518c54b4bdc2e87d
+    tokenizer.json: a6e931b92caff4c79c5c56282f1e89569a0ae558
+    tokenizer_config.json: 2ef41cbc275000b29afe157ba487f0530b8c26dc
+  config_signature:
+    hidden_size: 4096
+    num_hidden_layers: 32
+    num_attention_heads: 32
+    num_key_value_heads: 32
+    vocab_size: 32000
+    max_position_embeddings: 4096
+
+dataset:
+  official_source: huggingface://datasets/allenai/winogrande
+  official_revision: 01e74176c63542e6b0bcb004dcdea22d94fb67b5
+  dataset_name: winogrande_xl
+  split: validation
+  official_relative_path: winogrande_xl/validation-00000-of-00001.parquet
+  qualification_path: third_party/datasets/winogrande/winogrande_xl/validation-00000-of-00001.parquet
+  parquet_bytes: 85928
+  parquet_sha256: f9d914d1818c0aba98cabdf8af2bc4bd943c462b9c5e7062647e05c2ce3315d1
+  canonical_content_sha256: 8e8671d6097f314f4ddc6c9734e382810926a1e0c3e76664715786d25b4a78d4
+  expected_rows: 1267
+  expected_columns: [sentence, option1, option2, answer]
+  expected_label_counts: {"1": 628, "2": 639}
+  first_row_sha256: 2a63f8d827c33439b8820402049e51b90ba58cc135211c9f52d0f520094c087e
+  last_row_sha256: 5fab81ad6dfe400c4207806fa9ebdd10d154dc7e2d72ad71866ec25f050da142
+
+harness:
+  distribution: lm-eval
+  version: 0.4.12
+  distribution_metadata_sha256: 072d33a0ff16a67aca5dbf5b2823ba11ad0b467a6ade6d5a2c5432c91959570a
+  upstream_task_yaml_sha256: 7a73c28f1c760f1f54b4185f21f8df5927c1fe7278a8520f38ee03cc7f40d9e7
+  upstream_preprocessor_sha256: e55327629264a98f1d383fda24645b6779afb53fa0bce2150042b9416b1ae006
+  include_path: configs/lm_eval/h27_winogrande
+  task_name: mlx_winogrande_pinned
+  task_yaml: configs/lm_eval/h27_winogrande/winogrande_pinned.yaml
+  task_yaml_sha256: 2045a0bb5ffb47216427100030066509240c592b0140fabfd40ac84b5490bad9
+  preprocessor: configs/lm_eval/h27_winogrande/preprocess_winogrande.py
+  preprocessor_sha256: e55327629264a98f1d383fda24645b6779afb53fa0bce2150042b9416b1ae006
+
+evaluation:
+  output_type: multiple_choice
+  scoring: upstream_partial_scoring
+  num_fewshot: 0
+  apply_chat_template: false
+  system_instruction: null
+  fewshot_as_multiturn: true
+  metric: acc
+  filter: none
+  expected_samples: 1267
+  max_length: 512
+  batch_size: 32
+  bootstrap_iters: 100000
+  log_samples: true
+  write_out: true
+  cache_requests: false
+  add_bos_token: null
+  use_fast_tokenizer: false
+  random_seed: 0
+  numpy_random_seed: 1234
+  torch_random_seed: 1234
+  fewshot_random_seed: 1234
+
+runtime:
+  required_cuda_visible_devices: "1"
+  device: cuda:0
+  expected_cuda_device_name: NVIDIA GeForce RTX 4090
+  model_dtype: bfloat16
+  python_version: 3.12.13
+  torch_version: 2.13.0+cu130
+  transformers_version: 5.15.0
+  datasets_version: 5.0.1
+
+target:
+  source: artifacts/targets/paper_targets.yaml
+  key: fig15_quality.answering_original_accuracy_pct.llama2_winogrande_512
+  accuracy_pct: 90.1
+  relative_error_gate: 0.10
+
+classification: native_unmodified_checkpoint_standard_harness
+validation_eligible: true

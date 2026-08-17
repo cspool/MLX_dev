@@ -1,0 +1,22 @@
+task: mlx_winogrande_pinned
+dataset_path: allenai/winogrande
+dataset_name: winogrande_xl
+dataset_kwargs:
+  revision: 01e74176c63542e6b0bcb004dcdea22d94fb67b5
+output_type: multiple_choice
+training_split: train
+validation_split: validation
+num_fewshot: 0
+doc_to_text: !function preprocess_winogrande.doc_to_text
+doc_to_target: !function preprocess_winogrande.doc_to_target
+doc_to_choice: !function preprocess_winogrande.doc_to_choice
+should_decontaminate: true
+doc_to_decontamination_query: sentence
+metric_list:
+  - metric: acc
+    aggregation: mean
+    higher_is_better: true
+metadata:
+  version: 1.0
+  upstream_task: winogrande
+  upstream_harness_version: 0.4.12
