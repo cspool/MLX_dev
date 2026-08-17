@@ -193,7 +193,7 @@ hypotheses:
     priority: medium
   - id: H23
     statement: "The H2-calibrated full-design event simulator directly maps FABNet-Large's two-axis FFT and global butterfly FFN to reproduce all eight Fig. 19 MLX component segments within 10%, without Fig. 19 fitting."
-    status: pending
+    status: rejected
     motivation: "Test whether the central event model transfers to a previously unsimulated end-to-end FPGA workload and localize any remaining cycle-semantics gap."
     parent: H2
     priority: high
@@ -202,7 +202,7 @@ experiments:
   proxy_metric: "Maximum absolute percentage error across every numeric paper anchor; pass only when each reproducible point is <=10%, with unavailable measurements explicitly classified rather than fabricated."
   baseline_value: 0.2486
   best_value: 0.0123
-  total_runs: 25
+  total_runs: 26
   trajectory:
     - run_id: "run_001"
       hypothesis: "H2"
@@ -379,11 +379,18 @@ experiments:
       wall_time_min: 0.1
       change_summary: "Official FABNet component transfer rejected: all eight FFT-attention/FFN segments fail; component MAPEs are 230.9%/234.6%, maximum error 288.2%, while their sums exactly replay H13 totals."
       timestamp: "2026-08-17"
+    - run_id: "run_027"
+      hypothesis: "H23"
+      metric_value: 0.5723
+      delta: null
+      wall_time_min: 0.1
+      change_summary: "Data-exposed no-fit MLX event transfer rejected: attention MAPE/max is 40.08%/57.23%, FFN is 11.03%/17.19% with 2/4 passing, and totals have 12.34% MAPE with 2/4 passing."
+      timestamp: "2026-08-17"
 
 outer_loop:
-  cycle: 7
-  last_direction: "Do not invent an FGSCR-42 split or present an inferred ViT dataset as native MLX reproduction. Preserve Fig. 15(a)/16 as a public-input blocker and move to an independent remaining hardware or target-completion item."
-  last_reflection: "H21 establishes a conjunctive reproducibility boundary: all 36 anonymous archive-byte probes are denied with PCS 31064, while the paper and every official repository commit omit the experiment split and ViT recipe. Auxiliary Baidu list/ZIP responses drifted from the exploratory snapshot, so the run remains validation-ineligible with audit_integrity=false; the exact-split absence alone is sufficient to reject public-input sufficiency."
+  cycle: 8
+  last_direction: "Deepen the Fig. 19 mechanism diagnosis with one no-fit composite 2D-FFT execution that removes only the artificial inter-axis launch and off-chip boundary. Preserve the near-transfer of global-BSMM FFN and do not introduce residual-derived scales."
+  last_reflection: "H22 shows the official FABNet model misses both components by about 233%, while H23's H2-calibrated MLX model reduces FFN MAPE to 11.0% and total MAPE to 12.3%. Its remaining failure is concentrated in attention (40.1% MAPE), where the current mapping executes the two FFT axes as isolated workloads despite MLX's claimed cross-stage pipeline. This supplies a specific structural follow-up rather than a free calibration knob."
 
 workspace:
   findings: "findings.md"

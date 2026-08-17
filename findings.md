@@ -41,6 +41,7 @@ This supports a hybrid reproduction strategy: use public spatial/GPU projects as
 - H20 rejects an explicit s=0.75 FFT/LoRA isolation. Zero-adapter compressed PPL is 31.047; 64 rank-8 LoRA steps drive it to 3.072 versus 5.781 targeted (46.86% error). The exact checkpoint scores 18.046 on leakage-free chunk-end positions, 5.87x its all-token PPL, confirming that symmetric full-chunk teacher forcing is not a valid causal reconstruction. B=32 was intentionally absent.
 - H21 rejects public-input sufficiency for the FGSCR-42 ViT runs. Both share codes verify and both batch routes issue probe targets, but all 36 one-byte probes return HTTP 403 / PCS 31064. The paper and all 25 official-repository commits provide no exact experiment split or ViT recipe; all three Hugging Face catalog searches return zero matches. Auxiliary Baidu list/ZIP responses drift from the exploratory snapshot, so this availability result is validation-ineligible with `audit_integrity=false`, and no accuracy bar is claimed.
 - H22 completes Fig. 19 stack-target recovery and rejects the official FABNet component transfer. All 16 attention/FFN segments reconstruct their eight totals exactly, but the eight public-simulator FABNet points all fail: FFT-attention MAPE is 230.9% and FFN MAPE is 234.6%, with 288.2% maximum error. Their sums replay H13 totals exactly, so the discrepancy is not localized to one upstream component.
+- H23 rejects the direct H2-event-model transfer to Fig. 19, but sharply localizes the gap. Global-BSMM FFN reaches 11.03% MAPE (256/512 pass), while separately launched two-axis FFT attention has 40.08% MAPE and 57.23% maximum error (0/4 pass). Totals pass at 128/1024 and reach 12.34% MAPE. The exact mapping was previewed before registration, so this is explicitly data-exposed and validation-ineligible.
 
 ## Patterns and Insights
 
@@ -53,6 +54,7 @@ This supports a hybrid reproduction strategy: use public spatial/GPU projects as
 - For an autoregressive quality metric, tensor-shape correctness is insufficient: symmetric FFT compression/decompression across a teacher-forced chunk lets early logits depend on later inputs. H20's chunk-end-only audit separates this causal defect from adapter loading and shows why a numerically low PPL can be invalid evidence.
 - Dataset identity is not experiment identity. FGSCR-42's declared 9,320 images/42 classes and two live share pages still do not determine which bytes, labels, split, preprocessing, or ViT variant produced MLX's bars; an accessible catalog entry would need those fields independently qualified.
 - Component decomposition can distinguish a global configuration mismatch from one bad operator model. Fig. 19's public FABNet FFT and FFN components miss by nearly the same MAPE, while summing exactly to the failed total; neither component alone explains the transfer failure.
+- A cross-figure event model can look accurate in totals while getting component allocation wrong. H23's 128/1024 sums pass because FFT overprediction and FFN underprediction partially cancel; the all-component gate prevents that cancellation from being mistaken for mechanism validation.
 
 ## Lessons and Constraints
 
