@@ -6,11 +6,11 @@ This is the completion checklist. `target` means a paper anchor is captured with
 |---|---|---|---|---:|---:|---:|
 | Fig. 2 | AGX Orin dense vs FFT normalized execution time and L2/L1 hit rate at N=512/8K | Native GPU profile | GPU profile manifest + replay/native results | yes | yes | profile arithmetic pass; native run unavailable |
 | Fig. 3 | H100 roofline, OI/performance points, CUDA utilization and QKV+attention FLOPs | Native GPU profile + analytical roofline | GPU roofline runner and targets | partial | yes | roofline arithmetic pass; native run unavailable |
-| Fig. 5 | Dominant Q/K/V frequencies across Llama2-7B layers | Model activation measurement | Activation capture + spectrum runner | no | no | no |
-| Fig. 6 | K frequency energy at Llama2 layers 1 and 16 | Model activation measurement | Spectrum runner and digitized curves | no | no | no |
+| Fig. 5 | Dominant Q/K/V frequencies across Llama2-7B layers | Model activation measurement | Activation capture + spectrum runner | yes | yes | H16 native run pending |
+| Fig. 6 | K frequency energy at Llama2 layers 1 and 16 | Model activation measurement | Spectrum runner and digitized curves | yes | yes | H16 native run pending |
 | Table II / Fig. 14 | 12-nm area and power breakdown | RTL synthesis + silicon | Exact table replay, component power model, provenance limitation | yes | yes | reported arithmetic pass; RTL unavailable |
 | Fig. 15(a) | ViT dense/BSMM/FNet/MLX accuracy and compute | Training from scratch | Training recipe + FLOP model + result audit | yes | compute + quality-target digitizer yes | MLX compute pass; training no |
-| Fig. 15(b) | BERT layer-count sensitivity | Retraining | Training recipe + FLOP model + audit | yes | compute + target digitizer + original baseline yes | original BERT baseline pass (1.23% max error); compressed layer sweep no |
+| Fig. 15(b) | BERT layer-count sensitivity | Retraining | Training recipe + FLOP model + audit | yes | yes | original baseline passes; inferred structured sweep rejected at k=9/12 (81.47% max error) |
 | Fig. 15(c,d) | Llama2/InternLM2 LoRA accuracy/perplexity and compute | Fine-tuning/evaluation | Model recipes, cached targets, FLOP model | yes | compute + target digitizer + InternLM original PPL yes | InternLM/WikiText-2 original pass (3.91% error); compressed/LoRA variants no |
 | Fig. 16 | Block-size B sensitivity on ViT/Llama2/InternLM2 | Training/fine-tuning | Parameter sweep runner | yes | compute + quality-target digitizer yes | MLX compute pass; training no |
 | Fig. 17 | H100 prefill/decode speedup vs eager/FA | Native GPU benchmark | Native/trace GPU runner + audit | partial | no | no |
