@@ -143,6 +143,12 @@ hypotheses:
     motivation: "Establish a transparent executable operator contract before any target-facing structured-model training, while separating inferred semantics from author-disclosed facts."
     parent: H4
     priority: high
+  - id: H15
+    statement: "The H14 inferred operators, initialized by a frozen dense-weight fit and retrained from the H11 checkpoint, reproduce all ten Fig. 15(b) BERT last-k F1/EM targets within 10%."
+    status: pending
+    motivation: "Move from formula and operator tests to native structured-model quality while making every undisclosed recipe choice explicit and immutable."
+    parent: H5
+    priority: high
 
 experiments:
   proxy_metric: "Maximum absolute percentage error across every numeric paper anchor; pass only when each reproducible point is <=10%, with unavailable measurements explicitly classified rather than fabricated."
@@ -273,7 +279,7 @@ experiments:
 outer_loop:
   cycle: 0
   last_direction: null
-  last_reflection: "H14 supports the inferred operator contract with 10/10 checks and 9.54e-7 max numerical error. This removes implementation-shape ambiguity but not training identifiability; the next run must pre-register dense-to-factor fitting, BERT layer wiring, and retraining before comparing any Fig. 15(b) quality target."
+  last_reflection: "H14 supports the inferred operator contract. H15 freezes the first target-facing structured model run: H11 initialization, last-k QKV replacement, s=0.5/B=32/L=32, 300-step factor fitting, symmetric attention decompression, and one-epoch independent retraining. None may be selected from Fig. 15 residuals."
 
 workspace:
   findings: "findings.md"

@@ -1,0 +1,70 @@
+version: 1
+experiment_id: H15
+classification: inferred_native_structured_finetuning
+description: "Independent last-k BERT/SQuAD reconstructions with inferred MLX operators"
+
+model:
+  path: third_party/checkpoints/bert-squad-baseline-run014
+  source_experiment: H11
+  weights_sha256: "8d990314a6b4937b45a1183a22ef9155626e0bbb60073e8ba1cc5958ae9dc6d3"
+
+dataset:
+  train: third_party/data/squad/train-v1.1.json
+  validation: third_party/data/squad/dev-v1.1.json
+  train_sha256: "3527663986b8295af4f7fcdff1ba1ff3f72d07d61a20f487cb238a6ef92fd955"
+  validation_sha256: "95aa6a52d5d6a735563366753ca50492a658031da74f301ac5238b03966972c9"
+
+preprocessing:
+  max_sequence_length: 384
+  document_stride: 128
+  pad_to_multiple_of: 8
+  question_whitespace: lstrip
+
+structured:
+  modified_last_k_layers: [1, 3, 6, 9, 12]
+  compression_ratio: 0.5
+  chunk_length: 32
+  butterfly_block_size: 32
+  projections: [query, key, value]
+  decompression: symmetric_before_attention_residual
+  compressed_padding_mask: any_valid_token_per_source_chunk
+  materialize_dense_for_autograd: true
+  factor_fit:
+    objective: normalized_weight_mse
+    steps: 300
+    learning_rate: 0.03
+    seed_base: 1500
+
+optimization:
+  seed_base: 150
+  epochs: 1
+  per_device_train_batch_size: 16
+  gradient_accumulation_steps: 2
+  effective_batch_size: 32
+  learning_rate: 1.0e-5
+  weight_decay: 0.01
+  warmup_ratio: 0.1
+  scheduler: linear
+  optimizer: adamw_torch_fused
+  max_gradient_norm: 1.0
+  dtype: bfloat16
+  tf32: true
+  device: cuda:0
+  dataloader_workers: 4
+
+evaluation:
+  per_device_batch_size: 32
+  n_best_size: 20
+  max_answer_length: 30
+  metric: official_squad_v1_normalized_exact_and_token_f1
+
+paper_targets:
+  modified_last_k_layers: [1, 3, 6, 9, 12]
+  f1_pct: [87.9353, 87.3667, 87.2882, 86.6412, 86.4]
+  exact_match_pct: [79.0216, 78.6098, 78.5510, 77.6882, 77.35]
+  maximum_relative_error: 0.10
+
+outputs:
+  checkpoint_root: third_party/checkpoints/bert-structured-h15
+  report: artifacts/results/bert-structured-sweep-run018.json
+
