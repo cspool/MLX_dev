@@ -187,7 +187,7 @@ hypotheses:
     priority: high
   - id: H22
     statement: "At the source-identified FABNet-Large/BE-40 point, the official simulator's separate FFT-attention and butterfly-FFN cycles reproduce all eight Fig. 19 FABNet stack segments within 10%."
-    status: pending
+    status: rejected
     motivation: "Use previously untested component outputs to localize H13's total-latency failure without fitting another hardware point."
     parent: H13
     priority: medium
@@ -196,7 +196,7 @@ experiments:
   proxy_metric: "Maximum absolute percentage error across every numeric paper anchor; pass only when each reproducible point is <=10%, with unavailable measurements explicitly classified rather than fabricated."
   baseline_value: 0.2486
   best_value: 0.0123
-  total_runs: 24
+  total_runs: 25
   trajectory:
     - run_id: "run_001"
       hypothesis: "H2"
@@ -365,6 +365,13 @@ experiments:
       delta: null
       wall_time_min: 0.6
       change_summary: "Public FGSCR-42 input sufficiency rejected: 36/36 one-byte probes return HTTP 403/PCS 31064 and no versioned MLX split exists; auxiliary list/ZIP mismatch keeps audit_integrity false and validation_eligible false."
+      timestamp: "2026-08-17"
+    - run_id: "run_026"
+      hypothesis: "H22"
+      metric_value: 2.8816
+      delta: null
+      wall_time_min: 0.1
+      change_summary: "Official FABNet component transfer rejected: all eight FFT-attention/FFN segments fail; component MAPEs are 230.9%/234.6%, maximum error 288.2%, while their sums exactly replay H13 totals."
       timestamp: "2026-08-17"
 
 outer_loop:

@@ -40,6 +40,7 @@ This supports a hybrid reproduction strategy: use public spatial/GPU projects as
 - H19 supports the byte-qualified Llama2-7B/WikiText-2 original baseline: 333 complete 1024-token windows yield PPL 6.0965 versus 6.62 reported (7.91% error). A full-stream audit proves Transformers 5.15's unified tokenizer backend emits exactly the same 341,468 IDs as direct official SentencePiece encoding.
 - H20 rejects an explicit s=0.75 FFT/LoRA isolation. Zero-adapter compressed PPL is 31.047; 64 rank-8 LoRA steps drive it to 3.072 versus 5.781 targeted (46.86% error). The exact checkpoint scores 18.046 on leakage-free chunk-end positions, 5.87x its all-token PPL, confirming that symmetric full-chunk teacher forcing is not a valid causal reconstruction. B=32 was intentionally absent.
 - H21 rejects public-input sufficiency for the FGSCR-42 ViT runs. Both share codes verify and both batch routes issue probe targets, but all 36 one-byte probes return HTTP 403 / PCS 31064. The paper and all 25 official-repository commits provide no exact experiment split or ViT recipe; all three Hugging Face catalog searches return zero matches. Auxiliary Baidu list/ZIP responses drift from the exploratory snapshot, so this availability result is validation-ineligible with `audit_integrity=false`, and no accuracy bar is claimed.
+- H22 completes Fig. 19 stack-target recovery and rejects the official FABNet component transfer. All 16 attention/FFN segments reconstruct their eight totals exactly, but the eight public-simulator FABNet points all fail: FFT-attention MAPE is 230.9% and FFN MAPE is 234.6%, with 288.2% maximum error. Their sums replay H13 totals exactly, so the discrepancy is not localized to one upstream component.
 
 ## Patterns and Insights
 
@@ -51,6 +52,7 @@ This supports a hybrid reproduction strategy: use public spatial/GPU projects as
 - Backend labels are weaker than token-stream equivalence. Transformers 5.15 reports the unified Llama tokenizer as fast even when requested with `use_fast=False`; H19 qualifies semantics by comparing every token ID against the official SentencePiece model rather than relying on the class flag.
 - For an autoregressive quality metric, tensor-shape correctness is insufficient: symmetric FFT compression/decompression across a teacher-forced chunk lets early logits depend on later inputs. H20's chunk-end-only audit separates this causal defect from adapter loading and shows why a numerically low PPL can be invalid evidence.
 - Dataset identity is not experiment identity. FGSCR-42's declared 9,320 images/42 classes and two live share pages still do not determine which bytes, labels, split, preprocessing, or ViT variant produced MLX's bars; an accessible catalog entry would need those fields independently qualified.
+- Component decomposition can distinguish a global configuration mismatch from one bad operator model. Fig. 19's public FABNet FFT and FFN components miss by nearly the same MAPE, while summing exactly to the failed total; neither component alone explains the transfer failure.
 
 ## Lessons and Constraints
 
