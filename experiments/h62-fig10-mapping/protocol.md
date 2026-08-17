@@ -28,9 +28,10 @@ strides 4/8 map vertically by one/two hops as stated in the paper, and strides
 16/32 are time-multiplexed self hops. FFT uses the same loop/routing skeleton
 and its already registered `mul, add, add` complex-butterfly abstraction.
 
-The full-design metadata records SIMD32. Batch SIMD is omitted from the Figure
-10 drawing and does not multiply scalar instruction instances in the timing
-graph. Every active-window block footprint must remain within the disclosed 32
+The Figure 22/23 simulator baseline records the reduced design's SIMD8. Batch
+SIMD is omitted from the Figure 10 drawing and does not multiply instruction
+instances in the timing graph. Each FP16 vector request is therefore 16 bytes.
+Every active-window block footprint must remain within the disclosed 32
 instructions per PE.
 
 ## Gates

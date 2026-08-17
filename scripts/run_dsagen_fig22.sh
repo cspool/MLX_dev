@@ -8,13 +8,16 @@ CONFIG_ROOT=${MLX_FIG22_CONFIG_ROOT:-$PROJECT_ROOT/artifacts/environment/h44}
 OUTPUT_ROOT=${MLX_FIG22_OUTPUT_ROOT:-$PROJECT_ROOT/artifacts/environment/h44/runs}
 WAIT_BINARY=${MLX_WAIT_BINARY:-$DSAGEN_ROOT/dsa-apps/sdk/compiled/ss-vecadd-gnu-wait.out}
 WATCHDOG_CYCLES=${MLX_WATCHDOG_CYCLES:-100000}
+CONFIG_PREFIX=${MLX_FIG22_CONFIG_PREFIX:-fig22}
+read -r -a KERNELS <<< "${MLX_FIG22_KERNELS:-bsmm fft}"
+read -r -a SIZES <<< "${MLX_FIG22_SIZES:-64 128 256 512 1024 2048 4096 8192}"
 ADG="$DSAGEN_ROOT/dsa-scheduler/configs/DSAGenMesh.PE16-MaxI64-AddI64-MulI64-FAddD64-FMulD64-Copy-MinI64.SW25.DMA1.SPM1.REC1.GEN1.REG1.IVP3.OVP2.20220127-103840.json"
 
 mkdir -p "$OUTPUT_ROOT"
-for kernel in bsmm fft; do
-  for size in 64 128 256 512 1024 2048 4096 8192; do
+for kernel in "${KERNELS[@]}"; do
+  for size in "${SIZES[@]}"; do
     name="$kernel-$size"
-    config="$CONFIG_ROOT/fig22-$name.json"
+    config="$CONFIG_ROOT/$CONFIG_PREFIX-$name.json"
     run_dir="$OUTPUT_ROOT/$name"
     log="$run_dir/run.log"
     mkdir -p "$run_dir/m5out"

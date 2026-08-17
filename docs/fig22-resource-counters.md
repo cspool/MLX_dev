@@ -53,6 +53,10 @@ the tagged blocks must represent the paper's SIMD lane occupancy, 32-instruction
 PE templates, and xfer service duration from Fig. 10. Post-run multipliers are
 not permitted.
 
+H62 implements that source-derived Figure 10 mapping and passes its target-free
+mechanism gates; see [`fig10-mapping.md`](fig10-mapping.md). Its numerical
+Figure 22 transfer remains a separate held-out experiment.
+
 Artifacts:
 
 - H60 target result: `artifacts/results/fig22-resource-targets-run065.json`

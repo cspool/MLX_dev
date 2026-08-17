@@ -1,0 +1,109 @@
+diff --git a/src/cpu/minor/ssim/mlx_overlay.hh b/src/cpu/minor/ssim/mlx_overlay.hh
+--- a/src/cpu/minor/ssim/mlx_overlay.hh
++++ b/src/cpu/minor/ssim/mlx_overlay.hh
+@@ -132,6 +132,7 @@
+   uint64_t memory_address{0};
+   std::vector<uint64_t> memory_address_sequence;
+   unsigned memory_bytes{8};
++  bool memory_external{true};
+   std::string emit_event;
+ };
+ 
+diff --git a/src/cpu/minor/ssim/mlx_overlay.cc b/src/cpu/minor/ssim/mlx_overlay.cc
+--- a/src/cpu/minor/ssim/mlx_overlay.cc
++++ b/src/cpu/minor/ssim/mlx_overlay.cc
+@@ -281,6 +281,8 @@
+         }
+       }
+       instruction.memory_bytes = instruction_root.get("memory_bytes", 8).asUInt();
++      instruction.memory_external =
++          instruction_root.get("memory_external", true).asBool();
+       instruction.emit_event = instruction_root.get("emit_event", "").asString();
+       if (instruction.pipeline == PipelineKind::Xfer) {
+         instruction.destination =
+@@ -787,6 +789,7 @@
+   }
+   if ((instruction.pipeline == PipelineKind::Load ||
+        instruction.pipeline == PipelineKind::Store) &&
++      instruction.memory_external &&
+       config_.memory_backend != MemoryBackend::FixedLatency) {
+     if (!memory_adapter_) {
+       *reason = "memory_adapter_missing";
+@@ -942,6 +945,7 @@
+   state.service_ready_cycle = cycle_ + timing.latency;
+   if ((instruction.pipeline == PipelineKind::Load ||
+        instruction.pipeline == PipelineKind::Store) &&
++      instruction.memory_external &&
+       config_.memory_backend != MemoryBackend::FixedLatency) {
+     MemoryRequest request(
+         instruction.pipeline == PipelineKind::Store,
+@@ -964,9 +968,11 @@
+       {"initiation_interval", std::to_string(timing.initiation_interval)},
+       {"operation", instruction.operation},
+       {"fu_class", fuClass(instruction)}};
+-  issue_detail["memory_backend"] = state.external_memory ?
+-      (config_.memory_backend == MemoryBackend::DmaAdapter ?
+-       "dsagen_dma" : "adapter") : "fixed";
++  issue_detail["memory_backend"] =
++      !instruction.memory_external ? "local" :
++      (state.external_memory ?
++       (config_.memory_backend == MemoryBackend::DmaAdapter ?
++        "dsagen_dma" : "adapter") : "fixed");
+   if (state.external_memory) {
+     issue_detail["memory_token"] = std::to_string(state.memory_token);
+   }
+diff --git a/src/cpu/minor/ssim/mlx_spad_adapter.cc b/src/cpu/minor/ssim/mlx_spad_adapter.cc
+--- a/src/cpu/minor/ssim/mlx_spad_adapter.cc
++++ b/src/cpu/minor/ssim/mlx_spad_adapter.cc
+@@ -70,17 +70,40 @@
+     throw std::runtime_error("DSAGEN scratchpad adapter token space exhausted");
+   }
+   int response_id = ResponseBase + static_cast<int>(token);
+-  dsa::sim::Request operation(
+-      response_id, request.address, request.bytes,
+-      request.write ? MemoryOperation::DMO_Write : MemoryOperation::DMO_Read);
+-  operation.mask.assign(scratchpad.bank_width, true);
+-  if (request.write) {
+-    operation.operand.assign(scratchpad.bank_width, 0);
++  MemoryOperation memory_operation =
++      request.write ? MemoryOperation::DMO_Write : MemoryOperation::DMO_Read;
++  if (request.bytes <= static_cast<unsigned>(scratchpad.bank_width)) {
++    dsa::sim::Request operation(
++        response_id, request.address, request.bytes, memory_operation);
++    operation.mask.assign(scratchpad.bank_width, true);
++    if (request.write) {
++      operation.operand.assign(scratchpad.bank_width, 0);
++    }
++    dsa::sim::stream::LinearStream::LineInfo metadata(
++        request.address, request.address,
++        std::vector<bool>(scratchpad.bank_width, true), 0);
++    scratchpad.rb->Decode(
++        &scratchpad, std::vector<dsa::sim::Request>{operation}, metadata);
++  } else {
++    unsigned bandwidth = static_cast<unsigned>(scratchpad.bandwidth());
++    uint64_t linebase = request.address - request.address % bandwidth;
++    unsigned offset = static_cast<unsigned>(request.address - linebase);
++    if (offset + request.bytes > bandwidth) {
++      throw std::runtime_error(
++          "DSAGEN scratchpad vector request crosses a bandwidth line");
++    }
++    std::vector<bool> mask(bandwidth, false);
++    std::fill(
++        mask.begin() + offset, mask.begin() + offset + request.bytes, true);
++    std::vector<uint8_t> operands;
++    if (request.write) {
++      operands.assign(bandwidth, 0);
++    }
++    dsa::sim::stream::LinearStream::LineInfo metadata(
++        linebase, request.address, mask, 0);
++    scratchpad.rb->Decode(
++        &scratchpad, response_id, memory_operation, metadata, operands);
+   }
+-  dsa::sim::stream::LinearStream::LineInfo metadata(
+-      request.address, request.address,
+-      std::vector<bool>(scratchpad.bank_width, true), 0);
+-  scratchpad.rb->Decode(&scratchpad, std::vector<dsa::sim::Request>{operation}, metadata);
+   response_to_token_[static_cast<uint64_t>(response_id)] = Pending(token, host_->now());
+   ++requests_issued_;
+   return token;
+
