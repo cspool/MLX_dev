@@ -157,7 +157,7 @@ hypotheses:
     priority: high
   - id: H17
     statement: "Frozen Fig. 17 pixels recover all 20 H100 speedup bars and reconcile their visual series identities with the paper's prefill/decode prose anchors."
-    status: pending
+    status: supported
     motivation: "Correct the existing legend-order ambiguity and establish immutable native-benchmark targets before implementing any timing runner."
     parent: H5
     priority: high
@@ -166,7 +166,7 @@ experiments:
   proxy_metric: "Maximum absolute percentage error across every numeric paper anchor; pass only when each reproducible point is <=10%, with unavailable measurements explicitly classified rather than fabricated."
   baseline_value: 0.2486
   best_value: 0.0123
-  total_runs: 19
+  total_runs: 20
   trajectory:
     - run_id: "run_001"
       hypothesis: "H2"
@@ -301,11 +301,18 @@ experiments:
       wall_time_min: 0.4
       change_summary: "Byte-verified native Llama2 spectrum run rejected: 1/42 Fig. 6 points and 2/3 Fig. 5 directions pass; MAPE is 82.98% and maximum error is 96.83%."
       timestamp: "2026-08-17"
+    - run_id: "run_020"
+      hypothesis: "H17"
+      metric_value: 0.0474
+      delta: null
+      wall_time_min: 0.1
+      change_summary: "Corrected Fig. 17 target recovery supported: all 20 bars, four prose anchors, image/axis checks, and canonical values pass; native H100 execution remains absent."
+      timestamp: "2026-08-17"
 
 outer_loop:
-  cycle: 2
-  last_direction: "Preserve H16 as a rejection of the frozen inferred spectrum statistic. Do not choose prompts, features, aggregation, or normalization from its residuals; move to an independently constrained unreproduced experiment while treating author spectrum code as the only route to exact Fig. 5/6 recovery."
-  last_reflection: "H16 uses byte-identical official Llama2 weights and reproduces the broad shallow-high/deep-low direction, but only 1/42 Fig. 6 bars and 2/3 Fig. 5 checks pass. The Layer-1 peak pattern and Layer-16 decay cannot be repaired by one scale factor. The paper omits enough of the activation-analysis protocol that run019 residuals cannot identify a unique replacement."
+  cycle: 3
+  last_direction: "Use the corrected immutable Fig. 17 targets for a hardware-boundary experiment on the available RTX 4090s. Keep target recovery separate from native timing and do not infer H100 agreement from a different GPU."
+  last_reflection: "H17 resolves a real series-identity error: bar styles, the 1.64x prefill-FA maximum, and the decode range all agree after swapping the two middle canonical series. This closes target acquisition for Fig. 17 but supplies no compressed checkpoint, H100, or executable timing recipe."
 
 workspace:
   findings: "findings.md"
