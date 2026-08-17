@@ -2,6 +2,15 @@ name: open-hybrid-dsagen-accelsim-v1
 experiment_id: H40
 run_id: run046
 
+build_toolchains:
+  accel_sim:
+    cuda_compile_toolkit: /usr/local/cuda-11.8
+    cuda_compile_version: 11.8.89
+    reason: GPGPU-Sim v4.2.1 declares CUDA 11 as tested; CUDA 13 removes textureReference
+  dsagen:
+    riscv_cross_prefix: riscv64-linux-gnu-
+    host_compiler: gcc-11
+
 architecture_contract:
   target: MLX reduced spatial architecture
   spatial_semantics:
