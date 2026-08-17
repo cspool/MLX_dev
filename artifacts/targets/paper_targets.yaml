@@ -88,7 +88,26 @@ fig15_quality:
     llama2_wikitext2_1k: 6.62
     internlm2_wikitext2_1k: 8.02
     llama2_wikitext103_2k: 6.41
-  note: "Original bars carry printed numeric annotations. Compressed quality bars still require a dedicated raster audit before they are acceptance targets."
+  vit:
+    methods: [orig, bd_qkv, bd_ffn, fnet_fft, mlx_s075, mlx_s05]
+    top1_accuracy_pct: [78.7000, 78.3078, 77.7000, 76.3078, 77.4059, 77.1118]
+    top5_accuracy_pct: [91.0000, 90.2941, 90.5882, 90.0588, 90.0000, 89.7843]
+    provenance: [reported_annotation, digitized, digitized, digitized, digitized, digitized]
+  bert_squad11:
+    modified_last_k_layers: [0, 1, 3, 6, 9, 12]
+    f1_pct: [87.7000, 87.9353, 87.3667, 87.2882, 86.6412, 86.4000]
+    exact_match_pct: [79.1000, 79.0216, 78.6098, 78.5510, 77.6882, 77.3500]
+    provenance: [reported_annotation, digitized, digitized, digitized, digitized, reported_prose]
+  llm_answering:
+    llama2_winogrande_512: {compression_ratio: 0.75, accuracy_pct: [90.1000, 89.6294], provenance: [reported_annotation, digitized]}
+    internlm2_adaleval_1k: {compression_ratio: 0.5, accuracy_pct: [52.8000, 52.1922], provenance: [reported_annotation, digitized]}
+    internlm2_adaleval_2k: {compression_ratio: 0.5, accuracy_pct: [40.6000, 39.8745], provenance: [reported_annotation, digitized]}
+    internlm2_adaleval_4k: {compression_ratio: 0.5, accuracy_pct: [35.9000, 35.1941], provenance: [reported_annotation, digitized]}
+  llm_generation:
+    llama2_wikitext2_1k: {compression_ratios: [1.0, 0.75, 0.5], perplexity: [6.6200, 5.7810, 5.3723], provenance: [reported_annotation, digitized, digitized]}
+    internlm2_wikitext2_1k: {compression_ratios: [1.0, 0.75, 0.5], perplexity: [8.0200, 6.7153, 6.3650], provenance: [reported_annotation, digitized, digitized]}
+    llama2_wikitext103_2k: {compression_ratios: [1.0, 0.75, 0.5], perplexity: [6.4100, 5.6058, 5.3723], provenance: [reported_annotation, digitized, digitized]}
+  digitization_method: "Run 015 derives every visible Fig. 15 quality bar from frozen raster coordinates and printed anchors; see quality_digitization_pixels.yaml."
 
 fig16_block_size_compute:
   provenance: digitized_and_reported_formula
@@ -101,6 +120,23 @@ fig16_block_size_compute:
     - {name: llama2_winogrande_512, family: llama2, sequence_length: 512, hidden_size: 4096, query_heads: 32, key_value_heads: 32, compute_remaining: [0.52, 0.36, 0.23]}
     - {name: internlm2_wikitext103_2k, family: internlm2, sequence_length: 2048, hidden_size: 4096, query_heads: 32, key_value_heads: 8, compute_remaining: [0.53, 0.43, 0.36]}
   digitization_method: "The lower-panel linear axes were mapped from the supplied raster. Stacked BSMM/GEMM components were summed at the outer bar top; only totals are audited."
+
+fig16_quality:
+  provenance: reported_annotations_and_digitized
+  uncertainty_abs_accuracy_pct: 0.15
+  uncertainty_abs_perplexity: 0.12
+  block_sizes: [16, 32, 64]
+  vit:
+    top1_accuracy_pct: [78.4000, 77.7958, 77.3792]
+    top5_accuracy_pct: [90.7000, 90.0125, 89.6167]
+    provenance: [reported_annotation, digitized, digitized]
+  llama2_winogrande_512:
+    accuracy_pct: [89.7, 89.4, 88.3]
+    provenance: [reported_annotation, reported_annotation, reported_annotation]
+  internlm2_wikitext103_2k:
+    perplexity: [5.52, 5.69, 6.04]
+    provenance: [reported_annotation, reported_annotation, reported_annotation]
+  digitization_method: "Run 015 retains printed Llama2/InternLM2 labels and derives the unlabelled ViT B=32/64 bars from the frozen 48-pixel-per-point axis."
 
 fig17_h100_speedup:
   provenance: digitized

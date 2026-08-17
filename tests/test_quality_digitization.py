@@ -1,10 +1,15 @@
+from pathlib import Path
+
 import pytest
+import yaml
 
 from mlxsim.quality_digitization import (
     audit_quality_digitization,
     derive_quality_targets,
     load_pixel_manifest,
 )
+
+ROOT = Path(__file__).resolve().parents[1]
 
 
 def test_frozen_quality_pixels_recover_all_visible_bars() -> None:
@@ -38,3 +43,19 @@ def test_fig16_reported_and_digitized_targets_stay_distinct() -> None:
         "digitized",
     ]
     assert targets["llama2_winogrande_512"]["accuracy_pct"] == [89.7, 89.4, 88.3]
+
+
+def test_canonical_quality_targets_match_frozen_derivation() -> None:
+    derived = derive_quality_targets(load_pixel_manifest())
+    with (ROOT / "artifacts/targets/paper_targets.yaml").open(encoding="utf-8") as handle:
+        canonical = yaml.safe_load(handle)
+
+    assert canonical["fig15_quality"]["vit"]["top1_accuracy_pct"] == pytest.approx(
+        derived["fig15_quality"]["vit"]["top1_accuracy_pct"], abs=5e-5
+    )
+    assert canonical["fig15_quality"]["bert_squad11"]["f1_pct"] == pytest.approx(
+        derived["fig15_quality"]["bert_squad11"]["f1_pct"], abs=5e-5
+    )
+    assert canonical["fig16_quality"]["vit"]["top5_accuracy_pct"] == pytest.approx(
+        derived["fig16_quality"]["vit"]["top5_accuracy_pct"], abs=5e-5
+    )

@@ -106,7 +106,7 @@ hypotheses:
     priority: high
   - id: H12
     statement: "Frozen raster coordinates and printed annotations recover every Fig. 15/16 model-quality bar with explicit <=0.15-point accuracy or <=0.12 perplexity uncertainty."
-    status: pending
+    status: supported
     motivation: "Create immutable full-quality targets before any structured-layer training can use the plots, preventing residual-guided target selection."
     parent: H5
     priority: high
@@ -115,7 +115,7 @@ experiments:
   proxy_metric: "Maximum absolute percentage error across every numeric paper anchor; pass only when each reproducible point is <=10%, with unavailable measurements explicitly classified rather than fabricated."
   baseline_value: 0.2486
   best_value: 0.0123
-  total_runs: 14
+  total_runs: 15
   trajectory:
     - run_id: "run_001"
       hypothesis: "H2"
@@ -215,11 +215,18 @@ experiments:
       wall_time_min: 12.3
       change_summary: "Frozen BERT-base/SQuAD 1.1 fine-tune yields 87.824 F1 and 80.076 EM versus 87.7/79.1 reported."
       timestamp: "2026-08-17"
+    - run_id: "run_015"
+      hypothesis: "H12"
+      metric_value: 0.0922
+      delta: null
+      wall_time_min: 0.2
+      change_summary: "Frozen Fig. 15/16 coordinates recover all 53 quality bars; eight raster/text cross-checks pass with 0.092-point accuracy and 0.045 perplexity maxima."
+      timestamp: "2026-08-17"
 
 outer_loop:
   cycle: 0
   last_direction: null
-  last_reflection: "H10 and H11 support the two public-checkpoint baseline anchors with 3.91% and 1.23% maximum error. They validate the data/model evaluation substrate, not the unpublished FFT/BSMM initialization or structured fine-tuning recipe."
+  last_reflection: "H12 freezes all 53 Fig. 15/16 quality bars and resolves the task-dependent series identities. This closes target acquisition, not structured-model execution; missing FFT/BSMM initialization and training recipes remain the next identifiability problem."
 
 workspace:
   findings: "findings.md"

@@ -1,0 +1,354 @@
+{
+  "classification": "exploratory-raster-target-recovery",
+  "cross_checks": [
+    {
+      "absolute_error": 0.09215686274509949,
+      "actual": 86.3078431372549,
+      "expected": 86.4,
+      "metric": "accuracy_pct",
+      "name": "fig15_bert_all12_f1",
+      "pass": true,
+      "tolerance": 0.15
+    },
+    {
+      "absolute_error": 0.004901960784309267,
+      "actual": 77.3549019607843,
+      "expected": 77.35,
+      "metric": "accuracy_pct",
+      "name": "fig15_bert_all12_exact_match",
+      "pass": true,
+      "tolerance": 0.15
+    },
+    {
+      "absolute_error": 0.02145985401459871,
+      "actual": 6.598540145985401,
+      "expected": 6.62,
+      "metric": "perplexity",
+      "name": "fig15_llama2_wikitext2_1k_original",
+      "pass": true,
+      "tolerance": 0.12
+    },
+    {
+      "absolute_error": 0.019999999999999574,
+      "actual": 8.0,
+      "expected": 8.02,
+      "metric": "perplexity",
+      "name": "fig15_internlm2_wikitext2_1k_original",
+      "pass": true,
+      "tolerance": 0.12
+    },
+    {
+      "absolute_error": 0.045036496350364885,
+      "actual": 6.364963503649635,
+      "expected": 6.41,
+      "metric": "perplexity",
+      "name": "fig15_llama2_wikitext103_2k_original",
+      "pass": true,
+      "tolerance": 0.12
+    },
+    {
+      "absolute_error": 0.0,
+      "actual": 89.7,
+      "expected": 89.7,
+      "metric": "accuracy_pct",
+      "name": "fig16_llama2_b16",
+      "pass": true,
+      "tolerance": 0.15
+    },
+    {
+      "absolute_error": 0.03333333333333144,
+      "actual": 89.36666666666667,
+      "expected": 89.4,
+      "metric": "accuracy_pct",
+      "name": "fig16_llama2_b32",
+      "pass": true,
+      "tolerance": 0.15
+    },
+    {
+      "absolute_error": 0.004166666666677088,
+      "actual": 88.30416666666667,
+      "expected": 88.3,
+      "metric": "accuracy_pct",
+      "name": "fig16_llama2_b64",
+      "pass": true,
+      "tolerance": 0.15
+    }
+  ],
+  "derived_targets": {
+    "fig15_quality": {
+      "bert_squad11": {
+        "exact_match_pct": [
+          79.1,
+          79.02156862745097,
+          78.60980392156863,
+          78.55098039215686,
+          77.68823529411765,
+          77.35
+        ],
+        "exact_match_provenance": [
+          "reported_annotation",
+          "digitized",
+          "digitized",
+          "digitized",
+          "digitized",
+          "reported_prose"
+        ],
+        "f1_pct": [
+          87.7,
+          87.93529411764706,
+          87.36666666666667,
+          87.28823529411765,
+          86.64117647058823,
+          86.4
+        ],
+        "f1_provenance": [
+          "reported_annotation",
+          "digitized",
+          "digitized",
+          "digitized",
+          "digitized",
+          "reported_prose"
+        ],
+        "modified_last_k_layers": [
+          0,
+          1,
+          3,
+          6,
+          9,
+          12
+        ]
+      },
+      "llm_answering": {
+        "internlm2_adaleval_1k": {
+          "accuracy_pct": [
+            52.8,
+            52.192156862745094
+          ],
+          "compression_ratio": 0.5,
+          "provenance": [
+            "reported_annotation",
+            "digitized"
+          ]
+        },
+        "internlm2_adaleval_2k": {
+          "accuracy_pct": [
+            40.6,
+            39.87450980392157
+          ],
+          "compression_ratio": 0.5,
+          "provenance": [
+            "reported_annotation",
+            "digitized"
+          ]
+        },
+        "internlm2_adaleval_4k": {
+          "accuracy_pct": [
+            35.9,
+            35.194117647058825
+          ],
+          "compression_ratio": 0.5,
+          "provenance": [
+            "reported_annotation",
+            "digitized"
+          ]
+        },
+        "llama2_winogrande_512": {
+          "accuracy_pct": [
+            90.1,
+            89.62941176470588
+          ],
+          "compression_ratio": 0.75,
+          "provenance": [
+            "reported_annotation",
+            "digitized"
+          ]
+        }
+      },
+      "llm_generation": {
+        "internlm2_wikitext2_1k": {
+          "compression_ratios": [
+            1.0,
+            0.75,
+            0.5
+          ],
+          "perplexity": [
+            8.02,
+            6.7153284671532845,
+            6.364963503649635
+          ],
+          "provenance": [
+            "reported_annotation",
+            "digitized",
+            "digitized"
+          ]
+        },
+        "llama2_wikitext103_2k": {
+          "compression_ratios": [
+            1.0,
+            0.75,
+            0.5
+          ],
+          "perplexity": [
+            6.41,
+            5.605839416058394,
+            5.372262773722627
+          ],
+          "provenance": [
+            "reported_annotation",
+            "digitized",
+            "digitized"
+          ]
+        },
+        "llama2_wikitext2_1k": {
+          "compression_ratios": [
+            1.0,
+            0.75,
+            0.5
+          ],
+          "perplexity": [
+            6.62,
+            5.781021897810219,
+            5.372262773722627
+          ],
+          "provenance": [
+            "reported_annotation",
+            "digitized",
+            "digitized"
+          ]
+        }
+      },
+      "vit": {
+        "methods": [
+          "orig",
+          "bd_qkv",
+          "bd_ffn",
+          "fnet_fft",
+          "mlx_s075",
+          "mlx_s05"
+        ],
+        "top1_accuracy_pct": [
+          78.7,
+          78.3078431372549,
+          77.7,
+          76.3078431372549,
+          77.40588235294118,
+          77.11176470588235
+        ],
+        "top1_provenance": [
+          "reported_annotation",
+          "digitized",
+          "digitized",
+          "digitized",
+          "digitized",
+          "digitized"
+        ],
+        "top5_accuracy_pct": [
+          91.0,
+          90.29411764705883,
+          90.58823529411765,
+          90.05882352941177,
+          90.0,
+          89.7843137254902
+        ],
+        "top5_provenance": [
+          "reported_annotation",
+          "digitized",
+          "digitized",
+          "digitized",
+          "digitized",
+          "digitized"
+        ]
+      }
+    },
+    "fig16_quality": {
+      "internlm2_wikitext103_2k": {
+        "block_sizes": [
+          16,
+          32,
+          64
+        ],
+        "perplexity": [
+          5.52,
+          5.69,
+          6.04
+        ],
+        "provenance": [
+          "reported_annotation",
+          "reported_annotation",
+          "reported_annotation"
+        ]
+      },
+      "llama2_winogrande_512": {
+        "accuracy_pct": [
+          89.7,
+          89.4,
+          88.3
+        ],
+        "block_sizes": [
+          16,
+          32,
+          64
+        ],
+        "provenance": [
+          "reported_annotation",
+          "reported_annotation",
+          "reported_annotation"
+        ]
+      },
+      "vit": {
+        "block_sizes": [
+          16,
+          32,
+          64
+        ],
+        "top1_accuracy_pct": [
+          78.4,
+          77.79583333333333,
+          77.37916666666668
+        ],
+        "top1_provenance": [
+          "reported_annotation",
+          "digitized",
+          "digitized"
+        ],
+        "top5_accuracy_pct": [
+          90.7,
+          90.0125,
+          89.61666666666667
+        ],
+        "top5_provenance": [
+          "reported_annotation",
+          "digitized",
+          "digitized"
+        ]
+      }
+    }
+  },
+  "hypothesis": "H12",
+  "protocol": "experiments/h12-quality-target-digitization/protocol.md",
+  "run_id": "run_015",
+  "source_checks": {
+    "fig15": {
+      "actual_sha256": "a7b9aa55d963b212f5bff3ffeb580e62d636b4af0c342cac859509691648f18b",
+      "expected_sha256": "a7b9aa55d963b212f5bff3ffeb580e62d636b4af0c342cac859509691648f18b",
+      "pass": true,
+      "path": "MLX Multi-Layer Execution for Structured LLM Workload Acceleration on Spatial Architectures/_page_10_Figure_0.jpeg"
+    },
+    "fig16": {
+      "actual_sha256": "0111f75cf7d8c3b1f38f83be07411a5f88e034161036f0b9bba65f8eff38b92c",
+      "expected_sha256": "0111f75cf7d8c3b1f38f83be07411a5f88e034161036f0b9bba65f8eff38b92c",
+      "pass": true,
+      "path": "MLX Multi-Layer Execution for Structured LLM Workload Acceleration on Spatial Architectures/_page_10_Figure_1.jpeg"
+    }
+  },
+  "summary": {
+    "all_cross_checks_pass": true,
+    "cross_check_count": 8,
+    "max_accuracy_absolute_error_pct": 0.09215686274509949,
+    "max_perplexity_absolute_error": 0.045036496350364885,
+    "pass": true,
+    "source_hashes_pass": true,
+    "visible_quality_bars": 53
+  },
+  "validation_eligible": false
+}
