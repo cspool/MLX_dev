@@ -1,0 +1,61 @@
+run:
+  id: run_035
+  hypothesis: H31
+  protocol: experiments/h31-internlm2-adaleval-seed-replicates/protocol.md
+  output: artifacts/results/internlm2-adaleval-seed-replicates-run035.json
+  rank_outputs:
+    - artifacts/results/internlm2-adaleval-seed-replicates-run035-rank0.jsonl
+    - artifacts/results/internlm2-adaleval-seed-replicates-run035-rank1.jsonl
+
+classification: post_hoc_stochastic_replication
+validation_eligible: false
+
+base_h30:
+  config:
+    path: configs/analysis/internlm2_adaleval_v1.yaml
+    bytes: 8423
+    sha256: c73aa580151cb36551f9b165182def02c0583ab2423719753fc95d457fb4bd89
+  formal_result:
+    path: artifacts/results/internlm2-adaleval-run034.json
+    bytes: 24158
+    sha256: 816731c7c3f6465b1e8a1de0f97661d7e776bc4b2ee9afa0e5099a789afc67c3
+
+dataset:
+  setting: 4k
+  rows: 1000
+
+replicates:
+  count: 3
+  seed_namespace: "H31|internlm2-adaleval-4k"
+  seed_formula: "uint64_be(SHA256(namespace + '|replicate=' + decimal_replicate + '|position=' + decimal_position)[0:8])"
+  seed_stream_encoding: "replicate-major, position-minor, each uint64 big-endian"
+  seed_stream_sha256: daa62375cb5a52782118a93beebf45ba21eb2544fb803e2a7484544a4bb945b0
+  require_unique_seeds: 3000
+
+targets:
+  mlx_accuracy_pct: 35.9
+  official_accuracy_pct: 33.9
+  relative_error_tolerance: 0.10
+  joint_mean_pass_band_pct: [32.31, 37.29]
+
+inference:
+  nproc: 2
+  launcher: "two independent one-GPU workers isolated by CUDA_VISIBLE_DEVICES"
+  rank_partition: "for every replicate, positions rank::world_size"
+  formal_log_level: ERROR
+  progress_interval: 25
+
+gate:
+  require_base_h30_preflight: true
+  require_all_seed_canaries: true
+  require_records_per_replicate: 1000
+  require_records_per_rank: 1500
+  require_exact_reextraction: true
+  primary_statistic: "unweighted correctness mean over all 3000 registered responses"
+  require_primary_mean_within_both_relative_error_targets: 0.10
+
+limitations:
+  - "H31 selects the 4k setting after observing H30's residual and is validation-ineligible for the paper claim."
+  - "Three fixed schedules quantify decoder variability but cannot recover the unpublished official seeds."
+  - "The H30 checkpoint, prompts, tokenizer, LMDeploy engine, generation parameters, effective capacity, extractor, and dataset rows are unchanged."
+  - "No individual replicate may replace the registered three-replicate mean."
