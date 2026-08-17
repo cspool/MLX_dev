@@ -1,0 +1,108 @@
+run:
+  id: run_033
+  hypothesis: H29
+  protocol: experiments/h29-compressed-llm-identifiability/protocol.md
+  output: artifacts/results/compressed-llm-identifiability-run033.json
+
+classification: source_exposed_identifiability_audit
+validation_eligible: false
+
+sources:
+  manuscript:
+    path: "MLX Multi-Layer Execution for Structured LLM Workload Acceleration on Spatial Architectures/MLX Multi-Layer Execution for Structured LLM Workload Acceleration on Spatial Architectures.md"
+    bytes: 85855
+    sha256: 5785eb81b28741a3806ca42749d7b556bbcd2404e1622ae644a32bae2ade7745
+  figure7:
+    path: "MLX Multi-Layer Execution for Structured LLM Workload Acceleration on Spatial Architectures/_page_3_Figure_11.jpeg"
+    bytes: 76206
+    sha256: 9265cdeaf4fc6aa8130294198bfc549f41d8b87597925595524ec4993f80020d
+  manuscript_segments:
+    semantic_fft:
+      start_line: 115
+      end_line: 140
+      bytes: 4139
+      sha256: 01a8849f5967dd81e3b2164f102446c14c55aac0ede883e260c1ba6f9855e95b
+    hierarchical_bsmm:
+      start_line: 141
+      end_line: 149
+      bytes: 1896
+      sha256: a3dc28f80cd9e512fe04627284e026e7955ad00ec5e01be4bd0ac6d37a41b8b6
+    llm_evaluation:
+      start_line: 350
+      end_line: 353
+      bytes: 1853
+      sha256: 1e584fa860e66e238b10eb569b452bb92989c8bed410e75f67a88bb02f9d865d
+
+necessary_fields:
+  - id: official_model_revision
+    domain: model_identity
+    disclosed: false
+    source_location: "Table III and Section VII-A identify Llama2-7B only"
+  - id: exact_modified_layer_indices
+    domain: layer_plan
+    disclosed: false
+    source_location: "Section VII-A says more than 60% of layers"
+  - id: spectrum_input_and_aggregation
+    domain: layer_plan
+    disclosed: false
+    source_location: "Section III-A gives no corpus, prompt, sample count, or reduction statistic"
+  - id: fixed_spectral_peak_threshold
+    domain: layer_plan
+    disclosed: false
+    source_location: "Section III-A gives only an example of a fixed fraction"
+  - id: per_layer_chunk_lengths
+    domain: layer_plan
+    disclosed: false
+    source_location: "Equation 1 defines L but publishes no L_l values"
+  - id: real_complex_frequency_retention_convention
+    domain: fft_graph
+    disclosed: false
+    source_location: "Section III-A says keep leading sL coefficients without a conjugate/normalization rule"
+  - id: rope_mask_and_decompression_placement
+    domain: fft_graph
+    disclosed: false
+    source_location: "Figure 7 omits symmetric decompression and the Llama attention graph"
+  - id: causal_training_and_likelihood_rule
+    domain: fft_graph
+    disclosed: false
+    source_location: "Only inference-time chunk caching is described; no teacher-forcing rule is given"
+  - id: hierarchical_bsmm_dense_initialization
+    domain: bsmm
+    disclosed: false
+    source_location: "Section III-B gives asymptotic structure but no dense-to-factor algorithm"
+  - id: lora_and_task_evaluation_recipe
+    domain: training_evaluation
+    disclosed: false
+    source_location: "Section VII-A names LoRA and datasets but no rank/modules/optimizer/epochs/split/objective/seed"
+
+ambiguity_witnesses:
+  dtype: float64
+  chunk_length: 32
+  compression_ratio: 0.75
+  perturbation_index: 31
+  perturbation_delta: 1.0
+  leakage_tolerance: 1.0e-12
+  interpretation_difference_tolerance: 1.0e-12
+  literal_imaginary_tolerance: 1.0e-12
+  deterministic_signal: "sin(2*pi*n/7)+0.1*n+0.25*cos(2*pi*n/5), n=0..31"
+
+combinatorics:
+  llama_layers: 32
+  minimum_modified_layers: 20
+  expected_admissible_layer_subsets: 462411533
+  sequence_length: 512
+  power_of_two_chunk_lengths: [1, 2, 4, 8, 16, 32, 64, 128, 256, 512]
+  expected_minimum_chunk_assignments_at_20_layers: 100000000000000000000
+
+gate:
+  required_missing_domains: [model_identity, layer_plan, fft_graph, bsmm, training_evaluation]
+  require_all_source_checks: true
+  require_future_perturbation_leakage: true
+  require_two_interpretations_differ: true
+  require_literal_prefix_complex_output: true
+  require_combinatorics_match: true
+
+limitations:
+  - "The omission judgments are a manual semantic audit bound to exact source hashes."
+  - "This run tests public identifiability, not whether the authors possess a complete internal implementation."
+  - "It neither trains nor evaluates a compressed model and cannot validate a Fig. 15/16 quality bar."
