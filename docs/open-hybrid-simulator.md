@@ -69,10 +69,10 @@ These fixes do not alter modeled PE, stream, memory, or network latency.
 
 ## Current boundary
 
-The upstream execution gates are complete, and the first source-integrated MLX
-overlay now implements tag blocks, programmable-PE resources, and skip-hop
-semantics; see [`dsagen-mlx-overlay.md`](dsagen-mlx-overlay.md). Its v1
-load/store latency is still configuration-driven rather than callback-driven
-from DSAGEN's LSQ/scratchpad. Connecting those paths and compiling real
-FFT/BSMM CDCs are the next boundary. Paper result bars were not inputs to
-substrate selection or the overlay invariant suite.
+The upstream execution gates are complete, and the source-integrated MLX
+overlay implements tag blocks, programmable-PE resources, skip-hop semantics,
+counted cross-layer events, a radix-2 CDC compiler, and callback-driven DSAGEN
+scratchpad requests; see [`dsagen-mlx-overlay.md`](dsagen-mlx-overlay.md) and
+[`dsagen-mlx-cdc-memory.md`](dsagen-mlx-cdc-memory.md). Off-chip DMA/LSQ
+traffic, large-shape aggregation, and independently calibrated timing remain
+the next boundary. Paper result bars were not inputs to these invariant runs.

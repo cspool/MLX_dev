@@ -50,11 +50,10 @@ cycles, 256 CGRA instances, 1,024 DFG instructions, and a numerical pass.
 
 ## Current boundary
 
-V1 validates control, PE resource, and NoC timing semantics. Its load/store
-instructions use explicit configured latency and do not yet issue DSAGEN LSQ
-or scratchpad requests; the official DSAGEN stream engine continues to execute
-beside the opt-in overlay. The next layer must compile FFT/BSMM CDCs into block
-JSON and connect overlay load/store completion to DSAGEN memory callbacks.
-Until that connection and workload compiler exist, V1 is not an end-to-end
-MLX paper-performance reproduction and its synthetic timing values must not be
-fitted to Figures 18-25.
+V1 validates control, PE resource, and NoC timing semantics. H42 subsequently
+adds counted cross-layer wakeup, a radix-2 FFT/BSMM compiler, and an opt-in
+DSAGEN scratchpad callback adapter; see
+[`dsagen-mlx-cdc-memory.md`](dsagen-mlx-cdc-memory.md). Off-chip traffic and
+paper-scale performance modeling remain incomplete, so neither layer is yet an
+end-to-end MLX paper-performance reproduction and their synthetic FU timings
+must not be fitted to Figures 18-25.

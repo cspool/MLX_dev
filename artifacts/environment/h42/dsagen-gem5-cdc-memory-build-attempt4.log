@@ -1,0 +1,83 @@
+scons: Reading SConscript files ...
+Warning: Your compiler doesn't support incremental linking and lto at the same
+         time, so lto is being disabled. To force lto on anyway, use the
+         --force-lto option. That will disable partial linking.
+Info: Using Python config: python3-config
+Checking for C header file Python.h... (cached) yes
+Checking for C library python3.8... (cached) yes
+Checking for C library crypt... (cached) yes
+Checking for C library pthread... (cached) yes
+Checking for C library dl... (cached) yes
+Checking for C library util... (cached) yes
+Checking for C library m... (cached) yes
+Checking for accept(0,0,0) in C++ library None... (cached) yes
+Checking for zlibVersion() in C++ library z... (cached) yes
+Checking for GOOGLE_PROTOBUF_VERIFY_VERSION in C++ library protobuf... (cached) yes
+Checking for C header file valgrind/valgrind.h... (cached) no
+Checking for clock_nanosleep(0,0,NULL,NULL) in C library None... (cached) yes
+Checking for timer_create(CLOCK_MONOTONIC, NULL, NULL) in C library None... (cached) yes
+Checking for C library tcmalloc... (cached) yes
+Checking for char temp; backtrace_symbols_fd((void*)&temp, 0, 0) in C library None... (cached) no
+Checking for char temp; backtrace_symbols_fd((void*)&temp, 0, 0) in C library execinfo... (cached) no
+Warning: No suitable back trace implementation found.
+Checking for C header file fenv.h... (cached) yes
+Checking for C header file png.h... (cached) yes
+Checking for C header file linux/kvm.h... (cached) yes
+Checking for C header file linux/if_tun.h... (cached) yes
+Checking size of struct kvm_xsave ... (cached) yes
+Checking for member exclude_host in struct perf_event_attr...(cached) yes
+Checking for hdf5-serial using pkg-config... yes
+Checking for H5Fcreate("", 0, 0, 0) in C library hdf5... (cached) yes
+Checking for H5::H5File("", 0) in C++ library hdf5_cpp... (cached) yes
+Checking whether __i386__ is declared... (cached) no
+Checking whether __x86_64__ is declared... (cached) yes
+Building in /workspace/MLX_dev/third_party/dsa-framework/dsa-gem5/build/RISCV
+Using saved variables file /workspace/MLX_dev/third_party/dsa-framework/dsa-gem5/build/variables/RISCV
+warn: CheckedInt already exists in allParams. This may be caused by the Python 2.7 compatibility layer.
+warn: Enum already exists in allParams. This may be caused by the Python 2.7 compatibility layer.
+warn: ScopedEnum already exists in allParams. This may be caused by the Python 2.7 compatibility layer.
+scons: done reading SConscript files.
+scons: Building targets ...
+ [VER TAGS]  -> RISCV/sim/tags.cc
+ [     CXX] RISCV/cpu/minor/cpu.cc -> .o
+ [     CXX] RISCV/cpu/minor/decode.cc -> .o
+ [     CXX] RISCV/cpu/minor/execute.cc -> .o
+ [     CXX] RISCV/cpu/minor/fetch1.cc -> .o
+ [     CXX] RISCV/cpu/minor/fetch2.cc -> .o
+ [     CXX] RISCV/cpu/minor/lsq.cc -> .o
+ [     CXX] RISCV/cpu/minor/pipeline.cc -> .o
+ [     CXX] RISCV/sim/tags.cc -> .o
+ [    LINK]  -> RISCV/sim/lib.o.partial
+ [     CXX] RISCV/cpu/minor/ssim/port.cc -> .o
+In file included from /usr/include/c++/11/cassert:44,
+                 from build/RISCV/base/intmath.hh:32,
+                 from build/RISCV/base/statistics.hh:81,
+                 from build/RISCV/cpu/minor/stats.hh:47,
+                 from build/RISCV/cpu/minor/cpu.hh:48,
+                 from build/RISCV/cpu/minor/execute.hh:49,
+                 from build/RISCV/cpu/minor/execute.cc:38:
+build/RISCV/base/statistics.hh: In instantiation of 'Stats::Vector2dBase<Derived, Stor>::Proxy Stats::Vector2dBase<Derived, Stor>::operator[](Stats::off_type) [with Derived = Stats::Vector2d; Stor = Stats::StatStor; Stats::Vector2dBase<Derived, Stor>::Proxy = Stats::VectorProxy<Stats::Vector2d>; Stats::off_type = unsigned int]':
+build/RISCV/cpu/minor/execute.cc:961:50:   required from here
+build/RISCV/base/statistics.hh:1314:23: warning: comparison of unsigned expression in '>= 0' is always true [-Wtype-limits]
+ 1314 |         assert (index >= 0 && offset + y <= size());
+      |                 ~~~~~~^~~~
+build/RISCV/base/statistics.hh: In instantiation of 'Stats::ScalarProxy<Derived> Stats::VectorProxy<Stat>::operator[](Stats::off_type) [with Stat = Stats::Vector2d; Stats::off_type = unsigned int]':
+build/RISCV/cpu/minor/execute.cc:962:60:   required from here
+build/RISCV/base/statistics.hh:1238:23: warning: comparison of unsigned expression in '>= 0' is always true [-Wtype-limits]
+ 1238 |         assert (index >= 0 && index < size());
+      |                 ~~~~~~^~~~
+ [     CXX] RISCV/cpu/minor/ssim/stream.cc -> .o
+ [     CXX] RISCV/cpu/minor/ssim/ssim.cc -> .o
+ [     CXX] RISCV/cpu/minor/ssim/mlx_spad_adapter.cc -> .o
+ [     CXX] RISCV/cpu/minor/ssim/accel.cc -> .o
+ [     CXX] RISCV/cpu/minor/ssim/arbiter.cc -> .o
+ [     CXX] RISCV/cpu/minor/ssim/statistics.cc -> .o
+ [    LINK]  -> RISCV/cpu/minor/lib.o.partial
+ [     CXX] RISCV/base/date.cc -> .o
+ [    LINK]  -> RISCV/gem5.opt
+scons: done building targets.
+*** Summary of Warnings ***
+Warning: Your compiler doesn't support incremental linking and lto at the same
+         time, so lto is being disabled. To force lto on anyway, use the
+         --force-lto option. That will disable partial linking.
+Warning: No suitable back trace implementation found.
