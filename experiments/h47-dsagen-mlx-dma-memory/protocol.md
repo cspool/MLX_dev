@@ -94,3 +94,9 @@ line of a separate 2-MiB volatile BSS region before `begin_roi()`. This is four
 times the configured 512-KiB L2 capacity. Both fixed and DMA runs execute the
 identical conditioner, its checksum is checked, and the ROI reset excludes its
 traffic. No overlay count, address, latency, or paper-derived parameter changes.
+
+Attempt 7 showed that untouched BSS can retain demand-zero/shared-page
+semantics in syscall-emulation mode. It is excluded as well. Before the formal
+run, the guest writes byte value 1 to the exact 64 eight-byte read targets,
+then performs the 2-MiB conditioner. This forces distinct writable backing and
+freezes an independent read-data gate: the adapter byte sum must be 512.

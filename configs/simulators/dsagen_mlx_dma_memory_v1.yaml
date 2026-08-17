@@ -54,6 +54,8 @@ microtrace:
   per_iteration_line_stride_bytes: 64
   write_block_stride_bytes: 256
   guest_cold_region_bytes: 131072
+  guest_cold_target_initial_byte: 1
+  expected_dma_read_byte_sum: 512
   guest_write_region_bytes: 4096
   guest_write_initial_byte: 165
   expected_fixed_store_checksum: 84480
@@ -62,6 +64,7 @@ microtrace:
     region_bytes: 2097152
     read_stride_bytes: 64
     execution: before_begin_roi_in_both_fixed_and_dma_runs
+    ordering: after_cold_target_initialization
     excluded_from_roi_stats: true
 
 gem5:
