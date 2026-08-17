@@ -1,0 +1,35 @@
+diff --git a/src/sim/init_signals.cc b/src/sim/init_signals.cc
+index 305f0cfaa..4841d9ed4 100644
+--- a/src/sim/init_signals.cc
++++ b/src/sim/init_signals.cc
+@@ -47,6 +47,7 @@
+ #include <csignal>
+ #include <iostream>
+ #include <string>
++#include <vector>
+ 
+ #if defined(__FreeBSD__)
+ #include <sys/param.h>
+@@ -64,18 +65,18 @@
+ using namespace std;
+ 
+ // Use an separate stack for fatal signal handlers
+-static uint8_t fatalSigStack[2 * SIGSTKSZ];
++static std::vector<uint8_t> fatalSigStack(2 * SIGSTKSZ);
+ 
+ static bool
+ setupAltStack()
+ {
+     stack_t stack;
+ #if defined(__FreeBSD__) && (__FreeBSD_version < 1100097)
+-    stack.ss_sp = (char *)fatalSigStack;
++    stack.ss_sp = (char *)fatalSigStack.data();
+ #else
+-    stack.ss_sp = fatalSigStack;
++    stack.ss_sp = fatalSigStack.data();
+ #endif
+-    stack.ss_size = sizeof(fatalSigStack);
++    stack.ss_size = fatalSigStack.size();
+     stack.ss_flags = 0;
+ 
+     return sigaltstack(&stack, NULL) == 0;
