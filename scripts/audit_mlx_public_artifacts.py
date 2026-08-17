@@ -113,6 +113,27 @@ def preflight(config: dict[str, Any]) -> dict[str, Any]:
     snapshot_queries = [item["query"] for item in browser_data["registered_queries"]]
     protocol = PROJECT_ROOT / config["run"]["protocol"]
     output = PROJECT_ROOT / config["run"]["output"]
+    prior_inconclusive = None
+    if prior_spec := config.get("prior_inconclusive"):
+        prior_file = qualify_file(PROJECT_ROOT / prior_spec["path"], prior_spec)
+        prior_data = (
+            json.loads(Path(prior_file["path"]).read_text(encoding="utf-8"))
+            if prior_file["pass"]
+            else {}
+        )
+        prior_checks = {
+            "file": prior_file["pass"],
+            "run_id": prior_data.get("run_id") == prior_spec["run_id"],
+            "git_commit": prior_data.get("git_commit") == prior_spec["git_commit"],
+            "audit_integrity_false": prior_data.get("audit_integrity") is False,
+            "hypothesis_inconclusive": prior_data.get("hypothesis_status") == "inconclusive",
+            "zero_qualifying_artifacts": prior_data.get("qualifying_artifact_count") == 0,
+        }
+        prior_inconclusive = {
+            "file": prior_file,
+            "checks": prior_checks,
+            "pass": all(prior_checks.values()),
+        }
     checks = {
         "paper": paper["pass"],
         "browser_snapshot": browser["pass"],
@@ -122,6 +143,8 @@ def preflight(config: dict[str, Any]) -> dict[str, Any]:
         "protocol": protocol.is_file(),
         "output_absent": not output.exists(),
     }
+    if prior_inconclusive is not None:
+        checks["prior_inconclusive"] = prior_inconclusive["pass"]
     return {
         "paper": paper,
         "browser_snapshot": browser,
@@ -130,6 +153,7 @@ def preflight(config: dict[str, Any]) -> dict[str, Any]:
             "identifier_and_index_followups": len(browser_data["identifier_and_index_followups"]),
             "author_repository_followups": len(browser_data["author_repository_followups"]),
         },
+        "prior_inconclusive": prior_inconclusive,
         "checks": checks,
         "pass": all(checks.values()),
     }
@@ -419,7 +443,7 @@ def fetch_all(
                 fetch_endpoint,
                 endpoint,
                 timeout=timeout,
-                max_attempts=max_attempts,
+                max_attempts=max_attempts if endpoint.required_transport else 1,
             ): endpoint
             for endpoint in endpoints
         }
@@ -575,6 +599,10 @@ def parse_results(
                         )
                     },
                 }
+                if identity["pass"]:
+                    exact_metadata_sources.append(
+                        {"source": key, "identifier": record.get("paperId")}
+                    )
             elif endpoint.parser == "zenodo":
                 data = json_body(result)["hits"]
                 hits = data.get("hits") or []
@@ -836,6 +864,36 @@ def zenodo_candidates(config: dict[str, Any], summary: dict[str, Any]) -> list[d
     return candidates
 
 
+def qualified_official_identity_sources(
+    summaries: dict[str, Any], identity_config: dict[str, Any]
+) -> dict[str, list[str]]:
+    """Select exact official sources only from registered provenance classes."""
+    venue_classes = set(
+        identity_config.get("official_venue_classes") or ["venue_program_identity_only"]
+    )
+    author_classes = set(
+        identity_config.get("author_controlled_classes")
+        or [
+            "coauthor_homepage_identity_only",
+            "corresponding_author_homepage_identity_only",
+        ]
+    )
+
+    def select(classes: set[str]) -> list[str]:
+        return sorted(
+            key
+            for key, summary in summaries.items()
+            if key.startswith("official_page_")
+            and summary.get("channel") in classes
+            and summary.get("identity", {}).get("pass") is True
+        )
+
+    return {
+        "venue": select(venue_classes),
+        "author_controlled": select(author_classes),
+    }
+
+
 def main() -> int:
     args = parse_args()
     config_path = args.config.resolve()
@@ -894,11 +952,11 @@ def main() -> int:
 
     github_search_keys = sorted(key for key in summaries if key.startswith("github_search_"))
     gitlab_search_keys = sorted(key for key in summaries if key.startswith("gitlab_search_"))
-    official_identity_count = sum(
-        bool(summary.get("identity", {}).get("pass"))
-        for key, summary in summaries.items()
-        if key.startswith("official_page_")
+    official_identity_sources = qualified_official_identity_sources(
+        summaries, config.get("identity_integrity") or {}
     )
+    official_venue_sources = official_identity_sources["venue"]
+    official_author_sources = official_identity_sources["author_controlled"]
     registered_queries = [item["query"] for item in browser_data["registered_queries"]]
     followup_queries = [item["query"] for item in browser_data["identifier_and_index_followups"]]
     unresolved_exact_leads = {
@@ -912,7 +970,8 @@ def main() -> int:
         == len(config["web_queries"]),
         "general_web_identifier_followups": len(browser_data["identifier_and_index_followups"])
         >= 12,
-        "venue_and_author_identity": official_identity_count >= 3,
+        "official_venue_identity": bool(official_venue_sources),
+        "official_author_identity": bool(official_author_sources),
         "crossref": summaries["crossref_doi"].get("identity", {}).get("pass") is True,
         "openalex": summaries["openalex_doi"].get("identity", {}).get("pass") is True,
         "bibliographic_alternatives_attempted": all(
@@ -989,6 +1048,7 @@ def main() -> int:
         "github_readme_snapshots": readme_metadata,
         "parsed_sources": summaries,
         "exact_metadata_sources": metadata_sources,
+        "official_identity_sources": official_identity_sources,
         "repository_counts": {
             "unique_github_repositories_inspected": len(repositories),
             "exact_github_identity_candidates": len(github_candidates),

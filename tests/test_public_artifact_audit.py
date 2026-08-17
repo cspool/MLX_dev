@@ -70,3 +70,52 @@ def test_zenodo_endpoint_uses_registered_exact_title_phrase() -> None:
 
     assert query == {"q": [f'"{title}"'], "size": ["25"]}
     assert endpoint.required_transport is False
+
+
+def test_fetch_all_retries_only_required_transports(monkeypatch) -> None:
+    seen: dict[str, int] = {}
+
+    def fake_fetch(endpoint, *, timeout: float, max_attempts: int):
+        assert timeout == 2.0
+        seen[endpoint.key] = max_attempts
+        return {"endpoint": endpoint, "body": b"", "metadata": {}}
+
+    monkeypatch.setattr(audit, "fetch_endpoint", fake_fetch)
+    endpoints = [
+        audit.Endpoint("required", "test", "https://example.test/a", "json", True),
+        audit.Endpoint("optional", "test", "https://example.test/b", "json"),
+    ]
+    audit.fetch_all(endpoints, timeout=2.0, max_workers=2, max_attempts=3)
+
+    assert seen == {"required": 3, "optional": 1}
+
+
+def test_official_identity_sources_require_registered_source_class() -> None:
+    summaries = {
+        "official_page_0": {
+            "channel": "venue_program_identity_only",
+            "identity": {"pass": True},
+        },
+        "official_page_1": {
+            "channel": "venue_artifact_policy_only",
+            "identity": {"pass": True},
+        },
+        "official_page_2": {
+            "channel": "coauthor_homepage_identity_only",
+            "identity": {"pass": True},
+        },
+        "official_page_3": {
+            "channel": "corresponding_author_homepage_identity_only",
+            "identity": {"pass": False},
+        },
+        "official_page_4": {
+            "channel": "doi_identity_only",
+            "identity": {"pass": True},
+        },
+    }
+    selected = audit.qualified_official_identity_sources(summaries, {})
+
+    assert selected == {
+        "venue": ["official_page_0"],
+        "author_controlled": ["official_page_2"],
+    }
