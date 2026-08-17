@@ -186,13 +186,18 @@ fig20_xavier_kernels:
     energy_saving: [4.1, 2.2, 1.6, 1.2, 5.9, 4.4, 3.4, 5.9, 3.1]
 
 fig21_end_to_end:
-  provenance: digitized
-  uncertainty_abs: 0.08
+  provenance: frozen_raster_digitization
+  uncertainty_abs_speedup: 0.06
+  uncertainty_abs_gemm_time_pct: 2.0
+  uncertainty_abs_memory_gb: 0.35
   sequence_lengths: [128, 256, 512, 1024, 2048]
-  speedup_over_xavier: [4.0, 2.75, 1.80, 1.40, 1.12]
-  sparse_memory_gb: [6.8, 7.7, 8.8, 11.2, 12.8]
-  dense_memory_gb: [14.0, 15.4, 16.6, 20.0, 21.5]
+  speedup_over_xavier: [4.0, 2.804878049, 1.804878049, 1.414634146, 1.146341463]
+  gemm_time_pct: [8.292682927, 10.243902439, 14.146341463, 20.975609756, 31.707317073]
+  sparse_memory_gb: [6.725146199, 7.456140351, 8.918128655, 11.257309942, 12.573099415]
+  dense_memory_gb: [14.035087719, 15.497076023, 16.374269006, 19.736842105, 21.198830409]
   xavier_capacity_gb: 16.0
+  projected_sequence_lengths: [512, 1024, 2048]
+  digitization_method: "Frozen bar endpoints plus monotone inversion of the in-plot grayscale GEMM-time colorbar; see H25/run029."
 
 fig22_compute_utilization:
   provenance: digitized

@@ -8,6 +8,7 @@ from mlxsim.fig21_digitization import (
     derive_gemm_time_targets,
     derive_height_targets,
     load_fig21_pixel_manifest,
+    load_yaml,
     pava_increasing,
 )
 
@@ -70,3 +71,16 @@ def test_full_source_axis_and_capacity_audit_passes() -> None:
 
 def test_manifest_source_is_project_relative() -> None:
     assert not Path(load_fig21_pixel_manifest()["metadata"]["source"]).is_absolute()
+
+
+def test_completed_targets_are_promoted_to_canonical_manifest() -> None:
+    report = audit_fig21_target_completion(load_fig21_pixel_manifest())
+    canonical = load_yaml(ROOT / "artifacts/targets/paper_targets.yaml")["fig21_end_to_end"]
+    for series in (
+        "speedup_over_xavier",
+        "gemm_time_pct",
+        "dense_memory_gb",
+        "sparse_memory_gb",
+    ):
+        assert canonical[series] == pytest.approx(report["derived_targets"][series])
+    assert canonical["projected_sequence_lengths"] == [512, 1024, 2048]

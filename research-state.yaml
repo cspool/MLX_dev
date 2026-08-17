@@ -205,7 +205,7 @@ hypotheses:
     priority: high
   - id: H25
     statement: "Frozen Figure 21 pixels recover all five Xavier speedups, five GEMM-time shares, and ten dense/sparse memory bars while reconciling the 16-GB capacity and projected-bar semantics."
-    status: pending
+    status: supported
     motivation: "Complete a partial target manifest before any later end-to-end implementation can use Figure 21, especially its previously omitted GEMM-time encoding."
     parent: H5
     priority: high
@@ -214,7 +214,7 @@ experiments:
   proxy_metric: "Maximum absolute percentage error across every numeric paper anchor; pass only when each reproducible point is <=10%, with unavailable measurements explicitly classified rather than fabricated."
   baseline_value: 0.2486
   best_value: 0.0123
-  total_runs: 27
+  total_runs: 28
   trajectory:
     - run_id: "run_001"
       hypothesis: "H2"
@@ -405,11 +405,18 @@ experiments:
       wall_time_min: 0.1
       change_summary: "Fused two-axis FFT mechanism rejected: attention MAPE/max worsens to 55.24%/77.49%, all four points fail, and diagnostic total MAPE/max is 13.21%/29.79%."
       timestamp: "2026-08-17"
+    - run_id: "run_029"
+      hypothesis: "H25"
+      metric_value: 0.0549
+      delta: null
+      wall_time_min: 0.1
+      change_summary: "Full Figure 21 raster target recovery supported: all 20 bars, GEMM colorbar, 16-GB line, and projected-bar semantics pass; prior coarse discrepancies max at 0.0549x and 0.3012 GB."
+      timestamp: "2026-08-17"
 
 outer_loop:
-  cycle: 9
-  last_direction: "Stop Figure 19 residual-guided boundary variants and move to an independent uncovered paper item. Prefer a target-completion or source-grounded consistency audit that does not reuse the H23/H24 residuals."
-  last_reflection: "H24 preserves operations and stages but makes every attention point worse: MAPE rises from 40.08% to 55.24% and maximum error from 57.23% to 77.49%. The complex handoff plus shared dependency schedule costs more than the removed launch/store/load boundary. The specific fused-FFT explanation is falsified; additional boundary changes selected against the same four targets would become target-guided tuning."
+  cycle: 10
+  last_direction: "Complete the remaining partial Figure 3 target provenance from its source raster before selecting another native or surrogate timing experiment. Keep target recovery separate from CUDA validation."
+  last_reflection: "H25 closes Figure 21 target coverage and recovers the previously omitted GEMM-time shares. The corrected pixels also move the plotted 16-GB crossover to N=512: H6 dense-memory values now pass numerically, but the crossover is one step late and speed/sparse memory remain rejected. The inventory's other partial target is Figure 3, whose values exist but lack a frozen source-pixel audit."
 
 workspace:
   findings: "findings.md"
