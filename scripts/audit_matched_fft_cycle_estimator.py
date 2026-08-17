@@ -8,6 +8,7 @@ import hashlib
 import json
 import subprocess
 from datetime import datetime, timezone
+from itertools import pairwise
 from pathlib import Path
 from typing import Any
 
@@ -138,8 +139,9 @@ def build_audit(config: dict[str, Any]) -> dict[str, Any]:
         int(value) for value in [*config["fit_scales"], *config["holdout_scales"]]
     ]
     work_checks = {}
+    base_scale = min(scales)
     for shape_name in config["shapes"]:
-        base = measurements[f"{shape_name}-q1"]
+        base = measurements[f"{shape_name}-q{base_scale}"]
         for scale in scales:
             item = measurements[f"{shape_name}-q{scale}"]
             scalar_fields = (
@@ -151,16 +153,17 @@ def build_audit(config: dict[str, Any]) -> dict[str, Any]:
                 "unit_hops",
             )
             summary_linear = all(
-                item["summary"][field] == base["summary"][field] * scale
+                item["summary"][field] * base_scale
+                == base["summary"][field] * scale
                 for field in scalar_fields
             )
             pipeline_linear = all(
-                item["summary"]["issued_by_pipeline"][pipeline]
+                item["summary"]["issued_by_pipeline"][pipeline] * base_scale
                 == base["summary"]["issued_by_pipeline"][pipeline] * scale
                 for pipeline in base["summary"]["issued_by_pipeline"]
             )
             operation_linear = all(
-                item["metadata"]["operation_counts"][operation]
+                item["metadata"]["operation_counts"][operation] * base_scale
                 == base["metadata"]["operation_counts"][operation] * scale
                 for operation in base["metadata"]["operation_counts"]
             )
@@ -175,15 +178,24 @@ def build_audit(config: dict[str, Any]) -> dict[str, Any]:
     holdout_scales = [int(value) for value in config["holdout_scales"]]
     limit = float(config["cycle_relative_error_limit"])
     for shape_name, shape in config["shapes"].items():
-        base = measurements[f"{shape_name}-q1"]["metadata"]
+        base = measurements[f"{shape_name}-q{base_scale}"]["metadata"]
         full_scale = int(shape["full_scale"])
         expected = parents["signature"]["signatures"][shape_name][
             "fft_compression"
         ]["fu_instruction_instances"]
         actual = {
-            "fma": base["operation_counts"]["fma"] * full_scale * 8,
-            "alu_add": base["operation_counts"]["add"] * full_scale * 8,
-            "shuffle": base["operation_counts"]["shuffle"] * full_scale * 8,
+            "fma": base["operation_counts"]["fma"]
+            * full_scale
+            * 8
+            // base_scale,
+            "alu_add": base["operation_counts"]["add"]
+            * full_scale
+            * 8
+            // base_scale,
+            "shuffle": base["operation_counts"]["shuffle"]
+            * full_scale
+            * 8
+            // base_scale,
         }
         checks = {name: actual[name] == expected[name] for name in expected}
         full_conservation[shape_name] = {
@@ -214,26 +226,21 @@ def build_audit(config: dict[str, Any]) -> dict[str, Any]:
                     "pass_5pct": error <= limit,
                 }
             )
+        adjacent_slopes = {
+            f"q{left}_to_q{right}": (
+                measurements[f"{shape_name}-q{right}"]["cycles"]
+                - measurements[f"{shape_name}-q{left}"]["cycles"]
+            )
+            / (right - left)
+            for left, right in pairwise(scales)
+        }
         models[shape_name] = {
             "intercept": model.intercept,
             "slope_cycles_per_scale": model.slope,
             "holdouts": holdouts,
             "full_scale": full_scale,
             "full_work_predicted_cycles": model.predict(full_scale),
-            "observed_incremental_slopes": {
-                "q1_to_q2": measurements[f"{shape_name}-q2"]["cycles"]
-                - measurements[f"{shape_name}-q1"]["cycles"],
-                "q2_to_q4": (
-                    measurements[f"{shape_name}-q4"]["cycles"]
-                    - measurements[f"{shape_name}-q2"]["cycles"]
-                )
-                / 2,
-                "q4_to_q8": (
-                    measurements[f"{shape_name}-q8"]["cycles"]
-                    - measurements[f"{shape_name}-q4"]["cycles"]
-                )
-                / 4,
-            },
+            "observed_incremental_slopes": adjacent_slopes,
         }
 
     numerical = {
