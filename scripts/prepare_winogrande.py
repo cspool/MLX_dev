@@ -15,11 +15,16 @@ from mlxsim.winogrande import qualify_parquet_dataset
 
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
 DEFAULT_CONFIG = PROJECT_ROOT / "configs/analysis/llama2_winogrande_v1.yaml"
+DEFAULT_TRAINING_CONFIG = (
+    PROJECT_ROOT / "configs/training/llama2_winogrande_dense_lora_v1.yaml"
+)
 
 
 def _parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--config", type=Path, default=DEFAULT_CONFIG)
+    parser.add_argument("--training-config", type=Path, default=DEFAULT_TRAINING_CONFIG)
+    parser.add_argument("--split", choices=("validation", "train"), default="validation")
     return parser.parse_args()
 
 
@@ -31,8 +36,13 @@ def _load_yaml(path: Path) -> dict[str, Any]:
 def main() -> int:
     args = _parse_args()
     config = _load_yaml(args.config)
-    dataset = config["dataset"]
-    destination = PROJECT_ROOT / dataset["qualification_path"]
+    dataset = (
+        config["dataset"]
+        if args.split == "validation"
+        else _load_yaml(args.training_config)["training_data"]
+    )
+    path_key = "qualification_path" if args.split == "validation" else "path"
+    destination = PROJECT_ROOT / dataset[path_key]
 
     if destination.exists():
         qualification = qualify_parquet_dataset(destination, dataset)
