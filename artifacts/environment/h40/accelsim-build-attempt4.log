@@ -1,0 +1,460 @@
+make: Entering directory '/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator'
+if [ ! -d ./bin/release ]; then mkdir -p ./bin/release; fi;
+if [ ! -d ./build/release ]; then mkdir -p ./build/release; fi;
+touch ./build/release/main.makedepend
+makedepend -f./build/release/main.makedepend -p./build/release/ main.cc 2> /dev/null
+make -C trace-driven depend
+make -C trace-parser depend
+make -C /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim
+echo "const char *g_accelsim_version=\"accelsim-commit-c5296df_modified_0.0_26-08-17-12-08-55\";" > ./build/release/accelsim_version.h
+make[1]: Entering directory '/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/trace-driven'
+make[1]: Entering directory '/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim'
+make[1]: Entering directory '/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/trace-parser'
+touch ../build/release/trace-driven.Makefile.makedepend
+makedepend -f../build/release/trace-driven.Makefile.makedepend -p../build/release/ trace_driven.cc 2> /dev/null
+touch ../build/release/trace-parser.Makefile.makedepend
+makedepend -f../build/release/trace-parser.Makefile.makedepend -p../build/release/ trace_parser.cc 2> /dev/null
+make[1]: 'depend' is up to date.
+make[1]: Leaving directory '/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/trace-driven'
+make -C trace-driven
+make[1]: Entering directory '/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/trace-driven'
+make[1]: 'depend' is up to date.
+make[1]: Leaving directory '/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/trace-parser'
+make -C trace-parser
+make[1]: Entering directory '/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/trace-parser'
+touch ../build/release/trace-driven.Makefile.makedepend
+makedepend -f../build/release/trace-driven.Makefile.makedepend -p../build/release/ trace_driven.cc 2> /dev/null
+touch ../build/release/trace-parser.Makefile.makedepend
+makedepend -f../build/release/trace-parser.Makefile.makedepend -p../build/release/ trace_parser.cc 2> /dev/null
+make[1]: Nothing to be done for 'trace-driven'.
+make[1]: Leaving directory '/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/trace-driven'
+make[1]: Nothing to be done for 'trace-parser'.
+make[1]: Leaving directory '/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/trace-parser'
+
+	Building GPGPU-Sim version 4.2.0 (build gpgpu-sim_git-commit-68e1cd3_modified_1.0) with CUDA version 11.8
+
+if [ ! -d lib/gcc-11.4.0/cuda-11080/release ]; then mkdir -p lib/gcc-11.4.0/cuda-11080/release; fi;
+if [ ! -d /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/libcuda ]; then mkdir -p /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/libcuda; fi;
+Warning: gpgpu-sim is building without opencl support. Make sure NVOPENCL_LIBDIR and NVOPENCL_INCDIR are set
+if [ ! -d /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/cuda-sim ]; then mkdir -p /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/cuda-sim; fi;
+if [ ! -d /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/cuda-sim/decuda_pred_table ]; then mkdir -p /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/cuda-sim/decuda_pred_table; fi;
+if [ ! -d /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/gpgpu-sim ]; then mkdir -p /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/gpgpu-sim; fi;
+if [ ! -d /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/libopencl ]; then mkdir -p /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/libopencl; fi;
+if [ ! -d /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/libopencl/bin ]; then mkdir -p /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/libopencl/bin; fi;
+if [ ! -d /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/intersim2 ]; then mkdir -p /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/intersim2; fi;
+if [ ! -d /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/cuobjdump_to_ptxplus ]; then mkdir -p /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/cuobjdump_to_ptxplus; fi;
+if [ ! -d /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/accelwattch ]; then mkdir -p /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/accelwattch; fi;
+if [ ! -d /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/accelwattch/cacti ]; then mkdir -p /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/accelwattch/cacti; fi;
+make -C ./src/cuda-sim/ depend
+make -C /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/src/accelwattch/ depend
+make[2]: Entering directory '/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/src/cuda-sim'
+make[2]: Entering directory '/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/src/accelwattch'
+make[3]: Entering directory '/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/src/accelwattch'
+touch /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/accelwattch/Makefile.makedepend
+makedepend -f/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/accelwattch/Makefile.makedepend -p/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/accelwattch/ Ucache.cc XML_Parse.cc arbiter.cc area.cc array.cc bank.cc basic_circuit.cc basic_components.cc cacti_interface.cc component.cc core.cc crossbar.cc decoder.cc htree2.cc interconnect.cc io.cc iocontrollers.cc logic.cc main.cc mat.cc memoryctrl.cc noc.cc nuca.cc parameter.cc processor.cc router.cc sharedcache.cc subarray.cc technology.cc uca.cc wire.cc xmlParser.cc gpgpu_sim_wrapper.cc  2> /dev/null
+make -C ./cacti/ depend
+make[4]: Entering directory '/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/src/accelwattch/cacti'
+make[5]: Entering directory '/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/src/accelwattch/cacti'
+touch /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/accelwattch/cacti/Makefile.makedepend
+makedepend -f/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/accelwattch/cacti/Makefile.makedepend -p/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/accelwattch/cacti/ area.cc bank.cc mat.cc main.cc Ucache.cc io.cc technology.cc basic_circuit.cc parameter.cc decoder.cc component.cc uca.cc subarray.cc wire.cc htree2.cc cacti_interface.cc router.cc nuca.cc crossbar.cc arbiter.cc  2> /dev/null
+touch /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/cuda-sim/Makefile.makedepend
+makedepend -f/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/cuda-sim/Makefile.makedepend -p/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/cuda-sim/ cuda-sim.cc cuda_device_printf.cc cuda_device_runtime.cc instructions.cc memory.cc ptx-stats.cc ptx_ir.cc ptx_loader.cc ptx_parser.cc ptx_sim.cc 2> /dev/null
+make[5]: Nothing to be done for 'depend'.
+make[5]: Leaving directory '/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/src/accelwattch/cacti'
+make[4]: Leaving directory '/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/src/accelwattch/cacti'
+make[3]: Nothing to be done for 'depend'.
+make[3]: Leaving directory '/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/src/accelwattch'
+make[2]: Leaving directory '/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/src/accelwattch'
+make -C /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/src/accelwattch/ 
+make[2]: Entering directory '/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/src/accelwattch'
+make[3]: Entering directory '/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/src/accelwattch'
+make[2]: 'depend' is up to date.
+make[2]: Leaving directory '/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/src/cuda-sim'
+make -C ./src/cuda-sim/
+touch /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/accelwattch/Makefile.makedepend
+makedepend -f/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/accelwattch/Makefile.makedepend -p/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/accelwattch/ Ucache.cc XML_Parse.cc arbiter.cc area.cc array.cc bank.cc basic_circuit.cc basic_components.cc cacti_interface.cc component.cc core.cc crossbar.cc decoder.cc htree2.cc interconnect.cc io.cc iocontrollers.cc logic.cc main.cc mat.cc memoryctrl.cc noc.cc nuca.cc parameter.cc processor.cc router.cc sharedcache.cc subarray.cc technology.cc uca.cc wire.cc xmlParser.cc gpgpu_sim_wrapper.cc  2> /dev/null
+make[2]: Entering directory '/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/src/cuda-sim'
+make -C ./cacti/ depend
+make[4]: Entering directory '/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/src/accelwattch/cacti'
+make[5]: Entering directory '/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/src/accelwattch/cacti'
+touch /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/accelwattch/cacti/Makefile.makedepend
+makedepend -f/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/accelwattch/cacti/Makefile.makedepend -p/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/accelwattch/cacti/ area.cc bank.cc mat.cc main.cc Ucache.cc io.cc technology.cc basic_circuit.cc parameter.cc decoder.cc component.cc uca.cc subarray.cc wire.cc htree2.cc cacti_interface.cc router.cc nuca.cc crossbar.cc arbiter.cc  2> /dev/null
+make[5]: Nothing to be done for 'depend'.
+make[5]: Leaving directory '/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/src/accelwattch/cacti'
+make[4]: Leaving directory '/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/src/accelwattch/cacti'
+make[3]: Nothing to be done for 'all'.
+make[3]: Leaving directory '/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/src/accelwattch'
+make[2]: Leaving directory '/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/src/accelwattch'
+touch /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/cuda-sim/Makefile.makedepend
+makedepend -f/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/cuda-sim/Makefile.makedepend -p/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/cuda-sim/ cuda-sim.cc cuda_device_printf.cc cuda_device_runtime.cc instructions.cc memory.cc ptx-stats.cc ptx_ir.cc ptx_loader.cc ptx_parser.cc ptx_sim.cc 2> /dev/null
+g++  -c -O3 -g3 -Wall -Wno-unused-function -Wno-sign-compare -I/usr/local/cuda-11.8/include  -I/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/cuda-sim/ -I. -I/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release -fPIC  -DTRACING_ON=1 -DCUDART_VERSION=11080 -std=c++0x cuda-sim.cc -o /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/cuda-sim/cuda-sim.o
+In file included from ../gpgpu-sim/shader.h:54,
+                 from cuda-sim.h:37,
+                 from cuda-sim.cc:33:
+../gpgpu-sim/gpu-cache.h: In constructor ‘baseline_cache::baseline_cache(const char*, cache_config&, int, int, mem_fetch_interface*, mem_fetch_status, cache_gpu_level, gpgpu_sim*)’:
+../gpgpu-sim/gpu-cache.h:1479:24: warning: ‘baseline_cache::m_bandwidth_management’ will be initialized after [-Wreorder]
+ 1479 |   bandwidth_management m_bandwidth_management;
+      |                        ^~~~~~~~~~~~~~~~~~~~~~
+../gpgpu-sim/gpu-cache.h:1399:19: warning:   ‘cache_gpu_level baseline_cache::m_level’ [-Wreorder]
+ 1399 |   cache_gpu_level m_level;
+      |                   ^~~~~~~
+../gpgpu-sim/gpu-cache.h:1282:3: warning:   when initialized here [-Wreorder]
+ 1282 |   baseline_cache(const char *name, cache_config &config, int core_id,
+      |   ^~~~~~~~~~~~~~
+ar rcs /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/cuda-sim/libgpgpu_ptx_sim.a /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/cuda-sim/ptx.tab.o /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/cuda-sim/lex.ptx_.o /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/cuda-sim/ptxinfo.tab.o /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/cuda-sim/lex.ptxinfo_.o /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/cuda-sim/ptx_parser.o /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/cuda-sim/ptx_loader.o /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/cuda-sim/cuda_device_printf.o /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/cuda-sim/instructions.o /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/cuda-sim/cuda-sim.o /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/cuda-sim/ptx_ir.o /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/cuda-sim/ptx_sim.o  /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/cuda-sim/memory.o /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/cuda-sim/ptx-stats.o /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/cuda-sim/decuda_pred_table/decuda_pred_table.o /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/cuda-sim/ptx.tab.o /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/cuda-sim/lex.ptx_.o /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/cuda-sim/ptxinfo.tab.o /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/cuda-sim/lex.ptxinfo_.o /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/cuda-sim/cuda_device_runtime.o
+make[2]: Leaving directory '/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/src/cuda-sim'
+make -C ./src/gpgpu-sim/ depend
+make -C ./libcuda/ depend
+make[2]: Entering directory '/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/src/gpgpu-sim'
+make -C ./cuobjdump_to_ptxplus/ depend
+make[2]: Entering directory '/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/libcuda'
+make[2]: Entering directory '/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/cuobjdump_to_ptxplus'
+touch /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/cuobjdump_to_ptxplus/Makefile.makedepend
+makedepend -f/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/cuobjdump_to_ptxplus/Makefile.makedepend cuobjdumpInst.cc cuobjdumpInstList.cc cuobjdump_to_ptxplus.cc 2> /dev/null
+make[2]: Leaving directory '/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/cuobjdump_to_ptxplus'
+make -C ./cuobjdump_to_ptxplus/
+make[2]: Entering directory '/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/cuobjdump_to_ptxplus'
+:
+:
+:
+make[2]: Leaving directory '/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/cuobjdump_to_ptxplus'
+touch /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/libcuda/Makefile.makedepend
+makedepend -f/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/libcuda/Makefile.makedepend -p/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/libcuda/ cuda_runtime_api.cc 2> /dev/null
+touch /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/gpgpu-sim/Makefile.makedepend
+makedepend -f/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/gpgpu-sim/Makefile.makedepend -p/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/gpgpu-sim/ addrdec.cc dram.cc dram_sched.cc gpu-cache.cc gpu-misc.cc gpu-sim.cc hashing.cc histogram.cc icnt_wrapper.cc l2cache.cc local_interconnect.cc mem_fetch.cc mem_latency_stat.cc power_interface.cc power_stat.cc scoreboard.cc shader.cc stack.cc stat-tool.cc traffic_breakdown.cc visualizer.cc 2> /dev/null
+make[2]: 'depend' is up to date.
+make[2]: Leaving directory '/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/libcuda'
+make -C ./libcuda/
+make[2]: Entering directory '/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/libcuda'
+make[2]: 'depend' is up to date.
+make[2]: Leaving directory '/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/src/gpgpu-sim'
+make -C ./src/gpgpu-sim/
+make[2]: Entering directory '/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/src/gpgpu-sim'
+touch /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/libcuda/Makefile.makedepend
+makedepend -f/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/libcuda/Makefile.makedepend -p/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/libcuda/ cuda_runtime_api.cc 2> /dev/null
+g++  -std=c++0x -O3 -g -Wall -Wno-unused-function -Wno-sign-compare -fPIC  -DCUDART_VERSION=11080 -I./ -I/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/libcuda -I/usr/local/cuda-11.8/include  -c cuda_runtime_api.cc -o /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/libcuda/cuda_runtime_api.o
+:
+flex -B  -P cuobjdump_ -o/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/libcuda/cuobjdump_lexer.c cuobjdump.l
+g++  -Wall -Wno-unused-function -Wno-sign-compare -fPIC -I./ -I/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/libcuda -I/usr/local/cuda-11.8/include  -c /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/libcuda/cuobjdump_parser.c -o /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/libcuda/cuobjdump_parser.o
+touch /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/gpgpu-sim/Makefile.makedepend
+makedepend -f/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/gpgpu-sim/Makefile.makedepend -p/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/gpgpu-sim/ addrdec.cc dram.cc dram_sched.cc gpu-cache.cc gpu-misc.cc gpu-sim.cc hashing.cc histogram.cc icnt_wrapper.cc l2cache.cc local_interconnect.cc mem_fetch.cc mem_latency_stat.cc power_interface.cc power_stat.cc scoreboard.cc shader.cc stack.cc stat-tool.cc traffic_breakdown.cc visualizer.cc 2> /dev/null
+g++  -Wall -Wno-unused-function -Wno-sign-compare -fPIC -I./ -I/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/libcuda -I/usr/local/cuda-11.8/include  -c /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/libcuda/cuobjdump_lexer.c -o /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/libcuda/cuobjdump_lexer.o
+ar rcs  /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/gpgpu-sim/libgpu_uarch_sim.a /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/gpgpu-sim/addrdec.o /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/gpgpu-sim/dram.o /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/gpgpu-sim/dram_sched.o /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/gpgpu-sim/gpu-cache.o /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/gpgpu-sim/gpu-misc.o /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/gpgpu-sim/gpu-sim.o /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/gpgpu-sim/hashing.o /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/gpgpu-sim/histogram.o /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/gpgpu-sim/icnt_wrapper.o /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/gpgpu-sim/l2cache.o /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/gpgpu-sim/local_interconnect.o /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/gpgpu-sim/mem_fetch.o /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/gpgpu-sim/mem_latency_stat.o /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/gpgpu-sim/power_interface.o /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/gpgpu-sim/power_stat.o /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/gpgpu-sim/scoreboard.o /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/gpgpu-sim/shader.o /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/gpgpu-sim/stack.o /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/gpgpu-sim/stat-tool.o /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/gpgpu-sim/traffic_breakdown.o /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/gpgpu-sim/visualizer.o
+In file included from cuda_runtime_api.cc:128:
+/usr/local/cuda-11.8/include/host_defines.h:54:2: warning: #warning "host_defines.h is an internal header file and must not be used directly.  This file will be removed in a future CUDA release.  Please use cuda_runtime_api.h or cuda_runtime.h instead." [-Wcpp]
+   54 | #warning "host_defines.h is an internal header file and must not be used directly.  This file will be removed in a future CUDA release.  Please use cuda_runtime_api.h or cuda_runtime.h instead."
+      |  ^~~~~~~
+make[2]: Leaving directory '/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/src/gpgpu-sim'
+make "CREATE_LIBRARY=1" "DEBUG=0" -C ./src/intersim2
+make[2]: Entering directory '/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/src/intersim2'
+touch /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/intersim2/Makefile.makedepend
+makedepend -f/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/intersim2/Makefile.makedepend -I-I. -Iarbiters -Iallocators -Irouters -Inetworks -Ipower -I/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/src -I/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/src/gpgpu-sim/ -p/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/intersim2/ config_utils.cpp booksim_config.cpp module.cpp buffer.cpp vc.cpp routefunc.cpp traffic.cpp flitchannel.cpp trafficmanager.cpp batchtrafficmanager.cpp packet_reply_info.cpp buffer_state.cpp stats.cpp credit.cpp outputset.cpp flit.cpp injection.cpp misc_utils.cpp rng_wrapper.cpp rng_double_wrapper.cpp power_module.cpp switch_monitor.cpp buffer_monitor.cpp main.cpp gputrafficmanager.cpp intersim_config.cpp interconnect_interface.cpp allocators/allocator.cpp allocators/islip.cpp allocators/loa.cpp allocators/maxsize.cpp allocators/pim.cpp allocators/selalloc.cpp allocators/separable.cpp allocators/separable_input_first.cpp allocators/separable_output_first.cpp allocators/wavefront.cpp arbiters/arbiter.cpp arbiters/matrix_arb.cpp arbiters/prio_arb.cpp arbiters/roundrobin_arb.cpp arbiters/tree_arb.cpp networks/anynet.cpp networks/cmesh.cpp networks/dragonfly.cpp networks/fattree.cpp networks/flatfly_onchip.cpp networks/fly.cpp networks/kncube.cpp networks/network.cpp networks/qtree.cpp networks/tree4.cpp power/buffer_monitor.cpp power/power_module.cpp power/switch_monitor.cpp routers/chaos_router.cpp routers/event_router.cpp routers/iq_router.cpp routers/router.cpp 2> /dev/null
+flex -o/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/intersim2/lex.yy.c config.l
+bison -y -d config.y --file-prefix=/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/intersim2/y
+bison -y -d config.y --file-prefix=/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/intersim2/y
+g++ -Wall -I. -Iarbiters -Iallocators -Irouters -Inetworks -Ipower -I/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/src -I/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/src/gpgpu-sim/ -DCREATE_LIBRARY -O3 -g -fPIC -I/usr/local/cuda-11.8/include -c config_utils.cpp -o /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/intersim2/config_utils.o
+g++ -Wall -I. -Iarbiters -Iallocators -Irouters -Inetworks -Ipower -I/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/src -I/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/src/gpgpu-sim/ -DCREATE_LIBRARY -O3 -g -fPIC -I/usr/local/cuda-11.8/include -c booksim_config.cpp -o /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/intersim2/booksim_config.o
+g++ -Wall -I. -Iarbiters -Iallocators -Irouters -Inetworks -Ipower -I/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/src -I/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/src/gpgpu-sim/ -DCREATE_LIBRARY -O3 -g -fPIC -I/usr/local/cuda-11.8/include -c module.cpp -o /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/intersim2/module.o
+g++ -Wall -I. -Iarbiters -Iallocators -Irouters -Inetworks -Ipower -I/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/src -I/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/src/gpgpu-sim/ -DCREATE_LIBRARY -O3 -g -fPIC -I/usr/local/cuda-11.8/include -c buffer.cpp -o /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/intersim2/buffer.o
+g++ -Wall -I. -Iarbiters -Iallocators -Irouters -Inetworks -Ipower -I/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/src -I/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/src/gpgpu-sim/ -DCREATE_LIBRARY -O3 -g -fPIC -I/usr/local/cuda-11.8/include -c vc.cpp -o /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/intersim2/vc.o
+g++ -Wall -I. -Iarbiters -Iallocators -Irouters -Inetworks -Ipower -I/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/src -I/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/src/gpgpu-sim/ -DCREATE_LIBRARY -O3 -g -fPIC -I/usr/local/cuda-11.8/include -c routefunc.cpp -o /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/intersim2/routefunc.o
+g++ -Wall -I. -Iarbiters -Iallocators -Irouters -Inetworks -Ipower -I/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/src -I/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/src/gpgpu-sim/ -DCREATE_LIBRARY -O3 -g -fPIC -I/usr/local/cuda-11.8/include -c traffic.cpp -o /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/intersim2/traffic.o
+g++ -Wall -I. -Iarbiters -Iallocators -Irouters -Inetworks -Ipower -I/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/src -I/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/src/gpgpu-sim/ -DCREATE_LIBRARY -O3 -g -fPIC -I/usr/local/cuda-11.8/include -c flitchannel.cpp -o /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/intersim2/flitchannel.o
+g++ -Wall -I. -Iarbiters -Iallocators -Irouters -Inetworks -Ipower -I/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/src -I/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/src/gpgpu-sim/ -DCREATE_LIBRARY -O3 -g -fPIC -I/usr/local/cuda-11.8/include -c trafficmanager.cpp -o /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/intersim2/trafficmanager.o
+g++ -Wall -I. -Iarbiters -Iallocators -Irouters -Inetworks -Ipower -I/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/src -I/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/src/gpgpu-sim/ -DCREATE_LIBRARY -O3 -g -fPIC -I/usr/local/cuda-11.8/include -c batchtrafficmanager.cpp -o /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/intersim2/batchtrafficmanager.o
+g++ -Wall -I. -Iarbiters -Iallocators -Irouters -Inetworks -Ipower -I/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/src -I/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/src/gpgpu-sim/ -DCREATE_LIBRARY -O3 -g -fPIC -I/usr/local/cuda-11.8/include -c packet_reply_info.cpp -o /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/intersim2/packet_reply_info.o
+g++ -Wall -I. -Iarbiters -Iallocators -Irouters -Inetworks -Ipower -I/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/src -I/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/src/gpgpu-sim/ -DCREATE_LIBRARY -O3 -g -fPIC -I/usr/local/cuda-11.8/include -c buffer_state.cpp -o /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/intersim2/buffer_state.o
+g++ -Wall -I. -Iarbiters -Iallocators -Irouters -Inetworks -Ipower -I/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/src -I/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/src/gpgpu-sim/ -DCREATE_LIBRARY -O3 -g -fPIC -I/usr/local/cuda-11.8/include -c stats.cpp -o /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/intersim2/stats.o
+g++ -Wall -I. -Iarbiters -Iallocators -Irouters -Inetworks -Ipower -I/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/src -I/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/src/gpgpu-sim/ -DCREATE_LIBRARY -O3 -g -fPIC -I/usr/local/cuda-11.8/include -c credit.cpp -o /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/intersim2/credit.o
+g++ -Wall -I. -Iarbiters -Iallocators -Irouters -Inetworks -Ipower -I/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/src -I/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/src/gpgpu-sim/ -DCREATE_LIBRARY -O3 -g -fPIC -I/usr/local/cuda-11.8/include -c outputset.cpp -o /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/intersim2/outputset.o
+g++ -Wall -I. -Iarbiters -Iallocators -Irouters -Inetworks -Ipower -I/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/src -I/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/src/gpgpu-sim/ -DCREATE_LIBRARY -O3 -g -fPIC -I/usr/local/cuda-11.8/include -c flit.cpp -o /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/intersim2/flit.o
+In file included from ../src/cuda-sim/../gpgpu-sim/shader.h:54,
+                 from ../src/cuda-sim/cuda-sim.h:37,
+                 from cuda_runtime_api.cc:138:
+../src/cuda-sim/../gpgpu-sim/gpu-cache.h: In constructor ‘baseline_cache::baseline_cache(const char*, cache_config&, int, int, mem_fetch_interface*, mem_fetch_status, cache_gpu_level, gpgpu_sim*)’:
+../src/cuda-sim/../gpgpu-sim/gpu-cache.h:1479:24: warning: ‘baseline_cache::m_bandwidth_management’ will be initialized after [-Wreorder]
+ 1479 |   bandwidth_management m_bandwidth_management;
+      |                        ^~~~~~~~~~~~~~~~~~~~~~
+../src/cuda-sim/../gpgpu-sim/gpu-cache.h:1399:19: warning:   ‘cache_gpu_level baseline_cache::m_level’ [-Wreorder]
+ 1399 |   cache_gpu_level m_level;
+      |                   ^~~~~~~
+../src/cuda-sim/../gpgpu-sim/gpu-cache.h:1282:3: warning:   when initialized here [-Wreorder]
+ 1282 |   baseline_cache(const char *name, cache_config &config, int core_id,
+      |   ^~~~~~~~~~~~~~
+g++ -Wall -I. -Iarbiters -Iallocators -Irouters -Inetworks -Ipower -I/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/src -I/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/src/gpgpu-sim/ -DCREATE_LIBRARY -O3 -g -fPIC -I/usr/local/cuda-11.8/include -c injection.cpp -o /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/intersim2/injection.o
+g++ -Wall -I. -Iarbiters -Iallocators -Irouters -Inetworks -Ipower -I/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/src -I/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/src/gpgpu-sim/ -DCREATE_LIBRARY -O3 -g -fPIC -I/usr/local/cuda-11.8/include -c misc_utils.cpp -o /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/intersim2/misc_utils.o
+g++ -Wall -I. -Iarbiters -Iallocators -Irouters -Inetworks -Ipower -I/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/src -I/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/src/gpgpu-sim/ -DCREATE_LIBRARY -O3 -g -fPIC -I/usr/local/cuda-11.8/include -c rng_wrapper.cpp -o /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/intersim2/rng_wrapper.o
+In file included from rng_wrapper.cpp:29:
+rng.c: In function ‘void ran_array(long int*, int)’:
+rng.c:35:16: warning: ISO C++17 does not allow ‘register’ storage class specifier [-Wregister]
+   35 |   register int i,j;
+      |                ^
+rng.c:35:18: warning: ISO C++17 does not allow ‘register’ storage class specifier [-Wregister]
+   35 |   register int i,j;
+      |                  ^
+rng.c: In function ‘void ran_start(long int)’:
+rng.c:60:16: warning: ISO C++17 does not allow ‘register’ storage class specifier [-Wregister]
+   60 |   register int t,j;
+      |                ^
+rng.c:60:18: warning: ISO C++17 does not allow ‘register’ storage class specifier [-Wregister]
+   60 |   register int t,j;
+      |                  ^
+rng.c:62:17: warning: ISO C++17 does not allow ‘register’ storage class specifier [-Wregister]
+   62 |   register long ss=(seed+2)&(MM-2);
+      |                 ^~
+In file included from rng_wrapper.cpp:29:
+rng.c: In function ‘int rng_main()’:
+rng.c:100:16: warning: ISO C++17 does not allow ‘register’ storage class specifier [-Wregister]
+  100 |   register int m; long a[2009];
+      |                ^
+g++ -Wall -I. -Iarbiters -Iallocators -Irouters -Inetworks -Ipower -I/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/src -I/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/src/gpgpu-sim/ -DCREATE_LIBRARY -O3 -g -fPIC -I/usr/local/cuda-11.8/include -c rng_double_wrapper.cpp -o /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/intersim2/rng_double_wrapper.o
+In file included from rng_double_wrapper.cpp:29:
+rng-double.c: In function ‘void ranf_array(double*, int)’:
+rng-double.c:34:16: warning: ISO C++17 does not allow ‘register’ storage class specifier [-Wregister]
+   34 |   register int i,j;
+      |                ^
+rng-double.c:34:18: warning: ISO C++17 does not allow ‘register’ storage class specifier [-Wregister]
+   34 |   register int i,j;
+      |                  ^
+rng-double.c: In function ‘void ranf_start(long int)’:
+rng-double.c:59:16: warning: ISO C++17 does not allow ‘register’ storage class specifier [-Wregister]
+   59 |   register int t,s,j;
+      |                ^
+rng-double.c:59:18: warning: ISO C++17 does not allow ‘register’ storage class specifier [-Wregister]
+   59 |   register int t,s,j;
+      |                  ^
+rng-double.c:59:20: warning: ISO C++17 does not allow ‘register’ storage class specifier [-Wregister]
+   59 |   register int t,s,j;
+      |                    ^
+g++ -Wall -I. -Iarbiters -Iallocators -Irouters -Inetworks -Ipower -I/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/src -I/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/src/gpgpu-sim/ -DCREATE_LIBRARY -O3 -g -fPIC -I/usr/local/cuda-11.8/include -c power/power_module.cpp -o /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/intersim2/power_module.o
+In file included from rng_double_wrapper.cpp:29:
+rng-double.c: In function ‘int rng_double_main()’:
+rng-double.c:103:16: warning: ISO C++17 does not allow ‘register’ storage class specifier [-Wregister]
+  103 |   register int m; double a[2009]; /* a rudimentary test */
+      |                ^
+g++ -Wall -I. -Iarbiters -Iallocators -Irouters -Inetworks -Ipower -I/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/src -I/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/src/gpgpu-sim/ -DCREATE_LIBRARY -O3 -g -fPIC -I/usr/local/cuda-11.8/include -c power/switch_monitor.cpp -o /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/intersim2/switch_monitor.o
+g++ -Wall -I. -Iarbiters -Iallocators -Irouters -Inetworks -Ipower -I/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/src -I/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/src/gpgpu-sim/ -DCREATE_LIBRARY -O3 -g -fPIC -I/usr/local/cuda-11.8/include -c power/buffer_monitor.cpp -o /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/intersim2/buffer_monitor.o
+g++ -Wall -I. -Iarbiters -Iallocators -Irouters -Inetworks -Ipower -I/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/src -I/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/src/gpgpu-sim/ -DCREATE_LIBRARY -O3 -g -fPIC -I/usr/local/cuda-11.8/include -c main.cpp -o /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/intersim2/main.o
+g++ -Wall -I. -Iarbiters -Iallocators -Irouters -Inetworks -Ipower -I/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/src -I/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/src/gpgpu-sim/ -DCREATE_LIBRARY -O3 -g -fPIC -I/usr/local/cuda-11.8/include -c gputrafficmanager.cpp -o /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/intersim2/gputrafficmanager.o
+g++ -Wall -I. -Iarbiters -Iallocators -Irouters -Inetworks -Ipower -I/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/src -I/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/src/gpgpu-sim/ -DCREATE_LIBRARY -O3 -g -fPIC -I/usr/local/cuda-11.8/include -c intersim_config.cpp -o /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/intersim2/intersim_config.o
+g++ -Wall -I. -Iarbiters -Iallocators -Irouters -Inetworks -Ipower -I/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/src -I/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/src/gpgpu-sim/ -DCREATE_LIBRARY -O3 -g -fPIC -I/usr/local/cuda-11.8/include -c interconnect_interface.cpp -o /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/intersim2/interconnect_interface.o
+g++ -Wall -I. -Iarbiters -Iallocators -Irouters -Inetworks -Ipower -I/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/src -I/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/src/gpgpu-sim/ -DCREATE_LIBRARY -O3 -g -fPIC -I/usr/local/cuda-11.8/include -c networks/anynet.cpp -o /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/intersim2/anynet.o
+cuda_runtime_api.cc: In function ‘void __cudaRegisterFunctionSST(unsigned int, uint64_t, char*)’:
+cuda_runtime_api.cc:3847:32: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
+ 3847 |   cudaRegisterFunctionInternal((void **)fatCubinHandle, (const char *)hostFun,
+      |                                ^~~~~~~~~~~~~~~~~~~~~~~
+cuda_runtime_api.cc:3848:57: warning: passing NULL to non-pointer argument 5 of ‘void cudaRegisterFunctionInternal(void**, const char*, char*, const char*, int, uint3*, uint3*, dim3*, dim3*, gpgpu_context*)’ [-Wconversion-null]
+ 3848 |                                (char *)deviceFun, NULL, NULL, NULL, NULL, NULL,
+      |                                                         ^~~~
+cuda_runtime_api.cc:810:39: note:   declared here
+  810 |                                   int thread_limit, uint3 *tid, uint3 *bid,
+      |                                   ~~~~^~~~~~~~~~~~
+g++ -Wall -I. -Iarbiters -Iallocators -Irouters -Inetworks -Ipower -I/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/src -I/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/src/gpgpu-sim/ -DCREATE_LIBRARY -O3 -g -fPIC -I/usr/local/cuda-11.8/include -c networks/cmesh.cpp -o /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/intersim2/cmesh.o
+g++ -Wall -I. -Iarbiters -Iallocators -Irouters -Inetworks -Ipower -I/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/src -I/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/src/gpgpu-sim/ -DCREATE_LIBRARY -O3 -g -fPIC -I/usr/local/cuda-11.8/include -c networks/dragonfly.cpp -o /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/intersim2/dragonfly.o
+g++ -Wall -I. -Iarbiters -Iallocators -Irouters -Inetworks -Ipower -I/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/src -I/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/src/gpgpu-sim/ -DCREATE_LIBRARY -O3 -g -fPIC -I/usr/local/cuda-11.8/include -c networks/fattree.cpp -o /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/intersim2/fattree.o
+g++ -Wall -I. -Iarbiters -Iallocators -Irouters -Inetworks -Ipower -I/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/src -I/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/src/gpgpu-sim/ -DCREATE_LIBRARY -O3 -g -fPIC -I/usr/local/cuda-11.8/include -c networks/flatfly_onchip.cpp -o /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/intersim2/flatfly_onchip.o
+g++ -Wall -I. -Iarbiters -Iallocators -Irouters -Inetworks -Ipower -I/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/src -I/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/src/gpgpu-sim/ -DCREATE_LIBRARY -O3 -g -fPIC -I/usr/local/cuda-11.8/include -c networks/fly.cpp -o /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/intersim2/fly.o
+g++ -Wall -I. -Iarbiters -Iallocators -Irouters -Inetworks -Ipower -I/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/src -I/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/src/gpgpu-sim/ -DCREATE_LIBRARY -O3 -g -fPIC -I/usr/local/cuda-11.8/include -c networks/kncube.cpp -o /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/intersim2/kncube.o
+g++ -Wall -I. -Iarbiters -Iallocators -Irouters -Inetworks -Ipower -I/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/src -I/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/src/gpgpu-sim/ -DCREATE_LIBRARY -O3 -g -fPIC -I/usr/local/cuda-11.8/include -c networks/network.cpp -o /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/intersim2/network.o
+g++ -Wall -I. -Iarbiters -Iallocators -Irouters -Inetworks -Ipower -I/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/src -I/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/src/gpgpu-sim/ -DCREATE_LIBRARY -O3 -g -fPIC -I/usr/local/cuda-11.8/include -c networks/qtree.cpp -o /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/intersim2/qtree.o
+g++ -Wall -I. -Iarbiters -Iallocators -Irouters -Inetworks -Ipower -I/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/src -I/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/src/gpgpu-sim/ -DCREATE_LIBRARY -O3 -g -fPIC -I/usr/local/cuda-11.8/include -c networks/tree4.cpp -o /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/intersim2/tree4.o
+g++ -Wall -I. -Iarbiters -Iallocators -Irouters -Inetworks -Ipower -I/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/src -I/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/src/gpgpu-sim/ -DCREATE_LIBRARY -O3 -g -fPIC -I/usr/local/cuda-11.8/include -c allocators/allocator.cpp -o /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/intersim2/allocator.o
+g++ -Wall -I. -Iarbiters -Iallocators -Irouters -Inetworks -Ipower -I/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/src -I/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/src/gpgpu-sim/ -DCREATE_LIBRARY -O3 -g -fPIC -I/usr/local/cuda-11.8/include -c allocators/islip.cpp -o /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/intersim2/islip.o
+g++ -Wall -I. -Iarbiters -Iallocators -Irouters -Inetworks -Ipower -I/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/src -I/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/src/gpgpu-sim/ -DCREATE_LIBRARY -O3 -g -fPIC -I/usr/local/cuda-11.8/include -c allocators/loa.cpp -o /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/intersim2/loa.o
+g++ -Wall -I. -Iarbiters -Iallocators -Irouters -Inetworks -Ipower -I/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/src -I/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/src/gpgpu-sim/ -DCREATE_LIBRARY -O3 -g -fPIC -I/usr/local/cuda-11.8/include -c allocators/maxsize.cpp -o /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/intersim2/maxsize.o
+g++ -Wall -I. -Iarbiters -Iallocators -Irouters -Inetworks -Ipower -I/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/src -I/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/src/gpgpu-sim/ -DCREATE_LIBRARY -O3 -g -fPIC -I/usr/local/cuda-11.8/include -c allocators/pim.cpp -o /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/intersim2/pim.o
+networks/kncube.cpp: In member function ‘virtual void KNCube::InsertRandomFaults(const Configuration&)’:
+networks/kncube.cpp:304:29: warning: ‘node’ may be used uninitialized in this function [-Wmaybe-uninitialized]
+  304 |         fail_nodes[_LeftNode( node, n )]  = true;
+      |                    ~~~~~~~~~^~~~~~~~~~~
+g++ -Wall -I. -Iarbiters -Iallocators -Irouters -Inetworks -Ipower -I/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/src -I/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/src/gpgpu-sim/ -DCREATE_LIBRARY -O3 -g -fPIC -I/usr/local/cuda-11.8/include -c allocators/selalloc.cpp -o /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/intersim2/selalloc.o
+g++ -Wall -I. -Iarbiters -Iallocators -Irouters -Inetworks -Ipower -I/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/src -I/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/src/gpgpu-sim/ -DCREATE_LIBRARY -O3 -g -fPIC -I/usr/local/cuda-11.8/include -c allocators/separable.cpp -o /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/intersim2/separable.o
+networks/tree4.cpp: In member function ‘int Tree4::_WireLatency(int, int, int, int)’:
+networks/tree4.cpp:288:10: warning: ‘L’ may be used uninitialized in this function [-Wmaybe-uninitialized]
+  288 |   return L;
+      |          ^
+g++ -Wall -I. -Iarbiters -Iallocators -Irouters -Inetworks -Ipower -I/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/src -I/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/src/gpgpu-sim/ -DCREATE_LIBRARY -O3 -g -fPIC -I/usr/local/cuda-11.8/include -c allocators/separable_input_first.cpp -o /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/intersim2/separable_input_first.o
+g++ -Wall -I. -Iarbiters -Iallocators -Irouters -Inetworks -Ipower -I/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/src -I/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/src/gpgpu-sim/ -DCREATE_LIBRARY -O3 -g -fPIC -I/usr/local/cuda-11.8/include -c allocators/separable_output_first.cpp -o /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/intersim2/separable_output_first.o
+g++ -Wall -I. -Iarbiters -Iallocators -Irouters -Inetworks -Ipower -I/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/src -I/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/src/gpgpu-sim/ -DCREATE_LIBRARY -O3 -g -fPIC -I/usr/local/cuda-11.8/include -c allocators/wavefront.cpp -o /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/intersim2/wavefront.o
+g++ -Wall -I. -Iarbiters -Iallocators -Irouters -Inetworks -Ipower -I/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/src -I/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/src/gpgpu-sim/ -DCREATE_LIBRARY -O3 -g -fPIC -I/usr/local/cuda-11.8/include -c arbiters/arbiter.cpp -o /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/intersim2/arbiter.o
+g++ -Wall -I. -Iarbiters -Iallocators -Irouters -Inetworks -Ipower -I/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/src -I/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/src/gpgpu-sim/ -DCREATE_LIBRARY -O3 -g -fPIC -I/usr/local/cuda-11.8/include -c arbiters/matrix_arb.cpp -o /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/intersim2/matrix_arb.o
+g++ -Wall -I. -Iarbiters -Iallocators -Irouters -Inetworks -Ipower -I/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/src -I/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/src/gpgpu-sim/ -DCREATE_LIBRARY -O3 -g -fPIC -I/usr/local/cuda-11.8/include -c arbiters/prio_arb.cpp -o /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/intersim2/prio_arb.o
+g++ -Wall -I. -Iarbiters -Iallocators -Irouters -Inetworks -Ipower -I/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/src -I/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/src/gpgpu-sim/ -DCREATE_LIBRARY -O3 -g -fPIC -I/usr/local/cuda-11.8/include -c arbiters/roundrobin_arb.cpp -o /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/intersim2/roundrobin_arb.o
+g++ -Wall -I. -Iarbiters -Iallocators -Irouters -Inetworks -Ipower -I/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/src -I/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/src/gpgpu-sim/ -DCREATE_LIBRARY -O3 -g -fPIC -I/usr/local/cuda-11.8/include -c arbiters/tree_arb.cpp -o /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/intersim2/tree_arb.o
+g++ -Wall -I. -Iarbiters -Iallocators -Irouters -Inetworks -Ipower -I/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/src -I/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/src/gpgpu-sim/ -DCREATE_LIBRARY -O3 -g -fPIC -I/usr/local/cuda-11.8/include -c routers/chaos_router.cpp -o /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/intersim2/chaos_router.o
+g++ -Wall -I. -Iarbiters -Iallocators -Irouters -Inetworks -Ipower -I/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/src -I/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/src/gpgpu-sim/ -DCREATE_LIBRARY -O3 -g -fPIC -I/usr/local/cuda-11.8/include -c routers/event_router.cpp -o /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/intersim2/event_router.o
+g++ -Wall -I. -Iarbiters -Iallocators -Irouters -Inetworks -Ipower -I/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/src -I/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/src/gpgpu-sim/ -DCREATE_LIBRARY -O3 -g -fPIC -I/usr/local/cuda-11.8/include -c routers/iq_router.cpp -o /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/intersim2/iq_router.o
+g++ -Wall -I. -Iarbiters -Iallocators -Irouters -Inetworks -Ipower -I/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/src -I/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/src/gpgpu-sim/ -DCREATE_LIBRARY -O3 -g -fPIC -I/usr/local/cuda-11.8/include -c routers/router.cpp -o /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/intersim2/router.o
+g++ -Wno-unused-function -Wall -I. -Iarbiters -Iallocators -Irouters -Inetworks -Ipower -I/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/src -I/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/src/gpgpu-sim/ -DCREATE_LIBRARY -O3 -g -fPIC -I/usr/local/cuda-11.8/include -c /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/intersim2/lex.yy.c -o /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/intersim2/lex.yy.o
+g++ -Wno-unused-function -Wall -I. -Iarbiters -Iallocators -Irouters -Inetworks -Ipower -I/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/src -I/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/src/gpgpu-sim/ -DCREATE_LIBRARY -O3 -g -fPIC -I/usr/local/cuda-11.8/include -c /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/intersim2/y.tab.c -o /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/intersim2/y.tab.o
+/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/intersim2/y.tab.c: In function ‘int yyparse()’:
+/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/intersim2/y.tab.c:1137:20: warning: ISO C++ forbids converting a string constant to ‘char*’ [-Wwrite-strings]
+ 1137 |       yyerror (YY_("syntax error"));
+      |                    ^~~~~~~~~~~~~~
+/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/intersim2/y.tab.c:253:22: note: in definition of macro ‘YY_’
+  253 | #  define YY_(Msgid) Msgid
+      |                      ^~~~~
+/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/intersim2/y.tab.c:1248:16: warning: ISO C++ forbids converting a string constant to ‘char*’ [-Wwrite-strings]
+ 1248 |   yyerror (YY_("memory exhausted"));
+      |                ^~~~~~~~~~~~~~~~~~
+/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/intersim2/y.tab.c:253:22: note: in definition of macro ‘YY_’
+  253 | #  define YY_(Msgid) Msgid
+      |                      ^~~~~
+cuda_runtime_api.cc: In member function ‘void cuda_runtime_api::extract_ptx_files_using_cuobjdump_internal(CUctx_st*, std::string&)’:
+cuda_runtime_api.cc:3189:30: warning: ‘%s’ directive output may be truncated writing up to 1023 bytes into a region of size 922 [-Wformat-truncation=]
+ 3189 |            "awk '{$1=$1}1' > %s",
+      |                              ^~
+ 3190 |            app_binary.c_str(), ptx_list_file_name);
+      |                                ~~~~~~~~~~~~~~~~~~
+In file included from /usr/include/stdio.h:894,
+                 from cuda_runtime_api.cc:107:
+/usr/include/x86_64-linux-gnu/bits/stdio2.h:71:35: note: ‘__builtin___snprintf_chk’ output 79 or more bytes (assuming 1102) into a destination of size 1000
+   71 |   return __builtin___snprintf_chk (__s, __n, __USE_FORTIFY_LEVEL - 1,
+      |          ~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   72 |                                    __glibc_objsize (__s), __fmt,
+      |                                    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   73 |                                    __va_arg_pack ());
+      |                                    ~~~~~~~~~~~~~~~~~
+echo /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/libcuda/cuda_runtime_api.o /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/libcuda/cuobjdump_lexer.o /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/libcuda/cuobjdump_parser.o
+/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/libcuda/cuda_runtime_api.o /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/libcuda/cuobjdump_lexer.o /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/libcuda/cuobjdump_parser.o
+ar rcs /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/libcuda/libcuda.a /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/libcuda/cuda_runtime_api.o /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/libcuda/cuobjdump_lexer.o /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/libcuda/cuobjdump_parser.o
+make[2]: Leaving directory '/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/libcuda'
+make[2]: Leaving directory '/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/src/intersim2'
+make -C ./src/ depend
+make[2]: Entering directory '/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/src'
+touch /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/Makefile.makedepend
+makedepend -f/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/Makefile.makedepend -p/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/ abstract_hardware_model.cc debug.cc gpgpusim_entrypoint.cc option_parser.cc statwrapper.cc stream_manager.cc trace.cc 2> /dev/null
+make[2]: 'depend' is up to date.
+make[2]: Leaving directory '/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/src'
+make -C ./src/
+make[2]: Entering directory '/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/src'
+touch /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/Makefile.makedepend
+makedepend -f/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/Makefile.makedepend -p/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/ abstract_hardware_model.cc debug.cc gpgpusim_entrypoint.cc option_parser.cc statwrapper.cc stream_manager.cc trace.cc 2> /dev/null
+g++  -O3 -g3 -fPIC -Wall -DDEBUG -DCUDART_VERSION=11080 -std=c++0x -DTRACING_ON=1 -I/usr/local/cuda-11.8/include -o /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/abstract_hardware_model.o -c abstract_hardware_model.cc
+g++  -O3 -g3 -fPIC -Wall -DDEBUG -DCUDART_VERSION=11080 -std=c++0x -DTRACING_ON=1 -I/usr/local/cuda-11.8/include -o /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/debug.o -c debug.cc
+g++  -O3 -g3 -fPIC -Wall -DDEBUG -DCUDART_VERSION=11080 -std=c++0x -DTRACING_ON=1 -I/usr/local/cuda-11.8/include -o /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/gpgpusim_entrypoint.o -c gpgpusim_entrypoint.cc
+g++  -O3 -g3 -fPIC -Wall -DDEBUG -DCUDART_VERSION=11080 -std=c++0x -DTRACING_ON=1 -I/usr/local/cuda-11.8/include -o /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/option_parser.o -c option_parser.cc
+g++  -O3 -g3 -fPIC -Wall -DDEBUG -DCUDART_VERSION=11080 -std=c++0x -DTRACING_ON=1 -I/usr/local/cuda-11.8/include -o /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/statwrapper.o -c statwrapper.cc
+g++  -O3 -g3 -fPIC -Wall -DDEBUG -DCUDART_VERSION=11080 -std=c++0x -DTRACING_ON=1 -I/usr/local/cuda-11.8/include -o /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/stream_manager.o -c stream_manager.cc
+g++  -O3 -g3 -fPIC -Wall -DDEBUG -DCUDART_VERSION=11080 -std=c++0x -DTRACING_ON=1 -I/usr/local/cuda-11.8/include -o /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/trace.o -c trace.cc
+make   -C ./gpgpu-sim
+make[3]: Entering directory '/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/src'
+make[3]: warning: jobserver unavailable: using -j1.  Add '+' to parent make rule.
+touch /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/gpgpu-sim/Makefile.makedepend
+makedepend -f/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/gpgpu-sim/Makefile.makedepend -p/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/gpgpu-sim/ addrdec.cc dram.cc dram_sched.cc gpu-cache.cc gpu-misc.cc gpu-sim.cc hashing.cc histogram.cc icnt_wrapper.cc l2cache.cc local_interconnect.cc mem_fetch.cc mem_latency_stat.cc power_interface.cc power_stat.cc scoreboard.cc shader.cc stack.cc stat-tool.cc traffic_breakdown.cc visualizer.cc 2> /dev/null
+ar rcs  /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/gpgpu-sim/libgpu_uarch_sim.a /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/gpgpu-sim/addrdec.o /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/gpgpu-sim/dram.o /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/gpgpu-sim/dram_sched.o /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/gpgpu-sim/gpu-cache.o /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/gpgpu-sim/gpu-misc.o /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/gpgpu-sim/gpu-sim.o /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/gpgpu-sim/hashing.o /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/gpgpu-sim/histogram.o /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/gpgpu-sim/icnt_wrapper.o /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/gpgpu-sim/l2cache.o /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/gpgpu-sim/local_interconnect.o /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/gpgpu-sim/mem_fetch.o /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/gpgpu-sim/mem_latency_stat.o /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/gpgpu-sim/power_interface.o /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/gpgpu-sim/power_stat.o /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/gpgpu-sim/scoreboard.o /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/gpgpu-sim/shader.o /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/gpgpu-sim/stack.o /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/gpgpu-sim/stat-tool.o /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/gpgpu-sim/traffic_breakdown.o /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/gpgpu-sim/visualizer.o
+make[3]: Leaving directory '/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/src/gpgpu-sim'
+In file included from ../libcuda/../src/cuda-sim/../gpgpu-sim/shader.h:54,
+                 from ../libcuda/../src/cuda-sim/cuda-sim.h:37,
+                 from ../libcuda/gpgpu_context.h:3,
+                 from stream_manager.cc:30:
+../libcuda/../src/cuda-sim/../gpgpu-sim/gpu-cache.h: In constructor ‘baseline_cache::baseline_cache(const char*, cache_config&, int, int, mem_fetch_interface*, mem_fetch_status, cache_gpu_level, gpgpu_sim*)’:
+../libcuda/../src/cuda-sim/../gpgpu-sim/gpu-cache.h:1479:24: warning: ‘baseline_cache::m_bandwidth_management’ will be initialized after [-Wreorder]
+ 1479 |   bandwidth_management m_bandwidth_management;
+      |                        ^~~~~~~~~~~~~~~~~~~~~~
+../libcuda/../src/cuda-sim/../gpgpu-sim/gpu-cache.h:1399:19: warning:   ‘cache_gpu_level baseline_cache::m_level’ [-Wreorder]
+ 1399 |   cache_gpu_level m_level;
+      |                   ^~~~~~~
+../libcuda/../src/cuda-sim/../gpgpu-sim/gpu-cache.h:1282:3: warning:   when initialized here [-Wreorder]
+ 1282 |   baseline_cache(const char *name, cache_config &config, int core_id,
+      |   ^~~~~~~~~~~~~~
+In file included from cuda-sim/../gpgpu-sim/shader.h:54,
+                 from cuda-sim/cuda-sim.h:37,
+                 from debug.cc:30:
+cuda-sim/../gpgpu-sim/gpu-cache.h: In constructor ‘baseline_cache::baseline_cache(const char*, cache_config&, int, int, mem_fetch_interface*, mem_fetch_status, cache_gpu_level, gpgpu_sim*)’:
+cuda-sim/../gpgpu-sim/gpu-cache.h:1479:24: warning: ‘baseline_cache::m_bandwidth_management’ will be initialized after [-Wreorder]
+ 1479 |   bandwidth_management m_bandwidth_management;
+      |                        ^~~~~~~~~~~~~~~~~~~~~~
+cuda-sim/../gpgpu-sim/gpu-cache.h:1399:19: warning:   ‘cache_gpu_level baseline_cache::m_level’ [-Wreorder]
+ 1399 |   cache_gpu_level m_level;
+      |                   ^~~~~~~
+cuda-sim/../gpgpu-sim/gpu-cache.h:1282:3: warning:   when initialized here [-Wreorder]
+ 1282 |   baseline_cache(const char *name, cache_config &config, int core_id,
+      |   ^~~~~~~~~~~~~~
+In file included from ../libcuda/../src/cuda-sim/../gpgpu-sim/shader.h:54,
+                 from ../libcuda/../src/cuda-sim/cuda-sim.h:37,
+                 from ../libcuda/gpgpu_context.h:3,
+                 from abstract_hardware_model.cc:37:
+../libcuda/../src/cuda-sim/../gpgpu-sim/gpu-cache.h: In constructor ‘baseline_cache::baseline_cache(const char*, cache_config&, int, int, mem_fetch_interface*, mem_fetch_status, cache_gpu_level, gpgpu_sim*)’:
+../libcuda/../src/cuda-sim/../gpgpu-sim/gpu-cache.h:1479:24: warning: ‘baseline_cache::m_bandwidth_management’ will be initialized after [-Wreorder]
+ 1479 |   bandwidth_management m_bandwidth_management;
+      |                        ^~~~~~~~~~~~~~~~~~~~~~
+../libcuda/../src/cuda-sim/../gpgpu-sim/gpu-cache.h:1399:19: warning:   ‘cache_gpu_level baseline_cache::m_level’ [-Wreorder]
+ 1399 |   cache_gpu_level m_level;
+      |                   ^~~~~~~
+../libcuda/../src/cuda-sim/../gpgpu-sim/gpu-cache.h:1282:3: warning:   when initialized here [-Wreorder]
+ 1282 |   baseline_cache(const char *name, cache_config &config, int core_id,
+      |   ^~~~~~~~~~~~~~
+In file included from ../libcuda/../src/cuda-sim/../gpgpu-sim/shader.h:54,
+                 from ../libcuda/../src/cuda-sim/cuda-sim.h:37,
+                 from ../libcuda/gpgpu_context.h:3,
+                 from gpgpusim_entrypoint.cc:32:
+../libcuda/../src/cuda-sim/../gpgpu-sim/gpu-cache.h: In constructor ‘baseline_cache::baseline_cache(const char*, cache_config&, int, int, mem_fetch_interface*, mem_fetch_status, cache_gpu_level, gpgpu_sim*)’:
+../libcuda/../src/cuda-sim/../gpgpu-sim/gpu-cache.h:1479:24: warning: ‘baseline_cache::m_bandwidth_management’ will be initialized after [-Wreorder]
+ 1479 |   bandwidth_management m_bandwidth_management;
+      |                        ^~~~~~~~~~~~~~~~~~~~~~
+../libcuda/../src/cuda-sim/../gpgpu-sim/gpu-cache.h:1399:19: warning:   ‘cache_gpu_level baseline_cache::m_level’ [-Wreorder]
+ 1399 |   cache_gpu_level m_level;
+      |                   ^~~~~~~
+../libcuda/../src/cuda-sim/../gpgpu-sim/gpu-cache.h:1282:3: warning:   when initialized here [-Wreorder]
+ 1282 |   baseline_cache(const char *name, cache_config &config, int core_id,
+      |   ^~~~~~~~~~~~~~
+ar rcs  /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/libgpgpusim.a /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/abstract_hardware_model.o /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/debug.o /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/gpgpusim_entrypoint.o /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/option_parser.o /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/statwrapper.o /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/stream_manager.o /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/trace.o /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/gpgpu-sim/*.o
+make[2]: Leaving directory '/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/src'
+g++ -shared -Wl,-soname,libcudart.so -Wl,--version-script=linux-so-version.txt\
+		/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/libcuda/*.o \
+		/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/cuda-sim/*.o \
+		/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/cuda-sim/decuda_pred_table/*.o \
+		/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/gpgpu-sim/*.o \
+		/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/intersim2/*.o \
+		/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/*.o -lm -lz -lGL -pthread \
+		/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/accelwattch/*.o \
+		-o lib/gcc-11.4.0/cuda-11080/release/libcudart.so
+if [ ! -f lib/gcc-11.4.0/cuda-11080/release/libcudart.so.2 ]; then ln -s libcudart.so lib/gcc-11.4.0/cuda-11080/release/libcudart.so.2; fi
+if [ ! -f lib/gcc-11.4.0/cuda-11080/release/libcudart.so.3 ]; then ln -s libcudart.so lib/gcc-11.4.0/cuda-11080/release/libcudart.so.3; fi
+if [ ! -f lib/gcc-11.4.0/cuda-11080/release/libcudart.so.4 ]; then ln -s libcudart.so lib/gcc-11.4.0/cuda-11080/release/libcudart.so.4; fi
+if [ ! -f lib/gcc-11.4.0/cuda-11080/release/libcudart.so.5.0 ]; then ln -s libcudart.so lib/gcc-11.4.0/cuda-11080/release/libcudart.so.5.0; fi
+if [ ! -f lib/gcc-11.4.0/cuda-11080/release/libcudart.so.5.5 ]; then ln -s libcudart.so lib/gcc-11.4.0/cuda-11080/release/libcudart.so.5.5; fi
+if [ ! -f lib/gcc-11.4.0/cuda-11080/release/libcudart.so.6.0 ]; then ln -s libcudart.so lib/gcc-11.4.0/cuda-11080/release/libcudart.so.6.0; fi
+if [ ! -f lib/gcc-11.4.0/cuda-11080/release/libcudart.so.6.5 ]; then ln -s libcudart.so lib/gcc-11.4.0/cuda-11080/release/libcudart.so.6.5; fi
+if [ ! -f lib/gcc-11.4.0/cuda-11080/release/libcudart.so.7.0 ]; then ln -s libcudart.so lib/gcc-11.4.0/cuda-11080/release/libcudart.so.7.0; fi
+if [ ! -f lib/gcc-11.4.0/cuda-11080/release/libcudart.so.7.5 ]; then ln -s libcudart.so lib/gcc-11.4.0/cuda-11080/release/libcudart.so.7.5; fi
+if [ ! -f lib/gcc-11.4.0/cuda-11080/release/libcudart.so.8.0 ]; then ln -s libcudart.so lib/gcc-11.4.0/cuda-11080/release/libcudart.so.8.0; fi
+if [ ! -f lib/gcc-11.4.0/cuda-11080/release/libcudart.so.9.0 ]; then ln -s libcudart.so lib/gcc-11.4.0/cuda-11080/release/libcudart.so.9.0; fi
+if [ ! -f lib/gcc-11.4.0/cuda-11080/release/libcudart.so.9.1 ]; then ln -s libcudart.so lib/gcc-11.4.0/cuda-11080/release/libcudart.so.9.1; fi
+if [ ! -f lib/gcc-11.4.0/cuda-11080/release/libcudart.so.9.2 ]; then ln -s libcudart.so lib/gcc-11.4.0/cuda-11080/release/libcudart.so.9.2; fi
+if [ ! -f lib/gcc-11.4.0/cuda-11080/release/libcudart.so.10.0 ]; then ln -s libcudart.so lib/gcc-11.4.0/cuda-11080/release/libcudart.so.10.0; fi
+if [ ! -f lib/gcc-11.4.0/cuda-11080/release/libcudart.so.10.1 ]; then ln -s libcudart.so lib/gcc-11.4.0/cuda-11080/release/libcudart.so.10.1; fi
+if [ ! -f lib/gcc-11.4.0/cuda-11080/release/libcudart.so.11.0 ]; then ln -s libcudart.so lib/gcc-11.4.0/cuda-11080/release/libcudart.so.11.0; fi
+if [ ! -f lib/gcc-11.4.0/cuda-11080/release/libcudart_mod.so ]; then ln -s libcudart.so lib/gcc-11.4.0/cuda-11080/release/libcudart_mod.so; fi
+make[1]: Leaving directory '/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim'
+g++ -Wall -O3 -g3 -fPIC -std=c++17 -I./trace-driven -I./trace-parser -I/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/libcuda -I/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/src -I/usr/local/cuda-11.8/include -I./build/release -L/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/lib/gcc-11.4.0/cuda-11080/release/ -lcudart -lm -lz -lGL -pthread ./build/release/*.o  -o ./bin/release/accel-sim.out accel-sim.cc main.cc 
+In file included from /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/src/cuda-sim/../gpgpu-sim/shader.h:54,
+                 from /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/src/cuda-sim/cuda-sim.h:37,
+                 from accel-sim.h:13,
+                 from accel-sim.cc:1:
+/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/src/cuda-sim/../gpgpu-sim/gpu-cache.h: In constructor ‘baseline_cache::baseline_cache(const char*, cache_config&, int, int, mem_fetch_interface*, mem_fetch_status, cache_gpu_level, gpgpu_sim*)’:
+/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/src/cuda-sim/../gpgpu-sim/gpu-cache.h:1479:24: warning: ‘baseline_cache::m_bandwidth_management’ will be initialized after [-Wreorder]
+ 1479 |   bandwidth_management m_bandwidth_management;
+      |                        ^~~~~~~~~~~~~~~~~~~~~~
+/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/src/cuda-sim/../gpgpu-sim/gpu-cache.h:1399:19: warning:   ‘cache_gpu_level baseline_cache::m_level’ [-Wreorder]
+ 1399 |   cache_gpu_level m_level;
+      |                   ^~~~~~~
+/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/src/cuda-sim/../gpgpu-sim/gpu-cache.h:1282:3: warning:   when initialized here [-Wreorder]
+ 1282 |   baseline_cache(const char *name, cache_config &config, int core_id,
+      |   ^~~~~~~~~~~~~~
+In file included from /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/src/cuda-sim/../gpgpu-sim/shader.h:54,
+                 from /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/src/cuda-sim/cuda-sim.h:37,
+                 from accel-sim.h:13,
+                 from main.cc:4:
+/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/src/cuda-sim/../gpgpu-sim/gpu-cache.h: In constructor ‘baseline_cache::baseline_cache(const char*, cache_config&, int, int, mem_fetch_interface*, mem_fetch_status, cache_gpu_level, gpgpu_sim*)’:
+/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/src/cuda-sim/../gpgpu-sim/gpu-cache.h:1479:24: warning: ‘baseline_cache::m_bandwidth_management’ will be initialized after [-Wreorder]
+ 1479 |   bandwidth_management m_bandwidth_management;
+      |                        ^~~~~~~~~~~~~~~~~~~~~~
+/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/src/cuda-sim/../gpgpu-sim/gpu-cache.h:1399:19: warning:   ‘cache_gpu_level baseline_cache::m_level’ [-Wreorder]
+ 1399 |   cache_gpu_level m_level;
+      |                   ^~~~~~~
+/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/src/cuda-sim/../gpgpu-sim/gpu-cache.h:1282:3: warning:   when initialized here [-Wreorder]
+ 1282 |   baseline_cache(const char *name, cache_config &config, int core_id,
+      |   ^~~~~~~~~~~~~~
+make: Leaving directory '/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator'
