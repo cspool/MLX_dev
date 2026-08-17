@@ -331,7 +331,7 @@ hypotheses:
     priority: high
   - id: H46
     statement: "H45's frozen work-conserving SIMD/mesh mechanism transfers across N=512..8192 and reproduces all 15 Figure 23 speedups within 10% without size-dependent or legacy calibration terms."
-    status: active
+    status: supported
     motivation: "Test the independently validated scaling mechanism against the paper curve while labeling the BSMM-only mapping as a target-exposed proxy."
     parent: H45
     priority: high
@@ -340,7 +340,7 @@ experiments:
   proxy_metric: "Maximum absolute percentage error across every numeric paper anchor; pass only when each reproducible point is <=10%, with unavailable measurements explicitly classified rather than fabricated."
   baseline_value: 0.2486
   best_value: 0.0123
-  total_runs: 48
+  total_runs: 49
   trajectory:
     - run_id: "run_001"
       hypothesis: "H2"
@@ -678,11 +678,18 @@ experiments:
       wall_time_min: 2.1
       change_summary: "Target-independent scaling mechanism supported with exact work conservation and three-build determinism: SIMD, mesh, and joint compute-only speedups are 3.984x, 3.410x, and 13.623x without Figure 23 targets."
       timestamp: "2026-08-17"
+    - run_id: "run_052"
+      hypothesis: "H46"
+      metric_value: 0.09805294420679034
+      delta: -0.04022698833958407
+      wall_time_min: 1.4
+      change_summary: "Target-exposed Figure 23 structured-proxy transfer supported: all 15 points pass with 4.31% MAPE and 9.81% maximum error, using H45 mapping with no size penalties or legacy calibration."
+      timestamp: "2026-08-17"
 
 outer_loop:
-  cycle: 31
-  last_direction: "Freeze a target-exposed Figure 23 transfer that scales only the H45 outer trip count with N while keeping radix graph, vector work factor, active window, FU, routes, and fixed-memory isolation unchanged. Execute all four configurations for N=512..8192 and compare only after all summaries exist; do not add size penalties or fit mesh congestion."
-  last_reflection: "H45 independently recovers the paper's qualitative resource ratios: 3.984x SIMD, 3.410x mesh, and 13.623x joint, close to the reported means without loading them. This justifies one no-fit Figure 23 transfer. It is still a structured BSMM proxy rather than the authors' full transformer schedule, so even a numerical pass must remain target-exposed and implementation-specific."
+  cycle: 32
+  last_direction: "Preserve H46 as a target-exposed structured proxy, not a full transformer trace. Next design and validate an off-chip DMA/LSQ adapter using DSAGEN's existing MinorCPU request path, with exact response ownership and a synthetic latency/bandwidth microtrace before attempting Figures 18-21 or 24-25."
+  last_reflection: "H46 passes all Figure 23 points without any size term, and the mechanism was independently frozen in H45. This materially improves confidence in the SIMD/mesh model, but the proxy omits dense/attention phases and fixed memory intentionally removes bandwidth. The largest remaining simulator gap is now off-chip traffic; do not infer GPU/DRAM results from scratchpad-only scaling."
 
 completion_snapshot_run042:
   certificate_run: run_042
