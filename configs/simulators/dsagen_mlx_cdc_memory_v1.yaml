@@ -1,0 +1,92 @@
+name: dsagen-mlx-cdc-memory-v1
+experiment_id: H42
+run_id: run048
+
+frozen_inputs:
+  paper:
+    path: MLX Multi-Layer Execution for Structured LLM Workload Acceleration on Spatial Architectures/MLX Multi-Layer Execution for Structured LLM Workload Acceleration on Spatial Architectures.md
+    bytes: 85855
+    sha256: 5785eb81b28741a3806ca42749d7b556bbcd2404e1622ae644a32bae2ade7745
+    source_sections: [IV-C, V-A, V-B]
+  overlay_result:
+    path: artifacts/results/dsagen-mlx-overlay-microtrace-run047.json
+    bytes: 11427
+    sha256: bbbc50aea2080e44be53a2163ca3b73af8d140ffdc5b034095a5e085ec735872
+    required_status: supported
+    required_integrity: true
+  dsagen_revision: 1e5d2c3d48ecc1f9b7d42c7103d0705b0c98fb78
+
+source_layout:
+  compiler: src/mlxsim/dsagen_overlay.py
+  compiler_cli: scripts/compile_mlx_cdc.py
+  memory_adapter_header: third_party/dsa-framework/dsa-gem5/src/cpu/minor/ssim/mlx_spad_adapter.hh
+  memory_adapter_source: third_party/dsa-framework/dsa-gem5/src/cpu/minor/ssim/mlx_spad_adapter.cc
+  overlay_header: third_party/dsa-framework/dsa-gem5/src/cpu/minor/ssim/mlx_overlay.hh
+  overlay_source: third_party/dsa-framework/dsa-gem5/src/cpu/minor/ssim/mlx_overlay.cc
+  tracked_patch: patches/dsagen/dsa-gem5-mlx-cdc-memory-v1.patch
+
+event_dependency_contract:
+  admission: tags may enter the bounded active window before boundary operands arrive
+  block_start: iteration k may issue only after every wait-event count is at least k+1
+  event_emit: a completing instruction increments its named event exactly once per iteration
+  forward_only: emitted events may target the same logical layer or the immediately next layer only
+  overlap_gate: at least one successor-layer compute issue precedes the predecessor tag-complete event
+  legacy_predecessors: full-tag predecessor dependencies remain supported for coarse barriers
+
+memory_adapter_contract:
+  activation: memory_backend equals dsagen_spad
+  issue_path: Overlay load/store -> Gem5ScratchpadAdapter -> RequestBuffer::Decode
+  progress_path: accel_t::tick -> ScratchMemory::Step
+  completion_path: Response ID interception -> adapter token -> Overlay completion
+  timing_source: actual DSAGEN bank FIFO/read/compute/writeback pipeline
+  reserved_response_namespace: adapter-owned positive port IDs outside vector-port range
+  default_path: fixed-latency backend remains available and unchanged
+
+compiler_fixture:
+  mesh: [4, 4]
+  active_window: 3
+  simd_width: 8
+  scalar_bytes: 8
+  skip_steps: [2, 1]
+  bsmm:
+    width: 8
+    stages: 3
+    pairs_per_stage: 4
+    total_pairs: 12
+    parameters: 48
+    scalar_multiplies: 48
+    scalar_adds: 24
+    memory_requests: 36
+    transfers: 12
+  fft:
+    length: 8
+    stages: 3
+    pairs_per_stage: 4
+    total_pairs: 12
+    complex_multiplies: 12
+    complex_adds: 24
+    real_multiplies: 48
+    real_adds: 72
+    memory_requests: 36
+    transfers: 12
+  provenance: exact small-shape consequences of radix-2 butterfly structure; no paper performance result
+
+registered_checks:
+  - deterministic compiler JSON and manifest for BSMM-8 and FFT-8
+  - exact log2 stage, pair, parameter, arithmetic, memory, and transfer counts
+  - unique per-pair boundary events with only adjacent-stage consumers
+  - load-first compute-middle store/xfer-last static block layout
+  - all memory addresses aligned and within DSAGEN scratchpad capacity
+  - every transfer route uses signed greedy skip steps and valid mesh endpoints
+  - standalone overlay event dependency permits cross-layer overlap
+  - real dsa-gem5 runs consume and complete every compiled scratchpad request
+  - DSAGEN bank conflicts or queue backpressure are observable rather than bypassed
+  - fixed-backend H41 smoke and disabled-overlay 569-cycle regression remain exact
+  - no paper timing, utilization, speedup, or energy target is consumed
+
+compiled_outputs:
+  bsmm: artifacts/environment/h42/mlx-bsmm-b8.json
+  fft: artifacts/environment/h42/mlx-fft-l8.json
+  manifest: artifacts/environment/h42/mlx-cdc-compiler-manifest.json
+
+result_path: artifacts/results/dsagen-mlx-cdc-memory-run048.json
