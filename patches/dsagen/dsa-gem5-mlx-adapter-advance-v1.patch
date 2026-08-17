@@ -1,0 +1,24 @@
+diff --git a/src/cpu/minor/ssim/mlx_overlay.hh b/src/cpu/minor/ssim/mlx_overlay.hh
+--- a/src/cpu/minor/ssim/mlx_overlay.hh
++++ b/src/cpu/minor/ssim/mlx_overlay.hh
+@@ -168,6 +168,7 @@ struct MemoryRequest {
+ class MemoryAdapter {
+  public:
+   virtual ~MemoryAdapter() {}
++  virtual void advance(uint64_t) {}
+   virtual bool available(const MemoryRequest &request) const = 0;
+   virtual uint64_t issue(const MemoryRequest &request) = 0;
+   virtual bool takeCompletion(uint64_t token) = 0;
+diff --git a/src/cpu/minor/ssim/mlx_overlay.cc b/src/cpu/minor/ssim/mlx_overlay.cc
+--- a/src/cpu/minor/ssim/mlx_overlay.cc
++++ b/src/cpu/minor/ssim/mlx_overlay.cc
+@@ -490,6 +490,9 @@ Overlay::step()
+   if (done()) {
+     return;
+   }
++  if (memory_adapter_) {
++    memory_adapter_->advance(cycle_);
++  }
+   resetCycleResources();
+   routePackets();
+   completeInstructions();

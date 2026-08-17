@@ -94,6 +94,8 @@ scratchpad/counter boundary is recorded in
 [`fig22-data-supply-evidence.md`](fig22-data-supply-evidence.md). Target-free
 SIMD/mesh scaling is documented in
 [`fig10-scalability.md`](fig10-scalability.md), with its frozen Figure 23
-comparison in [`fig10-fig23-transfer.md`](fig10-fig23-transfer.md). The remaining boundary
+comparison in [`fig10-fig23-transfer.md`](fig10-fig23-transfer.md). The exact
+standalone reproduction of DSAGEN scratchpad timing is documented in
+[`standalone-dsagen-spad.md`](standalone-dsagen-spad.md). The remaining boundary
 is independently defensible large-shape/per-kernel work scaling for Figures
 18--21 and 24--25. Paper result bars were not inputs to the invariant runs.

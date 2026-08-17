@@ -15,7 +15,9 @@ PROJECT_ROOT = Path(__file__).resolve().parents[1]
 DEFAULT_CONFIG_ROOT = PROJECT_ROOT / "artifacts/environment/h45"
 DEFAULT_OUTPUT = PROJECT_ROOT / "artifacts/environment/h45/raw"
 SOURCE_ROOT = PROJECT_ROOT / "third_party/dsa-framework/dsa-gem5/src/cpu/minor/ssim"
-DRIVER_SOURCE = PROJECT_ROOT / "simulator_ext/dsagen/mlx_overlay_json_driver.cc"
+EXT_ROOT = PROJECT_ROOT / "simulator_ext/dsagen"
+DRIVER_SOURCE = EXT_ROOT / "mlx_overlay_json_driver.cc"
+ADAPTER_SOURCE = EXT_ROOT / "standalone_spad_adapter.cc"
 BUILD_ROOT = PROJECT_ROOT / "build/mlx-scaling"
 NAMES = ("baseline", "simd32_4x4", "simd8_8x8", "simd32_8x8")
 
@@ -45,8 +47,10 @@ def build_drivers() -> dict[str, Path]:
         "-Wextra",
         "-Werror",
         f"-I{SOURCE_ROOT}",
+        f"-I{EXT_ROOT}",
         "-I/usr/include/jsoncpp",
         str(SOURCE_ROOT / "mlx_overlay.cc"),
+        str(ADAPTER_SOURCE),
         str(DRIVER_SOURCE),
         "-ljsoncpp",
     ]

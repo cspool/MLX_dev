@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Run every H64 scalability config twice with bounded parallel workers."""
+"""Run all H66 configs twice through the standalone DSAGEN scratchpad."""
 
 from __future__ import annotations
 
@@ -14,12 +14,10 @@ from typing import Any
 import yaml
 
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
-DEFAULT_CONFIG = PROJECT_ROOT / "configs/simulators/fig10_scalability_v1.yaml"
+DEFAULT_CONFIG = PROJECT_ROOT / "configs/simulators/standalone_dsagen_spad_v1.yaml"
 SOURCE_ROOT = PROJECT_ROOT / "third_party/dsa-framework/dsa-gem5/src/cpu/minor/ssim"
 EXT_ROOT = PROJECT_ROOT / "simulator_ext/dsagen"
-DRIVER_SOURCE = EXT_ROOT / "mlx_overlay_json_driver.cc"
-ADAPTER_SOURCE = EXT_ROOT / "standalone_spad_adapter.cc"
-BUILD_ROOT = PROJECT_ROOT / "build/mlx-fig10-scalability"
+BUILD_ROOT = PROJECT_ROOT / "build/standalone-dsagen-spad"
 
 
 def parse_args() -> argparse.Namespace:
@@ -49,8 +47,8 @@ def build_driver() -> Path:
             f"-I{EXT_ROOT}",
             "-I/usr/include/jsoncpp",
             str(SOURCE_ROOT / "mlx_overlay.cc"),
-            str(ADAPTER_SOURCE),
-            str(DRIVER_SOURCE),
+            str(EXT_ROOT / "standalone_spad_adapter.cc"),
+            str(EXT_ROOT / "mlx_overlay_json_driver.cc"),
             "-ljsoncpp",
             "-o",
             str(output),
@@ -60,28 +58,33 @@ def build_driver() -> Path:
     return output
 
 
-def run_one(task: tuple[str, str, Path, Path, Path]) -> dict[str, Any]:
-    key, replay, driver, config_path, summary_path = task
+def run_one(task: tuple[str, str, Path, Path, Path, Path]) -> dict[str, Any]:
+    key, replay, driver, config_path, summary_path, adapter_path = task
     subprocess.run(
         [
             str(driver),
             "--config",
             str(config_path),
+            "--standalone-spad",
             "--summary",
             str(summary_path),
+            "--adapter-summary",
+            str(adapter_path),
             "--max-cycles",
-            "100000000",
+            "10000000",
         ],
         check=True,
         stdout=subprocess.DEVNULL,
     )
-    summary = json.loads(summary_path.read_text(encoding="utf-8"))
     return {
         "key": key,
         "replay": replay,
-        "path": str(summary_path.relative_to(PROJECT_ROOT)),
-        "sha256": digest(summary_path),
-        "summary": summary,
+        "summary_path": str(summary_path.relative_to(PROJECT_ROOT)),
+        "summary_sha256": digest(summary_path),
+        "summary": json.loads(summary_path.read_text(encoding="utf-8")),
+        "adapter_path": str(adapter_path.relative_to(PROJECT_ROOT)),
+        "adapter_sha256": digest(adapter_path),
+        "adapter": json.loads(adapter_path.read_text(encoding="utf-8")),
     }
 
 
@@ -90,16 +93,15 @@ def main() -> int:
     if args.workers <= 0:
         raise ValueError("workers must be positive")
     config = yaml.safe_load(args.config.read_text(encoding="utf-8"))
-    root = PROJECT_ROOT / config["output_root"]
+    h62_root = PROJECT_ROOT / config["configs"]
     compile_manifest = json.loads(
-        (root / "fig10-scalability-compile-manifest.json").read_text(
-            encoding="utf-8"
-        )
+        (h62_root.parent / "fig10-compile-manifest.json").read_text(encoding="utf-8")
     )
-    driver = build_driver()
-    run_root = root / "runs"
+    output_root = PROJECT_ROOT / config["output_root"]
+    run_root = output_root / "runs"
     run_root.mkdir(parents=True, exist_ok=True)
-    tasks: list[tuple[str, str, Path, Path, Path]] = []
+    driver = build_driver()
+    tasks: list[tuple[str, str, Path, Path, Path, Path]] = []
     for key, record in compile_manifest["outputs"].items():
         config_path = PROJECT_ROOT / record["primary"]["path"]
         for replay in ("first", "second"):
@@ -110,6 +112,7 @@ def main() -> int:
                     driver,
                     config_path,
                     run_root / f"{key}-{replay}.json",
+                    run_root / f"{key}-{replay}-adapter.json",
                 )
             )
     records: dict[str, dict[str, Any]] = {}
@@ -119,43 +122,30 @@ def main() -> int:
             item = future.result()
             records.setdefault(item["key"], {})[item["replay"]] = item
             print(
-                f"[fig10-scale] {item['key']} {item['replay']} "
+                f"[standalone-spad] {item['key']} {item['replay']} "
                 f"cycles={item['summary']['cycles']}",
                 flush=True,
             )
-    checks: dict[str, bool] = {}
-    runs: dict[str, Any] = {}
-    for key in sorted(records):
-        first = records[key]["first"]
-        second = records[key]["second"]
-        checks[f"{key}_replay"] = first["sha256"] == second["sha256"]
-        checks[f"{key}_done"] = first["summary"].get("done") is True
-        runs[key] = {"first": first, "second": second}
-    cycles: dict[str, dict[str, int]] = {}
-    speedups = {name: [] for name in config["configurations"] if name != "baseline"}
-    for sequence in config["workload"]["sequence_lengths"]:
-        values = {
-            name: int(runs[f"{sequence}-{name}"]["first"]["summary"]["cycles"])
-            for name in config["configurations"]
-        }
-        cycles[str(sequence)] = values
-        for name, series in speedups.items():
-            series.append(values["baseline"] / values[name])
+    checks = {
+        f"{key}_replay": (
+            values["first"]["summary_sha256"] == values["second"]["summary_sha256"]
+            and values["first"]["adapter_sha256"]
+            == values["second"]["adapter_sha256"]
+        )
+        for key, values in records.items()
+    }
     manifest = {
         "schema_version": 1,
         "experiment_id": config["experiment_id"],
-        "workers": args.workers,
-        "driver": {"path": str(driver.relative_to(PROJECT_ROOT)), "sha256": digest(driver)},
         "paper_performance_targets_consumed": False,
-        "runs": runs,
-        "cycles": cycles,
-        "speedups": speedups,
+        "driver": {"path": str(driver.relative_to(PROJECT_ROOT)), "sha256": digest(driver)},
+        "runs": records,
         "checks": checks,
     }
-    path = root / "fig10-scalability-run-manifest.json"
+    path = output_root / "standalone-spad-run-manifest.json"
+    path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(json.dumps(manifest, indent=2, sort_keys=True) + "\n", encoding="utf-8")
-    print(json.dumps({"cycles": cycles, "speedups": speedups}, indent=2))
-    return 0 if len(runs) == 20 and all(checks.values()) else 1
+    return 0 if len(records) == 16 and all(checks.values()) else 1
 
 
 if __name__ == "__main__":

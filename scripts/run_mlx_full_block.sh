@@ -3,7 +3,9 @@ set -euo pipefail
 
 PROJECT_ROOT=$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)
 SOURCE_ROOT="$PROJECT_ROOT/third_party/dsa-framework/dsa-gem5/src/cpu/minor/ssim"
+EXT_ROOT="$PROJECT_ROOT/simulator_ext/dsagen"
 DRIVER="$PROJECT_ROOT/simulator_ext/dsagen/mlx_overlay_json_driver.cc"
+ADAPTER="$EXT_ROOT/standalone_spad_adapter.cc"
 DSAGEN_ROOT="$PROJECT_ROOT/third_party/dsa-framework"
 DSAGEN_TOOLS="$DSAGEN_ROOT/ss-tools"
 BUILD_ROOT=${MLX_FULL_BLOCK_BUILD_ROOT:-$PROJECT_ROOT/build/mlx-full-block}
@@ -30,8 +32,8 @@ mkdir -p "$BUILD_ROOT" "$OUTPUT_ROOT/standalone" "$OUTPUT_ROOT/gem5"
 
 COMMON=(
   -std=c++17 -Wall -Wextra -Werror
-  -I"$SOURCE_ROOT" -I/usr/include/jsoncpp
-  "$SOURCE_ROOT/mlx_overlay.cc" "$DRIVER" -ljsoncpp
+  -I"$SOURCE_ROOT" -I"$EXT_ROOT" -I/usr/include/jsoncpp
+  "$SOURCE_ROOT/mlx_overlay.cc" "$ADAPTER" "$DRIVER" -ljsoncpp
 )
 g++ "${COMMON[@]}" -D_GLIBCXX_ASSERTIONS -O0 -g \
   -o "$BUILD_ROOT/mlx_overlay_json_driver_debug"

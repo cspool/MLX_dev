@@ -38,3 +38,9 @@ latency, active tags, or counter scaling to match the raster would be fitting.
 The defensible path is to keep both traces, mark Figure 22 rejected, and carry
 the source-derived loop/routing mechanism into scalability experiments where
 the paper exposes relative speedups rather than unpublished unit counters.
+
+H66 subsequently reproduced the real DSAGEN scratchpad path exactly in a fast
+standalone adapter; see
+[`standalone-dsagen-spad.md`](standalone-dsagen-spad.md). This removes execution
+cost as a barrier but does not turn DSAGEN's undisclosed-as-MLX queue parameters
+into paper facts.

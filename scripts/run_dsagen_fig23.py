@@ -13,7 +13,9 @@ PROJECT_ROOT = Path(__file__).resolve().parents[1]
 DEFAULT_ROOT = PROJECT_ROOT / "artifacts/environment/h46"
 BUILD_ROOT = PROJECT_ROOT / "build/mlx-fig23"
 SOURCE_ROOT = PROJECT_ROOT / "third_party/dsa-framework/dsa-gem5/src/cpu/minor/ssim"
-DRIVER_SOURCE = PROJECT_ROOT / "simulator_ext/dsagen/mlx_overlay_json_driver.cc"
+EXT_ROOT = PROJECT_ROOT / "simulator_ext/dsagen"
+DRIVER_SOURCE = EXT_ROOT / "mlx_overlay_json_driver.cc"
+ADAPTER_SOURCE = EXT_ROOT / "standalone_spad_adapter.cc"
 
 
 def parse_args() -> argparse.Namespace:
@@ -41,8 +43,10 @@ def build_driver() -> Path:
             "-DNDEBUG",
             "-O3",
             f"-I{SOURCE_ROOT}",
+            f"-I{EXT_ROOT}",
             "-I/usr/include/jsoncpp",
             str(SOURCE_ROOT / "mlx_overlay.cc"),
+            str(ADAPTER_SOURCE),
             str(DRIVER_SOURCE),
             "-ljsoncpp",
             "-o",
