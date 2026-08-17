@@ -65,6 +65,15 @@
 - Public references determine useful primitives and external-baseline settings, but not a unique executable MLX model. Still missing are the spectral-peak threshold and all per-layer `L` values; the exact modified LLM layers; complex-to-real normalization and residual/decompression wiring; hierarchical-butterfly factor order and dense-to-factor initialization; and the complete LoRA/data/training recipe.
 - Any later structured-model run must label choices for these fields as inferred, freeze them before evaluation, and must not describe target-guided selection as author-recipe reproduction.
 
+### FGSCR-42 public-input status
+
+- Di, Jiang, and Zhang, *A Public Dataset for Fine-Grained Ship Classification in Optical Remote Sensing Images*, Remote Sensing 13(4):747, 2021, DOI `10.3390/rs13040747`. Publisher page: https://www.mdpi.com/2072-4292/13/4/747.
+- Official repository: https://github.com/DYH666/FGSCR-42, pinned at `ced49c37964c3c7c453602ba6e4ba2a812f67086`. It declares about 9,320 images in 42 classes but versions only a README and three illustration/result PNGs. No archive, label file, or split manifest occurs in any of its 25 commits.
+- Independent index: https://github.com/JACYI/Dataset-for-Remote-Sensing, pinned at `29e6aac03ff44f811e84073d0c5ae6abb381141e`. It provides a second Baidu share but leaves its Google Drive target empty.
+- The public Baidu shares accept their README extraction codes, but H21's 36 anonymous one-byte probes all return HTTP 403 / PCS 31064. Public issue history independently contains repeated download/completeness reports and requests for labels; three Hugging Face catalog searches yield no dataset match.
+- MLX says only that ViT is trained from scratch and cites the dataset paper. It does not publish the exact data partition, ViT variant, image pipeline, augmentation, optimizer, learning-rate schedule, epochs, or seed. Thus the public sources are insufficient to identify the Fig. 15(a)/16 training experiment even if archive delivery later becomes available.
+- Endpoint-normalization reference used only to make the availability audit executable: https://github.com/PeterDing/BaiduPCS-Py at `e81e9b65c4b35fc8f7f2993a81e25e0bc24608db`. This third-party client is not a dataset source and contributes no labels or split.
+
 ## Candidate GPU substrate
 
 - Pending primary-source comparison of Accel-Sim/GPGPU-Sim support for Volta, Ampere, Hopper, trace-driven execution, and custom structured kernels.

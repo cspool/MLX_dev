@@ -181,7 +181,7 @@ hypotheses:
     priority: high
   - id: H21
     statement: "The official FGSCR-42 release and an independently indexed mirror permit anonymous corpus-byte retrieval and publish labels plus a deterministic split sufficient for native Fig. 15(a)/16 ViT training."
-    status: pending
+    status: rejected
     motivation: "Distinguish a genuine public-input path from an inaccessible share or an invented dataset split before spending GPU time on an irreproducible ViT recipe."
     parent: H5
     priority: high
@@ -190,7 +190,7 @@ experiments:
   proxy_metric: "Maximum absolute percentage error across every numeric paper anchor; pass only when each reproducible point is <=10%, with unavailable measurements explicitly classified rather than fabricated."
   baseline_value: 0.2486
   best_value: 0.0123
-  total_runs: 23
+  total_runs: 24
   trajectory:
     - run_id: "run_001"
       hypothesis: "H2"
@@ -353,11 +353,18 @@ experiments:
       wall_time_min: 4.3
       change_summary: "Inferred s=0.75 FFT plus rank-8 LoRA isolation rejected: PPL moves from 31.047 pre-training to 3.072 post-training versus 5.781 target; chunk-end causal diagnostic is 18.046."
       timestamp: "2026-08-17"
+    - run_id: "run_025"
+      hypothesis: "H21"
+      metric_value: 1.0
+      delta: null
+      wall_time_min: 0.6
+      change_summary: "Public FGSCR-42 input sufficiency rejected: 36/36 one-byte probes return HTTP 403/PCS 31064 and no versioned MLX split exists; auxiliary list/ZIP mismatch keeps audit_integrity false and validation_eligible false."
+      timestamp: "2026-08-17"
 
 outer_loop:
-  cycle: 6
-  last_direction: "Reject the post-RoPE full-chunk teacher-forcing wiring and do not run s=0.5 with it. Treat compressed autoregressive quality as blocked on a causal author graph; prioritize an independent remaining experiment rather than target-guided LoRA or FFT changes."
-  last_reflection: "H20's zero-adapter compressed PPL is 31.05 and 64 LoRA steps overshoot to 3.07, missing the 5.781 target by 46.86%. More importantly, the exact checkpoint scores 18.05 PPL at leakage-free chunk-end positions versus 3.07 across all positions. The inferred symmetric FFT graph violates causal metric semantics, so its low all-token PPL is not useful quality evidence."
+  cycle: 7
+  last_direction: "Do not invent an FGSCR-42 split or present an inferred ViT dataset as native MLX reproduction. Preserve Fig. 15(a)/16 as a public-input blocker and move to an independent remaining hardware or target-completion item."
+  last_reflection: "H21 establishes a conjunctive reproducibility boundary: all 36 anonymous archive-byte probes are denied with PCS 31064, while the paper and every official repository commit omit the experiment split and ViT recipe. Auxiliary Baidu list/ZIP responses drifted from the exploratory snapshot, so the run remains validation-ineligible with audit_integrity=false; the exact-split absence alone is sufficient to reject public-input sufficiency."
 
 workspace:
   findings: "findings.md"
