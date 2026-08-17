@@ -41,3 +41,6 @@ would hide rather than resolve this mismatch.
 
 The immutable result is
 `artifacts/results/fig10-fig22-transfer-run068.json`.
+
+The precise evidence boundary for further data-supply work is documented in
+[`fig22-data-supply-evidence.md`](fig22-data-supply-evidence.md).

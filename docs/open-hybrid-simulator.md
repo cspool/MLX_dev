@@ -89,6 +89,8 @@ target/counter correction is reported in
 previous global-any-PE busy counter is not a valid PE-normalized utilization
 metric. The target-free Figure 10 loop/template reconstruction is documented in
 [`fig10-mapping.md`](fig10-mapping.md), and its full resource transfer in
-[`fig10-fig22-transfer.md`](fig10-fig22-transfer.md). The remaining boundary
+[`fig10-fig22-transfer.md`](fig10-fig22-transfer.md). The unpublished
+scratchpad/counter boundary is recorded in
+[`fig22-data-supply-evidence.md`](fig22-data-supply-evidence.md). The remaining boundary
 is independently defensible large-shape/per-kernel work scaling for Figures
 18--21 and 24--25. Paper result bars were not inputs to the invariant runs.
