@@ -1,0 +1,168 @@
+run:
+  id: run_034
+  hypothesis: H30
+  protocol: experiments/h30-internlm2-adaleval/protocol.md
+  output: artifacts/results/internlm2-adaleval-run034.json
+  rank_outputs:
+    - artifacts/results/internlm2-adaleval-run034-rank0.jsonl
+    - artifacts/results/internlm2-adaleval-run034-rank1.jsonl
+
+classification: source_identified_historical_baseline
+validation_eligible: true
+
+paper_targets:
+  manifest:
+    path: artifacts/targets/paper_targets.yaml
+    bytes: 14931
+    sha256: c4a22ab8052ff8cb223a729b8ce07320c6826cfee0d37e1a664a8761e018b41e
+  accuracy_pct:
+    1k: 52.8
+    2k: 40.6
+    4k: 35.9
+  relative_error_tolerance: 0.10
+
+official_reference:
+  repository:
+    path: third_party/ada-leval
+    revision: 2154258d5fa3969ac5429b3132d505570ef8a57a
+  files:
+    README.md:
+      bytes: 6352
+      sha256: 8111814a70745d86864b61d445be03f9cfc14b4e367485e0bfec46f66fa703b5
+    run.py:
+      bytes: 4431
+      sha256: d6abf83879bb00da07d08a28206ac8a11eadf58af31401db782d2fcded4a7c91
+    ada_leval/dataset.py:
+      bytes: 6846
+      sha256: 52ba4dafc12fb306c2041ee482a5e65ff90f04e680295e463f387a78bfff35cc
+  readme_result_segment:
+    start_line: 78
+    end_line: 93
+    sha256: 95dbdc0d69d5edc1a7c8528cfd7ba1483db43765ea28836b1722f23a0806dbae
+  accuracy_pct:
+    1k: 58.6
+    2k: 49.5
+    4k: 33.9
+  relative_error_tolerance: 0.10
+
+datasets:
+  root: third_party/ada-leval/data
+  settings: [1k, 2k, 4k]
+  rows_per_setting: 1000
+  files:
+    1k:
+      path: stackselect_1k.json
+      bytes: 3170252
+      sha256: 22b4dd4983c863d3bd6df206c1dd33ce2584b71b7d911edc768ab7e583d1d574
+    2k:
+      path: stackselect_2k.json
+      bytes: 7632671
+      sha256: 653d6e0f31e00aa984e15bd1280443f2a7ecc137daa005afa4d26eeb36af958e
+    4k:
+      path: stackselect_4k.json
+      bytes: 16508984
+      sha256: 68b43b082ebe66c33aeb4def955a676447aa2fc02acd2682af40d473553a1614
+  prompt_stream_canaries:
+    1k:
+      utf8_stream_sha256: 87d6c9f4fdb1896fd4dbf1109a2730d4d48b0a041719466b56bb718f87b277fd
+      raw_token_stream_sha256: adba6909a2e0146e1764e13a595595da910ec9a4dae9d39ab878c106d698a467
+      wrapped_token_stream_sha256: 703bbde4f3a0139898d2f0d3beee5766b4c049d0f667c42e291dcc2ac0867d64
+      wrapped_token_length: {min: 511, max: 1262, mean: 1087.619, median: 1146.0}
+      first_index: 38560748_A3
+      last_index: 2629680_A1
+    2k:
+      utf8_stream_sha256: 361c7cdb52b0e64f3303a58fcbe7a140d25272018592dc5af3ac3eaa8db1c944
+      raw_token_stream_sha256: c0f54f8c14bcc962004be5366f7ee9646d8a96432e45feff07afd402f171e53b
+      wrapped_token_stream_sha256: fa5ebb8e48946042828b495e573d9cd70108af870d3cb4cf287b00b4e03cee25
+      wrapped_token_length: {min: 1362, max: 2334, mean: 2124.734, median: 2181.0}
+      first_index: 38560748_A3
+      last_index: 2629680_A5
+    4k:
+      utf8_stream_sha256: 571d27559a8cffa18d8061abc1df92795470a862dbe21892e192aaf551ae7906
+      raw_token_stream_sha256: 1d05998794cd923eb7889b13cf7f45bc9f6c67c36240871a578186c7bb40f422
+      wrapped_token_stream_sha256: 8a73ff81dad7bcc60e88bb21aaadbce3769278194e013cf34edf88b9a3ed0625
+      wrapped_token_length: {min: 3478, max: 4474, mean: 4181.456, median: 4242.0}
+      first_index: 38560748_A19
+      last_index: 2629680_A2
+
+model:
+  official_huggingface_source: huggingface://internlm/internlm2-chat-7b
+  historical_revision: 4275caa205dbb8ff83930e2c1ce6bc62ec49329c
+  historical_revision_date: "2024-03-20T13:56:56+08:00"
+  modelscope_mirror_source: modelscope://Shanghai_AI_Laboratory/internlm2-chat-7b
+  mirror_revision: 263ce44692abcef0ebf1fc28c394cb4e7543adbb
+  source_history_root: third_party/sources/internlm2-chat-7b-hf
+  downloaded_weight_root: third_party/models/internlm2-chat-7b-msdownload
+  historical_view_root: third_party/models/internlm2-chat-7b-20240320-view
+  historical_files:
+    - {path: config.json, bytes: 851, sha256: 7e868aa34b2a099f3554eba038296508a990a1640042576036cb5445c6c4bce2}
+    - {path: generation_config.json, bytes: 132, sha256: fd5406f4987c5541e14a9e549583d9cf788019bc4f1e3be2ad1d992f3d7e425a}
+    - {path: model.safetensors.index.json, bytes: 18179, sha256: 1c3947a3578100becf21a781727e193985013754a845ca34591e7a5ff76245d7}
+    - {path: configuration_internlm2.py, bytes: 7020, sha256: c5ea339ccab0408d9962f2efcccf5745b73ecc0b041211d0f877a976c6785422}
+    - {path: modeling_internlm2.py, bytes: 59960, sha256: 8d068f404d1b79575f8ecab282e275e1e9857412fe529092bd345802a3259176}
+    - {path: tokenization_internlm2.py, bytes: 8806, sha256: 444d4c2b0da158e61c34b3c727943f0ad454770c74b307f4d881f03603335eef}
+    - {path: tokenization_internlm2_fast.py, bytes: 7805, sha256: 1fe5f033032afc400b9b8b0274f16efd57c6ebaab46a2f6fe9f961afb868ae10}
+    - {path: tokenizer_config.json, bytes: 2511, sha256: 3ad60a8ee8a0a63a1f1d51884787d557eb6a312e5689148b4d599639ac42801b}
+    - {path: special_tokens_map.json, bytes: 713, sha256: e636e880c43a263dc00724686c9ad90e2d23bd1467fe9ed1b95740cd9f387202}
+  binary_files:
+    - {path: model-00001-of-00008.safetensors, bytes: 1949337704, sha256: 9cec9c25c5f54c545deb16123fc72a0b265fd6bed4c467b4519380a8b215b62b}
+    - {path: model-00002-of-00008.safetensors, bytes: 1946242696, sha256: 4735b4b15a670c33a6aefe70cf39e4ba08468a496167b5233fa43ebcfbd42895}
+    - {path: model-00003-of-00008.safetensors, bytes: 1979780440, sha256: 523c7292140bc4c37d5fbd517ec7f9d0aa27b7d22822fdfc730f94f3bf02ebac}
+    - {path: model-00004-of-00008.safetensors, bytes: 1946242728, sha256: 2dd631ca87a5e516780832e747156e304a3c9bb53f85c4304550bff970d2db26}
+    - {path: model-00005-of-00008.safetensors, bytes: 1979780456, sha256: 4a28f7db7ba9fc0991e3552a156e11b942494e945c4c134003aad40bb4e49ed6}
+    - {path: model-00006-of-00008.safetensors, bytes: 1946242728, sha256: d330d795037a2db1c7a15a991c88ba6bf2bc2890e36210571d7499d1ae6dfd51}
+    - {path: model-00007-of-00008.safetensors, bytes: 1979780456, sha256: c6c65720f77de3aec168dff5b0f11e779f4c9059f2fdb04c67bae4321f5efd6a}
+    - {path: model-00008-of-00008.safetensors, bytes: 1748035640, sha256: eb488551289c4630b7b1fb015acf2ff52a206383c96370a7664b42253a007eae}
+    - {path: tokenizer.model, bytes: 1477754, sha256: f868398fc4e05ee1e8aeba95ddf18ddcc45b8bce55d5093bead5bbf80429b48b}
+
+lmdeploy:
+  version: 0.2.6
+  tag_commit: b69e7176dffb78329c13d0821ee0628088dabd1c
+  wheel:
+    filename: lmdeploy-0.2.6-cp310-cp310-manylinux2014_x86_64.whl
+    bytes: 94941630
+    sha256: 4e2d90443abb38b99ed6915adbf841566dffdfe7ad082ca0d32d10b15f2dbf4a
+  source_hashes:
+    lmdeploy/messages.py: efa826e49a522417396feb0db4b5ff029b7e805502f1b06e79819a7e051121ab
+    lmdeploy/serve/async_engine.py: 904a278d8dce7960eb8a6bad9f4ca92bbdfb01e575230b205b361487bf54dad0
+    lmdeploy/model.py: 2c3bce3009d163bb0d8053f6156a5d5dbbaa5f04182d45ae2a7ed624e3f34f04
+    lmdeploy/api.py: 4686a5213c5d3c0a11ce8e82bfeda396fa4f2ce377e5b764a9278ce298b2151a
+
+runtime:
+  environment_root: third_party/envs/lmdeploy026
+  python: 3.10.20
+  torch: 2.1.2
+  transformers: 4.38.1
+  triton: 2.1.0
+  numpy: 1.26.4
+  gpu_name: NVIDIA GeForce RTX 4090
+  gpu_count: 2
+  driver: "595.84"
+
+inference:
+  nproc: 2
+  rank_partition: "official tups[rank::world_size] over each setting"
+  session_len: 160000
+  rope_scaling_factor: 2.0
+  do_preprocess: true
+  request_output_len: 512
+  top_k: 40
+  top_p: 0.8
+  temperature: 0.8
+  repetition_penalty: 1.0
+  ignore_eos: false
+  random_seed: "one independent 64-bit seed per request, drawn before inference and recorded"
+
+gate:
+  require_all_sources: true
+  require_all_prompt_canaries: true
+  require_rows_per_setting: 1000
+  require_sample_mean_matches_aggregate: true
+  paper_requires_all_settings_within_relative_error: 0.10
+  official_reference_requires_all_settings_within_relative_error: 0.10
+
+limitations:
+  - "This is an uncompressed public chat-checkpoint baseline; it contains no MLX operator or LoRA training."
+  - "The target paper does not identify its exact checkpoint revision, prompt, evaluator, LMDeploy version, or random seeds."
+  - "The source-authentic LMDeploy 0.2.6 default is stochastic; recording generated seeds makes this run replayable but does not make the official table deterministic."
+  - "Agreement can validate only this frozen public reconstruction, not prove the authors used it."
