@@ -1,0 +1,1320 @@
+make: Entering directory '/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator'
+if [ ! -d ./bin/release ]; then mkdir -p ./bin/release; fi;
+if [ ! -d ./build/release ]; then mkdir -p ./build/release; fi;
+touch ./build/release/main.makedepend
+makedepend -f./build/release/main.makedepend -p./build/release/ main.cc 2> /dev/null
+make -C trace-driven depend
+make -C trace-parser depend
+make -C /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim
+echo "const char *g_accelsim_version=\"accelsim-commit-c5296df_modified_0.0_26-08-17-12-07-42\";" > ./build/release/accelsim_version.h
+make[1]: Entering directory '/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/trace-driven'
+make[1]: Entering directory '/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/trace-parser'
+make[1]: Entering directory '/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim'
+touch ../build/release/trace-parser.Makefile.makedepend
+touch ../build/release/trace-driven.Makefile.makedepend
+makedepend -f../build/release/trace-parser.Makefile.makedepend -p../build/release/ trace_parser.cc 2> /dev/null
+makedepend -f../build/release/trace-driven.Makefile.makedepend -p../build/release/ trace_driven.cc 2> /dev/null
+make[1]: 'depend' is up to date.
+make[1]: Leaving directory '/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/trace-parser'
+make -C trace-parser
+make[1]: 'depend' is up to date.
+make[1]: Leaving directory '/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/trace-driven'
+make -C trace-driven
+make[1]: Entering directory '/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/trace-parser'
+make[1]: Entering directory '/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/trace-driven'
+touch ../build/release/trace-parser.Makefile.makedepend
+makedepend -f../build/release/trace-parser.Makefile.makedepend -p../build/release/ trace_parser.cc 2> /dev/null
+touch ../build/release/trace-driven.Makefile.makedepend
+makedepend -f../build/release/trace-driven.Makefile.makedepend -p../build/release/ trace_driven.cc 2> /dev/null
+g++ -O3 -g3 -fPIC -std=c++11 -Wall -I/usr/local/cuda-11.8/include -I. -I/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/libcuda -I/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/src -c trace_parser.cc -o ../build/release/trace_parser.o
+g++ -O3 -g3 -fPIC -std=c++11 -Wall -I/usr/local/cuda-11.8/include -I. -I/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/libcuda -I/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/src -c trace_driven.cc -o ../build/release/trace_driven.o
+
+	Building GPGPU-Sim version 4.2.0 (build gpgpu-sim_git-commit-68e1cd3_modified_1.0) with CUDA version 11.8
+
+if [ ! -d lib/gcc-11.4.0/cuda-11080/release ]; then mkdir -p lib/gcc-11.4.0/cuda-11080/release; fi;
+Warning: gpgpu-sim is building without opencl support. Make sure NVOPENCL_LIBDIR and NVOPENCL_INCDIR are set
+if [ ! -d /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/libcuda ]; then mkdir -p /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/libcuda; fi;
+if [ ! -d /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/cuda-sim ]; then mkdir -p /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/cuda-sim; fi;
+if [ ! -d /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/cuda-sim/decuda_pred_table ]; then mkdir -p /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/cuda-sim/decuda_pred_table; fi;
+if [ ! -d /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/gpgpu-sim ]; then mkdir -p /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/gpgpu-sim; fi;
+if [ ! -d /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/libopencl ]; then mkdir -p /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/libopencl; fi;
+if [ ! -d /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/libopencl/bin ]; then mkdir -p /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/libopencl/bin; fi;
+if [ ! -d /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/intersim2 ]; then mkdir -p /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/intersim2; fi;
+if [ ! -d /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/cuobjdump_to_ptxplus ]; then mkdir -p /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/cuobjdump_to_ptxplus; fi;
+if [ ! -d /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/accelwattch ]; then mkdir -p /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/accelwattch; fi;
+if [ ! -d /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/accelwattch/cacti ]; then mkdir -p /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/accelwattch/cacti; fi;
+make -C ./src/cuda-sim/ depend
+make -C /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/src/accelwattch/ depend
+make[2]: Entering directory '/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/src/cuda-sim'
+make[2]: Entering directory '/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/src/accelwattch'
+make[3]: Entering directory '/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/src/accelwattch'
+touch /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/accelwattch/Makefile.makedepend
+makedepend -f/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/accelwattch/Makefile.makedepend -p/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/accelwattch/ Ucache.cc XML_Parse.cc arbiter.cc area.cc array.cc bank.cc basic_circuit.cc basic_components.cc cacti_interface.cc component.cc core.cc crossbar.cc decoder.cc htree2.cc interconnect.cc io.cc iocontrollers.cc logic.cc main.cc mat.cc memoryctrl.cc noc.cc nuca.cc parameter.cc processor.cc router.cc sharedcache.cc subarray.cc technology.cc uca.cc wire.cc xmlParser.cc gpgpu_sim_wrapper.cc  2> /dev/null
+make -C ./cacti/ depend
+make[4]: Entering directory '/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/src/accelwattch/cacti'
+make[5]: Entering directory '/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/src/accelwattch/cacti'
+touch /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/accelwattch/cacti/Makefile.makedepend
+makedepend -f/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/accelwattch/cacti/Makefile.makedepend -p/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/accelwattch/cacti/ area.cc bank.cc mat.cc main.cc Ucache.cc io.cc technology.cc basic_circuit.cc parameter.cc decoder.cc component.cc uca.cc subarray.cc wire.cc htree2.cc cacti_interface.cc router.cc nuca.cc crossbar.cc arbiter.cc  2> /dev/null
+touch /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/cuda-sim/Makefile.makedepend
+makedepend -f/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/cuda-sim/Makefile.makedepend -p/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/cuda-sim/ cuda-sim.cc cuda_device_printf.cc cuda_device_runtime.cc instructions.cc memory.cc ptx-stats.cc ptx_ir.cc ptx_loader.cc ptx_parser.cc ptx_sim.cc 2> /dev/null
+make[5]: Nothing to be done for 'depend'.
+make[5]: Leaving directory '/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/src/accelwattch/cacti'
+make[4]: Leaving directory '/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/src/accelwattch/cacti'
+make[3]: Nothing to be done for 'depend'.
+make[3]: Leaving directory '/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/src/accelwattch'
+make[2]: Leaving directory '/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/src/accelwattch'
+make -C /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/src/accelwattch/ 
+make[2]: Entering directory '/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/src/accelwattch'
+make[3]: Entering directory '/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/src/accelwattch'
+make[2]: 'depend' is up to date.
+make[2]: Leaving directory '/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/src/cuda-sim'
+make -C ./src/cuda-sim/
+touch /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/accelwattch/Makefile.makedepend
+make[2]: Entering directory '/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/src/cuda-sim'
+makedepend -f/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/accelwattch/Makefile.makedepend -p/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/accelwattch/ Ucache.cc XML_Parse.cc arbiter.cc area.cc array.cc bank.cc basic_circuit.cc basic_components.cc cacti_interface.cc component.cc core.cc crossbar.cc decoder.cc htree2.cc interconnect.cc io.cc iocontrollers.cc logic.cc main.cc mat.cc memoryctrl.cc noc.cc nuca.cc parameter.cc processor.cc router.cc sharedcache.cc subarray.cc technology.cc uca.cc wire.cc xmlParser.cc gpgpu_sim_wrapper.cc  2> /dev/null
+make -C ./cacti/ depend
+make[4]: Entering directory '/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/src/accelwattch/cacti'
+make[5]: Entering directory '/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/src/accelwattch/cacti'
+touch /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/accelwattch/cacti/Makefile.makedepend
+makedepend -f/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/accelwattch/cacti/Makefile.makedepend -p/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/accelwattch/cacti/ area.cc bank.cc mat.cc main.cc Ucache.cc io.cc technology.cc basic_circuit.cc parameter.cc decoder.cc component.cc uca.cc subarray.cc wire.cc htree2.cc cacti_interface.cc router.cc nuca.cc crossbar.cc arbiter.cc  2> /dev/null
+make[5]: Nothing to be done for 'depend'.
+make[5]: Leaving directory '/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/src/accelwattch/cacti'
+make[4]: Leaving directory '/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/src/accelwattch/cacti'
+g++ -m64 -Wno-unknown-pragmas  -O3 -fPIC -msse2 -mfpmath=sse -DNTHREADS=4 -Icacti -lz  -c cacti/Ucache.cc -o /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/accelwattch/Ucache.o
+g++ -m64 -Wno-unknown-pragmas  -O3 -fPIC -msse2 -mfpmath=sse -DNTHREADS=4 -Icacti -lz  -c XML_Parse.cc -o /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/accelwattch/XML_Parse.o
+g++ -m64 -Wno-unknown-pragmas  -O3 -fPIC -msse2 -mfpmath=sse -DNTHREADS=4 -Icacti -lz  -c cacti/arbiter.cc -o /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/accelwattch/arbiter.o
+g++ -m64 -Wno-unknown-pragmas  -O3 -fPIC -msse2 -mfpmath=sse -DNTHREADS=4 -Icacti -lz  -c cacti/area.cc -o /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/accelwattch/area.o
+g++ -m64 -Wno-unknown-pragmas  -O3 -fPIC -msse2 -mfpmath=sse -DNTHREADS=4 -Icacti -lz  -c array.cc -o /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/accelwattch/array.o
+g++ -m64 -Wno-unknown-pragmas  -O3 -fPIC -msse2 -mfpmath=sse -DNTHREADS=4 -Icacti -lz  -c cacti/bank.cc -o /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/accelwattch/bank.o
+g++ -m64 -Wno-unknown-pragmas  -O3 -fPIC -msse2 -mfpmath=sse -DNTHREADS=4 -Icacti -lz  -c cacti/basic_circuit.cc -o /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/accelwattch/basic_circuit.o
+g++ -m64 -Wno-unknown-pragmas  -O3 -fPIC -msse2 -mfpmath=sse -DNTHREADS=4 -Icacti -lz  -c basic_components.cc -o /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/accelwattch/basic_components.o
+g++ -m64 -Wno-unknown-pragmas  -O3 -fPIC -msse2 -mfpmath=sse -DNTHREADS=4 -Icacti -lz  -c cacti/cacti_interface.cc -o /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/accelwattch/cacti_interface.o
+g++ -m64 -Wno-unknown-pragmas  -O3 -fPIC -msse2 -mfpmath=sse -DNTHREADS=4 -Icacti -lz  -c cacti/component.cc -o /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/accelwattch/component.o
+g++ -m64 -Wno-unknown-pragmas  -O3 -fPIC -msse2 -mfpmath=sse -DNTHREADS=4 -Icacti -lz  -c core.cc -o /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/accelwattch/core.o
+g++ -m64 -Wno-unknown-pragmas  -O3 -fPIC -msse2 -mfpmath=sse -DNTHREADS=4 -Icacti -lz  -c cacti/crossbar.cc -o /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/accelwattch/crossbar.o
+g++ -m64 -Wno-unknown-pragmas  -O3 -fPIC -msse2 -mfpmath=sse -DNTHREADS=4 -Icacti -lz  -c cacti/decoder.cc -o /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/accelwattch/decoder.o
+touch /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/cuda-sim/Makefile.makedepend
+makedepend -f/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/cuda-sim/Makefile.makedepend -p/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/cuda-sim/ cuda-sim.cc cuda_device_printf.cc cuda_device_runtime.cc instructions.cc memory.cc ptx-stats.cc ptx_ir.cc ptx_loader.cc ptx_parser.cc ptx_sim.cc 2> /dev/null
+bison --name-prefix=ptx_ -v -d ptx.y --file-prefix=/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/cuda-sim/ptx 2> /dev/null
+chmod: /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/cuda-sim/instructions.h: new permissions are r--rw-r--, not r--r--r--
+created /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/cuda-sim/instructions.h
+g++  -c -O3 -g3 -Wall -Wno-unused-function -Wno-sign-compare -I/usr/local/cuda-11.8/include  -I/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/cuda-sim/ -I. -I/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release -fPIC  -DTRACING_ON=1 -DCUDART_VERSION=11080 -std=c++0x cuda-sim.cc -o /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/cuda-sim/cuda-sim.o
+cacti/crossbar.cc: In member function ‘void Crossbar::compute_power()’:
+cacti/crossbar.cc:146:14: warning: empty parentheses were disambiguated as a function declaration [-Wvexing-parse]
+  146 |   Wire wreset();
+      |              ^~
+cacti/crossbar.cc:146:14: note: remove parentheses to default-initialize a variable
+  146 |   Wire wreset();
+      |              ^~
+      |              --
+cacti/crossbar.cc:146:14: note: or replace parentheses with braces to value-initialize a variable
+g++ -m64 -Wno-unknown-pragmas  -O3 -fPIC -msse2 -mfpmath=sse -DNTHREADS=4 -Icacti -lz  -c cacti/htree2.cc -o /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/accelwattch/htree2.o
+g++ -m64 -Wno-unknown-pragmas  -O3 -fPIC -msse2 -mfpmath=sse -DNTHREADS=4 -Icacti -lz  -c interconnect.cc -o /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/accelwattch/interconnect.o
+g++ -m64 -Wno-unknown-pragmas  -O3 -fPIC -msse2 -mfpmath=sse -DNTHREADS=4 -Icacti -lz  -c cacti/io.cc -o /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/accelwattch/io.o
+g++ -m64 -Wno-unknown-pragmas  -O3 -fPIC -msse2 -mfpmath=sse -DNTHREADS=4 -Icacti -lz  -c iocontrollers.cc -o /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/accelwattch/iocontrollers.o
+g++ -m64 -Wno-unknown-pragmas  -O3 -fPIC -msse2 -mfpmath=sse -DNTHREADS=4 -Icacti -lz  -c logic.cc -o /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/accelwattch/logic.o
+g++ -m64 -Wno-unknown-pragmas  -O3 -fPIC -msse2 -mfpmath=sse -DNTHREADS=4 -Icacti -lz  -c main.cc -o /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/accelwattch/main.o
+g++ -m64 -Wno-unknown-pragmas  -O3 -fPIC -msse2 -mfpmath=sse -DNTHREADS=4 -Icacti -lz  -c cacti/mat.cc -o /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/accelwattch/mat.o
+g++ -m64 -Wno-unknown-pragmas  -O3 -fPIC -msse2 -mfpmath=sse -DNTHREADS=4 -Icacti -lz  -c memoryctrl.cc -o /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/accelwattch/memoryctrl.o
+interconnect.cc: In constructor ‘interconnect::interconnect(std::string, Device_ty, double, double, int, double, const InputParameter*, int, bool, double, bool, Core_type, Wire_type, double, double, TechnologyParameter::DeviceType*)’:
+interconnect.cc:157:14: warning: empty parentheses were disambiguated as a function declaration [-Wvexing-parse]
+  157 |   Wire wreset();
+      |              ^~
+interconnect.cc:157:14: note: remove parentheses to default-initialize a variable
+  157 |   Wire wreset();
+      |              ^~
+      |              --
+interconnect.cc:157:14: note: or replace parentheses with braces to value-initialize a variable
+In file included from ../gpgpu-sim/shader.h:54,
+                 from cuda-sim.h:37,
+                 from cuda-sim.cc:33:
+../gpgpu-sim/gpu-cache.h: In constructor ‘baseline_cache::baseline_cache(const char*, cache_config&, int, int, mem_fetch_interface*, mem_fetch_status, cache_gpu_level, gpgpu_sim*)’:
+../gpgpu-sim/gpu-cache.h:1479:24: warning: ‘baseline_cache::m_bandwidth_management’ will be initialized after [-Wreorder]
+ 1479 |   bandwidth_management m_bandwidth_management;
+      |                        ^~~~~~~~~~~~~~~~~~~~~~
+../gpgpu-sim/gpu-cache.h:1399:19: warning:   ‘cache_gpu_level baseline_cache::m_level’ [-Wreorder]
+ 1399 |   cache_gpu_level m_level;
+      |                   ^~~~~~~
+../gpgpu-sim/gpu-cache.h:1282:3: warning:   when initialized here [-Wreorder]
+ 1282 |   baseline_cache(const char *name, cache_config &config, int core_id,
+      |   ^~~~~~~~~~~~~~
+g++ -m64 -Wno-unknown-pragmas  -O3 -fPIC -msse2 -mfpmath=sse -DNTHREADS=4 -Icacti -lz  -c noc.cc -o /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/accelwattch/noc.o
+g++ -m64 -Wno-unknown-pragmas  -O3 -fPIC -msse2 -mfpmath=sse -DNTHREADS=4 -Icacti -lz  -c cacti/nuca.cc -o /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/accelwattch/nuca.o
+In file included from /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/src/cuda-sim/../gpgpu-sim/shader.h:54,
+                 from /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/src/cuda-sim/cuda-sim.h:37,
+                 from trace_driven.cc:51:
+/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/src/cuda-sim/../gpgpu-sim/gpu-cache.h: In constructor ‘baseline_cache::baseline_cache(const char*, cache_config&, int, int, mem_fetch_interface*, mem_fetch_status, cache_gpu_level, gpgpu_sim*)’:
+/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/src/cuda-sim/../gpgpu-sim/gpu-cache.h:1479:24: warning: ‘baseline_cache::m_bandwidth_management’ will be initialized after [-Wreorder]
+ 1479 |   bandwidth_management m_bandwidth_management;
+      |                        ^~~~~~~~~~~~~~~~~~~~~~
+/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/src/cuda-sim/../gpgpu-sim/gpu-cache.h:1399:19: warning:   ‘cache_gpu_level baseline_cache::m_level’ [-Wreorder]
+ 1399 |   cache_gpu_level m_level;
+      |                   ^~~~~~~
+/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/src/cuda-sim/../gpgpu-sim/gpu-cache.h:1282:3: warning:   when initialized here [-Wreorder]
+ 1282 |   baseline_cache(const char *name, cache_config &config, int core_id,
+      |   ^~~~~~~~~~~~~~
+g++ -m64 -Wno-unknown-pragmas  -O3 -fPIC -msse2 -mfpmath=sse -DNTHREADS=4 -Icacti -lz  -c cacti/parameter.cc -o /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/accelwattch/parameter.o
+g++ -m64 -Wno-unknown-pragmas  -O3 -fPIC -msse2 -mfpmath=sse -DNTHREADS=4 -Icacti -lz  -c processor.cc -o /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/accelwattch/processor.o
+g++ -m64 -Wno-unknown-pragmas  -O3 -fPIC -msse2 -mfpmath=sse -DNTHREADS=4 -Icacti -lz  -c cacti/router.cc -o /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/accelwattch/router.o
+g++ -m64 -Wno-unknown-pragmas  -O3 -fPIC -msse2 -mfpmath=sse -DNTHREADS=4 -Icacti -lz  -c sharedcache.cc -o /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/accelwattch/sharedcache.o
+make[1]: Leaving directory '/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/trace-parser'
+g++  -c -O3 -g3 -Wall -Wno-unused-function -Wno-sign-compare -I/usr/local/cuda-11.8/include  -I/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/cuda-sim/ -I. -I/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release -fPIC  -DTRACING_ON=1 -DCUDART_VERSION=11080 -std=c++0x ptx_sim.cc -o /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/cuda-sim/ptx_sim.o
+g++ -m64 -Wno-unknown-pragmas  -O3 -fPIC -msse2 -mfpmath=sse -DNTHREADS=4 -Icacti -lz  -c cacti/subarray.cc -o /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/accelwattch/subarray.o
+g++ -m64 -Wno-unknown-pragmas  -O3 -fPIC -msse2 -mfpmath=sse -DNTHREADS=4 -Icacti -lz  -c cacti/technology.cc -o /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/accelwattch/technology.o
+g++  -c -O3 -g3 -Wall -Wno-unused-function -Wno-sign-compare -I/usr/local/cuda-11.8/include  -I/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/cuda-sim/ -I. -I/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release -fPIC  -DTRACING_ON=1 -DCUDART_VERSION=11080 -std=c++0x memory.cc -o /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/cuda-sim/memory.o
+g++ -m64 -Wno-unknown-pragmas  -O3 -fPIC -msse2 -mfpmath=sse -DNTHREADS=4 -Icacti -lz  -c cacti/uca.cc -o /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/accelwattch/uca.o
+g++  -c -O3 -g3 -Wall -Wno-unused-function -Wno-sign-compare -I/usr/local/cuda-11.8/include  -I/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/cuda-sim/ -I. -I/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release -fPIC  -DTRACING_ON=1 -DCUDART_VERSION=11080 -std=c++0x ptx-stats.cc -o /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/cuda-sim/ptx-stats.o
+In file included from ../../libcuda/../src/cuda-sim/../gpgpu-sim/shader.h:54,
+                 from ../../libcuda/../src/cuda-sim/cuda-sim.h:37,
+                 from ../../libcuda/gpgpu_context.h:3,
+                 from ptx_sim.cc:34:
+../../libcuda/../src/cuda-sim/../gpgpu-sim/gpu-cache.h: In constructor ‘baseline_cache::baseline_cache(const char*, cache_config&, int, int, mem_fetch_interface*, mem_fetch_status, cache_gpu_level, gpgpu_sim*)’:
+../../libcuda/../src/cuda-sim/../gpgpu-sim/gpu-cache.h:1479:24: warning: ‘baseline_cache::m_bandwidth_management’ will be initialized after [-Wreorder]
+ 1479 |   bandwidth_management m_bandwidth_management;
+      |                        ^~~~~~~~~~~~~~~~~~~~~~
+../../libcuda/../src/cuda-sim/../gpgpu-sim/gpu-cache.h:1399:19: warning:   ‘cache_gpu_level baseline_cache::m_level’ [-Wreorder]
+ 1399 |   cache_gpu_level m_level;
+      |                   ^~~~~~~
+../../libcuda/../src/cuda-sim/../gpgpu-sim/gpu-cache.h:1282:3: warning:   when initialized here [-Wreorder]
+ 1282 |   baseline_cache(const char *name, cache_config &config, int core_id,
+      |   ^~~~~~~~~~~~~~
+g++  -c -O3 -g3 -Wall -Wno-unused-function -Wno-sign-compare -I/usr/local/cuda-11.8/include  -I/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/cuda-sim/ -I. -I/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release -fPIC  -DTRACING_ON=1 -DCUDART_VERSION=11080 -std=c++0x decuda_pred_table/decuda_pred_table.cc -o /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/cuda-sim/decuda_pred_table/decuda_pred_table.o
+g++ -m64 -Wno-unknown-pragmas  -O3 -fPIC -msse2 -mfpmath=sse -DNTHREADS=4 -Icacti -lz  -c cacti/wire.cc -o /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/accelwattch/wire.o
+In file included from ../../libcuda/../src/cuda-sim/../gpgpu-sim/shader.h:54,
+                 from ../../libcuda/../src/cuda-sim/cuda-sim.h:37,
+                 from ../../libcuda/gpgpu_context.h:3,
+                 from memory.cc:31:
+../../libcuda/../src/cuda-sim/../gpgpu-sim/gpu-cache.h: In constructor ‘baseline_cache::baseline_cache(const char*, cache_config&, int, int, mem_fetch_interface*, mem_fetch_status, cache_gpu_level, gpgpu_sim*)’:
+../../libcuda/../src/cuda-sim/../gpgpu-sim/gpu-cache.h:1479:24: warning: ‘baseline_cache::m_bandwidth_management’ will be initialized after [-Wreorder]
+ 1479 |   bandwidth_management m_bandwidth_management;
+      |                        ^~~~~~~~~~~~~~~~~~~~~~
+../../libcuda/../src/cuda-sim/../gpgpu-sim/gpu-cache.h:1399:19: warning:   ‘cache_gpu_level baseline_cache::m_level’ [-Wreorder]
+ 1399 |   cache_gpu_level m_level;
+      |                   ^~~~~~~
+../../libcuda/../src/cuda-sim/../gpgpu-sim/gpu-cache.h:1282:3: warning:   when initialized here [-Wreorder]
+ 1282 |   baseline_cache(const char *name, cache_config &config, int core_id,
+      |   ^~~~~~~~~~~~~~
+g++ -m64 -Wno-unknown-pragmas  -O3 -fPIC -msse2 -mfpmath=sse -DNTHREADS=4 -Icacti -lz  -c xmlParser.cc -o /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/accelwattch/xmlParser.o
+g++ -m64 -Wno-unknown-pragmas  -O3 -fPIC -msse2 -mfpmath=sse -DNTHREADS=4 -Icacti -lz  -c gpgpu_sim_wrapper.cc -o /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/accelwattch/gpgpu_sim_wrapper.o
+g++  -c -O3 -g3 -Wall -Wno-unused-function -Wno-sign-compare -I/usr/local/cuda-11.8/include  -I/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/cuda-sim/ -I. -I/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release -fPIC  -DTRACING_ON=1 -DCUDART_VERSION=11080 -std=c++0x -DYYDEBUG /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/cuda-sim/ptx.tab.c -o /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/cuda-sim/ptx.tab.o
+In file included from ../../libcuda/../src/cuda-sim/../gpgpu-sim/shader.h:54,
+                 from ../../libcuda/../src/cuda-sim/cuda-sim.h:37,
+                 from ../../libcuda/gpgpu_context.h:3,
+                 from ptx-stats.cc:32:
+../../libcuda/../src/cuda-sim/../gpgpu-sim/gpu-cache.h: In constructor ‘baseline_cache::baseline_cache(const char*, cache_config&, int, int, mem_fetch_interface*, mem_fetch_status, cache_gpu_level, gpgpu_sim*)’:
+../../libcuda/../src/cuda-sim/../gpgpu-sim/gpu-cache.h:1479:24: warning: ‘baseline_cache::m_bandwidth_management’ will be initialized after [-Wreorder]
+ 1479 |   bandwidth_management m_bandwidth_management;
+      |                        ^~~~~~~~~~~~~~~~~~~~~~
+../../libcuda/../src/cuda-sim/../gpgpu-sim/gpu-cache.h:1399:19: warning:   ‘cache_gpu_level baseline_cache::m_level’ [-Wreorder]
+ 1399 |   cache_gpu_level m_level;
+      |                   ^~~~~~~
+../../libcuda/../src/cuda-sim/../gpgpu-sim/gpu-cache.h:1282:3: warning:   when initialized here [-Wreorder]
+ 1282 |   baseline_cache(const char *name, cache_config &config, int core_id,
+      |   ^~~~~~~~~~~~~~
+flex --outfile=/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/cuda-sim/lex.ptx_.c ptx.l 2> /dev/null
+bison --name-prefix=ptxinfo_ -v -d ptxinfo.y --file-prefix=/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/cuda-sim/ptxinfo 2> /dev/null
+flex --outfile=/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/cuda-sim/lex.ptxinfo_.c ptxinfo.l 2> /dev/null
+g++  -c -O3 -g3 -Wall -Wno-unused-function -Wno-sign-compare -I/usr/local/cuda-11.8/include  -I/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/cuda-sim/ -I. -I/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release -fPIC  -DTRACING_ON=1 -DCUDART_VERSION=11080 -std=c++0x cuda_device_runtime.cc -o /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/cuda-sim/cuda_device_runtime.o
+In file included from ./../../libcuda/../src/cuda-sim/../gpgpu-sim/shader.h:54,
+                 from ./../../libcuda/../src/cuda-sim/cuda-sim.h:37,
+                 from ./../../libcuda/gpgpu_context.h:3,
+                 from ptx.y:33:
+./../../libcuda/../src/cuda-sim/../gpgpu-sim/gpu-cache.h: In constructor ‘baseline_cache::baseline_cache(const char*, cache_config&, int, int, mem_fetch_interface*, mem_fetch_status, cache_gpu_level, gpgpu_sim*)’:
+./../../libcuda/../src/cuda-sim/../gpgpu-sim/gpu-cache.h:1479:24: warning: ‘baseline_cache::m_bandwidth_management’ will be initialized after [-Wreorder]
+ 1479 |   bandwidth_management m_bandwidth_management;
+      |                        ^~~~~~~~~~~~~~~~~~~~~~
+./../../libcuda/../src/cuda-sim/../gpgpu-sim/gpu-cache.h:1399:19: warning:   ‘cache_gpu_level baseline_cache::m_level’ [-Wreorder]
+ 1399 |   cache_gpu_level m_level;
+      |                   ^~~~~~~
+./../../libcuda/../src/cuda-sim/../gpgpu-sim/gpu-cache.h:1282:3: warning:   when initialized here [-Wreorder]
+ 1282 |   baseline_cache(const char *name, cache_config &config, int core_id,
+      |   ^~~~~~~~~~~~~~
+In file included from ../../libcuda/../src/cuda-sim/../gpgpu-sim/shader.h:54,
+                 from ../../libcuda/../src/cuda-sim/cuda-sim.h:37,
+                 from ../../libcuda/gpgpu_context.h:3,
+                 from cuda_device_runtime.cc:12:
+../../libcuda/../src/cuda-sim/../gpgpu-sim/gpu-cache.h: In constructor ‘baseline_cache::baseline_cache(const char*, cache_config&, int, int, mem_fetch_interface*, mem_fetch_status, cache_gpu_level, gpgpu_sim*)’:
+../../libcuda/../src/cuda-sim/../gpgpu-sim/gpu-cache.h:1479:24: warning: ‘baseline_cache::m_bandwidth_management’ will be initialized after [-Wreorder]
+ 1479 |   bandwidth_management m_bandwidth_management;
+      |                        ^~~~~~~~~~~~~~~~~~~~~~
+../../libcuda/../src/cuda-sim/../gpgpu-sim/gpu-cache.h:1399:19: warning:   ‘cache_gpu_level baseline_cache::m_level’ [-Wreorder]
+ 1399 |   cache_gpu_level m_level;
+      |                   ^~~~~~~
+../../libcuda/../src/cuda-sim/../gpgpu-sim/gpu-cache.h:1282:3: warning:   when initialized here [-Wreorder]
+ 1282 |   baseline_cache(const char *name, cache_config &config, int core_id,
+      |   ^~~~~~~~~~~~~~
+cat /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/cuda-sim/ptx.tab.h | grep "=" | sed 's/^[ ]\+//' | sed -E 's/\s+\/\*.+\*\///' | sed 's/[=,]//g' | sed 's/\([_A-Z1-9]\+\)[ ]\+\([0-9]\+\)/\1 \1/' | sed 's/^/DEF(/' | sed 's/ /,"/' | sed 's/$/")/' | sed '/YYerror/d;/YYEOF/d;/YYEMPTY/d;/YYUNDEF/d;'> /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/cuda-sim/ptx_parser_decode.def
+g++  -c -O3 -g3 -Wall -Wno-unused-function -Wno-sign-compare -I/usr/local/cuda-11.8/include  -I/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/cuda-sim/ -I. -I/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release -fPIC  -DTRACING_ON=1 -DCUDART_VERSION=11080 -std=c++0x cuda_device_printf.cc -o /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/cuda-sim/cuda_device_printf.o
+g++  -c -O3 -g3 -Wall -Wno-unused-function -Wno-sign-compare -I/usr/local/cuda-11.8/include  -I/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/cuda-sim/ -I. -I/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release -fPIC  -DTRACING_ON=1 -DCUDART_VERSION=11080 -std=c++0x instructions.cc -o /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/cuda-sim/instructions.o
+g++  -c -O3 -g3 -Wall -Wno-unused-function -Wno-sign-compare -I/usr/local/cuda-11.8/include  -I/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/cuda-sim/ -I. -I/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release -fPIC  -DTRACING_ON=1 -DCUDART_VERSION=11080 -std=c++0x /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/cuda-sim/lex.ptx_.c -o /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/cuda-sim/lex.ptx_.o
+g++  -c -O3 -g3 -Wall -Wno-unused-function -Wno-sign-compare -I/usr/local/cuda-11.8/include  -I/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/cuda-sim/ -I. -I/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release -fPIC  -DTRACING_ON=1 -DCUDART_VERSION=11080 -std=c++0x -DYYDEBUG /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/cuda-sim/ptxinfo.tab.c -o /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/cuda-sim/ptxinfo.tab.o
+g++  -c -O3 -g3 -Wall -Wno-unused-function -Wno-sign-compare -I/usr/local/cuda-11.8/include  -I/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/cuda-sim/ -I. -I/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release -fPIC  -DTRACING_ON=1 -DCUDART_VERSION=11080 -std=c++0x /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/cuda-sim/lex.ptxinfo_.c -o /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/cuda-sim/lex.ptxinfo_.o
+g++  -c -O3 -g3 -Wall -Wno-unused-function -Wno-sign-compare -I/usr/local/cuda-11.8/include  -I/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/cuda-sim/ -I. -I/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release -fPIC  -DTRACING_ON=1 -DCUDART_VERSION=11080 -std=c++0x ptx_parser.cc -o /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/cuda-sim/ptx_parser.o
+g++  -c -O3 -g3 -Wall -Wno-unused-function -Wno-sign-compare -I/usr/local/cuda-11.8/include  -I/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/cuda-sim/ -I. -I/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release -fPIC  -DTRACING_ON=1 -DCUDART_VERSION=11080 -std=c++0x ptx_loader.cc -o /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/cuda-sim/ptx_loader.o
+g++  -c -O3 -g3 -Wall -Wno-unused-function -Wno-sign-compare -I/usr/local/cuda-11.8/include  -I/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/cuda-sim/ -I. -I/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release -fPIC  -DTRACING_ON=1 -DCUDART_VERSION=11080 -std=c++0x ptx_ir.cc -o /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/cuda-sim/ptx_ir.o
+In file included from cuda-math.h:354,
+                 from instructions.cc:54:
+/usr/local/cuda-11.8/include/math_functions.h:54:2: warning: #warning "math_functions.h is an internal header file and must not be used directly.  This file will be removed in a future CUDA release.  Please use cuda_runtime_api.h or cuda_runtime.h instead." [-Wcpp]
+   54 | #warning "math_functions.h is an internal header file and must not be used directly.  This file will be removed in a future CUDA release.  Please use cuda_runtime_api.h or cuda_runtime.h instead."
+      |  ^~~~~~~
+g++ -m64 /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/accelwattch/Ucache.o /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/accelwattch/XML_Parse.o /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/accelwattch/arbiter.o /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/accelwattch/area.o /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/accelwattch/array.o /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/accelwattch/bank.o /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/accelwattch/basic_circuit.o /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/accelwattch/basic_components.o /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/accelwattch/cacti_interface.o /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/accelwattch/component.o /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/accelwattch/core.o /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/accelwattch/crossbar.o /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/accelwattch/decoder.o /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/accelwattch/htree2.o /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/accelwattch/interconnect.o /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/accelwattch/io.o /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/accelwattch/iocontrollers.o /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/accelwattch/logic.o /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/accelwattch/main.o /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/accelwattch/mat.o /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/accelwattch/memoryctrl.o /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/accelwattch/noc.o /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/accelwattch/nuca.o /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/accelwattch/parameter.o /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/accelwattch/processor.o /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/accelwattch/router.o /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/accelwattch/sharedcache.o /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/accelwattch/subarray.o /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/accelwattch/technology.o /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/accelwattch/uca.o /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/accelwattch/wire.o /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/accelwattch/xmlParser.o /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/accelwattch/gpgpu_sim_wrapper.o -o /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/accelwattch/mcpat -lm -Wno-unknown-pragmas  -O3 -fPIC -msse2 -mfpmath=sse -DNTHREADS=4 -Icacti -lz  -I/usr/lib/ -I/usr/lib64/ -pthread
+make[1]: Leaving directory '/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/trace-driven'
+make[3]: Leaving directory '/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/src/accelwattch'
+make[2]: Leaving directory '/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/src/accelwattch'
+In file included from ./../../libcuda/../src/cuda-sim/../gpgpu-sim/shader.h:54,
+                 from ./../../libcuda/../src/cuda-sim/cuda-sim.h:37,
+                 from ./../../libcuda/gpgpu_context.h:3,
+                 from ptxinfo.l:42:
+./../../libcuda/../src/cuda-sim/../gpgpu-sim/gpu-cache.h: In constructor ‘baseline_cache::baseline_cache(const char*, cache_config&, int, int, mem_fetch_interface*, mem_fetch_status, cache_gpu_level, gpgpu_sim*)’:
+./../../libcuda/../src/cuda-sim/../gpgpu-sim/gpu-cache.h:1479:24: warning: ‘baseline_cache::m_bandwidth_management’ will be initialized after [-Wreorder]
+ 1479 |   bandwidth_management m_bandwidth_management;
+      |                        ^~~~~~~~~~~~~~~~~~~~~~
+./../../libcuda/../src/cuda-sim/../gpgpu-sim/gpu-cache.h:1399:19: warning:   ‘cache_gpu_level baseline_cache::m_level’ [-Wreorder]
+ 1399 |   cache_gpu_level m_level;
+      |                   ^~~~~~~
+./../../libcuda/../src/cuda-sim/../gpgpu-sim/gpu-cache.h:1282:3: warning:   when initialized here [-Wreorder]
+ 1282 |   baseline_cache(const char *name, cache_config &config, int core_id,
+      |   ^~~~~~~~~~~~~~
+In file included from ../../libcuda/../src/cuda-sim/../gpgpu-sim/shader.h:54,
+                 from ../../libcuda/../src/cuda-sim/cuda-sim.h:37,
+                 from ../../libcuda/gpgpu_context.h:3,
+                 from ptx_loader.cc:34:
+../../libcuda/../src/cuda-sim/../gpgpu-sim/gpu-cache.h: In constructor ‘baseline_cache::baseline_cache(const char*, cache_config&, int, int, mem_fetch_interface*, mem_fetch_status, cache_gpu_level, gpgpu_sim*)’:
+../../libcuda/../src/cuda-sim/../gpgpu-sim/gpu-cache.h:1479:24: warning: ‘baseline_cache::m_bandwidth_management’ will be initialized after [-Wreorder]
+ 1479 |   bandwidth_management m_bandwidth_management;
+      |                        ^~~~~~~~~~~~~~~~~~~~~~
+../../libcuda/../src/cuda-sim/../gpgpu-sim/gpu-cache.h:1399:19: warning:   ‘cache_gpu_level baseline_cache::m_level’ [-Wreorder]
+ 1399 |   cache_gpu_level m_level;
+      |                   ^~~~~~~
+../../libcuda/../src/cuda-sim/../gpgpu-sim/gpu-cache.h:1282:3: warning:   when initialized here [-Wreorder]
+ 1282 |   baseline_cache(const char *name, cache_config &config, int core_id,
+      |   ^~~~~~~~~~~~~~
+In file included from ../gpgpu-sim/gpu-sim.h:43,
+                 from instructions.cc:52:
+../gpgpu-sim/gpu-cache.h: In constructor ‘baseline_cache::baseline_cache(const char*, cache_config&, int, int, mem_fetch_interface*, mem_fetch_status, cache_gpu_level, gpgpu_sim*)’:
+../gpgpu-sim/gpu-cache.h:1479:24: warning: ‘baseline_cache::m_bandwidth_management’ will be initialized after [-Wreorder]
+ 1479 |   bandwidth_management m_bandwidth_management;
+      |                        ^~~~~~~~~~~~~~~~~~~~~~
+../gpgpu-sim/gpu-cache.h:1399:19: warning:   ‘cache_gpu_level baseline_cache::m_level’ [-Wreorder]
+ 1399 |   cache_gpu_level m_level;
+      |                   ^~~~~~~
+../gpgpu-sim/gpu-cache.h:1282:3: warning:   when initialized here [-Wreorder]
+ 1282 |   baseline_cache(const char *name, cache_config &config, int core_id,
+      |   ^~~~~~~~~~~~~~
+In file included from ../../libcuda/../src/cuda-sim/../gpgpu-sim/shader.h:54,
+                 from ../../libcuda/../src/cuda-sim/cuda-sim.h:37,
+                 from ../../libcuda/gpgpu_context.h:3,
+                 from ptx_parser.cc:30:
+../../libcuda/../src/cuda-sim/../gpgpu-sim/gpu-cache.h: In constructor ‘baseline_cache::baseline_cache(const char*, cache_config&, int, int, mem_fetch_interface*, mem_fetch_status, cache_gpu_level, gpgpu_sim*)’:
+../../libcuda/../src/cuda-sim/../gpgpu-sim/gpu-cache.h:1479:24: warning: ‘baseline_cache::m_bandwidth_management’ will be initialized after [-Wreorder]
+ 1479 |   bandwidth_management m_bandwidth_management;
+      |                        ^~~~~~~~~~~~~~~~~~~~~~
+../../libcuda/../src/cuda-sim/../gpgpu-sim/gpu-cache.h:1399:19: warning:   ‘cache_gpu_level baseline_cache::m_level’ [-Wreorder]
+ 1399 |   cache_gpu_level m_level;
+      |                   ^~~~~~~
+../../libcuda/../src/cuda-sim/../gpgpu-sim/gpu-cache.h:1282:3: warning:   when initialized here [-Wreorder]
+ 1282 |   baseline_cache(const char *name, cache_config &config, int core_id,
+      |   ^~~~~~~~~~~~~~
+In file included from ../../libcuda/../src/cuda-sim/../gpgpu-sim/shader.h:54,
+                 from ../../libcuda/../src/cuda-sim/cuda-sim.h:37,
+                 from ../../libcuda/gpgpu_context.h:3,
+                 from ptx_ir.cc:45:
+../../libcuda/../src/cuda-sim/../gpgpu-sim/gpu-cache.h: In constructor ‘baseline_cache::baseline_cache(const char*, cache_config&, int, int, mem_fetch_interface*, mem_fetch_status, cache_gpu_level, gpgpu_sim*)’:
+../../libcuda/../src/cuda-sim/../gpgpu-sim/gpu-cache.h:1479:24: warning: ‘baseline_cache::m_bandwidth_management’ will be initialized after [-Wreorder]
+ 1479 |   bandwidth_management m_bandwidth_management;
+      |                        ^~~~~~~~~~~~~~~~~~~~~~
+../../libcuda/../src/cuda-sim/../gpgpu-sim/gpu-cache.h:1399:19: warning:   ‘cache_gpu_level baseline_cache::m_level’ [-Wreorder]
+ 1399 |   cache_gpu_level m_level;
+      |                   ^~~~~~~
+../../libcuda/../src/cuda-sim/../gpgpu-sim/gpu-cache.h:1282:3: warning:   when initialized here [-Wreorder]
+ 1282 |   baseline_cache(const char *name, cache_config &config, int core_id,
+      |   ^~~~~~~~~~~~~~
+In file included from ./../../libcuda/../src/cuda-sim/../gpgpu-sim/shader.h:54,
+                 from ./../../libcuda/../src/cuda-sim/cuda-sim.h:37,
+                 from ./../../libcuda/gpgpu_context.h:3,
+                 from ptx.l:46:
+./../../libcuda/../src/cuda-sim/../gpgpu-sim/gpu-cache.h: In constructor ‘baseline_cache::baseline_cache(const char*, cache_config&, int, int, mem_fetch_interface*, mem_fetch_status, cache_gpu_level, gpgpu_sim*)’:
+./../../libcuda/../src/cuda-sim/../gpgpu-sim/gpu-cache.h:1479:24: warning: ‘baseline_cache::m_bandwidth_management’ will be initialized after [-Wreorder]
+ 1479 |   bandwidth_management m_bandwidth_management;
+      |                        ^~~~~~~~~~~~~~~~~~~~~~
+./../../libcuda/../src/cuda-sim/../gpgpu-sim/gpu-cache.h:1399:19: warning:   ‘cache_gpu_level baseline_cache::m_level’ [-Wreorder]
+ 1399 |   cache_gpu_level m_level;
+      |                   ^~~~~~~
+./../../libcuda/../src/cuda-sim/../gpgpu-sim/gpu-cache.h:1282:3: warning:   when initialized here [-Wreorder]
+ 1282 |   baseline_cache(const char *name, cache_config &config, int core_id,
+      |   ^~~~~~~~~~~~~~
+instructions.cc: In member function ‘void ptx_thread_info::print_reg_thread(char*)’:
+instructions.cc:203:19: warning: format ‘%llu’ expects argument of type ‘long long unsigned int’, but argument 4 has type ‘const ptx_reg_t’ [-Wformat=]
+  203 |       fprintf(fp, "%s %llu %s %d\n", name.c_str(), it->second, dec.c_str(),
+      |                   ^~~~~~~~~~~~~~~~~                ~~~~~~~~~~
+      |                                                        |
+      |                                                        const ptx_reg_t
+In file included from /usr/include/string.h:535,
+                 from /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/cuda-sim/lex.ptxinfo_.c:243:
+In function ‘char* strncpy(char*, const char*, size_t)’,
+    inlined from ‘int ptxinfo_lex(YYSTYPE*, yyscan_t, ptxinfo_data*)’ at ptxinfo.l:87:24:
+/usr/include/x86_64-linux-gnu/bits/string_fortified.h:95:34: warning: ‘char* __builtin_strncpy(char*, const char*, long unsigned int)’ specified bound 1024 equals destination size [-Wstringop-truncation]
+   95 |   return __builtin___strncpy_chk (__dest, __src, __len,
+      |          ~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~
+   96 |                                   __glibc_objsize (__dest));
+      |                                   ~~~~~~~~~~~~~~~~~~~~~~~~~
+In function ‘char* strncpy(char*, const char*, size_t)’,
+    inlined from ‘int ptxinfo_lex(YYSTYPE*, yyscan_t, ptxinfo_data*)’ at ptxinfo.l:85:1:
+/usr/include/x86_64-linux-gnu/bits/string_fortified.h:95:34: warning: ‘char* __builtin_strncpy(char*, const char*, long unsigned int)’ specified bound depends on the length of the source argument [-Wstringop-truncation]
+   95 |   return __builtin___strncpy_chk (__dest, __src, __len,
+      |          ~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~
+   96 |                                   __glibc_objsize (__dest));
+      |                                   ~~~~~~~~~~~~~~~~~~~~~~~~~
+ptxinfo.l: In function ‘int ptxinfo_lex(YYSTYPE*, yyscan_t, ptxinfo_data*)’:
+ptxinfo.l:45:57: note: length computed here
+   45 | #define TC if( (yylineno == 1) && (ptxinfo->col + strlen(yytext) < LINEBUF_SIZE) ) { \
+      |                                                   ~~~~~~^~~~~~~~
+ptxinfo.l:55:1: note: in expansion of macro ‘TC’
+   55 | "warning"[^\n]* TC; return WARNING;
+      | ^~
+In file included from /usr/include/string.h:535,
+                 from /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/cuda-sim/lex.ptxinfo_.c:243:
+In function ‘char* strncpy(char*, const char*, size_t)’,
+    inlined from ‘int ptxinfo_lex(YYSTYPE*, yyscan_t, ptxinfo_data*)’ at ptxinfo.l:84:1:
+/usr/include/x86_64-linux-gnu/bits/string_fortified.h:95:34: warning: ‘char* __builtin_strncpy(char*, const char*, long unsigned int)’ specified bound depends on the length of the source argument [-Wstringop-truncation]
+   95 |   return __builtin___strncpy_chk (__dest, __src, __len,
+      |          ~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~
+   96 |                                   __glibc_objsize (__dest));
+      |                                   ~~~~~~~~~~~~~~~~~~~~~~~~~
+ptxinfo.l: In function ‘int ptxinfo_lex(YYSTYPE*, yyscan_t, ptxinfo_data*)’:
+ptxinfo.l:45:57: note: length computed here
+   45 | #define TC if( (yylineno == 1) && (ptxinfo->col + strlen(yytext) < LINEBUF_SIZE) ) { \
+      |                                                   ~~~~~~^~~~~~~~
+ptxinfo.l:55:1: note: in expansion of macro ‘TC’
+   55 | "warning"[^\n]* TC; return WARNING;
+      | ^~
+In file included from /usr/include/string.h:535,
+                 from /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/cuda-sim/lex.ptxinfo_.c:243:
+In function ‘char* strncpy(char*, const char*, size_t)’,
+    inlined from ‘int ptxinfo_lex(YYSTYPE*, yyscan_t, ptxinfo_data*)’ at ptxinfo.l:83:1:
+/usr/include/x86_64-linux-gnu/bits/string_fortified.h:95:34: warning: ‘char* __builtin_strncpy(char*, const char*, long unsigned int)’ specified bound depends on the length of the source argument [-Wstringop-truncation]
+   95 |   return __builtin___strncpy_chk (__dest, __src, __len,
+      |          ~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~
+   96 |                                   __glibc_objsize (__dest));
+      |                                   ~~~~~~~~~~~~~~~~~~~~~~~~~
+ptxinfo.l: In function ‘int ptxinfo_lex(YYSTYPE*, yyscan_t, ptxinfo_data*)’:
+ptxinfo.l:45:57: note: length computed here
+   45 | #define TC if( (yylineno == 1) && (ptxinfo->col + strlen(yytext) < LINEBUF_SIZE) ) { \
+      |                                                   ~~~~~~^~~~~~~~
+ptxinfo.l:55:1: note: in expansion of macro ‘TC’
+   55 | "warning"[^\n]* TC; return WARNING;
+      | ^~
+In file included from /usr/include/string.h:535,
+                 from /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/cuda-sim/lex.ptxinfo_.c:243:
+In function ‘char* strncpy(char*, const char*, size_t)’,
+    inlined from ‘int ptxinfo_lex(YYSTYPE*, yyscan_t, ptxinfo_data*)’ at ptxinfo.l:82:1:
+/usr/include/x86_64-linux-gnu/bits/string_fortified.h:95:34: warning: ‘char* __builtin_strncpy(char*, const char*, long unsigned int)’ specified bound depends on the length of the source argument [-Wstringop-truncation]
+   95 |   return __builtin___strncpy_chk (__dest, __src, __len,
+      |          ~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~
+   96 |                                   __glibc_objsize (__dest));
+      |                                   ~~~~~~~~~~~~~~~~~~~~~~~~~
+ptxinfo.l: In function ‘int ptxinfo_lex(YYSTYPE*, yyscan_t, ptxinfo_data*)’:
+ptxinfo.l:45:57: note: length computed here
+   45 | #define TC if( (yylineno == 1) && (ptxinfo->col + strlen(yytext) < LINEBUF_SIZE) ) { \
+      |                                                   ~~~~~~^~~~~~~~
+ptxinfo.l:55:1: note: in expansion of macro ‘TC’
+   55 | "warning"[^\n]* TC; return WARNING;
+      | ^~
+In file included from /usr/include/string.h:535,
+                 from /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/cuda-sim/lex.ptxinfo_.c:243:
+In function ‘char* strncpy(char*, const char*, size_t)’,
+    inlined from ‘int ptxinfo_lex(YYSTYPE*, yyscan_t, ptxinfo_data*)’ at ptxinfo.l:81:1:
+/usr/include/x86_64-linux-gnu/bits/string_fortified.h:95:34: warning: ‘char* __builtin_strncpy(char*, const char*, long unsigned int)’ specified bound depends on the length of the source argument [-Wstringop-truncation]
+   95 |   return __builtin___strncpy_chk (__dest, __src, __len,
+      |          ~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~
+   96 |                                   __glibc_objsize (__dest));
+      |                                   ~~~~~~~~~~~~~~~~~~~~~~~~~
+ptxinfo.l: In function ‘int ptxinfo_lex(YYSTYPE*, yyscan_t, ptxinfo_data*)’:
+ptxinfo.l:45:57: note: length computed here
+   45 | #define TC if( (yylineno == 1) && (ptxinfo->col + strlen(yytext) < LINEBUF_SIZE) ) { \
+      |                                                   ~~~~~~^~~~~~~~
+ptxinfo.l:55:1: note: in expansion of macro ‘TC’
+   55 | "warning"[^\n]* TC; return WARNING;
+      | ^~
+In file included from /usr/include/string.h:535,
+                 from /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/cuda-sim/lex.ptxinfo_.c:243:
+In function ‘char* strncpy(char*, const char*, size_t)’,
+    inlined from ‘int ptxinfo_lex(YYSTYPE*, yyscan_t, ptxinfo_data*)’ at ptxinfo.l:80:1:
+/usr/include/x86_64-linux-gnu/bits/string_fortified.h:95:34: warning: ‘char* __builtin_strncpy(char*, const char*, long unsigned int)’ specified bound depends on the length of the source argument [-Wstringop-truncation]
+   95 |   return __builtin___strncpy_chk (__dest, __src, __len,
+      |          ~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~
+   96 |                                   __glibc_objsize (__dest));
+      |                                   ~~~~~~~~~~~~~~~~~~~~~~~~~
+ptxinfo.l: In function ‘int ptxinfo_lex(YYSTYPE*, yyscan_t, ptxinfo_data*)’:
+ptxinfo.l:45:57: note: length computed here
+   45 | #define TC if( (yylineno == 1) && (ptxinfo->col + strlen(yytext) < LINEBUF_SIZE) ) { \
+      |                                                   ~~~~~~^~~~~~~~
+ptxinfo.l:55:1: note: in expansion of macro ‘TC’
+   55 | "warning"[^\n]* TC; return WARNING;
+      | ^~
+In file included from /usr/include/string.h:535,
+                 from /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/cuda-sim/lex.ptxinfo_.c:243:
+In function ‘char* strncpy(char*, const char*, size_t)’,
+    inlined from ‘int ptxinfo_lex(YYSTYPE*, yyscan_t, ptxinfo_data*)’ at ptxinfo.l:79:1:
+/usr/include/x86_64-linux-gnu/bits/string_fortified.h:95:34: warning: ‘char* __builtin_strncpy(char*, const char*, long unsigned int)’ specified bound depends on the length of the source argument [-Wstringop-truncation]
+   95 |   return __builtin___strncpy_chk (__dest, __src, __len,
+      |          ~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~
+   96 |                                   __glibc_objsize (__dest));
+      |                                   ~~~~~~~~~~~~~~~~~~~~~~~~~
+ptxinfo.l: In function ‘int ptxinfo_lex(YYSTYPE*, yyscan_t, ptxinfo_data*)’:
+ptxinfo.l:45:57: note: length computed here
+   45 | #define TC if( (yylineno == 1) && (ptxinfo->col + strlen(yytext) < LINEBUF_SIZE) ) { \
+      |                                                   ~~~~~~^~~~~~~~
+ptxinfo.l:55:1: note: in expansion of macro ‘TC’
+   55 | "warning"[^\n]* TC; return WARNING;
+      | ^~
+In file included from /usr/include/string.h:535,
+                 from /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/cuda-sim/lex.ptxinfo_.c:243:
+In function ‘char* strncpy(char*, const char*, size_t)’,
+    inlined from ‘int ptxinfo_lex(YYSTYPE*, yyscan_t, ptxinfo_data*)’ at ptxinfo.l:78:1:
+/usr/include/x86_64-linux-gnu/bits/string_fortified.h:95:34: warning: ‘char* __builtin_strncpy(char*, const char*, long unsigned int)’ specified bound depends on the length of the source argument [-Wstringop-truncation]
+   95 |   return __builtin___strncpy_chk (__dest, __src, __len,
+      |          ~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~
+   96 |                                   __glibc_objsize (__dest));
+      |                                   ~~~~~~~~~~~~~~~~~~~~~~~~~
+ptxinfo.l: In function ‘int ptxinfo_lex(YYSTYPE*, yyscan_t, ptxinfo_data*)’:
+ptxinfo.l:45:57: note: length computed here
+   45 | #define TC if( (yylineno == 1) && (ptxinfo->col + strlen(yytext) < LINEBUF_SIZE) ) { \
+      |                                                   ~~~~~~^~~~~~~~
+ptxinfo.l:55:1: note: in expansion of macro ‘TC’
+   55 | "warning"[^\n]* TC; return WARNING;
+      | ^~
+In file included from /usr/include/string.h:535,
+                 from /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/cuda-sim/lex.ptxinfo_.c:243:
+In function ‘char* strncpy(char*, const char*, size_t)’,
+    inlined from ‘int ptxinfo_lex(YYSTYPE*, yyscan_t, ptxinfo_data*)’ at ptxinfo.l:77:1:
+/usr/include/x86_64-linux-gnu/bits/string_fortified.h:95:34: warning: ‘char* __builtin_strncpy(char*, const char*, long unsigned int)’ specified bound depends on the length of the source argument [-Wstringop-truncation]
+   95 |   return __builtin___strncpy_chk (__dest, __src, __len,
+      |          ~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~
+   96 |                                   __glibc_objsize (__dest));
+      |                                   ~~~~~~~~~~~~~~~~~~~~~~~~~
+ptxinfo.l: In function ‘int ptxinfo_lex(YYSTYPE*, yyscan_t, ptxinfo_data*)’:
+ptxinfo.l:45:57: note: length computed here
+   45 | #define TC if( (yylineno == 1) && (ptxinfo->col + strlen(yytext) < LINEBUF_SIZE) ) { \
+      |                                                   ~~~~~~^~~~~~~~
+ptxinfo.l:55:1: note: in expansion of macro ‘TC’
+   55 | "warning"[^\n]* TC; return WARNING;
+      | ^~
+In file included from /usr/include/string.h:535,
+                 from /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/cuda-sim/lex.ptxinfo_.c:243:
+In function ‘char* strncpy(char*, const char*, size_t)’,
+    inlined from ‘int ptxinfo_lex(YYSTYPE*, yyscan_t, ptxinfo_data*)’ at ptxinfo.l:75:1:
+/usr/include/x86_64-linux-gnu/bits/string_fortified.h:95:34: warning: ‘char* __builtin_strncpy(char*, const char*, long unsigned int)’ specified bound depends on the length of the source argument [-Wstringop-truncation]
+   95 |   return __builtin___strncpy_chk (__dest, __src, __len,
+      |          ~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~
+   96 |                                   __glibc_objsize (__dest));
+      |                                   ~~~~~~~~~~~~~~~~~~~~~~~~~
+ptxinfo.l: In function ‘int ptxinfo_lex(YYSTYPE*, yyscan_t, ptxinfo_data*)’:
+ptxinfo.l:45:57: note: length computed here
+   45 | #define TC if( (yylineno == 1) && (ptxinfo->col + strlen(yytext) < LINEBUF_SIZE) ) { \
+      |                                                   ~~~~~~^~~~~~~~
+ptxinfo.l:55:1: note: in expansion of macro ‘TC’
+   55 | "warning"[^\n]* TC; return WARNING;
+      | ^~
+In file included from /usr/include/string.h:535,
+                 from /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/cuda-sim/lex.ptxinfo_.c:243:
+In function ‘char* strncpy(char*, const char*, size_t)’,
+    inlined from ‘int ptxinfo_lex(YYSTYPE*, yyscan_t, ptxinfo_data*)’ at ptxinfo.l:74:1:
+/usr/include/x86_64-linux-gnu/bits/string_fortified.h:95:34: warning: ‘char* __builtin_strncpy(char*, const char*, long unsigned int)’ specified bound depends on the length of the source argument [-Wstringop-truncation]
+   95 |   return __builtin___strncpy_chk (__dest, __src, __len,
+      |          ~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~
+   96 |                                   __glibc_objsize (__dest));
+      |                                   ~~~~~~~~~~~~~~~~~~~~~~~~~
+ptxinfo.l: In function ‘int ptxinfo_lex(YYSTYPE*, yyscan_t, ptxinfo_data*)’:
+ptxinfo.l:45:57: note: length computed here
+   45 | #define TC if( (yylineno == 1) && (ptxinfo->col + strlen(yytext) < LINEBUF_SIZE) ) { \
+      |                                                   ~~~~~~^~~~~~~~
+ptxinfo.l:55:1: note: in expansion of macro ‘TC’
+   55 | "warning"[^\n]* TC; return WARNING;
+      | ^~
+In file included from /usr/include/string.h:535,
+                 from /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/cuda-sim/lex.ptxinfo_.c:243:
+In function ‘char* strncpy(char*, const char*, size_t)’,
+    inlined from ‘int ptxinfo_lex(YYSTYPE*, yyscan_t, ptxinfo_data*)’ at ptxinfo.l:72:1:
+/usr/include/x86_64-linux-gnu/bits/string_fortified.h:95:34: warning: ‘char* __builtin_strncpy(char*, const char*, long unsigned int)’ specified bound depends on the length of the source argument [-Wstringop-truncation]
+   95 |   return __builtin___strncpy_chk (__dest, __src, __len,
+      |          ~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~
+   96 |                                   __glibc_objsize (__dest));
+      |                                   ~~~~~~~~~~~~~~~~~~~~~~~~~
+ptxinfo.l: In function ‘int ptxinfo_lex(YYSTYPE*, yyscan_t, ptxinfo_data*)’:
+ptxinfo.l:45:57: note: length computed here
+   45 | #define TC if( (yylineno == 1) && (ptxinfo->col + strlen(yytext) < LINEBUF_SIZE) ) { \
+      |                                                   ~~~~~~^~~~~~~~
+ptxinfo.l:55:1: note: in expansion of macro ‘TC’
+   55 | "warning"[^\n]* TC; return WARNING;
+      | ^~
+In file included from /usr/include/string.h:535,
+                 from /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/cuda-sim/lex.ptxinfo_.c:243:
+In function ‘char* strncpy(char*, const char*, size_t)’,
+    inlined from ‘int ptxinfo_lex(YYSTYPE*, yyscan_t, ptxinfo_data*)’ at ptxinfo.l:71:1:
+/usr/include/x86_64-linux-gnu/bits/string_fortified.h:95:34: warning: ‘char* __builtin_strncpy(char*, const char*, long unsigned int)’ specified bound depends on the length of the source argument [-Wstringop-truncation]
+   95 |   return __builtin___strncpy_chk (__dest, __src, __len,
+      |          ~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~
+   96 |                                   __glibc_objsize (__dest));
+      |                                   ~~~~~~~~~~~~~~~~~~~~~~~~~
+ptxinfo.l: In function ‘int ptxinfo_lex(YYSTYPE*, yyscan_t, ptxinfo_data*)’:
+ptxinfo.l:45:57: note: length computed here
+   45 | #define TC if( (yylineno == 1) && (ptxinfo->col + strlen(yytext) < LINEBUF_SIZE) ) { \
+      |                                                   ~~~~~~^~~~~~~~
+ptxinfo.l:55:1: note: in expansion of macro ‘TC’
+   55 | "warning"[^\n]* TC; return WARNING;
+      | ^~
+In file included from /usr/include/string.h:535,
+                 from /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/cuda-sim/lex.ptxinfo_.c:243:
+In function ‘char* strncpy(char*, const char*, size_t)’,
+    inlined from ‘int ptxinfo_lex(YYSTYPE*, yyscan_t, ptxinfo_data*)’ at ptxinfo.l:70:1:
+/usr/include/x86_64-linux-gnu/bits/string_fortified.h:95:34: warning: ‘char* __builtin_strncpy(char*, const char*, long unsigned int)’ specified bound depends on the length of the source argument [-Wstringop-truncation]
+   95 |   return __builtin___strncpy_chk (__dest, __src, __len,
+      |          ~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~
+   96 |                                   __glibc_objsize (__dest));
+      |                                   ~~~~~~~~~~~~~~~~~~~~~~~~~
+ptxinfo.l: In function ‘int ptxinfo_lex(YYSTYPE*, yyscan_t, ptxinfo_data*)’:
+ptxinfo.l:45:57: note: length computed here
+   45 | #define TC if( (yylineno == 1) && (ptxinfo->col + strlen(yytext) < LINEBUF_SIZE) ) { \
+      |                                                   ~~~~~~^~~~~~~~
+ptxinfo.l:55:1: note: in expansion of macro ‘TC’
+   55 | "warning"[^\n]* TC; return WARNING;
+      | ^~
+In file included from /usr/include/string.h:535,
+                 from /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/cuda-sim/lex.ptxinfo_.c:243:
+In function ‘char* strncpy(char*, const char*, size_t)’,
+    inlined from ‘int ptxinfo_lex(YYSTYPE*, yyscan_t, ptxinfo_data*)’ at ptxinfo.l:69:1:
+/usr/include/x86_64-linux-gnu/bits/string_fortified.h:95:34: warning: ‘char* __builtin_strncpy(char*, const char*, long unsigned int)’ specified bound depends on the length of the source argument [-Wstringop-truncation]
+   95 |   return __builtin___strncpy_chk (__dest, __src, __len,
+      |          ~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~
+   96 |                                   __glibc_objsize (__dest));
+      |                                   ~~~~~~~~~~~~~~~~~~~~~~~~~
+ptxinfo.l: In function ‘int ptxinfo_lex(YYSTYPE*, yyscan_t, ptxinfo_data*)’:
+ptxinfo.l:45:57: note: length computed here
+   45 | #define TC if( (yylineno == 1) && (ptxinfo->col + strlen(yytext) < LINEBUF_SIZE) ) { \
+      |                                                   ~~~~~~^~~~~~~~
+ptxinfo.l:55:1: note: in expansion of macro ‘TC’
+   55 | "warning"[^\n]* TC; return WARNING;
+      | ^~
+In file included from /usr/include/string.h:535,
+                 from /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/cuda-sim/lex.ptxinfo_.c:243:
+In function ‘char* strncpy(char*, const char*, size_t)’,
+    inlined from ‘int ptxinfo_lex(YYSTYPE*, yyscan_t, ptxinfo_data*)’ at ptxinfo.l:68:1:
+/usr/include/x86_64-linux-gnu/bits/string_fortified.h:95:34: warning: ‘char* __builtin_strncpy(char*, const char*, long unsigned int)’ specified bound depends on the length of the source argument [-Wstringop-truncation]
+   95 |   return __builtin___strncpy_chk (__dest, __src, __len,
+      |          ~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~
+   96 |                                   __glibc_objsize (__dest));
+      |                                   ~~~~~~~~~~~~~~~~~~~~~~~~~
+ptxinfo.l: In function ‘int ptxinfo_lex(YYSTYPE*, yyscan_t, ptxinfo_data*)’:
+ptxinfo.l:45:57: note: length computed here
+   45 | #define TC if( (yylineno == 1) && (ptxinfo->col + strlen(yytext) < LINEBUF_SIZE) ) { \
+      |                                                   ~~~~~~^~~~~~~~
+ptxinfo.l:55:1: note: in expansion of macro ‘TC’
+   55 | "warning"[^\n]* TC; return WARNING;
+      | ^~
+In file included from /usr/include/string.h:535,
+                 from /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/cuda-sim/lex.ptxinfo_.c:243:
+In function ‘char* strncpy(char*, const char*, size_t)’,
+    inlined from ‘int ptxinfo_lex(YYSTYPE*, yyscan_t, ptxinfo_data*)’ at ptxinfo.l:67:1:
+/usr/include/x86_64-linux-gnu/bits/string_fortified.h:95:34: warning: ‘char* __builtin_strncpy(char*, const char*, long unsigned int)’ specified bound depends on the length of the source argument [-Wstringop-truncation]
+   95 |   return __builtin___strncpy_chk (__dest, __src, __len,
+      |          ~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~
+   96 |                                   __glibc_objsize (__dest));
+      |                                   ~~~~~~~~~~~~~~~~~~~~~~~~~
+ptxinfo.l: In function ‘int ptxinfo_lex(YYSTYPE*, yyscan_t, ptxinfo_data*)’:
+ptxinfo.l:45:57: note: length computed here
+   45 | #define TC if( (yylineno == 1) && (ptxinfo->col + strlen(yytext) < LINEBUF_SIZE) ) { \
+      |                                                   ~~~~~~^~~~~~~~
+ptxinfo.l:55:1: note: in expansion of macro ‘TC’
+   55 | "warning"[^\n]* TC; return WARNING;
+      | ^~
+In file included from /usr/include/string.h:535,
+                 from /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/cuda-sim/lex.ptxinfo_.c:243:
+In function ‘char* strncpy(char*, const char*, size_t)’,
+    inlined from ‘int ptxinfo_lex(YYSTYPE*, yyscan_t, ptxinfo_data*)’ at ptxinfo.l:66:1:
+/usr/include/x86_64-linux-gnu/bits/string_fortified.h:95:34: warning: ‘char* __builtin_strncpy(char*, const char*, long unsigned int)’ specified bound depends on the length of the source argument [-Wstringop-truncation]
+   95 |   return __builtin___strncpy_chk (__dest, __src, __len,
+      |          ~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~
+   96 |                                   __glibc_objsize (__dest));
+      |                                   ~~~~~~~~~~~~~~~~~~~~~~~~~
+ptxinfo.l: In function ‘int ptxinfo_lex(YYSTYPE*, yyscan_t, ptxinfo_data*)’:
+ptxinfo.l:45:57: note: length computed here
+   45 | #define TC if( (yylineno == 1) && (ptxinfo->col + strlen(yytext) < LINEBUF_SIZE) ) { \
+      |                                                   ~~~~~~^~~~~~~~
+ptxinfo.l:55:1: note: in expansion of macro ‘TC’
+   55 | "warning"[^\n]* TC; return WARNING;
+      | ^~
+In file included from /usr/include/string.h:535,
+                 from /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/cuda-sim/lex.ptxinfo_.c:243:
+In function ‘char* strncpy(char*, const char*, size_t)’,
+    inlined from ‘int ptxinfo_lex(YYSTYPE*, yyscan_t, ptxinfo_data*)’ at ptxinfo.l:65:1:
+/usr/include/x86_64-linux-gnu/bits/string_fortified.h:95:34: warning: ‘char* __builtin_strncpy(char*, const char*, long unsigned int)’ specified bound depends on the length of the source argument [-Wstringop-truncation]
+   95 |   return __builtin___strncpy_chk (__dest, __src, __len,
+      |          ~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~
+   96 |                                   __glibc_objsize (__dest));
+      |                                   ~~~~~~~~~~~~~~~~~~~~~~~~~
+ptxinfo.l: In function ‘int ptxinfo_lex(YYSTYPE*, yyscan_t, ptxinfo_data*)’:
+ptxinfo.l:45:57: note: length computed here
+   45 | #define TC if( (yylineno == 1) && (ptxinfo->col + strlen(yytext) < LINEBUF_SIZE) ) { \
+      |                                                   ~~~~~~^~~~~~~~
+ptxinfo.l:55:1: note: in expansion of macro ‘TC’
+   55 | "warning"[^\n]* TC; return WARNING;
+      | ^~
+In file included from /usr/include/string.h:535,
+                 from /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/cuda-sim/lex.ptxinfo_.c:243:
+In function ‘char* strncpy(char*, const char*, size_t)’,
+    inlined from ‘int ptxinfo_lex(YYSTYPE*, yyscan_t, ptxinfo_data*)’ at ptxinfo.l:64:1:
+/usr/include/x86_64-linux-gnu/bits/string_fortified.h:95:34: warning: ‘char* __builtin_strncpy(char*, const char*, long unsigned int)’ specified bound depends on the length of the source argument [-Wstringop-truncation]
+   95 |   return __builtin___strncpy_chk (__dest, __src, __len,
+      |          ~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~
+   96 |                                   __glibc_objsize (__dest));
+      |                                   ~~~~~~~~~~~~~~~~~~~~~~~~~
+ptxinfo.l: In function ‘int ptxinfo_lex(YYSTYPE*, yyscan_t, ptxinfo_data*)’:
+ptxinfo.l:45:57: note: length computed here
+   45 | #define TC if( (yylineno == 1) && (ptxinfo->col + strlen(yytext) < LINEBUF_SIZE) ) { \
+      |                                                   ~~~~~~^~~~~~~~
+ptxinfo.l:55:1: note: in expansion of macro ‘TC’
+   55 | "warning"[^\n]* TC; return WARNING;
+      | ^~
+In file included from /usr/include/string.h:535,
+                 from /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/cuda-sim/lex.ptxinfo_.c:243:
+In function ‘char* strncpy(char*, const char*, size_t)’,
+    inlined from ‘int ptxinfo_lex(YYSTYPE*, yyscan_t, ptxinfo_data*)’ at ptxinfo.l:63:1:
+/usr/include/x86_64-linux-gnu/bits/string_fortified.h:95:34: warning: ‘char* __builtin_strncpy(char*, const char*, long unsigned int)’ specified bound depends on the length of the source argument [-Wstringop-truncation]
+   95 |   return __builtin___strncpy_chk (__dest, __src, __len,
+      |          ~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~
+   96 |                                   __glibc_objsize (__dest));
+      |                                   ~~~~~~~~~~~~~~~~~~~~~~~~~
+ptxinfo.l: In function ‘int ptxinfo_lex(YYSTYPE*, yyscan_t, ptxinfo_data*)’:
+ptxinfo.l:45:57: note: length computed here
+   45 | #define TC if( (yylineno == 1) && (ptxinfo->col + strlen(yytext) < LINEBUF_SIZE) ) { \
+      |                                                   ~~~~~~^~~~~~~~
+ptxinfo.l:55:1: note: in expansion of macro ‘TC’
+   55 | "warning"[^\n]* TC; return WARNING;
+      | ^~
+In file included from /usr/include/string.h:535,
+                 from /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/cuda-sim/lex.ptxinfo_.c:243:
+In function ‘char* strncpy(char*, const char*, size_t)’,
+    inlined from ‘int ptxinfo_lex(YYSTYPE*, yyscan_t, ptxinfo_data*)’ at ptxinfo.l:62:1:
+/usr/include/x86_64-linux-gnu/bits/string_fortified.h:95:34: warning: ‘char* __builtin_strncpy(char*, const char*, long unsigned int)’ specified bound depends on the length of the source argument [-Wstringop-truncation]
+   95 |   return __builtin___strncpy_chk (__dest, __src, __len,
+      |          ~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~
+   96 |                                   __glibc_objsize (__dest));
+      |                                   ~~~~~~~~~~~~~~~~~~~~~~~~~
+ptxinfo.l: In function ‘int ptxinfo_lex(YYSTYPE*, yyscan_t, ptxinfo_data*)’:
+ptxinfo.l:45:57: note: length computed here
+   45 | #define TC if( (yylineno == 1) && (ptxinfo->col + strlen(yytext) < LINEBUF_SIZE) ) { \
+      |                                                   ~~~~~~^~~~~~~~
+ptxinfo.l:55:1: note: in expansion of macro ‘TC’
+   55 | "warning"[^\n]* TC; return WARNING;
+      | ^~
+In file included from /usr/include/string.h:535,
+                 from /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/cuda-sim/lex.ptxinfo_.c:243:
+In function ‘char* strncpy(char*, const char*, size_t)’,
+    inlined from ‘int ptxinfo_lex(YYSTYPE*, yyscan_t, ptxinfo_data*)’ at ptxinfo.l:61:1:
+/usr/include/x86_64-linux-gnu/bits/string_fortified.h:95:34: warning: ‘char* __builtin_strncpy(char*, const char*, long unsigned int)’ specified bound depends on the length of the source argument [-Wstringop-truncation]
+   95 |   return __builtin___strncpy_chk (__dest, __src, __len,
+      |          ~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~
+   96 |                                   __glibc_objsize (__dest));
+      |                                   ~~~~~~~~~~~~~~~~~~~~~~~~~
+ptxinfo.l: In function ‘int ptxinfo_lex(YYSTYPE*, yyscan_t, ptxinfo_data*)’:
+ptxinfo.l:45:57: note: length computed here
+   45 | #define TC if( (yylineno == 1) && (ptxinfo->col + strlen(yytext) < LINEBUF_SIZE) ) { \
+      |                                                   ~~~~~~^~~~~~~~
+ptxinfo.l:55:1: note: in expansion of macro ‘TC’
+   55 | "warning"[^\n]* TC; return WARNING;
+      | ^~
+In file included from /usr/include/string.h:535,
+                 from /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/cuda-sim/lex.ptxinfo_.c:243:
+In function ‘char* strncpy(char*, const char*, size_t)’,
+    inlined from ‘int ptxinfo_lex(YYSTYPE*, yyscan_t, ptxinfo_data*)’ at ptxinfo.l:60:1:
+/usr/include/x86_64-linux-gnu/bits/string_fortified.h:95:34: warning: ‘char* __builtin_strncpy(char*, const char*, long unsigned int)’ specified bound depends on the length of the source argument [-Wstringop-truncation]
+   95 |   return __builtin___strncpy_chk (__dest, __src, __len,
+      |          ~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~
+   96 |                                   __glibc_objsize (__dest));
+      |                                   ~~~~~~~~~~~~~~~~~~~~~~~~~
+ptxinfo.l: In function ‘int ptxinfo_lex(YYSTYPE*, yyscan_t, ptxinfo_data*)’:
+ptxinfo.l:45:57: note: length computed here
+   45 | #define TC if( (yylineno == 1) && (ptxinfo->col + strlen(yytext) < LINEBUF_SIZE) ) { \
+      |                                                   ~~~~~~^~~~~~~~
+ptxinfo.l:55:1: note: in expansion of macro ‘TC’
+   55 | "warning"[^\n]* TC; return WARNING;
+      | ^~
+In file included from /usr/include/string.h:535,
+                 from /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/cuda-sim/lex.ptxinfo_.c:243:
+In function ‘char* strncpy(char*, const char*, size_t)’,
+    inlined from ‘int ptxinfo_lex(YYSTYPE*, yyscan_t, ptxinfo_data*)’ at ptxinfo.l:59:1:
+/usr/include/x86_64-linux-gnu/bits/string_fortified.h:95:34: warning: ‘char* __builtin_strncpy(char*, const char*, long unsigned int)’ specified bound depends on the length of the source argument [-Wstringop-truncation]
+   95 |   return __builtin___strncpy_chk (__dest, __src, __len,
+      |          ~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~
+   96 |                                   __glibc_objsize (__dest));
+      |                                   ~~~~~~~~~~~~~~~~~~~~~~~~~
+ptxinfo.l: In function ‘int ptxinfo_lex(YYSTYPE*, yyscan_t, ptxinfo_data*)’:
+ptxinfo.l:45:57: note: length computed here
+   45 | #define TC if( (yylineno == 1) && (ptxinfo->col + strlen(yytext) < LINEBUF_SIZE) ) { \
+      |                                                   ~~~~~~^~~~~~~~
+ptxinfo.l:55:1: note: in expansion of macro ‘TC’
+   55 | "warning"[^\n]* TC; return WARNING;
+      | ^~
+In file included from /usr/include/string.h:535,
+                 from /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/cuda-sim/lex.ptxinfo_.c:243:
+In function ‘char* strncpy(char*, const char*, size_t)’,
+    inlined from ‘int ptxinfo_lex(YYSTYPE*, yyscan_t, ptxinfo_data*)’ at ptxinfo.l:58:1:
+/usr/include/x86_64-linux-gnu/bits/string_fortified.h:95:34: warning: ‘char* __builtin_strncpy(char*, const char*, long unsigned int)’ specified bound depends on the length of the source argument [-Wstringop-truncation]
+   95 |   return __builtin___strncpy_chk (__dest, __src, __len,
+      |          ~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~
+   96 |                                   __glibc_objsize (__dest));
+      |                                   ~~~~~~~~~~~~~~~~~~~~~~~~~
+ptxinfo.l: In function ‘int ptxinfo_lex(YYSTYPE*, yyscan_t, ptxinfo_data*)’:
+ptxinfo.l:45:57: note: length computed here
+   45 | #define TC if( (yylineno == 1) && (ptxinfo->col + strlen(yytext) < LINEBUF_SIZE) ) { \
+      |                                                   ~~~~~~^~~~~~~~
+ptxinfo.l:55:1: note: in expansion of macro ‘TC’
+   55 | "warning"[^\n]* TC; return WARNING;
+      | ^~
+In file included from /usr/include/string.h:535,
+                 from /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/cuda-sim/lex.ptxinfo_.c:243:
+In function ‘char* strncpy(char*, const char*, size_t)’,
+    inlined from ‘int ptxinfo_lex(YYSTYPE*, yyscan_t, ptxinfo_data*)’ at ptxinfo.l:57:1:
+/usr/include/x86_64-linux-gnu/bits/string_fortified.h:95:34: warning: ‘char* __builtin_strncpy(char*, const char*, long unsigned int)’ specified bound depends on the length of the source argument [-Wstringop-truncation]
+   95 |   return __builtin___strncpy_chk (__dest, __src, __len,
+      |          ~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~
+   96 |                                   __glibc_objsize (__dest));
+      |                                   ~~~~~~~~~~~~~~~~~~~~~~~~~
+ptxinfo.l: In function ‘int ptxinfo_lex(YYSTYPE*, yyscan_t, ptxinfo_data*)’:
+ptxinfo.l:45:57: note: length computed here
+   45 | #define TC if( (yylineno == 1) && (ptxinfo->col + strlen(yytext) < LINEBUF_SIZE) ) { \
+      |                                                   ~~~~~~^~~~~~~~
+ptxinfo.l:55:1: note: in expansion of macro ‘TC’
+   55 | "warning"[^\n]* TC; return WARNING;
+      | ^~
+In file included from /usr/include/string.h:535,
+                 from /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/cuda-sim/lex.ptxinfo_.c:243:
+In function ‘char* strncpy(char*, const char*, size_t)’,
+    inlined from ‘int ptxinfo_lex(YYSTYPE*, yyscan_t, ptxinfo_data*)’ at ptxinfo.l:56:1:
+/usr/include/x86_64-linux-gnu/bits/string_fortified.h:95:34: warning: ‘char* __builtin_strncpy(char*, const char*, long unsigned int)’ specified bound depends on the length of the source argument [-Wstringop-truncation]
+   95 |   return __builtin___strncpy_chk (__dest, __src, __len,
+      |          ~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~
+   96 |                                   __glibc_objsize (__dest));
+      |                                   ~~~~~~~~~~~~~~~~~~~~~~~~~
+ptxinfo.l: In function ‘int ptxinfo_lex(YYSTYPE*, yyscan_t, ptxinfo_data*)’:
+ptxinfo.l:45:57: note: length computed here
+   45 | #define TC if( (yylineno == 1) && (ptxinfo->col + strlen(yytext) < LINEBUF_SIZE) ) { \
+      |                                                   ~~~~~~^~~~~~~~
+ptxinfo.l:55:1: note: in expansion of macro ‘TC’
+   55 | "warning"[^\n]* TC; return WARNING;
+      | ^~
+In file included from /usr/include/string.h:535,
+                 from /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/cuda-sim/lex.ptxinfo_.c:243:
+In function ‘char* strncpy(char*, const char*, size_t)’,
+    inlined from ‘int ptxinfo_lex(YYSTYPE*, yyscan_t, ptxinfo_data*)’ at ptxinfo.l:55:1:
+/usr/include/x86_64-linux-gnu/bits/string_fortified.h:95:34: warning: ‘char* __builtin_strncpy(char*, const char*, long unsigned int)’ specified bound depends on the length of the source argument [-Wstringop-truncation]
+   95 |   return __builtin___strncpy_chk (__dest, __src, __len,
+      |          ~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~
+   96 |                                   __glibc_objsize (__dest));
+      |                                   ~~~~~~~~~~~~~~~~~~~~~~~~~
+ptxinfo.l: In function ‘int ptxinfo_lex(YYSTYPE*, yyscan_t, ptxinfo_data*)’:
+ptxinfo.l:45:57: note: length computed here
+   45 | #define TC if( (yylineno == 1) && (ptxinfo->col + strlen(yytext) < LINEBUF_SIZE) ) { \
+      |                                                   ~~~~~~^~~~~~~~
+ptxinfo.l:55:1: note: in expansion of macro ‘TC’
+   55 | "warning"[^\n]* TC; return WARNING;
+      | ^~
+In file included from /usr/include/string.h:535,
+                 from /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/cuda-sim/lex.ptx_.c:243:
+In function ‘char* strncpy(char*, const char*, size_t)’,
+    inlined from ‘int ptx_lex(YYSTYPE*, yyscan_t, ptx_recognizer*)’ at ptx.l:442:27:
+/usr/include/x86_64-linux-gnu/bits/string_fortified.h:95:34: warning: ‘char* __builtin_strncpy(char*, const char*, long unsigned int)’ specified bound 4096 equals destination size [-Wstringop-truncation]
+   95 |   return __builtin___strncpy_chk (__dest, __src, __len,
+      |          ~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~
+   96 |                                   __glibc_objsize (__dest));
+      |                                   ~~~~~~~~~~~~~~~~~~~~~~~~~
+ptx_loader.cc: In member function ‘void gpgpu_context::gpgpu_ptxinfo_load_from_string(const char*, unsigned int, unsigned int, int)’:
+ptx_loader.cc:512:41: warning: ‘info’ directive output may be truncated writing 4 bytes into a region of size between 1 and 1024 [-Wformat-truncation=]
+  512 |     snprintf(tempfile_ptxinfo, 1024, "%sinfo", fname);
+      |                                         ^~~~
+In file included from /usr/include/stdio.h:894,
+                 from /usr/include/c++/11/cstdio:42,
+                 from /usr/include/c++/11/ext/string_conversions.h:43,
+                 from /usr/include/c++/11/bits/basic_string.h:6608,
+                 from /usr/include/c++/11/string:55,
+                 from ptx_loader.h:31,
+                 from ptx_loader.cc:29:
+/usr/include/x86_64-linux-gnu/bits/stdio2.h:71:35: note: ‘__builtin___snprintf_chk’ output between 5 and 1028 bytes into a destination of size 1024
+   71 |   return __builtin___snprintf_chk (__s, __n, __USE_FORTIFY_LEVEL - 1,
+      |          ~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   72 |                                    __glibc_objsize (__s), __fmt,
+      |                                    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   73 |                                    __va_arg_pack ());
+      |                                    ~~~~~~~~~~~~~~~~~
+ptx_loader.cc:527:45: warning: ‘%s’ directive output may be truncated writing up to 1023 bytes into a region of size 991 [-Wformat-truncation=]
+  527 |         "$CUDA_INSTALL_PATH/bin/ptxas %s -v %s --output-file  /dev/null 2> %s",
+      |                                             ^~
+  528 |         extra_flags, fname2, tempfile_ptxinfo);
+      |                      ~~~~~~                  
+In file included from /usr/include/stdio.h:894,
+                 from /usr/include/c++/11/cstdio:42,
+                 from /usr/include/c++/11/ext/string_conversions.h:43,
+                 from /usr/include/c++/11/bits/basic_string.h:6608,
+                 from /usr/include/c++/11/string:55,
+                 from ptx_loader.h:31,
+                 from ptx_loader.cc:29:
+/usr/include/x86_64-linux-gnu/bits/stdio2.h:71:35: note: ‘__builtin___snprintf_chk’ output 63 or more bytes (assuming 2109) into a destination of size 1024
+   71 |   return __builtin___snprintf_chk (__s, __n, __USE_FORTIFY_LEVEL - 1,
+      |          ~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   72 |                                    __glibc_objsize (__s), __fmt,
+      |                                    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   73 |                                    __va_arg_pack ());
+      |                                    ~~~~~~~~~~~~~~~~~
+ptx_loader.cc:421:41: warning: ‘info’ directive output may be truncated writing 4 bytes into a region of size between 1 and 1024 [-Wformat-truncation=]
+  421 |     snprintf(tempfile_ptxinfo, 1024, "%sinfo", fname);
+      |                                         ^~~~
+In file included from /usr/include/stdio.h:894,
+                 from /usr/include/c++/11/cstdio:42,
+                 from /usr/include/c++/11/ext/string_conversions.h:43,
+                 from /usr/include/c++/11/bits/basic_string.h:6608,
+                 from /usr/include/c++/11/string:55,
+                 from ptx_loader.h:31,
+                 from ptx_loader.cc:29:
+/usr/include/x86_64-linux-gnu/bits/stdio2.h:71:35: note: ‘__builtin___snprintf_chk’ output between 5 and 1028 bytes into a destination of size 1024
+   71 |   return __builtin___snprintf_chk (__s, __n, __USE_FORTIFY_LEVEL - 1,
+      |          ~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   72 |                                    __glibc_objsize (__s), __fmt,
+      |                                    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   73 |                                    __va_arg_pack ());
+      |                                    ~~~~~~~~~~~~~~~~~
+ptx_loader.cc:444:56: warning: ‘%s’ directive output may be truncated writing up to 1023 bytes into a region of size 985 [-Wformat-truncation=]
+  444 |              "$PTXAS_CUDA_INSTALL_PATH/bin/ptxas %s -v %s --output-file  "
+      |                                                        ^~
+  445 |              "/dev/null 2> %s",
+  446 |              extra_flags, fname2, tempfile_ptxinfo);
+      |                           ~~~~~~                        
+In file included from /usr/include/stdio.h:894,
+                 from /usr/include/c++/11/cstdio:42,
+                 from /usr/include/c++/11/ext/string_conversions.h:43,
+                 from /usr/include/c++/11/bits/basic_string.h:6608,
+                 from /usr/include/c++/11/string:55,
+                 from ptx_loader.h:31,
+                 from ptx_loader.cc:29:
+/usr/include/x86_64-linux-gnu/bits/stdio2.h:71:35: note: ‘__builtin___snprintf_chk’ output 69 or more bytes (assuming 2115) into a destination of size 1024
+   71 |   return __builtin___snprintf_chk (__s, __n, __USE_FORTIFY_LEVEL - 1,
+      |          ~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   72 |                                    __glibc_objsize (__s), __fmt,
+      |                                    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   73 |                                    __va_arg_pack ());
+      |                                    ~~~~~~~~~~~~~~~~~
+ptx_loader.cc:463:54: warning: ‘%s’ directive output may be truncated writing up to 1023 bytes into a region of size 991 [-Wformat-truncation=]
+  463 |                  "$CUDA_INSTALL_PATH/bin/ptxas %s -v %s --output-file  "
+      |                                                      ^~
+  464 |                  "/dev/null 2> %s",
+  465 |                  extra_flags, fname2, tempfile_ptxinfo);
+      |                               ~~~~~~                  
+In file included from /usr/include/stdio.h:894,
+                 from /usr/include/c++/11/cstdio:42,
+                 from /usr/include/c++/11/ext/string_conversions.h:43,
+                 from /usr/include/c++/11/bits/basic_string.h:6608,
+                 from /usr/include/c++/11/string:55,
+                 from ptx_loader.h:31,
+                 from ptx_loader.cc:29:
+/usr/include/x86_64-linux-gnu/bits/stdio2.h:71:35: note: ‘__builtin___snprintf_chk’ output 63 or more bytes (assuming 2109) into a destination of size 1024
+   71 |   return __builtin___snprintf_chk (__s, __n, __USE_FORTIFY_LEVEL - 1,
+      |          ~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   72 |                                    __glibc_objsize (__s), __fmt,
+      |                                    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   73 |                                    __va_arg_pack ());
+      |                                    ~~~~~~~~~~~~~~~~~
+ptx_loader.cc:575:42: warning: ‘%s’ directive output may be truncated writing up to 1023 bytes into a region of size 1018 [-Wformat-truncation=]
+  575 |       snprintf(commandline, 1024, "rm -f %s %s %s", fname, fname2,
+      |                                          ^~         ~~~~~
+In file included from /usr/include/stdio.h:894,
+                 from /usr/include/c++/11/cstdio:42,
+                 from /usr/include/c++/11/ext/string_conversions.h:43,
+                 from /usr/include/c++/11/bits/basic_string.h:6608,
+                 from /usr/include/c++/11/string:55,
+                 from ptx_loader.h:31,
+                 from ptx_loader.cc:29:
+/usr/include/x86_64-linux-gnu/bits/stdio2.h:71:35: note: ‘__builtin___snprintf_chk’ output between 9 and 3078 bytes into a destination of size 1024
+   71 |   return __builtin___snprintf_chk (__s, __n, __USE_FORTIFY_LEVEL - 1,
+      |          ~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   72 |                                    __glibc_objsize (__s), __fmt,
+      |                                    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   73 |                                    __va_arg_pack ());
+      |                                    ~~~~~~~~~~~~~~~~~
+ptx_loader.cc:572:42: warning: ‘%s’ directive output may be truncated writing up to 1023 bytes into a region of size 1018 [-Wformat-truncation=]
+  572 |       snprintf(commandline, 1024, "rm -f %s %s %s", fname, fname2,
+      |                                          ^~         ~~~~~
+In file included from /usr/include/stdio.h:894,
+                 from /usr/include/c++/11/cstdio:42,
+                 from /usr/include/c++/11/ext/string_conversions.h:43,
+                 from /usr/include/c++/11/bits/basic_string.h:6608,
+                 from /usr/include/c++/11/string:55,
+                 from ptx_loader.h:31,
+                 from ptx_loader.cc:29:
+/usr/include/x86_64-linux-gnu/bits/stdio2.h:71:35: note: ‘__builtin___snprintf_chk’ output between 9 and 3078 bytes into a destination of size 1024
+   71 |   return __builtin___snprintf_chk (__s, __n, __USE_FORTIFY_LEVEL - 1,
+      |          ~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   72 |                                    __glibc_objsize (__s), __fmt,
+      |                                    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   73 |                                    __va_arg_pack ());
+      |                                    ~~~~~~~~~~~~~~~~~
+ptx_loader.cc: In member function ‘char* ptxinfo_data::gpgpu_ptx_sim_convert_ptx_and_sass_to_ptxplus(std::string, std::string, std::string)’:
+ptx_loader.cc:125:43: warning: ‘%s’ directive output may be truncated writing up to 1023 bytes into a region of size 941 [-Wformat-truncation=]
+  125 |            "cuobjdump_to_ptxplus %s %s %s %s",
+      |                                           ^~
+  126 |            ptxfilename.c_str(), sassfilename.c_str(), elffilename.c_str(),
+  127 |            fname_ptxplus);
+      |            ~~~~~~~~~~~~~                   
+In file included from /usr/include/stdio.h:894,
+                 from /usr/include/c++/11/cstdio:42,
+                 from /usr/include/c++/11/ext/string_conversions.h:43,
+                 from /usr/include/c++/11/bits/basic_string.h:6608,
+                 from /usr/include/c++/11/string:55,
+                 from ptx_loader.h:31,
+                 from ptx_loader.cc:29:
+/usr/include/x86_64-linux-gnu/bits/stdio2.h:71:35: note: ‘__builtin___snprintf_chk’ output 84 or more bytes (assuming 1107) into a destination of size 1024
+   71 |   return __builtin___snprintf_chk (__s, __n, __USE_FORTIFY_LEVEL - 1,
+      |          ~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   72 |                                    __glibc_objsize (__s), __fmt,
+      |                                    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   73 |                                    __va_arg_pack ());
+      |                                    ~~~~~~~~~~~~~~~~~
+ptx_loader.cc:152:43: warning: ‘%s’ directive output may be truncated writing up to 1023 bytes into a region of size 1018 [-Wformat-truncation=]
+  152 |     snprintf(rm_commandline, 1024, "rm -f %s", fname_ptxplus);
+      |                                           ^~   ~~~~~~~~~~~~~
+In file included from /usr/include/stdio.h:894,
+                 from /usr/include/c++/11/cstdio:42,
+                 from /usr/include/c++/11/ext/string_conversions.h:43,
+                 from /usr/include/c++/11/bits/basic_string.h:6608,
+                 from /usr/include/c++/11/string:55,
+                 from ptx_loader.h:31,
+                 from ptx_loader.cc:29:
+/usr/include/x86_64-linux-gnu/bits/stdio2.h:71:35: note: ‘__builtin___snprintf_chk’ output between 7 and 1030 bytes into a destination of size 1024
+   71 |   return __builtin___snprintf_chk (__s, __n, __USE_FORTIFY_LEVEL - 1,
+      |          ~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   72 |                                    __glibc_objsize (__s), __fmt,
+      |                                    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   73 |                                    __va_arg_pack ());
+      |                                    ~~~~~~~~~~~~~~~~~
+ar rcs /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/cuda-sim/libgpgpu_ptx_sim.a /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/cuda-sim/ptx.tab.o /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/cuda-sim/lex.ptx_.o /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/cuda-sim/ptxinfo.tab.o /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/cuda-sim/lex.ptxinfo_.o /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/cuda-sim/ptx_parser.o /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/cuda-sim/ptx_loader.o /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/cuda-sim/cuda_device_printf.o /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/cuda-sim/instructions.o /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/cuda-sim/cuda-sim.o /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/cuda-sim/ptx_ir.o /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/cuda-sim/ptx_sim.o  /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/cuda-sim/memory.o /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/cuda-sim/ptx-stats.o /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/cuda-sim/decuda_pred_table/decuda_pred_table.o /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/cuda-sim/ptx.tab.o /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/cuda-sim/lex.ptx_.o /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/cuda-sim/ptxinfo.tab.o /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/cuda-sim/lex.ptxinfo_.o /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/cuda-sim/cuda_device_runtime.o
+make[2]: Leaving directory '/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/src/cuda-sim'
+make -C ./src/gpgpu-sim/ depend
+make -C ./libcuda/ depend
+make[2]: Entering directory '/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/src/gpgpu-sim'
+make -C ./cuobjdump_to_ptxplus/ depend
+make[2]: Entering directory '/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/libcuda'
+make[2]: Entering directory '/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/cuobjdump_to_ptxplus'
+touch /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/cuobjdump_to_ptxplus/Makefile.makedepend
+makedepend -f/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/cuobjdump_to_ptxplus/Makefile.makedepend cuobjdumpInst.cc cuobjdumpInstList.cc cuobjdump_to_ptxplus.cc 2> /dev/null
+make[2]: 'depend' is up to date.
+make[2]: Leaving directory '/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/cuobjdump_to_ptxplus'
+make -C ./cuobjdump_to_ptxplus/
+make[2]: Entering directory '/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/cuobjdump_to_ptxplus'
+g++ -ggdb -fPIC -Wall -Wno-unused-function -Wno-sign-compare  -I /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/cuobjdump_to_ptxplus -I /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/cuobjdump_to_ptxplus/../cuda-sim/ -I . -I ../src/cuda-sim/ -c -o /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/cuobjdump_to_ptxplus/cuobjdumpInst.o cuobjdumpInst.cc
+g++ -ggdb -fPIC -Wall -Wno-unused-function -Wno-sign-compare  -I /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/cuobjdump_to_ptxplus -I /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/cuobjdump_to_ptxplus/../cuda-sim/ -I . -I ../src/cuda-sim/ -c -o /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/cuobjdump_to_ptxplus/cuobjdumpInstList.o cuobjdumpInstList.cc
+g++ -ggdb -fPIC -Wall -Wno-unused-function -Wno-sign-compare  -I /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/cuobjdump_to_ptxplus -I /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/cuobjdump_to_ptxplus/../cuda-sim/ -I . -I ../src/cuda-sim/ -c -o /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/cuobjdump_to_ptxplus/cuobjdump_to_ptxplus.o cuobjdump_to_ptxplus.cc
+bison -t -d --report=all --verbose --name-prefix=ptx_ -v ptx.y  --file-prefix=/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/cuobjdump_to_ptxplus/ptx 2> /dev/null
+flex -B  -o/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/cuobjdump_to_ptxplus/lex.ptx_.c ptx.l 2> /dev/null
+bison -t -d --report=all --verbose -p sass_ -o/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/cuobjdump_to_ptxplus/sass_parser.cc sass.y --file-prefix=/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/cuobjdump_to_ptxplus//workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/cuobjdump_to_ptxplus/sass_parser.cc
+bison -t -d --report=all --verbose -p elf_ -o/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/cuobjdump_to_ptxplus/elf_parser.cc elf.y --file-prefix=/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/cuobjdump_to_ptxplus//workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/cuobjdump_to_ptxplus/elf_parser.cc
+bison -t -d --report=all --verbose -p header_ -o/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/cuobjdump_to_ptxplus/header_parser.cc header.y --file-prefix=/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/cuobjdump_to_ptxplus//workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/cuobjdump_to_ptxplus/header_parser.cc
+touch /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/libcuda/Makefile.makedepend
+makedepend -f/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/libcuda/Makefile.makedepend -p/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/libcuda/ cuda_runtime_api.cc 2> /dev/null
+touch /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/gpgpu-sim/Makefile.makedepend
+makedepend -f/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/gpgpu-sim/Makefile.makedepend -p/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/gpgpu-sim/ addrdec.cc dram.cc dram_sched.cc gpu-cache.cc gpu-misc.cc gpu-sim.cc hashing.cc histogram.cc icnt_wrapper.cc l2cache.cc local_interconnect.cc mem_fetch.cc mem_latency_stat.cc power_interface.cc power_stat.cc scoreboard.cc shader.cc stack.cc stat-tool.cc traffic_breakdown.cc visualizer.cc 2> /dev/null
+make[2]: 'depend' is up to date.
+make[2]: Leaving directory '/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/libcuda'
+make -C ./libcuda/
+make[2]: Entering directory '/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/libcuda'
+make[2]: 'depend' is up to date.
+make[2]: Leaving directory '/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/src/gpgpu-sim'
+make -C ./src/gpgpu-sim/
+make[2]: Entering directory '/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/src/gpgpu-sim'
+:
+flex -B  -P elf_ -o/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/cuobjdump_to_ptxplus/elf_lexer.cc elf.l
+g++ -ggdb -fPIC -Wall -Wno-unused-function -Wno-sign-compare  -I /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/cuobjdump_to_ptxplus -I /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/cuobjdump_to_ptxplus/../cuda-sim/ -I . -I ../src/cuda-sim/ -c -o /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/cuobjdump_to_ptxplus/elf_parser.o /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/cuobjdump_to_ptxplus/elf_parser.cc
+g++ -ggdb -fPIC -Wall -Wno-unused-function -Wno-sign-compare  -I /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/cuobjdump_to_ptxplus -I /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/cuobjdump_to_ptxplus/../cuda-sim/ -I . -I ../src/cuda-sim/ -c -o /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/cuobjdump_to_ptxplus/header_parser.o /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/cuobjdump_to_ptxplus/header_parser.cc
+:
+flex -B  -P header_ -o/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/cuobjdump_to_ptxplus/header_lexer.cc header.l
+g++ -ggdb -fPIC -Wall -Wno-unused-function -Wno-sign-compare  -I /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/cuobjdump_to_ptxplus -I /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/cuobjdump_to_ptxplus/../cuda-sim/ -I . -I ../src/cuda-sim/ -c -o /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/cuobjdump_to_ptxplus/elf_lexer.o /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/cuobjdump_to_ptxplus/elf_lexer.cc
+g++ -ggdb -fPIC -Wall -Wno-unused-function -Wno-sign-compare  -I /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/cuobjdump_to_ptxplus -I /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/cuobjdump_to_ptxplus/../cuda-sim/ -I . -I ../src/cuda-sim/ -c -o /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/cuobjdump_to_ptxplus/header_lexer.o /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/cuobjdump_to_ptxplus/header_lexer.cc
+touch /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/libcuda/Makefile.makedepend
+makedepend -f/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/libcuda/Makefile.makedepend -p/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/libcuda/ cuda_runtime_api.cc 2> /dev/null
+touch /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/gpgpu-sim/Makefile.makedepend
+makedepend -f/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/gpgpu-sim/Makefile.makedepend -p/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/gpgpu-sim/ addrdec.cc dram.cc dram_sched.cc gpu-cache.cc gpu-misc.cc gpu-sim.cc hashing.cc histogram.cc icnt_wrapper.cc l2cache.cc local_interconnect.cc mem_fetch.cc mem_latency_stat.cc power_interface.cc power_stat.cc scoreboard.cc shader.cc stack.cc stat-tool.cc traffic_breakdown.cc visualizer.cc 2> /dev/null
+g++  -std=c++0x -O3 -g -Wall -Wno-unused-function -Wno-sign-compare -fPIC  -DCUDART_VERSION=11080 -I./ -I/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/libcuda -I/usr/local/cuda-11.8/include  -c cuda_runtime_api.cc -o /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/libcuda/cuda_runtime_api.o
+bison -t -d -v --report=all -p cuobjdump_  -o/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/libcuda/cuobjdump_parser.c cuobjdump.y --file-prefix=/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/libcuda/cuobjdump
+g++  -O3 -g3 -fPIC -DCUDART_VERSION=11080 -Wall -DTRACING_ON=1 -std=c++0x -I/usr/local/cuda-11.8/include -I/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/src/accelwattch/ -DGPGPUSIM_POWER_MODEL -o /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/gpgpu-sim/addrdec.o -c addrdec.cc
+g++  -O3 -g3 -fPIC -DCUDART_VERSION=11080 -Wall -DTRACING_ON=1 -std=c++0x -I/usr/local/cuda-11.8/include -I/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/src/accelwattch/ -DGPGPUSIM_POWER_MODEL -o /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/gpgpu-sim/dram.o -c dram.cc
+g++  -O3 -g3 -fPIC -DCUDART_VERSION=11080 -Wall -DTRACING_ON=1 -std=c++0x -I/usr/local/cuda-11.8/include -I/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/src/accelwattch/ -DGPGPUSIM_POWER_MODEL -o /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/gpgpu-sim/dram_sched.o -c dram_sched.cc
+g++  -O3 -g3 -fPIC -DCUDART_VERSION=11080 -Wall -DTRACING_ON=1 -std=c++0x -I/usr/local/cuda-11.8/include -I/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/src/accelwattch/ -DGPGPUSIM_POWER_MODEL -o /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/gpgpu-sim/gpu-cache.o -c gpu-cache.cc
+g++  -O3 -g3 -fPIC -DCUDART_VERSION=11080 -Wall -DTRACING_ON=1 -std=c++0x -I/usr/local/cuda-11.8/include -I/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/src/accelwattch/ -DGPGPUSIM_POWER_MODEL -o /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/gpgpu-sim/gpu-misc.o -c gpu-misc.cc
+g++  -O3 -g3 -fPIC -DCUDART_VERSION=11080 -Wall -DTRACING_ON=1 -std=c++0x -I/usr/local/cuda-11.8/include -I/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/src/accelwattch/ -DGPGPUSIM_POWER_MODEL -o /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/gpgpu-sim/gpu-sim.o -c gpu-sim.cc
+g++  -O3 -g3 -fPIC -DCUDART_VERSION=11080 -Wall -DTRACING_ON=1 -std=c++0x -I/usr/local/cuda-11.8/include -I/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/src/accelwattch/ -DGPGPUSIM_POWER_MODEL -o /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/gpgpu-sim/hashing.o -c hashing.cc
+In file included from cuda_runtime_api.cc:128:
+/usr/local/cuda-11.8/include/host_defines.h:54:2: warning: #warning "host_defines.h is an internal header file and must not be used directly.  This file will be removed in a future CUDA release.  Please use cuda_runtime_api.h or cuda_runtime.h instead." [-Wcpp]
+   54 | #warning "host_defines.h is an internal header file and must not be used directly.  This file will be removed in a future CUDA release.  Please use cuda_runtime_api.h or cuda_runtime.h instead."
+      |  ^~~~~~~
+g++  -O3 -g3 -fPIC -DCUDART_VERSION=11080 -Wall -DTRACING_ON=1 -std=c++0x -I/usr/local/cuda-11.8/include -I/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/src/accelwattch/ -DGPGPUSIM_POWER_MODEL -o /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/gpgpu-sim/histogram.o -c histogram.cc
+cuda_runtime_api.cc:132:10: fatal error: cudaProfiler.h: No such file or directory
+  132 | #include "cudaProfiler.h"
+      |          ^~~~~~~~~~~~~~~~
+compilation terminated.
+make[2]: *** [Makefile:111: /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/libcuda/cuda_runtime_api.o] Error 1
+make[2]: Leaving directory '/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/libcuda'
+make[1]: *** [Makefile:200: cudalib] Error 2
+make[1]: *** Waiting for unfinished jobs....
+g++  -O3 -g3 -fPIC -DCUDART_VERSION=11080 -Wall -DTRACING_ON=1 -std=c++0x -I/usr/local/cuda-11.8/include -I/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/src/accelwattch/ -DGPGPUSIM_POWER_MODEL -o /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/gpgpu-sim/icnt_wrapper.o -c icnt_wrapper.cc
+g++  -O3 -g3 -fPIC -DCUDART_VERSION=11080 -Wall -DTRACING_ON=1 -std=c++0x -I/usr/local/cuda-11.8/include -I/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/src/accelwattch/ -DGPGPUSIM_POWER_MODEL -o /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/gpgpu-sim/l2cache.o -c l2cache.cc
+g++  -O3 -g3 -fPIC -DCUDART_VERSION=11080 -Wall -DTRACING_ON=1 -std=c++0x -I/usr/local/cuda-11.8/include -I/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/src/accelwattch/ -DGPGPUSIM_POWER_MODEL -o /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/gpgpu-sim/local_interconnect.o -c local_interconnect.cc
+g++  -O3 -g3 -fPIC -DCUDART_VERSION=11080 -Wall -DTRACING_ON=1 -std=c++0x -I/usr/local/cuda-11.8/include -I/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/src/accelwattch/ -DGPGPUSIM_POWER_MODEL -o /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/gpgpu-sim/mem_fetch.o -c mem_fetch.cc
+:
+g++  -O3 -g3 -fPIC -DCUDART_VERSION=11080 -Wall -DTRACING_ON=1 -std=c++0x -I/usr/local/cuda-11.8/include -I/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/src/accelwattch/ -DGPGPUSIM_POWER_MODEL -o /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/gpgpu-sim/mem_latency_stat.o -c mem_latency_stat.cc
+g++  -O3 -g3 -fPIC -DCUDART_VERSION=11080 -Wall -DTRACING_ON=1 -std=c++0x -I/usr/local/cuda-11.8/include -I/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/src/accelwattch/ -DGPGPUSIM_POWER_MODEL -o /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/gpgpu-sim/power_interface.o -c power_interface.cc
+g++  -O3 -g3 -fPIC -DCUDART_VERSION=11080 -Wall -DTRACING_ON=1 -std=c++0x -I/usr/local/cuda-11.8/include -I/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/src/accelwattch/ -DGPGPUSIM_POWER_MODEL -o /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/gpgpu-sim/power_stat.o -c power_stat.cc
+g++  -O3 -g3 -fPIC -DCUDART_VERSION=11080 -Wall -DTRACING_ON=1 -std=c++0x -I/usr/local/cuda-11.8/include -I/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/src/accelwattch/ -DGPGPUSIM_POWER_MODEL -o /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/gpgpu-sim/scoreboard.o -c scoreboard.cc
+g++  -O3 -g3 -fPIC -DCUDART_VERSION=11080 -Wall -DTRACING_ON=1 -std=c++0x -I/usr/local/cuda-11.8/include -I/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/src/accelwattch/ -DGPGPUSIM_POWER_MODEL -o /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/gpgpu-sim/shader.o -c shader.cc
+g++  -O3 -g3 -fPIC -DCUDART_VERSION=11080 -Wall -DTRACING_ON=1 -std=c++0x -I/usr/local/cuda-11.8/include -I/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/src/accelwattch/ -DGPGPUSIM_POWER_MODEL -o /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/gpgpu-sim/stack.o -c stack.cc
+In file included from gpu-cache.cc:33:
+gpu-cache.h: In constructor ‘baseline_cache::baseline_cache(const char*, cache_config&, int, int, mem_fetch_interface*, mem_fetch_status, cache_gpu_level, gpgpu_sim*)’:
+gpu-cache.h:1479:24: warning: ‘baseline_cache::m_bandwidth_management’ will be initialized after [-Wreorder]
+ 1479 |   bandwidth_management m_bandwidth_management;
+      |                        ^~~~~~~~~~~~~~~~~~~~~~
+gpu-cache.h:1399:19: warning:   ‘cache_gpu_level baseline_cache::m_level’ [-Wreorder]
+ 1399 |   cache_gpu_level m_level;
+      |                   ^~~~~~~
+gpu-cache.h:1282:3: warning:   when initialized here [-Wreorder]
+ 1282 |   baseline_cache(const char *name, cache_config &config, int core_id,
+      |   ^~~~~~~~~~~~~~
+In file included from gpu-sim.h:43,
+                 from addrdec.cc:33:
+gpu-cache.h: In constructor ‘baseline_cache::baseline_cache(const char*, cache_config&, int, int, mem_fetch_interface*, mem_fetch_status, cache_gpu_level, gpgpu_sim*)’:
+gpu-cache.h:1479:24: warning: ‘baseline_cache::m_bandwidth_management’ will be initialized after [-Wreorder]
+ 1479 |   bandwidth_management m_bandwidth_management;
+      |                        ^~~~~~~~~~~~~~~~~~~~~~
+gpu-cache.h:1399:19: warning:   ‘cache_gpu_level baseline_cache::m_level’ [-Wreorder]
+ 1399 |   cache_gpu_level m_level;
+      |                   ^~~~~~~
+gpu-cache.h:1282:3: warning:   when initialized here [-Wreorder]
+ 1282 |   baseline_cache(const char *name, cache_config &config, int core_id,
+      |   ^~~~~~~~~~~~~~
+In file included from hashing.cc:7:
+gpu-cache.h: In constructor ‘baseline_cache::baseline_cache(const char*, cache_config&, int, int, mem_fetch_interface*, mem_fetch_status, cache_gpu_level, gpgpu_sim*)’:
+gpu-cache.h:1479:24: warning: ‘baseline_cache::m_bandwidth_management’ will be initialized after [-Wreorder]
+ 1479 |   bandwidth_management m_bandwidth_management;
+      |                        ^~~~~~~~~~~~~~~~~~~~~~
+gpu-cache.h:1399:19: warning:   ‘cache_gpu_level baseline_cache::m_level’ [-Wreorder]
+ 1399 |   cache_gpu_level m_level;
+      |                   ^~~~~~~
+gpu-cache.h:1282:3: warning:   when initialized here [-Wreorder]
+ 1282 |   baseline_cache(const char *name, cache_config &config, int core_id,
+      |   ^~~~~~~~~~~~~~
+In file included from gpu-sim.h:43,
+                 from dram_sched.h:36,
+                 from dram_sched.cc:29:
+gpu-cache.h: In constructor ‘baseline_cache::baseline_cache(const char*, cache_config&, int, int, mem_fetch_interface*, mem_fetch_status, cache_gpu_level, gpgpu_sim*)’:
+gpu-cache.h:1479:24: warning: ‘baseline_cache::m_bandwidth_management’ will be initialized after [-Wreorder]
+ 1479 |   bandwidth_management m_bandwidth_management;
+      |                        ^~~~~~~~~~~~~~~~~~~~~~
+gpu-cache.h:1399:19: warning:   ‘cache_gpu_level baseline_cache::m_level’ [-Wreorder]
+ 1399 |   cache_gpu_level m_level;
+      |                   ^~~~~~~
+gpu-cache.h:1282:3: warning:   when initialized here [-Wreorder]
+ 1282 |   baseline_cache(const char *name, cache_config &config, int core_id,
+      |   ^~~~~~~~~~~~~~
+In file included from gpu-sim.h:43,
+                 from dram_sched.h:36,
+                 from dram.cc:34:
+gpu-cache.h: In constructor ‘baseline_cache::baseline_cache(const char*, cache_config&, int, int, mem_fetch_interface*, mem_fetch_status, cache_gpu_level, gpgpu_sim*)’:
+gpu-cache.h:1479:24: warning: ‘baseline_cache::m_bandwidth_management’ will be initialized after [-Wreorder]
+ 1479 |   bandwidth_management m_bandwidth_management;
+      |                        ^~~~~~~~~~~~~~~~~~~~~~
+gpu-cache.h:1399:19: warning:   ‘cache_gpu_level baseline_cache::m_level’ [-Wreorder]
+ 1399 |   cache_gpu_level m_level;
+      |                   ^~~~~~~
+gpu-cache.h:1282:3: warning:   when initialized here [-Wreorder]
+ 1282 |   baseline_cache(const char *name, cache_config &config, int core_id,
+      |   ^~~~~~~~~~~~~~
+In file included from gpu-sim.h:43,
+                 from gpu-sim.cc:33:
+gpu-cache.h: In constructor ‘baseline_cache::baseline_cache(const char*, cache_config&, int, int, mem_fetch_interface*, mem_fetch_status, cache_gpu_level, gpgpu_sim*)’:
+gpu-cache.h:1479:24: warning: ‘baseline_cache::m_bandwidth_management’ will be initialized after [-Wreorder]
+ 1479 |   bandwidth_management m_bandwidth_management;
+      |                        ^~~~~~~~~~~~~~~~~~~~~~
+gpu-cache.h:1399:19: warning:   ‘cache_gpu_level baseline_cache::m_level’ [-Wreorder]
+ 1399 |   cache_gpu_level m_level;
+      |                   ^~~~~~~
+gpu-cache.h:1282:3: warning:   when initialized here [-Wreorder]
+ 1282 |   baseline_cache(const char *name, cache_config &config, int core_id,
+      |   ^~~~~~~~~~~~~~
+In file included from l2cache.cc:43:
+gpu-cache.h: In constructor ‘baseline_cache::baseline_cache(const char*, cache_config&, int, int, mem_fetch_interface*, mem_fetch_status, cache_gpu_level, gpgpu_sim*)’:
+gpu-cache.h:1479:24: warning: ‘baseline_cache::m_bandwidth_management’ will be initialized after [-Wreorder]
+ 1479 |   bandwidth_management m_bandwidth_management;
+      |                        ^~~~~~~~~~~~~~~~~~~~~~
+gpu-cache.h:1399:19: warning:   ‘cache_gpu_level baseline_cache::m_level’ [-Wreorder]
+ 1399 |   cache_gpu_level m_level;
+      |                   ^~~~~~~
+gpu-cache.h:1282:3: warning:   when initialized here [-Wreorder]
+ 1282 |   baseline_cache(const char *name, cache_config &config, int core_id,
+      |   ^~~~~~~~~~~~~~
+In file included from mem_latency_stat.cc:34:
+gpu-cache.h: In constructor ‘baseline_cache::baseline_cache(const char*, cache_config&, int, int, mem_fetch_interface*, mem_fetch_status, cache_gpu_level, gpgpu_sim*)’:
+gpu-cache.h:1479:24: warning: ‘baseline_cache::m_bandwidth_management’ will be initialized after [-Wreorder]
+ 1479 |   bandwidth_management m_bandwidth_management;
+      |                        ^~~~~~~~~~~~~~~~~~~~~~
+gpu-cache.h:1399:19: warning:   ‘cache_gpu_level baseline_cache::m_level’ [-Wreorder]
+ 1399 |   cache_gpu_level m_level;
+      |                   ^~~~~~~
+gpu-cache.h:1282:3: warning:   when initialized here [-Wreorder]
+ 1282 |   baseline_cache(const char *name, cache_config &config, int core_id,
+      |   ^~~~~~~~~~~~~~
+In file included from gpu-sim.h:43,
+                 from mem_fetch.cc:30:
+gpu-cache.h: In constructor ‘baseline_cache::baseline_cache(const char*, cache_config&, int, int, mem_fetch_interface*, mem_fetch_status, cache_gpu_level, gpgpu_sim*)’:
+gpu-cache.h:1479:24: warning: ‘baseline_cache::m_bandwidth_management’ will be initialized after [-Wreorder]
+ 1479 |   bandwidth_management m_bandwidth_management;
+      |                        ^~~~~~~~~~~~~~~~~~~~~~
+gpu-cache.h:1399:19: warning:   ‘cache_gpu_level baseline_cache::m_level’ [-Wreorder]
+ 1399 |   cache_gpu_level m_level;
+      |                   ^~~~~~~
+gpu-cache.h:1282:3: warning:   when initialized here [-Wreorder]
+ 1282 |   baseline_cache(const char *name, cache_config &config, int core_id,
+      |   ^~~~~~~~~~~~~~
+In file included from gpu-sim.h:43,
+                 from power_interface.h:35,
+                 from power_interface.cc:32:
+gpu-cache.h: In constructor ‘baseline_cache::baseline_cache(const char*, cache_config&, int, int, mem_fetch_interface*, mem_fetch_status, cache_gpu_level, gpgpu_sim*)’:
+gpu-cache.h:1479:24: warning: ‘baseline_cache::m_bandwidth_management’ will be initialized after [-Wreorder]
+ 1479 |   bandwidth_management m_bandwidth_management;
+      |                        ^~~~~~~~~~~~~~~~~~~~~~
+gpu-cache.h:1399:19: warning:   ‘cache_gpu_level baseline_cache::m_level’ [-Wreorder]
+ 1399 |   cache_gpu_level m_level;
+      |                   ^~~~~~~
+gpu-cache.h:1282:3: warning:   when initialized here [-Wreorder]
+ 1282 |   baseline_cache(const char *name, cache_config &config, int core_id,
+      |   ^~~~~~~~~~~~~~
+flex -B  -P sass_ -o/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/cuobjdump_to_ptxplus/sass_lexer.cc sass.l
+gpu-cache.cc: In member function ‘void cache_stats::print_stats(FILE*, long long unsigned int, const char*) const’:
+gpu-cache.cc:935:19: warning: comparison of integer expressions of different signedness: ‘long long unsigned int’ and ‘int’ [-Wsign-compare]
+  935 |     if ((streamID != -1) && (streamid != streamID)) continue;
+      |          ~~~~~~~~~^~~~~
+gpu-cache.cc: In member function ‘void cache_stats::print_fail_stats(FILE*, long long unsigned int, const char*) const’:
+gpu-cache.cc:967:19: warning: comparison of integer expressions of different signedness: ‘long long unsigned int’ and ‘int’ [-Wsign-compare]
+  967 |     if ((streamID != -1) && (streamid != streamID)) continue;
+      |          ~~~~~~~~~^~~~~
+g++ -ggdb -fPIC -Wall -Wno-unused-function -Wno-sign-compare  -I /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/cuobjdump_to_ptxplus -I /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/cuobjdump_to_ptxplus/../cuda-sim/ -I . -I ../src/cuda-sim/ -c -o /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/cuobjdump_to_ptxplus/sass_parser.o /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/cuobjdump_to_ptxplus/sass_parser.cc
+In file included from gpu-sim.h:43,
+                 from power_stat.h:37,
+                 from power_stat.cc:32:
+gpu-cache.h: In constructor ‘baseline_cache::baseline_cache(const char*, cache_config&, int, int, mem_fetch_interface*, mem_fetch_status, cache_gpu_level, gpgpu_sim*)’:
+gpu-cache.h:1479:24: warning: ‘baseline_cache::m_bandwidth_management’ will be initialized after [-Wreorder]
+ 1479 |   bandwidth_management m_bandwidth_management;
+      |                        ^~~~~~~~~~~~~~~~~~~~~~
+gpu-cache.h:1399:19: warning:   ‘cache_gpu_level baseline_cache::m_level’ [-Wreorder]
+ 1399 |   cache_gpu_level m_level;
+      |                   ^~~~~~~
+gpu-cache.h:1282:3: warning:   when initialized here [-Wreorder]
+ 1282 |   baseline_cache(const char *name, cache_config &config, int core_id,
+      |   ^~~~~~~~~~~~~~
+g++  -O3 -g3 -fPIC -DCUDART_VERSION=11080 -Wall -DTRACING_ON=1 -std=c++0x -I/usr/local/cuda-11.8/include -I/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/src/accelwattch/ -DGPGPUSIM_POWER_MODEL -o /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/gpgpu-sim/stat-tool.o -c stat-tool.cc
+In file included from shader.h:54,
+                 from shader.cc:33:
+gpu-cache.h: In constructor ‘baseline_cache::baseline_cache(const char*, cache_config&, int, int, mem_fetch_interface*, mem_fetch_status, cache_gpu_level, gpgpu_sim*)’:
+gpu-cache.h:1479:24: warning: ‘baseline_cache::m_bandwidth_management’ will be initialized after [-Wreorder]
+ 1479 |   bandwidth_management m_bandwidth_management;
+      |                        ^~~~~~~~~~~~~~~~~~~~~~
+gpu-cache.h:1399:19: warning:   ‘cache_gpu_level baseline_cache::m_level’ [-Wreorder]
+ 1399 |   cache_gpu_level m_level;
+      |                   ^~~~~~~
+gpu-cache.h:1282:3: warning:   when initialized here [-Wreorder]
+ 1282 |   baseline_cache(const char *name, cache_config &config, int core_id,
+      |   ^~~~~~~~~~~~~~
+g++  -O3 -g3 -fPIC -DCUDART_VERSION=11080 -Wall -DTRACING_ON=1 -std=c++0x -I/usr/local/cuda-11.8/include -I/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/src/accelwattch/ -DGPGPUSIM_POWER_MODEL -o /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/gpgpu-sim/traffic_breakdown.o -c traffic_breakdown.cc
+In file included from shader.h:54,
+                 from scoreboard.cc:31:
+gpu-cache.h: In constructor ‘baseline_cache::baseline_cache(const char*, cache_config&, int, int, mem_fetch_interface*, mem_fetch_status, cache_gpu_level, gpgpu_sim*)’:
+gpu-cache.h:1479:24: warning: ‘baseline_cache::m_bandwidth_management’ will be initialized after [-Wreorder]
+ 1479 |   bandwidth_management m_bandwidth_management;
+      |                        ^~~~~~~~~~~~~~~~~~~~~~
+gpu-cache.h:1399:19: warning:   ‘cache_gpu_level baseline_cache::m_level’ [-Wreorder]
+ 1399 |   cache_gpu_level m_level;
+      |                   ^~~~~~~
+gpu-cache.h:1282:3: warning:   when initialized here [-Wreorder]
+ 1282 |   baseline_cache(const char *name, cache_config &config, int core_id,
+      |   ^~~~~~~~~~~~~~
+g++  -O3 -g3 -fPIC -DCUDART_VERSION=11080 -Wall -DTRACING_ON=1 -std=c++0x -I/usr/local/cuda-11.8/include -I/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/src/accelwattch/ -DGPGPUSIM_POWER_MODEL -o /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/gpgpu-sim/visualizer.o -c visualizer.cc
+g++ -ggdb -fPIC -Wall -Wno-unused-function -Wno-sign-compare  -I /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/cuobjdump_to_ptxplus -I /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/cuobjdump_to_ptxplus/../cuda-sim/ -I . -I ../src/cuda-sim/ -c /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/cuobjdump_to_ptxplus/ptx.tab.c -o /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/cuobjdump_to_ptxplus/ptx.tab.o
+gpu-sim.cc: In member function ‘void sst_gpgpu_sim::SST_cycle()’:
+gpu-sim.cc:2355:32: warning: variable ‘sec’ set but not used [-Wunused-but-set-variable]
+ 2355 |     time_t days, hrs, minutes, sec;
+      |                                ^~~
+shader.cc: In member function ‘virtual void shader_core_ctx::issue_warp(register_set&, const warp_inst_t*, const active_mask_t&, unsigned int, unsigned int)’:
+shader.cc:1105:23: warning: comparison of integer expressions of different signedness: ‘int’ and ‘unsigned int’ [-Wsign-compare]
+ 1105 |     for (int i = 0; i < end_group; i++) {
+      |                     ~~^~~~~~~~~~~
+shader.cc:1106:25: warning: comparison of integer expressions of different signedness: ‘int’ and ‘std::vector<warp_inst_t>::size_type’ {aka ‘long unsigned int’} [-Wsign-compare]
+ 1106 |       for (int j = 0; j < m_warp[warp_id]->m_ldgdepbar_buf[i].size(); j++) {
+      |                       ~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+shader.cc:1107:55: warning: comparison of integer expressions of different signedness: ‘address_type’ {aka ‘long long unsigned int’} and ‘int’ [-Wsign-compare]
+ 1107 |         if (m_warp[warp_id]->m_ldgdepbar_buf[i][j].pc != -1) {
+shader.cc: In member function ‘void shader_core_ctx::unset_depbar(const warp_inst_t&)’:
+shader.cc:1873:23: warning: comparison of integer expressions of different signedness: ‘int’ and ‘std::vector<std::vector<warp_inst_t> >::size_type’ {aka ‘long unsigned int’} [-Wsign-compare]
+ 1873 |     for (int i = 0; i < m_warp[inst.warp_id()]->m_ldgdepbar_buf.size(); i++) {
+      |                     ~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+shader.cc:1874:25: warning: comparison of integer expressions of different signedness: ‘int’ and ‘std::vector<warp_inst_t>::size_type’ {aka ‘long unsigned int’} [-Wsign-compare]
+ 1874 |       for (int j = 0; j < m_warp[inst.warp_id()]->m_ldgdepbar_buf[i].size();
+      |                       ~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+shader.cc:1889:23: warning: comparison of integer expressions of different signedness: ‘int’ and ‘unsigned int’ [-Wsign-compare]
+ 1889 |     for (int i = 0; i < end_group; i++) {
+      |                     ~~^~~~~~~~~~~
+shader.cc:1890:25: warning: comparison of integer expressions of different signedness: ‘int’ and ‘std::vector<warp_inst_t>::size_type’ {aka ‘long unsigned int’} [-Wsign-compare]
+ 1890 |       for (int j = 0; j < m_warp[inst.warp_id()]->m_ldgdepbar_buf[i].size();
+      |                       ~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+shader.cc:1892:62: warning: comparison of integer expressions of different signedness: ‘address_type’ {aka ‘long long unsigned int’} and ‘int’ [-Wsign-compare]
+ 1892 |         if (m_warp[inst.warp_id()]->m_ldgdepbar_buf[i][j].pc != -1) {
+In file included from shader.cc:33:
+shader.h: In constructor ‘ldst_unit::ldst_unit(mem_fetch_interface*, shader_core_mem_fetch_allocator*, shader_core_ctx*, opndcoll_rfu_t*, Scoreboard*, const shader_core_config*, const memory_config*, shader_core_stats*, unsigned int, unsigned int, gpgpu_sim*)’:
+shader.h:1462:15: warning: ‘ldst_unit::m_next_wb’ will be initialized after [-Wreorder]
+ 1462 |   warp_inst_t m_next_wb;
+      |               ^~~~~~~~~
+shader.h:1442:14: warning:   ‘gpgpu_sim* ldst_unit::m_gpu’ [-Wreorder]
+ 1442 |   gpgpu_sim *m_gpu;
+      |              ^~~~~
+shader.cc:2623:1: warning:   when initialized here [-Wreorder]
+ 2623 | ldst_unit::ldst_unit(mem_fetch_interface *icnt,
+      | ^~~~~~~~~
+In file included from ../../libcuda/../src/cuda-sim/../gpgpu-sim/shader.h:54,
+                 from ../../libcuda/../src/cuda-sim/cuda-sim.h:37,
+                 from ../../libcuda/gpgpu_context.h:3,
+                 from stat-tool.cc:40:
+../../libcuda/../src/cuda-sim/../gpgpu-sim/gpu-cache.h: In constructor ‘baseline_cache::baseline_cache(const char*, cache_config&, int, int, mem_fetch_interface*, mem_fetch_status, cache_gpu_level, gpgpu_sim*)’:
+../../libcuda/../src/cuda-sim/../gpgpu-sim/gpu-cache.h:1479:24: warning: ‘baseline_cache::m_bandwidth_management’ will be initialized after [-Wreorder]
+ 1479 |   bandwidth_management m_bandwidth_management;
+      |                        ^~~~~~~~~~~~~~~~~~~~~~
+../../libcuda/../src/cuda-sim/../gpgpu-sim/gpu-cache.h:1399:19: warning:   ‘cache_gpu_level baseline_cache::m_level’ [-Wreorder]
+ 1399 |   cache_gpu_level m_level;
+      |                   ^~~~~~~
+../../libcuda/../src/cuda-sim/../gpgpu-sim/gpu-cache.h:1282:3: warning:   when initialized here [-Wreorder]
+ 1282 |   baseline_cache(const char *name, cache_config &config, int core_id,
+      |   ^~~~~~~~~~~~~~
+g++ -ggdb -fPIC -Wall -Wno-unused-function -Wno-sign-compare  -I /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/cuobjdump_to_ptxplus -I /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/cuobjdump_to_ptxplus/../cuda-sim/ -I . -I ../src/cuda-sim/ -c /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/cuobjdump_to_ptxplus/lex.ptx_.c -o /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/cuobjdump_to_ptxplus/lex.ptx_.o
+g++ -ggdb -fPIC -Wall -Wno-unused-function -Wno-sign-compare  -I /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/cuobjdump_to_ptxplus -I /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/cuobjdump_to_ptxplus/../cuda-sim/ -I . -I ../src/cuda-sim/ -c -o /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/cuobjdump_to_ptxplus/sass_lexer.o /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/cuobjdump_to_ptxplus/sass_lexer.cc
+g++ -ggdb -fPIC -Wall -Wno-unused-function -Wno-sign-compare  -o /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/cuobjdump_to_ptxplus/cuobjdump_to_ptxplus /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/cuobjdump_to_ptxplus/cuobjdumpInst.o /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/cuobjdump_to_ptxplus/cuobjdumpInstList.o /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/cuobjdump_to_ptxplus/cuobjdump_to_ptxplus.o /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/cuobjdump_to_ptxplus/ptx.tab.o /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/cuobjdump_to_ptxplus/lex.ptx_.o /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/cuobjdump_to_ptxplus/sass_lexer.o /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/cuobjdump_to_ptxplus/sass_parser.o  /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/cuobjdump_to_ptxplus/elf_lexer.o /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/cuobjdump_to_ptxplus/elf_parser.o /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/cuobjdump_to_ptxplus/header_parser.o /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/cuobjdump_to_ptxplus/header_lexer.o
+In file included from gpu-sim.h:43,
+                 from visualizer.cc:32:
+gpu-cache.h: In constructor ‘baseline_cache::baseline_cache(const char*, cache_config&, int, int, mem_fetch_interface*, mem_fetch_status, cache_gpu_level, gpgpu_sim*)’:
+gpu-cache.h:1479:24: warning: ‘baseline_cache::m_bandwidth_management’ will be initialized after [-Wreorder]
+ 1479 |   bandwidth_management m_bandwidth_management;
+      |                        ^~~~~~~~~~~~~~~~~~~~~~
+gpu-cache.h:1399:19: warning:   ‘cache_gpu_level baseline_cache::m_level’ [-Wreorder]
+ 1399 |   cache_gpu_level m_level;
+      |                   ^~~~~~~
+gpu-cache.h:1282:3: warning:   when initialized here [-Wreorder]
+ 1282 |   baseline_cache(const char *name, cache_config &config, int core_id,
+      |   ^~~~~~~~~~~~~~
+make[2]: Leaving directory '/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/cuobjdump_to_ptxplus'
+ar rcs  /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/gpgpu-sim/libgpu_uarch_sim.a /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/gpgpu-sim/addrdec.o /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/gpgpu-sim/dram.o /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/gpgpu-sim/dram_sched.o /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/gpgpu-sim/gpu-cache.o /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/gpgpu-sim/gpu-misc.o /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/gpgpu-sim/gpu-sim.o /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/gpgpu-sim/hashing.o /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/gpgpu-sim/histogram.o /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/gpgpu-sim/icnt_wrapper.o /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/gpgpu-sim/l2cache.o /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/gpgpu-sim/local_interconnect.o /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/gpgpu-sim/mem_fetch.o /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/gpgpu-sim/mem_latency_stat.o /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/gpgpu-sim/power_interface.o /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/gpgpu-sim/power_stat.o /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/gpgpu-sim/scoreboard.o /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/gpgpu-sim/shader.o /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/gpgpu-sim/stack.o /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/gpgpu-sim/stat-tool.o /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/gpgpu-sim/traffic_breakdown.o /workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/build/gcc-11.4.0/cuda-11080/release/gpgpu-sim/visualizer.o
+make[2]: Leaving directory '/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/src/gpgpu-sim'
+make[1]: Leaving directory '/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator/gpgpu-sim'
+make: *** [Makefile:58: gpgpu-sim] Error 2
+make: Leaving directory '/workspace/MLX_dev/third_party/accel-sim-framework/gpu-simulator'
