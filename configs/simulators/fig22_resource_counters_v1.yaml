@@ -1,0 +1,40 @@
+name: fig22-resource-counters-v1
+experiment_id: H61
+run_id: run066
+classification: target_exposed_corrective_measurement
+validation_eligible: false
+
+frozen_inputs:
+  h59_result:
+    path: artifacts/results/paper-static-fig22-23-run064.json
+    sha256: 2c01fe8c03f539cdf0c021a370809ad71e7d9cf564e07aa7289c37bcc16b0ff9
+    required_integrity: true
+  h60_targets:
+    path: artifacts/results/fig22-resource-targets-run065.json
+    sha256: c404f2d1a20b50dcc39937a982565d3ef542db54bebb85045a32d4527bcd1cf6
+    required_verdict: supported
+    required_summary_pass: true
+
+configs: artifacts/environment/h59/fig22
+output_root: artifacts/environment/h61/runs
+result_path: artifacts/results/fig22-resource-counters-run066.json
+
+primary_metric:
+  numerator: productive_pe_cycles_by_pipeline
+  denominator: cycles * physical_pe_count
+  external_memory_wait_is_service: false
+  xfer_route_residence_is_service: true
+  all_64_within_relative_error: 0.10
+
+diagnostic_metrics:
+  - resident_pe_cycles_by_pipeline
+  - productive_global_cycles_by_pipeline
+  - busy_cycles_by_pipeline
+  - issue_cycles_by_pipeline
+
+execution:
+  runner: scripts/run_dsagen_fig22.sh
+  auditor: scripts/audit_fig22_resource_counters.py
+  guest: third_party/dsa-framework/dsa-apps/sdk/compiled/ss-vecadd-gnu.out
+  watchdog_cycles: 10000000
+  targets_loaded_by_execution: false
