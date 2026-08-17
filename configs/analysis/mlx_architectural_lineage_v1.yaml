@@ -1,0 +1,137 @@
+run:
+  id: run_039
+  hypothesis: H34
+  protocol: experiments/h34-mlx-architectural-lineage/protocol.md
+  output: artifacts/results/mlx-architectural-lineage-run039.json
+
+classification: source_lineage_audit
+validation_eligible: false
+cutoff_utc: "2026-08-17T23:59:59Z"
+max_primary_payload_bytes: 26214400
+
+local_sources:
+  paper:
+    path: "MLX Multi-Layer Execution for Structured LLM Workload Acceleration on Spatial Architectures/MLX Multi-Layer Execution for Structured LLM Workload Acceleration on Spatial Architectures.md"
+    bytes: 85855
+    sha256: 5785eb81b28741a3806ca42749d7b556bbcd2404e1622ae644a32bae2ade7745
+  h33_browser_snapshot:
+    path: artifacts/source-snapshots/mlx-public-browser-search-20260817.yaml
+    bytes: 5791
+    sha256: 3c1760c7ff539451d1875ff54d7415b9473d03d8c5ebfa56341948e0b1d4d605
+  h33_result:
+    path: artifacts/results/mlx-public-artifact-discovery-run038.json
+    bytes: 88807
+    sha256: 462df17b15a8acdeee8820f59b476a60939a795d9efd69991d0fabfe0eccff09
+
+candidates:
+  - id: simict
+    title: "SimICT: A Fast and Flexible Framework for Performance and Power Evaluation of Large-Scale Architecture"
+    expected_role: simulation_framework
+  - id: dfu_e
+    title: "DFU-E: A Dataflow Architecture for Edge DSP and AI Applications"
+    expected_role: parent_family_candidate
+  - id: dfgas
+    title: "DFGAS: Exploring the Balance of HW-SW Scheduling through the DFG-Aware Scheme"
+    expected_role: scheduling_lineage_candidate
+  - id: m2_dfu
+    title: "M2-DFU: Multi-Mode Dataflow Architecture for Adaptive and High-Efficiency Data Processing"
+    expected_role: parent_family_candidate
+  - id: transfer_latency
+    title: "Alleviating Transfer Latency in Dataflow Accelerator for DSP Applications"
+    expected_role: interconnect_lineage_candidate
+  - id: cn202510992730_2
+    identifier: CN202510992730.2
+    expected_role: data_instruction_reuse_patent
+  - id: cn202511751816_2
+    identifier: CN202511751816.2
+    expected_role: fft_dataflow_patent
+  - id: dsagen
+    title: "DSAGEN: Synthesizing Programmable Spatial Accelerators"
+    expected_role: external_control
+  - id: assassyn
+    title: "Assassyn: Unified Software and Hardware Simulation with Asynchronous Semantics"
+    expected_role: external_control
+
+registered_queries:
+  - '"M2-DFU: Multi-Mode Dataflow Architecture for Adaptive and High-Efficiency Data Processing"'
+  - '"DFU-E: A Dataflow Architecture for Edge DSP and AI Applications"'
+  - '"DFGAS: Exploring the Balance of HW-SW Scheduling through the DFG-Aware Scheme"'
+  - '"Alleviating Transfer Latency in Dataflow Accelerator for DSP Applications"'
+  - '"SimICT: A Fast and Flexible Framework for Performance and Power Evaluation of Large-Scale Architecture"'
+  - '"CN202510992730.2"'
+  - '"CN202511751816.2"'
+  - '"MLX" "DFU-E" dataflow'
+  - '"MLX" "M2-DFU" dataflow'
+  - '"general-purpose dataflow design" "Wenming Li"'
+  - '"12 nm" "DFU-E" dataflow'
+  - '"7.712" dataflow accelerator'
+  - '"SIMD32" "DFU-E"'
+  - 'site:people.ucas.ac.cn/~liwenming "M2-DFU" OR "DFU-E"'
+
+metadata_queries:
+  - exact-title Crossref
+  - exact-title OpenAlex
+  - exact-title Semantic Scholar
+  - DOI and publisher record
+  - author institutional bibliography
+  - Google Patents exact publication/application number
+  - CNIPA or WIPO family record when linked
+
+frozen_feature_classes:
+  chronology_ownership:
+    - predates_mlx
+    - ict_or_ricore_ownership
+    - overlapping_hardware_authors
+  parent_hardware_fingerprints:
+    - taped_out_verilog
+    - process_12nm
+    - frequency_1ghz
+    - simd_width_32
+    - mesh_dimensions
+    - peak_about_1tops
+    - pe_array_area_7_712_mm2
+    - pe_array_power_5_846_w
+  software_interface:
+    - risc_v_host
+    - per_pe_or_dataflow_assembly
+    - llvm_compiler
+    - spatial_assembler
+    - binary_header_configuration
+  execution_substrate:
+    - programmable_spatial_dataflow_pes
+    - heterogeneous_functional_units
+    - decoupled_load_compute_transfer
+    - explicit_operand_routing
+    - data_reuse
+    - instruction_reuse_or_hierarchy
+  mlx_specific_delta:
+    - closed_dependency_components
+    - tagged_instruction_blocks
+    - bounded_active_layer_window
+    - skip_hop_links
+    - semantic_fft_compression
+    - hierarchical_bsmm
+  simulation:
+    - explicit_simict_use
+    - explicit_simict_derivation
+
+decision:
+  exact_parent:
+    explicit_primary_link_suffices: true
+    minimum_hardware_fingerprints: 4
+    minimum_exact_numeric_fingerprints: 2
+    forbid_material_conflict: true
+  family_attribution:
+    explicit_family_link_suffices: true
+    require_prior_tapeout_or_ownership: true
+    minimum_high_specificity_cross_class_matches: 3
+    shared_authorship_counts_as_match: false
+    generic_terminology_counts_as_match: false
+    forbid_material_conflict: true
+  code_provenance:
+    require_repository_or_primary_statement: true
+
+limitations:
+  - "Family-level architectural origin is not exact chip, simulator-code, RTL, or repository provenance."
+  - "Publisher access limits may make silence non-diagnostic; only explicit contradictions count as negative evidence."
+  - "Patents establish disclosed claims, inventors, assignees, and priority dates, not necessarily the implementation used by MLX."
