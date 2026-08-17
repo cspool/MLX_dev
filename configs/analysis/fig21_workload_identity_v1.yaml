@@ -1,0 +1,50 @@
+name: fig21-workload-identity-v1
+experiment_id: H90
+run_id: run095
+classification: target_free_figure21_workload_identity_audit
+validation_eligible: false
+
+frozen_inputs:
+  fig21_proxy:
+    path: artifacts/results/fig21-run007.json
+    sha256: 506538bf657eea9e398eb70771e889ab752e81913e9510961abb4a80d9425817
+  full_block:
+    path: artifacts/results/dsagen-mlx-full-block-run054.json
+    sha256: c80b174192db67a64f76516427fddfc6230712d332e943e095af4e455f5d34fb
+    required_status: supported
+    required_integrity: true
+  logical_work:
+    path: artifacts/results/fig20-workload-identity-run080.json
+    sha256: 464215470b8d56f944d85bf9ef419fddb3977072b1511735e9adc9ddc16b66af
+    required_status: supported
+    required_integrity: true
+  projections:
+    path: artifacts/results/matched-projection-estimator-run082.json
+    sha256: e9df44d2b6c025fa141c71564e47708e68f9f306cb3992f495a65f9ce3c93ec7
+    required_status: supported
+    required_integrity: true
+  attention:
+    path: artifacts/results/combined-attention-memory-run088.json
+    sha256: a647443c82ae407b18f0253757b43cf245b1626593e03510895f9c87ecd5fa44
+    required_status: supported
+    required_integrity: true
+  completion:
+    path: artifacts/results/full-paper-completion-update-run094.json
+    sha256: 1e51bec9236e5a3cd6f455c4044a663d6df18bb68cad39eb14a8cdb32cef450b
+    required_status: supported
+    required_integrity: true
+
+contract:
+  sequence_lengths: [128, 256, 512, 1024, 2048]
+  batch: 8
+  total_layers: 32
+  structured_layers: 24
+  dense_layers: 8
+  hidden_dimension: 4096
+  ffn_dimension: 11008
+  block_size: 32
+  compression_ratio: 0.5
+  required_components: [qkv, attention, output, ffn1, ffn2, elementwise]
+
+auditor: scripts/audit_fig21_workload_identity.py
+result_path: artifacts/results/fig21-workload-identity-run095.json
