@@ -1,0 +1,857 @@
+{
+  "audit_integrity": true,
+  "cache_dram_evidence": {
+    "checks": {
+      "dram": true,
+      "l1_reads": true,
+      "l1_writes": true,
+      "l2_cold_reads": true,
+      "l2_store_rfo": true
+    },
+    "metrics": {
+      "dram_read_bytes": 4096,
+      "dram_reads": 64,
+      "l1_read_accesses": 64,
+      "l1_read_misses": 64,
+      "l1_write_accesses": 64,
+      "l1_write_misses": 64,
+      "l2_read_accesses": 64,
+      "l2_read_misses": 64,
+      "l2_store_rfo_hits": 64
+    },
+    "pass": true
+  },
+  "claim_scope": {
+    "not_claimed": [
+      "authors' unpublished MLX simulator equivalence",
+      "paper performance accuracy",
+      "numerically correct full-model inference",
+      "GPU warp, SIMT, CTA, or coherence behavior inside a PE"
+    ],
+    "supported": [
+      "MLX overlay loads traverse MinorCPU LSQ, L1D, L2, and DDR",
+      "MLX overlay stores traverse the real LSQ/store-buffer response path",
+      "the off-chip adapter preserves tagged spatial execution and PE-local pipelines"
+    ]
+  },
+  "classification": "mechanism_confirmatory_no_paper_target",
+  "compiler": {
+    "checks": {
+      "address_sequences": true,
+      "backends": true,
+      "blocks": true,
+      "counts": true,
+      "dma_replay": true,
+      "files": true,
+      "fixed_replay": true,
+      "guest_hash": true,
+      "no_paper_targets": true,
+      "only_backend_differs": true,
+      "roi_gate": true,
+      "symbols": true
+    },
+    "counts": {
+      "compute": 64,
+      "load": 64,
+      "store": 64
+    },
+    "files": {
+      "dma": {
+        "bytes": 20258,
+        "checks": {
+          "is_file": true
+        },
+        "pass": true,
+        "path": "artifacts/environment/h47/mlx-dma-real.json",
+        "sha256": "06cbf4b745f461ccda3f351a1d060809943a21d49243a205dbe7fb22da94afa0"
+      },
+      "dma_replay": {
+        "bytes": 20258,
+        "checks": {
+          "is_file": true
+        },
+        "pass": true,
+        "path": "artifacts/environment/h47/replay/mlx-dma-real.json",
+        "sha256": "06cbf4b745f461ccda3f351a1d060809943a21d49243a205dbe7fb22da94afa0"
+      },
+      "fixed": {
+        "bytes": 20253,
+        "checks": {
+          "is_file": true
+        },
+        "pass": true,
+        "path": "artifacts/environment/h47/mlx-dma-fixed.json",
+        "sha256": "8679445f40c1f5fb616d587d557bfd6e50e8af3081cba0edbbf8878235bbb130"
+      },
+      "fixed_replay": {
+        "bytes": 20253,
+        "checks": {
+          "is_file": true
+        },
+        "pass": true,
+        "path": "artifacts/environment/h47/replay/mlx-dma-fixed.json",
+        "sha256": "8679445f40c1f5fb616d587d557bfd6e50e8af3081cba0edbbf8878235bbb130"
+      },
+      "manifest": {
+        "bytes": 1920,
+        "checks": {
+          "is_file": true
+        },
+        "pass": true,
+        "path": "artifacts/environment/h47/mlx-dma-compile-manifest.json",
+        "sha256": "20108aeb6c9b65f641308a31359998908f9a532df1e50407c7984ce54c20733e"
+      }
+    },
+    "guest_elf": {
+      "bytes": 508528,
+      "path": "/workspace/MLX_dev/third_party/dsa-framework/dsa-apps/sdk/compiled/ss-mlx-dma.out",
+      "sha256": "9e4d542dcfcecd66b927736e632f3eedf05bc84892e8c2600071000cf208b93d",
+      "symbols": {
+        "mlx_dma_cold_region": {
+          "address": 2633728,
+          "size": 131072
+        },
+        "mlx_dma_write_region": {
+          "address": 2629632,
+          "size": 4096
+        }
+      }
+    },
+    "pass": true
+  },
+  "dsagen_revision": "1e5d2c3d48ecc1f9b7d42c7103d0705b0c98fb78",
+  "evidence_files": {
+    "compiler_stdout": {
+      "bytes": 1920,
+      "checks": {
+        "is_file": true
+      },
+      "pass": true,
+      "path": "artifacts/environment/h47/compiler-stdout.json",
+      "sha256": "20108aeb6c9b65f641308a31359998908f9a532df1e50407c7984ce54c20733e"
+    },
+    "config": {
+      "bytes": 3960,
+      "checks": {
+        "is_file": true
+      },
+      "pass": true,
+      "path": "configs/simulators/dsagen_mlx_dma_memory_v1.yaml",
+      "sha256": "fa36a33c94331dfa97e90511b1e7905319e4c707549f8bd367550b54bcd0d602"
+    },
+    "dma_stats": {
+      "bytes": 128692,
+      "checks": {
+        "is_file": true
+      },
+      "pass": true,
+      "path": "artifacts/environment/h47/runs/dma/m5out/stats.txt",
+      "sha256": "7c1968000ce0db67fa496358cf0521f7674995c6fb54b68deb2de7fcf60442da"
+    },
+    "fixed_stats": {
+      "bytes": 118300,
+      "checks": {
+        "is_file": true
+      },
+      "pass": true,
+      "path": "artifacts/environment/h47/runs/fixed/m5out/stats.txt",
+      "sha256": "21900602ea102fd92675614586c5d2eea954214b601496cda5df6987b63cf601"
+    },
+    "gem5": {
+      "bytes": 1305221456,
+      "checks": {
+        "is_file": true
+      },
+      "pass": true,
+      "path": "third_party/dsa-framework/dsa-gem5/build/RISCV/gem5.opt",
+      "sha256": "ea859dbc0ded5558370fadfd4838bc8ee850523e28188a1efdb897f101693325"
+    },
+    "guest": {
+      "bytes": 508528,
+      "checks": {
+        "is_file": true
+      },
+      "pass": true,
+      "path": "third_party/dsa-framework/dsa-apps/sdk/compiled/ss-mlx-dma.out",
+      "sha256": "9e4d542dcfcecd66b927736e632f3eedf05bc84892e8c2600071000cf208b93d"
+    },
+    "guest_build_log": {
+      "bytes": 261,
+      "checks": {
+        "is_file": true
+      },
+      "pass": true,
+      "path": "artifacts/environment/h47/guest-build.log",
+      "sha256": "5a261cf1540c6c9e552d016e900d9d802ab4d2b71f2e78fcae58b35492616ced"
+    },
+    "protocol": {
+      "bytes": 5834,
+      "checks": {
+        "is_file": true
+      },
+      "pass": true,
+      "path": "experiments/h47-dsagen-mlx-dma-memory/protocol.md",
+      "sha256": "f57c0801dd5f2871d9815f46e0b889fd9fc8981cde9d5b6d20351356465113c4"
+    },
+    "replay_stdout": {
+      "bytes": 1934,
+      "checks": {
+        "is_file": true
+      },
+      "pass": true,
+      "path": "artifacts/environment/h47/replay/compiler-stdout.json",
+      "sha256": "bb7cd4358bc9403bc53113a3807862f1112c867e8007e5da00ede9ff610426b1"
+    }
+  },
+  "excluded_development_evidence": {
+    "failed_long_wait_candidate": {
+      "dma": {
+        "bytes": 3273,
+        "checks": {
+          "is_file": true
+        },
+        "pass": true,
+        "path": "artifacts/environment/h47/runs-failed-long-wait-candidate/dma/run.log",
+        "sha256": "c8b692b72026451a365c6552e6b5f41900c05e0916de3191da47b1e2534555fc"
+      },
+      "fixed": {
+        "bytes": 2937,
+        "checks": {
+          "is_file": true
+        },
+        "pass": true,
+        "path": "artifacts/environment/h47/runs-failed-long-wait-candidate/fixed/run.log",
+        "sha256": "f14e7f505730ef0ebb9fa18d9cb9fafdfc7b8a7b6399b9bd06e7533d185745cb"
+      },
+      "reason": "requestor command counters absent after obsolete long host wait"
+    },
+    "smoke_attempts": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10
+    ],
+    "used_for_hypothesis_status": false
+  },
+  "experiment_id": "H47",
+  "frozen_inputs": {
+    "paper": {
+      "bytes": 85855,
+      "checks": {
+        "bytes": true,
+        "is_file": true,
+        "sha256": true
+      },
+      "pass": true,
+      "path": "MLX Multi-Layer Execution for Structured LLM Workload Acceleration on Spatial Architectures/MLX Multi-Layer Execution for Structured LLM Workload Acceleration on Spatial Architectures.md",
+      "sha256": "5785eb81b28741a3806ca42749d7b556bbcd2404e1622ae644a32bae2ade7745"
+    },
+    "parent_memory_result": {
+      "bytes": 34750,
+      "checks": {
+        "is_file": true,
+        "sha256": true
+      },
+      "pass": true,
+      "path": "artifacts/results/dsagen-mlx-cdc-memory-run048.json",
+      "sha256": "8aae66d752079d683e6a897bdea09ab6bf6c108389e01baef2a65e8c6c3090da"
+    }
+  },
+  "git_revision": "250d054f0a7c85bc2645281557cb83bdb28fdb48",
+  "hypothesis_status": "supported",
+  "paper_performance_targets_consumed": false,
+  "pass_criteria": {
+    "cache_and_dram": true,
+    "compiler": true,
+    "dma_execution": true,
+    "evidence_files": true,
+    "fixed_control": true,
+    "frozen_inputs": true,
+    "no_paper_targets": true,
+    "regressions": true,
+    "source": true
+  },
+  "regressions": {
+    "checks": {
+      "disabled_overlay": true,
+      "fixed_overlay": true,
+      "spad_bsmm": true,
+      "spad_fft": true,
+      "spad_stress": true
+    },
+    "pass": true,
+    "runs": {
+      "disabled_overlay": {
+        "artifact": {
+          "bytes": 4331,
+          "checks": {
+            "is_file": true
+          },
+          "pass": true,
+          "path": "artifacts/environment/h47/regressions/overlay/disabled/run.log",
+          "sha256": "f8d7f7e3d8b329a649bff7a781a0079c664fa77a50493aabdb63efbe703a2792"
+        },
+        "dma_adapter": null,
+        "dsagen": {
+          "cgra_instances": 256,
+          "cgra_instructions": 1024,
+          "normal_exit": true,
+          "roi_cycles": 569,
+          "sanity": true
+        },
+        "guest": null,
+        "guest_symbols": null,
+        "overlay": null,
+        "spad_adapter": null
+      },
+      "fixed_overlay": {
+        "artifact": {
+          "bytes": 4987,
+          "checks": {
+            "is_file": true
+          },
+          "pass": true,
+          "path": "artifacts/environment/h47/regressions/overlay/enabled/run.log",
+          "sha256": "7eb9828ba722265038275e3e988697e845b008e380c9dedcaf2a8eadc6d4b905"
+        },
+        "dma_adapter": null,
+        "dsagen": {
+          "cgra_instances": 256,
+          "cgra_instructions": 1024,
+          "normal_exit": true,
+          "roi_cycles": 569,
+          "sanity": true
+        },
+        "guest": null,
+        "guest_symbols": null,
+        "overlay": {
+          "boundary_events_emitted": 0,
+          "busy_cycles_by_pipeline": {
+            "compute": 4,
+            "load": 3,
+            "store": 2,
+            "xfer": 2
+          },
+          "cycles": 5,
+          "done": true,
+          "event_unblocked_issues_before_tag_complete": 0,
+          "external_memory_completions": 0,
+          "external_memory_requests": 0,
+          "external_memory_wait_cycles": 0,
+          "instructions_completed": 4,
+          "instructions_issued": 4,
+          "issued_by_pipeline": {
+            "compute": 1,
+            "load": 1,
+            "store": 1,
+            "xfer": 1
+          },
+          "link_stalls": 0,
+          "max_active_tags": 3,
+          "max_pipeline_issues_in_cycle": 4,
+          "memory_backend": "fixed",
+          "record_events": true,
+          "route_hops": 1,
+          "scenario": "gem5",
+          "skip_hops": 0,
+          "stalls_by_reason": {},
+          "start_in_roi": false,
+          "unit_hops": 1
+        },
+        "spad_adapter": null
+      },
+      "spad_bsmm": {
+        "artifact": {
+          "bytes": 5206,
+          "checks": {
+            "is_file": true
+          },
+          "pass": true,
+          "path": "artifacts/environment/h47/regressions/cdc/bsmm-b8/run.log",
+          "sha256": "a34691d297d7cbed1e719de2329bf1828de5628f562841d5d32849ba1d645cf7"
+        },
+        "dma_adapter": null,
+        "dsagen": {
+          "cgra_instances": 256,
+          "cgra_instructions": 1024,
+          "normal_exit": true,
+          "roi_cycles": 569,
+          "sanity": true
+        },
+        "guest": null,
+        "guest_symbols": null,
+        "overlay": {
+          "boundary_events_emitted": 12,
+          "busy_cycles_by_pipeline": {
+            "compute": 27,
+            "load": 31,
+            "store": 21,
+            "xfer": 17
+          },
+          "cycles": 55,
+          "done": true,
+          "event_unblocked_issues_before_tag_complete": 6,
+          "external_memory_completions": 36,
+          "external_memory_requests": 36,
+          "external_memory_wait_cycles": 88,
+          "instructions_completed": 72,
+          "instructions_issued": 72,
+          "issued_by_pipeline": {
+            "compute": 24,
+            "load": 24,
+            "store": 12,
+            "xfer": 12
+          },
+          "link_stalls": 0,
+          "max_active_tags": 3,
+          "max_pipeline_issues_in_cycle": 4,
+          "memory_backend": "adapter",
+          "record_events": true,
+          "route_hops": 12,
+          "scenario": "gem5",
+          "skip_hops": 12,
+          "stalls_by_reason": {
+            "event_dependency": 207,
+            "pipeline_contention": 8
+          },
+          "start_in_roi": false,
+          "unit_hops": 0
+        },
+        "spad_adapter": {
+          "bank_backpressure_cycles": 0,
+          "max_response_cycles": 5,
+          "max_response_ticks": 5000,
+          "requests": 36,
+          "responses": 36,
+          "unavailable_checks": 0
+        }
+      },
+      "spad_fft": {
+        "artifact": {
+          "bytes": 5205,
+          "checks": {
+            "is_file": true
+          },
+          "pass": true,
+          "path": "artifacts/environment/h47/regressions/cdc/fft-l8/run.log",
+          "sha256": "5778b84aab7f561446c2ba3796e81a0e3b17c6e4d4386b761c9cd4a1fe433bc9"
+        },
+        "dma_adapter": null,
+        "dsagen": {
+          "cgra_instances": 256,
+          "cgra_instructions": 1024,
+          "normal_exit": true,
+          "roi_cycles": 569,
+          "sanity": true
+        },
+        "guest": null,
+        "guest_symbols": null,
+        "overlay": {
+          "boundary_events_emitted": 12,
+          "busy_cycles_by_pipeline": {
+            "compute": 33,
+            "load": 31,
+            "store": 21,
+            "xfer": 17
+          },
+          "cycles": 61,
+          "done": true,
+          "event_unblocked_issues_before_tag_complete": 6,
+          "external_memory_completions": 36,
+          "external_memory_requests": 36,
+          "external_memory_wait_cycles": 88,
+          "instructions_completed": 84,
+          "instructions_issued": 84,
+          "issued_by_pipeline": {
+            "compute": 36,
+            "load": 24,
+            "store": 12,
+            "xfer": 12
+          },
+          "link_stalls": 0,
+          "max_active_tags": 3,
+          "max_pipeline_issues_in_cycle": 4,
+          "memory_backend": "adapter",
+          "record_events": true,
+          "route_hops": 12,
+          "scenario": "gem5",
+          "skip_hops": 12,
+          "stalls_by_reason": {
+            "event_dependency": 231,
+            "pipeline_contention": 8
+          },
+          "start_in_roi": false,
+          "unit_hops": 0
+        },
+        "spad_adapter": {
+          "bank_backpressure_cycles": 0,
+          "max_response_cycles": 5,
+          "max_response_ticks": 5000,
+          "requests": 36,
+          "responses": 36,
+          "unavailable_checks": 0
+        }
+      },
+      "spad_stress": {
+        "artifact": {
+          "bytes": 5246,
+          "checks": {
+            "is_file": true
+          },
+          "pass": true,
+          "path": "artifacts/environment/h47/regressions/cdc/bsmm-b16-stress/run.log",
+          "sha256": "527df1185ceb67afbc930b6eb22888bdb4aa2358876319cbf21b27ede9b5ca28"
+        },
+        "dma_adapter": null,
+        "dsagen": {
+          "cgra_instances": 256,
+          "cgra_instructions": 1024,
+          "normal_exit": true,
+          "roi_cycles": 569,
+          "sanity": true
+        },
+        "guest": null,
+        "guest_symbols": null,
+        "overlay": {
+          "boundary_events_emitted": 32,
+          "busy_cycles_by_pipeline": {
+            "compute": 92,
+            "load": 93,
+            "store": 75,
+            "xfer": 47
+          },
+          "cycles": 105,
+          "done": true,
+          "event_unblocked_issues_before_tag_complete": 15,
+          "external_memory_completions": 96,
+          "external_memory_requests": 96,
+          "external_memory_wait_cycles": 286,
+          "instructions_completed": 192,
+          "instructions_issued": 192,
+          "issued_by_pipeline": {
+            "compute": 64,
+            "load": 64,
+            "store": 32,
+            "xfer": 32
+          },
+          "link_stalls": 0,
+          "max_active_tags": 3,
+          "max_pipeline_issues_in_cycle": 4,
+          "memory_backend": "adapter",
+          "record_events": true,
+          "route_hops": 32,
+          "scenario": "gem5",
+          "skip_hops": 32,
+          "stalls_by_reason": {
+            "event_dependency": 881,
+            "memory_queue_full": 162,
+            "pipeline_contention": 23
+          },
+          "start_in_roi": false,
+          "unit_hops": 0
+        },
+        "spad_adapter": {
+          "bank_backpressure_cycles": 0,
+          "max_response_cycles": 5,
+          "max_response_ticks": 5000,
+          "requests": 96,
+          "responses": 96,
+          "unavailable_checks": 162
+        }
+      }
+    }
+  },
+  "run_id": "run053",
+  "runs": {
+    "dma": {
+      "artifact": {
+        "bytes": 3265,
+        "checks": {
+          "is_file": true
+        },
+        "pass": true,
+        "path": "artifacts/environment/h47/runs/dma/run.log",
+        "sha256": "f4e94913aeac92ef7db2af35758f1cdde1c7dd98ed2acb72cc22e3708902f933"
+      },
+      "checks": {
+        "backend": true,
+        "concurrency": true,
+        "directional_requests": true,
+        "done": true,
+        "external_memory": true,
+        "guest": true,
+        "instructions": true,
+        "read_data": true,
+        "real_latency": true,
+        "same_guest_symbols": true,
+        "slower_than_fixed": true,
+        "write_data": true,
+        "zero_failures": true
+      },
+      "dma_adapter": {
+        "failed_responses": 0,
+        "max_outstanding": 16,
+        "max_response_cycles": 161,
+        "max_response_ticks": 161000,
+        "outstanding": 0,
+        "queue_backpressure_checks": 0,
+        "read_byte_sum": 512,
+        "read_requests": 64,
+        "read_responses": 64,
+        "requests": 128,
+        "responses": 128,
+        "unavailable_checks": 0,
+        "write_requests": 64,
+        "write_responses": 64
+      },
+      "dsagen": {
+        "cgra_instances": null,
+        "cgra_instructions": null,
+        "normal_exit": true,
+        "roi_cycles": null,
+        "sanity": true
+      },
+      "guest": {
+        "store_checksum": 0,
+        "wait_checksum": 0
+      },
+      "guest_symbols": {
+        "cold": 2633728,
+        "evict_checksum": 0,
+        "initial_checksum": 84480,
+        "write": 2629632
+      },
+      "overlay": {
+        "boundary_events_emitted": 0,
+        "busy_cycles_by_pipeline": {
+          "compute": 105,
+          "load": 678,
+          "store": 410,
+          "xfer": 0
+        },
+        "cycles": 806,
+        "done": true,
+        "event_unblocked_issues_before_tag_complete": 0,
+        "external_memory_completions": 128,
+        "external_memory_requests": 128,
+        "external_memory_wait_cycles": 12504,
+        "instructions_completed": 192,
+        "instructions_issued": 192,
+        "issued_by_pipeline": {
+          "compute": 64,
+          "load": 64,
+          "store": 64,
+          "xfer": 0
+        },
+        "link_stalls": 0,
+        "max_active_tags": 16,
+        "max_pipeline_issues_in_cycle": 16,
+        "memory_backend": "dsagen_dma",
+        "record_events": false,
+        "route_hops": 0,
+        "scenario": "gem5",
+        "skip_hops": 0,
+        "stalls_by_reason": {},
+        "start_in_roi": true,
+        "unit_hops": 0
+      },
+      "pass": true,
+      "spad_adapter": null
+    },
+    "fixed": {
+      "artifact": {
+        "bytes": 2929,
+        "checks": {
+          "is_file": true
+        },
+        "pass": true,
+        "path": "artifacts/environment/h47/runs/fixed/run.log",
+        "sha256": "dd4ef1d31110bd4b0d275e4e180b76942bcdff21f2d571398d9439c92b1e97fe"
+      },
+      "checks": {
+        "backend": true,
+        "checksum": true,
+        "cycles": true,
+        "done": true,
+        "guest": true,
+        "instructions": true,
+        "no_external_memory": true
+      },
+      "dma_adapter": null,
+      "dsagen": {
+        "cgra_instances": null,
+        "cgra_instructions": null,
+        "normal_exit": true,
+        "roi_cycles": null,
+        "sanity": true
+      },
+      "guest": {
+        "store_checksum": 84480,
+        "wait_checksum": 0
+      },
+      "guest_symbols": {
+        "cold": 2633728,
+        "evict_checksum": 0,
+        "initial_checksum": 84480,
+        "write": 2629632
+      },
+      "overlay": {
+        "boundary_events_emitted": 0,
+        "busy_cycles_by_pipeline": {
+          "compute": 8,
+          "load": 4,
+          "store": 4,
+          "xfer": 0
+        },
+        "cycles": 17,
+        "done": true,
+        "event_unblocked_issues_before_tag_complete": 0,
+        "external_memory_completions": 0,
+        "external_memory_requests": 0,
+        "external_memory_wait_cycles": 0,
+        "instructions_completed": 192,
+        "instructions_issued": 192,
+        "issued_by_pipeline": {
+          "compute": 64,
+          "load": 64,
+          "store": 64,
+          "xfer": 0
+        },
+        "link_stalls": 0,
+        "max_active_tags": 16,
+        "max_pipeline_issues_in_cycle": 16,
+        "memory_backend": "fixed",
+        "record_events": false,
+        "route_hops": 0,
+        "scenario": "gem5",
+        "skip_hops": 0,
+        "stalls_by_reason": {},
+        "start_in_roi": true,
+        "unit_hops": 0
+      },
+      "pass": true,
+      "spad_adapter": null
+    }
+  },
+  "schema_version": 1,
+  "source": {
+    "files": {
+      "accel_source": {
+        "pass": true,
+        "path": "third_party/dsa-framework/dsa-gem5/src/cpu/minor/ssim/accel.cc",
+        "tokens": {
+          "Gem5DmaAdapter": true,
+          "MLX overlay has in-flight": true,
+          "MLX_DMA_ADAPTER_SUMMARY": true
+        }
+      },
+      "adapter_header": {
+        "pass": true,
+        "path": "third_party/dsa-framework/dsa-gem5/src/cpu/minor/ssim/mlx_dma_adapter.hh",
+        "tokens": {
+          "TransferIndex = 126": true,
+          "class Gem5DmaAdapter": true,
+          "step()": true
+        }
+      },
+      "adapter_source": {
+        "pass": true,
+        "path": "third_party/dsa-framework/dsa-gem5/src/cpu/minor/ssim/mlx_dma_adapter.cc",
+        "tokens": {
+          "lsq->sd_transfers[TransferIndex]": true,
+          "lsq->sendStoreToStoreBuffer(response)": true,
+          "popMlxDmaStoreCompletion": true,
+          "pushRequest": true
+        }
+      },
+      "compiler": {
+        "pass": true,
+        "path": "scripts/compile_mlx_dma_microtrace.py",
+        "tokens": {
+          "\"paper_performance_targets_consumed\": False": true,
+          "compile_dma_microtrace": true,
+          "read_elf_symbols": true
+        }
+      },
+      "compiler_core": {
+        "pass": true,
+        "path": "src/mlxsim/dsagen_dma.py",
+        "tokens": {
+          "\"start_in_roi\": True": true,
+          "memory_address_sequence": true
+        }
+      },
+      "guest_source": {
+        "pass": true,
+        "path": "simulator_ext/dsagen/mlx_dma_harness.c",
+        "tokens": {
+          "mlx_dma_cold_region": true,
+          "mlx_dma_evict_region": true,
+          "selected_write_checksum": true
+        }
+      },
+      "lsq_header": {
+        "pass": true,
+        "path": "third_party/dsa-framework/dsa-gem5/src/cpu/minor/lsq.hh",
+        "tokens": {
+          "is_mlx_dma": true,
+          "mlxDmaMasterId": true,
+          "mlx_token": true
+        }
+      },
+      "lsq_source": {
+        "pass": true,
+        "path": "third_party/dsa-framework/dsa-gem5/src/cpu/minor/lsq.cc",
+        "tokens": {
+          "getMasterId(&cpu_, \"mlx_dma\")": true,
+          "mlxDmaStoreCompletions.emplace_back": true,
+          "sdInfo && sdInfo->is_mlx_dma": true
+        }
+      },
+      "overlay_header": {
+        "pass": true,
+        "path": "third_party/dsa-framework/dsa-gem5/src/cpu/minor/ssim/mlx_overlay.hh",
+        "tokens": {
+          "DmaAdapter": true,
+          "start_in_roi": true
+        }
+      },
+      "overlay_source": {
+        "pass": true,
+        "path": "third_party/dsa-framework/dsa-gem5/src/cpu/minor/ssim/mlx_overlay.cc",
+        "tokens": {
+          "MemoryBackend::DmaAdapter": true,
+          "name == \"dsagen_dma\"": true
+        }
+      },
+      "runner": {
+        "pass": true,
+        "path": "scripts/run_mlx_dma_gem5.sh",
+        "tokens": {
+          "\"read_byte_sum\":512": true,
+          "system\\.mem_ctrls\\.num_reads::\\.cpu\\.mlx_dma": true
+        }
+      }
+    },
+    "pass": true,
+    "patch": {
+      "bytes": 78895,
+      "checks": {
+        "forbidden_gpu_state_absent": true,
+        "present": true,
+        "reverse_applies": true
+      },
+      "forbidden_gpu_tokens": [],
+      "pass": true,
+      "path": "patches/dsagen/dsa-gem5-mlx-dma-memory-v1.patch",
+      "reverse_stderr": "",
+      "sha256": "fa43416726e4d1639f5aa15dad6005fa967f4c602497a981038ad71f51e01cf6"
+    }
+  }
+}
