@@ -1,0 +1,49 @@
+name: dsagen-mlx-scaling-mechanism-v1
+experiment_id: H45
+run_id: run051
+classification: target-independent mechanism validation
+
+frozen_inputs:
+  aggregate_result:
+    path: artifacts/results/dsagen-mlx-aggregate-run049.json
+    bytes: 28394
+    sha256: 2d166e60b2e01cb13836860688a7a967b3377160e4217c2a682a0e3a4dca7b3c
+  fig22_result:
+    path: artifacts/results/dsagen-mlx-fig22-run050.json
+    bytes: 43611
+    sha256: f2182c6113af7aff73be59eb76e1bc86a07cf5cbcbcb6a18bffcc5c264752950
+    required_status: rejected
+    required_integrity: true
+
+fixture:
+  operator: bsmm
+  radix_width: 256
+  logical_outer_iterations: 32
+  baseline_simd_width: 8
+  memory_backend: fixed
+  active_window: 3
+  configurations:
+    baseline: {simd_width: 8, mesh: [4, 4], compiler_outer_trip: 32}
+    simd32_4x4: {simd_width: 32, mesh: [4, 4], compiler_outer_trip: 8}
+    simd8_8x8: {simd_width: 8, mesh: [8, 8], compiler_outer_trip: 32}
+    simd32_8x8: {simd_width: 32, mesh: [8, 8], compiler_outer_trip: 8}
+
+conservation:
+  scalar_work: total radix pairs times logical outer iterations
+  vector_issue_work: executed instruction count times simd_width divided by 8
+  memory_work: memory request count times simd_width divided by 8
+  expected_simd_vector_issue_ratio: 4
+  expected_mesh_slot_ratio: 4
+  no_padding: all outer trip counts divide exactly
+
+tests:
+  - four configs and replay are byte deterministic
+  - scalar/vector/memory logical work is identical across configurations
+  - SIMD32 reduces executed compute and memory instructions exactly fourfold
+  - 8x8 increases active radix slots from 16 to 64 and reduces per-block trip count fourfold
+  - active-window instruction footprint remains at most 18 per PE
+  - debug/optimized/sanitized JSON-driver traces are deterministic per configuration
+  - compute-only cycles show positive SIMD, mesh, and joint speedup without target comparison
+  - no Figure 23 value or legacy calibration is consumed
+
+result_path: artifacts/results/dsagen-mlx-scaling-mechanism-run051.json
