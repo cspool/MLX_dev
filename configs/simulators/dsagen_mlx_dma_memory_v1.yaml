@@ -1,0 +1,90 @@
+name: dsagen-mlx-dma-memory-v1
+experiment_id: H47
+run_id: run053
+
+classification: mechanism_confirmatory_no_paper_target
+
+frozen_inputs:
+  paper:
+    path: MLX Multi-Layer Execution for Structured LLM Workload Acceleration on Spatial Architectures/MLX Multi-Layer Execution for Structured LLM Workload Acceleration on Spatial Architectures.md
+    bytes: 85855
+    sha256: 5785eb81b28741a3806ca42749d7b556bbcd2404e1622ae644a32bae2ade7745
+    consumed_performance_targets: []
+  parent_memory_result:
+    path: artifacts/results/dsagen-mlx-cdc-memory-run048.json
+    sha256: 8aae66d752079d683e6a897bdea09ab6bf6c108389e01baef2a65e8c6c3090da
+    required_status: supported
+    required_integrity: true
+  dsagen_revision: 1e5d2c3d48ecc1f9b7d42c7103d0705b0c98fb78
+
+source_layout:
+  adapter_header: third_party/dsa-framework/dsa-gem5/src/cpu/minor/ssim/mlx_dma_adapter.hh
+  adapter_source: third_party/dsa-framework/dsa-gem5/src/cpu/minor/ssim/mlx_dma_adapter.cc
+  lsq_header: third_party/dsa-framework/dsa-gem5/src/cpu/minor/lsq.hh
+  lsq_source: third_party/dsa-framework/dsa-gem5/src/cpu/minor/lsq.cc
+  guest_source: simulator_ext/dsagen/mlx_dma_harness.c
+  compiler: scripts/compile_mlx_dma_microtrace.py
+  runner: scripts/run_mlx_dma_gem5.sh
+  auditor: scripts/audit_dsagen_mlx_dma_memory.py
+  tracked_patch: patches/dsagen/dsa-gem5-mlx-dma-memory-v1.patch
+
+adapter_contract:
+  activation: memory_backend equals dsagen_dma
+  start_in_roi: true
+  transfer_index: 126
+  issue_path: Overlay -> Gem5DmaAdapter -> Minor::LSQ::pushRequest
+  load_completion: ordered LSQ response completion
+  store_progress: MLX transfer queue -> existing Minor store buffer
+  store_completion: LSQ recvTimingResp after completed write response
+  hierarchy: L1D -> L2 -> DDR4_2400_16x4
+  synthetic_latency_model_allowed: false
+  write_payload: deterministic_zero_bytes
+
+microtrace:
+  mesh: [4, 4]
+  active_window: 16
+  blocks: 16
+  iterations_per_block: 4
+  scalar_bytes: 8
+  reads: 64
+  stores: 64
+  computes: 64
+  cold_read_stride_bytes: 4096
+  per_iteration_line_stride_bytes: 64
+  write_block_stride_bytes: 256
+  guest_cold_region_bytes: 131072
+  guest_write_region_bytes: 4096
+  guest_write_initial_byte: 165
+  expected_fixed_store_checksum: 84480
+  expected_dma_store_checksum: 0
+
+gem5:
+  cpu_type: MinorCPU
+  cpu_clock: 1GHz
+  system_clock: 1GHz
+  l1d_size: 32kB
+  l1d_assoc: 8
+  l1i_size: 16kB
+  l2_size: 512kB
+  memory: DDR4_2400_16x4
+
+registered_checks:
+  - deterministic ELF-symbol-derived fixed and DMA configs
+  - exact 16-block and 64-load/64-compute/64-store structure
+  - transfer index does not overlap active DSAGEN input ports or reserved indices 127/128
+  - DMA requests use the existing LSQ and gem5 cache/DRAM ports
+  - load completion follows the real read response
+  - store completion follows the real write response rather than store-buffer insertion
+  - fixed and DMA guest checksums distinguish absent and completed writes
+  - positive data-cache access delta and positive data-side DRAM evidence
+  - zero request failures and exact request/completion conservation
+  - observable queue pressure or concurrent outstanding requests
+  - fixed, scratchpad, and disabled-overlay regressions remain exact
+  - no MLX paper timing, speedup, utilization, area, or energy target is consumed
+
+compiled_outputs:
+  fixed: artifacts/environment/h47/mlx-dma-fixed.json
+  dma: artifacts/environment/h47/mlx-dma-real.json
+  manifest: artifacts/environment/h47/mlx-dma-compile-manifest.json
+
+result_path: artifacts/results/dsagen-mlx-dma-memory-run053.json
