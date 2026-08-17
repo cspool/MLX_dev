@@ -1,0 +1,36 @@
+metadata:
+  purpose: "Frozen raster coordinates for exploratory Fig. 17 H100 speedup target recovery"
+  coordinate_origin: "top-left; y increases downward"
+  source: "MLX Multi-Layer Execution for Structured LLM Workload Acceleration on Spatial Architectures/_page_10_Figure_4.jpeg"
+  sha256: "72e761c2340ba7846758d5790f3189a60d133c4dcc926d2955a76fac21680ec0"
+  dimensions: [562, 200]
+  pixel_uncertainty_y: 1.5
+  uncertainty_abs_speedup: 0.04
+
+axis:
+  y_at_zero: 177
+  y_at_one: 120
+  y_at_two: 63
+  pixels_per_speedup: 57.0
+
+plot_semantics:
+  sequence_lengths: [512, 1024, 2048, 4096, 8192]
+  # Bars are ordered by phase/style, not by the row order in the legend.
+  bar_order_in_each_group: [prefill_eager, prefill_fa, decode_eager, decode_fa]
+  style_identity:
+    prefill_eager: "white, no hatch"
+    prefill_fa: "white, diagonal hatch"
+    decode_eager: "gray, no hatch"
+    decode_fa: "gray, diagonal hatch"
+
+bar_top_y:
+  prefill_eager: [112.0, 99.0, 57.0, 47.5, 21.5]
+  prefill_fa: [120.5, 119.0, 115.0, 100.0, 83.0]
+  decode_eager: [91.5, 81.5, 74.5, 67.5, 66.5]
+  decode_fa: [94.5, 84.0, 75.5, 69.5, 67.5]
+
+reported_cross_checks:
+  prefill_eager_max: {expected: 2.72, tolerance_abs: 0.04}
+  prefill_fa_max: {expected: 1.64, tolerance_abs: 0.04}
+  decode_min: {expected: 1.4, tolerance_abs: 0.06}
+  decode_max: {expected: 1.9, tolerance_abs: 0.06}

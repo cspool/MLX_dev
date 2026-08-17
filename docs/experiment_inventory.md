@@ -13,7 +13,7 @@ This is the completion checklist. `target` means a paper anchor is captured with
 | Fig. 15(b) | BERT layer-count sensitivity | Retraining | Training recipe + FLOP model + audit | yes | yes | original baseline passes; inferred structured sweep rejected at k=9/12 (81.47% max error) |
 | Fig. 15(c,d) | Llama2/InternLM2 LoRA accuracy/perplexity and compute | Fine-tuning/evaluation | Model recipes, cached targets, FLOP model | yes | compute + target digitizer + InternLM original PPL yes | InternLM/WikiText-2 original pass (3.91% error); compressed/LoRA variants no |
 | Fig. 16 | Block-size B sensitivity on ViT/Llama2/InternLM2 | Training/fine-tuning | Parameter sweep runner | yes | compute + quality-target digitizer yes | MLX compute pass; training no |
-| Fig. 17 | H100 prefill/decode speedup vs eager/FA | Native GPU benchmark | Native/trace GPU runner + audit | partial | no | no |
+| Fig. 17 | H100 prefill/decode speedup vs eager/FA | Native GPU benchmark | Native/trace GPU runner + audit | yes | no | H17 target audit pending; native H100 unavailable |
 | Fig. 18 | Latency, energy, and algorithm-normalized speedup vs sparse accelerators | MLX cycle simulation + cited baselines | Reduced-design simulator + baseline replay | yes | yes | no (Fig. 18(c)/Table IV MLX values unreconciled) |
 | Table V / Fig. 19 | FPGA resources and FABNet latency breakdown | FPGA implementation/simulation | Resource replay + workload timing model | partial | yes | reported arithmetic pass; FPGA timing not reproduced |
 | Fig. 20 | Eight Llama2 kernels vs Xavier, dense and sparse GPU | Silicon/MLX + native GPU | Full-design timing/power + GPU targets | yes | yes | no (held-out proxy rejected; speed MAPE 65%/25%) |
