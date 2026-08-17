@@ -1,0 +1,80 @@
+run:
+  id: run_041
+  hypothesis: H36
+  protocol: experiments/h36-mlx-fig14-identity/protocol.md
+  observation: artifacts/source-snapshots/mlx-fig14-visual-observation-run041.yaml
+  output: artifacts/results/mlx-fig14-identity-run041.json
+
+classification: primary_figure_identity_audit
+validation_eligible: false
+
+local_sources:
+  paper:
+    path: "MLX Multi-Layer Execution for Structured LLM Workload Acceleration on Spatial Architectures/MLX Multi-Layer Execution for Structured LLM Workload Acceleration on Spatial Architectures.md"
+    bytes: 85855
+    sha256: 5785eb81b28741a3806ca42749d7b556bbcd2404e1622ae644a32bae2ade7745
+  figure14:
+    path: "MLX Multi-Layer Execution for Structured LLM Workload Acceleration on Spatial Architectures/_page_9_Picture_0.jpeg"
+    bytes: 16309
+    sha256: dc77320cffffb71ae50b3e388677eeea71df34bcdab1d8781e1faf73498da2ba
+    width: 266
+    height: 213
+    mode: RGB
+    format: JPEG
+  h35_result:
+    path: artifacts/results/mlx-primary-source-recovery-run040.json
+    bytes: 84348
+    sha256: 49944b8e0e66a6835a88f26784fca1552e8770a779aed06da31078e1c9e81ef8
+    run_id: run_040
+    git_commit: e5422fded921f06ee7bf9c6072dc4b60523aac2e
+
+allowed_identifier_tokens:
+  - DFU-E
+  - M2-DFU
+  - DFGAS
+  - SimICT
+  - DSAGEN
+  - Assassyn
+  - DPU-s
+  - HTC-3000
+  - HTC-3500
+
+exact_parent_candidate_tokens:
+  - DFU-E
+  - M2-DFU
+  - DPU-s
+  - HTC-3000
+  - HTC-3500
+
+generic_identity_tokens:
+  - MLX
+  - PE
+  - memory
+  - NoC
+  - floorplan
+
+allowed_categories:
+  - chip_identifier
+  - project_or_family_identifier
+  - process_node
+  - frequency
+  - simd_width
+  - mesh_dimensions
+  - peak_throughput
+  - pe_array_area
+  - pe_array_power
+  - generic_label
+
+numeric_parent_categories:
+  - process_node
+  - frequency
+  - simd_width
+  - mesh_dimensions
+  - peak_throughput
+  - pe_array_area
+  - pe_array_power
+
+decision:
+  minimum_clear_non_generic_identifiers: 1
+  minimum_clear_numeric_parent_values: 2
+  exact_parent_requires_registered_candidate_label: true
