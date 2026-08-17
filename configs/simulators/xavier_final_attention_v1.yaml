@@ -1,0 +1,43 @@
+name: xavier-final-attention-v1
+experiment_id: H87
+run_id: run092
+classification: target_free_final_xavier_attention_folding
+validation_eligible: false
+
+frozen_inputs:
+  h86:
+    path: artifacts/results/xavier-qualified-attention-run091.json
+    sha256: e22c0b3155cdfcb2dbd30e00bc17f2c17bf1166e025f95d9f47630e713474344
+    required_status: rejected
+    required_integrity: true
+  h86_run_manifest:
+    path: artifacts/environment/h86/xavier-qualified-run-manifest.json
+    sha256: e114aac60046894274e38bfe5dd55fe552b93cbd0c161639796a1ca896ad099d
+  stable_fft_source:
+    path: simulator_ext/accelsim/mlx_fft_stable_proxy.cu
+    sha256: 11c83400213067531c863eb94af9dcea877b2eb4b806353f04da15d1fe5f9b59
+  attention_source:
+    path: simulator_ext/accelsim/mlx_attention_proxy.cu
+    sha256: e96786969a7c5a4daba2e984e85768b18d3fbde692db337b4493dc91a7a25bbc
+
+checksum_relative_error_limit: 0.00001
+cycle_relative_error_limit: 0.05
+device_clock_hz: 1377000000
+output_root: artifacts/environment/h87
+
+jobs:
+  - {name: N256-stablefft-c16384, binary: stable_fft, family: fftcmp, count: 16384, parameter: 8, parameter2: 7}
+  - {name: N8192-stablefft-c16384, binary: stable_fft, family: fftcmp, count: 16384, parameter: 13, parameter2: 12}
+  - {name: N256-sv-c16384, binary: attention, family: sv, count: 16384, parameter: 128, parameter2: 0}
+
+full_counts:
+  N256: {fftcmp: 1572864, qk: 16384, softmax: 128, sv: 524288}
+  N8192: {fftcmp: 50331648, qk: 16777216, softmax: 4096, sv: 16777216}
+
+source_layout:
+  stable_fft_source: simulator_ext/accelsim/mlx_fft_stable_proxy.cu
+  attention_source: simulator_ext/accelsim/mlx_attention_proxy.cu
+  runner: scripts/run_xavier_final_attention.py
+  auditor: scripts/audit_xavier_final_attention.py
+
+result_path: artifacts/results/xavier-final-attention-run092.json
