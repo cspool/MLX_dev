@@ -1,0 +1,59 @@
+name: attention-work-signature-v1
+experiment_id: H79
+run_id: run084
+classification: target_free_attention_execution_signature
+validation_eligible: false
+
+frozen_inputs:
+  paper:
+    path: MLX Multi-Layer Execution for Structured LLM Workload Acceleration on Spatial Architectures/MLX Multi-Layer Execution for Structured LLM Workload Acceleration on Spatial Architectures.md
+    sha256: 5785eb81b28741a3806ca42749d7b556bbcd2404e1622ae644a32bae2ade7745
+  logical_work:
+    path: artifacts/results/fig20-workload-identity-run080.json
+    sha256: 464215470b8d56f944d85bf9ef419fddb3977072b1511735e9adc9ddc16b66af
+    required_status: supported
+    required_integrity: true
+  h57_result:
+    path: artifacts/results/fig20-sparse-xavier-run063.json
+    sha256: 5688d439bbe21b68380238b60b983bcb59236368c63056524a8d66ffdd36a4e2
+    required_integrity: true
+  h57_manifest:
+    path: artifacts/environment/h57/fig20-sparse-xavier-compile-manifest.json
+    sha256: 158460ac460dcb81381121601caead2a4f4ad4e93921e1980c9bf3ddb22aab49
+  fu_anchor:
+    path: artifacts/results/fig24-fu-rerun-run078.json
+    sha256: c25a72a32d8ed37bbb9d09b0747167c712f7fbbf5c0ca54edc580e9a6c0203c1
+    required_status: supported
+    required_integrity: true
+  pe_contract:
+    path: artifacts/results/mlx-pe-semantics-correction-run058.json
+    sha256: 5573dcc3b4317077803ad135aa0be863b94db00aefdfeec545b9504cd9642d1e
+    required_status: supported
+    required_integrity: true
+  execution_template:
+    path: src/mlxsim/dsagen_operator_sweep.py
+    sha256: 5a705e2edccc73b00d5faaf635b1199cea6521203d65048239147db38a217a8b
+
+shape:
+  sequence_lengths: [256, 8192]
+  hidden_dimension: 4096
+  batch: 1
+  compression_ratio: 0.5
+  fft_projections: 3
+
+fft_template:
+  fma_per_pair: 4
+  add_per_pair: 6
+  analytical_flops_per_pair: 10
+  shuffle_per_retained_element: 1
+
+attention_template:
+  fma_flops: 2
+  fmax_weighted_flops: 1
+  fexp_weighted_flops: 4
+  add_weighted_flops: 1
+  fdiv_per_output_element: 1
+
+expected_h57_fft_stage_count: 7
+auditor: scripts/audit_attention_work_signature.py
+result_path: artifacts/results/attention-work-signature-run084.json
