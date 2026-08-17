@@ -1,0 +1,274 @@
+{
+  "schema_version": 1,
+  "experiment_id": "H79",
+  "run_id": "run084",
+  "classification": "target_free_attention_execution_signature",
+  "validation_eligible": false,
+  "generated_at": "2026-08-17T21:56:02.114460+00:00",
+  "project_commit": "bc2c9a2505dce58462462e808f4246c693dcdce9",
+  "hypothesis_status": "supported",
+  "audit_integrity": true,
+  "frozen_inputs": {
+    "paper": {
+      "path": "MLX Multi-Layer Execution for Structured LLM Workload Acceleration on Spatial Architectures/MLX Multi-Layer Execution for Structured LLM Workload Acceleration on Spatial Architectures.md",
+      "bytes": 85855,
+      "sha256": "5785eb81b28741a3806ca42749d7b556bbcd2404e1622ae644a32bae2ade7745",
+      "checks": {
+        "is_file": true,
+        "sha256": true
+      },
+      "pass": true
+    },
+    "logical_work": {
+      "path": "artifacts/results/fig20-workload-identity-run080.json",
+      "bytes": 14034,
+      "sha256": "464215470b8d56f944d85bf9ef419fddb3977072b1511735e9adc9ddc16b66af",
+      "checks": {
+        "is_file": true,
+        "sha256": true
+      },
+      "pass": true
+    },
+    "h57_result": {
+      "path": "artifacts/results/fig20-sparse-xavier-run063.json",
+      "bytes": 7991,
+      "sha256": "5688d439bbe21b68380238b60b983bcb59236368c63056524a8d66ffdd36a4e2",
+      "checks": {
+        "is_file": true,
+        "sha256": true
+      },
+      "pass": true
+    },
+    "h57_manifest": {
+      "path": "artifacts/environment/h57/fig20-sparse-xavier-compile-manifest.json",
+      "bytes": 6351,
+      "sha256": "158460ac460dcb81381121601caead2a4f4ad4e93921e1980c9bf3ddb22aab49",
+      "checks": {
+        "is_file": true,
+        "sha256": true
+      },
+      "pass": true
+    },
+    "fu_anchor": {
+      "path": "artifacts/results/fig24-fu-rerun-run078.json",
+      "bytes": 154240,
+      "sha256": "c25a72a32d8ed37bbb9d09b0747167c712f7fbbf5c0ca54edc580e9a6c0203c1",
+      "checks": {
+        "is_file": true,
+        "sha256": true
+      },
+      "pass": true
+    },
+    "pe_contract": {
+      "path": "artifacts/results/mlx-pe-semantics-correction-run058.json",
+      "bytes": 13215,
+      "sha256": "5573dcc3b4317077803ad135aa0be863b94db00aefdfeec545b9504cd9642d1e",
+      "checks": {
+        "is_file": true,
+        "sha256": true
+      },
+      "pass": true
+    },
+    "execution_template": {
+      "path": "src/mlxsim/dsagen_operator_sweep.py",
+      "bytes": 10799,
+      "sha256": "5a705e2edccc73b00d5faaf635b1199cea6521203d65048239147db38a217a8b",
+      "checks": {
+        "is_file": true,
+        "sha256": true
+      },
+      "pass": true
+    }
+  },
+  "parent_checks": {
+    "logical_work": true,
+    "h57_result": true,
+    "fu_anchor": true,
+    "pe_contract": true
+  },
+  "signatures": {
+    "N256": {
+      "sequence_length": 256,
+      "fft_compression": {
+        "sequence_length": 256,
+        "retained_length": 128,
+        "vectors": 12288,
+        "forward_stages": 8,
+        "inverse_stages": 7,
+        "tagged_stage_count": 16,
+        "analytical_stage_count_excluding_shuffle": 15,
+        "forward_butterfly_pairs": 12582912,
+        "inverse_butterfly_pairs": 5505024,
+        "butterfly_pairs": 18087936,
+        "analytical_operations": 180879360,
+        "execution_weighted_flops_excluding_shuffle": 253231104,
+        "fu_instruction_instances": {
+          "fma": 72351744,
+          "alu_add": 108527616,
+          "shuffle": 1572864
+        }
+      },
+      "compressed_attention": {
+        "retained_length": 128,
+        "hidden_dimension": 4096,
+        "tagged_stage_count": 4,
+        "score_elements": 16384,
+        "output_elements": 524288,
+        "analytical_operations_excluding_fdiv": 268533760,
+        "fu_instruction_instances": {
+          "fma": 134217728,
+          "fmax": 16384,
+          "fexp": 16384,
+          "alu_add": 16384,
+          "fdiv": 524288
+        }
+      },
+      "analytical_operations_excluding_fdiv": 449413120,
+      "required_fdiv_instructions": 524288,
+      "logical_parent": {
+        "operations": 449413120.0,
+        "offchip_bytes": 13631488.0,
+        "output_elements": 2097152.0,
+        "component_count": 2
+      }
+    },
+    "N8192": {
+      "sequence_length": 8192,
+      "fft_compression": {
+        "sequence_length": 8192,
+        "retained_length": 4096,
+        "vectors": 12288,
+        "forward_stages": 13,
+        "inverse_stages": 12,
+        "tagged_stage_count": 26,
+        "analytical_stage_count_excluding_shuffle": 25,
+        "forward_butterfly_pairs": 654311424,
+        "inverse_butterfly_pairs": 301989888,
+        "butterfly_pairs": 956301312,
+        "analytical_operations": 9563013120,
+        "execution_weighted_flops_excluding_shuffle": 13388218368,
+        "fu_instruction_instances": {
+          "fma": 3825205248,
+          "alu_add": 5737807872,
+          "shuffle": 50331648
+        }
+      },
+      "compressed_attention": {
+        "retained_length": 4096,
+        "hidden_dimension": 4096,
+        "tagged_stage_count": 4,
+        "score_elements": 16777216,
+        "output_elements": 16777216,
+        "analytical_operations_excluding_fdiv": 274978570240,
+        "fu_instruction_instances": {
+          "fma": 137438953472,
+          "fmax": 16777216,
+          "fexp": 16777216,
+          "alu_add": 16777216,
+          "fdiv": 16777216
+        }
+      },
+      "analytical_operations_excluding_fdiv": 284541583360,
+      "required_fdiv_instructions": 16777216,
+      "logical_parent": {
+        "operations": 284541583360.0,
+        "offchip_bytes": 436207616.0,
+        "output_elements": 67108864.0,
+        "component_count": 2
+      }
+    }
+  },
+  "reconciliation": {
+    "N256": {
+      "fft_analytical_operations": true,
+      "fft_analytical_stages": true,
+      "fft_shuffle_stage_explicit": true,
+      "attention_analytical_operations": true,
+      "attention_stages": true,
+      "fdiv_matches_output": true,
+      "combined_analytical_operations": true
+    },
+    "N8192": {
+      "fft_analytical_operations": true,
+      "fft_analytical_stages": true,
+      "fft_shuffle_stage_explicit": true,
+      "attention_analytical_operations": true,
+      "attention_stages": true,
+      "fdiv_matches_output": true,
+      "combined_analytical_operations": true
+    }
+  },
+  "h57_gaps": {
+    "N256": {
+      "proxy_key": "fft--short",
+      "proxy_stage_count": 7,
+      "required_fft_stage_count": 16,
+      "proxy_operation_classes": [
+        "alu_add",
+        "fma",
+        "shuffle"
+      ],
+      "missing_attention_operation_classes": [
+        "fdiv",
+        "fexp",
+        "fmax"
+      ],
+      "single_proxy_for_two_components": true,
+      "stage_count_mismatch": true,
+      "attention_fu_mix_missing": true
+    },
+    "N8192": {
+      "proxy_key": "fft--long",
+      "proxy_stage_count": 7,
+      "required_fft_stage_count": 26,
+      "proxy_operation_classes": [
+        "alu_add",
+        "fma",
+        "shuffle"
+      ],
+      "missing_attention_operation_classes": [
+        "fdiv",
+        "fexp",
+        "fmax"
+      ],
+      "single_proxy_for_two_components": true,
+      "stage_count_mismatch": true,
+      "attention_fu_mix_missing": true
+    }
+  },
+  "h57_gap_checks": {
+    "N256": true,
+    "N8192": true
+  },
+  "available_physical_anchor_classes": {
+    "fft": [
+      "alu",
+      "fma",
+      "shuffle"
+    ],
+    "swa": [
+      "alu",
+      "fma",
+      "reduce",
+      "transcendental"
+    ]
+  },
+  "source_checks": {
+    "paper_spatial_pe": true,
+    "paper_tagged_block": true,
+    "paper_fdiv": true,
+    "template_fft_mix": true,
+    "template_attention_mix": true
+  },
+  "integrity_checks": {
+    "frozen_files": true,
+    "parents": true,
+    "reconciliation": true,
+    "h57_gap": true,
+    "source_contract": true,
+    "fu_anchors": true,
+    "no_targets": true
+  },
+  "paper_performance_targets_consumed": false,
+  "conclusion": "H57 single FFT proxy cannot represent matched FFT compression plus compressed attention"
+}

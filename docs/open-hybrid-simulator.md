@@ -116,6 +116,8 @@ estimator in
 Figure 20 comparison is rejected in
 [`matched-projection-fig20-transfer.md`](matched-projection-fig20-transfer.md),
 showing that matched aggregate work alone is insufficient. The remaining
-boundary is independently defensible per-kernel FU/stage/memory/launch scaling
-for Figures 18--21 and 24--25. Paper result bars were not inputs to the
-invariant runs.
+attention work mismatch is now made explicit in
+[`attention-work-signature.md`](attention-work-signature.md). The remaining
+boundary is execution of those matched per-kernel FU/stage/memory/launch
+signatures for Figures 18--21 and 24--25. Paper result bars were not inputs to
+the invariant runs.

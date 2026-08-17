@@ -72,6 +72,7 @@ H37 closes the full-paper ledger with a machine certificate rather than a comple
 - H71's physical `(PE,FU-class)` counters invalidate the earlier global-any-PE compute proxy. Their frozen transfers reject Figure 25 at 0/24 points (46.09% MAPE) and Figure 24 at 3/42 points (610.5% MAPE), proving that proxy-work identity and physical utilization cannot be repaired by renaming the metric.
 - H75 proves H57 did not execute matched Figure 20 shapes: all proxies represent below 1% of logical work, usually below 0.001%, and QKV/FFN rectangular shapes share one BSMM proxy. H76 then validates affine repeat folding independently at 36/36 held-out checks, 0.82% MAPE, and 3.73% maximum error.
 - H77 applies that folding to all six QKV/FFN projection cells with exact logical FMA work and no paper targets. H78 freezes the estimator before comparison and rejects it at 0/6 points: all predictions are about 2.021x versus 3.2x-4.3x, with 46.75% MAPE and 53.00% maximum error. Matched total work is necessary but not sufficient; per-kernel FU mix, stage/launch structure, memory traffic, and GPU execution shape must be modeled next.
+- H79 supports a target-free per-FU attention work contract. The matched FFT-CMP paths require 16/26 tagged stages rather than H57's seven, and the second component adds FMAX/FEXP/FDIV classes absent from the FFT proxy. It also exposes a convention boundary: H75's FFT analysis uses 10 real FLOPs per butterfly, while H50's executable template uses four FMA plus six ADD instructions (14 weighted FLOPs), and H75 omits 0.524M/16.78M final FDIV instructions at N=256/8192. All frozen analytical totals reconcile exactly; no performance target is read.
 
 ## Patterns and Insights
 
@@ -106,6 +107,7 @@ H37 closes the full-paper ledger with a machine certificate rather than a comple
 - An independently frozen mechanism can support a later target-exposed curve without becoming held-out. H45 contains no Figure 23 values; H46 reuses it unchanged and passes, which is stronger than the old residual-calibrated replay but still limited by proxy workload scope.
 - Successful source compilation is weaker than instruction-stream qualification. DSAGEN's LLVM integrated assembler silently lost custom S-type immediates and produced zero-address streams; object disassembly of masks 98/229/1220 plus an application sanity check was necessary to validate the official custom-GNU assembly path.
 - Exact repeat folding is weaker than kernel identity. H76 can predict cycles for one recurring schedule while H78 still fails every projection target because one B32 CDC slope and one GPU cycles/FMA slope erase QKV/FFN shape, launch, memory, and occupancy differences.
+- A paper's FLOP convention is not automatically an executable instruction mix. H79 preserves both the conventional 10-FLOP FFT-pair count and the source-derived four-FMA/six-ADD template instead of treating their 1.4x difference as simulator speed.
 
 ## Lessons and Constraints
 
@@ -144,6 +146,7 @@ H37 closes the full-paper ledger with a machine certificate rather than a comple
 - H43 removes pair-wise JSON expansion as a blocker, but timing provenance and off-chip traffic remain unresolved. The 593-cycle B64 result is a target-independent implementation check, not evidence that any plotted MLX bar is reproduced.
 - Preserve H44's FFT-64 failure. The paper mentions about 17% small-kernel launch overhead but publishes no exact launch/IF model; applying 17% only where the residual asks for it would turn the no-fit transfer into a calibration replay.
 - Do not divide H78 residuals into QKV/FFN correction factors. The next Figure 20 attempt must first produce target-free, per-kernel execution signatures and a separate two-component FFT-compression plus compressed-attention path.
+- Do not count H79's newly explicit FDIV or FFT-template mix as extra paper work retroactively. They are execution-signature fields for the next simulator run; historical H75/H77 artifacts retain their original analytical convention.
 
 ## Open Questions
 
@@ -180,3 +183,8 @@ to six exact-work projection shapes without targets. Run083 then rejects the
 frozen Figure 20 transfer at 0/6 points, 46.75% MAPE, and 53.00% maximum error;
 the next loop must deepen per-kernel execution identity rather than tune this
 shared slope.
+
+Run084 supplies that next identity layer for Attention. Both H75 analytical
+components reconcile exactly, while the executable signature proves that a
+seven-stage FFT-only proxy lacks the matched 16/26-stage FFT depth and the
+compressed-attention FMAX/FEXP/FDIV classes.

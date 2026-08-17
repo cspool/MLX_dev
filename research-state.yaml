@@ -687,9 +687,9 @@ experiments:
       timestamp: "2026-08-17"
 
 outer_loop:
-  cycle: 40
-  last_direction: "Stop shared cycles/FMA and residual scaling after H78. Derive a target-free per-FU work signature for Figure 20 attention, then execute separate shape-specific FFT-compression and compressed-attention anchors on paper-static DSAGEN and Xavier GPGPU-Sim before another target comparison."
-  last_reflection: "H75 fixes workload identity and H76 proves repeat folding, but H78 still misses all six matched-work projection targets at 46.75% MAPE. Aggregate FMA count is therefore necessary but insufficient: kernel-specific FU mix, stages, launches, memory traffic, and GPU occupancy are now the highest-priority boundary. The PE contract remains spatial/tagged-block rather than GPU-SM/SIMT."
+  cycle: 41
+  last_direction: "Use H79's target-free signature to extend the paper-static operator compiler to variable 16/26-stage FFT compression and a separate four-stage dense compressed-attention CDC. Validate per-FU work conservation and repeat-folded cycles, then run two-size Xavier GPGPU-Sim anchors before exposing Figure 20 targets."
+  last_reflection: "H79 reconciles both analytical components and proves H57's seven-stage FFT-only proxy misses the matched FFT depth plus FMAX/FEXP/FDIV work. It also separates H75's 10-FLOP FFT convention from H50's executable 4-FMA/6-ADD template and records the omitted final FDIV. The architecture path remains a spatial tagged-block PE with explicit heterogeneous FUs; no SM/SIMT state is added."
 
 recent_milestones_after_h46:
   architecture_contract: "H52 supersedes the GPU-SM analogy with the paper's specialized spatial tagged-block PE; GPGPU-Sim is baseline-only."
@@ -698,6 +698,7 @@ recent_milestones_after_h46:
   workload_identity: "H75 proves H57 proxies cover below 1% of logical work and collapse distinct QKV/FFN/attention shapes."
   repeat_folding: "H76 supports 36/36 held-out affine cycle estimates with 0.82% MAPE and 3.73% maximum error."
   matched_projection: "H77 supports exact-work target-free estimates for six projection cells; H78 rejects their frozen Figure 20 transfer at 0/6, 46.75% MAPE, and 53.00% maximum error."
+  attention_signature: "H79 supports exact target-free N=256/8192 FFT-CMP and compressed-attention per-FU signatures; H57's seven-stage FFT proxy lacks the required 16/26 stages and FMAX/FEXP/FDIV classes."
 
 completion_snapshot_run042:
   certificate_run: run_042

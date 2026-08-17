@@ -22,5 +22,10 @@ cross-simulator explanation. The next estimator must preserve per-kernel FU
 mix, stage count, launch structure, memory traffic, and GPU execution shape;
 the residuals above must not be converted into per-kernel scale factors.
 
+The next target-free step is complete in
+[`attention-work-signature.md`](attention-work-signature.md): it separates the
+FFT-compression and compressed-attention FU/stage signatures before either is
+timed at matched shape.
+
 The immutable result is
 `artifacts/results/matched-projection-fig20-transfer-run083.json`.
