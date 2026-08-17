@@ -138,3 +138,8 @@ The Xavier follow-up trajectory is closed in
 eight-cell Figure 20 ledger is in
 [`fig20-matched-evidence-closure.md`](fig20-matched-evidence-closure.md): six
 numerical failures and two execution-incomplete Attention cells.
+
+Figure 21's next boundary is localized in
+[`fig21-workload-identity.md`](fig21-workload-identity.md): the analytical work
+is correct, but the real source path lacks the complete batch-8, five-shape,
+32-layer structured/dense graph.

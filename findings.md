@@ -82,6 +82,7 @@ H37 closed the first full-paper ledger with a machine certificate rather than a 
 - H86 fixes FFT numerical reproducibility with a separate stable source: all seven new checksums pass. Its 2048/4096→8192 cycle gate still passes only 1/3 points (5.26% MAPE), with long FFT and short SV just above 5%. H87's final 4096/8192→16384 gate also passes only 1/3 (5.91% MAPE, 7.35% max). The source and execution are valid; global affine full-count folding is not.
 - H88 supports a complete Figure 20 evidence ledger, not reproduction. All eight cells are accounted for: six matched projections are numerical failures and two Attention cells are execution-incomplete because no eligible Xavier denominator exists. Zero cells reproduce within 10%; the global Figure 20 verdict remains false.
 - H89 supports the updated full-paper certificate. Latest evidence changes Figure 22 from one early calibrated pass to a 15/16 strict rejection and Figures 23-25 from replay-only to real-execution rejections. Updated counts are 0 reproduced, 11 attempt-rejected, 0 replay-only, and 7 publicly blocked; all 18 remain incomplete.
+- H90 supports a target-free Figure 21 identity diagnosis. H6's analytical batch-8 work exactly matches fresh QKV/Attention/output/FFN profiles at all five sequence lengths, so its failure is not work arithmetic. Source-integrated coverage is still unmatched: H48 is trip=2 phase coverage, H77/H83 are batch=1 at only N=256/8192, output projection is absent, and no run executes dense/elementwise paths or the 24+8 layer mix.
 
 ## Patterns and Insights
 
@@ -244,3 +245,6 @@ zero reproduced, six numerical failures, and two execution-incomplete cells.
 
 Run094 refreshes the full-paper certificate with H44/H70/H72/H74/H88. The
 truthful completion count is now zero of 18 rather than the old one of 18.
+
+Run095 proves Figure 21's logical work is explicit while its real execution
+identity remains missing across shape, batch, components, and layer mix.

@@ -1,0 +1,612 @@
+{
+  "schema_version": 1,
+  "experiment_id": "H90",
+  "run_id": "run095",
+  "classification": "target_free_figure21_workload_identity_audit",
+  "validation_eligible": false,
+  "generated_at": "2026-08-17T23:55:51.358234+00:00",
+  "project_commit": "72bd788d3141e75c01ff178349c77bfc830d47d4",
+  "hypothesis_status": "supported",
+  "audit_integrity": true,
+  "matched_source_execution_available": false,
+  "frozen_inputs": {
+    "fig21_proxy": {
+      "path": "artifacts/results/fig21-run007.json",
+      "bytes": 161959,
+      "sha256": "506538bf657eea9e398eb70771e889ab752e81913e9510961abb4a80d9425817",
+      "checks": {
+        "is_file": true,
+        "sha256": true
+      },
+      "pass": true
+    },
+    "full_block": {
+      "path": "artifacts/results/dsagen-mlx-full-block-run054.json",
+      "bytes": 71102,
+      "sha256": "c80b174192db67a64f76516427fddfc6230712d332e943e095af4e455f5d34fb",
+      "checks": {
+        "is_file": true,
+        "sha256": true
+      },
+      "pass": true
+    },
+    "logical_work": {
+      "path": "artifacts/results/fig20-workload-identity-run080.json",
+      "bytes": 14034,
+      "sha256": "464215470b8d56f944d85bf9ef419fddb3977072b1511735e9adc9ddc16b66af",
+      "checks": {
+        "is_file": true,
+        "sha256": true
+      },
+      "pass": true
+    },
+    "projections": {
+      "path": "artifacts/results/matched-projection-estimator-run082.json",
+      "bytes": 5533,
+      "sha256": "e9df44d2b6c025fa141c71564e47708e68f9f306cb3992f495a65f9ce3c93ec7",
+      "checks": {
+        "is_file": true,
+        "sha256": true
+      },
+      "pass": true
+    },
+    "attention": {
+      "path": "artifacts/results/combined-attention-memory-run088.json",
+      "bytes": 48441,
+      "sha256": "a647443c82ae407b18f0253757b43cf245b1626593e03510895f9c87ecd5fa44",
+      "checks": {
+        "is_file": true,
+        "sha256": true
+      },
+      "pass": true
+    },
+    "completion": {
+      "path": "artifacts/results/full-paper-completion-update-run094.json",
+      "bytes": 8831,
+      "sha256": "1e51bec9236e5a3cd6f455c4044a663d6df18bb68cad39eb14a8cdb32cef450b",
+      "checks": {
+        "is_file": true,
+        "sha256": true
+      },
+      "pass": true
+    }
+  },
+  "parent_checks": {
+    "fig21_proxy": true,
+    "full_block": true,
+    "logical_work": true,
+    "projections": true,
+    "attention": true,
+    "completion": true
+  },
+  "contract": {
+    "sequence_lengths": [
+      128,
+      256,
+      512,
+      1024,
+      2048
+    ],
+    "batch": 8,
+    "total_layers": 32,
+    "structured_layers": 24,
+    "dense_layers": 8,
+    "hidden_dimension": 4096,
+    "ffn_dimension": 11008,
+    "block_size": 32,
+    "compression_ratio": 0.5,
+    "required_components": [
+      "qkv",
+      "attention",
+      "output",
+      "ffn1",
+      "ffn2",
+      "elementwise"
+    ]
+  },
+  "logical_profiles": {
+    "N128": {
+      "structured": {
+        "qkv": {
+          "operations": 32212254720.0,
+          "offchip_bytes": 65011712.0,
+          "output_elements": 12582912,
+          "stage_count": 5,
+          "subcomponents": 1
+        },
+        "attention": {
+          "operations": 1166213120.0,
+          "offchip_bytes": 54525952.0,
+          "output_elements": 8388608.0,
+          "stage_count": 17,
+          "subcomponents": 2
+        },
+        "output": {
+          "operations": 10737418240.0,
+          "offchip_bytes": 27262976.0,
+          "output_elements": 4194304,
+          "stage_count": 5,
+          "subcomponents": 1
+        },
+        "ffn1": {
+          "operations": 28856811520.0,
+          "offchip_bytes": 59113472.0,
+          "output_elements": 11272192,
+          "stage_count": 5,
+          "subcomponents": 1
+        },
+        "ffn2": {
+          "operations": 28856811520.0,
+          "offchip_bytes": 59113472.0,
+          "output_elements": 4194304,
+          "stage_count": 5,
+          "subcomponents": 1
+        }
+      },
+      "dense": {
+        "qkv": {
+          "operations": 103079215104.0,
+          "offchip_bytes": 134217728,
+          "output_elements": 12582912,
+          "stage_count": 1,
+          "subcomponents": 1
+        },
+        "attention": {
+          "operations": 2148270080.0,
+          "offchip_bytes": 33554432.0,
+          "output_elements": 4194304,
+          "stage_count": 4,
+          "subcomponents": 1
+        },
+        "output": {
+          "operations": 34359738368.0,
+          "offchip_bytes": 50331648,
+          "output_elements": 4194304,
+          "stage_count": 1,
+          "subcomponents": 1
+        },
+        "ffn1": {
+          "operations": 92341796864.0,
+          "offchip_bytes": 121110528,
+          "output_elements": 11272192,
+          "stage_count": 1,
+          "subcomponents": 1
+        },
+        "ffn2": {
+          "operations": 92341796864.0,
+          "offchip_bytes": 121110528,
+          "output_elements": 4194304,
+          "stage_count": 1,
+          "subcomponents": 1
+        }
+      }
+    },
+    "N256": {
+      "structured": {
+        "qkv": {
+          "operations": 64424509440.0,
+          "offchip_bytes": 98566144.0,
+          "output_elements": 25165824,
+          "stage_count": 5,
+          "subcomponents": 1
+        },
+        "attention": {
+          "operations": 3595304960.0,
+          "offchip_bytes": 109051904.0,
+          "output_elements": 16777216.0,
+          "stage_count": 19,
+          "subcomponents": 2
+        },
+        "output": {
+          "operations": 21474836480.0,
+          "offchip_bytes": 44040192.0,
+          "output_elements": 8388608,
+          "stage_count": 5,
+          "subcomponents": 1
+        },
+        "ffn1": {
+          "operations": 57713623040.0,
+          "offchip_bytes": 90046464.0,
+          "output_elements": 22544384,
+          "stage_count": 5,
+          "subcomponents": 1
+        },
+        "ffn2": {
+          "operations": 57713623040.0,
+          "offchip_bytes": 90046464.0,
+          "output_elements": 8388608,
+          "stage_count": 5,
+          "subcomponents": 1
+        }
+      },
+      "dense": {
+        "qkv": {
+          "operations": 206158430208.0,
+          "offchip_bytes": 167772160,
+          "output_elements": 25165824,
+          "stage_count": 1,
+          "subcomponents": 1
+        },
+        "attention": {
+          "operations": 8593080320.0,
+          "offchip_bytes": 67108864.0,
+          "output_elements": 8388608,
+          "stage_count": 4,
+          "subcomponents": 1
+        },
+        "output": {
+          "operations": 68719476736.0,
+          "offchip_bytes": 67108864,
+          "output_elements": 8388608,
+          "stage_count": 1,
+          "subcomponents": 1
+        },
+        "ffn1": {
+          "operations": 184683593728.0,
+          "offchip_bytes": 152043520,
+          "output_elements": 22544384,
+          "stage_count": 1,
+          "subcomponents": 1
+        },
+        "ffn2": {
+          "operations": 184683593728.0,
+          "offchip_bytes": 152043520,
+          "output_elements": 8388608,
+          "stage_count": 1,
+          "subcomponents": 1
+        }
+      }
+    },
+    "N512": {
+      "structured": {
+        "qkv": {
+          "operations": 128849018880.0,
+          "offchip_bytes": 165675008.0,
+          "output_elements": 50331648,
+          "stage_count": 5,
+          "subcomponents": 1
+        },
+        "attention": {
+          "operations": 11864637440.0,
+          "offchip_bytes": 218103808.0,
+          "output_elements": 33554432.0,
+          "stage_count": 21,
+          "subcomponents": 2
+        },
+        "output": {
+          "operations": 42949672960.0,
+          "offchip_bytes": 77594624.0,
+          "output_elements": 16777216,
+          "stage_count": 5,
+          "subcomponents": 1
+        },
+        "ffn1": {
+          "operations": 115427246080.0,
+          "offchip_bytes": 151912448.0,
+          "output_elements": 45088768,
+          "stage_count": 5,
+          "subcomponents": 1
+        },
+        "ffn2": {
+          "operations": 115427246080.0,
+          "offchip_bytes": 151912448.0,
+          "output_elements": 16777216,
+          "stage_count": 5,
+          "subcomponents": 1
+        }
+      },
+      "dense": {
+        "qkv": {
+          "operations": 412316860416.0,
+          "offchip_bytes": 234881024,
+          "output_elements": 50331648,
+          "stage_count": 1,
+          "subcomponents": 1
+        },
+        "attention": {
+          "operations": 34372321280.0,
+          "offchip_bytes": 134217728.0,
+          "output_elements": 16777216,
+          "stage_count": 4,
+          "subcomponents": 1
+        },
+        "output": {
+          "operations": 137438953472.0,
+          "offchip_bytes": 100663296,
+          "output_elements": 16777216,
+          "stage_count": 1,
+          "subcomponents": 1
+        },
+        "ffn1": {
+          "operations": 369367187456.0,
+          "offchip_bytes": 213909504,
+          "output_elements": 45088768,
+          "stage_count": 1,
+          "subcomponents": 1
+        },
+        "ffn2": {
+          "operations": 369367187456.0,
+          "offchip_bytes": 213909504,
+          "output_elements": 16777216,
+          "stage_count": 1,
+          "subcomponents": 1
+        }
+      }
+    },
+    "N1024": {
+      "structured": {
+        "qkv": {
+          "operations": 257698037760.0,
+          "offchip_bytes": 299892736.0,
+          "output_elements": 100663296,
+          "stage_count": 5,
+          "subcomponents": 1
+        },
+        "attention": {
+          "operations": 41670410240.0,
+          "offchip_bytes": 436207616.0,
+          "output_elements": 67108864.0,
+          "stage_count": 23,
+          "subcomponents": 2
+        },
+        "output": {
+          "operations": 85899345920.0,
+          "offchip_bytes": 144703488.0,
+          "output_elements": 33554432,
+          "stage_count": 5,
+          "subcomponents": 1
+        },
+        "ffn1": {
+          "operations": 230854492160.0,
+          "offchip_bytes": 275644416.0,
+          "output_elements": 90177536,
+          "stage_count": 5,
+          "subcomponents": 1
+        },
+        "ffn2": {
+          "operations": 230854492160.0,
+          "offchip_bytes": 275644416.0,
+          "output_elements": 33554432,
+          "stage_count": 5,
+          "subcomponents": 1
+        }
+      },
+      "dense": {
+        "qkv": {
+          "operations": 824633720832.0,
+          "offchip_bytes": 369098752,
+          "output_elements": 100663296,
+          "stage_count": 1,
+          "subcomponents": 1
+        },
+        "attention": {
+          "operations": 137489285120.0,
+          "offchip_bytes": 268435456.0,
+          "output_elements": 33554432,
+          "stage_count": 4,
+          "subcomponents": 1
+        },
+        "output": {
+          "operations": 274877906944.0,
+          "offchip_bytes": 167772160,
+          "output_elements": 33554432,
+          "stage_count": 1,
+          "subcomponents": 1
+        },
+        "ffn1": {
+          "operations": 738734374912.0,
+          "offchip_bytes": 337641472,
+          "output_elements": 90177536,
+          "stage_count": 1,
+          "subcomponents": 1
+        },
+        "ffn2": {
+          "operations": 738734374912.0,
+          "offchip_bytes": 337641472,
+          "output_elements": 33554432,
+          "stage_count": 1,
+          "subcomponents": 1
+        }
+      }
+    },
+    "N2048": {
+      "structured": {
+        "qkv": {
+          "operations": 515396075520.0,
+          "offchip_bytes": 568328192.0,
+          "output_elements": 201326592,
+          "stage_count": 5,
+          "subcomponents": 1
+        },
+        "attention": {
+          "operations": 153595412480.0,
+          "offchip_bytes": 872415232.0,
+          "output_elements": 134217728.0,
+          "stage_count": 25,
+          "subcomponents": 2
+        },
+        "output": {
+          "operations": 171798691840.0,
+          "offchip_bytes": 278921216.0,
+          "output_elements": 67108864,
+          "stage_count": 5,
+          "subcomponents": 1
+        },
+        "ffn1": {
+          "operations": 461708984320.0,
+          "offchip_bytes": 523108352.0,
+          "output_elements": 180355072,
+          "stage_count": 5,
+          "subcomponents": 1
+        },
+        "ffn2": {
+          "operations": 461708984320.0,
+          "offchip_bytes": 523108352.0,
+          "output_elements": 67108864,
+          "stage_count": 5,
+          "subcomponents": 1
+        }
+      },
+      "dense": {
+        "qkv": {
+          "operations": 1649267441664.0,
+          "offchip_bytes": 637534208,
+          "output_elements": 201326592,
+          "stage_count": 1,
+          "subcomponents": 1
+        },
+        "attention": {
+          "operations": 549957140480.0,
+          "offchip_bytes": 536870912.0,
+          "output_elements": 67108864,
+          "stage_count": 4,
+          "subcomponents": 1
+        },
+        "output": {
+          "operations": 549755813888.0,
+          "offchip_bytes": 301989888,
+          "output_elements": 67108864,
+          "stage_count": 1,
+          "subcomponents": 1
+        },
+        "ffn1": {
+          "operations": 1477468749824.0,
+          "offchip_bytes": 585105408,
+          "output_elements": 180355072,
+          "stage_count": 1,
+          "subcomponents": 1
+        },
+        "ffn2": {
+          "operations": 1477468749824.0,
+          "offchip_bytes": 585105408,
+          "output_elements": 67108864,
+          "stage_count": 1,
+          "subcomponents": 1
+        }
+      }
+    }
+  },
+  "logical_checks": {
+    "N128": {
+      "structured_qkv": true,
+      "dense_qkv": true,
+      "structured_attention": true,
+      "dense_attention": true,
+      "structured_output": true,
+      "dense_output": true,
+      "structured_ffn1": true,
+      "dense_ffn1": true,
+      "structured_ffn2": true,
+      "dense_ffn2": true
+    },
+    "N256": {
+      "structured_qkv": true,
+      "dense_qkv": true,
+      "structured_attention": true,
+      "dense_attention": true,
+      "structured_output": true,
+      "dense_output": true,
+      "structured_ffn1": true,
+      "dense_ffn1": true,
+      "structured_ffn2": true,
+      "dense_ffn2": true
+    },
+    "N512": {
+      "structured_qkv": true,
+      "dense_qkv": true,
+      "structured_attention": true,
+      "dense_attention": true,
+      "structured_output": true,
+      "dense_output": true,
+      "structured_ffn1": true,
+      "dense_ffn1": true,
+      "structured_ffn2": true,
+      "dense_ffn2": true
+    },
+    "N1024": {
+      "structured_qkv": true,
+      "dense_qkv": true,
+      "structured_attention": true,
+      "dense_attention": true,
+      "structured_output": true,
+      "dense_output": true,
+      "structured_ffn1": true,
+      "dense_ffn1": true,
+      "structured_ffn2": true,
+      "dense_ffn2": true
+    },
+    "N2048": {
+      "structured_qkv": true,
+      "dense_qkv": true,
+      "structured_attention": true,
+      "dense_attention": true,
+      "structured_output": true,
+      "dense_output": true,
+      "structured_ffn1": true,
+      "dense_ffn1": true,
+      "structured_ffn2": true,
+      "dense_ffn2": true
+    }
+  },
+  "source_coverage": {
+    "h48": {
+      "phase_coverage": true,
+      "exact_schedule": false,
+      "batch": null,
+      "sequence_lengths": [],
+      "layers_executed": null,
+      "reason": [
+        "numerically exact Llama2 inference",
+        "authors' unpublished instruction schedule",
+        "Figure 18-25 performance accuracy",
+        "GPU warp/SIMT/CTA/coherence behavior"
+      ]
+    },
+    "h77": {
+      "components": [
+        "qkv",
+        "ffn1",
+        "ffn2"
+      ],
+      "sequence_lengths": [
+        256,
+        8192
+      ],
+      "batch": 1,
+      "output_projection": false,
+      "layers_executed": 1
+    },
+    "h83": {
+      "components": [
+        "attention"
+      ],
+      "sequence_lengths": [
+        256,
+        8192
+      ],
+      "batch": 1,
+      "output_projection": false,
+      "layers_executed": 1
+    }
+  },
+  "gap_checks": {
+    "h6_logical_work_matches": true,
+    "all_required_shapes_missing_from_h83": true,
+    "batch_mismatch": true,
+    "output_projection_missing": true,
+    "dense_source_execution_missing": true,
+    "elementwise_exact_execution_missing": true,
+    "thirty_two_layer_execution_missing": true,
+    "h48_not_exact_schedule": true
+  },
+  "integrity_checks": {
+    "frozen_files": true,
+    "parents": true,
+    "proxy_sequences": true,
+    "logical_profiles": true,
+    "identity_gap_proven": true,
+    "targets_consumed": false
+  },
+  "paper_performance_targets_consumed": false,
+  "conclusion": "Figure 21 logical work is explicit but no current source-integrated run matches its full execution identity"
+}
