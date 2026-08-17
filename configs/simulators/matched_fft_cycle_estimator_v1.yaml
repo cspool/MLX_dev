@@ -1,0 +1,53 @@
+name: matched-fft-cycle-estimator-v1
+experiment_id: H80
+run_id: run085
+classification: target_free_matched_fft_cycle_estimator
+validation_eligible: false
+
+frozen_inputs:
+  signature:
+    path: artifacts/results/attention-work-signature-run084.json
+    sha256: 109091f15841245b3d2727fbfa492ea1671cb053a30c0278359833026919c3c6
+    required_status: supported
+    required_integrity: true
+  repeat_folding:
+    path: artifacts/results/repeat-folding-run081.json
+    sha256: 8aff122ca8a7c797030742c0035cf18626962c746d105c57dd2136bacaa6b3d6
+    required_status: supported
+    required_integrity: true
+  pe_contract:
+    path: artifacts/results/mlx-pe-semantics-correction-run058.json
+    sha256: 5573dcc3b4317077803ad135aa0be863b94db00aefdfeec545b9504cd9642d1e
+    required_status: supported
+    required_integrity: true
+  overlay:
+    path: third_party/dsa-framework/dsa-gem5/src/cpu/minor/ssim/mlx_overlay.cc
+    sha256: d2fc094770e5d78c9f4ccde03835fbec9bd37c2476bc6ff0ae5d1349d19ea6b0
+  driver:
+    path: simulator_ext/dsagen/mlx_overlay_json_driver.cc
+    sha256: 39608457bd470e4c130c1aec7bd61ea87b00abf069195a6d9e601f221c1b790b
+
+hardware:
+  mesh: [4, 4]
+  lanes: 4
+  simd_width: 8
+  branches: 3
+  active_window: 4
+  memory_backend: fixed
+
+shapes:
+  N256: {sequence_length: 256, forward_stages: 8, inverse_stages: 7, full_scale: 8192}
+  N8192: {sequence_length: 8192, forward_stages: 13, inverse_stages: 12, full_scale: 262144}
+
+fit_scales: [1, 2]
+holdout_scales: [4, 8]
+cycle_relative_error_limit: 0.05
+output_root: artifacts/environment/h80
+
+source_layout:
+  compiler_core: src/mlxsim/dsagen_matched_fft.py
+  compiler: scripts/compile_matched_fft_cycle_estimator.py
+  runner: scripts/run_matched_fft_cycle_estimator.py
+  auditor: scripts/audit_matched_fft_cycle_estimator.py
+
+result_path: artifacts/results/matched-fft-cycle-estimator-run085.json
