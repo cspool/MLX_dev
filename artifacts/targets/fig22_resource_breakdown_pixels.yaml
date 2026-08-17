@@ -1,0 +1,55 @@
+metadata:
+  purpose: "Frozen raster coordinates for complete Figure 22 resource recovery"
+  coordinate_origin: "top-left; y increases downward; boundary coordinates may be half pixels"
+  source: "MLX Multi-Layer Execution for Structured LLM Workload Acceleration on Spatial Architectures/_page_11_Figure_9.jpeg"
+  sha256: "047a6d3039a9f8b64a1c5ad39f9cfcc54063cdf75b09147625558088828e7b9f"
+  dimensions: [621, 232]
+  pixel_uncertainty_y: 1.5
+  segment_uncertainty_abs: 0.02
+
+plot_semantics:
+  sizes: [64, 128, 256, 512, 1024, 2048, 4096, 8192]
+  panels: [bsmm, chunk_fft]
+  paired_bars: "left=data supply stack; right=compute"
+  data_stack_bottom_to_top: [xfer, load, store]
+  compute_fill: "dark gray"
+  launch_overhead_raster_recoverable: false
+
+utilization_axis:
+  value_to_y:
+    - [0.0, 187.5]
+    - [0.2, 157.5]
+    - [0.4, 127.0]
+    - [0.6, 96.5]
+    - [0.8, 66.5]
+    - [1.0, 36.0]
+  zero_y: 187.5
+  hundred_y: 36.0
+  pixels_per_fraction: 151.5
+
+bars:
+  bsmm:
+    - {size: 64, data_x: [96, 106], compute_x: [107, 119], compute_top_y: 64.0, data_top_y: 151.5, store_load_y: 158.0, load_xfer_y: 170.0}
+    - {size: 128, data_x: [124, 134], compute_x: [135, 146], compute_top_y: 59.0, data_top_y: 144.0, store_load_y: 150.0, load_xfer_y: 157.0}
+    - {size: 256, data_x: [151, 161], compute_x: [162, 174], compute_top_y: 57.0, data_top_y: 147.0, store_load_y: 152.5, load_xfer_y: 160.5}
+    - {size: 512, data_x: [179, 189], compute_x: [190, 201], compute_top_y: 62.5, data_top_y: 150.0, store_load_y: 155.0, load_xfer_y: 165.0}
+    - {size: 1024, data_x: [206, 216], compute_x: [217, 229], compute_top_y: 61.0, data_top_y: 149.0, store_load_y: 157.0, load_xfer_y: 167.0}
+    - {size: 2048, data_x: [234, 244], compute_x: [245, 256], compute_top_y: 57.5, data_top_y: 150.0, store_load_y: 158.0, load_xfer_y: 168.0}
+    - {size: 4096, data_x: [261, 271], compute_x: [272, 284], compute_top_y: 56.5, data_top_y: 153.0, store_load_y: 160.0, load_xfer_y: 169.5}
+    - {size: 8192, data_x: [289, 299], compute_x: [300, 311], compute_top_y: 59.0, data_top_y: 148.0, store_load_y: 154.5, load_xfer_y: 163.0}
+  chunk_fft:
+    - {size: 64, data_x: [332, 342], compute_x: [343, 354], compute_top_y: 60.0, data_top_y: 124.0, store_load_y: 134.0, load_xfer_y: 144.0}
+    - {size: 128, data_x: [359, 369], compute_x: [370, 382], compute_top_y: 51.0, data_top_y: 130.0, store_load_y: 139.0, load_xfer_y: 149.0}
+    - {size: 256, data_x: [387, 397], compute_x: [398, 409], compute_top_y: 47.5, data_top_y: 136.0, store_load_y: 144.5, load_xfer_y: 153.0}
+    - {size: 512, data_x: [414, 424], compute_x: [425, 437], compute_top_y: 46.0, data_top_y: 142.0, store_load_y: 149.0, load_xfer_y: 157.0}
+    - {size: 1024, data_x: [442, 452], compute_x: [453, 464], compute_top_y: 52.5, data_top_y: 143.5, store_load_y: 154.0, load_xfer_y: 165.0}
+    - {size: 2048, data_x: [469, 479], compute_x: [480, 492], compute_top_y: 50.0, data_top_y: 146.5, store_load_y: 156.0, load_xfer_y: 166.5}
+    - {size: 4096, data_x: [497, 507], compute_x: [508, 519], compute_top_y: 49.0, data_top_y: 149.0, store_load_y: 158.0, load_xfer_y: 168.0}
+    - {size: 8192, data_x: [524, 534], compute_x: [535, 547], compute_top_y: 49.0, data_top_y: 143.0, store_load_y: 152.0, load_xfer_y: 160.0}
+
+legacy_compute_crosscheck:
+  source: artifacts/targets/paper_targets.yaml
+  sha256: c4a22ab8052ff8cb223a729b8ce07320c6826cfee0d37e1a664a8761e018b41e
+  tolerance_abs: 0.02
+  bsmm: [0.81, 0.85, 0.86, 0.83, 0.84, 0.86, 0.87, 0.85]
+  chunk_fft: [0.84, 0.91, 0.93, 0.94, 0.89, 0.91, 0.92, 0.91]
