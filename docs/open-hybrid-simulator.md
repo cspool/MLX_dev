@@ -127,5 +127,8 @@ compressed-attention reduction is implemented in
 NoC packet flow, and four-port DSAGEN SRAM timing pass in
 [`combined-attention-memory.md`](combined-attention-memory.md). The remaining
 Figure 20 boundary is a matched Xavier FFT-CMP plus compressed-Attention
-execution; Figures 18--21 and 24--25 still require broader shape/device
-coverage. Paper result bars were not inputs to the invariant runs.
+execution. Its first 32-run attempt is execution-valid but its small-anchor
+folding is rejected in
+[`xavier-matched-attention.md`](xavier-matched-attention.md); saturated GPU
+anchors are still required. Figures 18--21 and 24--25 also require broader
+shape/device coverage. Paper result bars were not inputs to the invariant runs.

@@ -33,5 +33,10 @@ At 1 GHz the full estimates correspond to 4.985 ms and 4.339 s. They are not
 Figure 20 speedups until matched Xavier FFT-CMP plus compressed-Attention
 execution is frozen independently.
 
+The first matched Xavier execution is complete in
+[`xavier-matched-attention.md`](xavier-matched-attention.md). All 32 runs are
+valid, but its small-anchor folding fails 10/16 holdouts, so no cross-device
+speedup is yet admitted.
+
 The immutable result is
 `artifacts/results/combined-attention-memory-run088.json`.

@@ -77,6 +77,7 @@ H37 closes the full-paper ledger with a machine certificate rather than a comple
 - H81 supports target-free FFT steady-state folding. With the topology and work unchanged, q=4/8 fits predict newly executed q=16/32 at 4/4 points, 0.157% MAPE, and 0.291% maximum error. The validated fixed-memory full-work estimates are 1,751,157 cycles for N=256 and 100,401,211 for N=8192. They remain component-only and cannot enter Figure 20 until compressed Attention, memory, and Xavier gates exist.
 - H82 supports grouped compressed-attention CDC semantics. Optional emit/wait periods default to one and preserve the frozen H80 summary byte-for-byte. Complete QK/SV reduction groups drive FMAX/FEXP/ADD/FDIV events without a macro-FMA shortcut. Eight configs replay exactly, conserve all H79 FU counts at full q, and q=1/2 predicts q=4/8 with zero error. Fixed-memory component estimates are 8,421,396 cycles at N=256 and 8,590,475,284 at N=8192; data movement and Xavier remain absent.
 - H83 supports the first full-design SIMD32 combined MLX Attention schedule. Per-event periods and multiplicities preserve two-packet inverse butterflies and distinct Q/K/V reuse. Four column SRAM ports service only original input/final output while 3.15/100.66 MB compressed boundaries stay on NoC. All FU work, 7.34/234.88 MB SRAM bytes, 26-entry maximum PE footprint, and replay gates pass exactly; u=4/8 predicts u=16/32 with `1.18e-7` MAPE. Full estimates are 4,984,864 and 4,339,007,525 cycles at 1 GHz. Xavier remains independently unmodeled.
+- H84 rejects the first matched Xavier component folding while supporting all execution evidence. Thirty-two detailed PTX runs and checksums pass, and FFT/QK/softmax/SV work matches H79 exactly. Only 6/16 held-out cycles pass (13.07% MAPE, 53.17% max): small-count affine fits cross CTA/SM occupancy regimes. Failed full sums are ineligible, so H83 remains unpaired with Xavier.
 
 ## Patterns and Insights
 
@@ -116,6 +117,7 @@ H37 closes the full-paper ledger with a machine certificate rather than a comple
 - A failed small-anchor affine model can be repaired without target fitting when new holdouts test an independently observed steady-state boundary. H81 changes only the q range and achieves sub-0.3% held-out error on both stage depths.
 - CDC boundary events may need a different cadence from local loop iterations. H82's grouped emit/wait periods let one tag event represent a completed dot product or output reduction while retaining every underlying vector instruction; default-one regression proves this does not rewrite earlier schedules.
 - Logical packets require both reuse and consumption cardinality. H83 uses per-event periods for reuse and multiplicities for two-packet inverse butterflies; omitting either silently drops or duplicates readiness while aggregate FLOPs remain unchanged.
+- GPU outer-count scaling is piecewise, not globally affine from sub-saturation anchors. H84 observes nearly flat QK/SV cycles while one wave occupies the eight SMs, then changing FFT/softmax slopes as CTA and launch counts grow.
 
 ## Lessons and Constraints
 
@@ -159,6 +161,7 @@ H37 closes the full-paper ledger with a machine certificate rather than a comple
 - Do not promote H81's fixed-memory FFT estimates to total Attention or Figure 20. They exclude FMAX/FEXP/FDIV Attention work, scratchpad/off-chip stalls, GPU launch/stage behavior, and device-clock comparison.
 - Do not add H81 and H82 cycles and call the sum a reproduced Attention bar until explicit FFT→Attention transfers, real memory traffic, and a matched Xavier two-component estimate are validated.
 - H83 supersedes the isolated SIMD8 cycle sum for MLX Figure 20 Attention, but its 4.985 ms/4.339 s values remain target-free MLX-only estimates until an independently held-out Xavier execution exists.
+- Do not use H84's full-count extrapolations. They are generated only as rejected diagnostics; saturated anchors and new larger holdouts must pass before computing MLX/Xavier speedup.
 
 ## Open Questions
 
@@ -218,3 +221,7 @@ target-free.
 Run088 composes both components at SIMD32 with exact NoC/SRAM packets. All four
 holdouts and every work/byte/footprint/replay gate pass; the resulting MLX-only
 cycles are withheld from Figure 20 comparison pending Xavier execution.
+
+Run089 executes 32 matched Xavier component jobs successfully but rejects their
+small-anchor folding at 6/16 holdouts, 13.07% MAPE, and 53.17% maximum error.
+No invalid full-size GPU estimate is consumed downstream.
