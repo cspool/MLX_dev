@@ -175,7 +175,7 @@ hypotheses:
     priority: high
   - id: H20
     statement: "An inferred post-RoPE chunk-FFT wiring at s=0.75 plus rank-8 LoRA on the last 20 Llama2 layers reproduces Fig. 15(d)'s 5.781 WikiText-2 perplexity within 10%."
-    status: pending
+    status: rejected
     motivation: "Isolate whether an executable semantic-FFT/LoRA path can recover the first compressed Llama quality point while explicitly excluding the still-unidentified B=32 BSMM initialization."
     parent: H5
     priority: high
@@ -184,7 +184,7 @@ experiments:
   proxy_metric: "Maximum absolute percentage error across every numeric paper anchor; pass only when each reproducible point is <=10%, with unavailable measurements explicitly classified rather than fabricated."
   baseline_value: 0.2486
   best_value: 0.0123
-  total_runs: 22
+  total_runs: 23
   trajectory:
     - run_id: "run_001"
       hypothesis: "H2"
@@ -340,11 +340,18 @@ experiments:
       wall_time_min: 0.9
       change_summary: "Byte-qualified native Llama2-7B scores 333 complete WikiText-2 windows at PPL 6.0965 versus 6.62 reported, passing with 7.91% relative error."
       timestamp: "2026-08-17"
+    - run_id: "run_023"
+      hypothesis: "H20"
+      metric_value: 0.4686
+      delta: null
+      wall_time_min: 4.3
+      change_summary: "Inferred s=0.75 FFT plus rank-8 LoRA isolation rejected: PPL moves from 31.047 pre-training to 3.072 post-training versus 5.781 target; chunk-end causal diagnostic is 18.046."
+      timestamp: "2026-08-17"
 
 outer_loop:
-  cycle: 5
-  last_direction: "Use the now-qualified Llama2 baseline and training stack to tackle one pre-registered compressed/LoRA quality case. Keep it separate from the rejected H15 BERT recipe and do not infer missing LoRA/operator choices from target residuals."
-  last_reflection: "H19 passes at 7.91% after scoring exactly the 333 registered full windows. The full Transformers-backend token stream equals direct SentencePiece byte for byte in token-ID space, so the API's is_fast label does not invalidate the input. Both public LLM original-PPL baselines are now native and within gate; compressed variants remain the central quality gap."
+  cycle: 6
+  last_direction: "Reject the post-RoPE full-chunk teacher-forcing wiring and do not run s=0.5 with it. Treat compressed autoregressive quality as blocked on a causal author graph; prioritize an independent remaining experiment rather than target-guided LoRA or FFT changes."
+  last_reflection: "H20's zero-adapter compressed PPL is 31.05 and 64 LoRA steps overshoot to 3.07, missing the 5.781 target by 46.86%. More importantly, the exact checkpoint scores 18.05 PPL at leakage-free chunk-end positions versus 3.07 across all positions. The inferred symmetric FFT graph violates causal metric semantics, so its low all-token PPL is not useful quality evidence."
 
 workspace:
   findings: "findings.md"
