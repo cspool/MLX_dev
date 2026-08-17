@@ -1,0 +1,71 @@
+name: open-hybrid-dsagen-accelsim-v1
+experiment_id: H40
+run_id: run046
+
+architecture_contract:
+  target: MLX reduced spatial architecture
+  spatial_semantics:
+    - 2D PE mesh with deterministic bounded-hop communication
+    - static per-layer instruction blocks replayed inside each PE
+    - tag-level readiness and arbitration across folded layers
+    - independent load, store, compute, and transfer resources
+  programmable_pe_semantics:
+    - SIMD functional units with operation-specific latency and initiation interval
+    - register-file and operand-port pressure
+    - load/store pipeline occupancy and scratchpad-bank conflicts
+    - structural hazards between heterogeneous functional units
+  explicitly_excluded_gpu_semantics:
+    - warp formation
+    - SIMT reconvergence
+    - GPU CTA residency
+    - GPU cache-coherence behavior
+
+sources:
+  dsagen:
+    role: primary_spatial_timing_substrate
+    repository: https://github.com/PolyArch/dsa-framework.git
+    revision: 273e141a519d12138ee0fbc9743059d13e9b5a64
+    license: BSD-2-Clause
+    required_submodules:
+      dsa-gem5: 1e5d2c3d48ecc1f9b7d42c7103d0705b0c98fb78
+      dsa-scheduler: d0dd8163c336d2909c1aa11784e312cfdc7b3256
+      dsa-apps: 7160803e400ef88f9fdfc0910458901ef5153cd4
+      dsa-riscv-ext: 65822cda53c32f58c2c0c08bfe24f06b8f7e5bd8
+  accel_sim:
+    role: gpu_baseline_and_programmable_pe_reference
+    repository: https://github.com/accel-sim/accel-sim-framework.git
+    revision: c5296df152c99a28dd64e5d9560bd58a8fd2e774
+    license: verify_from_checkout
+  timeloop:
+    role: analytical_mapping_crosscheck_only
+    repository: https://github.com/NVlabs/timeloop.git
+    revision: 32370826fdf1aa3c8deb0c93e6b2a2fc7cf053aa
+    license: verify_from_checkout
+  assassyn:
+    role: inspect_only_semantics_reference
+    repository: https://github.com/Synthesys-Lab/assassyn.git
+    revision: 6a99ade0e9380c93d4817f7de51b7edd8a473dd2
+    code_reuse_allowed: false
+    exclusion_reason: no top-level license located at the frozen revision
+
+required_source_mechanisms:
+  spatial:
+    - architecture graph or PE/FU topology description
+    - cycle/event scheduling entry point
+    - explicit communication or streaming-port model
+    - programmable operation or instruction representation
+  gpu_pe_reference:
+    - issue or dispatch model
+    - functional-unit latency and initiation interval
+    - operand or register-file arbitration
+    - load/store pipeline occupancy
+
+smoke_gates:
+  - pinned revisions and recursive dependency revisions are recorded
+  - every reused source has an explicit compatible license
+  - one primary spatial simulator binary builds and executes an upstream example
+  - one GPU timing simulator binary builds and executes an upstream trace or test
+  - stdout, command line, wall time, binary hash, and result hash are recorded
+  - no MLX paper result value is used as a build, timing, or selection input
+
+result_path: artifacts/results/open-hybrid-simulator-audit-run046.json
