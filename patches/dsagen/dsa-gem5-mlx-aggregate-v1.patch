@@ -1,0 +1,1801 @@
+diff --git a/src/cpu/minor/SConscript b/src/cpu/minor/SConscript
+index e84fe87d0..e3e01ba32 100644
+--- a/src/cpu/minor/SConscript
++++ b/src/cpu/minor/SConscript
+@@ -62,6 +62,8 @@ if 'MinorCPU' in env['CPU_MODELS']:
+     Source('ssim/stream.cc')
+     Source('ssim/ssim.cc')
+     Source('ssim/sim-debug.cc')
++    Source('ssim/mlx_overlay.cc')
++    Source('ssim/mlx_spad_adapter.cc')
+     Source('ssim/accel.cc')
+     Source('ssim/arbiter.cc')
+     Source('ssim/spad.cc')
+diff --git a/src/cpu/minor/ssim/accel.cc b/src/cpu/minor/ssim/accel.cc
+index bb3604ebe..45762412f 100644
+--- a/src/cpu/minor/ssim/accel.cc
++++ b/src/cpu/minor/ssim/accel.cc
+@@ -265,6 +265,16 @@ accel_t::accel_t(int i, ssim_t *ssim)
+   scratchpad_readers.resize(SCRATCH_SIZE);
+   scratchpad_writers.resize(SCRATCH_SIZE);
+ 
++  if (i == 0) {
++    if (const char *mlx_config = std::getenv("MLX_CONFIG")) {
++      _mlx_overlay = dsa::sim::mlx::Overlay::FromJsonFile(mlx_config);
++      if (_mlx_overlay->requiresMemoryAdapter()) {
++        _mlx_spad_adapter.reset(new dsa::sim::mlx::Gem5ScratchpadAdapter(this));
++        _mlx_overlay->setMemoryAdapter(_mlx_spad_adapter.get());
++      }
++    }
++  }
++
+   // FIXME(@were): Implicit streams for remote spad access.
+   // if (i == 0) { // required only in 1st accel
+   //   remote_core_net_stream_t *implicit_stream = new remote_core_net_stream_t();
+@@ -1109,6 +1119,28 @@ struct SPADResponser : dsa::sim::stream::Functor {
+ 
+ void accel_t::tick() {
+   DSA_LOG(TICK) << curTick() << ": tick accelerator!";
++  if (_mlx_overlay && !_mlx_overlay->done()) {
++    _mlx_overlay->step();
++    if (_mlx_overlay->done() && !_mlx_summary_printed) {
++      std::cout << "MLX_OVERLAY_SUMMARY "
++                << _mlx_overlay->summaryJson("gem5") << std::endl;
++      if (_mlx_spad_adapter) {
++        std::cout << "MLX_SPAD_ADAPTER_SUMMARY {\"requests\":"
++                  << _mlx_spad_adapter->requestsIssued()
++                  << ",\"responses\":" << _mlx_spad_adapter->responsesHandled()
++                  << ",\"unavailable_checks\":"
++                  << _mlx_spad_adapter->unavailableChecks()
++                  << ",\"max_response_ticks\":"
++                  << _mlx_spad_adapter->maxResponseTicks()
++                  << ",\"max_response_cycles\":"
++                  << _mlx_spad_adapter->maxResponseCycles()
++                  << ",\"bank_backpressure_cycles\":"
++                  << _mlx_spad_adapter->bankBackpressureCycles()
++                  << "}" << std::endl;
++      }
++      _mlx_summary_printed = true;
++    }
++  }
+   if (statistics.blame != dsa::stat::Accelerator::Blame::CONFIGURE) {
+     statistics.blame = dsa::stat::Accelerator::Blame::UNKNOWN;
+   }
+@@ -1130,6 +1162,9 @@ void accel_t::tick() {
+   for (auto &elem : spads) {
+     auto spad_response = elem.Step();
+     if (spad_response.id != -1) {
++      if (_mlx_spad_adapter && _mlx_spad_adapter->handleResponse(spad_response)) {
++        continue;
++      }
+       DSA_LOG(MEM_REQ) << "Responding port: " << spad_response.id;
+       if (spad_response.op == MemoryOperation::DMO_Read) {
+         auto &vp = input_ports[spad_response.id];
+@@ -3068,4 +3103,3 @@ void scratch_write_controller_t::push_atomic_inc(int tid, std::vector<uint8_t> i
+   }
+ 
+ }
+-
+diff --git a/src/cpu/minor/ssim/accel.hh b/src/cpu/minor/ssim/accel.hh
+index a08190892..9bc77bd42 100644
+--- a/src/cpu/minor/ssim/accel.hh
++++ b/src/cpu/minor/ssim/accel.hh
+@@ -30,6 +30,8 @@
+ #include "cpu/minor/lsq.hh"
+ 
+ #include "sim-debug.hh"
++#include "mlx_overlay.hh"
++#include "mlx_spad_adapter.hh"
+ #include "./port.h"
+ #include "./stream.hh"
+ #include "./consts.hh"
+@@ -771,6 +773,9 @@ public:
+ 
+ private:
+   ssim_t* _ssim;
++  std::unique_ptr<dsa::sim::mlx::Overlay> _mlx_overlay;
++  std::unique_ptr<dsa::sim::mlx::Gem5ScratchpadAdapter> _mlx_spad_adapter;
++  bool _mlx_summary_printed{false};
+   bool _cleanup_mode=false;
+   bool _stream_cleanup_mode=false;
+ 
+diff --git a/src/cpu/minor/ssim/mlx_overlay.cc b/src/cpu/minor/ssim/mlx_overlay.cc
+new file mode 100644
+index 000000000..0cd13426a
+--- /dev/null
++++ b/src/cpu/minor/ssim/mlx_overlay.cc
+@@ -0,0 +1,1119 @@
++/* See mlx_overlay.hh for license. */
++
++#include "mlx_overlay.hh"
++
++#include <algorithm>
++#include <fstream>
++#include <iomanip>
++#include <limits>
++#include <sstream>
++#include <stdexcept>
++
++#include <json/json.h>
++
++namespace dsa {
++namespace sim {
++namespace mlx {
++
++namespace {
++
++std::string
++JsonEscape(const std::string &value)
++{
++  std::ostringstream out;
++  for (unsigned char character : value) {
++    switch (character) {
++      case '\"': out << "\\\""; break;
++      case '\\': out << "\\\\"; break;
++      case '\b': out << "\\b"; break;
++      case '\f': out << "\\f"; break;
++      case '\n': out << "\\n"; break;
++      case '\r': out << "\\r"; break;
++      case '\t': out << "\\t"; break;
++      default:
++        if (character < 0x20) {
++          out << "\\u" << std::hex << std::setw(4) << std::setfill('0')
++              << static_cast<unsigned>(character) << std::dec;
++        } else {
++          out << character;
++        }
++    }
++  }
++  return out.str();
++}
++
++std::string
++Quote(const std::string &value)
++{
++  return "\"" + JsonEscape(value) + "\"";
++}
++
++Coord
++ParseCoord(const Json::Value &value, const std::string &field)
++{
++  if (!value.isArray() || value.size() != 2 || !value[0].isInt() ||
++      !value[1].isInt()) {
++    throw std::runtime_error(field + " must be a two-integer array");
++  }
++  return {value[0].asInt(), value[1].asInt()};
++}
++
++uint64_t
++PositiveUInt(const Json::Value &value, const std::string &field)
++{
++  if (!value.isUInt64() && !value.isUInt()) {
++    throw std::runtime_error(field + " must be an unsigned integer");
++  }
++  uint64_t result = value.asUInt64();
++  if (result == 0) {
++    throw std::runtime_error(field + " must be positive");
++  }
++  return result;
++}
++
++std::vector<unsigned>
++ParseRegisters(const Json::Value &value, const std::string &field)
++{
++  std::vector<unsigned> registers;
++  if (value.isNull()) {
++    return registers;
++  }
++  if (!value.isArray()) {
++    throw std::runtime_error(field + " must be an array");
++  }
++  for (const auto &item : value) {
++    if (!item.isUInt()) {
++      throw std::runtime_error(field + " entries must be unsigned integers");
++    }
++    registers.push_back(item.asUInt());
++  }
++  return registers;
++}
++
++uint64_t
++MapValue(const std::map<PipelineKind, uint64_t> &values, PipelineKind key)
++{
++  auto iterator = values.find(key);
++  return iterator == values.end() ? 0 : iterator->second;
++}
++
++}  // namespace
++
++const char *
++PipelineName(PipelineKind pipeline)
++{
++  switch (pipeline) {
++    case PipelineKind::Load: return "load";
++    case PipelineKind::Store: return "store";
++    case PipelineKind::Compute: return "compute";
++    case PipelineKind::Xfer: return "xfer";
++  }
++  throw std::runtime_error("invalid MLX pipeline enum");
++}
++
++PipelineKind
++ParsePipeline(const std::string &name)
++{
++  if (name == "load") return PipelineKind::Load;
++  if (name == "store") return PipelineKind::Store;
++  if (name == "compute") return PipelineKind::Compute;
++  if (name == "xfer") return PipelineKind::Xfer;
++  throw std::runtime_error("unknown MLX pipeline: " + name);
++}
++
++MemoryBackend
++ParseMemoryBackend(const std::string &name)
++{
++  if (name.empty() || name == "fixed") return MemoryBackend::FixedLatency;
++  if (name == "dsagen_spad" || name == "adapter") return MemoryBackend::Adapter;
++  throw std::runtime_error("unknown MLX memory backend: " + name);
++}
++
++Overlay::Overlay(Config config, std::vector<TaggedBlock> blocks)
++    : config_(std::move(config)), blocks_(std::move(blocks)),
++      states_(blocks_.size())
++{
++  auto &steps = config_.routing.skip_steps;
++  std::sort(steps.begin(), steps.end(), std::greater<int>());
++  steps.erase(std::unique(steps.begin(), steps.end()), steps.end());
++  buildTagIndex();
++  validate();
++}
++
++std::unique_ptr<Overlay>
++Overlay::FromJsonFile(const std::string &path)
++{
++  std::ifstream input(path);
++  if (!input) {
++    throw std::runtime_error("cannot open MLX overlay config: " + path);
++  }
++  Json::CharReaderBuilder builder;
++  builder["collectComments"] = false;
++  Json::Value root;
++  std::string errors;
++  if (!Json::parseFromStream(builder, input, &root, &errors)) {
++    throw std::runtime_error("cannot parse MLX overlay config: " + errors);
++  }
++
++  Config config;
++  config.active_window =
++      static_cast<unsigned>(PositiveUInt(root["active_window"], "active_window"));
++  config.memory_backend = ParseMemoryBackend(root.get("memory_backend", "fixed").asString());
++  const auto &rf = root["register_file"];
++  config.register_file.banks =
++      static_cast<unsigned>(PositiveUInt(rf["banks"], "register_file.banks"));
++  config.register_file.read_ports = static_cast<unsigned>(
++      PositiveUInt(rf["read_ports"], "register_file.read_ports"));
++  config.register_file.write_ports = static_cast<unsigned>(
++      PositiveUInt(rf["write_ports"], "register_file.write_ports"));
++
++  const auto &pipeline_root = root["pipelines"];
++  for (const std::string name : {"load", "store", "compute", "xfer"}) {
++    const auto &timing = pipeline_root[name];
++    config.pipeline_timing[ParsePipeline(name)] = {
++        PositiveUInt(timing["latency"], "pipelines." + name + ".latency"),
++        PositiveUInt(
++            timing["initiation_interval"],
++            "pipelines." + name + ".initiation_interval")};
++  }
++
++  const auto &fu_root = root["functional_units"];
++  for (const auto &name : fu_root.getMemberNames()) {
++    const auto &fu = fu_root[name];
++    if (!fu["class"].isString()) {
++      throw std::runtime_error("functional_units." + name + ".class must be a string");
++    }
++    config.functional_units[name] = {
++        fu["class"].asString(),
++        {PositiveUInt(fu["latency"], "functional_units." + name + ".latency"),
++         PositiveUInt(
++             fu["initiation_interval"],
++             "functional_units." + name + ".initiation_interval")}};
++  }
++
++  const auto &routing = root["routing"];
++  config.routing.mesh_width = static_cast<int>(
++      PositiveUInt(routing["mesh_width"], "routing.mesh_width"));
++  config.routing.mesh_height = static_cast<int>(
++      PositiveUInt(routing["mesh_height"], "routing.mesh_height"));
++  config.routing.latency_per_hop =
++      PositiveUInt(routing["latency_per_hop"], "routing.latency_per_hop");
++  config.routing.link_capacity = static_cast<unsigned>(
++      PositiveUInt(routing["link_capacity"], "routing.link_capacity"));
++  if (!routing["skip_steps"].isArray()) {
++    throw std::runtime_error("routing.skip_steps must be an array");
++  }
++  for (const auto &step : routing["skip_steps"]) {
++    config.routing.skip_steps.push_back(
++        static_cast<int>(PositiveUInt(step, "routing.skip_steps[]")));
++  }
++
++  std::vector<TaggedBlock> blocks;
++  if (!root["blocks"].isArray()) {
++    throw std::runtime_error("blocks must be an array");
++  }
++  for (const auto &block_root : root["blocks"]) {
++    TaggedBlock block;
++    block.id = block_root["id"].asString();
++    block.tag = PositiveUInt(block_root["tag"], "blocks[].tag");
++    block.pe = ParseCoord(block_root["pe"], "blocks[].pe");
++    block.trip_count = PositiveUInt(block_root["trip_count"], "blocks[].trip_count");
++    if (!block_root["predecessors"].isNull()) {
++      for (const auto &predecessor : block_root["predecessors"]) {
++        block.predecessors.push_back(predecessor.asUInt64());
++      }
++    }
++    if (!block_root["wait_events"].isNull()) {
++      if (!block_root["wait_events"].isArray()) {
++        throw std::runtime_error("blocks[].wait_events must be an array");
++      }
++      for (const auto &event : block_root["wait_events"]) {
++        if (!event.isString()) {
++          throw std::runtime_error("blocks[].wait_events entries must be strings");
++        }
++        block.wait_events.push_back(event.asString());
++      }
++    }
++    if (!block_root["instructions"].isArray()) {
++      throw std::runtime_error("blocks[].instructions must be an array");
++    }
++    for (const auto &instruction_root : block_root["instructions"]) {
++      Instruction instruction;
++      instruction.id = instruction_root["id"].asString();
++      instruction.pipeline = ParsePipeline(instruction_root["pipeline"].asString());
++      instruction.operation = instruction_root["operation"].asString();
++      instruction.reads = ParseRegisters(instruction_root["reads"], "reads");
++      instruction.writes = ParseRegisters(instruction_root["writes"], "writes");
++      instruction.memory_address = instruction_root.get("memory_address", 0).asUInt64();
++      if (!instruction_root["memory_address_sequence"].isNull()) {
++        if (!instruction_root["memory_address_sequence"].isArray()) {
++          throw std::runtime_error("memory_address_sequence must be an array");
++        }
++        for (const auto &address : instruction_root["memory_address_sequence"]) {
++          if (!address.isUInt64() && !address.isUInt()) {
++            throw std::runtime_error(
++                "memory_address_sequence entries must be unsigned integers");
++          }
++          instruction.memory_address_sequence.push_back(address.asUInt64());
++        }
++      }
++      instruction.memory_bytes = instruction_root.get("memory_bytes", 8).asUInt();
++      instruction.emit_event = instruction_root.get("emit_event", "").asString();
++      if (instruction.pipeline == PipelineKind::Xfer) {
++        instruction.destination =
++            ParseCoord(instruction_root["destination"], "destination");
++        instruction.destination_register =
++            instruction_root["destination_register"].asUInt();
++        if (instruction.writes.empty()) {
++          instruction.writes.push_back(instruction.destination_register);
++        }
++      } else {
++        instruction.destination = block.pe;
++      }
++      block.instructions.push_back(std::move(instruction));
++    }
++    blocks.push_back(std::move(block));
++  }
++  return std::unique_ptr<Overlay>(new Overlay(std::move(config), std::move(blocks)));
++}
++
++std::vector<Coord>
++Overlay::GreedyRoute(
++    Coord source, Coord destination, const RoutingConfig &routing)
++{
++  auto in_bounds = [&routing](Coord coordinate) {
++    return coordinate.x >= 0 && coordinate.x < routing.mesh_width &&
++           coordinate.y >= 0 && coordinate.y < routing.mesh_height;
++  };
++  if (!in_bounds(source) || !in_bounds(destination)) {
++    throw std::runtime_error("MLX route endpoint is outside the configured mesh");
++  }
++  std::vector<int> steps = routing.skip_steps;
++  std::sort(steps.begin(), steps.end(), std::greater<int>());
++  steps.erase(std::unique(steps.begin(), steps.end()), steps.end());
++  if (steps.empty() || steps.back() != 1) {
++    throw std::runtime_error("MLX skip-hop steps must contain unit distance");
++  }
++
++  std::vector<Coord> route{source};
++  Coord current = source;
++  auto consume_dimension = [&route, &current, &steps](int Coord::*member, int target) {
++    while (current.*member != target) {
++      int delta = target - current.*member;
++      int residual = delta < 0 ? -delta : delta;
++      int selected = 0;
++      for (int step : steps) {
++        if (step <= residual) {
++          selected = step;
++          break;
++        }
++      }
++      if (selected == 0) {
++        throw std::runtime_error("no admissible MLX skip-hop step");
++      }
++      current.*member += delta < 0 ? -selected : selected;
++      route.push_back(current);
++    }
++  };
++  consume_dimension(&Coord::x, destination.x);
++  consume_dimension(&Coord::y, destination.y);
++  return route;
++}
++
++void
++Overlay::buildTagIndex()
++{
++  for (std::size_t index = 0; index < blocks_.size(); ++index) {
++    const auto &block = blocks_[index];
++    tag_blocks_[block.tag].push_back(index);
++    auto &predecessors = tag_predecessors_[block.tag];
++    predecessors.insert(block.predecessors.begin(), block.predecessors.end());
++    for (const auto &instruction : block.instructions) {
++      if (!instruction.emit_event.empty() &&
++          !event_producer_tags_.emplace(instruction.emit_event, block.tag).second) {
++        throw std::runtime_error(
++            "MLX boundary events must have one static emitter: " +
++            instruction.emit_event);
++      }
++    }
++  }
++}
++
++void
++Overlay::validate() const
++{
++  if (config_.active_window == 0) {
++    throw std::runtime_error("MLX active window must be positive");
++  }
++  if (config_.register_file.banks == 0 || config_.register_file.read_ports == 0 ||
++      config_.register_file.write_ports == 0) {
++    throw std::runtime_error("MLX register-file dimensions must be positive");
++  }
++  if (config_.routing.mesh_width <= 0 || config_.routing.mesh_height <= 0 ||
++      config_.routing.latency_per_hop == 0 || config_.routing.link_capacity == 0) {
++    throw std::runtime_error("MLX routing dimensions and timings must be positive");
++  }
++  if (config_.routing.skip_steps.empty() || config_.routing.skip_steps.back() != 1) {
++    throw std::runtime_error("MLX routing must include a unit hop");
++  }
++  for (PipelineKind pipeline : {PipelineKind::Load, PipelineKind::Store,
++                                PipelineKind::Compute, PipelineKind::Xfer}) {
++    auto iterator = config_.pipeline_timing.find(pipeline);
++    if (iterator == config_.pipeline_timing.end() || iterator->second.latency == 0 ||
++        iterator->second.initiation_interval == 0) {
++      throw std::runtime_error(
++          std::string("missing/invalid timing for pipeline ") + PipelineName(pipeline));
++    }
++  }
++
++  std::set<std::string> block_ids;
++  for (const auto &block : blocks_) {
++    if (block.id.empty() || !block_ids.insert(block.id).second) {
++      throw std::runtime_error("MLX block IDs must be nonempty and unique");
++    }
++    if (block.tag == 0 || block.trip_count == 0 || block.instructions.empty()) {
++      throw std::runtime_error("MLX blocks need a positive tag/trip count and instructions");
++    }
++    if (block.pe.x < 0 || block.pe.x >= config_.routing.mesh_width || block.pe.y < 0 ||
++        block.pe.y >= config_.routing.mesh_height) {
++      throw std::runtime_error("MLX block PE is outside the configured mesh");
++    }
++    auto predecessor_iterator = tag_predecessors_.find(block.tag);
++    if (predecessor_iterator != tag_predecessors_.end() &&
++        predecessor_iterator->second.count(block.tag)) {
++      throw std::runtime_error("MLX tag cannot depend on itself");
++    }
++    for (const auto &event : block.wait_events) {
++      auto emitter = event_producer_tags_.find(event);
++      if (emitter == event_producer_tags_.end()) {
++        throw std::runtime_error("MLX wait event has no emitter: " + event);
++      }
++      if (block.tag < emitter->second || block.tag > emitter->second + 1) {
++        throw std::runtime_error(
++            "MLX boundary event must stay in-layer or advance one layer: " + event);
++      }
++    }
++    std::set<std::string> instruction_ids;
++    for (const auto &instruction : block.instructions) {
++      if (instruction.id.empty() || !instruction_ids.insert(instruction.id).second) {
++        throw std::runtime_error("MLX instruction IDs must be unique within a block");
++      }
++      if (instruction.pipeline == PipelineKind::Compute &&
++          !config_.functional_units.count(instruction.operation)) {
++        throw std::runtime_error("unknown MLX functional-unit operation: " +
++                                 instruction.operation);
++      }
++      if (instruction.pipeline == PipelineKind::Xfer) {
++        GreedyRoute(block.pe, instruction.destination, config_.routing);
++      }
++      if ((instruction.pipeline == PipelineKind::Load ||
++           instruction.pipeline == PipelineKind::Store) &&
++          instruction.memory_bytes == 0) {
++        throw std::runtime_error("MLX memory instruction size must be positive");
++      }
++      if (!instruction.memory_address_sequence.empty() &&
++          instruction.memory_address_sequence.size() != block.trip_count) {
++        throw std::runtime_error(
++            "MLX memory address sequence must match block trip count");
++      }
++      for (const auto &registers : {instruction.reads, instruction.writes}) {
++        std::set<unsigned> banks;
++        for (unsigned reg : registers) {
++          if (!banks.insert(reg % config_.register_file.banks).second) {
++            throw std::runtime_error(
++                "one MLX instruction cannot consume the same RF bank twice in one cycle");
++          }
++        }
++      }
++    }
++  }
++  for (const auto &entry : tag_predecessors_) {
++    for (uint64_t predecessor : entry.second) {
++      if (!tag_blocks_.count(predecessor)) {
++        throw std::runtime_error("MLX predecessor tag is not defined");
++      }
++    }
++  }
++}
++
++bool
++Overlay::done() const
++{
++  return completed_tags_.size() == tag_blocks_.size();
++}
++
++void
++Overlay::run(uint64_t max_cycles)
++{
++  while (!done() && cycle_ < max_cycles) {
++    step();
++  }
++  if (!done()) {
++    throw std::runtime_error("MLX overlay exceeded maximum cycles (deadlock suspected)");
++  }
++}
++
++void
++Overlay::resetCycleResources()
++{
++  rf_reads_this_cycle_.clear();
++  rf_writes_this_cycle_.clear();
++  rf_read_banks_this_cycle_.clear();
++  rf_write_banks_this_cycle_.clear();
++  links_this_cycle_.clear();
++}
++
++void
++Overlay::step()
++{
++  if (done()) {
++    return;
++  }
++  resetCycleResources();
++  routePackets();
++  completeInstructions();
++  updateCompletedTags();
++  admitTags();
++  issueInstructions();
++  recordBusyCycles();
++  ++cycle_;
++  stats_.cycles = cycle_;
++}
++
++void
++Overlay::routePackets()
++{
++  std::vector<std::size_t> ready;
++  for (std::size_t index = 0; index < states_.size(); ++index) {
++    const auto &state = states_[index];
++    if (state.inflight && state.routing && state.next_hop_cycle <= cycle_) {
++      ready.push_back(index);
++    }
++  }
++  std::sort(ready.begin(), ready.end(), [this](std::size_t left, std::size_t right) {
++    return std::tie(blocks_[left].tag, blocks_[left].id) <
++           std::tie(blocks_[right].tag, blocks_[right].id);
++  });
++  for (std::size_t index : ready) {
++    auto &state = states_[index];
++    Coord source = state.route[state.route_index];
++    Coord destination = state.route[state.route_index + 1];
++    LinkKey link{source, destination};
++    if (links_this_cycle_[link] >= config_.routing.link_capacity) {
++      ++stats_.link_stalls;
++      ++stats_.stalls_by_reason["link_capacity"];
++      recordEvent("stall", index, {{"reason", "link_capacity"}});
++      continue;
++    }
++    ++links_this_cycle_[link];
++    ++state.route_index;
++    ++stats_.route_hops;
++    int distance = std::abs(destination.x - source.x) +
++                   std::abs(destination.y - source.y);
++    if (distance > 1) {
++      ++stats_.skip_hops;
++    } else {
++      ++stats_.unit_hops;
++    }
++    recordEvent(
++        "route_hop", index,
++        {{"from", std::to_string(source.x) + "," + std::to_string(source.y)},
++         {"to", std::to_string(destination.x) + "," + std::to_string(destination.y)},
++         {"step", std::to_string(distance)},
++         {"residual_hops", std::to_string(state.route.size() - state.route_index - 1)}});
++    if (state.route_index + 1 == state.route.size()) {
++      state.routing = false;
++      state.ready_cycle = cycle_ + config_.routing.latency_per_hop;
++    } else {
++      state.next_hop_cycle = cycle_ + config_.routing.latency_per_hop;
++    }
++  }
++}
++
++void
++Overlay::completeInstructions()
++{
++  std::vector<std::size_t> ready;
++  for (std::size_t index = 0; index < states_.size(); ++index) {
++    auto &state = states_[index];
++    if (state.inflight && state.external_memory) {
++      if (memory_adapter_ && memory_adapter_->takeCompletion(state.memory_token)) {
++        state.external_memory = false;
++        state.ready_cycle = cycle_;
++        ++stats_.external_memory_completions;
++        recordEvent(
++            "memory_response", index,
++            {{"memory_token", std::to_string(state.memory_token)}});
++      } else {
++        ++stats_.external_memory_wait_cycles;
++      }
++    }
++    if (state.inflight && !state.routing && state.ready_cycle <= cycle_) {
++      ready.push_back(index);
++    }
++  }
++  std::sort(ready.begin(), ready.end(), [this](std::size_t left, std::size_t right) {
++    return std::tie(blocks_[left].tag, blocks_[left].id) <
++           std::tie(blocks_[right].tag, blocks_[right].id);
++  });
++  for (std::size_t index : ready) {
++    std::string reason;
++    if (!canWriteback(index, &reason)) {
++      ++stats_.stalls_by_reason[reason];
++      recordEvent("writeback_stall", index, {{"reason", reason}});
++      states_[index].ready_cycle = cycle_ + 1;
++      continue;
++    }
++    completeInstruction(index);
++  }
++}
++
++void
++Overlay::completeInstruction(std::size_t block_index)
++{
++  auto &block = blocks_[block_index];
++  auto &state = states_[block_index];
++  const auto &instruction = block.instructions[state.pc];
++  reserveWritePorts(block, instruction);
++  Coord destination = writebackPe(block, instruction);
++  for (unsigned reg : instruction.writes) {
++    pending_writers_.erase({destination, block.tag, reg});
++  }
++  recordEvent("complete", block_index);
++  ++stats_.instructions_completed;
++  if (!instruction.emit_event.empty()) {
++    uint64_t count = ++event_counts_[instruction.emit_event];
++    ++stats_.boundary_events_emitted;
++    recordEvent(
++        "event_emit", block_index,
++        {{"event", instruction.emit_event}, {"count", std::to_string(count)}});
++  }
++  state.inflight = false;
++  state.external_memory = false;
++  state.memory_token = 0;
++  state.route.clear();
++  state.route_index = 0;
++  ++state.pc;
++  if (state.pc == block.instructions.size()) {
++    ++state.iteration;
++    events_.push_back(
++        {cycle_, "iteration_complete", block.tag, block.id, state.iteration,
++         instruction.id, block.pe, PipelineName(instruction.pipeline),
++         {{"completed_iterations", std::to_string(state.iteration)}}});
++    if (state.iteration == block.trip_count) {
++      state.complete = true;
++      state.active = false;
++      events_.push_back(
++          {cycle_, "block_complete", block.tag, block.id, state.iteration,
++           instruction.id, block.pe, PipelineName(instruction.pipeline), {}});
++    }
++    state.pc = 0;
++  }
++}
++
++bool
++Overlay::tagFinished(uint64_t tag) const
++{
++  auto iterator = tag_blocks_.find(tag);
++  if (iterator == tag_blocks_.end()) {
++    return false;
++  }
++  for (std::size_t index : iterator->second) {
++    if (!states_[index].complete) {
++      return false;
++    }
++  }
++  return true;
++}
++
++void
++Overlay::updateCompletedTags()
++{
++  std::vector<uint64_t> completed;
++  for (uint64_t tag : active_tags_) {
++    if (tagFinished(tag)) {
++      completed.push_back(tag);
++    }
++  }
++  for (uint64_t tag : completed) {
++    active_tags_.erase(tag);
++    completed_tags_.insert(tag);
++    recordTagEvent("tag_complete", tag);
++  }
++}
++
++bool
++Overlay::predecessorsComplete(uint64_t tag) const
++{
++  auto iterator = tag_predecessors_.find(tag);
++  if (iterator == tag_predecessors_.end()) {
++    return true;
++  }
++  for (uint64_t predecessor : iterator->second) {
++    if (!completed_tags_.count(predecessor)) {
++      return false;
++    }
++  }
++  return true;
++}
++
++bool
++Overlay::iterationEventsReady(std::size_t block_index) const
++{
++  const auto &block = blocks_[block_index];
++  const auto &state = states_[block_index];
++  for (const auto &event : block.wait_events) {
++    auto iterator = event_counts_.find(event);
++    uint64_t count = iterator == event_counts_.end() ? 0 : iterator->second;
++    if (count <= state.iteration) {
++      return false;
++    }
++  }
++  return true;
++}
++
++void
++Overlay::admitTags()
++{
++  bool admitted = true;
++  while (admitted && active_tags_.size() < config_.active_window) {
++    admitted = false;
++    for (const auto &entry : tag_blocks_) {
++      uint64_t tag = entry.first;
++      if (active_tags_.count(tag) || completed_tags_.count(tag) ||
++          !predecessorsComplete(tag)) {
++        continue;
++      }
++      active_tags_.insert(tag);
++      for (std::size_t index : entry.second) {
++        states_[index].active = true;
++      }
++      recordTagEvent(
++          "admit", tag,
++          {{"active_tags", std::to_string(active_tags_.size())},
++           {"window_capacity", std::to_string(config_.active_window)}});
++      stats_.max_active_tags =
++          std::max<uint64_t>(stats_.max_active_tags, active_tags_.size());
++      admitted = true;
++      break;
++    }
++  }
++}
++
++unsigned
++Overlay::registerBank(unsigned reg) const
++{
++  return reg % config_.register_file.banks;
++}
++
++Timing
++Overlay::instructionTiming(const Instruction &instruction) const
++{
++  if (instruction.pipeline == PipelineKind::Compute) {
++    return config_.functional_units.at(instruction.operation).timing;
++  }
++  return config_.pipeline_timing.at(instruction.pipeline);
++}
++
++std::string
++Overlay::fuClass(const Instruction &instruction) const
++{
++  if (instruction.pipeline != PipelineKind::Compute) {
++    return "";
++  }
++  return config_.functional_units.at(instruction.operation).resource_class;
++}
++
++Coord
++Overlay::writebackPe(
++    const TaggedBlock &block, const Instruction &instruction) const
++{
++  return instruction.pipeline == PipelineKind::Xfer ? instruction.destination : block.pe;
++}
++
++uint64_t
++Overlay::memoryAddress(
++    const TaggedBlock &, const BlockState &state,
++    const Instruction &instruction) const
++{
++  if (instruction.memory_address_sequence.empty()) {
++    return instruction.memory_address;
++  }
++  return instruction.memory_address_sequence.at(state.iteration);
++}
++
++bool
++Overlay::canIssue(std::size_t block_index, std::string *reason) const
++{
++  const auto &block = blocks_[block_index];
++  const auto &state = states_[block_index];
++  const auto &instruction = block.instructions[state.pc];
++  if (state.pc == 0 && !iterationEventsReady(block_index)) {
++    *reason = "event_dependency";
++    return false;
++  }
++  if ((instruction.pipeline == PipelineKind::Load ||
++       instruction.pipeline == PipelineKind::Store) &&
++      config_.memory_backend == MemoryBackend::Adapter) {
++    if (!memory_adapter_) {
++      *reason = "memory_adapter_missing";
++      return false;
++    }
++    MemoryRequest request(
++        instruction.pipeline == PipelineKind::Store,
++        memoryAddress(block, state, instruction), instruction.memory_bytes, block.pe,
++        block.tag, block.id, instruction.id, state.iteration);
++    if (!memory_adapter_->available(request)) {
++      *reason = "memory_queue_full";
++      return false;
++    }
++  }
++  PipelineKey pipeline_key{block.pe, instruction.pipeline};
++  auto pipeline = pipeline_next_issue_.find(pipeline_key);
++  if (pipeline != pipeline_next_issue_.end() && pipeline->second > cycle_) {
++    *reason = "pipeline_initiation";
++    return false;
++  }
++  if (instruction.pipeline == PipelineKind::Compute) {
++    FuKey fu_key{block.pe, fuClass(instruction)};
++    auto fu = fu_next_issue_.find(fu_key);
++    if (fu != fu_next_issue_.end() && fu->second > cycle_) {
++      *reason = "fu_initiation";
++      return false;
++    }
++  }
++  for (unsigned reg : instruction.reads) {
++    if (pending_writers_.count({block.pe, block.tag, reg})) {
++      *reason = "register_pending";
++      return false;
++    }
++  }
++  Coord destination = writebackPe(block, instruction);
++  for (unsigned reg : instruction.writes) {
++    if (pending_writers_.count({destination, block.tag, reg})) {
++      *reason = "register_waw";
++      return false;
++    }
++  }
++  unsigned reads_used = 0;
++  auto reads = rf_reads_this_cycle_.find(block.pe);
++  if (reads != rf_reads_this_cycle_.end()) {
++    reads_used = reads->second;
++  }
++  if (reads_used + instruction.reads.size() > config_.register_file.read_ports) {
++    *reason = "rf_read_ports";
++    return false;
++  }
++  for (unsigned reg : instruction.reads) {
++    auto key = std::make_pair(block.pe, registerBank(reg));
++    auto used = rf_read_banks_this_cycle_.find(key);
++    if (used != rf_read_banks_this_cycle_.end() && used->second >= 1) {
++      *reason = "rf_read_bank";
++      return false;
++    }
++  }
++  return true;
++}
++
++void
++Overlay::reserveReadPorts(
++    const TaggedBlock &block, const Instruction &instruction)
++{
++  rf_reads_this_cycle_[block.pe] += instruction.reads.size();
++  for (unsigned reg : instruction.reads) {
++    ++rf_read_banks_this_cycle_[{block.pe, registerBank(reg)}];
++  }
++}
++
++bool
++Overlay::canWriteback(std::size_t block_index, std::string *reason) const
++{
++  const auto &block = blocks_[block_index];
++  const auto &state = states_[block_index];
++  const auto &instruction = block.instructions[state.pc];
++  Coord destination = writebackPe(block, instruction);
++  unsigned writes_used = 0;
++  auto writes = rf_writes_this_cycle_.find(destination);
++  if (writes != rf_writes_this_cycle_.end()) {
++    writes_used = writes->second;
++  }
++  if (writes_used + instruction.writes.size() > config_.register_file.write_ports) {
++    *reason = "rf_write_ports";
++    return false;
++  }
++  for (unsigned reg : instruction.writes) {
++    auto key = std::make_pair(destination, registerBank(reg));
++    auto used = rf_write_banks_this_cycle_.find(key);
++    if (used != rf_write_banks_this_cycle_.end() && used->second >= 1) {
++      *reason = "rf_write_bank";
++      return false;
++    }
++  }
++  return true;
++}
++
++void
++Overlay::reserveWritePorts(
++    const TaggedBlock &block, const Instruction &instruction)
++{
++  Coord destination = writebackPe(block, instruction);
++  rf_writes_this_cycle_[destination] += instruction.writes.size();
++  for (unsigned reg : instruction.writes) {
++    ++rf_write_banks_this_cycle_[{destination, registerBank(reg)}];
++  }
++}
++
++void
++Overlay::issueInstruction(std::size_t block_index)
++{
++  const auto &block = blocks_[block_index];
++  auto &state = states_[block_index];
++  const auto &instruction = block.instructions[state.pc];
++  Timing timing = instructionTiming(instruction);
++  Timing pipeline_timing = config_.pipeline_timing.at(instruction.pipeline);
++  if (state.pc == 0) {
++    for (const auto &event : block.wait_events) {
++      uint64_t producer_tag = event_producer_tags_.at(event);
++      if (!completed_tags_.count(producer_tag)) {
++        ++stats_.event_unblocked_issues_before_tag_complete;
++        break;
++      }
++    }
++  }
++  reserveReadPorts(block, instruction);
++  PipelineKey pipeline_key{block.pe, instruction.pipeline};
++  pipeline_next_issue_[pipeline_key] =
++      cycle_ + pipeline_timing.initiation_interval;
++  if (instruction.pipeline == PipelineKind::Compute) {
++    fu_next_issue_[{block.pe, fuClass(instruction)}] =
++        cycle_ + timing.initiation_interval;
++  }
++  Coord destination = writebackPe(block, instruction);
++  for (unsigned reg : instruction.writes) {
++    pending_writers_.insert({destination, block.tag, reg});
++  }
++  state.inflight = true;
++  state.routing = false;
++  state.external_memory = false;
++  state.ready_cycle = cycle_ + timing.latency;
++  if ((instruction.pipeline == PipelineKind::Load ||
++       instruction.pipeline == PipelineKind::Store) &&
++      config_.memory_backend == MemoryBackend::Adapter) {
++    MemoryRequest request(
++        instruction.pipeline == PipelineKind::Store,
++        memoryAddress(block, state, instruction), instruction.memory_bytes, block.pe,
++        block.tag, block.id, instruction.id, state.iteration);
++    state.memory_token = memory_adapter_->issue(request);
++    state.external_memory = true;
++    state.ready_cycle = std::numeric_limits<uint64_t>::max();
++    ++stats_.external_memory_requests;
++  } else if (instruction.pipeline == PipelineKind::Xfer &&
++             block.pe != instruction.destination) {
++    state.route = GreedyRoute(block.pe, instruction.destination, config_.routing);
++    state.route_index = 0;
++    state.routing = true;
++    state.next_hop_cycle = cycle_ + 1;
++    state.ready_cycle = std::numeric_limits<uint64_t>::max();
++  }
++  std::map<std::string, std::string> issue_detail = {
++      {"latency", std::to_string(timing.latency)},
++      {"initiation_interval", std::to_string(timing.initiation_interval)},
++      {"operation", instruction.operation},
++      {"fu_class", fuClass(instruction)}};
++  issue_detail["memory_backend"] = state.external_memory ? "adapter" : "fixed";
++  if (state.external_memory) {
++    issue_detail["memory_token"] = std::to_string(state.memory_token);
++  }
++  if (instruction.pipeline == PipelineKind::Load ||
++      instruction.pipeline == PipelineKind::Store) {
++    issue_detail["memory_address"] =
++        std::to_string(memoryAddress(block, state, instruction));
++  }
++  recordEvent("issue", block_index, issue_detail);
++  ++stats_.instructions_issued;
++  ++stats_.issued_by_pipeline[instruction.pipeline];
++}
++
++void
++Overlay::issueInstructions()
++{
++  std::vector<Candidate> candidates;
++  for (std::size_t index = 0; index < blocks_.size(); ++index) {
++    const auto &state = states_[index];
++    if (!state.active || state.complete || state.inflight) {
++      continue;
++    }
++    const auto &block = blocks_[index];
++    const auto &instruction = block.instructions[state.pc];
++    candidates.push_back({index, {block.pe, instruction.pipeline}});
++  }
++  std::sort(
++      candidates.begin(), candidates.end(),
++      [this](const Candidate &left, const Candidate &right) {
++        const auto &left_block = blocks_[left.block_index];
++        const auto &right_block = blocks_[right.block_index];
++        auto left_prefix = std::make_tuple(
++            left_block.tag, left_block.pe, left.pipeline_key.pipeline);
++        auto right_prefix = std::make_tuple(
++            right_block.tag, right_block.pe, right.pipeline_key.pipeline);
++        if (left_prefix != right_prefix) {
++          return left_prefix < right_prefix;
++        }
++        std::size_t cursor = 0;
++        auto iterator = round_robin_cursor_.find(left.pipeline_key);
++        if (iterator != round_robin_cursor_.end()) {
++          cursor = iterator->second;
++        }
++        auto rank = [this, cursor](std::size_t index) {
++          return (index + blocks_.size() - cursor) % blocks_.size();
++        };
++        return std::make_tuple(rank(left.block_index), left_block.id) <
++               std::make_tuple(rank(right.block_index), right_block.id);
++      });
++
++  std::set<PipelineKey> issued;
++  uint64_t issued_this_cycle = 0;
++  for (const auto &candidate : candidates) {
++    if (issued.count(candidate.pipeline_key)) {
++      ++stats_.stalls_by_reason["pipeline_contention"];
++      recordEvent(
++          "stall", candidate.block_index,
++          {{"reason", "pipeline_contention"}});
++      continue;
++    }
++    std::string reason;
++    if (!canIssue(candidate.block_index, &reason)) {
++      ++stats_.stalls_by_reason[reason];
++      recordEvent("stall", candidate.block_index, {{"reason", reason}});
++      continue;
++    }
++    issueInstruction(candidate.block_index);
++    issued.insert(candidate.pipeline_key);
++    round_robin_cursor_[candidate.pipeline_key] =
++        (candidate.block_index + 1) % blocks_.size();
++    ++issued_this_cycle;
++  }
++  stats_.max_pipeline_issues_in_cycle =
++      std::max(stats_.max_pipeline_issues_in_cycle, issued_this_cycle);
++}
++
++void
++Overlay::recordBusyCycles()
++{
++  std::set<PipelineKind> busy;
++  for (std::size_t index = 0; index < states_.size(); ++index) {
++    const auto &state = states_[index];
++    if (state.inflight) {
++      busy.insert(blocks_[index].instructions[state.pc].pipeline);
++    }
++  }
++  for (PipelineKind pipeline : busy) {
++    ++stats_.busy_cycles_by_pipeline[pipeline];
++  }
++}
++
++void
++Overlay::recordEvent(
++    const std::string &kind, std::size_t block_index,
++    const std::map<std::string, std::string> &detail)
++{
++  const auto &block = blocks_[block_index];
++  const auto &state = states_[block_index];
++  const auto &instruction = block.instructions[state.pc];
++  events_.push_back(
++      {cycle_, kind, block.tag, block.id, state.iteration, instruction.id,
++       block.pe, PipelineName(instruction.pipeline), detail});
++}
++
++void
++Overlay::recordTagEvent(
++    const std::string &kind, uint64_t tag,
++    const std::map<std::string, std::string> &detail)
++{
++  events_.push_back({cycle_, kind, tag, "", 0, "", {}, "", detail});
++}
++
++std::string
++Overlay::eventsJsonLines(const std::string &scenario) const
++{
++  std::ostringstream out;
++  for (const auto &event : events_) {
++    out << "{\"scenario\":" << Quote(scenario)
++        << ",\"cycle\":" << event.cycle
++        << ",\"kind\":" << Quote(event.kind)
++        << ",\"tag\":" << event.tag
++        << ",\"block\":" << Quote(event.block)
++        << ",\"iteration\":" << event.iteration
++        << ",\"instruction\":" << Quote(event.instruction)
++        << ",\"pe\":[" << event.pe.x << "," << event.pe.y << "]"
++        << ",\"pipeline\":" << Quote(event.pipeline)
++        << ",\"detail\":{";
++    bool first = true;
++    for (const auto &item : event.detail) {
++      if (!first) out << ",";
++      out << Quote(item.first) << ":" << Quote(item.second);
++      first = false;
++    }
++    out << "}}\n";
++  }
++  return out.str();
++}
++
++std::string
++Overlay::summaryJson(const std::string &scenario) const
++{
++  std::ostringstream out;
++  out << "{\"scenario\":" << Quote(scenario)
++      << ",\"cycles\":" << stats_.cycles
++      << ",\"done\":" << (done() ? "true" : "false")
++      << ",\"memory_backend\":"
++      << Quote(config_.memory_backend == MemoryBackend::Adapter ? "adapter" : "fixed")
++      << ",\"instructions_issued\":" << stats_.instructions_issued
++      << ",\"instructions_completed\":" << stats_.instructions_completed
++      << ",\"max_active_tags\":" << stats_.max_active_tags
++      << ",\"route_hops\":" << stats_.route_hops
++      << ",\"skip_hops\":" << stats_.skip_hops
++      << ",\"unit_hops\":" << stats_.unit_hops
++      << ",\"link_stalls\":" << stats_.link_stalls
++      << ",\"max_pipeline_issues_in_cycle\":"
++      << stats_.max_pipeline_issues_in_cycle
++      << ",\"boundary_events_emitted\":" << stats_.boundary_events_emitted
++      << ",\"event_unblocked_issues_before_tag_complete\":"
++      << stats_.event_unblocked_issues_before_tag_complete
++      << ",\"external_memory_requests\":" << stats_.external_memory_requests
++      << ",\"external_memory_completions\":"
++      << stats_.external_memory_completions
++      << ",\"external_memory_wait_cycles\":"
++      << stats_.external_memory_wait_cycles
++      << ",\"issued_by_pipeline\":{";
++  bool first = true;
++  for (PipelineKind pipeline : {PipelineKind::Load, PipelineKind::Store,
++                                PipelineKind::Compute, PipelineKind::Xfer}) {
++    if (!first) out << ",";
++    out << Quote(PipelineName(pipeline)) << ":"
++        << MapValue(stats_.issued_by_pipeline, pipeline);
++    first = false;
++  }
++  out << "},\"busy_cycles_by_pipeline\":{";
++  first = true;
++  for (PipelineKind pipeline : {PipelineKind::Load, PipelineKind::Store,
++                                PipelineKind::Compute, PipelineKind::Xfer}) {
++    if (!first) out << ",";
++    out << Quote(PipelineName(pipeline)) << ":"
++        << MapValue(stats_.busy_cycles_by_pipeline, pipeline);
++    first = false;
++  }
++  out << "},\"stalls_by_reason\":{";
++  first = true;
++  for (const auto &item : stats_.stalls_by_reason) {
++    if (!first) out << ",";
++    out << Quote(item.first) << ":" << item.second;
++    first = false;
++  }
++  out << "}}";
++  return out.str();
++}
++
++}  // namespace mlx
++}  // namespace sim
++}  // namespace dsa
+diff --git a/src/cpu/minor/ssim/mlx_overlay.hh b/src/cpu/minor/ssim/mlx_overlay.hh
+new file mode 100644
+index 000000000..bfc0b326f
+--- /dev/null
++++ b/src/cpu/minor/ssim/mlx_overlay.hh
+@@ -0,0 +1,357 @@
++/*
++ * Copyright (c) 2026 MLX reproduction contributors
++ * All rights reserved.
++ *
++ * Redistribution and use in source and binary forms, with or without
++ * modification, are permitted provided that the following conditions are met:
++ * 1. Redistributions of source code must retain the above copyright notice,
++ *    this list of conditions and the following disclaimer.
++ * 2. Redistributions in binary form must reproduce the above copyright notice,
++ *    this list of conditions and the following disclaimer in the documentation
++ *    and/or other materials provided with the distribution.
++ *
++ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
++ * AND ANY EXPRESS OR IMPLIED WARRANTIES ARE DISCLAIMED.
++ */
++
++#pragma once
++
++#include <cstdint>
++#include <map>
++#include <memory>
++#include <set>
++#include <string>
++#include <tuple>
++#include <utility>
++#include <vector>
++
++namespace dsa {
++namespace sim {
++namespace mlx {
++
++struct Coord {
++  int x{0};
++  int y{0};
++
++  Coord(int x_ = 0, int y_ = 0) : x(x_), y(y_) {}
++
++  bool operator==(const Coord &other) const {
++    return x == other.x && y == other.y;
++  }
++
++  bool operator!=(const Coord &other) const { return !(*this == other); }
++
++  bool operator<(const Coord &other) const {
++    return std::tie(x, y) < std::tie(other.x, other.y);
++  }
++};
++
++enum class PipelineKind { Load = 0, Store = 1, Compute = 2, Xfer = 3 };
++
++enum class MemoryBackend { FixedLatency = 0, Adapter = 1 };
++
++const char *PipelineName(PipelineKind pipeline);
++PipelineKind ParsePipeline(const std::string &name);
++MemoryBackend ParseMemoryBackend(const std::string &name);
++
++struct Timing {
++  uint64_t latency{1};
++  uint64_t initiation_interval{1};
++
++  Timing(uint64_t latency_ = 1, uint64_t initiation_interval_ = 1)
++      : latency(latency_), initiation_interval(initiation_interval_) {}
++};
++
++struct FunctionalUnit {
++  std::string resource_class;
++  Timing timing;
++
++  FunctionalUnit(
++      std::string resource_class_ = "", Timing timing_ = Timing())
++      : resource_class(std::move(resource_class_)), timing(timing_) {}
++};
++
++struct RegisterFileConfig {
++  unsigned banks{1};
++  unsigned read_ports{1};
++  unsigned write_ports{1};
++
++  RegisterFileConfig(
++      unsigned banks_ = 1, unsigned read_ports_ = 1,
++      unsigned write_ports_ = 1)
++      : banks(banks_), read_ports(read_ports_), write_ports(write_ports_) {}
++};
++
++struct RoutingConfig {
++  int mesh_width{1};
++  int mesh_height{1};
++  std::vector<int> skip_steps{1};
++  uint64_t latency_per_hop{1};
++  unsigned link_capacity{1};
++
++  RoutingConfig(
++      int mesh_width_ = 1, int mesh_height_ = 1,
++      std::vector<int> skip_steps_ = std::vector<int>{1},
++      uint64_t latency_per_hop_ = 1, unsigned link_capacity_ = 1)
++      : mesh_width(mesh_width_), mesh_height(mesh_height_),
++        skip_steps(std::move(skip_steps_)),
++        latency_per_hop(latency_per_hop_), link_capacity(link_capacity_) {}
++};
++
++struct Config {
++  unsigned active_window{1};
++  MemoryBackend memory_backend{MemoryBackend::FixedLatency};
++  RegisterFileConfig register_file;
++  std::map<PipelineKind, Timing> pipeline_timing;
++  std::map<std::string, FunctionalUnit> functional_units;
++  RoutingConfig routing;
++};
++
++struct Instruction {
++  std::string id;
++  PipelineKind pipeline{PipelineKind::Compute};
++  std::string operation;
++  std::vector<unsigned> reads;
++  std::vector<unsigned> writes;
++  Coord destination;
++  unsigned destination_register{0};
++  uint64_t memory_address{0};
++  std::vector<uint64_t> memory_address_sequence;
++  unsigned memory_bytes{8};
++  std::string emit_event;
++};
++
++struct TaggedBlock {
++  std::string id;
++  uint64_t tag{0};
++  Coord pe;
++  uint64_t trip_count{1};
++  std::vector<uint64_t> predecessors;
++  std::vector<std::string> wait_events;
++  std::vector<Instruction> instructions;
++};
++
++struct MemoryRequest {
++  bool write{false};
++  uint64_t address{0};
++  unsigned bytes{0};
++  Coord pe;
++  uint64_t tag{0};
++  std::string block;
++  std::string instruction;
++  uint64_t iteration{0};
++
++  MemoryRequest(
++      bool write_ = false, uint64_t address_ = 0, unsigned bytes_ = 0,
++      Coord pe_ = Coord(), uint64_t tag_ = 0, std::string block_ = "",
++      std::string instruction_ = "", uint64_t iteration_ = 0)
++      : write(write_), address(address_), bytes(bytes_), pe(pe_), tag(tag_),
++        block(std::move(block_)), instruction(std::move(instruction_)),
++        iteration(iteration_) {}
++};
++
++class MemoryAdapter {
++ public:
++  virtual ~MemoryAdapter() {}
++  virtual bool available(const MemoryRequest &request) const = 0;
++  virtual uint64_t issue(const MemoryRequest &request) = 0;
++  virtual bool takeCompletion(uint64_t token) = 0;
++};
++
++struct Event {
++  uint64_t cycle{0};
++  std::string kind;
++  uint64_t tag{0};
++  std::string block;
++  uint64_t iteration{0};
++  std::string instruction;
++  Coord pe;
++  std::string pipeline;
++  std::map<std::string, std::string> detail;
++
++  Event(
++      uint64_t cycle_ = 0, std::string kind_ = "", uint64_t tag_ = 0,
++      std::string block_ = "", uint64_t iteration_ = 0,
++      std::string instruction_ = "", Coord pe_ = Coord(),
++      std::string pipeline_ = "",
++      std::map<std::string, std::string> detail_ = {})
++      : cycle(cycle_), kind(std::move(kind_)), tag(tag_),
++        block(std::move(block_)), iteration(iteration_),
++        instruction(std::move(instruction_)), pe(pe_),
++        pipeline(std::move(pipeline_)), detail(std::move(detail_)) {}
++};
++
++struct Stats {
++  uint64_t cycles{0};
++  uint64_t instructions_issued{0};
++  uint64_t instructions_completed{0};
++  uint64_t max_active_tags{0};
++  uint64_t route_hops{0};
++  uint64_t skip_hops{0};
++  uint64_t unit_hops{0};
++  uint64_t link_stalls{0};
++  uint64_t max_pipeline_issues_in_cycle{0};
++  uint64_t boundary_events_emitted{0};
++  uint64_t event_unblocked_issues_before_tag_complete{0};
++  uint64_t external_memory_requests{0};
++  uint64_t external_memory_completions{0};
++  uint64_t external_memory_wait_cycles{0};
++  std::map<PipelineKind, uint64_t> issued_by_pipeline;
++  std::map<PipelineKind, uint64_t> busy_cycles_by_pipeline;
++  std::map<std::string, uint64_t> stalls_by_reason;
++};
++
++class Overlay {
++ public:
++  Overlay(Config config, std::vector<TaggedBlock> blocks);
++
++  static std::unique_ptr<Overlay> FromJsonFile(const std::string &path);
++  static std::vector<Coord> GreedyRoute(
++      Coord source, Coord destination, const RoutingConfig &routing);
++
++  void step();
++  void run(uint64_t max_cycles);
++  void setMemoryAdapter(MemoryAdapter *adapter) { memory_adapter_ = adapter; }
++
++  bool done() const;
++  bool requiresMemoryAdapter() const {
++    return config_.memory_backend == MemoryBackend::Adapter;
++  }
++  uint64_t now() const { return cycle_; }
++  const Config &config() const { return config_; }
++  const std::vector<TaggedBlock> &blocks() const { return blocks_; }
++  const std::vector<Event> &events() const { return events_; }
++  const Stats &stats() const { return stats_; }
++
++  std::string eventsJsonLines(const std::string &scenario) const;
++  std::string summaryJson(const std::string &scenario) const;
++
++ private:
++  struct BlockState {
++    bool active{false};
++    bool complete{false};
++    bool inflight{false};
++    bool routing{false};
++    bool external_memory{false};
++    uint64_t iteration{0};
++    std::size_t pc{0};
++    uint64_t ready_cycle{0};
++    uint64_t next_hop_cycle{0};
++    std::vector<Coord> route;
++    std::size_t route_index{0};
++    uint64_t memory_token{0};
++  };
++
++  struct PipelineKey {
++    Coord pe;
++    PipelineKind pipeline{PipelineKind::Compute};
++    PipelineKey(
++        Coord pe_ = Coord(),
++        PipelineKind pipeline_ = PipelineKind::Compute)
++        : pe(pe_), pipeline(pipeline_) {}
++    bool operator<(const PipelineKey &other) const {
++      return std::tie(pe, pipeline) < std::tie(other.pe, other.pipeline);
++    }
++  };
++
++  struct FuKey {
++    Coord pe;
++    std::string resource_class;
++    FuKey(Coord pe_ = Coord(), std::string resource_class_ = "")
++        : pe(pe_), resource_class(std::move(resource_class_)) {}
++    bool operator<(const FuKey &other) const {
++      return std::tie(pe, resource_class) <
++             std::tie(other.pe, other.resource_class);
++    }
++  };
++
++  struct RegisterKey {
++    Coord pe;
++    uint64_t tag{0};
++    unsigned reg{0};
++    RegisterKey(Coord pe_ = Coord(), uint64_t tag_ = 0, unsigned reg_ = 0)
++        : pe(pe_), tag(tag_), reg(reg_) {}
++    bool operator<(const RegisterKey &other) const {
++      return std::tie(pe, tag, reg) < std::tie(other.pe, other.tag, other.reg);
++    }
++  };
++
++  struct LinkKey {
++    Coord source;
++    Coord destination;
++    LinkKey(Coord source_ = Coord(), Coord destination_ = Coord())
++        : source(source_), destination(destination_) {}
++    bool operator<(const LinkKey &other) const {
++      return std::tie(source, destination) <
++             std::tie(other.source, other.destination);
++    }
++  };
++
++  struct Candidate {
++    std::size_t block_index{0};
++    PipelineKey pipeline_key;
++    Candidate(
++        std::size_t block_index_ = 0,
++        PipelineKey pipeline_key_ = PipelineKey())
++        : block_index(block_index_), pipeline_key(pipeline_key_) {}
++  };
++
++  void validate() const;
++  void buildTagIndex();
++  void resetCycleResources();
++  void routePackets();
++  void completeInstructions();
++  void completeInstruction(std::size_t block_index);
++  void updateCompletedTags();
++  void admitTags();
++  void issueInstructions();
++  bool canIssue(std::size_t block_index, std::string *reason) const;
++  void issueInstruction(std::size_t block_index);
++  bool canWriteback(std::size_t block_index, std::string *reason) const;
++  void reserveReadPorts(const TaggedBlock &block, const Instruction &instruction);
++  void reserveWritePorts(const TaggedBlock &block, const Instruction &instruction);
++  Coord writebackPe(const TaggedBlock &block, const Instruction &instruction) const;
++  Timing instructionTiming(const Instruction &instruction) const;
++  uint64_t memoryAddress(
++      const TaggedBlock &block, const BlockState &state,
++      const Instruction &instruction) const;
++  std::string fuClass(const Instruction &instruction) const;
++  unsigned registerBank(unsigned reg) const;
++  bool tagFinished(uint64_t tag) const;
++  bool predecessorsComplete(uint64_t tag) const;
++  bool iterationEventsReady(std::size_t block_index) const;
++  void recordBusyCycles();
++  void recordEvent(
++      const std::string &kind, std::size_t block_index,
++      const std::map<std::string, std::string> &detail = {});
++  void recordTagEvent(
++      const std::string &kind, uint64_t tag,
++      const std::map<std::string, std::string> &detail = {});
++
++  Config config_;
++  std::vector<TaggedBlock> blocks_;
++  std::vector<BlockState> states_;
++  uint64_t cycle_{0};
++  std::map<uint64_t, std::vector<std::size_t>> tag_blocks_;
++  std::map<uint64_t, std::set<uint64_t>> tag_predecessors_;
++  std::set<uint64_t> active_tags_;
++  std::set<uint64_t> completed_tags_;
++  std::map<std::string, uint64_t> event_counts_;
++  std::map<std::string, uint64_t> event_producer_tags_;
++  std::map<PipelineKey, uint64_t> pipeline_next_issue_;
++  std::map<PipelineKey, std::size_t> round_robin_cursor_;
++  std::map<FuKey, uint64_t> fu_next_issue_;
++  std::set<RegisterKey> pending_writers_;
++  std::map<Coord, unsigned> rf_reads_this_cycle_;
++  std::map<Coord, unsigned> rf_writes_this_cycle_;
++  std::map<std::pair<Coord, unsigned>, unsigned> rf_read_banks_this_cycle_;
++  std::map<std::pair<Coord, unsigned>, unsigned> rf_write_banks_this_cycle_;
++  std::map<LinkKey, unsigned> links_this_cycle_;
++  std::vector<Event> events_;
++  Stats stats_;
++  MemoryAdapter *memory_adapter_{nullptr};
++};
++
++}  // namespace mlx
++}  // namespace sim
++}  // namespace dsa
+diff --git a/src/cpu/minor/ssim/mlx_spad_adapter.cc b/src/cpu/minor/ssim/mlx_spad_adapter.cc
+new file mode 100644
+index 000000000..a5d575724
+--- /dev/null
++++ b/src/cpu/minor/ssim/mlx_spad_adapter.cc
+@@ -0,0 +1,137 @@
++/* See mlx_overlay.hh for license. */
++
++#include "mlx_spad_adapter.hh"
++
++#include <algorithm>
++#include <stdexcept>
++#include <vector>
++
++#include "accel.hh"
++#include "request.h"
++
++namespace dsa {
++namespace sim {
++namespace mlx {
++
++namespace {
++
++uint64_t
++BackpressureCycles(const dsa::sim::ScratchMemory &scratchpad)
++{
++  uint64_t total = 0;
++  for (const auto &bank : scratchpad.banks) {
++    total += bank.stat.read_backlog;
++    total += bank.stat.compute_backlog;
++    total += bank.stat.atomic_backlog;
++    total += bank.stat.wb_backlog;
++    total += bank.stat.decompose_backlog;
++  }
++  return total;
++}
++
++}  // namespace
++
++Gem5ScratchpadAdapter::Gem5ScratchpadAdapter(accel_t *host) : host_(host)
++{
++  if (host_ && !host_->spads.empty()) {
++    initial_bank_backpressure_ = BackpressureCycles(host_->spads.front());
++  }
++}
++
++bool
++Gem5ScratchpadAdapter::available(const MemoryRequest &request) const
++{
++  if (!host_ || host_->spads.empty() || request.bytes == 0) {
++    return false;
++  }
++  auto &scratchpad = host_->spads.front();
++  if (request.address + request.bytes > static_cast<uint64_t>(scratchpad.num_bytes) ||
++      request.address % request.bytes != 0 ||
++      request.bytes >= static_cast<unsigned>(scratchpad.bandwidth())) {
++    return false;
++  }
++  bool result = scratchpad.rb->Available() &&
++                response_to_token_.size() < MaxOutstandingTokens;
++  if (!result) {
++    ++unavailable_checks_;
++  }
++  return result;
++}
++
++uint64_t
++Gem5ScratchpadAdapter::issue(const MemoryRequest &request)
++{
++  if (!available(request)) {
++    throw std::runtime_error("DSAGEN scratchpad adapter issued while unavailable");
++  }
++  auto &scratchpad = host_->spads.front();
++  uint64_t token = next_token_++;
++  if (token > MaxOutstandingTokens) {
++    throw std::runtime_error("DSAGEN scratchpad adapter token space exhausted");
++  }
++  int response_id = ResponseBase + static_cast<int>(token);
++  dsa::sim::Request operation(
++      response_id, request.address, request.bytes,
++      request.write ? MemoryOperation::DMO_Write : MemoryOperation::DMO_Read);
++  operation.mask.assign(scratchpad.bank_width, true);
++  if (request.write) {
++    operation.operand.assign(scratchpad.bank_width, 0);
++  }
++  dsa::sim::stream::LinearStream::LineInfo metadata(
++      request.address, request.address,
++      std::vector<bool>(scratchpad.bank_width, true), 0);
++  scratchpad.rb->Decode(&scratchpad, std::vector<dsa::sim::Request>{operation}, metadata);
++  response_to_token_[static_cast<uint64_t>(response_id)] = Pending(token, host_->now());
++  ++requests_issued_;
++  return token;
++}
++
++bool
++Gem5ScratchpadAdapter::handleResponse(const dsa::sim::Response &response)
++{
++  auto iterator = response_to_token_.find(response.id);
++  if (iterator == response_to_token_.end()) {
++    return false;
++  }
++  completed_tokens_.insert(iterator->second.token);
++  uint64_t latency = host_->now() - iterator->second.issue_cycle;
++  max_response_ticks_ = std::max(max_response_ticks_, latency);
++  response_to_token_.erase(iterator);
++  ++responses_handled_;
++  return true;
++}
++
++uint64_t
++Gem5ScratchpadAdapter::bankBackpressureCycles() const
++{
++  if (!host_ || host_->spads.empty()) {
++    return 0;
++  }
++  uint64_t current = BackpressureCycles(host_->spads.front());
++  return current >= initial_bank_backpressure_ ?
++      current - initial_bank_backpressure_ : 0;
++}
++
++uint64_t
++Gem5ScratchpadAdapter::maxResponseCycles() const
++{
++  if (!host_ || host_->freq() == 0) {
++    return 0;
++  }
++  return (max_response_ticks_ + host_->freq() - 1) / host_->freq();
++}
++
++bool
++Gem5ScratchpadAdapter::takeCompletion(uint64_t token)
++{
++  auto iterator = completed_tokens_.find(token);
++  if (iterator == completed_tokens_.end()) {
++    return false;
++  }
++  completed_tokens_.erase(iterator);
++  return true;
++}
++
++}  // namespace mlx
++}  // namespace sim
++}  // namespace dsa
+diff --git a/src/cpu/minor/ssim/mlx_spad_adapter.hh b/src/cpu/minor/ssim/mlx_spad_adapter.hh
+new file mode 100644
+index 000000000..82ba41ef8
+--- /dev/null
++++ b/src/cpu/minor/ssim/mlx_spad_adapter.hh
+@@ -0,0 +1,63 @@
++/* See mlx_overlay.hh for license. */
++
++#pragma once
++
++#include <cstdint>
++#include <map>
++#include <set>
++
++#include "mlx_overlay.hh"
++
++class accel_t;
++
++namespace dsa {
++namespace sim {
++struct Response;
++}
++}
++
++namespace dsa {
++namespace sim {
++namespace mlx {
++
++class Gem5ScratchpadAdapter : public MemoryAdapter {
++ public:
++  explicit Gem5ScratchpadAdapter(accel_t *host);
++
++  bool available(const MemoryRequest &request) const override;
++  uint64_t issue(const MemoryRequest &request) override;
++  bool takeCompletion(uint64_t token) override;
++
++  bool handleResponse(const dsa::sim::Response &response);
++  uint64_t requestsIssued() const { return requests_issued_; }
++  uint64_t responsesHandled() const { return responses_handled_; }
++  uint64_t unavailableChecks() const { return unavailable_checks_; }
++  uint64_t maxResponseTicks() const { return max_response_ticks_; }
++  uint64_t maxResponseCycles() const;
++  uint64_t bankBackpressureCycles() const;
++
++ private:
++  static const int ResponseBase = 0x3f000000;
++  static const uint64_t MaxOutstandingTokens = 0x000fffff;
++
++  struct Pending {
++    uint64_t token{0};
++    uint64_t issue_cycle{0};
++    Pending(uint64_t token_ = 0, uint64_t issue_cycle_ = 0)
++        : token(token_), issue_cycle(issue_cycle_) {}
++  };
++
++  accel_t *host_;
++  uint64_t next_token_{1};
++  uint64_t requests_issued_{0};
++  uint64_t responses_handled_{0};
++  mutable uint64_t unavailable_checks_{0};
++  uint64_t max_response_ticks_{0};
++  uint64_t initial_bank_backpressure_{0};
++  std::map<uint64_t, Pending> response_to_token_;
++  std::set<uint64_t> completed_tokens_;
++};
++
++}  // namespace mlx
++}  // namespace sim
++}  // namespace dsa

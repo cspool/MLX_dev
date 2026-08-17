@@ -39,6 +39,8 @@ Run the compiler and callback/event microtraces with:
 MLX_CDC_OUTPUT_ROOT=artifacts/smoke/my-cdc-tests \
   scripts/run_mlx_cdc_memory_microtraces.sh
 MLX_CDC_RUN_LABEL=rerun001 scripts/run_mlx_cdc_gem5.sh
+MLX_AGGREGATE_OUTPUT_ROOT=artifacts/smoke/my-aggregate \
+  scripts/run_mlx_aggregate_equivalence.sh
 ```
 
 The current BSMM-8 dsa-gem5 run completes 72 instructions, 36/36 real

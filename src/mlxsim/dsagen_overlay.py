@@ -97,6 +97,21 @@ def _functional_units() -> dict[str, dict[str, int | str]]:
     }
 
 
+def _operation_counts(operator_kind: OperatorKind, total_pairs: int, width: int, stages: int) -> dict[str, int]:
+    if operator_kind == "bsmm":
+        return {
+            "parameters": 2 * width * stages,
+            "scalar_multiplies": 4 * total_pairs,
+            "scalar_adds": 2 * total_pairs,
+        }
+    return {
+        "complex_multiplies": total_pairs,
+        "complex_adds": 2 * total_pairs,
+        "real_multiplies": 4 * total_pairs,
+        "real_adds": 6 * total_pairs,
+    }
+
+
 def _instruction_template(
     *,
     operator_kind: OperatorKind,
@@ -264,23 +279,12 @@ def compile_radix2_cdc(
                 )
 
     total_pairs = stages * pairs_per_stage
-    if operator_kind == "bsmm":
-        operation_counts = {
-            "parameters": 2 * width * stages,
-            "scalar_multiplies": 4 * total_pairs,
-            "scalar_adds": 2 * total_pairs,
-        }
-    else:
-        operation_counts = {
-            "complex_multiplies": total_pairs,
-            "complex_adds": 2 * total_pairs,
-            "real_multiplies": 4 * total_pairs,
-            "real_adds": 6 * total_pairs,
-        }
+    operation_counts = _operation_counts(operator_kind, total_pairs, width, stages)
 
     instructions_per_block = 6 if operator_kind == "bsmm" else 7
     metadata = {
         "schema_version": 1,
+        "compilation_mode": "pairwise",
         "compiler": "mlxsim.dsagen_overlay.compile_radix2_cdc",
         "operator": operator_kind,
         "width": width,
@@ -297,6 +301,171 @@ def compile_radix2_cdc(
         "routes": routes,
         "paper_performance_targets_consumed": False,
         "template_provenance": "inferred load-compute-store-xfer realization",
+    }
+    config = {
+        "schema_version": 1,
+        "memory_backend": fixture.memory_backend,
+        "active_window": fixture.active_window,
+        "register_file": {"banks": 4, "read_ports": 2, "write_ports": 1},
+        "pipelines": {
+            "load": {"latency": 1, "initiation_interval": 1},
+            "store": {"latency": 1, "initiation_interval": 1},
+            "compute": {"latency": 1, "initiation_interval": 1},
+            "xfer": {"latency": 1, "initiation_interval": 1},
+        },
+        "functional_units": _functional_units(),
+        "routing": {
+            "mesh_width": fixture.mesh_width,
+            "mesh_height": fixture.mesh_height,
+            "skip_steps": list(fixture.skip_steps),
+            "latency_per_hop": 1,
+            "link_capacity": 1,
+        },
+        "metadata": metadata,
+        "blocks": blocks,
+    }
+    return config, metadata
+
+
+def compile_aggregate_radix2_cdc(
+    operator_kind: OperatorKind,
+    width: int,
+    fixture: OverlayFixture = DEFAULT_FIXTURE,
+) -> tuple[dict[str, Any], dict[str, Any]]:
+    if operator_kind not in {"bsmm", "fft"}:
+        raise ValueError(f"unsupported operator: {operator_kind}")
+    if not is_power_of_two(width) or width < 2:
+        raise ValueError("operator width must be a power of two >= 2")
+    mesh_capacity = fixture.mesh_width * fixture.mesh_height
+    if mesh_capacity <= 0:
+        raise ValueError("mesh dimensions must be positive")
+    stages = int(math.log2(width))
+    pairs_per_stage = width // 2
+    active_slots = min(pairs_per_stage, mesh_capacity)
+    placement_stride = max(1, min(width, fixture.mesh_width * 2))
+    instructions_per_iteration = 6 if operator_kind == "bsmm" else 7
+    blocks: list[dict[str, Any]] = []
+    routes: list[dict[str, Any]] = []
+    event_edges: list[dict[str, Any]] = []
+
+    for stage in range(stages):
+        for slot in range(active_slots):
+            assigned_pairs = list(range(slot, pairs_per_stage, active_slots))
+            if not assigned_pairs:
+                continue
+            source = index_to_coord(slot + stage * placement_stride, fixture)
+            destination = index_to_coord(slot + (stage + 1) * placement_stride, fixture)
+            for pair in assigned_pairs:
+                pair_source = index_to_coord(pair + stage * placement_stride, fixture)
+                pair_destination = index_to_coord(
+                    pair + (stage + 1) * placement_stride, fixture
+                )
+                if pair_source != source or pair_destination != destination:
+                    raise ValueError(
+                        "modulo aggregation mixed source/destination route classes"
+                    )
+            first_pair = assigned_pairs[0]
+            first_index, second_index = pair_indices(width, stage, first_pair)
+            event_name = f"{operator_kind}_s{stage}_slot{slot}_ready"
+            instructions = _instruction_template(
+                operator_kind=operator_kind,
+                stage=stage,
+                pair=first_pair,
+                first_index=first_index,
+                second_index=second_index,
+                source=source,
+                destination=destination,
+                width=width,
+                fixture=fixture,
+                event_name=event_name,
+            )
+            first_addresses: list[int] = []
+            second_addresses: list[int] = []
+            output_addresses: list[int] = []
+            for pair in assigned_pairs:
+                first, second = pair_indices(width, stage, pair)
+                stage_base = stage * width * fixture.scalar_bytes
+                output_base = (stage + 1) * width * fixture.scalar_bytes
+                first_addresses.append(stage_base + first * fixture.scalar_bytes)
+                second_addresses.append(stage_base + second * fixture.scalar_bytes)
+                output_addresses.append(output_base + first * fixture.scalar_bytes)
+            first_addresses *= fixture.trip_count
+            second_addresses *= fixture.trip_count
+            output_addresses *= fixture.trip_count
+            memory_instructions = [
+                item for item in instructions if item["pipeline"] in {"load", "store"}
+            ]
+            sequences = [first_addresses, second_addresses, output_addresses]
+            for instruction, sequence in zip(memory_instructions, sequences, strict=True):
+                instruction["memory_address"] = sequence[0]
+                instruction["memory_address_sequence"] = sequence
+            wait_events = (
+                []
+                if stage == 0
+                else [f"{operator_kind}_s{stage - 1}_slot{slot}_ready"]
+            )
+            blocks.append(
+                {
+                    "id": f"{operator_kind}_aggregate_stage{stage}_slot{slot}",
+                    "tag": stage + 1,
+                    "pe": list(source),
+                    "trip_count": len(assigned_pairs) * fixture.trip_count,
+                    "predecessors": [],
+                    "wait_events": wait_events,
+                    "logical_pairs": assigned_pairs,
+                    "instructions": instructions,
+                }
+            )
+            routes.append(
+                {
+                    "stage": stage,
+                    "slot": slot,
+                    "source": list(source),
+                    "destination": list(destination),
+                    "trip_count": len(assigned_pairs) * fixture.trip_count,
+                    "steps": instructions[-1]["route"],
+                }
+            )
+            if stage + 1 < stages:
+                event_edges.append(
+                    {
+                        "event": event_name,
+                        "producer_stage": stage,
+                        "consumer_stage": stage + 1,
+                        "consumer_block": (
+                            f"{operator_kind}_aggregate_stage{stage + 1}_slot{slot}"
+                        ),
+                        "count": len(assigned_pairs) * fixture.trip_count,
+                    }
+                )
+
+    total_pairs = stages * pairs_per_stage
+    executed_pairs = sum(int(block["trip_count"]) for block in blocks)
+    metadata = {
+        "schema_version": 1,
+        "compilation_mode": "aggregate",
+        "compiler": "mlxsim.dsagen_overlay.compile_aggregate_radix2_cdc",
+        "operator": operator_kind,
+        "width": width,
+        "stages": stages,
+        "pairs_per_stage": pairs_per_stage,
+        "total_pairs": total_pairs,
+        "active_slots_per_stage": active_slots,
+        "block_count": len(blocks),
+        "max_trip_count": max(int(block["trip_count"]) for block in blocks),
+        "static_instruction_count": sum(len(block["instructions"]) for block in blocks),
+        "max_active_instruction_footprint_per_pe": (
+            fixture.active_window * instructions_per_iteration
+        ),
+        "executed_instruction_count": executed_pairs * instructions_per_iteration,
+        "instruction_count": executed_pairs * instructions_per_iteration,
+        "memory_requests": executed_pairs * 3,
+        "transfers": executed_pairs,
+        "operation_counts": _operation_counts(operator_kind, total_pairs, width, stages),
+        "event_edges": event_edges,
+        "routes": routes,
+        "paper_performance_targets_consumed": False,
+        "template_provenance": "trip-count-folded inferred CDC realization",
     }
     config = {
         "schema_version": 1,

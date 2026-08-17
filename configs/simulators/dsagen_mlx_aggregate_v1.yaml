@@ -31,6 +31,15 @@ aggregation_contract:
     - trip-weighted instruction, memory, transfer, and scalar-op totals equal pair-wise compilation
   no_padding: no dummy pair or memory request may be introduced
 
+source_layout:
+  compiler: src/mlxsim/dsagen_overlay.py
+  compiler_cli: scripts/compile_mlx_aggregate.py
+  overlay_header: third_party/dsa-framework/dsa-gem5/src/cpu/minor/ssim/mlx_overlay.hh
+  overlay_source: third_party/dsa-framework/dsa-gem5/src/cpu/minor/ssim/mlx_overlay.cc
+  json_driver: simulator_ext/dsagen/mlx_overlay_json_driver.cc
+  trace_comparator: scripts/compare_mlx_overlay_traces.py
+  tracked_patch: patches/dsagen/dsa-gem5-mlx-aggregate-v1.patch
+
 fixtures:
   equivalence:
     - {operator: bsmm, width: 8}
