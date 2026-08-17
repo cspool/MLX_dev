@@ -1,0 +1,36 @@
+name: multiport-spad-v1
+experiment_id: H69
+run_id: run074
+classification: target_free_diagram_derived_multiport_memory
+validation_eligible: false
+
+frozen_inputs:
+  scaling:
+    path: artifacts/results/fig10-scalability-run069.json
+    sha256: 520d152a792225dfe3ec6ba3189fa3048f226c977fb3ff4621fc8cc321bdc530
+    required_status: supported
+    required_integrity: true
+  adapter:
+    path: artifacts/results/standalone-dsagen-spad-run071.json
+    sha256: 2a816515bf6cb2dcdde3ba6972eb8d095b44a2fde2f2c01ad7d1c63c30f15db8
+    required_status: supported
+    required_integrity: true
+
+parent_configs: artifacts/environment/h64/configs
+compile_manifest: artifacts/environment/h64/fig10-scalability-compile-manifest.json
+output_root: artifacts/environment/h69
+result_path: artifacts/results/multiport-spad-run074.json
+
+candidate:
+  operator: bsmm
+  access_orientation: column
+  port_axis: x
+  ports: mesh_width
+  per_port_mechanism: standalone_dsagen_spad_v1
+
+source_layout:
+  transformer: scripts/compile_multiport_spad.py
+  runner: scripts/run_multiport_spad.py
+  auditor: scripts/audit_multiport_spad.py
+  adapter_hh: simulator_ext/dsagen/standalone_spad_adapter.hh
+  adapter_cc: simulator_ext/dsagen/standalone_spad_adapter.cc
