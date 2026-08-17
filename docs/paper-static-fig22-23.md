@@ -20,6 +20,13 @@ GPU scoreboarding are neither described nor imported into MLX timing.
 | Fig. 22 compute utilization | 13/16 | 5.79% | 12.26% | rejected |
 | Fig. 23 scalability proxy | 12/15 | 5.45% | 11.88% | rejected |
 
+The Figure 22 row is the historical compute-only, global-busy proxy inherited
+from H44. H60/H61 subsequently recovered all 64 compute/xfer/load/store values
+and added physical-PE-normalized counters. That stricter complete audit rejects
+0/64 with 62.89% MAPE; see
+[`fig22-resource-counters.md`](fig22-resource-counters.md). Consequently H59
+must not be cited as a complete Figure 22 resource-utilization reproduction.
+
 The six failing points are:
 
 | Figure | Point | Simulated | Paper target | Relative error |

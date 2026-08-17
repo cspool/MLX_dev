@@ -1,0 +1,183 @@
+diff --git a/src/cpu/minor/ssim/mlx_overlay.hh b/src/cpu/minor/ssim/mlx_overlay.hh
+--- a/src/cpu/minor/ssim/mlx_overlay.hh
++++ b/src/cpu/minor/ssim/mlx_overlay.hh
+@@ -197,6 +197,8 @@
+ 
+ struct Stats {
+   uint64_t cycles{0};
++  uint64_t physical_pe_count{0};
++  uint64_t mapped_pe_count{0};
+   uint64_t instructions_issued{0};
+   uint64_t instructions_completed{0};
+   uint64_t max_active_tags{0};
+@@ -212,6 +214,10 @@
+   uint64_t external_memory_wait_cycles{0};
+   std::map<PipelineKind, uint64_t> issued_by_pipeline;
+   std::map<PipelineKind, uint64_t> busy_cycles_by_pipeline;
++  std::map<PipelineKind, uint64_t> resident_pe_cycles_by_pipeline;
++  std::map<PipelineKind, uint64_t> productive_pe_cycles_by_pipeline;
++  std::map<PipelineKind, uint64_t> productive_global_cycles_by_pipeline;
++  std::map<PipelineKind, uint64_t> issue_cycles_by_pipeline;
+   std::map<std::string, uint64_t> stalls_by_reason;
+ };
+ 
+@@ -250,6 +256,7 @@
+     uint64_t iteration{0};
+     std::size_t pc{0};
+     uint64_t ready_cycle{0};
++    uint64_t service_ready_cycle{0};
+     uint64_t next_hop_cycle{0};
+     std::vector<Coord> route;
+     std::size_t route_index{0};
+@@ -365,6 +372,7 @@
+   std::map<std::pair<Coord, unsigned>, unsigned> rf_read_banks_this_cycle_;
+   std::map<std::pair<Coord, unsigned>, unsigned> rf_write_banks_this_cycle_;
+   std::map<LinkKey, unsigned> links_this_cycle_;
++  std::set<PipelineKind> issued_pipelines_this_cycle_;
+   std::vector<Event> events_;
+   Stats stats_;
+   MemoryAdapter *memory_adapter_{nullptr};
+diff --git a/src/cpu/minor/ssim/mlx_overlay.cc b/src/cpu/minor/ssim/mlx_overlay.cc
+--- a/src/cpu/minor/ssim/mlx_overlay.cc
++++ b/src/cpu/minor/ssim/mlx_overlay.cc
+@@ -150,6 +150,13 @@
+   steps.erase(std::unique(steps.begin(), steps.end()), steps.end());
+   buildTagIndex();
+   validate();
++  stats_.physical_pe_count = static_cast<uint64_t>(config_.routing.mesh_width) *
++      static_cast<uint64_t>(config_.routing.mesh_height);
++  std::set<Coord> mapped_pes;
++  for (const auto &block : blocks_) {
++    mapped_pes.insert(block.pe);
++  }
++  stats_.mapped_pe_count = mapped_pes.size();
+ }
+ 
+ std::unique_ptr<Overlay>
+@@ -477,6 +484,7 @@
+   rf_read_banks_this_cycle_.clear();
+   rf_write_banks_this_cycle_.clear();
+   links_this_cycle_.clear();
++  issued_pipelines_this_cycle_.clear();
+ }
+ 
+ void
+@@ -611,6 +619,7 @@
+   state.inflight = false;
+   state.external_memory = false;
+   state.memory_token = 0;
++  state.service_ready_cycle = 0;
+   state.route.clear();
+   state.route_index = 0;
+   ++state.pc;
+@@ -930,6 +939,7 @@
+   state.routing = false;
+   state.external_memory = false;
+   state.ready_cycle = cycle_ + timing.latency;
++  state.service_ready_cycle = cycle_ + timing.latency;
+   if ((instruction.pipeline == PipelineKind::Load ||
+        instruction.pipeline == PipelineKind::Store) &&
+       config_.memory_backend != MemoryBackend::FixedLatency) {
+@@ -968,6 +978,7 @@
+   recordEvent("issue", block_index, issue_detail);
+   ++stats_.instructions_issued;
+   ++stats_.issued_by_pipeline[instruction.pipeline];
++  issued_pipelines_this_cycle_.insert(instruction.pipeline);
+ }
+ 
+ void
+@@ -1037,15 +1048,40 @@
+ Overlay::recordBusyCycles()
+ {
+   std::set<PipelineKind> busy;
++  std::set<PipelineKind> productive;
++  std::set<PipelineKey> resident_pe;
++  std::set<PipelineKey> productive_pe;
+   for (std::size_t index = 0; index < states_.size(); ++index) {
+     const auto &state = states_[index];
+     if (state.inflight) {
+-      busy.insert(blocks_[index].instructions[state.pc].pipeline);
++      PipelineKind pipeline = blocks_[index].instructions[state.pc].pipeline;
++      PipelineKey key{blocks_[index].pe, pipeline};
++      busy.insert(pipeline);
++      resident_pe.insert(key);
++      bool external_memory_wait =
++          (pipeline == PipelineKind::Load || pipeline == PipelineKind::Store) &&
++          state.external_memory && state.service_ready_cycle <= cycle_;
++      if (!external_memory_wait) {
++        productive.insert(pipeline);
++        productive_pe.insert(key);
++      }
+     }
+   }
+   for (PipelineKind pipeline : busy) {
+     ++stats_.busy_cycles_by_pipeline[pipeline];
+   }
++  for (const auto &key : resident_pe) {
++    ++stats_.resident_pe_cycles_by_pipeline[key.pipeline];
++  }
++  for (const auto &key : productive_pe) {
++    ++stats_.productive_pe_cycles_by_pipeline[key.pipeline];
++  }
++  for (PipelineKind pipeline : productive) {
++    ++stats_.productive_global_cycles_by_pipeline[pipeline];
++  }
++  for (PipelineKind pipeline : issued_pipelines_this_cycle_) {
++    ++stats_.issue_cycles_by_pipeline[pipeline];
++  }
+ }
+ 
+ void
+@@ -1107,6 +1143,8 @@
+   std::ostringstream out;
+   out << "{\"scenario\":" << Quote(scenario)
+       << ",\"cycles\":" << stats_.cycles
++      << ",\"physical_pe_count\":" << stats_.physical_pe_count
++      << ",\"mapped_pe_count\":" << stats_.mapped_pe_count
+       << ",\"done\":" << (done() ? "true" : "false")
+       << ",\"record_events\":" << (config_.record_events ? "true" : "false")
+       << ",\"start_in_roi\":" << (config_.start_in_roi ? "true" : "false")
+@@ -1153,6 +1191,42 @@
+         << MapValue(stats_.busy_cycles_by_pipeline, pipeline);
+     first = false;
+   }
++  out << "},\"resident_pe_cycles_by_pipeline\":{";
++  first = true;
++  for (PipelineKind pipeline : {PipelineKind::Load, PipelineKind::Store,
++                                PipelineKind::Compute, PipelineKind::Xfer}) {
++    if (!first) out << ",";
++    out << Quote(PipelineName(pipeline)) << ":"
++        << MapValue(stats_.resident_pe_cycles_by_pipeline, pipeline);
++    first = false;
++  }
++  out << "},\"productive_pe_cycles_by_pipeline\":{";
++  first = true;
++  for (PipelineKind pipeline : {PipelineKind::Load, PipelineKind::Store,
++                                PipelineKind::Compute, PipelineKind::Xfer}) {
++    if (!first) out << ",";
++    out << Quote(PipelineName(pipeline)) << ":"
++        << MapValue(stats_.productive_pe_cycles_by_pipeline, pipeline);
++    first = false;
++  }
++  out << "},\"productive_global_cycles_by_pipeline\":{";
++  first = true;
++  for (PipelineKind pipeline : {PipelineKind::Load, PipelineKind::Store,
++                                PipelineKind::Compute, PipelineKind::Xfer}) {
++    if (!first) out << ",";
++    out << Quote(PipelineName(pipeline)) << ":"
++        << MapValue(stats_.productive_global_cycles_by_pipeline, pipeline);
++    first = false;
++  }
++  out << "},\"issue_cycles_by_pipeline\":{";
++  first = true;
++  for (PipelineKind pipeline : {PipelineKind::Load, PipelineKind::Store,
++                                PipelineKind::Compute, PipelineKind::Xfer}) {
++    if (!first) out << ",";
++    out << Quote(PipelineName(pipeline)) << ":"
++        << MapValue(stats_.issue_cycles_by_pipeline, pipeline);
++    first = false;
++  }
+   out << "},\"stalls_by_reason\":{";
+   first = true;
+   for (const auto &item : stats_.stalls_by_reason) {
+

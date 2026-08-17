@@ -83,6 +83,10 @@ full-Transformer-block proxy. See [`dsagen-mlx-overlay.md`](dsagen-mlx-overlay.m
 [`dsagen-mlx-full-block.md`](dsagen-mlx-full-block.md), and
 [`mlx-pe-paper-contract.md`](mlx-pe-paper-contract.md). The corrective Figure
 22/23 replay is reported in
-[`paper-static-fig22-23.md`](paper-static-fig22-23.md). The remaining boundary
+[`paper-static-fig22-23.md`](paper-static-fig22-23.md). The complete Figure 22
+target/counter correction is reported in
+[`fig22-resource-counters.md`](fig22-resource-counters.md). It shows that the
+previous global-any-PE busy counter is not a valid PE-normalized utilization
+metric. The remaining boundary
 is independently defensible large-shape/per-kernel work scaling for Figures
 18--21 and 24--25. Paper result bars were not inputs to the invariant runs.
