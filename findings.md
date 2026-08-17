@@ -31,6 +31,7 @@ This supports a hybrid reproduction strategy: use public spatial/GPU projects as
 - H12 freezes every one of the 53 visible Fig. 15/16 quality bars. Eight raster/text checks pass with maximum discrepancies of 0.092 accuracy percentage point and 0.045 perplexity. This completes quality-target acquisition but is explicitly not a model run.
 - The official FABNet artifact is now pinned as the authoritative external Fig. 19 baseline source: it includes a Python performance simulator, FPGA RTL, `rfft2`, and training instructions. Hazy Butterfly supplies the global pair-mixing primitive, while Monarch supplies a different analytical dense-to-structured projection. None contains MLX's hierarchical tile wrapper or initialization.
 - MLX cites QA-LoRA only at a generic LoRA-fine-tuning claim. QA-LoRA's public defaults (`r=64`, `alpha=16`) assume GPTQ 4-bit/group-32 weights, whereas MLX reports FP16 and omits adapter modules and training details; the citation cannot identify a unique MLX recipe.
+- H13 rejects a no-fit transfer of the official FABNet simulator. The caption-identified Large model and Table-V-identified BE-40 resource point produce 8.53/15.47/29.35/59.42 ms versus 2.91/4.02/8.60/18.88 ms digitized (233.5% MAPE). Even the source-implied half-duration base model misses by 46.8%-92.3%; the public artifact's other speed helpers use BE-120/128, so Fig. 19's model, resource, and timing settings are not jointly recoverable.
 
 ## Patterns and Insights
 

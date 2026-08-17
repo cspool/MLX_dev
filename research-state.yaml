@@ -133,7 +133,7 @@ hypotheses:
     priority: high
   - id: H13
     statement: "The official FABNet BE-40 Python performance model at the source-identified FABNet-Large configuration reproduces all four digitized Fig. 19 FABNet total latencies within 10%."
-    status: pending
+    status: rejected
     motivation: "Test a genuinely open, explicitly cited accelerator simulator against MLX's external-baseline bars without fitting any hardware or workload parameter to the raster."
     parent: H5
     priority: high
@@ -142,7 +142,7 @@ experiments:
   proxy_metric: "Maximum absolute percentage error across every numeric paper anchor; pass only when each reproducible point is <=10%, with unavailable measurements explicitly classified rather than fabricated."
   baseline_value: 0.2486
   best_value: 0.0123
-  total_runs: 15
+  total_runs: 16
   trajectory:
     - run_id: "run_001"
       hypothesis: "H2"
@@ -249,11 +249,18 @@ experiments:
       wall_time_min: 0.2
       change_summary: "Frozen Fig. 15/16 coordinates recover all 53 quality bars; eight raster/text cross-checks pass with 0.092-point accuracy and 0.045 perplexity maxima."
       timestamp: "2026-08-17"
+    - run_id: "run_016"
+      hypothesis: "H13"
+      metric_value: 2.8456
+      delta: null
+      wall_time_min: 0.1
+      change_summary: "Pinned official FABNet-Large/BE-40 simulator rejected: all four absolute Fig. 19 bars fail, with 233.5% MAPE and 284.6% maximum error."
+      timestamp: "2026-08-17"
 
 outer_loop:
   cycle: 0
   last_direction: null
-  last_reflection: "Open references do not identify a unique MLX training recipe, but the official FABNet artifact and Table V identify an unfitted BE-40/FABNet-Large external-simulator holdout for Fig. 19. H13 is pre-registered before executing that configuration."
+  last_reflection: "H13 rejects direct transfer of the open FABNet simulator: MLX's caption selects 24-layer Large and Table V selects BE-40, but that combination is 2.94x-3.85x slower than the Fig. 19 bars. Upstream speed helpers instead use BE-120/128, so the public model/resource/performance settings are not jointly identifiable. Keep the rejection and move to an explicitly inferred functional MLX operator reconstruction."
 
 workspace:
   findings: "findings.md"
