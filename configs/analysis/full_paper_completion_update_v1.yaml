@@ -1,0 +1,50 @@
+name: full-paper-completion-update-v1
+experiment_id: H89
+run_id: run094
+classification: full_paper_completion_certificate_update
+
+frozen_inputs:
+  baseline:
+    path: artifacts/results/full-paper-completion-certificate-run042.json
+    sha256: 7182c5dd1612680f85912c6e96bf14e78b871a4d560f0f3610a6c0dc7de6b071
+  fig20:
+    path: artifacts/results/fig20-matched-evidence-closure-run093.json
+    sha256: 356bfd16663ea4640d54982bb487e40f2d24673ea9e2834da9f26a9d51546d9c
+    required_status: supported
+    required_integrity: true
+  fig22:
+    path: artifacts/results/dsagen-mlx-fig22-run050.json
+    sha256: f2182c6113af7aff73be59eb76e1bc86a07cf5cbcbcb6a18bffcc5c264752950
+    required_status: rejected
+    required_integrity: true
+  fig23:
+    path: artifacts/results/multiport-fig23-transfer-run075.json
+    sha256: 5a79d9d2dd8389bd0a144127c9fecf2e3f52050efd3c7187a6e18ce1644d1bf5
+    required_status: rejected
+    required_integrity: true
+  fig24:
+    path: artifacts/results/fu-fig24-transfer-run079.json
+    sha256: da2a5c2401de1f71e3546e15797b8741524d90b7ceaec614972d07f8ad35b4d5
+    required_status: rejected
+    required_integrity: true
+  fig25:
+    path: artifacts/results/fma-fig25-transfer-run077.json
+    sha256: 6fb413252e731cd858694db343035e14e017bd485963f4f51fd45b4b78bc4b51
+    required_status: rejected
+    required_integrity: true
+
+overrides:
+  fig20: attempt_rejected
+  fig22: attempt_rejected
+  fig23: attempt_rejected
+  fig24: attempt_rejected
+  fig25: attempt_rejected
+
+expected_status_counts:
+  reproduced_within_10pct: 0
+  attempt_rejected: 11
+  calibration_replay_only: 0
+  publicly_blocked: 7
+
+auditor: scripts/audit_full_paper_completion_update.py
+result_path: artifacts/results/full-paper-completion-update-run094.json
