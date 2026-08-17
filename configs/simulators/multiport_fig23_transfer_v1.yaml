@@ -1,0 +1,26 @@
+name: multiport-fig23-transfer-v1
+experiment_id: H70
+run_id: run075
+classification: target_exposed_frozen_multiport_transfer
+validation_eligible: false
+
+frozen_inputs:
+  mechanism:
+    path: artifacts/results/multiport-spad-run074.json
+    sha256: a58c37a45111a8928fd98df8eb52ee8db48b2d1032766351020d11344b16f562
+    required_status: supported
+    required_integrity: true
+  targets:
+    path: artifacts/targets/paper_targets.yaml
+    bytes: 14931
+    sha256: c4a22ab8052ff8cb223a729b8ce07320c6826cfee0d37e1a664a8761e018b41e
+    key: fig23_scalability
+
+mapping:
+  sequence_lengths: [512, 1024, 2048, 4096, 8192]
+  series: [simd32_4x4, simd8_8x8, simd32_8x8]
+  relative_error_limit: 0.10
+  required_points: 15
+
+auditor: scripts/audit_fig10_fig23_transfer.py
+result_path: artifacts/results/multiport-fig23-transfer-run075.json
