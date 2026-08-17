@@ -131,6 +131,12 @@ hypotheses:
     motivation: "Create immutable full-quality targets before any structured-layer training can use the plots, preventing residual-guided target selection."
     parent: H5
     priority: high
+  - id: H13
+    statement: "The official FABNet BE-40 Python performance model at the source-identified FABNet-Large configuration reproduces all four digitized Fig. 19 FABNet total latencies within 10%."
+    status: pending
+    motivation: "Test a genuinely open, explicitly cited accelerator simulator against MLX's external-baseline bars without fitting any hardware or workload parameter to the raster."
+    parent: H5
+    priority: high
 
 experiments:
   proxy_metric: "Maximum absolute percentage error across every numeric paper anchor; pass only when each reproducible point is <=10%, with unavailable measurements explicitly classified rather than fabricated."
@@ -247,7 +253,7 @@ experiments:
 outer_loop:
   cycle: 0
   last_direction: null
-  last_reflection: "H12 freezes all 53 Fig. 15/16 quality bars and resolves the task-dependent series identities. This closes target acquisition, not structured-model execution; missing FFT/BSMM initialization and training recipes remain the next identifiability problem."
+  last_reflection: "Open references do not identify a unique MLX training recipe, but the official FABNet artifact and Table V identify an unfitted BE-40/FABNet-Large external-simulator holdout for Fig. 19. H13 is pre-registered before executing that configuration."
 
 workspace:
   findings: "findings.md"
