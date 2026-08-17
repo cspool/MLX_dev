@@ -1,0 +1,764 @@
+{
+  "aggregate": {
+    "between_replicate_sample_std_pct": 1.357694123627753,
+    "mean_accuracy_pct": 28.866666666666667,
+    "official_pass": false,
+    "official_relative_error": 0.1484759095378564,
+    "official_target_pct": 33.9,
+    "pairwise": {
+      "0-1": {
+        "correctness_agreement": 816,
+        "prediction_agreement": 421
+      },
+      "0-2": {
+        "correctness_agreement": 861,
+        "prediction_agreement": 442
+      },
+      "1-2": {
+        "correctness_agreement": 843,
+        "prediction_agreement": 462
+      }
+    },
+    "paper_pass": false,
+    "paper_relative_error": 0.19591457753017638,
+    "paper_target_pct": 35.9,
+    "primary_pass": false,
+    "replicate_max_accuracy_pct": 30.3,
+    "replicate_min_accuracy_pct": 27.6,
+    "replicates": {
+      "0": {
+        "accuracy_pct": 28.7,
+        "correct": 287,
+        "rows": 1000,
+        "sample_mean_accuracy_pct": 28.7,
+        "standard_error_pct": 1.430492922037715,
+        "unextracted": 0
+      },
+      "1": {
+        "accuracy_pct": 30.3,
+        "correct": 303,
+        "rows": 1000,
+        "sample_mean_accuracy_pct": 30.3,
+        "standard_error_pct": 1.4532412050310162,
+        "unextracted": 0
+      },
+      "2": {
+        "accuracy_pct": 27.6,
+        "correct": 276,
+        "rows": 1000,
+        "sample_mean_accuracy_pct": 27.6,
+        "standard_error_pct": 1.4135911714495106,
+        "unextracted": 0
+      }
+    },
+    "sample_mean_accuracy_pct": 28.866666666666667,
+    "total_correct": 866,
+    "total_records": 3000,
+    "unanimous_correctness_positions": 760,
+    "unanimous_prediction_positions": 331
+  },
+  "checks": {
+    "per_replicate_rank_counts": true,
+    "preflight": true,
+    "primary_targets": false,
+    "prompt_hashes": true,
+    "rank_file_counts": true,
+    "rank_partition": true,
+    "record_correctness": true,
+    "response_bounds": true,
+    "sample_mean": true,
+    "seed_stream": true,
+    "seed_values": true,
+    "total_records": true,
+    "unique_seeds": true
+  },
+  "classification": "post_hoc_stochastic_replication",
+  "git_commit": "11baa7d10d62ace7cde670354c168c04f950927b",
+  "h30_secondary_comparison": {
+    "accuracy_pct": 27.4,
+    "replicates": {
+      "0": {
+        "correctness_agreement": 855,
+        "fixes": 79,
+        "prediction_agreement": 455,
+        "regressions": 66
+      },
+      "1": {
+        "correctness_agreement": 855,
+        "fixes": 87,
+        "prediction_agreement": 464,
+        "regressions": 58
+      },
+      "2": {
+        "correctness_agreement": 868,
+        "fixes": 67,
+        "prediction_agreement": 436,
+        "regressions": 65
+      }
+    },
+    "run_id": "run_034"
+  },
+  "hypothesis": "H31",
+  "limitations": [
+    "H31 selects the 4k setting after observing H30's residual and is validation-ineligible for the paper claim.",
+    "Three fixed schedules quantify decoder variability but cannot recover the unpublished official seeds.",
+    "The H30 checkpoint, prompts, tokenizer, LMDeploy engine, generation parameters, effective capacity, extractor, and dataset rows are unchanged.",
+    "No individual replicate may replace the registered three-replicate mean."
+  ],
+  "pass": false,
+  "qualification": {
+    "base_files": {
+      "config": {
+        "actual_bytes": 8423,
+        "actual_sha256": "c73aa580151cb36551f9b165182def02c0583ab2423719753fc95d457fb4bd89",
+        "checks": {
+          "bytes": true,
+          "is_file": true,
+          "sha256": true
+        },
+        "expected_bytes": 8423,
+        "expected_sha256": "c73aa580151cb36551f9b165182def02c0583ab2423719753fc95d457fb4bd89",
+        "pass": true,
+        "path": "/workspace/MLX_dev/configs/analysis/internlm2_adaleval_v1.yaml"
+      },
+      "formal_result": {
+        "actual_bytes": 24158,
+        "actual_sha256": "816731c7c3f6465b1e8a1de0f97661d7e776bc4b2ee9afa0e5099a789afc67c3",
+        "checks": {
+          "bytes": true,
+          "is_file": true,
+          "sha256": true
+        },
+        "expected_bytes": 24158,
+        "expected_sha256": "816731c7c3f6465b1e8a1de0f97661d7e776bc4b2ee9afa0e5099a789afc67c3",
+        "pass": true,
+        "path": "/workspace/MLX_dev/artifacts/results/internlm2-adaleval-run034.json"
+      }
+    },
+    "checks": {
+      "base_files": true,
+      "h30_preflight": true,
+      "h30_result": true,
+      "rows": true,
+      "seed_schedule": true,
+      "setting": true
+    },
+    "h30_preflight": {
+      "checks": {
+        "datasets": true,
+        "inference_capacity": true,
+        "lmdeploy_sources": true,
+        "model_view": true,
+        "official_source": true,
+        "paper_target": true,
+        "prompt_audits": true,
+        "runtime": true
+      },
+      "datasets": {
+        "1k": {
+          "actual_bytes": 3170252,
+          "actual_sha256": "22b4dd4983c863d3bd6df206c1dd33ce2584b71b7d911edc768ab7e583d1d574",
+          "checks": {
+            "bytes": true,
+            "is_file": true,
+            "sha256": true
+          },
+          "expected_bytes": 3170252,
+          "expected_sha256": "22b4dd4983c863d3bd6df206c1dd33ce2584b71b7d911edc768ab7e583d1d574",
+          "pass": true,
+          "path": "/workspace/MLX_dev/third_party/ada-leval/data/stackselect_1k.json"
+        },
+        "2k": {
+          "actual_bytes": 7632671,
+          "actual_sha256": "653d6e0f31e00aa984e15bd1280443f2a7ecc137daa005afa4d26eeb36af958e",
+          "checks": {
+            "bytes": true,
+            "is_file": true,
+            "sha256": true
+          },
+          "expected_bytes": 7632671,
+          "expected_sha256": "653d6e0f31e00aa984e15bd1280443f2a7ecc137daa005afa4d26eeb36af958e",
+          "pass": true,
+          "path": "/workspace/MLX_dev/third_party/ada-leval/data/stackselect_2k.json"
+        },
+        "4k": {
+          "actual_bytes": 16508984,
+          "actual_sha256": "68b43b082ebe66c33aeb4def955a676447aa2fc02acd2682af40d473553a1614",
+          "checks": {
+            "bytes": true,
+            "is_file": true,
+            "sha256": true
+          },
+          "expected_bytes": 16508984,
+          "expected_sha256": "68b43b082ebe66c33aeb4def955a676447aa2fc02acd2682af40d473553a1614",
+          "pass": true,
+          "path": "/workspace/MLX_dev/third_party/ada-leval/data/stackselect_4k.json"
+        }
+      },
+      "inference_capacity": {
+        "checks": {
+          "effective_covers_every_request": true,
+          "effective_not_above_official": true,
+          "every_prompt_is_single_prefill": true
+        },
+        "effective_session_len": 8192,
+        "max_prefill_token_num": 8192,
+        "maximum_prompt_tokens": 4451,
+        "official_session_len": 160000,
+        "pass": true,
+        "request_output_len": 512,
+        "required_session_tokens": 4963
+      },
+      "lmdeploy_sources": {
+        "files": {
+          "lmdeploy/api.py": {
+            "actual_sha256": "4686a5213c5d3c0a11ce8e82bfeda396fa4f2ce377e5b764a9278ce298b2151a",
+            "expected_sha256": "4686a5213c5d3c0a11ce8e82bfeda396fa4f2ce377e5b764a9278ce298b2151a",
+            "pass": true,
+            "path": "/workspace/MLX_dev/third_party/envs/lmdeploy026/lib/python3.10/site-packages/lmdeploy/api.py"
+          },
+          "lmdeploy/messages.py": {
+            "actual_sha256": "efa826e49a522417396feb0db4b5ff029b7e805502f1b06e79819a7e051121ab",
+            "expected_sha256": "efa826e49a522417396feb0db4b5ff029b7e805502f1b06e79819a7e051121ab",
+            "pass": true,
+            "path": "/workspace/MLX_dev/third_party/envs/lmdeploy026/lib/python3.10/site-packages/lmdeploy/messages.py"
+          },
+          "lmdeploy/model.py": {
+            "actual_sha256": "2c3bce3009d163bb0d8053f6156a5d5dbbaa5f04182d45ae2a7ed624e3f34f04",
+            "expected_sha256": "2c3bce3009d163bb0d8053f6156a5d5dbbaa5f04182d45ae2a7ed624e3f34f04",
+            "pass": true,
+            "path": "/workspace/MLX_dev/third_party/envs/lmdeploy026/lib/python3.10/site-packages/lmdeploy/model.py"
+          },
+          "lmdeploy/serve/async_engine.py": {
+            "actual_sha256": "904a278d8dce7960eb8a6bad9f4ca92bbdfb01e575230b205b361487bf54dad0",
+            "expected_sha256": "904a278d8dce7960eb8a6bad9f4ca92bbdfb01e575230b205b361487bf54dad0",
+            "pass": true,
+            "path": "/workspace/MLX_dev/third_party/envs/lmdeploy026/lib/python3.10/site-packages/lmdeploy/serve/async_engine.py"
+          }
+        },
+        "pass": true
+      },
+      "model_view": {
+        "binary_files": [
+          {
+            "actual_bytes": 1949337704,
+            "actual_sha256": "9cec9c25c5f54c545deb16123fc72a0b265fd6bed4c467b4519380a8b215b62b",
+            "checks": {
+              "bytes": true,
+              "is_file": true,
+              "sha256": true
+            },
+            "expected_bytes": 1949337704,
+            "expected_sha256": "9cec9c25c5f54c545deb16123fc72a0b265fd6bed4c467b4519380a8b215b62b",
+            "is_symlink": true,
+            "pass": true,
+            "path": "/workspace/MLX_dev/third_party/models/internlm2-chat-7b-20240320-view/model-00001-of-00008.safetensors"
+          },
+          {
+            "actual_bytes": 1946242696,
+            "actual_sha256": "4735b4b15a670c33a6aefe70cf39e4ba08468a496167b5233fa43ebcfbd42895",
+            "checks": {
+              "bytes": true,
+              "is_file": true,
+              "sha256": true
+            },
+            "expected_bytes": 1946242696,
+            "expected_sha256": "4735b4b15a670c33a6aefe70cf39e4ba08468a496167b5233fa43ebcfbd42895",
+            "is_symlink": true,
+            "pass": true,
+            "path": "/workspace/MLX_dev/third_party/models/internlm2-chat-7b-20240320-view/model-00002-of-00008.safetensors"
+          },
+          {
+            "actual_bytes": 1979780440,
+            "actual_sha256": "523c7292140bc4c37d5fbd517ec7f9d0aa27b7d22822fdfc730f94f3bf02ebac",
+            "checks": {
+              "bytes": true,
+              "is_file": true,
+              "sha256": true
+            },
+            "expected_bytes": 1979780440,
+            "expected_sha256": "523c7292140bc4c37d5fbd517ec7f9d0aa27b7d22822fdfc730f94f3bf02ebac",
+            "is_symlink": true,
+            "pass": true,
+            "path": "/workspace/MLX_dev/third_party/models/internlm2-chat-7b-20240320-view/model-00003-of-00008.safetensors"
+          },
+          {
+            "actual_bytes": 1946242728,
+            "actual_sha256": "2dd631ca87a5e516780832e747156e304a3c9bb53f85c4304550bff970d2db26",
+            "checks": {
+              "bytes": true,
+              "is_file": true,
+              "sha256": true
+            },
+            "expected_bytes": 1946242728,
+            "expected_sha256": "2dd631ca87a5e516780832e747156e304a3c9bb53f85c4304550bff970d2db26",
+            "is_symlink": true,
+            "pass": true,
+            "path": "/workspace/MLX_dev/third_party/models/internlm2-chat-7b-20240320-view/model-00004-of-00008.safetensors"
+          },
+          {
+            "actual_bytes": 1979780456,
+            "actual_sha256": "4a28f7db7ba9fc0991e3552a156e11b942494e945c4c134003aad40bb4e49ed6",
+            "checks": {
+              "bytes": true,
+              "is_file": true,
+              "sha256": true
+            },
+            "expected_bytes": 1979780456,
+            "expected_sha256": "4a28f7db7ba9fc0991e3552a156e11b942494e945c4c134003aad40bb4e49ed6",
+            "is_symlink": true,
+            "pass": true,
+            "path": "/workspace/MLX_dev/third_party/models/internlm2-chat-7b-20240320-view/model-00005-of-00008.safetensors"
+          },
+          {
+            "actual_bytes": 1946242728,
+            "actual_sha256": "d330d795037a2db1c7a15a991c88ba6bf2bc2890e36210571d7499d1ae6dfd51",
+            "checks": {
+              "bytes": true,
+              "is_file": true,
+              "sha256": true
+            },
+            "expected_bytes": 1946242728,
+            "expected_sha256": "d330d795037a2db1c7a15a991c88ba6bf2bc2890e36210571d7499d1ae6dfd51",
+            "is_symlink": true,
+            "pass": true,
+            "path": "/workspace/MLX_dev/third_party/models/internlm2-chat-7b-20240320-view/model-00006-of-00008.safetensors"
+          },
+          {
+            "actual_bytes": 1979780456,
+            "actual_sha256": "c6c65720f77de3aec168dff5b0f11e779f4c9059f2fdb04c67bae4321f5efd6a",
+            "checks": {
+              "bytes": true,
+              "is_file": true,
+              "sha256": true
+            },
+            "expected_bytes": 1979780456,
+            "expected_sha256": "c6c65720f77de3aec168dff5b0f11e779f4c9059f2fdb04c67bae4321f5efd6a",
+            "is_symlink": true,
+            "pass": true,
+            "path": "/workspace/MLX_dev/third_party/models/internlm2-chat-7b-20240320-view/model-00007-of-00008.safetensors"
+          },
+          {
+            "actual_bytes": 1748035640,
+            "actual_sha256": "eb488551289c4630b7b1fb015acf2ff52a206383c96370a7664b42253a007eae",
+            "checks": {
+              "bytes": true,
+              "is_file": true,
+              "sha256": true
+            },
+            "expected_bytes": 1748035640,
+            "expected_sha256": "eb488551289c4630b7b1fb015acf2ff52a206383c96370a7664b42253a007eae",
+            "is_symlink": true,
+            "pass": true,
+            "path": "/workspace/MLX_dev/third_party/models/internlm2-chat-7b-20240320-view/model-00008-of-00008.safetensors"
+          },
+          {
+            "actual_bytes": 1477754,
+            "actual_sha256": "f868398fc4e05ee1e8aeba95ddf18ddcc45b8bce55d5093bead5bbf80429b48b",
+            "checks": {
+              "bytes": true,
+              "is_file": true,
+              "sha256": true
+            },
+            "expected_bytes": 1477754,
+            "expected_sha256": "f868398fc4e05ee1e8aeba95ddf18ddcc45b8bce55d5093bead5bbf80429b48b",
+            "is_symlink": true,
+            "pass": true,
+            "path": "/workspace/MLX_dev/third_party/models/internlm2-chat-7b-20240320-view/tokenizer.model"
+          }
+        ],
+        "checks": {
+          "all_binary_files": true,
+          "all_historical_files": true,
+          "historical_revision": true
+        },
+        "expected_historical_revision": "4275caa205dbb8ff83930e2c1ce6bc62ec49329c",
+        "historical_files": [
+          {
+            "actual_bytes": 851,
+            "actual_sha256": "7e868aa34b2a099f3554eba038296508a990a1640042576036cb5445c6c4bce2",
+            "checks": {
+              "bytes": true,
+              "is_file": true,
+              "sha256": true
+            },
+            "expected_bytes": 851,
+            "expected_sha256": "7e868aa34b2a099f3554eba038296508a990a1640042576036cb5445c6c4bce2",
+            "is_symlink": true,
+            "pass": true,
+            "path": "/workspace/MLX_dev/third_party/models/internlm2-chat-7b-20240320-view/config.json"
+          },
+          {
+            "actual_bytes": 132,
+            "actual_sha256": "fd5406f4987c5541e14a9e549583d9cf788019bc4f1e3be2ad1d992f3d7e425a",
+            "checks": {
+              "bytes": true,
+              "is_file": true,
+              "sha256": true
+            },
+            "expected_bytes": 132,
+            "expected_sha256": "fd5406f4987c5541e14a9e549583d9cf788019bc4f1e3be2ad1d992f3d7e425a",
+            "is_symlink": true,
+            "pass": true,
+            "path": "/workspace/MLX_dev/third_party/models/internlm2-chat-7b-20240320-view/generation_config.json"
+          },
+          {
+            "actual_bytes": 18179,
+            "actual_sha256": "1c3947a3578100becf21a781727e193985013754a845ca34591e7a5ff76245d7",
+            "checks": {
+              "bytes": true,
+              "is_file": true,
+              "sha256": true
+            },
+            "expected_bytes": 18179,
+            "expected_sha256": "1c3947a3578100becf21a781727e193985013754a845ca34591e7a5ff76245d7",
+            "is_symlink": true,
+            "pass": true,
+            "path": "/workspace/MLX_dev/third_party/models/internlm2-chat-7b-20240320-view/model.safetensors.index.json"
+          },
+          {
+            "actual_bytes": 7020,
+            "actual_sha256": "c5ea339ccab0408d9962f2efcccf5745b73ecc0b041211d0f877a976c6785422",
+            "checks": {
+              "bytes": true,
+              "is_file": true,
+              "sha256": true
+            },
+            "expected_bytes": 7020,
+            "expected_sha256": "c5ea339ccab0408d9962f2efcccf5745b73ecc0b041211d0f877a976c6785422",
+            "is_symlink": true,
+            "pass": true,
+            "path": "/workspace/MLX_dev/third_party/models/internlm2-chat-7b-20240320-view/configuration_internlm2.py"
+          },
+          {
+            "actual_bytes": 59960,
+            "actual_sha256": "8d068f404d1b79575f8ecab282e275e1e9857412fe529092bd345802a3259176",
+            "checks": {
+              "bytes": true,
+              "is_file": true,
+              "sha256": true
+            },
+            "expected_bytes": 59960,
+            "expected_sha256": "8d068f404d1b79575f8ecab282e275e1e9857412fe529092bd345802a3259176",
+            "is_symlink": true,
+            "pass": true,
+            "path": "/workspace/MLX_dev/third_party/models/internlm2-chat-7b-20240320-view/modeling_internlm2.py"
+          },
+          {
+            "actual_bytes": 8806,
+            "actual_sha256": "444d4c2b0da158e61c34b3c727943f0ad454770c74b307f4d881f03603335eef",
+            "checks": {
+              "bytes": true,
+              "is_file": true,
+              "sha256": true
+            },
+            "expected_bytes": 8806,
+            "expected_sha256": "444d4c2b0da158e61c34b3c727943f0ad454770c74b307f4d881f03603335eef",
+            "is_symlink": true,
+            "pass": true,
+            "path": "/workspace/MLX_dev/third_party/models/internlm2-chat-7b-20240320-view/tokenization_internlm2.py"
+          },
+          {
+            "actual_bytes": 7805,
+            "actual_sha256": "1fe5f033032afc400b9b8b0274f16efd57c6ebaab46a2f6fe9f961afb868ae10",
+            "checks": {
+              "bytes": true,
+              "is_file": true,
+              "sha256": true
+            },
+            "expected_bytes": 7805,
+            "expected_sha256": "1fe5f033032afc400b9b8b0274f16efd57c6ebaab46a2f6fe9f961afb868ae10",
+            "is_symlink": true,
+            "pass": true,
+            "path": "/workspace/MLX_dev/third_party/models/internlm2-chat-7b-20240320-view/tokenization_internlm2_fast.py"
+          },
+          {
+            "actual_bytes": 2511,
+            "actual_sha256": "3ad60a8ee8a0a63a1f1d51884787d557eb6a312e5689148b4d599639ac42801b",
+            "checks": {
+              "bytes": true,
+              "is_file": true,
+              "sha256": true
+            },
+            "expected_bytes": 2511,
+            "expected_sha256": "3ad60a8ee8a0a63a1f1d51884787d557eb6a312e5689148b4d599639ac42801b",
+            "is_symlink": true,
+            "pass": true,
+            "path": "/workspace/MLX_dev/third_party/models/internlm2-chat-7b-20240320-view/tokenizer_config.json"
+          },
+          {
+            "actual_bytes": 713,
+            "actual_sha256": "e636e880c43a263dc00724686c9ad90e2d23bd1467fe9ed1b95740cd9f387202",
+            "checks": {
+              "bytes": true,
+              "is_file": true,
+              "sha256": true
+            },
+            "expected_bytes": 713,
+            "expected_sha256": "e636e880c43a263dc00724686c9ad90e2d23bd1467fe9ed1b95740cd9f387202",
+            "is_symlink": true,
+            "pass": true,
+            "path": "/workspace/MLX_dev/third_party/models/internlm2-chat-7b-20240320-view/special_tokens_map.json"
+          }
+        ],
+        "historical_revision": "4275caa205dbb8ff83930e2c1ce6bc62ec49329c",
+        "pass": true,
+        "view_root": "/workspace/MLX_dev/third_party/models/internlm2-chat-7b-20240320-view"
+      },
+      "official_source": {
+        "expected_revision": "2154258d5fa3969ac5429b3132d505570ef8a57a",
+        "files": {
+          "README.md": {
+            "actual_bytes": 6352,
+            "actual_sha256": "8111814a70745d86864b61d445be03f9cfc14b4e367485e0bfec46f66fa703b5",
+            "checks": {
+              "bytes": true,
+              "is_file": true,
+              "sha256": true
+            },
+            "expected_bytes": 6352,
+            "expected_sha256": "8111814a70745d86864b61d445be03f9cfc14b4e367485e0bfec46f66fa703b5",
+            "pass": true,
+            "path": "/workspace/MLX_dev/third_party/ada-leval/README.md"
+          },
+          "ada_leval/dataset.py": {
+            "actual_bytes": 6846,
+            "actual_sha256": "52ba4dafc12fb306c2041ee482a5e65ff90f04e680295e463f387a78bfff35cc",
+            "checks": {
+              "bytes": true,
+              "is_file": true,
+              "sha256": true
+            },
+            "expected_bytes": 6846,
+            "expected_sha256": "52ba4dafc12fb306c2041ee482a5e65ff90f04e680295e463f387a78bfff35cc",
+            "pass": true,
+            "path": "/workspace/MLX_dev/third_party/ada-leval/ada_leval/dataset.py"
+          },
+          "run.py": {
+            "actual_bytes": 4431,
+            "actual_sha256": "d6abf83879bb00da07d08a28206ac8a11eadf58af31401db782d2fcded4a7c91",
+            "checks": {
+              "bytes": true,
+              "is_file": true,
+              "sha256": true
+            },
+            "expected_bytes": 4431,
+            "expected_sha256": "d6abf83879bb00da07d08a28206ac8a11eadf58af31401db782d2fcded4a7c91",
+            "pass": true,
+            "path": "/workspace/MLX_dev/third_party/ada-leval/run.py"
+          }
+        },
+        "pass": true,
+        "readme_result_segment": {
+          "actual_sha256": "95dbdc0d69d5edc1a7c8528cfd7ba1483db43765ea28836b1722f23a0806dbae",
+          "expected_sha256": "95dbdc0d69d5edc1a7c8528cfd7ba1483db43765ea28836b1722f23a0806dbae",
+          "pass": true
+        },
+        "revision": "2154258d5fa3969ac5429b3132d505570ef8a57a"
+      },
+      "paper_target": {
+        "actual_bytes": 14931,
+        "actual_sha256": "c4a22ab8052ff8cb223a729b8ce07320c6826cfee0d37e1a664a8761e018b41e",
+        "checks": {
+          "bytes": true,
+          "is_file": true,
+          "sha256": true
+        },
+        "expected_bytes": 14931,
+        "expected_sha256": "c4a22ab8052ff8cb223a729b8ce07320c6826cfee0d37e1a664a8761e018b41e",
+        "pass": true,
+        "path": "/workspace/MLX_dev/artifacts/targets/paper_targets.yaml"
+      },
+      "pass": true,
+      "prompt_audits": {
+        "1k": {
+          "checks": {
+            "first_index": true,
+            "last_index": true,
+            "length_max": true,
+            "length_mean": true,
+            "length_median": true,
+            "length_min": true,
+            "raw_token_stream_sha256": true,
+            "rows": true,
+            "utf8_stream_sha256": true,
+            "wrapped_token_stream_sha256": true
+          },
+          "first_index": "38560748_A3",
+          "last_index": "2629680_A1",
+          "pass": true,
+          "raw_token_stream_sha256": "adba6909a2e0146e1764e13a595595da910ec9a4dae9d39ab878c106d698a467",
+          "rows": 1000,
+          "utf8_stream_sha256": "87d6c9f4fdb1896fd4dbf1109a2730d4d48b0a041719466b56bb718f87b277fd",
+          "wrapped_token_length": {
+            "max": 1239,
+            "mean": 1064.619,
+            "median": 1123.0,
+            "min": 488
+          },
+          "wrapped_token_stream_sha256": "09c66d19f7373c83d40439e7f280392e3cc07dd6022e9b45d2ccf398ade9a28c"
+        },
+        "2k": {
+          "checks": {
+            "first_index": true,
+            "last_index": true,
+            "length_max": true,
+            "length_mean": true,
+            "length_median": true,
+            "length_min": true,
+            "raw_token_stream_sha256": true,
+            "rows": true,
+            "utf8_stream_sha256": true,
+            "wrapped_token_stream_sha256": true
+          },
+          "first_index": "38560748_A3",
+          "last_index": "2629680_A5",
+          "pass": true,
+          "raw_token_stream_sha256": "c0f54f8c14bcc962004be5366f7ee9646d8a96432e45feff07afd402f171e53b",
+          "rows": 1000,
+          "utf8_stream_sha256": "361c7cdb52b0e64f3303a58fcbe7a140d25272018592dc5af3ac3eaa8db1c944",
+          "wrapped_token_length": {
+            "max": 2311,
+            "mean": 2101.734,
+            "median": 2158.0,
+            "min": 1339
+          },
+          "wrapped_token_stream_sha256": "71ba563b1ba1efd3eae53ef32886f28b40d04936a644eb90f151be986787a604"
+        },
+        "4k": {
+          "checks": {
+            "first_index": true,
+            "last_index": true,
+            "length_max": true,
+            "length_mean": true,
+            "length_median": true,
+            "length_min": true,
+            "raw_token_stream_sha256": true,
+            "rows": true,
+            "utf8_stream_sha256": true,
+            "wrapped_token_stream_sha256": true
+          },
+          "first_index": "38560748_A19",
+          "last_index": "2629680_A2",
+          "pass": true,
+          "raw_token_stream_sha256": "1d05998794cd923eb7889b13cf7f45bc9f6c67c36240871a578186c7bb40f422",
+          "rows": 1000,
+          "utf8_stream_sha256": "571d27559a8cffa18d8061abc1df92795470a862dbe21892e192aaf551ae7906",
+          "wrapped_token_length": {
+            "max": 4451,
+            "mean": 4158.456,
+            "median": 4219.0,
+            "min": 3455
+          },
+          "wrapped_token_stream_sha256": "7b23de3ffb05bdb998167b4a21c922923ce982746ce562dacb7efb91a5c7caad"
+        }
+      },
+      "runtime": {
+        "checks": {
+          "driver": true,
+          "gpu_count": true,
+          "gpu_names": true,
+          "lmdeploy": true,
+          "numpy": true,
+          "protobuf": true,
+          "python": true,
+          "sentencepiece": true,
+          "torch": true,
+          "transformers": true,
+          "triton": true
+        },
+        "driver": "595.84",
+        "gpu_names": [
+          "NVIDIA GeForce RTX 4090",
+          "NVIDIA GeForce RTX 4090"
+        ],
+        "packages": {
+          "lmdeploy": "0.2.6",
+          "numpy": "1.26.4",
+          "protobuf": "4.25.3",
+          "sentencepiece": "0.2.1",
+          "torch": "2.1.2",
+          "transformers": "4.38.1",
+          "triton": "2.1.0"
+        },
+        "pass": true,
+        "python": "3.10.20",
+        "torch_cuda": "12.1"
+      }
+    },
+    "h30_result": {
+      "checks": {
+        "4k_accuracy": true,
+        "hypothesis": true,
+        "preflight": true,
+        "rank_logs": true,
+        "records": true,
+        "run_id": true
+      },
+      "pass": true,
+      "rank_logs": [
+        {
+          "actual_bytes": 630717,
+          "actual_sha256": "3cf389864571c664653fbc1053148c75d74d3233a64e28c60e3cc49c42951770",
+          "expected_bytes": 630717,
+          "expected_sha256": "3cf389864571c664653fbc1053148c75d74d3233a64e28c60e3cc49c42951770",
+          "pass": true,
+          "path": "/workspace/MLX_dev/artifacts/results/internlm2-adaleval-run034-rank0.jsonl",
+          "rank": 0
+        },
+        {
+          "actual_bytes": 631352,
+          "actual_sha256": "108782168a75e1899ef6d9977010d3c2bbd42464efe16aedd030863785e2b52b",
+          "expected_bytes": 631352,
+          "expected_sha256": "108782168a75e1899ef6d9977010d3c2bbd42464efe16aedd030863785e2b52b",
+          "pass": true,
+          "path": "/workspace/MLX_dev/artifacts/results/internlm2-adaleval-run034-rank1.jsonl",
+          "rank": 1
+        }
+      ]
+    },
+    "pass": true,
+    "seed_schedule": {
+      "actual_sha256": "daa62375cb5a52782118a93beebf45ba21eb2544fb803e2a7484544a4bb945b0",
+      "checks": {
+        "rows": true,
+        "sha256": true,
+        "unique": true
+      },
+      "expected_sha256": "daa62375cb5a52782118a93beebf45ba21eb2544fb803e2a7484544a4bb945b0",
+      "pass": true,
+      "rows": 3000,
+      "unique": 3000
+    }
+  },
+  "rank_sample_logs": [
+    {
+      "bytes": 662510,
+      "path": "/workspace/MLX_dev/artifacts/results/internlm2-adaleval-seed-replicates-run035-rank0.jsonl",
+      "rank": 0,
+      "records": 1500,
+      "sha256": "965b47b0fded39e9926a8715b2189076a8ffc57758a6f81ffb5cd3f5ede0c58e"
+    },
+    {
+      "bytes": 662376,
+      "path": "/workspace/MLX_dev/artifacts/results/internlm2-adaleval-seed-replicates-run035-rank1.jsonl",
+      "rank": 1,
+      "records": 1500,
+      "sha256": "fee65d35efc19697f8cbeecb5a6d937ad542b43dd9b4de2d166269e26d387f1d"
+    }
+  ],
+  "run_id": "run_035",
+  "runtime": {
+    "finish_reasons": {
+      "stop": 3000
+    },
+    "generate_token_len_max": 117,
+    "generate_token_len_min": 5,
+    "generated_tokens": 18210,
+    "input_token_len_max": 4451,
+    "input_token_len_min": 3455,
+    "total_sample_wall_time_seconds": 1673.176429347077,
+    "wall_time_seconds": 922.2792720620055
+  },
+  "validation_eligible": false
+}

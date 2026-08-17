@@ -241,7 +241,7 @@ hypotheses:
     priority: high
   - id: H31
     statement: "The mean Ada-LEval 4k accuracy across three independently hash-fixed seed schedules under H30's unchanged historical LMDeploy stack is within 10% of both the official 33.9% result and MLX's 35.9% original bar."
-    status: pending
+    status: rejected
     motivation: "Determine whether H30's isolated 4k deficit is ordinary stochastic-decoder variation without selecting a favorable rerun or changing any model/evaluation setting."
     parent: H30
     priority: high
@@ -250,7 +250,7 @@ experiments:
   proxy_metric: "Maximum absolute percentage error across every numeric paper anchor; pass only when each reproducible point is <=10%, with unavailable measurements explicitly classified rather than fabricated."
   baseline_value: 0.2486
   best_value: 0.0123
-  total_runs: 33
+  total_runs: 34
   trajectory:
     - run_id: "run_001"
       hypothesis: "H2"
@@ -483,11 +483,18 @@ experiments:
       wall_time_min: 11.0
       change_summary: "Historical public InternLM2/Ada-LEval reconstruction rejected at 57.8/46.9/27.4%; 1k passes MLX and 1k/2k pass the official table, but the all-setting maxima are 23.68%/19.17%."
       timestamp: "2026-08-17"
+    - run_id: "run_035"
+      hypothesis: "H31"
+      metric_value: 0.1959
+      delta: null
+      wall_time_min: 15.4
+      change_summary: "Three fixed-seed 4k replications score 28.7/30.3/27.6%, mean 28.8667%; the mean misses the official/MLX targets by 14.85%/19.59% relative despite strong prediction-level seed variation."
+      timestamp: "2026-08-17"
 
 outer_loop:
-  cycle: 15
-  last_direction: "Treat H30 as a valid rejection of one historical public checkpoint run. Quantify the frozen LMDeploy decoder's stochastic 4k variability with independently fixed replicate seed schedules before attributing the 6.5-point official-table gap to an unpublished checkpoint or task adaptation; do not tune prompts or select a favorable replicate."
-  last_reflection: "H30 passes every source, runtime, prompt, partition, extraction, and capacity gate but reaches 57.8/46.9/27.4%. The curve agrees with the official Ada-LEval table at 1k/2k yet misses both official and MLX 4k anchors, so neither input corruption nor one global checkpoint offset explains the residual."
+  cycle: 16
+  last_direction: "Close the sole remaining H30 runtime caveat with a fixed-prompt, exact-seed equivalence audit between the 8,192-token effective session and the official 160,000-token setting under a separately frozen low-cache hardware allocation. If outputs match, classify the persistent Ada 4k gap as checkpoint/evaluator underidentification rather than continue seed trials."
+  last_reflection: "H31's three fixed schedules vary predictions heavily but yield only 27.6%-30.3% accuracy and a 28.8667% mean. H30's 27.4% is not an outlier, every non-target gate passes, and even the best replicate misses the official pass floor, so favorable stochastic variation is not a supported explanation."
 
 workspace:
   findings: "findings.md"

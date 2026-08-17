@@ -72,6 +72,7 @@
 - The official Ada-LEval repository is pinned at `2154258d5fa3969ac5429b3132d505570ef8a57a`. Its BestAnswer runner evaluates the first 1,000 StackSelect rows at each nominal length with `internlm/internlm2-chat-7b`, LMDeploy, `rope_scaling_factor=2.0`, and `session_len=160000`; its README reports 58.6%/49.5%/33.9%.
 - H30 reconstructs the runner with LMDeploy 0.2.6 and the last official InternLM2-Chat-7B revision available when the runner was published. All three dataset, prompt, tokenizer, model, engine, and response streams are hash- or record-qualified. The measured 57.8%/46.9%/27.4% passes the official table's 10% gate at 1k/2k but fails at 4k by 19.17% relative.
 - LMDeploy 0.2.6 draws an unpublished independent 64-bit random seed for every request. H30 records all seeds but cannot reconstruct the official draw. This makes the remaining 4k gap a stochastic-reproducibility question before it can be attributed to a different checkpoint or evaluation recipe; it does not license selection of a favorable seed run.
+- H31 answers that limited stochastic question with three fully precommitted seed streams. Their 28.7%/30.3%/27.6% 4k accuracies average 28.8667%, below both 10% target bands. Although most individual designations change across schedules, no schedule reaches the official pass floor and H30's 27.4% is consistent with the new range. The remaining public-stack gap therefore needs a session-cap equivalence check and then an independently identified checkpoint/evaluator detail, not additional seed search.
 
 ### Recipe-identifiability conclusion
 
