@@ -1,0 +1,65 @@
+name: dsagen-mlx-aggregate-v1
+experiment_id: H43
+run_id: run049
+
+frozen_inputs:
+  paper:
+    path: MLX Multi-Layer Execution for Structured LLM Workload Acceleration on Spatial Architectures/MLX Multi-Layer Execution for Structured LLM Workload Acceleration on Spatial Architectures.md
+    bytes: 85855
+    sha256: 5785eb81b28741a3806ca42749d7b556bbcd2404e1622ae644a32bae2ade7745
+    source_claims:
+      - tagged blocks are fixed reusable templates with loop trip counts
+      - instruction storage is decoupled from logical layer depth
+      - CDC instances reuse identical bounded interfaces
+  bridge_result:
+    path: artifacts/results/dsagen-mlx-cdc-memory-run048.json
+    bytes: 34750
+    sha256: 8aae66d752079d683e6a897bdea09ab6bf6c108389e01baef2a65e8c6c3090da
+    required_status: supported
+    required_integrity: true
+
+aggregation_contract:
+  assignment: radix pair p maps to physical slot p modulo active PE count
+  active_pe_count: min(radix pairs per stage, mesh PE count)
+  block_count: stages times active PE count
+  trip_count: number of logical pairs assigned to the block
+  address_semantics: each memory instruction stores its exact per-iteration address sequence
+  route_semantics: assignment modulo mesh capacity preserves one fixed source/destination route per block
+  event_semantics: one event counter per stage/physical slot; emitted and consumed once per assigned iteration
+  count_conservation:
+    - sum of trip counts in every stage equals pairs per stage
+    - trip-weighted instruction, memory, transfer, and scalar-op totals equal pair-wise compilation
+  no_padding: no dummy pair or memory request may be introduced
+
+fixtures:
+  equivalence:
+    - {operator: bsmm, width: 8}
+    - {operator: bsmm, width: 16}
+    - {operator: bsmm, width: 64}
+    - {operator: fft, width: 8}
+    - {operator: fft, width: 256}
+  scale_only:
+    - {operator: bsmm, width: 32}
+    - {operator: fft, width: 8192}
+  expected_bounds:
+    bsmm64: {pairwise_blocks: 192, aggregate_blocks: 96, max_trip_count: 2}
+    fft8192: {pairwise_blocks: 53248, aggregate_blocks: 208, trip_count: 256}
+    fft8192_config_max_bytes: 5000000
+
+tests:
+  - deterministic aggregate JSON and manifests
+  - exact trip-count and weighted-count conservation for every fixture
+  - exact per-iteration first/second/output addresses against radix pair indices
+  - fixed per-block route across all assigned logical pairs
+  - adjacent-stage event counts equal producer and consumer trip counts
+  - aggregate and pairwise B8 traces/cycles are identical after canonical ID normalization
+  - aggregate B64 completes with real DSAGEN scratchpad callbacks and queue pressure
+  - FFT8192 compiles within the frozen size/block bounds without executing a paper timing comparison
+  - H42 pair-wise configs and H41/disabled regressions remain valid
+  - no paper performance target is consumed
+
+outputs:
+  directory: artifacts/environment/h43
+  manifest: artifacts/environment/h43/mlx-aggregate-manifest.json
+
+result_path: artifacts/results/dsagen-mlx-aggregate-run049.json
