@@ -101,3 +101,9 @@ H119 performs that strict join in
 3/64, 82.73% MAPE. Compute/store are uniformly low and load uniformly high.
 No scale follows. The next target-free mechanism is limited to H69's already
 registered diagram-derived column/row SRAM ports coupled into H106 memory.
+
+H120 supports that mechanism in
+[fig22-coupled-multiport.md](fig22-coupled-multiport.md). It preserves total
+banks/issue width and all work, while four independently queued ports accelerate
+all 16 paths by 1.76x–2.75x and reduce queue-unavailable checks by 77%–88%.
+The new primary counters are frozen before H121; Figure 22 remains incomplete.

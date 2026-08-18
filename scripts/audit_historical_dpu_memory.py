@@ -510,9 +510,17 @@ def build_audit(config: dict[str, Any]) -> dict[str, Any]:
         and "Owner::Draining" in adapter_source,
         "dma_conservation": "offchip_read_bytes_" in adapter_source
         and "offchip_write_bytes_" in adapter_source,
-        "h66_spad_reuse": "StandaloneSpadAdapter spad_" in (
-            PROJECT_ROOT / config["source_layout"]["adapter_header"]
-        ).read_text(),
+        "h66_spad_reuse": (
+            "StandaloneSpadAdapter spad_" in (
+                PROJECT_ROOT / config["source_layout"]["adapter_header"]
+            ).read_text()
+            or (
+                "unique_ptr<StandaloneSpadAdapter>" in (
+                    PROJECT_ROOT / config["source_layout"]["adapter_header"]
+                ).read_text()
+                and "spad_ports_" in adapter_source
+            )
+        ),
     }
     mode_counts = {
         mode: sum(item["mode"] == mode for item in run_manifest["records"])

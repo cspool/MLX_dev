@@ -38,6 +38,12 @@ target join.
 
 Figure 22 remains incomplete and active completion remains 0/8.
 
+The next target-free mechanism is now complete in
+[fig22-coupled-multiport.md](fig22-coupled-multiport.md). H120 partitions the
+same 32 banks across four diagram-derived ports and accelerates all 16 paths by
+1.76x–2.75x without H60/H119 access. Its frozen outputs require a separate
+H121 target join.
+
 Evidence is in
 [run124](../artifacts/results/fig22-coupled-transfer-run124.json), with the
 frozen plan in

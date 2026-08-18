@@ -282,6 +282,12 @@ compute/store are low and load is high for every workload. This rejects the
 single shared H106 request queue as a complete Figure 22 data-supply model but
 does not invalidate H118's execution correctness.
 
+H120 replaces only that attachment with H69's diagram-derived port topology in
+[fig22-coupled-multiport.md](fig22-coupled-multiport.md). Total banks and issue
+width remain 32, but four independent queues accelerate every exact path by
+1.76x–2.75x. Default one-port and all historical regressions remain exact; no
+paper target is consumed.
+
 The active objective is now limited to simulator-dependent hardware performance
 in Figures 18–25, as recorded in
 [simulator-experiment-scope.md](simulator-experiment-scope.md). Accuracy,

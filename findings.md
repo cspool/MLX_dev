@@ -108,6 +108,7 @@ H37 closed the first full-paper ledger with a machine certificate rather than a 
 - H117 rejects its all-metric steady-state claim with integrity while qualifying the useful subset. Sixteen q64/q128 FFT configs complete 48/48 executions; q16/q32 fits pass all 80 cycle/compute/load/store/xfer holdouts, but only 9/16 FMA-residence holdouts pass (89/96 overall, 1.22% MAPE, 9.65% max). Since residence is not Figure 25 completed-work throughput, further q extension is stopped. The stable pipeline counters now support a target-free exact Figure 22 coupled rebuild; active completion remains 0/8.
 - H118 supports the exact target-free Figure 22 source path. All 16 SIMD8/4x4 BSMM/FFT sizes execute directly across 64 optimized/sanitized runs with exact H62 work/events/routes and H106 traffic/ownership. Two real substrate defects are corrected reversibly: instruction slots now count only the active tag window, and aligned 16-byte requests can occupy one 32-byte bank. Frozen end-to-end utilization spans 19.62%-37.89% compute, 11.79%-20.68% load, 1.33%-1.83% store and 6.88%-14.67% xfer; no target has been joined and completion remains 0/8.
 - H119 rejects the frozen Figure 22 transfer at 3/64, 82.73% MAPE and 229.85% maximum error. Compute and store pass 0/16 and are uniformly low; load passes 0/16 and is uniformly high; xfer passes 3/16. The consistent signs reject a launch-only explanation and localize the next source mechanism to data-supply concurrency/counter semantics. No denominator selection or residual scale is admitted; active completion remains 0/8.
+- H120 supports H69's pre-existing port topology inside live H106 memory. Four ports partition—not replicate—the fixed 32 banks and issue width 32; BSMM uses x/columns and FFT y/rows. All 16 paths and 64 four-build runs pass, plus 19 exact parent regressions. Every path accelerates 1.757x-2.745x and queue-unavailable checks fall to 11.59%-22.57% of H118. Primary compute utilization rises to 41.98%-73.68%; H120 remains target-free and completion stays 0/8.
 
 ## Patterns and Insights
 
@@ -119,6 +120,7 @@ H37 closed the first full-paper ledger with a machine certificate rather than a 
 - Capacity must follow residency, not program depth. The paper's tagged instruction store is constant-footprint because only the active layer window resides; summing templates across every logical tag silently rejects valid long FFT programs and contradicts the architecture being modeled.
 - Bank width is a service granularity, not necessarily a minimum vector size. A naturally aligned SIMD8 half-bank request is a valid one-bank access; rejecting it as permanently unavailable creates a false memory deadlock rather than modeled contention.
 - A source-valid memory hierarchy can still have the wrong array attachment. H106's 32 banks and DMA ownership are historically grounded, but its single four-entry DSAGEN request queue is an open-adapter assumption; H119's load-high/compute-low split is consistent with over-serialization, while H69 independently supplies a per-column/per-row port candidate.
+- Conserving total banks and issue width does not imply equivalent concurrency. H120's four independent queues preserve 32 banks/32 aggregate issues yet reduce queue unavailability by 77%-88% and roughly double cycles, validating port topology as a first-order simulator mechanism rather than a bandwidth scale.
 - The team's public methodology is unusually consistent: SimICT component simulation, gem5/RTL calibration, independent Verilog/Synopsys implementation, and DPU PE/SPM/multi-NoC models. This is a stronger reconstruction basis than architecture resemblance to DSAGEN.
 - Model-declared framework versions are part of the checkpoint: InternLM2's remote code produced incompatible logits under Transformers 5.15 (first-window PPL 387.07) but PPL 5.69 under its declared 4.41.0. Smoke tests caught this before the registered run, and the official evaluator now refuses a different version.
 - Correct operator invariants and analytical sparsity do not identify a model-quality recipe. In run018, factor-fit MSE remains nearly flat at 0.629-0.634 while quality degrades monotonically with replacement depth, so cumulative approximation—not one broken projection—best explains this particular inferred reconstruction.
@@ -427,3 +429,8 @@ Run124 performs that join and rejects Figure 22 at 3/64. Compute/store are low
 in all 16 workloads, load is high in all 16, and only three xfer segments pass;
 global MAPE is 82.73%. The next experiment returns to H69's pre-existing
 diagram-derived port topology rather than fitting these residuals.
+
+Run125 couples that topology to H106. Four x/y-selected ports preserve total
+banks, issue width, work and DMA traffic, while all 16 paths accelerate by
+1.757x-2.745x and pass four-build plus parent regressions. The improved primary
+counters are frozen target-free for H121.
