@@ -1,0 +1,91 @@
+name: fig21-full-array-paths-v1
+experiment_id: H152
+run_id: run157
+classification: target_free_figure21_full_array_component_paths
+validation_eligible: false
+
+frozen_inputs:
+  layer_contract:
+    path: artifacts/results/fig21-layer-contract-run096.json
+    bytes: 33918
+    sha256: d92d0c477a1525beba1ab613985820dde98c8a7fe7429347210eb5abe9b2bf12
+    required_status: supported
+    required_integrity: true
+  spad:
+    path: artifacts/results/standalone-dsagen-spad-run071.json
+    bytes: 15983
+    sha256: 2a816515bf6cb2dcdde3ba6972eb8d095b44a2fde2f2c01ad7d1c63c30f15db8
+    required_status: supported
+    required_integrity: true
+  column_ports:
+    path: artifacts/results/multiport-spad-run074.json
+    bytes: 54297
+    sha256: a58c37a45111a8928fd98df8eb52ee8db48b2d1032766351020d11344b16f562
+    required_status: supported
+    required_integrity: true
+  full_block:
+    path: artifacts/results/dsagen-mlx-full-block-run054.json
+    bytes: 71102
+    sha256: c80b174192db67a64f76516427fddfc6230712d332e943e095af4e455f5d34fb
+    required_status: supported
+    required_integrity: true
+  grouped_events:
+    path: patches/dsagen/dsa-gem5-mlx-per-event-wait-v1.patch
+    bytes: 3939
+    sha256: 27f312be33cec14b1d8eae2b16d1365a3d0297af68148eeedb748a490291275f
+  h141_current_mapping:
+    path: artifacts/results/fig23-complete-block-run146.json
+    bytes: 12663
+    sha256: 7aad546c0b750086c78b3ec04427143c46da74a9f7ea96ad47b9017ce0d60c69
+    required_status: supported
+    required_integrity: true
+  h150_diagnosis:
+    path: artifacts/results/fig21-scale-semantics-run155.json
+    bytes: 6905
+    sha256: 8383ea05c3d0245bc4fb2f0f7c1e915a9bde932461e6a9634d9d4294ea6f451e
+    required_status: supported
+    required_integrity: true
+
+families:
+  - structured_qkv
+  - structured_output
+  - structured_ffn1
+  - structured_ffn2
+  - dense_qkv
+  - dense_output
+  - dense_ffn1
+  - dense_ffn2
+  - elementwise
+
+fit_scales: [4, 8]
+holdout_scales: [16, 32]
+cycle_relative_error_limit: 0.05
+
+hardware:
+  simd_width: 32
+  vector_bytes: 64
+  lanes: 16
+  mesh: [4, 4]
+  active_window: 4
+  pe_dependency_model: scoreboard_experimental
+  spad_ports: 4
+  spad_axis: x
+
+acceptance:
+  expected_paths: 45
+  expected_configs: 180
+  expected_runs: 360
+  expected_holdouts: 90
+  minimum_max_pipeline_issues: 16
+  targets_consumed: false
+  residual_cycle_factor: forbidden
+
+output_root: artifacts/environment/h152
+source_layout:
+  compiler_core: src/mlxsim/fig21_full_array_paths.py
+  compiler: scripts/compile_fig21_full_array_paths.py
+  runner: scripts/run_fig21_timed_paths.py
+  auditor: scripts/audit_fig21_full_array_paths.py
+  test: tests/test_fig21_full_array_paths.py
+
+result_path: artifacts/results/fig21-full-array-paths-run157.json
