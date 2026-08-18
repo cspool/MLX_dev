@@ -1,0 +1,44 @@
+name: fig19-trend-completion-v1
+experiment_id: H138
+run_id: run143
+classification: target_exposed_figure19_dual_criterion_trend_audit
+validation_eligible: false
+
+frozen_inputs:
+  h13_fabnet:
+    path: artifacts/results/fig19-fabnet-run016.json
+    bytes: 6536
+    sha256: fb00ed1c7546b8beedd3fe722f9e365fa5eec37984f7d5ee3f20eae0d46451b0
+    required_verdict: rejected
+  h130_mlx:
+    path: artifacts/results/fig19-coupled-transfer-run135.json
+    bytes: 8151
+    sha256: 0310d74b703171b9ecbf2b5cf090547a7f308528b46a004857dfb4e959da30d5
+    required_status: rejected
+    required_integrity: true
+
+mapping:
+  sequence_lengths: [128, 256, 512, 1024]
+  mlx_series:
+    - attention_latency_ms
+    - ffn_latency_ms
+    - total_latency_ms
+  comparison_baseline: official_open_fabnet_simulator
+  comparison_candidate: current_coupled_mlx_simulator
+
+acceptance:
+  minimum_clear_speedup: 1.20
+  minimum_spearman: 0.70
+  endpoint_direction_required: true
+  required_curve_passes: 3
+  required_comparison_passes: 4
+  strict_relative_error_limit: 0.10
+  strict_10pct_retained_as_diagnostic: true
+  all_required_series_must_pass: true
+  residual_fit_or_factor: forbidden
+
+source_layout:
+  auditor: scripts/audit_fig19_trend_completion.py
+  test: tests/test_fig19_trend_completion.py
+
+result_path: artifacts/results/fig19-trend-completion-run143.json
