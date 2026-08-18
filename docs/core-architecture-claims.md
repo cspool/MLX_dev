@@ -40,3 +40,6 @@ Evidence is in
 [run159](../artifacts/results/core-architecture-claims-run159.json), with the
 frozen plan in
 [H154 protocol](../experiments/h154-core-architecture-claims/protocol.md).
+
+Final repository verification: Ruff passes and the complete test suite reports
+395 passed, 0 failed and 17 non-fatal dependency/configuration warnings.
