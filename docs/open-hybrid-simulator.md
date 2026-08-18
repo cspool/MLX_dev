@@ -143,3 +143,7 @@ Figure 21's next boundary is localized in
 [`fig21-workload-identity.md`](fig21-workload-identity.md): the analytical work
 is correct, but the real source path lacks the complete batch-8, five-shape,
 32-layer structured/dense graph.
+
+H91 supplies the five exact batch-8 layer contracts and replayable structured-
+Attention graphs in [`fig21-layer-contract.md`](fig21-layer-contract.md); timed
+projection/dense/elementwise blocks and 24+8 folding remain next.

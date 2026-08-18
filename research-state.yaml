@@ -687,9 +687,9 @@ experiments:
       timestamp: "2026-08-17"
 
 outer_loop:
-  cycle: 50
-  last_direction: "Generalize the H83 source graph to Figure 21's batch-8 N=128..2048 shapes, add output projection plus dense/elementwise paths, and validate exact one-layer work/bytes before folding 24 structured and 8 dense layers."
-  last_reflection: "H90 shows H6's logical work is correct, but source execution identity is absent across batch, sequence set, output projection, dense/elementwise work, and layer count. Timing composition is forbidden until those graph dimensions are executable."
+  cycle: 51
+  last_direction: "Compile timed structured/dense QKV, output, FFN1, FFN2 and inferred elementwise blocks from H91 contracts. Validate per-path repeat folding before combining with Attention and folding 24+8 layers."
+  last_reflection: "H91 closes work and byte identity for all five batch-8 shapes and materializes replayable structured-Attention graphs. Output/dense signatures and inferred elementwise counts exist, but only Attention has an executable timing path; full-layer timing remains forbidden."
 
 recent_milestones_after_h46:
   architecture_contract: "H52 supersedes the GPU-SM analogy with the paper's specialized spatial tagged-block PE; GPGPU-Sim is baseline-only."
@@ -708,6 +708,7 @@ recent_milestones_after_h46:
   xavier_final_attention: "H86/H87 pass all execution/checksum gates but reject final cycle folding; H88 closes Figure 20 at 0 reproduced, 6 numerical failures, and 2 incomplete cells."
   full_paper_update: "H89 updates the 18-row certificate to 0 reproduced, 11 attempt-rejected, 0 replay-only, and 7 publicly blocked."
   fig21_identity: "H90 supports exact analytical work but proves no current source-integrated batch-8 five-shape 24+8-layer execution exists."
+  fig21_layer_contract: "H91 supports five exact batch-8 layer contracts and structured-Attention graphs; remaining timed paths and 24+8 folding are incomplete."
 
 completion_snapshot_run042:
   certificate_run: run_042

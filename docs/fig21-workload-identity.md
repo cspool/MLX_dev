@@ -21,5 +21,10 @@ work model is explicit. The next implementation must generalize the H83 graph
 to all five batch-8 shapes, add output projection and dense/elementwise paths,
 and fold the complete 32-layer mix before Figure 21 timing can be revisited.
 
+The first correction is complete in
+[`fig21-layer-contract.md`](fig21-layer-contract.md): all five batch-8 work
+signatures and structured-Attention u=1 graphs replay exactly, while the
+remaining timed component paths stay explicit.
+
 The immutable result is
 `artifacts/results/fig21-workload-identity-run095.json`.

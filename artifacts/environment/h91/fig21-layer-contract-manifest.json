@@ -1,0 +1,964 @@
+{
+  "contracts": {
+    "N1024": {
+      "attention_scale_per_u": 1,
+      "batch": 8,
+      "checks": {
+        "attention_analytical_operations": true,
+        "attention_fu": true,
+        "boundary": true,
+        "combined_offchip": true,
+        "dense_attention_operations": true,
+        "elementwise_positive": true,
+        "instruction_footprint": true,
+        "isolated_roundtrip": true,
+        "output_projection": true
+      },
+      "dense_components": {
+        "attention": {
+          "fu_instruction_instances": {
+            "add": 8388608,
+            "fdiv": 33554432,
+            "fexp": 8388608,
+            "fma": 68719476736,
+            "fmax": 8388608
+          },
+          "offchip_bytes": 268435456.0,
+          "operations": 137489285120.0,
+          "output_elements": 33554432,
+          "stage_count": 4,
+          "subcomponents": 1
+        },
+        "ffn1": {
+          "execution_convention": "analytical_fma_equivalent",
+          "fma_equivalents": 369367187456,
+          "gemm_stage_count": 1,
+          "offchip_bytes": 337641472,
+          "operations": 738734374912.0,
+          "output_elements": 90177536,
+          "stage_count": 1,
+          "subcomponents": 1
+        },
+        "ffn2": {
+          "execution_convention": "analytical_fma_equivalent",
+          "fma_equivalents": 369367187456,
+          "gemm_stage_count": 1,
+          "offchip_bytes": 337641472,
+          "operations": 738734374912.0,
+          "output_elements": 33554432,
+          "stage_count": 1,
+          "subcomponents": 1
+        },
+        "output": {
+          "execution_convention": "analytical_fma_equivalent",
+          "fma_equivalents": 137438953472,
+          "gemm_stage_count": 1,
+          "offchip_bytes": 167772160,
+          "operations": 274877906944.0,
+          "output_elements": 33554432,
+          "stage_count": 1,
+          "subcomponents": 1
+        },
+        "qkv": {
+          "execution_convention": "analytical_fma_equivalent",
+          "fma_equivalents": 412316860416,
+          "gemm_stage_count": 1,
+          "offchip_bytes": 369098752,
+          "operations": 824633720832.0,
+          "output_elements": 100663296,
+          "stage_count": 1,
+          "subcomponents": 1
+        }
+      },
+      "elementwise": {
+        "evidence": "inferred_llama2_semantics",
+        "fu_instruction_instances": {
+          "add": 291504128,
+          "fdiv": 90177536,
+          "fexp": 90177536,
+          "frsqrt": 16384,
+          "mul": 448790528,
+          "shuffle": 67108864
+        },
+        "operation_count": 987774976,
+        "tokens": 8192
+      },
+      "fft_scale_per_u": 4,
+      "full_scale": 16384,
+      "retained_length": 512,
+      "sequence_length": 1024,
+      "structured_components": {
+        "attention": {
+          "boundary_bytes": 100663296,
+          "combined_offchip_bytes": 234881024,
+          "fu_instruction_instances": {
+            "add": 4380950528,
+            "fdiv": 16777216,
+            "fexp": 2097152,
+            "fma": 20099104768,
+            "fmax": 2097152,
+            "shuffle": 50331648
+          },
+          "isolated_offchip_bytes": 436207616,
+          "offchip_bytes": 436207616.0,
+          "operations": 41670410240.0,
+          "output_elements": 67108864.0,
+          "removed_roundtrip_bytes": 201326592,
+          "stage_count": 23,
+          "subcomponents": 2
+        },
+        "ffn1": {
+          "bsmm_stage_count": 5,
+          "execution_convention": "analytical_fma_equivalent",
+          "fma_equivalents": 115427246080,
+          "offchip_bytes": 275644416.0,
+          "operations": 230854492160.0,
+          "output_elements": 90177536,
+          "stage_count": 5,
+          "subcomponents": 1
+        },
+        "ffn2": {
+          "bsmm_stage_count": 5,
+          "execution_convention": "analytical_fma_equivalent",
+          "fma_equivalents": 115427246080,
+          "offchip_bytes": 275644416.0,
+          "operations": 230854492160.0,
+          "output_elements": 33554432,
+          "stage_count": 5,
+          "subcomponents": 1
+        },
+        "output": {
+          "bsmm_stage_count": 5,
+          "execution_convention": "analytical_fma_equivalent",
+          "fma_equivalents": 42949672960,
+          "offchip_bytes": 144703488.0,
+          "operations": 85899345920.0,
+          "output_elements": 33554432,
+          "stage_count": 5,
+          "subcomponents": 1
+        },
+        "qkv": {
+          "bsmm_stage_count": 5,
+          "execution_convention": "analytical_fma_equivalent",
+          "fma_equivalents": 128849018880,
+          "offchip_bytes": 299892736.0,
+          "operations": 257698037760.0,
+          "output_elements": 100663296,
+          "stage_count": 5,
+          "subcomponents": 1
+        }
+      },
+      "unit_attention_metadata": {
+        "active_window": 2,
+        "attention_scale": 1,
+        "block_count": 272,
+        "boundary_bytes": 6144,
+        "boundary_xfers": 96,
+        "dynamic_event_count": 3052,
+        "experiment_id": "H83",
+        "fft_scale": 4,
+        "forward_stages": 10,
+        "hidden_dimension": 4096,
+        "inverse_stages": 9,
+        "max_active_instruction_footprint_per_pe": 26,
+        "memory_requests": 224,
+        "name": "fig21-N1024-u1",
+        "offchip_bytes": 14336,
+        "operation_counts": {
+          "add": 8356,
+          "fdiv": 32,
+          "fexp": 4,
+          "fma": 38336,
+          "fmax": 4,
+          "shuffle": 96
+        },
+        "paper_target_values_consumed": false,
+        "pipeline_counts": {
+          "compute": 46828,
+          "load": 192,
+          "store": 32,
+          "xfer": 2976
+        },
+        "retained_length": 512,
+        "sequence_length": 1024,
+        "simd_width": 32,
+        "stage_count": 24,
+        "vector_bytes": 64
+      }
+    },
+    "N128": {
+      "attention_scale_per_u": 1,
+      "batch": 8,
+      "checks": {
+        "attention_analytical_operations": true,
+        "attention_fu": true,
+        "boundary": true,
+        "combined_offchip": true,
+        "dense_attention_operations": true,
+        "elementwise_positive": true,
+        "instruction_footprint": true,
+        "isolated_roundtrip": true,
+        "output_projection": true
+      },
+      "dense_components": {
+        "attention": {
+          "fu_instruction_instances": {
+            "add": 131072,
+            "fdiv": 4194304,
+            "fexp": 131072,
+            "fma": 1073741824,
+            "fmax": 131072
+          },
+          "offchip_bytes": 33554432.0,
+          "operations": 2148270080.0,
+          "output_elements": 4194304,
+          "stage_count": 4,
+          "subcomponents": 1
+        },
+        "ffn1": {
+          "execution_convention": "analytical_fma_equivalent",
+          "fma_equivalents": 46170898432,
+          "gemm_stage_count": 1,
+          "offchip_bytes": 121110528,
+          "operations": 92341796864.0,
+          "output_elements": 11272192,
+          "stage_count": 1,
+          "subcomponents": 1
+        },
+        "ffn2": {
+          "execution_convention": "analytical_fma_equivalent",
+          "fma_equivalents": 46170898432,
+          "gemm_stage_count": 1,
+          "offchip_bytes": 121110528,
+          "operations": 92341796864.0,
+          "output_elements": 4194304,
+          "stage_count": 1,
+          "subcomponents": 1
+        },
+        "output": {
+          "execution_convention": "analytical_fma_equivalent",
+          "fma_equivalents": 17179869184,
+          "gemm_stage_count": 1,
+          "offchip_bytes": 50331648,
+          "operations": 34359738368.0,
+          "output_elements": 4194304,
+          "stage_count": 1,
+          "subcomponents": 1
+        },
+        "qkv": {
+          "execution_convention": "analytical_fma_equivalent",
+          "fma_equivalents": 51539607552,
+          "gemm_stage_count": 1,
+          "offchip_bytes": 134217728,
+          "operations": 103079215104.0,
+          "output_elements": 12582912,
+          "stage_count": 1,
+          "subcomponents": 1
+        }
+      },
+      "elementwise": {
+        "evidence": "inferred_llama2_semantics",
+        "fu_instruction_instances": {
+          "add": 36438016,
+          "fdiv": 11272192,
+          "fexp": 11272192,
+          "frsqrt": 2048,
+          "mul": 56098816,
+          "shuffle": 8388608
+        },
+        "operation_count": 123471872,
+        "tokens": 1024
+      },
+      "fft_scale_per_u": 32,
+      "full_scale": 256,
+      "retained_length": 64,
+      "sequence_length": 128,
+      "structured_components": {
+        "attention": {
+          "boundary_bytes": 12582912,
+          "combined_offchip_bytes": 29360128,
+          "fu_instruction_instances": {
+            "add": 377520128,
+            "fdiv": 2097152,
+            "fexp": 32768,
+            "fma": 520093696,
+            "fmax": 32768,
+            "shuffle": 6291456
+          },
+          "isolated_offchip_bytes": 54525952,
+          "offchip_bytes": 54525952.0,
+          "operations": 1166213120.0,
+          "output_elements": 8388608.0,
+          "removed_roundtrip_bytes": 25165824,
+          "stage_count": 17,
+          "subcomponents": 2
+        },
+        "ffn1": {
+          "bsmm_stage_count": 5,
+          "execution_convention": "analytical_fma_equivalent",
+          "fma_equivalents": 14428405760,
+          "offchip_bytes": 59113472.0,
+          "operations": 28856811520.0,
+          "output_elements": 11272192,
+          "stage_count": 5,
+          "subcomponents": 1
+        },
+        "ffn2": {
+          "bsmm_stage_count": 5,
+          "execution_convention": "analytical_fma_equivalent",
+          "fma_equivalents": 14428405760,
+          "offchip_bytes": 59113472.0,
+          "operations": 28856811520.0,
+          "output_elements": 4194304,
+          "stage_count": 5,
+          "subcomponents": 1
+        },
+        "output": {
+          "bsmm_stage_count": 5,
+          "execution_convention": "analytical_fma_equivalent",
+          "fma_equivalents": 5368709120,
+          "offchip_bytes": 27262976.0,
+          "operations": 10737418240.0,
+          "output_elements": 4194304,
+          "stage_count": 5,
+          "subcomponents": 1
+        },
+        "qkv": {
+          "bsmm_stage_count": 5,
+          "execution_convention": "analytical_fma_equivalent",
+          "fma_equivalents": 16106127360,
+          "offchip_bytes": 65011712.0,
+          "operations": 32212254720.0,
+          "output_elements": 12582912,
+          "stage_count": 5,
+          "subcomponents": 1
+        }
+      },
+      "unit_attention_metadata": {
+        "active_window": 2,
+        "attention_scale": 1,
+        "block_count": 200,
+        "boundary_bytes": 49152,
+        "boundary_xfers": 768,
+        "dynamic_event_count": 17420,
+        "experiment_id": "H83",
+        "fft_scale": 32,
+        "forward_stages": 7,
+        "hidden_dimension": 4096,
+        "inverse_stages": 6,
+        "max_active_instruction_footprint_per_pe": 26,
+        "memory_requests": 1792,
+        "name": "fig21-N128-u1",
+        "offchip_bytes": 114688,
+        "operation_counts": {
+          "add": 46084,
+          "fdiv": 256,
+          "fexp": 4,
+          "fma": 63488,
+          "fmax": 4,
+          "shuffle": 768
+        },
+        "paper_target_values_consumed": false,
+        "pipeline_counts": {
+          "compute": 110604,
+          "load": 1536,
+          "store": 256,
+          "xfer": 16896
+        },
+        "retained_length": 64,
+        "sequence_length": 128,
+        "simd_width": 32,
+        "stage_count": 18,
+        "vector_bytes": 64
+      }
+    },
+    "N2048": {
+      "attention_scale_per_u": 1,
+      "batch": 8,
+      "checks": {
+        "attention_analytical_operations": true,
+        "attention_fu": true,
+        "boundary": true,
+        "combined_offchip": true,
+        "dense_attention_operations": true,
+        "elementwise_positive": true,
+        "instruction_footprint": true,
+        "isolated_roundtrip": true,
+        "output_projection": true
+      },
+      "dense_components": {
+        "attention": {
+          "fu_instruction_instances": {
+            "add": 33554432,
+            "fdiv": 67108864,
+            "fexp": 33554432,
+            "fma": 274877906944,
+            "fmax": 33554432
+          },
+          "offchip_bytes": 536870912.0,
+          "operations": 549957140480.0,
+          "output_elements": 67108864,
+          "stage_count": 4,
+          "subcomponents": 1
+        },
+        "ffn1": {
+          "execution_convention": "analytical_fma_equivalent",
+          "fma_equivalents": 738734374912,
+          "gemm_stage_count": 1,
+          "offchip_bytes": 585105408,
+          "operations": 1477468749824.0,
+          "output_elements": 180355072,
+          "stage_count": 1,
+          "subcomponents": 1
+        },
+        "ffn2": {
+          "execution_convention": "analytical_fma_equivalent",
+          "fma_equivalents": 738734374912,
+          "gemm_stage_count": 1,
+          "offchip_bytes": 585105408,
+          "operations": 1477468749824.0,
+          "output_elements": 67108864,
+          "stage_count": 1,
+          "subcomponents": 1
+        },
+        "output": {
+          "execution_convention": "analytical_fma_equivalent",
+          "fma_equivalents": 274877906944,
+          "gemm_stage_count": 1,
+          "offchip_bytes": 301989888,
+          "operations": 549755813888.0,
+          "output_elements": 67108864,
+          "stage_count": 1,
+          "subcomponents": 1
+        },
+        "qkv": {
+          "execution_convention": "analytical_fma_equivalent",
+          "fma_equivalents": 824633720832,
+          "gemm_stage_count": 1,
+          "offchip_bytes": 637534208,
+          "operations": 1649267441664.0,
+          "output_elements": 201326592,
+          "stage_count": 1,
+          "subcomponents": 1
+        }
+      },
+      "elementwise": {
+        "evidence": "inferred_llama2_semantics",
+        "fu_instruction_instances": {
+          "add": 583008256,
+          "fdiv": 180355072,
+          "fexp": 180355072,
+          "frsqrt": 32768,
+          "mul": 897581056,
+          "shuffle": 134217728
+        },
+        "operation_count": 1975549952,
+        "tokens": 16384
+      },
+      "fft_scale_per_u": 2,
+      "full_scale": 65536,
+      "retained_length": 1024,
+      "sequence_length": 2048,
+      "structured_components": {
+        "attention": {
+          "boundary_bytes": 201326592,
+          "combined_offchip_bytes": 469762048,
+          "fu_instruction_instances": {
+            "add": 9672065024,
+            "fdiv": 33554432,
+            "fexp": 8388608,
+            "fma": 75161927680,
+            "fmax": 8388608,
+            "shuffle": 100663296
+          },
+          "isolated_offchip_bytes": 872415232,
+          "offchip_bytes": 872415232.0,
+          "operations": 153595412480.0,
+          "output_elements": 134217728.0,
+          "removed_roundtrip_bytes": 402653184,
+          "stage_count": 25,
+          "subcomponents": 2
+        },
+        "ffn1": {
+          "bsmm_stage_count": 5,
+          "execution_convention": "analytical_fma_equivalent",
+          "fma_equivalents": 230854492160,
+          "offchip_bytes": 523108352.0,
+          "operations": 461708984320.0,
+          "output_elements": 180355072,
+          "stage_count": 5,
+          "subcomponents": 1
+        },
+        "ffn2": {
+          "bsmm_stage_count": 5,
+          "execution_convention": "analytical_fma_equivalent",
+          "fma_equivalents": 230854492160,
+          "offchip_bytes": 523108352.0,
+          "operations": 461708984320.0,
+          "output_elements": 67108864,
+          "stage_count": 5,
+          "subcomponents": 1
+        },
+        "output": {
+          "bsmm_stage_count": 5,
+          "execution_convention": "analytical_fma_equivalent",
+          "fma_equivalents": 85899345920,
+          "offchip_bytes": 278921216.0,
+          "operations": 171798691840.0,
+          "output_elements": 67108864,
+          "stage_count": 5,
+          "subcomponents": 1
+        },
+        "qkv": {
+          "bsmm_stage_count": 5,
+          "execution_convention": "analytical_fma_equivalent",
+          "fma_equivalents": 257698037760,
+          "offchip_bytes": 568328192.0,
+          "operations": 515396075520.0,
+          "output_elements": 201326592,
+          "stage_count": 5,
+          "subcomponents": 1
+        }
+      },
+      "unit_attention_metadata": {
+        "active_window": 2,
+        "attention_scale": 1,
+        "block_count": 296,
+        "boundary_bytes": 3072,
+        "boundary_xfers": 48,
+        "dynamic_event_count": 1676,
+        "experiment_id": "H83",
+        "fft_scale": 2,
+        "forward_stages": 11,
+        "hidden_dimension": 4096,
+        "inverse_stages": 10,
+        "max_active_instruction_footprint_per_pe": 26,
+        "memory_requests": 112,
+        "name": "fig21-N2048-u1",
+        "offchip_bytes": 7168,
+        "operation_counts": {
+          "add": 4612,
+          "fdiv": 16,
+          "fexp": 4,
+          "fma": 35840,
+          "fmax": 4,
+          "shuffle": 48
+        },
+        "paper_target_values_consumed": false,
+        "pipeline_counts": {
+          "compute": 40524,
+          "load": 96,
+          "store": 16,
+          "xfer": 1632
+        },
+        "retained_length": 1024,
+        "sequence_length": 2048,
+        "simd_width": 32,
+        "stage_count": 26,
+        "vector_bytes": 64
+      }
+    },
+    "N256": {
+      "attention_scale_per_u": 1,
+      "batch": 8,
+      "checks": {
+        "attention_analytical_operations": true,
+        "attention_fu": true,
+        "boundary": true,
+        "combined_offchip": true,
+        "dense_attention_operations": true,
+        "elementwise_positive": true,
+        "instruction_footprint": true,
+        "isolated_roundtrip": true,
+        "output_projection": true
+      },
+      "dense_components": {
+        "attention": {
+          "fu_instruction_instances": {
+            "add": 524288,
+            "fdiv": 8388608,
+            "fexp": 524288,
+            "fma": 4294967296,
+            "fmax": 524288
+          },
+          "offchip_bytes": 67108864.0,
+          "operations": 8593080320.0,
+          "output_elements": 8388608,
+          "stage_count": 4,
+          "subcomponents": 1
+        },
+        "ffn1": {
+          "execution_convention": "analytical_fma_equivalent",
+          "fma_equivalents": 92341796864,
+          "gemm_stage_count": 1,
+          "offchip_bytes": 152043520,
+          "operations": 184683593728.0,
+          "output_elements": 22544384,
+          "stage_count": 1,
+          "subcomponents": 1
+        },
+        "ffn2": {
+          "execution_convention": "analytical_fma_equivalent",
+          "fma_equivalents": 92341796864,
+          "gemm_stage_count": 1,
+          "offchip_bytes": 152043520,
+          "operations": 184683593728.0,
+          "output_elements": 8388608,
+          "stage_count": 1,
+          "subcomponents": 1
+        },
+        "output": {
+          "execution_convention": "analytical_fma_equivalent",
+          "fma_equivalents": 34359738368,
+          "gemm_stage_count": 1,
+          "offchip_bytes": 67108864,
+          "operations": 68719476736.0,
+          "output_elements": 8388608,
+          "stage_count": 1,
+          "subcomponents": 1
+        },
+        "qkv": {
+          "execution_convention": "analytical_fma_equivalent",
+          "fma_equivalents": 103079215104,
+          "gemm_stage_count": 1,
+          "offchip_bytes": 167772160,
+          "operations": 206158430208.0,
+          "output_elements": 25165824,
+          "stage_count": 1,
+          "subcomponents": 1
+        }
+      },
+      "elementwise": {
+        "evidence": "inferred_llama2_semantics",
+        "fu_instruction_instances": {
+          "add": 72876032,
+          "fdiv": 22544384,
+          "fexp": 22544384,
+          "frsqrt": 4096,
+          "mul": 112197632,
+          "shuffle": 16777216
+        },
+        "operation_count": 246943744,
+        "tokens": 2048
+      },
+      "fft_scale_per_u": 16,
+      "full_scale": 1024,
+      "retained_length": 128,
+      "sequence_length": 256,
+      "structured_components": {
+        "attention": {
+          "boundary_bytes": 25165824,
+          "combined_offchip_bytes": 58720256,
+          "fu_instruction_instances": {
+            "add": 868352000,
+            "fdiv": 4194304,
+            "fexp": 131072,
+            "fma": 1652555776,
+            "fmax": 131072,
+            "shuffle": 12582912
+          },
+          "isolated_offchip_bytes": 109051904,
+          "offchip_bytes": 109051904.0,
+          "operations": 3595304960.0,
+          "output_elements": 16777216.0,
+          "removed_roundtrip_bytes": 50331648,
+          "stage_count": 19,
+          "subcomponents": 2
+        },
+        "ffn1": {
+          "bsmm_stage_count": 5,
+          "execution_convention": "analytical_fma_equivalent",
+          "fma_equivalents": 28856811520,
+          "offchip_bytes": 90046464.0,
+          "operations": 57713623040.0,
+          "output_elements": 22544384,
+          "stage_count": 5,
+          "subcomponents": 1
+        },
+        "ffn2": {
+          "bsmm_stage_count": 5,
+          "execution_convention": "analytical_fma_equivalent",
+          "fma_equivalents": 28856811520,
+          "offchip_bytes": 90046464.0,
+          "operations": 57713623040.0,
+          "output_elements": 8388608,
+          "stage_count": 5,
+          "subcomponents": 1
+        },
+        "output": {
+          "bsmm_stage_count": 5,
+          "execution_convention": "analytical_fma_equivalent",
+          "fma_equivalents": 10737418240,
+          "offchip_bytes": 44040192.0,
+          "operations": 21474836480.0,
+          "output_elements": 8388608,
+          "stage_count": 5,
+          "subcomponents": 1
+        },
+        "qkv": {
+          "bsmm_stage_count": 5,
+          "execution_convention": "analytical_fma_equivalent",
+          "fma_equivalents": 32212254720,
+          "offchip_bytes": 98566144.0,
+          "operations": 64424509440.0,
+          "output_elements": 25165824,
+          "stage_count": 5,
+          "subcomponents": 1
+        }
+      },
+      "unit_attention_metadata": {
+        "active_window": 2,
+        "attention_scale": 1,
+        "block_count": 224,
+        "boundary_bytes": 24576,
+        "boundary_xfers": 384,
+        "dynamic_event_count": 9868,
+        "experiment_id": "H83",
+        "fft_scale": 16,
+        "forward_stages": 8,
+        "hidden_dimension": 4096,
+        "inverse_stages": 7,
+        "max_active_instruction_footprint_per_pe": 26,
+        "memory_requests": 896,
+        "name": "fig21-N256-u1",
+        "offchip_bytes": 57344,
+        "operation_counts": {
+          "add": 26500,
+          "fdiv": 128,
+          "fexp": 4,
+          "fma": 50432,
+          "fmax": 4,
+          "shuffle": 384
+        },
+        "paper_target_values_consumed": false,
+        "pipeline_counts": {
+          "compute": 77452,
+          "load": 768,
+          "store": 128,
+          "xfer": 9600
+        },
+        "retained_length": 128,
+        "sequence_length": 256,
+        "simd_width": 32,
+        "stage_count": 20,
+        "vector_bytes": 64
+      }
+    },
+    "N512": {
+      "attention_scale_per_u": 1,
+      "batch": 8,
+      "checks": {
+        "attention_analytical_operations": true,
+        "attention_fu": true,
+        "boundary": true,
+        "combined_offchip": true,
+        "dense_attention_operations": true,
+        "elementwise_positive": true,
+        "instruction_footprint": true,
+        "isolated_roundtrip": true,
+        "output_projection": true
+      },
+      "dense_components": {
+        "attention": {
+          "fu_instruction_instances": {
+            "add": 2097152,
+            "fdiv": 16777216,
+            "fexp": 2097152,
+            "fma": 17179869184,
+            "fmax": 2097152
+          },
+          "offchip_bytes": 134217728.0,
+          "operations": 34372321280.0,
+          "output_elements": 16777216,
+          "stage_count": 4,
+          "subcomponents": 1
+        },
+        "ffn1": {
+          "execution_convention": "analytical_fma_equivalent",
+          "fma_equivalents": 184683593728,
+          "gemm_stage_count": 1,
+          "offchip_bytes": 213909504,
+          "operations": 369367187456.0,
+          "output_elements": 45088768,
+          "stage_count": 1,
+          "subcomponents": 1
+        },
+        "ffn2": {
+          "execution_convention": "analytical_fma_equivalent",
+          "fma_equivalents": 184683593728,
+          "gemm_stage_count": 1,
+          "offchip_bytes": 213909504,
+          "operations": 369367187456.0,
+          "output_elements": 16777216,
+          "stage_count": 1,
+          "subcomponents": 1
+        },
+        "output": {
+          "execution_convention": "analytical_fma_equivalent",
+          "fma_equivalents": 68719476736,
+          "gemm_stage_count": 1,
+          "offchip_bytes": 100663296,
+          "operations": 137438953472.0,
+          "output_elements": 16777216,
+          "stage_count": 1,
+          "subcomponents": 1
+        },
+        "qkv": {
+          "execution_convention": "analytical_fma_equivalent",
+          "fma_equivalents": 206158430208,
+          "gemm_stage_count": 1,
+          "offchip_bytes": 234881024,
+          "operations": 412316860416.0,
+          "output_elements": 50331648,
+          "stage_count": 1,
+          "subcomponents": 1
+        }
+      },
+      "elementwise": {
+        "evidence": "inferred_llama2_semantics",
+        "fu_instruction_instances": {
+          "add": 145752064,
+          "fdiv": 45088768,
+          "fexp": 45088768,
+          "frsqrt": 8192,
+          "mul": 224395264,
+          "shuffle": 33554432
+        },
+        "operation_count": 493887488,
+        "tokens": 4096
+      },
+      "fft_scale_per_u": 8,
+      "full_scale": 4096,
+      "retained_length": 256,
+      "sequence_length": 512,
+      "structured_components": {
+        "attention": {
+          "boundary_bytes": 50331648,
+          "combined_offchip_bytes": 117440512,
+          "fu_instruction_instances": {
+            "add": 1963458560,
+            "fdiv": 8388608,
+            "fexp": 524288,
+            "fma": 5603590144,
+            "fmax": 524288,
+            "shuffle": 25165824
+          },
+          "isolated_offchip_bytes": 218103808,
+          "offchip_bytes": 218103808.0,
+          "operations": 11864637440.0,
+          "output_elements": 33554432.0,
+          "removed_roundtrip_bytes": 100663296,
+          "stage_count": 21,
+          "subcomponents": 2
+        },
+        "ffn1": {
+          "bsmm_stage_count": 5,
+          "execution_convention": "analytical_fma_equivalent",
+          "fma_equivalents": 57713623040,
+          "offchip_bytes": 151912448.0,
+          "operations": 115427246080.0,
+          "output_elements": 45088768,
+          "stage_count": 5,
+          "subcomponents": 1
+        },
+        "ffn2": {
+          "bsmm_stage_count": 5,
+          "execution_convention": "analytical_fma_equivalent",
+          "fma_equivalents": 57713623040,
+          "offchip_bytes": 151912448.0,
+          "operations": 115427246080.0,
+          "output_elements": 16777216,
+          "stage_count": 5,
+          "subcomponents": 1
+        },
+        "output": {
+          "bsmm_stage_count": 5,
+          "execution_convention": "analytical_fma_equivalent",
+          "fma_equivalents": 21474836480,
+          "offchip_bytes": 77594624.0,
+          "operations": 42949672960.0,
+          "output_elements": 16777216,
+          "stage_count": 5,
+          "subcomponents": 1
+        },
+        "qkv": {
+          "bsmm_stage_count": 5,
+          "execution_convention": "analytical_fma_equivalent",
+          "fma_equivalents": 64424509440,
+          "offchip_bytes": 165675008.0,
+          "operations": 128849018880.0,
+          "output_elements": 50331648,
+          "stage_count": 5,
+          "subcomponents": 1
+        }
+      },
+      "unit_attention_metadata": {
+        "active_window": 2,
+        "attention_scale": 1,
+        "block_count": 248,
+        "boundary_bytes": 12288,
+        "boundary_xfers": 192,
+        "dynamic_event_count": 5516,
+        "experiment_id": "H83",
+        "fft_scale": 8,
+        "forward_stages": 9,
+        "hidden_dimension": 4096,
+        "inverse_stages": 8,
+        "max_active_instruction_footprint_per_pe": 26,
+        "memory_requests": 448,
+        "name": "fig21-N512-u1",
+        "offchip_bytes": 28672,
+        "operation_counts": {
+          "add": 14980,
+          "fdiv": 64,
+          "fexp": 4,
+          "fma": 42752,
+          "fmax": 4,
+          "shuffle": 192
+        },
+        "paper_target_values_consumed": false,
+        "pipeline_counts": {
+          "compute": 57996,
+          "load": 384,
+          "store": 64,
+          "xfer": 5376
+        },
+        "retained_length": 256,
+        "sequence_length": 512,
+        "simd_width": 32,
+        "stage_count": 22,
+        "vector_bytes": 64
+      }
+    }
+  },
+  "experiment_id": "H91",
+  "outputs": {
+    "N1024": {
+      "bytes": 693397,
+      "path": "artifacts/environment/h91/fig21-N1024-u1.json",
+      "sha256": "1bc523407fe5f85f2d24e7bf182e901cd9a24d7eda3e49c16e2017d508768514"
+    },
+    "N128": {
+      "bytes": 521110,
+      "path": "artifacts/environment/h91/fig21-N128-u1.json",
+      "sha256": "ad49a6382cfdf3d5d7f5fdfa2db293c3dd113139cf3ca63efa9b508f67b4bcab"
+    },
+    "N2048": {
+      "bytes": 758793,
+      "path": "artifacts/environment/h91/fig21-N2048-u1.json",
+      "sha256": "226e5dd17e546c6a24a6caabce2cd447b460255bbef9bd7c404f6b9427c6a26f"
+    },
+    "N256": {
+      "bytes": 569229,
+      "path": "artifacts/environment/h91/fig21-N256-u1.json",
+      "sha256": "504c5e276389813ff44291a519f27f4b2fed8eda6dc6032841fc847e3ff63638"
+    },
+    "N512": {
+      "bytes": 626886,
+      "path": "artifacts/environment/h91/fig21-N512-u1.json",
+      "sha256": "fbf2d140712ba54ce365aab074ac3e49a57f9bd2c530f82cfba86474e2b3daf1"
+    }
+  },
+  "paper_performance_targets_consumed": false,
+  "schema_version": 1
+}
