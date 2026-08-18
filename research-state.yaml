@@ -687,9 +687,9 @@ experiments:
       timestamp: "2026-08-17"
 
 outer_loop:
-  cycle: 59
-  last_direction: "Implement exact batch-32 Figure 24/25 shape compilers by generalizing H83 FFT-CMP, H92 B16/B32/B64 QKV, and H94 W/Q-specific SWA; validate folding before any target transfer."
-  last_reflection: "H100 proves all 66 old proxies cover only `3.73e-9`-`6.10e-5` of required FU work. Stage identity often matches, but work identity never does. Physical-counter/GPU comparisons must be rebuilt from exact shapes."
+  cycle: 61
+  last_direction: "Rebuild the open surrogate from the SimICT/DPU historical contract: gem5-calibrated components, task/block/instance state, instruction/operand buffers, multiple NoCs, and explicit DRAM-cache-SPM/non-stop buffering; then add MLX CDC/tag/skip-hop specialization."
+  last_reflection: "H104 changes the origin ranking: SimICT and the closed ICT/Ricore DPU->DFU-E->M2-DFU line are the strongest evidence. H103 used physical occupancy rather than the paper roofline metric and is diagnostic-only."
 
 recent_milestones_after_h46:
   architecture_contract: "H52 supersedes the GPU-SM analogy with the paper's specialized spatial tagged-block PE; GPGPU-Sim is baseline-only."
@@ -717,6 +717,10 @@ recent_milestones_after_h46:
   fig19_source_identity: "H97 supports exact mapping identity and localizes missing plain-FFT/global-BSMM source compilers."
   fig19_source_transfer: "H98 supports exact source paths; H99 rejects Figure 19 at 0/12, 724% MAPE, and 858% max."
   fig24_25_identity: "H100 supports exact-work diagnosis: 0/66 proxies complete, represented fractions `3.73e-9`-`6.10e-5`."
+  fig24_25_exact_paths: "H101 supports 48 exact four-strip paths, 384 deterministic executions, 48/48 work checks, 192/192 physical-FU checks, and 96/96 cycle holdouts."
+  fig24_25_full_mesh: "H102 supports the Figure-10-derived 16-PE mapping with 96/96 cycle and 96/96 physical-FMA holdouts; all 24 QKV paths exceed 99.30% full-work FMA utilization."
+  fig25_full_mesh_transfer: "H103 is diagnostic-only: 1/24 physical-occupancy comparisons pass, but the metric omits Figure 25's OI/BW roofline denominator and cannot certify reproduction."
+  author_simulator_lineage: "H104 supports SimICT as the cited/historical framework and ranks the closed ICT/Ricore DPU->DFU-E->M2-DFU line first; exact chip and code reuse remain unresolved."
 
 completion_snapshot_run042:
   certificate_run: run_042

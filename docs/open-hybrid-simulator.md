@@ -2,11 +2,13 @@
 
 ## Outcome
 
-The executable second-development substrate is DSAGEN/dsa-gem5 for the MLX
-spatial fabric and tagged-block PE. Accel-Sim/GPGPU-Sim is retained as a
-separately executable GPU baseline only. This is an engineering reconstruction,
-not a claim that the unpublished MLX simulator was derived from either
-repository.
+The currently executable second-development substrate is DSAGEN/dsa-gem5 for
+the MLX spatial fabric and tagged-block PE. H104's author-lineage audit now
+shows that the unpublished original is more likely a closed SimICT-hosted
+ICT/Ricore DPU/DFU simulator than a DSAGEN fork. The next open surrogate should
+therefore use gem5 component timing plus historically reconstructed DPU
+PE/memory/NoC behavior, while reusing DSAGEN/Assassyn mechanisms selectively.
+Accel-Sim/GPGPU-Sim remains the separate GPU baseline.
 
 MLX is spatial between PEs, but its PE is more programmable than a fixed
 systolic MAC. The resulting split is intentional:
@@ -170,3 +172,16 @@ Figure 24/25 proxy identity is quantified in
 [`fig24-25-work-identity.md`](fig24-25-work-identity.md): all 66 proxies cover
 less than `6.11e-5` of at least one required FU workload despite many matching
 stage counts.
+
+H101 replaces those proxies with all 48 exact batch-32 paths in
+[`fig24-25-exact-paths.md`](fig24-25-exact-paths.md). H102 then applies the
+paper-derived 16-PE spatial loop in
+[`fig24-25-full-mesh-paths.md`](fig24-25-full-mesh-paths.md): every work,
+replay, holdout, and physical-counter gate passes, and QKV utilization rises
+from about 25% to at least 99.30% without changing work or FU latency. The
+frozen Figure 25 comparison in
+[`full-mesh-fma-fig25-transfer.md`](full-mesh-fma-fig25-transfer.md) is still
+a 1/24 physical-occupancy diagnostic. It is not the paper's roofline metric and
+therefore does not constitute a Figure 25 transfer. H104's broader author-team
+survey is recorded in
+[`../literature/mlx-author-simulator-lineage.md`](../literature/mlx-author-simulator-lineage.md).

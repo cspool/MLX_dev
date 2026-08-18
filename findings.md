@@ -92,11 +92,18 @@ H37 closed the first full-paper ledger with a machine certificate rather than a 
 - H97 supports an exact, target-free Figure 19 mapping diagnosis. H23 operations/bytes match fresh profiles for two plain forward FFT axes and global B1024/B4096 FFNs at all four N. H81 FFT-CMP and H92 hierarchical B32 are not directly reusable; H43 aggregation and H83 packet/SRAM/event mechanisms are. The workload is identifiable but still lacks source-integrated timing.
 - H98 supports source-integrated Figure 19 execution: 12 plain-FFT/global-BSMM paths, 48 configs, 96 replaying runs, exact FU/packet work, and 24/24 held-out cycle checks. H99 then rejects the frozen latency transfer at 0/12 points, 724% MAPE, and 858% maximum error. Real tagged-block/FU/SRAM serialization is far slower than H23's analytical timing; no residual correction follows.
 - H100 supports a target-free Figure 24/25 identity diagnosis. Across 66 operator/case proxies, zero represents complete batch-32 work; represented fractions span `3.73e-9` to `6.10e-5`. Stage counts match in 55 cases, proving topology labels are insufficient. Exact variable-depth FFT, B16/32/64 QKV, and W/Q-specific SWA paths must replace the proxy trips before physical utilization or GPU ratios are meaningful.
+- H101 supports all 48 exact batch-32 Figure 24/25 four-strip paths. The 192 configs execute twice, 48/48 full FU/byte contracts and 192/192 physical-FU checks pass, and all 96 cycle holdouts pass with `1.58e-5` MAPE. The largest path legitimately needs 504,890,785 cycles, so its watchdog is work-derived rather than treated as a deadlock.
+- H102 supports the paper-derived 16-PE correction. All 384 executions replay; 48/48 work paths, 192/192 full-mesh runs, 96/96 cycle holdouts, and 96/96 physical-FMA holdouts pass. QKV full-work utilization rises from about 25% under four-strip folding to 99.30%-99.93% with identical FU/byte work. This confirms spatial loop placement—not GPU-SM semantics or FU latency—as the dominant occupancy mechanism.
+- H103 is retained as an internally valid physical-FMA occupancy diagnostic, not a Figure 25 reproduction. Its metric omits the paper's `min(P_peak, OI*BW)` denominator and H102 omits windowed-KV bandwidth loss. The 1/24, 59.33% MAPE comparison therefore cannot enter the paper certificate; it only proves that the current full-mesh path is over-saturated.
+- H104 supports the expanded author/simulator lineage audit. Twelve of twelve required primary sources and 13 T1-primary responses qualify. SimICT is supported as the cited/historical cycle-accurate framework; the ICT/Ricore DPU -> DFU-E -> M2-DFU line is the highest-confidence parent-family candidate; an internal SmarCo simulator/RTL/runtime stack is directly reported. Exact chip and source-code reuse remain unresolved. DSAGEN/Assassyn move from likely-origin candidates to open engineering precedents.
 
 ## Patterns and Insights
 
 - SimICT is the explicit historical simulation framework; DSAGEN is the closest open spatial compiler stack; Assassyn is the closest open asynchronous simulator/RTL semantics reference. These roles must not be collapsed into an unsupported fork or reuse claim.
 - A faithful model needs both work accounting (FLOPs/bytes/stages) and contention timing (pipeline readiness, tag priority, link occupancy, launch/fill/drain overhead). A pure roofline model cannot test MLX's central scheduling claim.
+- Spatial work must be distributed across physical coordinates, not merely divided into a few long loop strips. H101 and H102 conserve exactly the same operations and bytes, yet QKV FMA occupancy changes from about 25% to more than 99% solely through 4-PE versus 16-PE placement.
+- Full physical occupancy is not paper roofline utilization. Figure 25 normalizes achieved FMA throughput by `min(P_peak, OI*BW)`; physical FU busy cycles omit OI/BW and cannot be compared directly.
+- The team's public methodology is unusually consistent: SimICT component simulation, gem5/RTL calibration, independent Verilog/Synopsys implementation, and DPU PE/SPM/multi-NoC models. This is a stronger reconstruction basis than architecture resemblance to DSAGEN.
 - Model-declared framework versions are part of the checkpoint: InternLM2's remote code produced incompatible logits under Transformers 5.15 (first-window PPL 387.07) but PPL 5.69 under its declared 4.41.0. Smoke tests caught this before the registered run, and the official evaluator now refuses a different version.
 - Correct operator invariants and analytical sparsity do not identify a model-quality recipe. In run018, factor-fit MSE remains nearly flat at 0.629-0.634 while quality degrades monotonically with replacement depth, so cumulative approximation—not one broken projection—best explains this particular inferred reconstruction.
 - Native checkpoint identity does not identify an activation figure's statistic. In run019, averaging squared FFT magnitude over 32 windows and all features produces a smooth early-layer curve and a much steeper deep-layer decay than Fig. 6; prompt, feature/head selection, sample aggregation, spectral statistic, grouping, and normalization are all undisclosed.
@@ -167,6 +174,7 @@ H37 closed the first full-paper ledger with a machine certificate rather than a 
 - Stop supplied-image provenance variants after H36. The only permitted original-detail view contains no legible identifier; layout matching, upscaling, sharpening, and OCR parameter sweeps cannot establish origin. Reopen only for genuinely new primary evidence.
 - A complete evidence certificate is not a complete experimental reproduction. H37 must remain globally false while any row is rejected, replay-only, or blocked; target acquisition, arithmetic agreement, and successful sub-baselines cannot be counted as the missing author experiment.
 - Do not equate H40's executable substrate result with MLX performance reproduction. It validates licensed source availability, real timing execution, and extension seams only; tag-block, active-window, programmable-PE, and skip-hop semantics still require implementation and target-independent microtests before any paper figure is revisited.
+- Do not tune H102 from H103 residuals or call H103 a Figure 25 result. First implement the paper's roofline metric and the historical DPU DRAM/cache/SPM/non-stop-buffer path.
 - Do not equate H41's passing synthetic overlay with an end-to-end MLX workload. Its scheduling and routing events are real dsa-gem5 source, but fixed load/store timings are not DSAGEN memory responses and no compiler yet emits FFT/BSMM CDC blocks. Paper-cycle claims remain disallowed until both bridges are validated independently.
 - H42 removes H41's scratchpad/compiler blockers but still is not paper-scale validation. Pair-wise JSON expansion, absent off-chip DMA/LSQ traffic, and inferred FU/placement choices must be resolved or explicitly bounded before comparing its cycles with Figures 18-25.
 - H43 removes pair-wise JSON expansion as a blocker, but timing provenance and off-chip traffic remain unresolved. The 593-cycle B64 result is a target-independent implementation check, not evidence that any plotted MLX bar is reproduced.
@@ -284,3 +292,17 @@ Figure 19 MLX component/total target and closes the residual route.
 
 Run105 proves all 66 Figure 24/25 proxies under-represent complete work by at
 least four and up to nine orders of magnitude despite 55 stage-count matches.
+
+Run106 replaces them with 48 exact batch-32 four-strip paths. All 384 runs,
+physical FU classes, full-work contracts, and 96 cycle holdouts pass.
+
+Run107 redistributes the same work across the full 4x4 mesh. All 96 cycle and
+96 physical-FMA holdouts pass; QKV utilization is at least 99.30% without any
+paper target input.
+
+Run108 exposes that physical FMA occupancy is not Figure 25's roofline metric;
+its 1/24 comparison is quarantined as a diagnostic rather than a paper result.
+
+Run109 broadens the author lineage to 15 records and supports SimICT plus the
+closed DPU/DFU-E/M2-DFU family as the reconstruction basis. Exact parent and
+source reuse remain unresolved.
