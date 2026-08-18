@@ -12,7 +12,9 @@ H115 showed that completed FMA work/cycle does not reproduce Figure 25, while
 MCP provides no independent basis to substitute residence. H116 therefore does
 not compare either figure. It first tests whether the already implemented H71
 physical counters are numerically stable under the new live memory/tile-major
-execution.
+execution. H61 supplies the productive-PE normalization semantics, while H71
+supplies the later per-FU/FMA counter implementation; their roles remain
+separate.
 
 ## Frozen counters
 
@@ -31,8 +33,9 @@ a relative-error division.
 
 ## Acceptance gates
 
-1. Frozen H114/H71/config bytes qualify and both parents are supported with
-   audit integrity.
+1. Frozen H114/H61/H71/config bytes qualify; H114/H71 are supported with
+   integrity, while H61's target transfer is rejected with integrity but its
+   productive-PE counter definition is frozen.
 2. H114's run manifest qualifies; exactly 48 paths and 192 optimized q summaries
    bind through hashes and match run119 cycles.
 3. All five counter keys are present/nonnegative at every q; physical PE count
