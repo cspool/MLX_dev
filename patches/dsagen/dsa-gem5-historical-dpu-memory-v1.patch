@@ -1,0 +1,49 @@
+diff --git a/src/cpu/minor/ssim/mlx_overlay.hh b/src/cpu/minor/ssim/mlx_overlay.hh
+--- a/src/cpu/minor/ssim/mlx_overlay.hh
++++ b/src/cpu/minor/ssim/mlx_overlay.hh
+@@ -51,7 +51,8 @@ enum class PipelineKind { Load = 0, Store = 1, Compute = 2, Xfer = 3 };
+ enum class MemoryBackend {
+   FixedLatency = 0,
+   Adapter = 1,
+-  DmaAdapter = 2
++  DmaAdapter = 2,
++  DpuMemoryAdapter = 3
+ };
+ 
+ enum class PeDependencyModel {
+diff --git a/src/cpu/minor/ssim/mlx_overlay.cc b/src/cpu/minor/ssim/mlx_overlay.cc
+--- a/src/cpu/minor/ssim/mlx_overlay.cc
++++ b/src/cpu/minor/ssim/mlx_overlay.cc
+@@ -127,6 +127,7 @@ ParseMemoryBackend(const std::string &name)
+   if (name.empty() || name == "fixed") return MemoryBackend::FixedLatency;
+   if (name == "dsagen_spad" || name == "adapter") return MemoryBackend::Adapter;
+   if (name == "dsagen_dma") return MemoryBackend::DmaAdapter;
++  if (name == "dpu_memory") return MemoryBackend::DpuMemoryAdapter;
+   throw std::runtime_error("unknown MLX memory backend: " + name);
+ }
+ 
+@@ -1171,8 +1172,9 @@ Overlay::issueInstruction(std::size_t block_index)
+   issue_detail["memory_backend"] =
+       !instruction.memory_external ? "local" :
+       (state.external_memory ?
+-       (config_.memory_backend == MemoryBackend::DmaAdapter ?
+-        "dsagen_dma" : "adapter") : "fixed");
++       (config_.memory_backend == MemoryBackend::DmaAdapter ? "dsagen_dma" :
++        (config_.memory_backend == MemoryBackend::DpuMemoryAdapter ?
++         "dpu_memory" : "adapter")) : "fixed");
+   if (state.external_memory) {
+     issue_detail["memory_token"] = std::to_string(state.memory_token);
+   }
+@@ -1397,8 +1399,10 @@ Overlay::summaryJson(const std::string &scenario) const
+       << ",\"memory_backend\":"
+       << Quote(config_.memory_backend == MemoryBackend::DmaAdapter ?
+                "dsagen_dma" :
+-               (config_.memory_backend == MemoryBackend::Adapter ?
+-                "adapter" : "fixed"))
++               (config_.memory_backend == MemoryBackend::DpuMemoryAdapter ?
++                "dpu_memory" :
++                (config_.memory_backend == MemoryBackend::Adapter ?
++                 "adapter" : "fixed")))
+       << ",\"instructions_issued\":" << stats_.instructions_issued
+       << ",\"instructions_completed\":" << stats_.instructions_completed
+       << ",\"max_active_tags\":" << stats_.max_active_tags

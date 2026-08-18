@@ -1,0 +1,124 @@
+{
+  "active_window": 1,
+  "blocks": [
+    {
+      "block_id": 1,
+      "id": "invalid_capacity",
+      "instance_base": 0,
+      "instructions": [
+        {
+          "id": "invalid_capacity_load",
+          "memory_address": 0,
+          "memory_bytes": 32,
+          "memory_external": true,
+          "operation": "load",
+          "pipeline": "load",
+          "reads": [],
+          "writes": []
+        },
+        {
+          "id": "invalid_capacity_compute",
+          "operation": "tile_compute",
+          "pipeline": "compute",
+          "reads": [],
+          "writes": []
+        },
+        {
+          "id": "invalid_capacity_store",
+          "memory_address": 32,
+          "memory_bytes": 32,
+          "memory_external": true,
+          "operation": "store",
+          "pipeline": "store",
+          "reads": [],
+          "writes": []
+        }
+      ],
+      "pe": [
+        0,
+        0
+      ],
+      "predecessors": [],
+      "tag": 1,
+      "task_id": 1,
+      "trip_count": 1,
+      "wait_events": []
+    }
+  ],
+  "dpu": {
+    "active_blocks_per_pe": 0,
+    "instruction_slots_per_pe": 0,
+    "operand_contexts_per_pe": 0
+  },
+  "functional_units": {
+    "add": {
+      "class": "alu",
+      "initiation_interval": 1,
+      "latency": 1
+    },
+    "fma": {
+      "class": "fma",
+      "initiation_interval": 1,
+      "latency": 4
+    },
+    "hold": {
+      "class": "alu",
+      "initiation_interval": 5,
+      "latency": 5
+    },
+    "slow": {
+      "class": "alu",
+      "initiation_interval": 1,
+      "latency": 3
+    },
+    "tile_compute": {
+      "class": "fma",
+      "initiation_interval": 1,
+      "latency": 8
+    }
+  },
+  "memory_backend": "dpu_memory",
+  "metadata": {
+    "experiment_id": "H106",
+    "paper_performance_targets_consumed": false,
+    "synthetic_compute_latency": 8,
+    "synthetic_compute_latency_provenance": "mechanism_only_not_paper_target"
+  },
+  "pe_dependency_model": "dpu_frfo",
+  "pipelines": {
+    "compute": {
+      "initiation_interval": 1,
+      "latency": 1
+    },
+    "load": {
+      "initiation_interval": 1,
+      "latency": 1
+    },
+    "store": {
+      "initiation_interval": 1,
+      "latency": 1
+    },
+    "xfer": {
+      "initiation_interval": 1,
+      "latency": 1
+    }
+  },
+  "record_events": true,
+  "register_file": {
+    "banks": 8,
+    "read_ports": 2,
+    "write_ports": 1
+  },
+  "routing": {
+    "latency_per_hop": 1,
+    "link_capacity": 1,
+    "mesh_height": 4,
+    "mesh_width": 4,
+    "network_planes": 4,
+    "skip_steps": [
+      1
+    ]
+  },
+  "schema_version": 1,
+  "start_in_roi": true
+}

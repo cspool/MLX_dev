@@ -84,6 +84,16 @@ execution:
   build_modes: [debug, optimized, asan, ubsan]
   paper_performance_targets_consumed: false
 
+regressions:
+  h105_manifest: artifacts/environment/h105/simict-dpu-run-manifest.json
+  h52_summary: artifacts/environment/h52/runs/standalone/debug-summary.json
+  h52_trace: artifacts/environment/h52/runs/standalone/debug-trace.jsonl
+  gem5:
+    binary: third_party/dsa-framework/dsa-gem5/build/RISCV/gem5.opt
+    smoke_root: artifacts/smoke/dsagen-mlx-overlay/h106-dpu-memory-r1
+    expected_overlay_cycles: 5
+    expected_dsagen_cycles: 569
+
 source_layout:
   overlay_header: third_party/dsa-framework/dsa-gem5/src/cpu/minor/ssim/mlx_overlay.hh
   overlay_source: third_party/dsa-framework/dsa-gem5/src/cpu/minor/ssim/mlx_overlay.cc
