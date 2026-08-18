@@ -69,3 +69,9 @@ Replay the immutable audit with:
 ```bash
 .venv/bin/python scripts/audit_fig22_resource_counters.py --verify-existing
 ```
+
+H116 revisits the same productive-PE semantics after H114's live coupled
+execution in [coupled-resource-counter-folding.md](coupled-resource-counter-folding.md).
+All QKV/SWA pipeline and FMA counters fold successfully, but FFT compute/xfer
+and especially FMA residence have not reached q=4/8 steady state. No new
+Figure 22 target comparison is admitted yet.

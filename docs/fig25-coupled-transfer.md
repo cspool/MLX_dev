@@ -44,6 +44,11 @@ definition selecting FMA residence rather than completed-work throughput.
 Accordingly, H115 does not reinterpret the metric from residuals and does not
 fit operator scales. Active simulator completion remains 0/8 full figures.
 
+H116 subsequently tests physical counters without targets in
+[coupled-resource-counter-folding.md](coupled-resource-counter-folding.md).
+QKV/SWA residence is nearly identical to issue, so it cannot repair their H115
+residual. FFT FMA residence fails all q=16/32 folds and remains ineligible.
+
 Evidence is in
 [run120](../artifacts/results/fig25-coupled-transfer-run120.json), with the
 frozen plan in

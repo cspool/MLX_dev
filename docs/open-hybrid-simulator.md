@@ -257,6 +257,11 @@ H115 performs the frozen join in
 but FFT remains uniformly low and QKV uniformly high; full Figure 25 is
 rejected at 2/24 and 43.71% MAPE. No residual factor follows.
 
+H116 audits run119's physical counters target-free in
+[coupled-resource-counter-folding.md](coupled-resource-counter-folding.md).
+QKV/SWA counters are stable, while all FFT FMA-residence holdouts fail; the
+next simulator work is an FFT-only steady-state extension.
+
 The active objective is now limited to simulator-dependent hardware performance
 in Figures 18–25, as recorded in
 [simulator-experiment-scope.md](simulator-experiment-scope.md). Accuracy,
