@@ -28,5 +28,9 @@ reconcile with H90, all five generalized H83 mappings to conserve FU/bytes,
 output projection to be present, and every elementwise count positive. No
 Figure 21 target is read.
 
+Each u=1 structured-Attention graph and a hash-bound five-shape compile
+manifest are materialized under `artifacts/environment/h91`; a fresh compiler
+replay must be byte-identical.
+
 The immutable output is
 `artifacts/results/fig21-layer-contract-run096.json`.
