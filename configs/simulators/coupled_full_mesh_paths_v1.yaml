@@ -1,0 +1,96 @@
+name: coupled-full-mesh-paths-v1
+experiment_id: H114
+run_id: run119
+classification: target_free_coupled_full_mesh_cycle_fold
+validation_eligible: false
+
+frozen_inputs:
+  h113:
+    path: artifacts/results/coupled-pipelined-dpu-memory-run118.json
+    bytes: 13276
+    sha256: 895b7b7d375b2b1a2f94e303633201bae61511c799d6346026a73b93a6487e8b
+    required_status: supported
+    required_integrity: true
+  h110:
+    path: artifacts/results/pipelined-full-mesh-paths-run115.json
+    bytes: 2861404
+    sha256: 6ba5a86ac22135f38e3ed065f12f343fa91a173168b8ab41553d3a48e7b2e18a
+    required_status: rejected
+    required_integrity: true
+    required_cycle_holdouts_pass: true
+  h107:
+    path: artifacts/results/full-mesh-memory-residency-run112.json
+    bytes: 57444
+    sha256: ca917f5a1cf047d5d08cdba39a454955fb7d7d1aae33bef799058bcf38174a59
+    required_status: supported
+    required_integrity: true
+  contracts:
+    path: artifacts/source-snapshots/h110-pipelined-full-mesh-contracts-20260818.json
+    bytes: 116512
+    sha256: 5c49aa1190383fd70f559dbc9a8b990a7b8c24572e78064ed2ac76c2aa1acf5b
+
+scales:
+  fit: [4, 8]
+  holdout: [16, 32]
+  cycle_relative_error_limit: 0.05
+
+hardware:
+  frequency_hz: 1000000000
+  physical_pes: 16
+  simd_width: 32
+  vector_bytes: 64
+  active_window: 2
+  iteration_contexts_per_block: 4
+  operand_contexts_per_pe: 256
+  dma_bytes_per_cycle: 64
+  dma_setup_cycles: 0
+  spm_bytes: 8388608
+  buffer_halves: 2
+  half_bytes: 4194304
+  logical_tile_stride: 4194304
+  tile_alignment_bytes: 32
+  spm:
+    bank_width_bytes: 32
+    banks: 32
+    request_buffer_entries: 4
+    issue_width: 32
+    bank_provision: 1
+    bank_fifo_entries: 1
+
+execution:
+  required_paths: 48
+  required_configs: 192
+  optimized_replays: 2
+  required_optimized_executions: 384
+  sanitizer_scales: [4]
+  sanitizer_modes: [asan, ubsan]
+  required_sanitizer_executions: 96
+  required_executions: 480
+  required_cycle_holdouts: 96
+  memory_record_events: false
+  paper_performance_targets_consumed: false
+
+trace_control:
+  adapter_default_record_events: true
+  bulk_record_events: false
+  default_behavior_must_remain_byte_exact: true
+  adapter_header_before_sha256: 2dac6191a0484b26cfee480078a75f05a1378a3a83866caeb9a54c9f4dbf9fc5
+  adapter_source_before_sha256: 9132eac4a5ad2676c0628e1fe6c026e67df0426aae41206efbd6631504cf7aa2
+
+regressions:
+  h106_manifest: artifacts/environment/h106/historical-dpu-memory-run-manifest.json
+  h109_manifest: artifacts/environment/h109/pipelined-block-contexts-run-manifest.json
+  h113_manifest: artifacts/environment/h113/coupled-pipelined-dpu-memory-run-manifest.json
+
+source_layout:
+  adapter_header: simulator_ext/dsagen/historical_dpu_memory.hh
+  adapter_source: simulator_ext/dsagen/historical_dpu_memory.cc
+  scenario_core: src/mlxsim/coupled_full_mesh_paths.py
+  compiler: scripts/compile_coupled_full_mesh_paths.py
+  runner: scripts/run_coupled_full_mesh_paths.py
+  auditor: scripts/audit_coupled_full_mesh_paths.py
+  driver: simulator_ext/dsagen/historical_dpu_memory_driver.cc
+  patch: patches/dsagen/dsa-gem5-memory-trace-control-v1.patch
+
+output_root: artifacts/environment/h114
+result_path: artifacts/results/coupled-full-mesh-paths-run119.json
