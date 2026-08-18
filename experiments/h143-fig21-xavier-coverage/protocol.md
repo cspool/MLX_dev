@@ -36,7 +36,7 @@ WMMA/MMA instructions rather than inferring use from configuration alone.
 7. H135 covers only structured Attention at N256/N8192 and is not dense full
    attention.
 8. No existing parent provides matched dense Xavier elementwise execution.
-9. The missing plan contains exactly 15 shape-family and 40 shape-component
+9. The missing plan contains exactly 15 shape-family and 55 shape-component
    rows, with zero currently qualified Xavier rows.
 10. Auditor/test consume no Figure 21 performance target and do not promote a
     sparse/structured substitute; active completion stays 3/8.
