@@ -29,6 +29,7 @@ def main() -> int:
     output_root = PROJECT_ROOT / config["output_root"]
     run_root = output_root / "runs"
     run_root.mkdir(parents=True, exist_ok=True)
+    (PROJECT_ROOT / "build/xavier-fft-regime").mkdir(parents=True, exist_ok=True)
     binary = build(
         PROJECT_ROOT / config["source_layout"]["stable_fft_source"],
         "../xavier-fft-regime/mlx_fft_stable_proxy",
