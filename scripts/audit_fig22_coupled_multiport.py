@@ -318,7 +318,10 @@ def build_audit(config: dict[str, Any]) -> dict[str, Any]:
         for name, path in config["source_layout"].items()
         if name not in {"memory_header", "memory_source", "driver", "patch"}
     )
-    forbidden = ("fig22-resource-targets-run065.json", "fig22-coupled-transfer-run124.json")
+    forbidden = (
+        "fig22-resource" + "-targets-run065.json",
+        "fig22-coupled" + "-transfer-run124.json",
+    )
     target_free_checks = {
         "source": not any(name in source_text for name in forbidden),
         "compile": compiled["paper_performance_targets_consumed"] is False,
