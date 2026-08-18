@@ -9,13 +9,23 @@ predicting q16/q32 within 5% and yielding 12 target-free full estimates.
 ## Frozen transform
 
 Preserve every H98 block, tag, PE, trip, instruction, operation, event and
-route. Change only the execution/memory contract:
+route logically. Change only the execution/memory contract:
 
 - `dpu_pipelined`, four iteration contexts and source-derived DPU capacities;
 - one historical non-stop tile with exact q load/store bytes;
 - four partitioned ports, FFT selected by row/y and global FFN by column/x;
 - aligned addresses remapped within one 4 MiB SPM half; and
 - 64 B/cycle DMA with zero setup lower bound.
+
+### Pre-result capacity correction
+
+A static pre-execution audit shows some `global_ffn2-q32` input-request bytes
+slightly exceed one 4 MiB compute half. H128 therefore reuses H114's exact
+tile-major partition only when required: split every source block's trip range,
+prefix its events, remap tags/addresses per tile, and require the partitioned
+trip/work/request sums to equal H98 exactly. Per-tile input/output bytes must be
+32-byte aligned and fit one half; stores per tile must remain uniform. This
+does not change q scales, total work/bytes, hardware capacity or any target.
 
 Execute all 48 q4/8/16/32 configs twice optimized and once under ASan/UBSan:
 192 runs. No Figure 19 target is read.
@@ -24,7 +34,8 @@ Execute all 48 q4/8/16/32 configs twice optimized and once under ASan/UBSan:
 
 1. H98/H120/config inputs qualify and parent statuses pass.
 2. Exactly 48 overlays reproduce H98 blocks/metadata before the allowed root
-   transform; 12 path identities and all q scales are complete.
+   transform; tile partitions sum exactly to every source block/trip/event;
+   12 path identities and all q scales are complete.
 3. Active-window instruction demand fits 32 slots; DPU/context/port fields and
    x/y orientation match the frozen contract.
 4. Memory requests are aligned/remapped within one half; input/output DMA bytes
