@@ -192,17 +192,24 @@ def trace_patch_audit(config: dict[str, Any]) -> dict[str, Any]:
 def capacity_patch_audit(config: dict[str, Any]) -> dict[str, Any]:
     patch = PROJECT_ROOT / config["source_layout"]["capacity_patch"]
     active_patch = PROJECT_ROOT / config["source_layout"]["active_scan_patch"]
+    resident_patch = (
+        PROJECT_ROOT
+        / "patches/dsagen/dsa-gem5-active-window-instruction-capacity-v1.patch"
+    )
     current_header = PROJECT_ROOT / config["source_layout"]["overlay_header"]
     current_source = PROJECT_ROOT / config["source_layout"]["overlay_source"]
     report = {
         "patch": qualify(patch),
         "active_patch": qualify(active_patch),
+        "resident_patch": qualify(resident_patch),
+        "resident_reverse_check": False,
         "active_reverse_check": False,
         "reverse_check": False,
         "baseline_header": False,
         "baseline_source": False,
         "forward_check": False,
         "active_forward_check": False,
+        "resident_forward_check": False,
         "round_trip_exact": False,
     }
     if not patch.is_file():
@@ -216,6 +223,22 @@ def capacity_patch_audit(config: dict[str, Any]) -> dict[str, Any]:
         source = target / "mlx_overlay.cc"
         shutil.copy2(current_header, header)
         shutil.copy2(current_source, source)
+        resident_reverse = subprocess.run(
+            ["git", "apply", "-R", "--check", str(resident_patch)],
+            cwd=root,
+            capture_output=True,
+            text=True,
+            check=False,
+        )
+        report["resident_reverse_check"] = resident_reverse.returncode == 0
+        if resident_reverse.returncode != 0:
+            report["pass"] = False
+            return report
+        subprocess.run(
+            ["git", "apply", "-R", str(resident_patch)],
+            cwd=root,
+            check=True,
+        )
         active_reverse = subprocess.run(
             [
                 "git",
@@ -285,6 +308,22 @@ def capacity_patch_audit(config: dict[str, Any]) -> dict[str, Any]:
                         cwd=root,
                         check=True,
                     )
+                    resident_forward = subprocess.run(
+                        ["git", "apply", "--check", str(resident_patch)],
+                        cwd=root,
+                        capture_output=True,
+                        text=True,
+                        check=False,
+                    )
+                    report["resident_forward_check"] = (
+                        resident_forward.returncode == 0
+                    )
+                    if resident_forward.returncode == 0:
+                        subprocess.run(
+                            ["git", "apply", str(resident_patch)],
+                            cwd=root,
+                            check=True,
+                        )
                 report["round_trip_exact"] = (
                     header.read_bytes() == current_header.read_bytes()
                     and source.read_bytes() == current_source.read_bytes()
@@ -293,11 +332,13 @@ def capacity_patch_audit(config: dict[str, Any]) -> dict[str, Any]:
         report[key]
         for key in (
             "reverse_check",
+            "resident_reverse_check",
             "active_reverse_check",
             "baseline_header",
             "baseline_source",
             "forward_check",
             "active_forward_check",
+            "resident_forward_check",
             "round_trip_exact",
         )
     )

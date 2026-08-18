@@ -98,6 +98,29 @@ execution:
   workers: 16
   paper_performance_targets_consumed: false
 
+regressions:
+  h105:
+    compile_manifest: artifacts/environment/h105/simict-dpu-compile-manifest.json
+    run_manifest: artifacts/environment/h105/simict-dpu-run-manifest.json
+    valid_scenario: dpu_2018_8x8
+    invalid_scenario: instruction_slot_overflow
+  h109:
+    compile_manifest: artifacts/environment/h109/pipelined-block-contexts-compile-manifest.json
+    run_manifest: artifacts/environment/h109/pipelined-block-contexts-run-manifest.json
+    scenario: fma_ii1_ctx4
+  h106:
+    compile_manifest: artifacts/environment/h106/historical-dpu-memory-compile-manifest.json
+    run_manifest: artifacts/environment/h106/historical-dpu-memory-run-manifest.json
+    scenario: non_stop_four_tiles
+  h113:
+    compile_manifest: artifacts/environment/h113/coupled-pipelined-dpu-memory-compile-manifest.json
+    run_manifest: artifacts/environment/h113/coupled-pipelined-dpu-memory-run-manifest.json
+    scenario: single_tile_ctx4
+  h114:
+    compile_manifest: artifacts/environment/h114/coupled-full-mesh-compile-manifest.json
+    run_manifest: artifacts/environment/h114/coupled-full-mesh-run-manifest.json
+    run_key: fft_cmp--BERT_512-q4
+
 target_exclusion:
   forbidden_paths:
     - artifacts/results/fig22-resource-targets-run065.json
