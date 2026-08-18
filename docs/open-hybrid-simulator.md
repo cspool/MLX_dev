@@ -5,9 +5,9 @@
 The currently executable second-development substrate is DSAGEN/dsa-gem5 for
 the MLX spatial fabric and tagged-block PE. H104's author-lineage audit now
 shows that the unpublished original is more likely a closed SimICT-hosted
-ICT/Ricore DPU/DFU simulator than a DSAGEN fork. The next open surrogate should
-therefore use gem5 component timing plus historically reconstructed DPU
-PE/memory/NoC behavior, while reusing DSAGEN/Assassyn mechanisms selectively.
+ICT/Ricore DPU/DFU simulator than a DSAGEN fork. H105 begins that corrected open
+surrogate by adding a target-free historical DPU execution contract to the
+gem5-integrated overlay, while reusing DSAGEN/Assassyn mechanisms selectively.
 Accel-Sim/GPGPU-Sim remains the separate GPU baseline.
 
 MLX is spatial between PEs, but its PE is more programmable than a fixed
@@ -185,3 +185,10 @@ a 1/24 physical-occupancy diagnostic. It is not the paper's roofline metric and
 therefore does not constitute a Figure 25 transfer. H104's broader author-team
 survey is recorded in
 [`../literature/mlx-author-simulator-lineage.md`](../literature/mlx-author-simulator-lineage.md).
+
+H105 implements the first historically grounded DPU layer in
+[`simict-dpu-contract.md`](simict-dpu-contract.md): FRFO readiness, explicit
+task/block/instance identity, instruction/operand/active-block capacities, and
+independent physical NoC planes. Its 12/12 gates include H52 event-level and
+full-gem5 569-cycle regressions. It consumes no paper performance target and
+does not change the current 0/18 full-paper reproduction certificate.

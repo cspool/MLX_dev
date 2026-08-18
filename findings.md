@@ -306,3 +306,12 @@ its 1/24 comparison is quarantined as a diagnostic rather than a paper result.
 Run109 broadens the author lineage to 15 records and supports SimICT plus the
 closed DPU/DFU-E/M2-DFU family as the reconstruction basis. Exact parent and
 source reuse remain unresolved.
+
+Run110 implements the first target-free contract on that corrected basis. The
+opt-in DPU path passes FRFO, task/block/instance, capacity, and multi-NoC tests
+across 78 executions, including 26 sanitizer executions. Patch-reversal proves
+that legacy standalone output is byte-identical, an H52 event comparison is
+exact after scenario-name normalization, and enabled/disabled dsa-gem5 both
+retain 569 ROI cycles. This validates an open architecture layer, not the
+unpublished SimICT source or any MLX performance result; full-paper completion
+remains zero of 18.
