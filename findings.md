@@ -100,6 +100,8 @@ H37 closed the first full-paper ledger with a machine certificate rather than a 
 - H111 supports the corrected target-free compute/DMA envelope. It reuses H108's scheduler with H110 cycles and H107 traffic, reconstructs H110 issue exactly, and makes all 240 sensitivity points strictly faster by 1.215x-3.994x. At 64 B/cycle, pipeline utilization is 40.15%-41.06% for FFT, 97.34%-99.79% for QKV, and 94.30%-97.49% for SWA. The exact 16x32x2 peak is 1024 effective ops/cycle, 2.4% above Table IV's rounded 1000. MLX bandwidth remains undisclosed/unselected and no paper target is consumed.
 - H112 rejects the corrected fixed-grid Figure 25 transfer with integrity: every 16/32/64/128/256 B/cycle row passes 0/24, best-grid MAPE is 59.24%, and even the diagnostic per-point bandwidth oracle passes 0/24. FFT crosses from bandwidth- to compute-limited, but QKV remains 96%-100% against 52%-76% targets and SWA remains 94%-100% against 43%-75%. A scalar bandwidth cannot repair the model. H107's saved per-tile vectors exactly match H111's reconstruction at 48/48 paths, localizing the next gap to live compute-memory coupling and non-ideal service rather than byte partitioning.
 - H113 supports live compute-memory coupling without a new C++ patch. Six dpu_pipelined+dpu_memory scenarios run 36 times across four builds with exact traces. Non-stop takes 39 cycles versus baseline 55 for identical work; four contexts take 27 versus two contexts 44; same/split-bank traffic records 16/0 bank stalls. All ownership waits, request/response counts, tile parity, addresses, release/drain/refill order and H106/H109 regressions pass. The mechanism is now executable, but all 48 paper paths still need coupled tile folding before target comparison.
+- H114 supports all 48 target-free coupled full-mesh paths. Across 192 configs and 480 executions, 96/96 q holdouts pass at 0.374% MAPE and 3.92% maximum error. Live memory raises cycles 1.015x-1.728x over H110 and lowers full issue utilization to 25.22%-28.61% FFT, 83.53%-98.43% QKV and 55.02%-71.00% SWA. The slowdown is produced by tile-major DMA/SPM ownership, bank/queue stalls and memory callbacks, not residual factors. Run119 consumes no Figure 25 values and leaves completion 0/18.
+- After run119, the active objective is narrowed to simulator-dependent hardware performance in Figures 18-25. Simulator-independent accuracy, perplexity, training, FLOP-reduction and native-GPU-only experiments remain archived but will not motivate further simulator changes. The provisional strict active count is 0/8 full figures; run119 is eligible source evidence, not yet a target comparison.
 
 ## Patterns and Insights
 
@@ -387,3 +389,10 @@ four-tile non-stop schedule is 39 versus 55 baseline cycles, four contexts are
 27 versus 44 for two contexts, and same/split-bank cases record 16/0 bank
 stalls. This licenses full-path coupled compilation but consumes no paper
 target; completion remains 0/18.
+
+Run119 extends the coupled clock to every exact Figure 24/25 work path. All 480
+optimized/sanitized executions, exact work/byte/tile reconstruction, patch
+round trips and parent regressions pass. q=4/8 predicts q=16/32 at 96/96 points
+with 0.374% MAPE. Coupled data supply adds up to 72.8% cycles and produces
+family-specific issue ranges without target fitting. The result is frozen
+before any new Figure 25 comparison; completion remains 0/18.

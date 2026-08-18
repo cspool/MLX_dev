@@ -245,3 +245,15 @@ H113 validates that live combination in
 and 36 four-build executions pass exact ownership, request/response, tile
 ordering, context, bank-pressure and parent-regression gates. The remaining
 boundary is compiling all 48 exact paths into this coupled clock.
+
+H114 closes that boundary in
+[coupled-full-mesh-paths.md](coupled-full-mesh-paths.md). All 48 paths, 192
+configs, 480 executions and 96 cycle holdouts pass. Full coupled FMA issue is
+25.22%–28.61% for FFT, 83.53%–98.43% for QKV and 55.02%–71.00% for SWA. These
+are target-free outputs; work pauses before a new Figure 25 join.
+
+The active objective is now limited to simulator-dependent hardware performance
+in Figures 18–25, as recorded in
+[simulator-experiment-scope.md](simulator-experiment-scope.md). Accuracy,
+perplexity, training, algorithm-only and standalone native-GPU results no
+longer drive simulator changes.

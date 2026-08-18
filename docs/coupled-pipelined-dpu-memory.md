@@ -51,6 +51,10 @@ tile quanta, validate cycle folding on held-out tile counts, and then project
 complete tile schedules. A new Figure 25 comparison is inadmissible until that
 full-path coupling passes.
 
+H114 completes that boundary for all 48 paths in
+[coupled full-mesh path folding](coupled-full-mesh-paths.md): 480 executions,
+96/96 cycle holdouts and all 12 gates pass.
+
 Evidence is in
 [run118](../artifacts/results/coupled-pipelined-dpu-memory-run118.json), with
 the frozen plan in

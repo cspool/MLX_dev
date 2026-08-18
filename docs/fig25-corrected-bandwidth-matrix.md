@@ -64,6 +64,11 @@ H113 completes that mechanism gate in
 six scenarios and 12 gates pass. Full-path tile folding remains required before
 the corrected Figure 25 matrix may be rerun.
 
+H114 now completes full-path coupling in
+[coupled-full-mesh-paths.md](coupled-full-mesh-paths.md), but does not rerun
+this target matrix. The frozen target comparison remains H112 until work is
+resumed and a new no-tuning protocol is registered.
+
 Evidence is in
 [run117](../artifacts/results/fig25-corrected-bandwidth-matrix-run117.json),
 with the frozen plan in

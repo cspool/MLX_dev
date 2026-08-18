@@ -1,9 +1,23 @@
 project:
   title: "MLX paper reproduction"
-  question: "Can a transparent open surrogate of the unpublished MLX simulator reproduce every reported experiment within 10% while separating measured, digitized, inferred, and calibrated evidence?"
-  status: active
+  question: "Can a transparent open surrogate of the unpublished MLX simulator reproduce every simulator-dependent hardware-performance experiment within 10% while separating measured, digitized, inferred, and calibrated evidence?"
+  status: paused
   started: "2026-08-16"
   domain: "spatial accelerator architecture simulation and structured LLM inference"
+
+active_simulator_scope:
+  status: provisional_pending_mcp_verification
+  included_figures: [18, 19, 20, 21, 22, 23, 24, 25]
+  completion_unit: full_figure
+  required_full_figures: 8
+  reproduced_full_figures: 0
+  relative_error_limit: 0.10
+  excluded:
+    - accuracy_perplexity_and_training
+    - algorithm_only_flop_reduction
+    - standalone_native_gpu_profiling
+    - other_simulator_independent_results
+  rule: "Excluded experiments remain provenance only and must not motivate simulator changes."
 
 literature:
   key_papers:
@@ -687,9 +701,9 @@ experiments:
       timestamp: "2026-08-17"
 
 outer_loop:
-  cycle: 70
-  last_direction: "Compile all 48 H110/H107 paths into target-free coupled tile quanta; fit q=4/8, hold out q=16/32, conserve work/bytes/events, and project full tile schedules before any Figure 25 revisit."
-  last_reflection: "H113 proves dpu_pipelined contexts and HistoricalDpuMemoryAdapter execute correctly in one clock with ownership, context and bank backpressure across 36 four-build runs. The mechanism is ready for full-path folding; completion remains 0/18."
+  cycle: 71
+  last_direction: "Paused after H114/run119 by user request. On resume, refresh MCP, verify paper-analysis-* availability and the provisional Figure 18-25 simulator scope, requalify run119, then pre-register any target-facing comparison."
+  last_reflection: "H114 supports all 48 live coupled paths with 480 executions and 96/96 holdouts. Active scope is now simulator-dependent hardware performance only; provisional strict completion is 0/8 full figures pending MCP verification."
 
 recent_milestones_after_h46:
   architecture_contract: "H52 supersedes the GPU-SM analogy with the paper's specialized spatial tagged-block PE; GPGPU-Sim is baseline-only."
@@ -730,6 +744,7 @@ recent_milestones_after_h46:
   corrected_compute_dma_overlap: "H111 supports 240 target-free corrected sensitivity points with 12/12 gates; all are 1.215x-3.994x faster than H108, exact peak is 1024 ops/cycle, and MLX bandwidth/paper reproduction remain null."
   fig25_corrected_bandwidth_matrix: "H112 rejects all five frozen bandwidths at 0/24 with 59.24%-63.65% MAPE; the per-point oracle is also 0/24, proving scalar bandwidth cannot repair QKV/SWA overprediction."
   coupled_pipelined_dpu_memory: "H113 supports live dpu_pipelined+dpu_memory coupling across six scenarios and 36 executions; non-stop/context/bank relationships and every ownership/traffic/temporal gate pass without paper targets."
+  coupled_full_mesh_paths: "H114 supports 48 coupled paths, 192 configs, 480 executions and 96/96 holdouts; full issue is 25.22%-28.61% FFT, 83.53%-98.43% QKV and 55.02%-71.00% SWA, with no target consumed."
 
 completion_snapshot_run042:
   certificate_run: run_042
