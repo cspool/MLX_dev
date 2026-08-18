@@ -1,0 +1,40 @@
+name: fig19-coupled-transfer-v1
+experiment_id: H130
+run_id: run135
+classification: target_exposed_frozen_current_coupled_figure19_transfer
+validation_eligible: true
+
+frozen_inputs:
+  h129:
+    path: artifacts/results/fig19-coupled-steady-state-run134.json
+    bytes: 12881
+    sha256: d456e7cbf21d9a651615c1cd1d137650e11d3d6e6c2ce84c6540c58945aa7866
+    required_status: supported
+    required_integrity: true
+  targets:
+    path: artifacts/results/fig19-components-run026.json
+    bytes: 12201
+    sha256: de1358f1b28a51f990742745a7ef603e578a3c3ad01175323b0ad9897722018c
+
+composition:
+  sequence_lengths: [128, 256, 512, 1024]
+  layers: 24
+  clock_hz: 1000000000
+  attention_path: N{n}-fft2d
+  ffn_paths: [N{n}-global_ffn1, N{n}-global_ffn2]
+  series: [attention_latency_ms, ffn_latency_ms, total_latency_ms]
+  required_points: 12
+
+acceptance:
+  relative_error_limit: 0.10
+  required_passing_points: 12
+  layer_or_clock_change: forbidden
+  overlap_or_component_factor: forbidden
+  residual_scale_or_offset: forbidden
+  target_derived_mapping: forbidden
+
+source_layout:
+  auditor: scripts/audit_fig19_coupled_transfer.py
+  test: tests/test_fig19_coupled_transfer.py
+
+result_path: artifacts/results/fig19-coupled-transfer-run135.json
