@@ -29,3 +29,13 @@ semantic-value. No clock, component, factor, scale or offset change is allowed.
 
 The immutable result will be
 `artifacts/results/fig20-attention-completion-run141.json`.
+
+## User-directed acceptance amendment before result generation
+
+The user relaxed the project-wide primary criterion before H136 produced a
+target comparison: numerical 10% remains a diagnostic, while completion is
+based on matching comparative direction with an obvious improvement. H136
+therefore adds a frozen trend gate: both target and prediction must indicate a
+speedup over baseline, and the prediction must be at least 1.2x. Attention
+requires 2/2 trend passes and the full ledger 8/8; strict 10% counts/errors are
+still emitted unchanged. This amendment is not derived from H136 residuals.
