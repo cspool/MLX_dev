@@ -1,0 +1,41 @@
+name: fig22-trend-completion-v1
+experiment_id: H139
+run_id: run144
+classification: target_exposed_figure22_dual_criterion_trend_audit
+validation_eligible: false
+
+frozen_inputs:
+  h121:
+    path: artifacts/results/fig22-multiport-transfer-run126.json
+    bytes: 34616
+    sha256: 0977ccc97958cd49532e758a85f14e4d089a95f7237ab0ff0c1bafd173dfb601
+    required_status: rejected
+    required_integrity: true
+  h137:
+    path: artifacts/results/active-simulator-trend-completion-run142.json
+    bytes: 11524
+    sha256: e32eddfc97e97f4ff0b17ec10f1ca0be829a06f7055709712ab01f3549b99dd3
+    required_status: supported
+    required_integrity: true
+
+mapping:
+  operators: [bsmm, fft]
+  resources: [compute, load, store, xfer]
+  sizes: [64, 128, 256, 512, 1024, 2048, 4096, 8192]
+
+acceptance:
+  minimum_spearman: 0.70
+  endpoint_direction_required: true
+  required_curve_passes: 8
+  strict_relative_error_limit: 0.10
+  strict_10pct_retained_as_diagnostic: true
+  every_required_series_must_pass: true
+  resource_or_counter_remap: forbidden
+  scale_offset_or_fit: forbidden
+
+source_layout:
+  auditor: scripts/audit_fig22_trend_completion.py
+  trend_math: scripts/audit_fig19_trend_completion.py
+  test: tests/test_fig22_trend_completion.py
+
+result_path: artifacts/results/fig22-trend-completion-run144.json
