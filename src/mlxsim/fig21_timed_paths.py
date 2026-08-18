@@ -13,6 +13,7 @@ def functional_units() -> dict[str, dict[str, int | str]]:
         "add": {"class": "alu", "latency": 2, "initiation_interval": 1},
         "mul": {"class": "mul", "latency": 2, "initiation_interval": 1},
         "fma": {"class": "fma", "latency": 4, "initiation_interval": 1},
+        "fmax": {"class": "reduce", "latency": 2, "initiation_interval": 1},
         "fexp": {"class": "transcendental", "latency": 8, "initiation_interval": 4},
         "fdiv": {"class": "transcendental", "latency": 8, "initiation_interval": 4},
         "frsqrt": {"class": "transcendental", "latency": 8, "initiation_interval": 4},
