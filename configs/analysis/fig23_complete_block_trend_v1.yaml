@@ -1,0 +1,44 @@
+name: fig23-complete-block-trend-v1
+experiment_id: H142
+run_id: run147
+classification: target_exposed_figure23_complete_block_dual_criterion_audit
+validation_eligible: false
+
+frozen_inputs:
+  h141:
+    path: artifacts/results/fig23-complete-block-run146.json
+    bytes: 12663
+    sha256: 7aad546c0b750086c78b3ec04427143c46da74a9f7ea96ad47b9017ce0d60c69
+    required_status: supported
+    required_integrity: true
+  h65_targets:
+    path: artifacts/results/fig10-fig23-transfer-run070.json
+    bytes: 5524
+    sha256: bf389012fb1eef95ed190b7f1941614321368557c85aeee5a1570ee6f3d04a07
+    required_status: rejected
+    required_integrity: true
+  h137:
+    path: artifacts/results/active-simulator-trend-completion-run142.json
+    bytes: 11524
+    sha256: e32eddfc97e97f4ff0b17ec10f1ca0be829a06f7055709712ab01f3549b99dd3
+    required_status: supported
+    required_integrity: true
+
+mapping:
+  sequence_lengths: [512, 1024, 2048, 4096, 8192]
+  active_windows: [2, 4]
+  speedup_series: [simd32_4x4, simd8_8x8, simd32_8x8]
+
+acceptance:
+  minimum_clear_speedup: 1.20
+  required_trend_passes: 30
+  strict_relative_error_limit: 0.10
+  strict_10pct_retained_as_diagnostic: true
+  exact_author_schedule_claim: forbidden
+  scale_offset_or_fit: forbidden
+
+source_layout:
+  auditor: scripts/audit_fig23_complete_block_trend.py
+  test: tests/test_fig23_complete_block_trend.py
+
+result_path: artifacts/results/fig23-complete-block-trend-run147.json
