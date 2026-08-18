@@ -32,7 +32,7 @@ def test_coupled_path_preserves_scaled_work_and_oi() -> None:
     assert memory["record_events"] is False
     assert document["memory_backend"] == "dpu_memory"
     assert baseline["memory_backend"] == "dsagen_spad"
-    assert len(document["blocks"]) == len(baseline["blocks"])
+    assert len(document["blocks"]) == len(baseline["blocks"]) * 3
     for block in document["blocks"]:
         for instruction in block["instructions"]:
             if instruction["pipeline"] not in {"load", "store"}:

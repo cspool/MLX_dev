@@ -351,6 +351,8 @@ def patch_audit(config: dict[str, Any]) -> dict[str, Any]:
         shutil.copy2(source_path, source)
         newer_patches = [
             PROJECT_ROOT
+            / "patches/dsagen/dsa-gem5-active-window-capacity-v1.patch",
+            PROJECT_ROOT
             / "patches/dsagen/dsa-gem5-pipelined-block-contexts-v1.patch"
         ]
         applied_newer = []

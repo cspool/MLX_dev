@@ -1,0 +1,50 @@
+diff --git a/src/cpu/minor/ssim/mlx_overlay.cc b/src/cpu/minor/ssim/mlx_overlay.cc
+--- a/src/cpu/minor/ssim/mlx_overlay.cc
++++ b/src/cpu/minor/ssim/mlx_overlay.cc
+@@ -5,5 +5,6 @@
+ #include <algorithm>
+ #include <fstream>
++#include <functional>
+ #include <iomanip>
+ #include <limits>
+ #include <sstream>
+@@ -467,6 +468,6 @@ Overlay::validate() const
+   std::set<std::string> block_ids;
+   std::map<Coord, unsigned> static_instructions_per_pe;
+-  std::map<Coord, unsigned> operand_contexts_per_pe;
++  std::map<Coord, std::map<uint64_t, unsigned>> operand_contexts_by_tag;
+   for (const auto &block : blocks_) {
+     if (block.id.empty() || !block_ids.insert(block.id).second) {
+       throw std::runtime_error("MLX block IDs must be nonempty and unique");
+@@ -513,7 +514,7 @@ Overlay::validate() const
+     }
+     std::set<std::string> instruction_ids;
+     static_instructions_per_pe[block.pe] += block.instructions.size();
+-    operand_contexts_per_pe[block.pe] += usesPipelinedContexts() ?
++    operand_contexts_by_tag[block.pe][block.tag] += usesPipelinedContexts() ?
+         static_cast<unsigned>(std::min<uint64_t>(
+             block.trip_count, config_.iteration_contexts_per_block)) : 1;
+     for (const auto &instruction : block.instructions) {
+@@ -571,9 +572,20 @@ Overlay::validate() const
+       throw std::runtime_error("DPU instruction-slot capacity exceeded");
+     }
+   }
+-  for (const auto &entry : operand_contexts_per_pe) {
++  for (const auto &entry : operand_contexts_by_tag) {
++    std::vector<unsigned> resident_demands;
++    for (const auto &tag_demand : entry.second) {
++      resident_demands.push_back(tag_demand.second);
++    }
++    std::sort(resident_demands.begin(), resident_demands.end(), std::greater<unsigned>());
++    uint64_t resident_contexts = 0;
++    for (std::size_t index = 0;
++         index < std::min<std::size_t>(config_.active_window, resident_demands.size());
++         ++index) {
++      resident_contexts += resident_demands[index];
++    }
+     if (config_.operand_contexts_per_pe != 0 &&
+-        entry.second > config_.operand_contexts_per_pe) {
++        resident_contexts > config_.operand_contexts_per_pe) {
+       throw std::runtime_error("DPU operand-context capacity exceeded");
+     }
+   }

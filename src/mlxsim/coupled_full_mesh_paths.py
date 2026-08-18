@@ -6,7 +6,7 @@ import math
 from copy import deepcopy
 from typing import Any
 
-from mlxsim.compute_dma_overlap import balanced_aligned
+from mlxsim.compute_dma_overlap import balanced_aligned, balanced_integer
 from mlxsim.pipelined_full_mesh_paths import compile_pipelined_path
 
 
@@ -70,51 +70,9 @@ def compile_coupled_path(
     input_by_tile = balanced_aligned(read_bytes, tile_count, alignment)
     output_by_tile = balanced_aligned(write_bytes, tile_count, alignment)
     stride = int(hardware["logical_tile_stride"])
-    cursors = {"load": 0, "store": 0}
-    request_addresses_valid = True
-    spad_bandwidth = int(hardware["spm"]["bank_width_bytes"]) * int(
-        hardware["spm"]["banks"]
-    )
-    for block in document["blocks"]:
-        trip_count = int(block["trip_count"])
-        for instruction in block["instructions"]:
-            pipeline = instruction["pipeline"]
-            if pipeline not in cursors:
-                continue
-            bytes_ = int(instruction.get("memory_bytes", hardware["vector_bytes"]))
-            original = instruction.get("memory_address_sequence")
-            if original is None:
-                original = [int(instruction.get("memory_address", 0))] * trip_count
-            if len(original) != trip_count:
-                raise ValueError(f"memory sequence differs from trip count: {run_key}")
-            sequence = []
-            for index, address in enumerate(original):
-                tile = (cursors[pipeline] + index) % tile_count
-                relative = _relative_address(
-                    int(address),
-                    bytes_=bytes_,
-                    half_bytes=half_bytes,
-                    alignment=alignment,
-                )
-                sequence.append(tile * stride + relative)
-                request_addresses_valid = request_addresses_valid and (
-                    relative % bytes_ == 0
-                    and relative % spad_bandwidth + bytes_ <= spad_bandwidth
-                )
-            cursors[pipeline] += trip_count
-            instruction["memory_address"] = sequence[0]
-            instruction["memory_address_sequence"] = sequence
-            instruction["memory_external"] = True
-    if cursors["store"] % tile_count:
-        raise ValueError(f"stores do not divide tiles: {run_key}")
     pipeline_counts = {
         name: int(value) for name, value in h110_metadata["pipeline_counts"].items()
     }
-    if cursors != {
-        "load": pipeline_counts["load"],
-        "store": pipeline_counts["store"],
-    }:
-        raise ValueError(f"remapped memory counts differ from H110: {run_key}")
     scalar_fma = int(h110_metadata["operation_counts"]["fma"]) * int(
         hardware["simd_width"]
     )
@@ -123,6 +81,119 @@ def compile_coupled_path(
     )
     if scalar_fma != expected_scalar_fma:
         raise ValueError(f"scaled FMA work differs from H107: {run_key}")
+    original_blocks = document["blocks"]
+    original_tags = sorted({int(block["tag"]) for block in original_blocks})
+    minimum_tag = original_tags[0]
+    tag_span = original_tags[-1] - minimum_tag + 1
+    tile_blocks = []
+    load_counts_by_tile = [0] * tile_count
+    store_counts_by_tile = [0] * tile_count
+    request_addresses_valid = True
+    spad_bandwidth = int(hardware["spm"]["bank_width_bytes"]) * int(
+        hardware["spm"]["banks"]
+    )
+    for tile in range(tile_count):
+        event_prefix = f"tile{tile}__"
+        for original_block in original_blocks:
+            partitions = balanced_integer(
+                int(original_block["trip_count"]), tile_count
+            )
+            trip_count = partitions[tile]
+            start = sum(partitions[:tile])
+            block = deepcopy(original_block)
+            block["id"] = f"{event_prefix}{original_block['id']}"
+            block["tag"] = (
+                tile * tag_span
+                + int(original_block["tag"])
+                - minimum_tag
+                + 1
+            )
+            block["trip_count"] = trip_count
+            block["instance_base"] = int(
+                original_block.get("instance_base", 0)
+            ) + start
+            block["predecessors"] = [
+                tile * tag_span + int(tag) - minimum_tag + 1
+                for tag in original_block.get("predecessors", [])
+            ]
+            block["wait_events"] = [
+                f"{event_prefix}{event}"
+                for event in original_block.get("wait_events", [])
+            ]
+            if original_block.get("wait_event_periods") or original_block.get(
+                "wait_event_multiplicities"
+            ):
+                raise ValueError(
+                    f"tile partition requires nonperiodic waits: {run_key}"
+                )
+            for instruction_index, instruction in enumerate(block["instructions"]):
+                original_instruction = original_block["instructions"][
+                    instruction_index
+                ]
+                instruction["id"] = f"{event_prefix}{original_instruction['id']}"
+                if original_instruction.get("emit_event"):
+                    if int(original_instruction.get("emit_event_period", 1)) != int(
+                        original_block["trip_count"]
+                    ):
+                        raise ValueError(
+                            f"tile partition requires completion events: {run_key}"
+                        )
+                    instruction["emit_event"] = (
+                        f"{event_prefix}{original_instruction['emit_event']}"
+                    )
+                    instruction["emit_event_period"] = trip_count
+                pipeline = instruction["pipeline"]
+                if pipeline not in {"load", "store"}:
+                    continue
+                bytes_ = int(
+                    original_instruction.get(
+                        "memory_bytes", hardware["vector_bytes"]
+                    )
+                )
+                original_sequence = original_instruction.get(
+                    "memory_address_sequence"
+                )
+                if original_sequence is None:
+                    original_sequence = [
+                        int(original_instruction.get("memory_address", 0))
+                    ] * int(original_block["trip_count"])
+                if len(original_sequence) != int(original_block["trip_count"]):
+                    raise ValueError(
+                        f"memory sequence differs from trip count: {run_key}"
+                    )
+                sequence = []
+                for address in original_sequence[start : start + trip_count]:
+                    relative = _relative_address(
+                        int(address),
+                        bytes_=bytes_,
+                        half_bytes=half_bytes,
+                        alignment=alignment,
+                    )
+                    sequence.append(tile * stride + relative)
+                    request_addresses_valid = request_addresses_valid and (
+                        relative % bytes_ == 0
+                        and relative % spad_bandwidth + bytes_ <= spad_bandwidth
+                    )
+                instruction["memory_address"] = sequence[0]
+                instruction["memory_address_sequence"] = sequence
+                instruction["memory_external"] = True
+                if pipeline == "load":
+                    load_counts_by_tile[tile] += trip_count
+                else:
+                    store_counts_by_tile[tile] += trip_count
+            tile_blocks.append(block)
+    document["blocks"] = tile_blocks
+    if len(set(store_counts_by_tile)) != 1:
+        raise ValueError(f"tile stores are not uniform: {run_key}")
+    cursors = {
+        "load": sum(load_counts_by_tile),
+        "store": sum(store_counts_by_tile),
+    }
+    if cursors != {
+        "load": pipeline_counts["load"],
+        "store": pipeline_counts["store"],
+    }:
+        raise ValueError(f"partitioned memory counts differ from H110: {run_key}")
     document["memory_backend"] = "dpu_memory"
     document["metadata"].update(
         {
@@ -142,7 +213,7 @@ def compile_coupled_path(
         "output_bytes_per_tile": output_by_tile[0],
         "input_bytes_by_tile": input_by_tile,
         "output_bytes_by_tile": output_by_tile,
-        "stores_per_tile": cursors["store"] // tile_count,
+        "stores_per_tile": store_counts_by_tile[0],
         "dma_bytes_per_cycle": int(hardware["dma_bytes_per_cycle"]),
         "dma_setup_cycles": int(hardware["dma_setup_cycles"]),
         "record_events": bool(config["execution"]["memory_record_events"]),
@@ -174,6 +245,15 @@ def compile_coupled_path(
         "operation_counts": h110_metadata["operation_counts"],
         "dynamic_event_count": int(h110_metadata["dynamic_event_count"]),
         "stores_per_tile": cursors["store"] // tile_count,
+        "load_counts_by_tile": load_counts_by_tile,
+        "store_counts_by_tile": store_counts_by_tile,
+        "source_block_count": len(original_blocks),
+        "coupled_block_count": len(tile_blocks),
+        "source_tag_count": len(original_tags),
+        "coupled_tag_count": len(original_tags) * tile_count,
+        "source_dynamic_event_count": int(h110_metadata["dynamic_event_count"]),
+        "coupled_dynamic_event_count": int(h110_metadata["dynamic_event_count"])
+        * tile_count,
         "memory_requests": cursors["load"] + cursors["store"],
         "memory_record_events": memory["record_events"],
         "checks": {
@@ -190,8 +270,17 @@ def compile_coupled_path(
                 for value in [*input_by_tile, *output_by_tile]
             ),
             "capacity": max([*input_by_tile, *output_by_tile]) <= half_bytes,
-            "store_divisibility": cursors["store"] % tile_count == 0,
+            "store_divisibility": len(set(store_counts_by_tile)) == 1,
             "request_alignment": request_addresses_valid,
+            "block_partition": all(
+                sum(
+                    block["trip_count"]
+                    for block in tile_blocks
+                    if block["id"].endswith(f"__{source['id']}")
+                )
+                == int(source["trip_count"])
+                for source in original_blocks
+            ),
             "oi": effective_flops / (read_bytes + write_bytes)
             == float(path["selected_oi_flop_per_byte"]),
             "target_free": document["metadata"][

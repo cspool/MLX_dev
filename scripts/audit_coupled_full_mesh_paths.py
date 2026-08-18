@@ -32,8 +32,8 @@ PROJECT_ROOT = Path(__file__).resolve().parents[1]
 DEFAULT_CONFIG = PROJECT_ROOT / "configs/simulators/coupled_full_mesh_paths_v1.yaml"
 
 
-def semantic_identity(
-    coupled: dict[str, Any], baseline: dict[str, Any]
+def partition_identity(
+    coupled: dict[str, Any], baseline: dict[str, Any], tile_count: int
 ) -> bool:
     if (
         coupled["functional_units"] != baseline["functional_units"]
@@ -42,30 +42,73 @@ def semantic_identity(
         or coupled["pe_dependency_model"] != baseline["pe_dependency_model"]
         or coupled["active_window"] != baseline["active_window"]
         or coupled["dpu"] != baseline["dpu"]
-        or len(coupled["blocks"]) != len(baseline["blocks"])
+        or len(coupled["blocks"]) != len(baseline["blocks"]) * tile_count
     ):
         return False
-    for left_block, right_block in zip(coupled["blocks"], baseline["blocks"]):
-        left_static = {key: value for key, value in left_block.items() if key != "instructions"}
-        right_static = {
-            key: value for key, value in right_block.items() if key != "instructions"
-        }
-        if left_static != right_static or len(left_block["instructions"]) != len(
-            right_block["instructions"]
+    base_tags = sorted({int(block["tag"]) for block in baseline["blocks"]})
+    minimum_tag = base_tags[0]
+    tag_span = base_tags[-1] - minimum_tag + 1
+    block_count = len(baseline["blocks"])
+    ignored_block = {
+        "id",
+        "tag",
+        "trip_count",
+        "instance_base",
+        "predecessors",
+        "wait_events",
+        "instructions",
+    }
+    ignored_instruction = {
+        "id",
+        "emit_event",
+        "emit_event_period",
+        "memory_address",
+        "memory_address_sequence",
+        "memory_external",
+    }
+    for source_index, source in enumerate(baseline["blocks"]):
+        members = [
+            coupled["blocks"][tile * block_count + source_index]
+            for tile in range(tile_count)
+        ]
+        if sum(int(member["trip_count"]) for member in members) != int(
+            source["trip_count"]
         ):
             return False
-        for left, right in zip(
-            left_block["instructions"], right_block["instructions"]
-        ):
-            ignored = {
-                "memory_address",
-                "memory_address_sequence",
-                "memory_external",
-            }
-            if {key: value for key, value in left.items() if key not in ignored} != {
-                key: value for key, value in right.items() if key not in ignored
-            }:
+        for tile, member in enumerate(members):
+            if (
+                member["id"] != f"tile{tile}__{source['id']}"
+                or int(member["tag"])
+                != tile * tag_span + int(source["tag"]) - minimum_tag + 1
+                or {key: value for key, value in member.items() if key not in ignored_block}
+                != {key: value for key, value in source.items() if key not in ignored_block}
+                or len(member["instructions"]) != len(source["instructions"])
+                or len(member.get("wait_events", []))
+                != len(source.get("wait_events", []))
+                or any(
+                    not left.endswith(f"__{right}")
+                    for left, right in zip(
+                        member.get("wait_events", []), source.get("wait_events", [])
+                    )
+                )
+            ):
                 return False
+            for left, right in zip(member["instructions"], source["instructions"]):
+                if {
+                    key: value
+                    for key, value in left.items()
+                    if key not in ignored_instruction
+                } != {
+                    key: value
+                    for key, value in right.items()
+                    if key not in ignored_instruction
+                }:
+                    return False
+                if right.get("emit_event") and (
+                    not left["emit_event"].endswith(f"__{right['emit_event']}")
+                    or int(left["emit_event_period"]) != int(member["trip_count"])
+                ):
+                    return False
     return True
 
 
@@ -73,8 +116,8 @@ def sha256(path: Path) -> str:
     return hashlib.sha256(path.read_bytes()).hexdigest()
 
 
-def patch_audit(config: dict[str, Any]) -> dict[str, Any]:
-    patch = PROJECT_ROOT / config["source_layout"]["patch"]
+def trace_patch_audit(config: dict[str, Any]) -> dict[str, Any]:
+    patch = PROJECT_ROOT / config["source_layout"]["trace_patch"]
     current_header = PROJECT_ROOT / config["source_layout"]["adapter_header"]
     current_source = PROJECT_ROOT / config["source_layout"]["adapter_source"]
     report = {
@@ -112,6 +155,72 @@ def patch_audit(config: dict[str, Any]) -> dict[str, Any]:
             report["baseline_source"] = sha256(source) == config["trace_control"][
                 "adapter_source_before_sha256"
             ]
+            forward = subprocess.run(
+                ["git", "apply", "--check", str(patch)],
+                cwd=root,
+                capture_output=True,
+                text=True,
+                check=False,
+            )
+            report["forward_check"] = forward.returncode == 0
+            if forward.returncode == 0:
+                subprocess.run(["git", "apply", str(patch)], cwd=root, check=True)
+                report["round_trip_exact"] = (
+                    header.read_bytes() == current_header.read_bytes()
+                    and source.read_bytes() == current_source.read_bytes()
+                )
+    report["pass"] = all(
+        report[key]
+        for key in (
+            "reverse_check",
+            "baseline_header",
+            "baseline_source",
+            "forward_check",
+            "round_trip_exact",
+        )
+    )
+    return report
+
+
+def capacity_patch_audit(config: dict[str, Any]) -> dict[str, Any]:
+    patch = PROJECT_ROOT / config["source_layout"]["capacity_patch"]
+    current_header = PROJECT_ROOT / config["source_layout"]["overlay_header"]
+    current_source = PROJECT_ROOT / config["source_layout"]["overlay_source"]
+    report = {
+        "patch": qualify(patch),
+        "reverse_check": False,
+        "baseline_header": False,
+        "baseline_source": False,
+        "forward_check": False,
+        "round_trip_exact": False,
+    }
+    if not patch.is_file():
+        report["pass"] = False
+        return report
+    with tempfile.TemporaryDirectory(prefix="mlx-h114-capacity-") as temporary:
+        root = Path(temporary)
+        target = root / "src/cpu/minor/ssim"
+        target.mkdir(parents=True)
+        header = target / "mlx_overlay.hh"
+        source = target / "mlx_overlay.cc"
+        shutil.copy2(current_header, header)
+        shutil.copy2(current_source, source)
+        reverse = subprocess.run(
+            ["git", "apply", "-R", "--check", str(patch)],
+            cwd=root,
+            capture_output=True,
+            text=True,
+            check=False,
+        )
+        report["reverse_check"] = reverse.returncode == 0
+        if reverse.returncode == 0:
+            subprocess.run(["git", "apply", "-R", str(patch)], cwd=root, check=True)
+            report["baseline_header"] = sha256(header) == config[
+                "capacity_control"
+            ]["overlay_header_before_sha256"]
+            report["baseline_source"] = sha256(source) == config[
+                "capacity_control"
+            ]["overlay_source_before_sha256"]
             forward = subprocess.run(
                 ["git", "apply", "--check", str(patch)],
                 cwd=root,
@@ -198,7 +307,9 @@ def build_audit(config: dict[str, Any]) -> dict[str, Any]:
             and item["metadata"] == metadata
             and all(metadata["checks"].values())
         )
-        semantic_checks[run_key] = semantic_identity(document, h110_document)
+        semantic_checks[run_key] = partition_identity(
+            document, h110_document, int(metadata["tile_count"])
+        )
 
     records = {
         (item["run_key"], item["mode"], int(item["replay"])): item
@@ -345,7 +456,10 @@ def build_audit(config: dict[str, Any]) -> dict[str, Any]:
     family_counts = Counter(
         h107["path_results"][key]["family"] for key in models
     )
-    patch = patch_audit(config)
+    patches = {
+        "trace": trace_patch_audit(config),
+        "capacity": capacity_patch_audit(config),
+    }
     regression_files = {
         name: qualify(PROJECT_ROOT / path)
         for name, path in config["regressions"].items()
@@ -422,7 +536,7 @@ def build_audit(config: dict[str, Any]) -> dict[str, Any]:
         all(reconstruction_checks.values())
         and all(item["eligible"] for item in full_estimates.values()),
         all(run["sanitizer_checks"].values())
-        and patch["pass"]
+        and all(item["pass"] for item in patches.values())
         and all(item["pass"] for item in regression_files.values()),
         target_free and all(check["target_free"] for check in execution_checks.values()),
     ]
@@ -440,7 +554,7 @@ def build_audit(config: dict[str, Any]) -> dict[str, Any]:
         ),
         "counts": all(counts.values()),
         "reconstruction": all(reconstruction_checks.values()),
-        "patch": patch["pass"],
+        "patches": all(item["pass"] for item in patches.values()),
         "regressions": all(item["pass"] for item in regression_files.values())
         and all(item["pass"] for item in run["regressions"].values()),
         "source_files": all(item["pass"] for item in source_files.values()),
@@ -478,7 +592,7 @@ def build_audit(config: dict[str, Any]) -> dict[str, Any]:
         "full_estimates": full_estimates,
         "reconstruction_checks": reconstruction_checks,
         "counts": counts,
-        "patch_checks": patch,
+        "patch_checks": patches,
         "regression_files": regression_files,
         "acceptance_gates": acceptance_gates,
         "summary": {
