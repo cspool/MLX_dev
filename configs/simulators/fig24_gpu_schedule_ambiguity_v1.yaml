@@ -1,0 +1,75 @@
+name: fig24-gpu-schedule-ambiguity-v1
+experiment_id: H123
+run_id: run128
+classification: target_free_exact_fma_gpu_schedule_ambiguity
+validation_eligible: false
+
+frozen_inputs:
+  h100:
+    path: artifacts/results/fig24-25-work-identity-run105.json
+    bytes: 67314
+    sha256: a947545c62cec6fc79621f5c5a838f8845480c414d75bd37f9285d0cdfd6493d
+    required_status: supported
+    required_integrity: true
+  h101:
+    path: artifacts/results/fig24-25-exact-paths-run106.json
+    bytes: 517805
+    sha256: 73b505a008d38fbb65fd138ca583da8a3800ac3a0384eb60b43a201d20daf8af
+    required_status: supported
+    required_integrity: true
+  h101_manifest:
+    path: artifacts/environment/h101/fig24-25-exact-compile-manifest.json
+    bytes: 316034
+    sha256: 7f5bb9908e03e54b644ddb5a0547ac281c4310a179e24f727b7ed8449601519a
+  h54:
+    path: artifacts/results/gpgpusim-orin-proxy-run060.json
+    bytes: 7608
+    sha256: 62eae2e80adb5c21b13d11b622ea1238818320e6db8e9b924472e8035193e193
+    required_status: supported
+    required_integrity: true
+  orin_config:
+    path: artifacts/environment/h54/config/gpgpusim.config
+    bytes: 5460
+    sha256: 1e1fb072fa26213186c7c9a5d2935a06cc70e1a5ba7aa444f817779d0ccc5335
+  orin_interconnect:
+    path: artifacts/environment/h54/config/config_ampere_islip.icnt
+    bytes: 1351
+    sha256: f1c6b2f7340605bbc500e8fc8bed457aeeffaa5774f4cb2d572feb8df4a619ca
+
+witness:
+  path_key: qkv_bsmm--BERT_512
+  family: qkv_bsmm
+  stages: 4
+  fma_per_element_stage: 3
+  full_scalar_fma: 25769803776
+  fractional_denominator: 65536
+  witness_scalar_fma: 393216
+  element_count: 32768
+  block_threads: [32, 128, 1024]
+  expected_total_ctas: [4096, 1024, 128]
+  schedule_only_change: block_threads
+
+acceptance:
+  checksum_relative_error_limit: 0.000001
+  fma_count_exact: true
+  required_runs: 3
+  minimum_cycle_spread: 0.05
+  targets_consumed: false
+  figure24_denominator_identified_expected: false
+
+toolchain:
+  nvcc: /usr/local/cuda-11.8/bin/nvcc
+  host_compiler: /usr/bin/g++-11
+  architecture: compute_86
+  execution: GPGPU_Sim_detailed_PTX
+  gpgpusim_root: third_party/accel-sim-framework/gpu-simulator/gpgpu-sim
+  cuda_shim: third_party/envs/cuda-11.8-cuobjdump
+
+source_layout:
+  cuda_source: simulator_ext/accelsim/mlx_fig24_schedule_witness.cu
+  runner: scripts/run_fig24_gpu_schedule_ambiguity.sh
+  auditor: scripts/audit_fig24_gpu_schedule_ambiguity.py
+  test: tests/test_fig24_gpu_schedule_ambiguity.py
+
+output_root: artifacts/environment/h123
+result_path: artifacts/results/fig24-gpu-schedule-ambiguity-run128.json
