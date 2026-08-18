@@ -119,7 +119,7 @@ def build_audit(config: dict[str, Any]) -> dict[str, Any]:
             == sum(metadata["pipeline_counts"].values())
             and overlay_summary["issued_by_pipeline"] == metadata["pipeline_counts"]
             and overlay_summary["boundary_events_emitted"]
-            == metadata["dynamic_event_count"]
+            == metadata["coupled_dynamic_event_count"]
             and overlay_summary["external_memory_requests"]
             == overlay_summary["external_memory_completions"]
             == memory["requests"]

@@ -194,7 +194,9 @@ def compile_fig19_coupled_path(
         "pipeline_counts": deepcopy(source_metadata["pipeline_counts"]),
         "operation_counts": deepcopy(source_metadata["operation_counts"]),
         "memory_requests": int(source_metadata["memory_requests"]),
-        "dynamic_event_count": int(source_metadata["dynamic_event_count"]),
+        "source_dynamic_event_count": int(source_metadata["dynamic_event_count"]),
+        "coupled_dynamic_event_count": int(source_metadata["dynamic_event_count"])
+        * tile_count,
         "max_active_instruction_footprint_per_pe": footprint,
         "analytical_operations_full": source_metadata.get("analytical_operations_full"),
         "paper_performance_targets_consumed": False,

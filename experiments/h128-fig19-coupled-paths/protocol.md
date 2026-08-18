@@ -26,6 +26,8 @@ prefix its events, remap tags/addresses per tile, and require the partitioned
 trip/work/request sums to equal H98 exactly. Per-tile input/output bytes must be
 32-byte aligned and fit one half; stores per tile must remain uniform. This
 does not change q scales, total work/bytes, hardware capacity or any target.
+Logical source events remain unchanged; physical coupled event instances equal
+the source count times tile count because each tile has an independent prefix.
 
 Execute all 48 q4/8/16/32 configs twice optimized and once under ASan/UBSan:
 192 runs. No Figure 19 target is read.
