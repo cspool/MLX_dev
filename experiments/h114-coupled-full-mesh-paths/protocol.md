@@ -36,6 +36,12 @@ maximum demand of any active-window-sized tag set per PE. H109's two-tag
 overflow remains over capacity, while completed/nonresident tile graphs no
 longer consume instruction-buffer state.
 
+The replicated graph also makes whole-program per-cycle scans asymptotically
+wrong for a folded simulator. Route, completion, issue and busy accounting must
+iterate only blocks belonging to the currently active tags. This is a
+semantics-preserving active-window optimization; ordering inside each active
+tag remains unchanged and legacy/H109 traces must stay exact.
+
 Input/output tile vectors use the same aligned balanced packing as H107. Every
 tile therefore observes scaled DMA fill/drain plus live PE request/response,
 ownership and bank/queue backpressure.
@@ -78,9 +84,9 @@ ASan and UBSan, for 480 total executions and 96 sanitizer executions.
    rejects cycle folding without invalidating correctly executed coupled runs.
 10. For every path, q=full_scale reconstructs exact H107 bytes/tile count and
     exact H110 FU work; a full coupled cycle is emitted only from a passing fold.
-11. ASan/UBSan runs are clean; trace-control and active-window-capacity patches
-    are reversible; H106, H109 and H113 regressions remain exact, including the
-    H109 operand-overflow rejection.
+11. ASan/UBSan runs are clean; trace-control, active-window-capacity and
+    active-block-scan patches are reversible; H106, H109 and H113 regressions
+    remain exact, including the H109 operand-overflow rejection.
 12. Compiler/runner source contains no Figure 25 target, selected MLX bandwidth,
     residual scale or family correction; full-paper completion remains 0/18.
 
