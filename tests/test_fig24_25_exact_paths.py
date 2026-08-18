@@ -1,5 +1,8 @@
+import json
+
 from mlxsim.fig24_25_exact_paths import compile_fft_cmp_path, compile_swa_path
 from scripts.audit_fig24_25_exact_paths import reconstruct_full_work
+from scripts.run_fig24_25_exact_paths import watchdog_cycles
 
 
 def test_fft_full_scale_is_batch32_work() -> None:
@@ -72,3 +75,11 @@ def test_swa_reconstructs_full_scalar_work_and_bytes() -> None:
     assert reconstructed["pass"]
     assert reconstructed["reconstructed_load_bytes"] == 100663296
     assert reconstructed["reconstructed_store_bytes"] == 33554432
+
+
+def test_watchdog_exceeds_registered_dynamic_instruction_work(tmp_path) -> None:
+    config = tmp_path / "path.json"
+    config.write_text(
+        json.dumps({"metadata": {"pipeline_counts": {"compute": 505_000_000}}})
+    )
+    assert watchdog_cycles(config) == 1_010_000_000

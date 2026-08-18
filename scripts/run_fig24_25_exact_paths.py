@@ -24,6 +24,12 @@ def digest(path: Path) -> str:
     return hashlib.sha256(path.read_bytes()).hexdigest()
 
 
+def watchdog_cycles(config_path: Path) -> int:
+    document = json.loads(config_path.read_text(encoding="utf-8"))
+    dynamic_instructions = sum(document["metadata"]["pipeline_counts"].values())
+    return max(500_000_000, 2 * int(dynamic_instructions))
+
+
 def build_driver() -> Path:
     BUILD_ROOT.mkdir(parents=True, exist_ok=True)
     output = BUILD_ROOT / "mlx_overlay_json_driver_opt"
@@ -43,12 +49,13 @@ def build_driver() -> Path:
 
 def run_one(task: tuple[str, str, Path, Path, Path, Path, int, str]) -> dict[str, Any]:
     key, replay, driver, config_path, summary_path, adapter_path, ports, axis = task
+    max_cycles = watchdog_cycles(config_path)
     subprocess.run(
         [
             str(driver), "--config", str(config_path),
             "--standalone-spad-ports", str(ports), "--standalone-spad-axis", axis,
             "--summary", str(summary_path), "--adapter-summary", str(adapter_path),
-            "--max-cycles", "500000000",
+            "--max-cycles", str(max_cycles),
         ],
         check=True,
         stdout=subprocess.DEVNULL,
@@ -61,6 +68,7 @@ def run_one(task: tuple[str, str, Path, Path, Path, Path, int, str]) -> dict[str
         "adapter_path": str(adapter_path.relative_to(PROJECT_ROOT)),
         "adapter_sha256": digest(adapter_path),
         "adapter": json.loads(adapter_path.read_text()),
+        "max_cycles": max_cycles,
     }
 
 
@@ -94,6 +102,7 @@ def main() -> int:
                         "summary_sha256": digest(summary_path), "summary": summary,
                         "adapter_path": str(adapter_path.relative_to(PROJECT_ROOT)),
                         "adapter_sha256": digest(adapter_path), "adapter": adapter,
+                        "max_cycles": watchdog_cycles(PROJECT_ROOT / item["artifact"]["path"]),
                     }
                     continue
             tasks.append((key, replay, driver, PROJECT_ROOT / item["artifact"]["path"],
