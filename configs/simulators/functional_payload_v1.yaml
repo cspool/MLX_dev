@@ -1,0 +1,71 @@
+name: functional-payload-v1
+experiment_id: H155
+run_id: run160
+classification: target_free_integrated_numeric_cycle_execution
+validation_eligible: true
+
+frozen_inputs:
+  core_full_array:
+    path: artifacts/results/core-full-array-gain-run158.json
+    bytes: 15930
+    sha256: f2faf6a176ca8f0da89bd9fdebf34e16b401db96dfaf51f720328dffa3d20ce1
+    required_status: supported
+    required_integrity: true
+  core_certificate:
+    path: artifacts/results/core-architecture-claims-run159.json
+    bytes: 6813
+    sha256: 3b7bba0021a03d13252884bd81361a5cbfd35d699ceddbc1d72c62595891208c
+    required_status: supported
+    required_integrity: true
+
+functional_contract:
+  precision: fp64_shadow
+  iterations: 2
+  input_pairs:
+    - [2.0, 3.0]
+    - [-1.0, 4.0]
+  formula:
+    - fma_ab_plus_1
+    - add_2
+    - multiply_0_5
+    - transfer_to_next_tag_and_pe
+    - max_with_0
+    - exponential
+    - divide_by_2
+    - reciprocal_square_root
+    - identity_shuffle
+  input_addresses:
+    a: [256, 264]
+    b: [512, 520]
+  output_addresses: [768, 776]
+  source: {pe: [0, 0], tag: 1}
+  destination: {pe: [1, 0], tag: 2}
+
+timing_contract:
+  active_window: 2
+  pe_dependency_model: scoreboard_experimental
+  mesh: [2, 1]
+  skip_steps: [1]
+  functional_enabled_and_disabled_cycles_must_match: true
+
+acceptance:
+  absolute_error_limit: 1.0e-12
+  expected_iterations: 2
+  expected_compute_operations: [fma, add, mul, fmax, fexp, fdiv, frsqrt, shuffle]
+  expected_functional_operations: 24
+  expected_boundary_events: 2
+  expected_route_hops: 2
+  required_builds: [debug, opt, sanitize]
+  paper_targets_consumed: false
+
+source_layout:
+  overlay_header: third_party/dsa-framework/dsa-gem5/src/cpu/minor/ssim/mlx_overlay.hh
+  overlay_source: third_party/dsa-framework/dsa-gem5/src/cpu/minor/ssim/mlx_overlay.cc
+  driver: simulator_ext/dsagen/mlx_overlay_json_driver.cc
+  compiler: scripts/compile_functional_payload.py
+  runner: scripts/run_functional_payload.py
+  auditor: scripts/audit_functional_payload.py
+  test: tests/test_functional_payload.py
+
+output_root: artifacts/environment/h155
+result_path: artifacts/results/functional-payload-run160.json
