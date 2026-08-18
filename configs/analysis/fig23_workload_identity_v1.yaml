@@ -1,0 +1,79 @@
+name: fig23-workload-identity-v1
+experiment_id: H122
+run_id: run127
+classification: target_free_figure23_workload_identifiability_audit
+validation_eligible: false
+
+frozen_inputs:
+  paper:
+    path: MLX Multi-Layer Execution for Structured LLM Workload Acceleration on Spatial Architectures/MLX Multi-Layer Execution for Structured LLM Workload Acceleration on Spatial Architectures.md
+    bytes: 85855
+    sha256: 5785eb81b28741a3806ca42749d7b556bbcd2404e1622ae644a32bae2ade7745
+  h64:
+    path: artifacts/results/fig10-scalability-run069.json
+    bytes: 49036
+    sha256: 520d152a792225dfe3ec6ba3189fa3048f226c977fb3ff4621fc8cc321bdc530
+    required_status: supported
+    required_integrity: true
+  h64_manifest:
+    path: artifacts/environment/h64/fig10-scalability-compile-manifest.json
+    bytes: 5105816
+    sha256: e6c6dd6010dae9180f01a95ebe829ebab12514e2589e4c571f923e1bda543584
+  h64_config:
+    path: configs/simulators/fig10_scalability_v1.yaml
+    bytes: 992
+    sha256: c00e3fef311157ca0f3a67e8b4d1f9324c1377e5c38761df3f281b7777e24f02
+  h90:
+    path: artifacts/results/fig21-workload-identity-run095.json
+    bytes: 16671
+    sha256: f7c9f22af25a9abe8c42129f1ddd03e9b33fdbca5beb617dad98dd9bf3f50da0
+    required_status: supported
+    required_integrity: true
+  h91:
+    path: artifacts/results/fig21-layer-contract-run096.json
+    bytes: 33918
+    sha256: d92d0c477a1525beba1ab613985820dde98c8a7fe7429347210eb5abe9b2bf12
+    required_status: supported
+    required_integrity: true
+
+paper_disclosed:
+  sequence_lengths: [512, 1024, 2048, 4096, 8192]
+  hidden_dimension: 512
+  batch: 8
+  simd_widths: [8, 32]
+  meshes: [[4, 4], [8, 8]]
+  four_x_peak_per_axis: true
+
+required_identity_fields:
+  - block_component_sequence
+  - structured_vs_dense_layer_mix
+  - projection_count_and_shapes
+  - attention_operator_and_fft_compression
+  - block_size_B
+  - chunk_length_L
+  - compression_ratio_s
+  - ffn_dimension
+  - head_count_or_layout
+  - elementwise_instruction_mix
+  - memory_residency_and_inter_component_boundaries
+  - launch_and_measurement_interval
+  - active_window_by_mesh
+
+h64_proxy_contract:
+  operator: bsmm
+  hidden_width: 512
+  components: [single_bsmm_transform]
+  memory_backend: fixed
+  active_window: 3
+  absent_components: [fft_cmp, attention, output_projection, ffn1, ffn2, elementwise]
+
+acceptance:
+  exact_workload_identified_expected: false
+  h64_full_transformer_block_expected: false
+  targets_consumed: false
+
+source_layout:
+  auditor: scripts/audit_fig23_workload_identity.py
+  test: tests/test_fig23_workload_identity.py
+
+result_path: artifacts/results/fig23-workload-identity-run127.json
