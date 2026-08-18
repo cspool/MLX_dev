@@ -1,0 +1,58 @@
+name: compute-dma-overlap-v1
+experiment_id: H108
+run_id: run113
+classification: target_free_compute_dma_overlap_bandwidth_envelope
+validation_eligible: false
+
+frozen_inputs:
+  h102:
+    path: artifacts/results/fig24-25-full-mesh-paths-run107.json
+    bytes: 2848348
+    sha256: 0107a9a0bd25404d49f90ac073d8c0bd04346f95cab13f8e259a1c6e81ae4a7d
+    required_status: supported
+    required_integrity: true
+  h107:
+    path: artifacts/results/full-mesh-memory-residency-run112.json
+    bytes: 57444
+    sha256: ca917f5a1cf047d5d08cdba39a454955fb7d7d1aae33bef799058bcf38174a59
+    required_status: supported
+    required_integrity: true
+  manuscript:
+    path: MLX Multi-Layer Execution for Structured LLM Workload Acceleration on Spatial Architectures/MLX Multi-Layer Execution for Structured LLM Workload Acceleration on Spatial Architectures.md
+    bytes: 85855
+    sha256: 5785eb81b28741a3806ca42749d7b556bbcd2404e1622ae644a32bae2ade7745
+
+hardware:
+  frequency_hz: 1000000000
+  peak_effective_ops_per_cycle: 1000
+  peak_source: table_iv_full_design_1_top_per_second_at_1_ghz
+  bandwidth_sweep_bytes_per_cycle: [16, 32, 64, 128, 256]
+  historical_dpu_anchor_bytes_per_cycle: 64
+  mlx_bandwidth_bytes_per_cycle: null
+
+scheduler:
+  buffers: 2
+  compute_resources: 1
+  dma_resources: 1
+  compute_tile_order: ascending
+  dma_queue: fifo
+  initial_transfers: [fill_tile_0, fill_tile_1]
+  reuse_rule: drain_tile_i_before_fill_tile_i_plus_2
+  simultaneous_completion_priority: [dma, compute]
+  compute_partition: balanced_integer_cycles
+
+execution:
+  required_paths: 48
+  required_bandwidth_points: 5
+  deterministic_replays: 2
+  required_records: 480
+  paper_performance_targets_consumed: false
+
+source_layout:
+  model: src/mlxsim/compute_dma_overlap.py
+  runner: scripts/run_compute_dma_overlap.py
+  auditor: scripts/audit_compute_dma_overlap.py
+
+output_root: artifacts/environment/h108
+result_path: artifacts/results/compute-dma-overlap-run113.json
+
