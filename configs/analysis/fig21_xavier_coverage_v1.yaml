@@ -1,0 +1,69 @@
+name: fig21-xavier-coverage-v1
+experiment_id: H143
+run_id: run148
+classification: target_free_figure21_dense_xavier_coverage_audit
+validation_eligible: false
+
+frozen_inputs:
+  paper:
+    path: MLX Multi-Layer Execution for Structured LLM Workload Acceleration on Spatial Architectures/MLX Multi-Layer Execution for Structured LLM Workload Acceleration on Spatial Architectures.md
+    bytes: 85855
+    sha256: 5785eb81b28741a3806ca42749d7b556bbcd2404e1622ae644a32bae2ade7745
+  h95_mlx:
+    path: artifacts/results/fig21-mlx-composition-run100.json
+    bytes: 7818
+    sha256: 9628b4204d9d4d1fe73b3a92f8bec2977d6cf9c7af254aa9ee4552c811fe12a1
+    required_status: supported
+    required_integrity: true
+  h96_closure:
+    path: artifacts/results/fig21-evidence-closure-run101.json
+    bytes: 7467
+    sha256: 9aa60e3ba0114ccecee48ee8eec5724b04ded8d25443f883e7d60c433ad46c8d
+    required_status: supported
+    required_integrity: true
+  h56_xavier:
+    path: artifacts/results/gpgpusim-xavier-proxy-run062.json
+    bytes: 7595
+    sha256: 443843b96d3f01cf27fee02413ae8d8cdc519233aca514cdaeb2d34d0373fe14
+    required_status: supported
+    required_integrity: true
+  h56_bsmm_ptx:
+    path: artifacts/environment/h56/runs/bsmm/mlx_gpu_proxy.1.sm_70.ptx
+    bytes: 17203
+    sha256: a62db10f392ae75cccc8e6566b0cce34c9dd8c648fe45602ca7c171973965b64
+  h77_sparse_projection:
+    path: artifacts/results/matched-projection-estimator-run082.json
+    bytes: 5533
+    sha256: e9df44d2b6c025fa141c71564e47708e68f9f306cb3992f495a65f9ce3c93ec7
+    required_status: supported
+    required_integrity: true
+  h135_structured_attention:
+    path: artifacts/results/xavier-attention-composition-run140.json
+    bytes: 4268
+    sha256: 95f730d982b89dccbf311ddc164c6557f235f078b58b40f1d5d96342e2caac63
+    required_status: supported
+    required_integrity: true
+
+figure21_contract:
+  sequence_lengths: [128, 256, 512, 1024, 2048]
+  model: Llama2-7B
+  xavier_model: dense
+  mlx_model: sparsified_24_plus_8_layers
+  required_xavier_families:
+    dense_tensor_projection: [qkv, output, ffn1, ffn2]
+    dense_attention: [qk, softmax, sv]
+    elementwise: [rmsnorm, rope, residual, activation]
+
+acceptance:
+  expected_mlx_rows: 5
+  expected_required_family_rows: 15
+  expected_required_component_rows: 40
+  expected_qualified_xavier_rows: 0
+  targets_consumed: false
+  sparse_or_structured_substitution: forbidden
+
+source_layout:
+  auditor: scripts/audit_fig21_xavier_coverage.py
+  test: tests/test_fig21_xavier_coverage.py
+
+result_path: artifacts/results/fig21-xavier-coverage-run148.json
