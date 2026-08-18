@@ -556,3 +556,8 @@ A complete 28-stage structured block is spatially sharded across every PE, and
 SIMD/mesh changes conserve scalarized work exactly. All 120 executions agree
 across builds; two active windows and five disclosed sequence lengths give
 3.687x-4.001x SIMD, 3.532x-3.795x mesh and 7.938x-15.018x joint speedups.
+
+Run147 joins both complete-block windows without choosing the better one. All
+30 speedup cells retain clear above-baseline scaling, while 23/30 happen to fall
+within 10%. Figure 23 therefore counts under the qualitative goal, but not the
+strict goal, and still does not claim the exact unpublished block schedule.

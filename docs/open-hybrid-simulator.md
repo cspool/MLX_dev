@@ -394,6 +394,11 @@ sweep in [fig23-complete-block.md](fig23-complete-block.md). Forty configs and
 120 three-build executions conserve work exactly and show robust SIMD, mesh and
 joint scaling before target access.
 
+H142 completes the qualitative join in
+[fig23-complete-block-trend.md](fig23-complete-block-trend.md). Both robustness
+windows pass all 15 scaling comparisons, raising primary completion to 3/8;
+the 23/30 strict diagnostic and representative-schedule caveat remain explicit.
+
 The active objective is now limited to simulator-dependent hardware performance
 in Figures 18–25, as recorded in
 [simulator-experiment-scope.md](simulator-experiment-scope.md). Accuracy,

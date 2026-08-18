@@ -10,7 +10,7 @@ active_simulator_scope:
   included_figures: [18, 19, 20, 21, 22, 23, 24, 25]
   completion_unit: full_figure
   required_full_figures: 8
-  reproduced_full_figures: 2
+  reproduced_full_figures: 3
   strict_reproduced_full_figures: 0
   relative_error_limit: 0.10
   primary_completion_criterion: qualitative_trend_with_clear_improvement
@@ -710,9 +710,9 @@ experiments:
       timestamp: "2026-08-17"
 
 outer_loop:
-  cycle: 99
-  last_direction: "Pre-register H142 to join H141's frozen complete-block speedups to Figure 23 under the qualitative rule, requiring every N/window SIMD, mesh and joint comparison to retain clear scaling."
-  last_reflection: "H141 supports target-free complete-block robustness across 40 configs/120 runs: SIMD 3.687x-4.001x, mesh 3.532x-3.795x and joint 7.938x-15.018x with exact scalarized work conservation. Active completion remains 2/8 pending target join."
+  cycle: 100
+  last_direction: "Pre-register H143 target-free to audit and complete the matched Xavier component coverage needed for Figure 21's five missing full-block speedup denominators, reusing only source-qualified GPU paths."
+  last_reflection: "H142 closes Figure 23 qualitatively at 30/30 across both complete-block windows; strict is 23/30 and therefore false. The representative-schedule caveat remains explicit, and primary completion becomes 3/8."
 
 recent_milestones_after_h46:
   architecture_contract: "H52 supersedes the GPU-SM analogy with the paper's specialized spatial tagged-block PE; GPGPU-Sim is baseline-only."
@@ -781,6 +781,7 @@ recent_milestones_after_h46:
   fig22_trend_completion: "H139 rejects Figure 22 trend completion with integrity: 0/8 resource curves pass rho>=0.70 plus endpoint direction, only 3/8 endpoints match, strict remains 4/64, and active primary completion stays 2/8."
   fig25_trend_completion: "H140 rejects Figure 25 trend completion with integrity: FFT-CMP is the sole passing curve (1/6), all endpoints match but QKV/SWA rho is 0.2-0.4, strict remains 2/24, and active primary completion stays 2/8."
   fig23_complete_block_robustness: "H141 supports a target-free representative full-block sweep: 40 configs and 120 debug/opt/sanitized runs conserve all scalarized work; SIMD/mesh/joint speedups are 3.687x-4.001x, 3.532x-3.795x and 7.938x-15.018x across N512-8192 and windows2/4."
+  fig23_complete_block_trend: "H142 supports Figure 23 qualitative completion on the representative full block: both windows pass all 15 cells (30/30 total), strict is 23/30 with 7.24% MAPE but false globally, and active primary completion becomes 3/8."
 
 completion_snapshot_run042:
   certificate_run: run_042

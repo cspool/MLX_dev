@@ -72,3 +72,8 @@ pending trend audits, not presumed passes.
 H138 completes Figure 19 under that frozen trend policy, raising the primary
 count to 2/8 while strict completion remains 0/8. Figure 22/25 remain pending
 their own full-series audits.
+
+H142 subsequently completes Figure 23 using a complete-block, two-window
+robustness sweep. The primary count is now 3/8; strict full-figure completion is
+still 0/8, and the result is labeled as representative rather than the authors'
+unpublished exact schedule.
