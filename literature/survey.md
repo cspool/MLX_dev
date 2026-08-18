@@ -25,6 +25,23 @@
 ## SimICT
 
 - Ye et al., *SimICT: A Fast and Flexible Framework for Performance and Power Evaluation of Large-Scale Architecture*, ISLPED 2013, pp. 273-278.
+- H104 broadens the author survey and materially strengthens SimICT's role.
+  Multiple official ICT papers from 2017-2022 explicitly build cycle-accurate
+  DPU models on SimICT, calibrate it against gem5 or RTL, and pair it with
+  Verilog/Synopsys implementation. MLX's simulator citation resolves to this
+  framework. Source-code reuse remains unproven because no repository is public.
+
+## DPU / DFU-E / M2-DFU author lineage
+
+- Official Wenming Li, Xiaochun Ye, Zhihua Fan, Haibin Wu and Shantian Qin
+  pages expose a continuous 2017-2026 DPU/DFU publication, patent, chip,
+  simulator, RTL and runtime program.
+- The highest-ranked parent family is now ICT/Ricore's DPU -> DFU-E -> M2-DFU
+  line. M2-DFU is the closest title/author/chronology match to MLX's unnamed
+  general-purpose parent, but no primary source explicitly links them.
+- DPU-s, HTC-3000 and HTC-3500 tape-outs and an internal SmarCo simulator/RTL/
+  runtime stack are officially reported. This makes a closed internal simulator
+  more likely than a direct DSAGEN fork.
 - The framework is described as component-based, able to integrate performance/power models, and able to parallelize simulation with relaxed synchronization.
 - MLX cites it at the sentence describing the tuned 256-GOp/s simulator configuration.
 - H34 source status: Crossref/OpenAlex/Semantic metadata and official ISLPED program/proceedings records establish identity and framework scope. The publisher full text and source code remain unavailable in run039; MLX supports only a citation-level relationship, not code reuse.
