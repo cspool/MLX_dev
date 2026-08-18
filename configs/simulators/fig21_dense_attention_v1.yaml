@@ -1,0 +1,51 @@
+name: fig21-dense-attention-v1
+experiment_id: H94
+run_id: run099
+classification: target_free_figure21_dense_attention_timing
+validation_eligible: false
+
+frozen_inputs:
+  layer_contract:
+    path: artifacts/results/fig21-layer-contract-run096.json
+    sha256: d92d0c477a1525beba1ab613985820dde98c8a7fe7429347210eb5abe9b2bf12
+    required_status: supported
+    required_integrity: true
+  timed_paths:
+    path: artifacts/results/fig21-timed-paths-run097.json
+    sha256: 14444c351b54ad3e597d5f8c601b19dde989e3ba034ded6e1b4519186730421d
+    required_status: supported
+    required_integrity: true
+  structured_attention:
+    path: artifacts/results/fig21-attention-timing-run098.json
+    sha256: 8075b341f2b640db8c5008cd956d96266c9fa1615655281fd76893f2a7df850f
+    required_status: supported
+    required_integrity: true
+  spad:
+    path: artifacts/results/standalone-dsagen-spad-run071.json
+    sha256: 2a816515bf6cb2dcdde3ba6972eb8d095b44a2fde2f2c01ad7d1c63c30f15db8
+    required_status: supported
+    required_integrity: true
+  column_ports:
+    path: artifacts/results/multiport-spad-run074.json
+    sha256: a58c37a45111a8928fd98df8eb52ee8db48b2d1032766351020d11344b16f562
+    required_status: supported
+    required_integrity: true
+
+sequence_lengths: [128, 256, 512, 1024, 2048]
+batch: 8
+hidden_dimension: 4096
+simd_width: 32
+vector_bytes: 64
+fit_scales: [4, 8]
+holdout_scales: [16, 32]
+cycle_relative_error_limit: 0.05
+hardware: {spad_ports: 4, spad_axis: x, active_window: 2}
+output_root: artifacts/environment/h94
+
+source_layout:
+  compiler_core: src/mlxsim/fig21_dense_attention.py
+  compiler: scripts/compile_fig21_dense_attention.py
+  runner: scripts/run_fig21_dense_attention.py
+  auditor: scripts/audit_fig21_dense_attention.py
+
+result_path: artifacts/results/fig21-dense-attention-run099.json
