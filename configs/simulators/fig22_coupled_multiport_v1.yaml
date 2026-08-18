@@ -1,0 +1,87 @@
+name: fig22-coupled-multiport-v1
+experiment_id: H120
+run_id: run125
+classification: target_free_diagram_derived_ported_live_memory
+validation_eligible: false
+
+frozen_inputs:
+  h118:
+    path: artifacts/results/fig22-coupled-workloads-run123.json
+    bytes: 23914
+    sha256: 87892c11cfcabf4a59562e369378712c31ec282137a9f0414473821408e8bcfe
+    required_status: supported
+    required_integrity: true
+  h118_config:
+    path: configs/simulators/fig22_coupled_workloads_v1.yaml
+    bytes: 5918
+    sha256: 61ec4d1368410a0e8a5c7656e96315af4fc14151f18044e95096d083e6c088b7
+  h69:
+    path: artifacts/results/multiport-spad-run074.json
+    bytes: 54297
+    sha256: a58c37a45111a8928fd98df8eb52ee8db48b2d1032766351020d11344b16f562
+    required_status: supported
+    required_integrity: true
+  h106:
+    path: artifacts/results/historical-dpu-memory-run111.json
+    bytes: 8808
+    sha256: 5c799e785f214a247b85be256e42d3e8f34e52e6f9c81a2c3d4f445aa3dd68a1
+    required_status: supported
+    required_integrity: true
+
+workloads:
+  operators: [bsmm, fft]
+  sizes: [64, 128, 256, 512, 1024, 2048, 4096, 8192]
+  required_paths: 16
+  overlay_source: exact_h118_recompile
+
+candidate:
+  ports: 4
+  operator_axis:
+    bsmm: x
+    fft: y
+  provenance: h69_fig9_fig11_column_bsmm_row_fft
+  total_banks: 32
+  total_issue_width: 32
+  per_port_spad:
+    bank_width_bytes: 32
+    banks: 8
+    request_buffer_entries: 4
+    issue_width: 8
+    bank_provision: 1
+    bank_fifo_entries: 1
+  partition_checks:
+    banks_times_ports: 32
+    issue_width_times_ports: 32
+
+execution:
+  optimized_replays: 2
+  sanitizer_modes: [asan, ubsan]
+  required_optimized_executions: 32
+  required_sanitizer_executions: 32
+  required_executions: 64
+  max_cycles: 50000000
+  workers: 16
+  paper_performance_targets_consumed: false
+
+comparison:
+  baseline: h118_primary_optimized_summary
+  require_every_cycle_non_regression: true
+  require_at_least_one_strict_cycle_improvement: true
+  require_every_queue_unavailable_non_regression: true
+  targets_forbidden: true
+
+source_layout:
+  compiler_core: src/mlxsim/fig22_coupled_multiport.py
+  compiler: scripts/compile_fig22_coupled_multiport.py
+  runner: scripts/run_fig22_coupled_multiport.py
+  auditor: scripts/audit_fig22_coupled_multiport.py
+  test: tests/test_fig22_coupled_multiport.py
+  spad_header: simulator_ext/dsagen/standalone_spad_adapter.hh
+  spad_source: simulator_ext/dsagen/standalone_spad_adapter.cc
+  memory_header: simulator_ext/dsagen/historical_dpu_memory.hh
+  memory_source: simulator_ext/dsagen/historical_dpu_memory.cc
+  driver: simulator_ext/dsagen/historical_dpu_memory_driver.cc
+  patch: patches/dsagen/dsa-gem5-historical-multiport-spad-v1.patch
+
+output_root: artifacts/environment/h120
+result_path: artifacts/results/fig22-coupled-multiport-run125.json
