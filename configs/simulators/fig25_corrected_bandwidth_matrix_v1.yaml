@@ -1,0 +1,57 @@
+name: fig25-corrected-bandwidth-matrix-v1
+experiment_id: H112
+run_id: run117
+classification: target_exposed_fixed_bandwidth_matrix
+validation_eligible: false
+
+frozen_inputs:
+  h111:
+    path: artifacts/results/corrected-compute-dma-overlap-run116.json
+    bytes: 161811
+    sha256: 80d820ba42358e480c22173368b9624830c884a70030a28cc45dbac84159b41f
+    required_status: supported
+    required_integrity: true
+  h111_config:
+    path: configs/simulators/corrected_compute_dma_overlap_v1.yaml
+    bytes: 2812
+    sha256: b26ac02a4b7f49765d7e4a839c70018b8c8d1214cfb9bd4c08069a641a1fc6ba
+  h103:
+    path: artifacts/results/full-mesh-fma-fig25-transfer-run108.json
+    bytes: 9151
+    sha256: 6c0fe704ca55fa6a9238a39d7ea419b22ccd2e57f3cfcfcc8c50aaadc79ba5ce
+    required_status: rejected
+    required_integrity: true
+  h103_config:
+    path: configs/simulators/full_mesh_fma_fig25_transfer_v1.yaml
+    bytes: 1014
+    sha256: 87b6ed1b27c6109010c5974b9ae1f70973c2600f19a88f7ee230ec53ed7efbfb
+  targets:
+    path: artifacts/targets/paper_targets.yaml
+    bytes: 14931
+    sha256: c4a22ab8052ff8cb223a729b8ce07320c6826cfee0d37e1a664a8761e018b41e
+    key: fig25_roofline_utilization.heatmap.mlx
+
+mapping:
+  cases: [BERT_512, Llama2_1K, InternLM2_4K, BERT_8K]
+  operators: [fft_cmp, qkv_bsmm, qkv_bsmm_b32, qkv_bsmm_b64, swa_w128_q32, swa_w256_q64]
+  bandwidth_bytes_per_cycle: [16, 32, 64, 128, 256]
+  relative_error_limit: 0.10
+  required_points_per_bandwidth: 24
+  required_matrix_points: 120
+
+metric: pipeline_effective_ops_per_cycle_div_min_exact_peak_and_oi_times_bandwidth
+
+selection_rules:
+  uniform_bandwidth_required: true
+  per_point_bandwidth_selection_allowed: false
+  interpolation_allowed: false
+  extrapolation_allowed: false
+  target_derived_bandwidth_allowed: false
+  selected_mlx_bandwidth_bytes_per_cycle: null
+  oracle_per_point_summary_is_diagnostic_only: true
+
+source_layout:
+  auditor: scripts/audit_fig25_corrected_bandwidth_matrix.py
+  test: tests/test_fig25_corrected_bandwidth_matrix.py
+
+result_path: artifacts/results/fig25-corrected-bandwidth-matrix-run117.json
