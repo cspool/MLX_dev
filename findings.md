@@ -99,6 +99,7 @@ H37 closed the first full-paper ledger with a machine certificate rather than a 
 - H105-H109 reconstruct and validate the source-supported DPU control, multi-NoC, two-half-SPM/DMA ownership, full-work residency, and bounded iteration-context layers without consuming MLX targets. H110 then reruns all 48 full-mesh paths: 96/96 corrected-cycle holdouts pass, QKV issue utilization is 97.78%-99.79%, and H102-to-H110 speedup is 3.939x-3.994x for QKV. The joint H110 hypothesis is still rejected because only 80/96 residence holdouts pass; all 16 failures are FFT. Direct cycles/issues remain valid, but the failed residence extrapolation cannot stand in for Figure 25 throughput.
 - H111 supports the corrected target-free compute/DMA envelope. It reuses H108's scheduler with H110 cycles and H107 traffic, reconstructs H110 issue exactly, and makes all 240 sensitivity points strictly faster by 1.215x-3.994x. At 64 B/cycle, pipeline utilization is 40.15%-41.06% for FFT, 97.34%-99.79% for QKV, and 94.30%-97.49% for SWA. The exact 16x32x2 peak is 1024 effective ops/cycle, 2.4% above Table IV's rounded 1000. MLX bandwidth remains undisclosed/unselected and no paper target is consumed.
 - H112 rejects the corrected fixed-grid Figure 25 transfer with integrity: every 16/32/64/128/256 B/cycle row passes 0/24, best-grid MAPE is 59.24%, and even the diagnostic per-point bandwidth oracle passes 0/24. FFT crosses from bandwidth- to compute-limited, but QKV remains 96%-100% against 52%-76% targets and SWA remains 94%-100% against 43%-75%. A scalar bandwidth cannot repair the model. H107's saved per-tile vectors exactly match H111's reconstruction at 48/48 paths, localizing the next gap to live compute-memory coupling and non-ideal service rather than byte partitioning.
+- H113 supports live compute-memory coupling without a new C++ patch. Six dpu_pipelined+dpu_memory scenarios run 36 times across four builds with exact traces. Non-stop takes 39 cycles versus baseline 55 for identical work; four contexts take 27 versus two contexts 44; same/split-bank traffic records 16/0 bank stalls. All ownership waits, request/response counts, tile parity, addresses, release/drain/refill order and H106/H109 regressions pass. The mechanism is now executable, but all 48 paper paths still need coupled tile folding before target comparison.
 
 ## Patterns and Insights
 
@@ -378,3 +379,11 @@ passes 0/24, so neither a uniform nor pointwise choice from the target-free
 grid explains the residual. QKV/SWA overprediction persists while FFT changes
 sign across bandwidth. A 48/48 byte-vector audit rules out H107-to-H111 tile
 redistribution as the cause. Full-paper completion remains 0/18.
+
+Run118 proves the previously separated engines can execute in one clock.
+Across 36 deterministic four-build executions, every live load/store context
+waits on historical tile ownership and bank queues with zero violations. The
+four-tile non-stop schedule is 39 versus 55 baseline cycles, four contexts are
+27 versus 44 for two contexts, and same/split-bank cases record 16/0 bank
+stalls. This licenses full-path coupled compilation but consumes no paper
+target; completion remains 0/18.

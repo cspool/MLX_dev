@@ -59,6 +59,11 @@ clock and validate ownership backpressure, context/FU issue, bytes, events, and
 legacy regressions before another Figure 25 comparison. Family correction
 factors or residual-derived bandwidths are not justified.
 
+H113 completes that mechanism gate in
+[live pipelined compute-memory coupling](coupled-pipelined-dpu-memory.md): all
+six scenarios and 12 gates pass. Full-path tile folding remains required before
+the corrected Figure 25 matrix may be rerun.
+
 Evidence is in
 [run117](../artifacts/results/fig25-corrected-bandwidth-matrix-run117.json),
 with the frozen plan in

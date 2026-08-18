@@ -239,3 +239,9 @@ All five bandwidth rows and the per-point oracle pass 0/24. QKV/SWA remain far
 too close to ideal issue/bandwidth roofs, proving that a scalar bandwidth is
 not the missing simulator parameter. The next substrate change must couple
 `dpu_pipelined` contexts directly to the historical DMA/SPM ownership clock.
+
+H113 validates that live combination in
+[coupled-pipelined-dpu-memory.md](coupled-pipelined-dpu-memory.md). Six scenarios
+and 36 four-build executions pass exact ownership, request/response, tile
+ordering, context, bank-pressure and parent-regression gates. The remaining
+boundary is compiling all 48 exact paths into this coupled clock.

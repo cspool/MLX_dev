@@ -63,3 +63,7 @@ now be recompiled in dpu_pipelined mode with an independently selected context
 capacity, then its work, events, cycles and FMA issue throughput must be
 revalidated before returning to H108 or Figure 25.
 
+H110 performs that recompile, and H113 further demonstrates that the bounded
+contexts operate correctly against live historical DMA/SPM ownership rather
+than only fixed scratchpad responses. See
+[coupled pipelined DPU memory](coupled-pipelined-dpu-memory.md).

@@ -73,3 +73,7 @@ compile H101/H102's exact batch-32 FFT-CMP, QKV and sliding-window-attention
 paths into explicit H106 tile/residency schedules, validate full DRAM/SPM byte
 conservation, and derive operational intensity before reopening Figure 25.
 
+H113 subsequently connects the same adapter to H109's live bounded contexts in
+[coupled pipelined DPU memory](coupled-pipelined-dpu-memory.md). Ownership,
+release, drain/refill, context capacity and bank pressure all remain active in
+one clock across 36 four-build executions.
