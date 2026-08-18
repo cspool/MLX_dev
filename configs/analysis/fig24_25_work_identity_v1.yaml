@@ -1,0 +1,37 @@
+name: fig24-25-work-identity-v1
+experiment_id: H100
+run_id: run105
+classification: target_free_figure24_25_exact_work_identity
+validation_eligible: false
+
+frozen_inputs:
+  fig24_runs:
+    path: artifacts/results/fig24-fu-rerun-run078.json
+    sha256: c25a72a32d8ed37bbb9d09b0747167c712f7fbbf5c0ca54edc580e9a6c0203c1
+    required_status: supported
+    required_integrity: true
+  fig25_runs:
+    path: artifacts/results/fu-counters-run076.json
+    sha256: 31b63a260a596bff6aafaa418bca877898683529f6f36ad04066757c254833c0
+    required_status: supported
+    required_integrity: true
+  fig24_config:
+    path: configs/simulators/fig24_cross_simulator_v1.yaml
+    sha256: 86f246c537d85c006e5538bec493feff7baa9af2888686128776411b28b3a679
+  fig25_config:
+    path: configs/simulators/dsagen_mlx_fig25_transfer_v1.yaml
+    sha256: a3b850d2b90f8f71b634bbb0c2e360daf91d1e82ad268d72efdb5a216f70b5e0
+  attention_signature:
+    path: artifacts/results/attention-work-signature-run084.json
+    sha256: 109091f15841245b3d2727fbfa492ea1671cb053a30c0278359833026919c3c6
+  timed_paths:
+    path: artifacts/results/fig21-timed-paths-run097.json
+    sha256: 14444c351b54ad3e597d5f8c601b19dde989e3ba034ded6e1b4519186730421d
+  dense_attention:
+    path: artifacts/results/fig21-dense-attention-run099.json
+    sha256: 728d6c7ef1577816ce2ecf6e4db0eae27da2a14123ae1bedd1c3f42bf0f6808f
+
+batch: 32
+model_dimensions: {BERT: 1024, Llama2: 4096, InternLM2: 4096}
+auditor: scripts/audit_fig24_25_work_identity.py
+result_path: artifacts/results/fig24-25-work-identity-run105.json
