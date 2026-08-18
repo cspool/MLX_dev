@@ -1,0 +1,201 @@
+{
+  "schema_version": 1,
+  "experiment_id": "H145",
+  "run_id": "run150",
+  "classification": "target_free_accelsim_trace_driven_xavier_wmma_projection",
+  "validation_eligible": false,
+  "generated_at": "2026-08-18T14:32:14.463757+00:00",
+  "project_commit": "4a32e7c4a86ae5eb7ba88d56f025324cb0fc690b",
+  "hypothesis_status": "rejected",
+  "audit_integrity": true,
+  "paper_performance_targets_consumed": false,
+  "paper_reproduction_claim": "none_nvbit_capture_unsupported",
+  "failure_class": "nvbit_1_7_3_cuda_error_not_supported_on_driver_595",
+  "recommended_successor": "source_derived_hmma_traceg_generator",
+  "cross_isa_proxy": "SM89_trace_capture_failed_before_SM70_timing_replay",
+  "frozen_inputs": {
+    "h56_xavier": {
+      "path": "artifacts/results/gpgpusim-xavier-proxy-run062.json",
+      "bytes": 7595,
+      "sha256": "443843b96d3f01cf27fee02413ae8d8cdc519233aca514cdaeb2d34d0373fe14",
+      "checks": {
+        "is_file": true,
+        "bytes": true,
+        "sha256": true
+      },
+      "pass": true
+    },
+    "h91_contract": {
+      "path": "artifacts/results/fig21-layer-contract-run096.json",
+      "bytes": 33918,
+      "sha256": "d92d0c477a1525beba1ab613985820dde98c8a7fe7429347210eb5abe9b2bf12",
+      "checks": {
+        "is_file": true,
+        "bytes": true,
+        "sha256": true
+      },
+      "pass": true
+    },
+    "h144_failure": {
+      "path": "artifacts/results/fig21-xavier-wmma-run149.json",
+      "bytes": 4320,
+      "sha256": "630516ab9751e4ff9ba284f71a988bc70866c3ef60df6902ac01d1e0fda8a6c5",
+      "checks": {
+        "is_file": true,
+        "bytes": true,
+        "sha256": true
+      },
+      "pass": true
+    },
+    "nvbit_tracer": {
+      "path": "third_party/accel-sim-framework/util/tracer_nvbit/tracer_tool/tracer_tool.so",
+      "bytes": 2582960,
+      "sha256": "dfae71f4ed43948c45e8f2503d2f91ab7dc1350cc0362d1146c7b4e9a9e06396",
+      "checks": {
+        "is_file": true,
+        "bytes": true,
+        "sha256": true
+      },
+      "pass": true
+    },
+    "trace_postprocessor": {
+      "path": "third_party/accel-sim-framework/util/tracer_nvbit/tracer_tool/traces-processing/post-traces-processing",
+      "bytes": 847488,
+      "sha256": "3dfb3756548a6d41aa11628ed304c5b210111c5a1df9b86037c88f9a564c5f2e",
+      "checks": {
+        "is_file": true,
+        "bytes": true,
+        "sha256": true
+      },
+      "pass": true
+    },
+    "accelsim_binary": {
+      "path": "third_party/accel-sim-framework/gpu-simulator/bin/release/accel-sim.out",
+      "bytes": 7185272,
+      "sha256": "3212f2565873286e599bdce2280428f7c3d3de227b92a605dbf2e8d506bb4dad",
+      "checks": {
+        "is_file": true,
+        "bytes": true,
+        "sha256": true
+      },
+      "pass": true
+    },
+    "trace_config": {
+      "path": "third_party/accel-sim-framework/gpu-simulator/configs/tested-cfgs/SM7_QV100/trace.config",
+      "bytes": 672,
+      "sha256": "19dd14b3a4b6c1a1cb2833bd091f0dbd485ad79336ef7d4b0c9db1f7c46f504e",
+      "checks": {
+        "is_file": true,
+        "bytes": true,
+        "sha256": true
+      },
+      "pass": true
+    }
+  },
+  "generated_inputs": {
+    "run_manifest": {
+      "path": "artifacts/environment/h145/xavier-wmma-trace-run-manifest-r16.json",
+      "bytes": 1196,
+      "sha256": "9b0b7c77169c3c80e701d6eff31c87a24c28f5ff141051aa6d655215c0c7d220",
+      "checks": {
+        "is_file": true
+      },
+      "pass": true
+    }
+  },
+  "parent_checks": {
+    "h56_xavier": true,
+    "h91_contract": true,
+    "h144_failure": true
+  },
+  "device_check": true,
+  "h144_check": true,
+  "capture_failure_checks": {
+    "single_anchor": true,
+    "returncode": true,
+    "nvbit_version": true,
+    "unsupported": true,
+    "application_not_started": true,
+    "no_trace": true,
+    "no_replay": true,
+    "stopping_rule": true
+  },
+  "projection_estimates": {},
+  "source_files": {
+    "cuda_source": {
+      "path": "simulator_ext/accelsim/mlx_wmma_proxy.cu",
+      "bytes": 3863,
+      "sha256": "53c4ba2a1c3e778d29e416c897d2dc53f432756652d7d3e80fcbe5355e689a31",
+      "checks": {
+        "is_file": true
+      },
+      "pass": true
+    },
+    "runner": {
+      "path": "scripts/run_fig21_xavier_wmma_trace.py",
+      "bytes": 5080,
+      "sha256": "0d49ac70443a606fc2b606409ba44fc882ffe0afc5f2c8a3b6753bfce5ecd69a",
+      "checks": {
+        "is_file": true
+      },
+      "pass": true
+    },
+    "auditor": {
+      "path": "scripts/audit_fig21_xavier_wmma_trace.py",
+      "bytes": 8953,
+      "sha256": "27f69cf6f3b7ba0b3dfb61a80dc6d8ffb53434e4c6a4a2237c7c2722a731354f",
+      "checks": {
+        "is_file": true
+      },
+      "pass": true
+    },
+    "test": {
+      "path": "tests/test_fig21_xavier_wmma_trace.py",
+      "bytes": 969,
+      "sha256": "e202eabdfdb89a9c87fae180a4c3cecdc9f1eccbf3db8d7d2665c952e658b2d9",
+      "checks": {
+        "is_file": true
+      },
+      "pass": true
+    }
+  },
+  "target_free_check": true,
+  "acceptance_gates": [
+    true,
+    true,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    true,
+    true
+  ],
+  "summary": {
+    "planned_captures": 4,
+    "attempted_captures": 1,
+    "successful_captures": 0,
+    "trace_files": 0,
+    "replays": 0,
+    "capture_returncode": 1,
+    "driver_version": "595.84",
+    "projection_estimates": 0,
+    "figure21_dense_projection_complete": false,
+    "active_simulator_figures_reproduced": 3,
+    "active_simulator_figures_total": 8,
+    "acceptance_gates_passed": 4,
+    "acceptance_gates_total": 10
+  },
+  "integrity_checks": {
+    "frozen": true,
+    "parents": true,
+    "h144": true,
+    "device": true,
+    "capture_failure": true,
+    "no_trace_or_replay": true,
+    "no_estimates": true,
+    "source": true,
+    "acceptance_evaluated": true
+  }
+}

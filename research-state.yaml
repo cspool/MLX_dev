@@ -710,9 +710,9 @@ experiments:
       timestamp: "2026-08-17"
 
 outer_loop:
-  cycle: 102
-  last_direction: "Pre-register H145 target-free to capture the real WMMA kernel with Accel-Sim's NVBit SASS tracer on the available RTX4090, replay it through the frozen H56 Xavier trace-driven timing config, and reapply independent repeat holdouts."
-  last_reflection: "H144 rejects functional-PTX WMMA execution with integrity: genuine WMMA PTX parses and enqueues, then GPGPU-Sim segfaults before metrics. The stopping rule emits zero estimates; trace-driven Accel-Sim is the source-prescribed successor."
+  cycle: 103
+  last_direction: "Pre-register H146 target-free to generate deterministic Accel-Sim traceg microtraces from H144's exact WMMA work and the official Volta HMMA opcode mapping, then run the same independent repeat holdouts on Xavier timing."
+  last_reflection: "H145 rejects live NVBit capture with integrity: fixed v1.7.3 returns CUDA_ERROR_NOT_SUPPORTED on RTX4090/driver595.84 before the application starts, yielding zero traces/replays/estimates."
 
 recent_milestones_after_h46:
   architecture_contract: "H52 supersedes the GPU-SM analogy with the paper's specialized spatial tagged-block PE; GPGPU-Sim is baseline-only."
@@ -784,6 +784,7 @@ recent_milestones_after_h46:
   fig23_complete_block_trend: "H142 supports Figure 23 qualitative completion on the representative full block: both windows pass all 15 cells (30/30 total), strict is 23/30 with 7.24% MAPE but false globally, and active primary completion becomes 3/8."
   fig21_xavier_coverage: "H143 supports a negative target-free coverage audit: H95 supplies 5/5 MLX rows, while dense Xavier has 0/15 qualified family rows and 55 missing component rows; H56 tensor units are enabled but its executed PTX has no WMMA/MMA."
   fig21_xavier_wmma_functional: "H144 rejects the functional-PTX WMMA route with integrity: compute_70 PTX contains WMMA load/MMA/store and reaches enqueue, then exits 139 before cycles/checksum; only 1/4 planned anchors runs and zero projection estimates are emitted."
+  fig21_xavier_wmma_nvbit: "H145 rejects live trace capture with integrity: fixed NVBit1.7.3 on RTX4090/driver595.84 returns CUDA_ERROR_NOT_SUPPORTED before kernel execution; 1/4 captures attempted, zero trace/replay/estimate artifacts emitted."
 
 completion_snapshot_run042:
   certificate_run: run_042

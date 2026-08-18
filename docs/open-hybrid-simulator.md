@@ -409,6 +409,11 @@ H144 tests functional-PTX WMMA in
 enqueue but crashes the functional simulator before metrics, so no projection
 estimate is emitted and the next route is trace-driven Accel-Sim.
 
+H145 tests live SASS capture in
+[fig21-xavier-wmma-trace.md](fig21-xavier-wmma-trace.md). The frozen NVBit
+tracer is unsupported by the current driver before application execution, so
+the trace-driven route must use a transparent source-derived HMMA microtrace.
+
 The active objective is now limited to simulator-dependent hardware performance
 in Figures 18–25, as recorded in
 [simulator-experiment-scope.md](simulator-experiment-scope.md). Accuracy,

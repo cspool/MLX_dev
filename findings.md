@@ -573,3 +573,9 @@ semantics. The new kernel compiles to WMMA load/MMA/store, parses successfully
 and is pushed to the GPU stream, then the simulator segfaults before any cycle
 or checksum output. The foundational stop leaves all projections null and
 routes TensorCore work to Accel-Sim's intended trace-driven specialized unit.
+
+Run150 shows that live trace capture is independently blocked. NVBit 1.7.3
+recognizes the RTX4090 process but returns CUDA_ERROR_NOT_SUPPORTED under driver
+595.84 before the application runs; no trace or replay exists. This rules out
+pretending that a captured SASS schedule is available and motivates an
+explicitly synthetic HMMA trace derived from exact WMMA work.
