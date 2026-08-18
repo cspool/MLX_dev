@@ -1,0 +1,50 @@
+name: coupled-resource-counter-folding-v1
+experiment_id: H116
+run_id: run121
+classification: target_free_coupled_physical_counter_folding
+validation_eligible: false
+
+frozen_inputs:
+  h114:
+    path: artifacts/results/coupled-full-mesh-paths-run119.json
+    bytes: 203542
+    sha256: 2e5fb3d24dc74a9b9d4cf253fd8d9bf49c833654e807acde6ecb16906461ad99
+    required_status: supported
+    required_integrity: true
+  h114_config:
+    path: configs/simulators/coupled_full_mesh_paths_v1.yaml
+    bytes: 3827
+    sha256: de20c31a6e33dea2f9ce0045ced71c43bf08fede1a295072150c3aff4834fc3f
+  h71:
+    path: artifacts/results/fu-counters-run076.json
+    bytes: 197181
+    sha256: 31b63a260a596bff6aafaa418bca877898683529f6f36ad04066757c254833c0
+    required_status: supported
+    required_integrity: true
+
+folding:
+  fit_scales: [4, 8]
+  holdout_scales: [16, 32]
+  relative_error_limit: 0.05
+  metrics:
+    - productive_compute_pe_cycles
+    - productive_load_pe_cycles
+    - productive_store_pe_cycles
+    - productive_xfer_pe_cycles
+    - productive_fma_pe_cycles
+
+hardware:
+  physical_pes: 16
+  simd_width: 32
+
+required:
+  paths: 48
+  configs: 192
+  cycle_holdouts: 96
+  metric_slots: 240
+
+source_layout:
+  auditor: scripts/audit_coupled_resource_counter_folding.py
+  test: tests/test_coupled_resource_counter_folding.py
+
+result_path: artifacts/results/coupled-resource-counter-folding-run121.json
