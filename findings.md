@@ -585,3 +585,8 @@ routes source-derived HMMA instructions to tensor unit 3; four unmodified Xavier
 replays scale from 128 to 912 cycles, and the 16/32 fit predicts both 64/128
 holdouts exactly. Five compute-only dense projection estimates are released,
 with the absence of captured SASS and memory instructions kept in the claim.
+
+Run152 adds the scalar side with source-derived FADD, MUFU.EX2 and SHFL.IDX
+traces. Twelve Xavier replays pass, all six holdouts are exact, and the H91
+operation maps conserve dense attention and elementwise counts exactly. The
+three Xavier families are now complete but remain compute-only service proxies.

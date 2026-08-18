@@ -419,6 +419,11 @@ H146 implements that microtrace in
 replays and two exact holdouts qualify five compute-only dense projection
 estimates, all explicitly labeled synthetic rather than captured.
 
+H147 completes the remaining services in
+[fig21-xavier-scalar-traceg.md](fig21-xavier-scalar-traceg.md). Twelve SP/SFU/ALU
+replays and six exact holdouts map every H91 dense-attention and elementwise
+operation without a target or efficiency factor.
+
 The active objective is now limited to simulator-dependent hardware performance
 in Figures 18–25, as recorded in
 [simulator-experiment-scope.md](simulator-experiment-scope.md). Accuracy,
