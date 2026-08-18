@@ -20,6 +20,15 @@ frozen_inputs:
     sha256: 5573dcc3b4317077803ad135aa0be863b94db00aefdfeec545b9504cd9642d1e
     required_status: supported
     required_integrity: true
+  h52_config:
+    path: artifacts/environment/h52/mlx-full-block-fixed.json
+    sha256: 30bf40af8c4e7adc1c89f7b70d9ba1cb6fe91a99ffbd2fdac3507146a0349c7c
+  h52_summary:
+    path: artifacts/environment/h52/runs/standalone/debug-summary.json
+    sha256: 8f6c0a5b82cd491952feaf632d1b7effd4ee03cdae4ec6327cdda43b0c2c793b
+  h52_trace:
+    path: artifacts/environment/h52/runs/standalone/debug-trace.jsonl
+    sha256: 0d1833bba77c293bd915ea555a4690c17c58c181bba1ab16971518e3160480da
   spad:
     path: artifacts/results/standalone-dsagen-spad-run071.json
     sha256: 2a816515bf6cb2dcdde3ba6972eb8d095b44a2fde2f2c01ad7d1c63c30f15db8
@@ -65,9 +74,20 @@ execution:
   pe_dependency_model: dpu_frfo
   deterministic_replays: 2
   build_modes: [debug, optimized, asan, ubsan]
-  required_scenarios: 12
+  required_scenarios: 13
   require_legacy_summary_exact: true
   paper_performance_targets_consumed: false
+
+regressions:
+  h52:
+    config: artifacts/environment/h52/mlx-full-block-fixed.json
+    reference_summary: artifacts/environment/h52/runs/standalone/debug-summary.json
+    reference_trace: artifacts/environment/h52/runs/standalone/debug-trace.jsonl
+  gem5:
+    binary: third_party/dsa-framework/dsa-gem5/build/RISCV/gem5.opt
+    smoke_root: artifacts/smoke/dsagen-mlx-overlay/h105-dpu-contract-r3
+    expected_overlay_cycles: 5
+    expected_dsagen_cycles: 569
 
 source_layout:
   overlay_header: third_party/dsa-framework/dsa-gem5/src/cpu/minor/ssim/mlx_overlay.hh

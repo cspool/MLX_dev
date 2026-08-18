@@ -1,0 +1,519 @@
+diff --git a/src/cpu/minor/ssim/mlx_overlay.hh b/src/cpu/minor/ssim/mlx_overlay.hh
+--- a/src/cpu/minor/ssim/mlx_overlay.hh
++++ b/src/cpu/minor/ssim/mlx_overlay.hh
+@@ -56,13 +56,15 @@ enum class MemoryBackend {
+ 
+ enum class PeDependencyModel {
+   PaperStatic = 0,
+-  ScoreboardExperimental = 1
++  ScoreboardExperimental = 1,
++  DpuFrfo = 2
+ };
+ 
+ const char *PipelineName(PipelineKind pipeline);
+ PipelineKind ParsePipeline(const std::string &name);
+ MemoryBackend ParseMemoryBackend(const std::string &name);
+ PeDependencyModel ParsePeDependencyModel(const std::string &name);
++const char *PeDependencyModelName(PeDependencyModel model);
+ 
+ struct Timing {
+   uint64_t latency{1};
+@@ -98,14 +100,17 @@ struct RoutingConfig {
+   std::vector<int> skip_steps{1};
+   uint64_t latency_per_hop{1};
+   unsigned link_capacity{1};
++  unsigned network_planes{1};
+ 
+   RoutingConfig(
+       int mesh_width_ = 1, int mesh_height_ = 1,
+       std::vector<int> skip_steps_ = std::vector<int>{1},
+-      uint64_t latency_per_hop_ = 1, unsigned link_capacity_ = 1)
++      uint64_t latency_per_hop_ = 1, unsigned link_capacity_ = 1,
++      unsigned network_planes_ = 1)
+       : mesh_width(mesh_width_), mesh_height(mesh_height_),
+         skip_steps(std::move(skip_steps_)),
+-        latency_per_hop(latency_per_hop_), link_capacity(link_capacity_) {}
++        latency_per_hop(latency_per_hop_), link_capacity(link_capacity_),
++        network_planes(network_planes_) {}
+ };
+ 
+ struct Config {
+@@ -116,6 +121,9 @@ struct Config {
+   PeDependencyModel pe_dependency_model{
+       PeDependencyModel::ScoreboardExperimental};
+   RegisterFileConfig register_file;
++  unsigned instruction_slots_per_pe{0};
++  unsigned operand_contexts_per_pe{0};
++  unsigned active_blocks_per_pe{0};
+   std::map<PipelineKind, Timing> pipeline_timing;
+   std::map<std::string, FunctionalUnit> functional_units;
+   RoutingConfig routing;
+@@ -135,11 +143,15 @@ struct Instruction {
+   bool memory_external{true};
+   std::string emit_event;
+   uint64_t emit_event_period{1};
++  unsigned network_plane{0};
+ };
+ 
+ struct TaggedBlock {
+   std::string id;
+   uint64_t tag{0};
++  uint64_t task_id{0};
++  uint64_t numeric_block_id{0};
++  uint64_t instance_base{0};
+   Coord pe;
+   uint64_t trip_count{1};
+   std::vector<uint64_t> predecessors;
+@@ -225,7 +237,10 @@ struct Stats {
+   std::map<PipelineKind, uint64_t> productive_global_cycles_by_pipeline;
+   std::map<PipelineKind, uint64_t> issue_cycles_by_pipeline;
+   std::map<std::string, uint64_t> productive_pe_cycles_by_fu_class;
++  std::map<unsigned, uint64_t> route_hops_by_plane;
+   std::map<std::string, uint64_t> stalls_by_reason;
++  uint64_t dpu_frfo_issues{0};
++  uint64_t max_active_blocks_per_pe{0};
+ };
+ 
+ class Overlay {
+@@ -268,6 +283,7 @@ class Overlay {
+     std::vector<Coord> route;
+     std::size_t route_index{0};
+     uint64_t memory_token{0};
++    uint64_t frfo_ready_cycle{~uint64_t{0}};
+   };
+ 
+   struct PipelineKey {
+@@ -307,21 +323,27 @@ class Overlay {
+   struct LinkKey {
+     Coord source;
+     Coord destination;
+-    LinkKey(Coord source_ = Coord(), Coord destination_ = Coord())
+-        : source(source_), destination(destination_) {}
++    unsigned plane{0};
++    LinkKey(
++        Coord source_ = Coord(), Coord destination_ = Coord(),
++        unsigned plane_ = 0)
++        : source(source_), destination(destination_), plane(plane_) {}
+     bool operator<(const LinkKey &other) const {
+-      return std::tie(source, destination) <
+-             std::tie(other.source, other.destination);
++      return std::tie(source, destination, plane) <
++             std::tie(other.source, other.destination, other.plane);
+     }
+   };
+ 
+   struct Candidate {
+     std::size_t block_index{0};
+     PipelineKey pipeline_key;
++    uint64_t ready_cycle{~uint64_t{0}};
+     Candidate(
+         std::size_t block_index_ = 0,
+-        PipelineKey pipeline_key_ = PipelineKey())
+-        : block_index(block_index_), pipeline_key(pipeline_key_) {}
++        PipelineKey pipeline_key_ = PipelineKey(),
++        uint64_t ready_cycle_ = ~uint64_t{0})
++        : block_index(block_index_), pipeline_key(pipeline_key_),
++          ready_cycle(ready_cycle_) {}
+   };
+ 
+   void validate() const;
+@@ -352,6 +374,12 @@ class Overlay {
+   bool tagFinished(uint64_t tag) const;
+   bool predecessorsComplete(uint64_t tag) const;
+   bool iterationEventsReady(std::size_t block_index) const;
++  bool dpuDependenciesReady(std::size_t block_index) const;
++  bool usesDpuFrfo() const {
++    return config_.pe_dependency_model == PeDependencyModel::DpuFrfo;
++  }
++  uint64_t blockInstance(std::size_t block_index) const;
++  unsigned activeBlocksAt(Coord pe) const;
+   void recordBusyCycles();
+   void recordEvent(
+       const std::string &kind, std::size_t block_index,
+diff --git a/src/cpu/minor/ssim/mlx_overlay.cc b/src/cpu/minor/ssim/mlx_overlay.cc
+--- a/src/cpu/minor/ssim/mlx_overlay.cc
++++ b/src/cpu/minor/ssim/mlx_overlay.cc
+@@ -134,6 +134,7 @@ PeDependencyModel
+ ParsePeDependencyModel(const std::string &name)
+ {
+   if (name == "paper_static") return PeDependencyModel::PaperStatic;
++  if (name == "dpu_frfo") return PeDependencyModel::DpuFrfo;
+   if (name.empty() || name == "scoreboard_experimental" ||
+       name == "scoreboard") {
+     return PeDependencyModel::ScoreboardExperimental;
+@@ -141,6 +142,18 @@ ParsePeDependencyModel(const std::string &name)
+   throw std::runtime_error("unknown MLX PE dependency model: " + name);
+ }
+ 
++const char *
++PeDependencyModelName(PeDependencyModel model)
++{
++  switch (model) {
++    case PeDependencyModel::PaperStatic: return "paper_static";
++    case PeDependencyModel::ScoreboardExperimental:
++      return "scoreboard_experimental";
++    case PeDependencyModel::DpuFrfo: return "dpu_frfo";
++  }
++  throw std::runtime_error("invalid PE dependency model");
++}
++
+ Overlay::Overlay(Config config, std::vector<TaggedBlock> blocks)
+     : config_(std::move(config)), blocks_(std::move(blocks)),
+       states_(blocks_.size())
+@@ -189,6 +202,13 @@ Overlay::FromJsonFile(const std::string &path)
+       PositiveUInt(rf["read_ports"], "register_file.read_ports"));
+   config.register_file.write_ports = static_cast<unsigned>(
+       PositiveUInt(rf["write_ports"], "register_file.write_ports"));
++  const auto &dpu = root["dpu"];
++  config.instruction_slots_per_pe =
++      dpu.get("instruction_slots_per_pe", 0).asUInt();
++  config.operand_contexts_per_pe =
++      dpu.get("operand_contexts_per_pe", 0).asUInt();
++  config.active_blocks_per_pe =
++      dpu.get("active_blocks_per_pe", 0).asUInt();
+ 
+   const auto &pipeline_root = root["pipelines"];
+   for (const std::string name : {"load", "store", "compute", "xfer"}) {
+@@ -223,6 +243,8 @@ Overlay::FromJsonFile(const std::string &path)
+       PositiveUInt(routing["latency_per_hop"], "routing.latency_per_hop");
+   config.routing.link_capacity = static_cast<unsigned>(
+       PositiveUInt(routing["link_capacity"], "routing.link_capacity"));
++  config.routing.network_planes = static_cast<unsigned>(PositiveUInt(
++      routing.get("network_planes", 1), "routing.network_planes"));
+   if (!routing["skip_steps"].isArray()) {
+     throw std::runtime_error("routing.skip_steps must be an array");
+   }
+@@ -239,6 +261,10 @@ Overlay::FromJsonFile(const std::string &path)
+     TaggedBlock block;
+     block.id = block_root["id"].asString();
+     block.tag = PositiveUInt(block_root["tag"], "blocks[].tag");
++    block.task_id = block_root.get("task_id", block.tag).asUInt64();
++    block.numeric_block_id = block_root.get(
++        "block_id", static_cast<Json::UInt64>(blocks.size() + 1)).asUInt64();
++    block.instance_base = block_root.get("instance_base", 0).asUInt64();
+     block.pe = ParseCoord(block_root["pe"], "blocks[].pe");
+     block.trip_count = PositiveUInt(block_root["trip_count"], "blocks[].trip_count");
+     block.wait_event_period = PositiveUInt(
+@@ -311,6 +337,8 @@ Overlay::FromJsonFile(const std::string &path)
+       instruction.emit_event_period = PositiveUInt(
+           instruction_root.get("emit_event_period", 1),
+           "instructions[].emit_event_period");
++      instruction.network_plane =
++          instruction_root.get("network_plane", 0).asUInt();
+       if (instruction.pipeline == PipelineKind::Xfer) {
+         instruction.destination =
+             ParseCoord(instruction_root["destination"], "destination");
+@@ -419,6 +447,8 @@ Overlay::validate() const
+   }
+ 
+   std::set<std::string> block_ids;
++  std::map<Coord, unsigned> static_instructions_per_pe;
++  std::map<Coord, unsigned> operand_contexts_per_pe;
+   for (const auto &block : blocks_) {
+     if (block.id.empty() || !block_ids.insert(block.id).second) {
+       throw std::runtime_error("MLX block IDs must be nonempty and unique");
+@@ -440,7 +470,8 @@ Overlay::validate() const
+       if (emitter == event_producer_tags_.end()) {
+         throw std::runtime_error("MLX wait event has no emitter: " + event);
+       }
+-      if (block.tag < emitter->second || block.tag > emitter->second + 1) {
++      if (!usesDpuFrfo() &&
++          (block.tag < emitter->second || block.tag > emitter->second + 1)) {
+         throw std::runtime_error(
+             "MLX boundary event must stay in-layer or advance one layer: " + event);
+       }
+@@ -463,6 +494,8 @@ Overlay::validate() const
+       }
+     }
+     std::set<std::string> instruction_ids;
++    static_instructions_per_pe[block.pe] += block.instructions.size();
++    ++operand_contexts_per_pe[block.pe];
+     for (const auto &instruction : block.instructions) {
+       if (instruction.id.empty() || !instruction_ids.insert(instruction.id).second) {
+         throw std::runtime_error("MLX instruction IDs must be unique within a block");
+@@ -474,6 +507,13 @@ Overlay::validate() const
+       }
+       if (instruction.pipeline == PipelineKind::Xfer) {
+         GreedyRoute(block.pe, instruction.destination, config_.routing);
++        if (instruction.network_plane >= config_.routing.network_planes) {
++          throw std::runtime_error(
++              "DPU network plane is outside the configured physical planes");
++        }
++      } else if (instruction.network_plane != 0) {
++        throw std::runtime_error(
++            "only xfer instructions may select a DPU network plane");
+       }
+       if ((instruction.pipeline == PipelineKind::Load ||
+            instruction.pipeline == PipelineKind::Store) &&
+@@ -505,6 +545,18 @@ Overlay::validate() const
+       }
+     }
+   }
++  for (const auto &entry : static_instructions_per_pe) {
++    if (config_.instruction_slots_per_pe != 0 &&
++        entry.second > config_.instruction_slots_per_pe) {
++      throw std::runtime_error("DPU instruction-slot capacity exceeded");
++    }
++  }
++  for (const auto &entry : operand_contexts_per_pe) {
++    if (config_.operand_contexts_per_pe != 0 &&
++        entry.second > config_.operand_contexts_per_pe) {
++      throw std::runtime_error("DPU operand-context capacity exceeded");
++    }
++  }
+   for (const auto &entry : tag_predecessors_) {
+     for (uint64_t predecessor : entry.second) {
+       if (!tag_blocks_.count(predecessor)) {
+@@ -573,6 +625,14 @@ Overlay::routePackets()
+     }
+   }
+   std::sort(ready.begin(), ready.end(), [this](std::size_t left, std::size_t right) {
++    if (usesDpuFrfo()) {
++      return std::tie(
++                 blocks_[left].task_id, blocks_[left].numeric_block_id,
++                 states_[left].iteration, blocks_[left].id) <
++             std::tie(
++                 blocks_[right].task_id, blocks_[right].numeric_block_id,
++                 states_[right].iteration, blocks_[right].id);
++    }
+     return std::tie(blocks_[left].tag, blocks_[left].id) <
+            std::tie(blocks_[right].tag, blocks_[right].id);
+   });
+@@ -580,7 +640,8 @@ Overlay::routePackets()
+     auto &state = states_[index];
+     Coord source = state.route[state.route_index];
+     Coord destination = state.route[state.route_index + 1];
+-    LinkKey link{source, destination};
++    const auto &instruction = blocks_[index].instructions[state.pc];
++    LinkKey link{source, destination, instruction.network_plane};
+     if (links_this_cycle_[link] >= config_.routing.link_capacity) {
+       ++stats_.link_stalls;
+       ++stats_.stalls_by_reason["link_capacity"];
+@@ -590,6 +651,7 @@ Overlay::routePackets()
+     ++links_this_cycle_[link];
+     ++state.route_index;
+     ++stats_.route_hops;
++    ++stats_.route_hops_by_plane[instruction.network_plane];
+     int distance = std::abs(destination.x - source.x) +
+                    std::abs(destination.y - source.y);
+     if (distance > 1) {
+@@ -635,6 +697,14 @@ Overlay::completeInstructions()
+     }
+   }
+   std::sort(ready.begin(), ready.end(), [this](std::size_t left, std::size_t right) {
++    if (usesDpuFrfo()) {
++      return std::tie(
++                 blocks_[left].task_id, blocks_[left].numeric_block_id,
++                 states_[left].iteration, blocks_[left].id) <
++             std::tie(
++                 blocks_[right].task_id, blocks_[right].numeric_block_id,
++                 states_[right].iteration, blocks_[right].id);
++    }
+     return std::tie(blocks_[left].tag, blocks_[left].id) <
+            std::tie(blocks_[right].tag, blocks_[right].id);
+   });
+@@ -676,6 +746,7 @@ Overlay::completeInstruction(std::size_t block_index)
+         {{"event", instruction.emit_event}, {"count", std::to_string(count)}});
+   }
+   state.inflight = false;
++  state.frfo_ready_cycle = ~uint64_t{0};
+   state.external_memory = false;
+   state.memory_token = 0;
+   state.service_ready_cycle = 0;
+@@ -776,6 +847,32 @@ Overlay::iterationEventsReady(std::size_t block_index) const
+   return true;
+ }
+ 
++bool
++Overlay::dpuDependenciesReady(std::size_t block_index) const
++{
++  const auto &state = states_[block_index];
++  return state.pc != 0 || iterationEventsReady(block_index);
++}
++
++uint64_t
++Overlay::blockInstance(std::size_t block_index) const
++{
++  return blocks_[block_index].instance_base + states_[block_index].iteration;
++}
++
++unsigned
++Overlay::activeBlocksAt(Coord pe) const
++{
++  unsigned count = 0;
++  for (std::size_t index = 0; index < blocks_.size(); ++index) {
++    if (blocks_[index].pe == pe && states_[index].active &&
++        !states_[index].complete) {
++      ++count;
++    }
++  }
++  return count;
++}
++
+ void
+ Overlay::admitTags()
+ {
+@@ -788,6 +885,23 @@ Overlay::admitTags()
+           !predecessorsComplete(tag)) {
+         continue;
+       }
++      if (usesDpuFrfo() && config_.active_blocks_per_pe != 0) {
++        std::map<Coord, unsigned> additions;
++        for (std::size_t index : entry.second) {
++          ++additions[blocks_[index].pe];
++        }
++        bool capacity = true;
++        for (const auto &addition : additions) {
++          if (activeBlocksAt(addition.first) + addition.second >
++              config_.active_blocks_per_pe) {
++            capacity = false;
++            break;
++          }
++        }
++        if (!capacity) {
++          continue;
++        }
++      }
+       active_tags_.insert(tag);
+       for (std::size_t index : entry.second) {
+         states_[index].active = true;
+@@ -798,6 +912,12 @@ Overlay::admitTags()
+            {"window_capacity", std::to_string(config_.active_window)}});
+       stats_.max_active_tags =
+           std::max<uint64_t>(stats_.max_active_tags, active_tags_.size());
++      if (usesDpuFrfo()) {
++        for (const auto &block : blocks_) {
++          stats_.max_active_blocks_per_pe = std::max<uint64_t>(
++              stats_.max_active_blocks_per_pe, activeBlocksAt(block.pe));
++        }
++      }
+       admitted = true;
+       break;
+     }
+@@ -980,6 +1100,7 @@ Overlay::issueInstruction(std::size_t block_index)
+   const auto &block = blocks_[block_index];
+   auto &state = states_[block_index];
+   const auto &instruction = block.instructions[state.pc];
++  uint64_t frfo_ready_cycle = state.frfo_ready_cycle;
+   Timing timing = instructionTiming(instruction);
+   Timing pipeline_timing = config_.pipeline_timing.at(instruction.pipeline);
+   if (state.pc == 0) {
+@@ -1008,6 +1129,7 @@ Overlay::issueInstruction(std::size_t block_index)
+     }
+   }
+   state.inflight = true;
++  state.frfo_ready_cycle = ~uint64_t{0};
+   state.routing = false;
+   state.external_memory = false;
+   state.ready_cycle = cycle_ + timing.latency;
+@@ -1037,6 +1159,15 @@ Overlay::issueInstruction(std::size_t block_index)
+       {"initiation_interval", std::to_string(timing.initiation_interval)},
+       {"operation", instruction.operation},
+       {"fu_class", fuClass(instruction)}};
++  if (usesDpuFrfo()) {
++    issue_detail["task_id"] = std::to_string(block.task_id);
++    issue_detail["block_id"] = std::to_string(block.numeric_block_id);
++    issue_detail["instance"] = std::to_string(blockInstance(block_index));
++    issue_detail["network_plane"] =
++        std::to_string(instruction.network_plane);
++    issue_detail["frfo_ready_cycle"] = std::to_string(frfo_ready_cycle);
++    ++stats_.dpu_frfo_issues;
++  }
+   issue_detail["memory_backend"] =
+       !instruction.memory_external ? "local" :
+       (state.external_memory ?
+@@ -1061,19 +1192,41 @@ Overlay::issueInstructions()
+ {
+   std::vector<Candidate> candidates;
+   for (std::size_t index = 0; index < blocks_.size(); ++index) {
+-    const auto &state = states_[index];
++    auto &state = states_[index];
+     if (!state.active || state.complete || state.inflight) {
+       continue;
+     }
+     const auto &block = blocks_[index];
+     const auto &instruction = block.instructions[state.pc];
+-    candidates.push_back({index, {block.pe, instruction.pipeline}});
++    if (usesDpuFrfo()) {
++      if (!dpuDependenciesReady(index)) {
++        state.frfo_ready_cycle = ~uint64_t{0};
++        continue;
++      }
++      if (state.frfo_ready_cycle == ~uint64_t{0}) {
++        state.frfo_ready_cycle = cycle_;
++      }
++    }
++    candidates.push_back(
++        {index, {block.pe, instruction.pipeline}, state.frfo_ready_cycle});
+   }
+   std::sort(
+       candidates.begin(), candidates.end(),
+       [this](const Candidate &left, const Candidate &right) {
+         const auto &left_block = blocks_[left.block_index];
+         const auto &right_block = blocks_[right.block_index];
++        if (usesDpuFrfo()) {
++          return std::make_tuple(
++                     left.pipeline_key.pe, left.pipeline_key.pipeline,
++                     left.ready_cycle, left_block.task_id,
++                     left_block.numeric_block_id, blockInstance(left.block_index),
++                     left_block.id) <
++                 std::make_tuple(
++                     right.pipeline_key.pe, right.pipeline_key.pipeline,
++                     right.ready_cycle, right_block.task_id,
++                     right_block.numeric_block_id,
++                     blockInstance(right.block_index), right_block.id);
++        }
+         auto left_prefix = std::make_tuple(
+             left_block.tag, left_block.pe, left.pipeline_key.pipeline);
+         auto right_prefix = std::make_tuple(
+@@ -1178,9 +1331,17 @@ Overlay::recordEvent(
+   const auto &block = blocks_[block_index];
+   const auto &state = states_[block_index];
+   const auto &instruction = block.instructions[state.pc];
++  auto enriched_detail = detail;
++  if (usesDpuFrfo()) {
++    enriched_detail["task_id"] = std::to_string(block.task_id);
++    enriched_detail["block_id"] = std::to_string(block.numeric_block_id);
++    enriched_detail["instance"] = std::to_string(blockInstance(block_index));
++    enriched_detail["network_plane"] =
++        std::to_string(instruction.network_plane);
++  }
+   events_.push_back(
+       {cycle_, kind, block.tag, block.id, state.iteration, instruction.id,
+-       block.pe, PipelineName(instruction.pipeline), detail});
++       block.pe, PipelineName(instruction.pipeline), enriched_detail});
+ }
+ 
+ void
+@@ -1232,8 +1393,7 @@ Overlay::summaryJson(const std::string &scenario) const
+       << ",\"record_events\":" << (config_.record_events ? "true" : "false")
+       << ",\"start_in_roi\":" << (config_.start_in_roi ? "true" : "false")
+       << ",\"pe_dependency_model\":"
+-      << Quote(config_.pe_dependency_model == PeDependencyModel::PaperStatic ?
+-               "paper_static" : "scoreboard_experimental")
++      << Quote(PeDependencyModelName(config_.pe_dependency_model))
+       << ",\"memory_backend\":"
+       << Quote(config_.memory_backend == MemoryBackend::DmaAdapter ?
+                "dsagen_dma" :
+@@ -1317,6 +1477,21 @@ Overlay::summaryJson(const std::string &scenario) const
+     out << Quote(item.first) << ":" << item.second;
+     first = false;
+   }
++  if (usesDpuFrfo()) {
++    out << "},\"dpu_frfo_issues\":" << stats_.dpu_frfo_issues
++        << ",\"max_active_blocks_per_pe\":"
++        << stats_.max_active_blocks_per_pe
++        << ",\"route_hops_by_plane\":{";
++    first = true;
++    for (unsigned plane = 0; plane < config_.routing.network_planes; ++plane) {
++      if (!first) out << ",";
++      auto iterator = stats_.route_hops_by_plane.find(plane);
++      uint64_t count = iterator == stats_.route_hops_by_plane.end() ?
++          0 : iterator->second;
++      out << Quote(std::to_string(plane)) << ":" << count;
++      first = false;
++    }
++  }
+   out << "},\"stalls_by_reason\":{";
+   first = true;
+   for (const auto &item : stats_.stalls_by_reason) {

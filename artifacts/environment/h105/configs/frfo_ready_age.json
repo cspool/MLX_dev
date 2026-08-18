@@ -1,0 +1,195 @@
+{
+  "active_window": 5,
+  "blocks": [
+    {
+      "block_id": 9,
+      "id": "blocker",
+      "instance_base": 0,
+      "instructions": [
+        {
+          "id": "blocker_hold",
+          "operation": "hold",
+          "pipeline": "compute",
+          "reads": [],
+          "writes": []
+        }
+      ],
+      "pe": [
+        0,
+        0
+      ],
+      "predecessors": [],
+      "tag": 1,
+      "task_id": 9,
+      "trip_count": 1,
+      "wait_events": []
+    },
+    {
+      "block_id": 1,
+      "id": "low_tag_late",
+      "instance_base": 0,
+      "instructions": [
+        {
+          "id": "low_issue",
+          "operation": "add",
+          "pipeline": "compute",
+          "reads": [],
+          "writes": []
+        }
+      ],
+      "pe": [
+        0,
+        0
+      ],
+      "predecessors": [],
+      "tag": 2,
+      "task_id": 1,
+      "trip_count": 1,
+      "wait_events": [
+        "low_ready"
+      ]
+    },
+    {
+      "block_id": 2,
+      "id": "high_tag_early",
+      "instance_base": 0,
+      "instructions": [
+        {
+          "id": "high_issue",
+          "operation": "add",
+          "pipeline": "compute",
+          "reads": [],
+          "writes": []
+        }
+      ],
+      "pe": [
+        0,
+        0
+      ],
+      "predecessors": [],
+      "tag": 3,
+      "task_id": 2,
+      "trip_count": 1,
+      "wait_events": [
+        "high_ready"
+      ]
+    },
+    {
+      "block_id": 4,
+      "id": "high_producer",
+      "instance_base": 0,
+      "instructions": [
+        {
+          "emit_event": "high_ready",
+          "id": "emit_high",
+          "operation": "add",
+          "pipeline": "compute",
+          "reads": [],
+          "writes": []
+        }
+      ],
+      "pe": [
+        1,
+        0
+      ],
+      "predecessors": [],
+      "tag": 4,
+      "task_id": 4,
+      "trip_count": 1,
+      "wait_events": []
+    },
+    {
+      "block_id": 5,
+      "id": "low_producer",
+      "instance_base": 0,
+      "instructions": [
+        {
+          "emit_event": "low_ready",
+          "id": "emit_low",
+          "operation": "slow",
+          "pipeline": "compute",
+          "reads": [],
+          "writes": []
+        }
+      ],
+      "pe": [
+        2,
+        0
+      ],
+      "predecessors": [],
+      "tag": 5,
+      "task_id": 5,
+      "trip_count": 1,
+      "wait_events": []
+    }
+  ],
+  "dpu": {
+    "active_blocks_per_pe": 0,
+    "instruction_slots_per_pe": 0,
+    "operand_contexts_per_pe": 0
+  },
+  "functional_units": {
+    "add": {
+      "class": "alu",
+      "initiation_interval": 1,
+      "latency": 1
+    },
+    "fma": {
+      "class": "fma",
+      "initiation_interval": 1,
+      "latency": 4
+    },
+    "hold": {
+      "class": "alu",
+      "initiation_interval": 5,
+      "latency": 5
+    },
+    "slow": {
+      "class": "alu",
+      "initiation_interval": 1,
+      "latency": 3
+    }
+  },
+  "memory_backend": "fixed",
+  "metadata": {
+    "experiment_id": "H105",
+    "paper_performance_targets_consumed": false
+  },
+  "pe_dependency_model": "dpu_frfo",
+  "pipelines": {
+    "compute": {
+      "initiation_interval": 1,
+      "latency": 1
+    },
+    "load": {
+      "initiation_interval": 1,
+      "latency": 1
+    },
+    "store": {
+      "initiation_interval": 1,
+      "latency": 1
+    },
+    "xfer": {
+      "initiation_interval": 1,
+      "latency": 1
+    }
+  },
+  "record_events": true,
+  "register_file": {
+    "banks": 8,
+    "read_ports": 2,
+    "write_ports": 1
+  },
+  "routing": {
+    "latency_per_hop": 1,
+    "link_capacity": 1,
+    "mesh_height": 4,
+    "mesh_width": 4,
+    "network_planes": 2,
+    "skip_steps": [
+      1
+    ]
+  },
+  "schema_version": 1,
+  "start_in_roi": true
+}

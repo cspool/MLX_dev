@@ -49,7 +49,7 @@ run_gem5 "$OUTPUT_ROOT/enabled/m5out" "$OUTPUT_ROOT/enabled/run.log" \
   run_gem5 "$OUTPUT_ROOT/disabled/m5out" "$OUTPUT_ROOT/disabled/run.log"
 )
 
-grep -Fq 'MLX_OVERLAY_SUMMARY {"scenario":"gem5","cycles":5,"done":true' \
+grep -Fq 'MLX_OVERLAY_SUMMARY {"scenario":"gem5","cycles":5,"physical_pe_count":16,"mapped_pe_count":1,"done":true' \
   "$OUTPUT_ROOT/enabled/run.log"
 if grep -Fq 'MLX_OVERLAY_SUMMARY' "$OUTPUT_ROOT/disabled/run.log"; then
   echo "disabled run unexpectedly activated the MLX overlay" >&2
