@@ -64,9 +64,10 @@ gap is family-specific compute scheduling, non-ideal memory service, or both.
 10. Selected MLX bandwidth remains null and no per-point bandwidth choices are
     used in the primary decision; oracle per-point coverage is labeled
     diagnostic-only.
-11. The primary support flag is true iff at least one existing bandwidth has
-    all 24 points within 10%; all such uniform bandwidths are listed without
-    post-hoc promotion to validation.
+11. At least one existing uniform bandwidth has all 24 points within 10%; all
+    such bandwidths are listed without post-hoc promotion to validation. This
+    is the sole numerical hypothesis gate and may fail without invalidating
+    audit integrity.
 12. Classification remains target-exposed/validation-ineligible; H103 remains
     unchanged, and full-paper completion changes only under the separate global
     certificate process, not from this sensitivity test.
