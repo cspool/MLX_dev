@@ -69,11 +69,33 @@ def reverse_patch_check(spec: dict[str, Any]) -> dict[str, Any]:
     apply_root = (PROJECT_ROOT / spec["apply_root"]).resolve()
     relative_source = source.resolve().relative_to(apply_root)
     current = sha256_file(source)
+    descendant_checks: dict[str, bool] = {}
     with tempfile.TemporaryDirectory(prefix="h118-patch-") as directory:
         temporary_root = Path(directory)
         temporary_source = temporary_root / relative_source
         temporary_source.parent.mkdir(parents=True, exist_ok=True)
         shutil.copy2(source, temporary_source)
+        for descendant in spec.get("descendant_patches", []):
+            descendant_path = PROJECT_ROOT / descendant
+            descendant_result = subprocess.run(
+                [
+                    "git",
+                    "apply",
+                    "--reverse",
+                    f"--include={relative_source}",
+                    str(descendant_path),
+                ],
+                cwd=temporary_root,
+                capture_output=True,
+                text=True,
+                check=False,
+            )
+            descendant_checks[descendant_path.name] = (
+                descendant_result.returncode == 0
+            )
+            if descendant_result.returncode != 0:
+                break
+        after_descendants = sha256_file(temporary_source)
         result = subprocess.run(
             ["git", "apply", "--reverse", str(patch)],
             cwd=temporary_root,
@@ -85,7 +107,9 @@ def reverse_patch_check(spec: dict[str, Any]) -> dict[str, Any]:
             sha256_file(temporary_source) if result.returncode == 0 else None
         )
     checks = {
-        "after": current == spec["after_sha256"],
+        "current": current == spec.get("current_sha256", current),
+        "descendants": all(descendant_checks.values()),
+        "after": after_descendants == spec["after_sha256"],
         "reverse_apply": result.returncode == 0,
         "before": reversed_digest == spec["before_sha256"],
     }
@@ -93,6 +117,8 @@ def reverse_patch_check(spec: dict[str, Any]) -> dict[str, Any]:
         "source": str(source.relative_to(PROJECT_ROOT)),
         "patch": str(patch.relative_to(PROJECT_ROOT)),
         "current_sha256": current,
+        "after_descendants_sha256": after_descendants,
+        "descendant_checks": descendant_checks,
         "reversed_sha256": reversed_digest,
         "stderr": result.stderr.strip(),
         "checks": checks,
@@ -129,6 +155,35 @@ def historical_memory_descendant_check(
             and sha256_file(header) == h114_sources["adapter_header"]["sha256"],
             "source": reverse.returncode == 0
             and sha256_file(source) == h114_sources["adapter_source"]["sha256"],
+        }
+
+
+def functional_overlay_descendant_check(
+    h114_sources: dict[str, Any],
+) -> dict[str, bool]:
+    patch = PROJECT_ROOT / "patches/dsagen/dsa-gem5-functional-payload-v1.patch"
+    current_header = PROJECT_ROOT / h114_sources["overlay_header"]["path"]
+    current_source = PROJECT_ROOT / h114_sources["overlay_source"]["path"]
+    with tempfile.TemporaryDirectory(prefix="h118-functional-descendant-") as directory:
+        root = Path(directory)
+        target = root / "src/cpu/minor/ssim"
+        target.mkdir(parents=True)
+        header = target / "mlx_overlay.hh"
+        source = target / "mlx_overlay.cc"
+        shutil.copy2(current_header, header)
+        shutil.copy2(current_source, source)
+        reverse = subprocess.run(
+            ["git", "apply", "--reverse", str(patch)],
+            cwd=root,
+            capture_output=True,
+            text=True,
+            check=False,
+        )
+        return {
+            "header": reverse.returncode == 0
+            and sha256_file(header) == h114_sources["overlay_header"]["sha256"],
+            "source": reverse.returncode == 0
+            and sha256_file(source) == h114_sources["overlay_source"]["sha256"],
         }
 def build_audit(config: dict[str, Any]) -> dict[str, Any]:
     frozen = {
@@ -397,10 +452,12 @@ def build_audit(config: dict[str, Any]) -> dict[str, Any]:
     }
     h114_sources = parents["h114"]["source_files"]
     historical_descendant = historical_memory_descendant_check(h114_sources)
+    functional_descendant = functional_overlay_descendant_check(h114_sources)
     cpp_source_checks = {
-        name: qualify(PROJECT_ROOT / h114_sources[name]["path"])["sha256"]
-        == h114_sources[name]["sha256"]
-        for name in ("overlay_header", "driver")
+        "overlay_header": functional_descendant["header"],
+        "overlay_source": functional_descendant["source"],
+        "driver": qualify(PROJECT_ROOT / h114_sources["driver"]["path"])["sha256"]
+        == h114_sources["driver"]["sha256"],
     }
     cpp_source_checks.update(
         {
