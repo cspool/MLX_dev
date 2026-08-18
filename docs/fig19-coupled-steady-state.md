@@ -22,6 +22,10 @@ H130 may apply H99's unchanged 24-layer composition and 1 GHz conversion to
 these 12 frozen cycles, then compare all attention/FFN/total points under the
 10% gate. No frequency, layer-count, overlap or component factor may be fitted.
 
+That join is complete in
+[fig19-coupled-transfer.md](fig19-coupled-transfer.md). It improves substantially
+over H99 but still passes 0/12; no residual composition change follows.
+
 Evidence is in
 [run134](../artifacts/results/fig19-coupled-steady-state-run134.json), with the
 frozen plan in

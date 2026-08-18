@@ -336,6 +336,11 @@ H129 closes those folds in
 holdouts pass at 1.23% MAPE, including exact power-of-two multi-tile FFN
 scaling, so all 12 current-coupled components are frozen before target access.
 
+H130 joins them in [fig19-coupled-transfer.md](fig19-coupled-transfer.md).
+Current coupling cuts the old error sharply, but all 12 component/total values
+remain high and the full figure is rejected. Published component sums forbid an
+overlap repair without new author evidence.
+
 The active objective is now limited to simulator-dependent hardware performance
 in Figures 18–25, as recorded in
 [simulator-experiment-scope.md](simulator-experiment-scope.md). Accuracy,

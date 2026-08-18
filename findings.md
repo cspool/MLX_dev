@@ -118,6 +118,7 @@ H37 closed the first full-paper ledger with a machine certificate rather than a 
 - H127 rejects the frozen direct-time Figure 24 QKV subset at 0/21, 761.99% MAPE and 1100.94% maximum error. Every prediction is high at 6.09x-7.18x versus 0.58x-1.36x targets. Exact FMA and post-cache timing validate the transparent proxy internally but expose its staged global-memory CUDA mapping as unlike the authors' optimized Orin kernel. FFT/SWA are not extended on this path; active completion remains 0/8.
 - H128 rejects universal small-anchor Figure 19 folding but validates the current coupled execution. All 48 configs and 192 four-build runs conserve exact H98 graphs/work/traffic. Fifteen of 24 holdouts pass; all eight FFT holdouts fail at 15.60%-25.24%, plus N1024-global-FFN2 q32 at 27.31% after its first two-tile transition. Seven FFN paths are eligible and 2.23x-3.18x faster than H98. No target is consumed.
 - H129 supports larger-anchor Figure 19 folding. Ten q64/q128 configs and 40 four-build runs pass; q16/q32 predicts all ten holdouts at 1.23% MAPE and 1.95% max. FFT passes 8/8, N1024-global-FFN2 is exact with power-of-two 4/8-tile schedules, and the combined 12-path current-coupled estimate set is complete without targets.
+- H130 rejects the frozen current-coupled Figure 19 join at 0/12, 180.27% MAPE and 232.69% max. Attention/FFN/total MAPE are 171.55%/187.11%/182.15%; predicted totals are 5.28-39.81 ms versus 2.23-15.64 ms. This is much better than H99's 724% but uniformly high. Target components already sum to total and H97 fixes 24 layers, so overlap/layer/frequency residual repairs are disallowed. Active completion remains 0/8.
 
 ## Patterns and Insights
 
@@ -139,6 +140,7 @@ H37 closed the first full-paper ledger with a machine certificate rather than a 
 - Internal proxy validity is not cross-implementation identity. H126's folds are excellent, yet H127 misses every target by multiples because an exact-FMA staged global-memory kernel is fundamentally slower than the undisclosed fused/tiled Orin implementation.
 - The current MLX coupling materially changes prior conclusions: H128 accelerates stable Figure 19 FFN paths by more than 2x while preserving exact work. FFT and tile-count transitions again require larger anchors, reinforcing that extrapolation regimes—not residual scales—must be validated separately.
 - Power-of-two tile growth makes historical double-buffer folding predictable across capacity transitions. H129 exactly scales the large FFN at 4/8 tiles while FFT reaches steady state, completing the first current-coupled Figure 19 component set.
+- Mechanism corrections can reduce error without reaching author timing. H130 improves Figure 19 by roughly 4x versus H99, yet the remaining uniform 2.5x-3.3x gap cannot be assigned to overlap because the published component decomposition is additive.
 - The team's public methodology is unusually consistent: SimICT component simulation, gem5/RTL calibration, independent Verilog/Synopsys implementation, and DPU PE/SPM/multi-NoC models. This is a stronger reconstruction basis than architecture resemblance to DSAGEN.
 - Model-declared framework versions are part of the checkpoint: InternLM2's remote code produced incompatible logits under Transformers 5.15 (first-window PPL 387.07) but PPL 5.69 under its declared 4.41.0. Smoke tests caught this before the registered run, and the official evaluator now refuses a different version.
 - Correct operator invariants and analytical sparsity do not identify a model-quality recipe. In run018, factor-fit MSE remains nearly flat at 0.629-0.634 while quality degrades monotonically with replacement depth, so cumulative approximation—not one broken projection—best explains this particular inferred reconstruction.
@@ -491,3 +493,7 @@ steady-state evidence before full estimates can be compared.
 Run134 supplies that evidence at 10/10 holdouts, combining five new models with
 seven frozen H128 FFNs. The full 12-path estimate set is ready for a no-fit
 24-layer Figure 19 join.
+
+Run135 performs the join and rejects all 12 values. The remaining additive
+component gap has no disclosed schedule parameter, so Figure 19 closes pending
+author traces rather than receiving a residual factor.

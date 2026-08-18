@@ -11,3 +11,7 @@ access. The Figure 19 residual route is closed by the registered stopping rule.
 
 The immutable result is
 `artifacts/results/fig19-source-transfer-run104.json`.
+
+H128/H129 later upgrade all paths to current coupled timing. Their frozen H130
+join in [fig19-coupled-transfer.md](fig19-coupled-transfer.md) reduces MAPE from
+724% to 180% but still passes 0/12, preserving the stopping rule.
