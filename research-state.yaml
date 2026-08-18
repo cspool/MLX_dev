@@ -687,9 +687,9 @@ experiments:
       timestamp: "2026-08-17"
 
 outer_loop:
-  cycle: 57
-  last_direction: "Implement source-integrated plain forward-FFT and global B1024/B4096 BSMM compilers for Figure 19, reusing H43 aggregation and H83 SIMD32/grouped-event/four-port-SRAM mechanisms before target exposure."
-  last_reflection: "H97 proves the Figure 19 workload is fully identifiable but not directly served by H81 FFT-CMP or H92 B32 paths. The missing work is implementation, not public evidence: H43/H83 provide the necessary reusable substrate."
+  cycle: 58
+  last_direction: "Close Figure 19 residual adjustment. Move to Figure 24/25 exact workload identity and source shape expansion, using physical FU counters and execution-driven GPU evidence."
+  last_reflection: "H98 implements every identifiable Figure 19 path with exact work and folding, but H99 rejects all 12 latency points by very large margins. The mapping is executable; its inferred serialization/timing is not the authors' design."
 
 recent_milestones_after_h46:
   architecture_contract: "H52 supersedes the GPU-SM analogy with the paper's specialized spatial tagged-block PE; GPGPU-Sim is baseline-only."
@@ -715,6 +715,7 @@ recent_milestones_after_h46:
   fig21_mlx_composition: "H95 supports complete 24+8 MLX timing and memory with null Xavier speedup."
   fig21_evidence: "H96 closes 20 targets at 9 reproduced, 6 numerical failures, and 5 execution-incomplete; full Figure 21 remains false."
   fig19_source_identity: "H97 supports exact mapping identity and localizes missing plain-FFT/global-BSMM source compilers."
+  fig19_source_transfer: "H98 supports exact source paths; H99 rejects Figure 19 at 0/12, 724% MAPE, and 858% max."
 
 completion_snapshot_run042:
   certificate_run: run_042

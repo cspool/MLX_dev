@@ -291,3 +291,8 @@ Chronological, append-only record of reproduction decisions and evidence.
 | 285 | 2026-08-18 | protocol | Pre-registered H97 without latency targets: freeze H23's 24-layer FABNet mapping, audit two plain FFT axes and B1024/B4096 global FFNs against H43/H81/H83/H92 source capabilities. |
 | 286 | 2026-08-18 | inner-loop | H97 run102 is supported: all operations/bytes/stages match, the mapping is identifiable, H43/H83 mechanisms are reusable, but H81/H92 cannot directly execute plain FFT/global BSMM. |
 | 287 | 2026-08-18 | outer-loop | Implement new source compilers for forward-only complex FFT and 10/12-stage global BSMM using exact aggregation, SIMD32 packets, grouped events, and four-port SRAM before exposing Figure 19 targets. |
+| 288 | 2026-08-18 | protocol | Pre-registered H98: real→complex→real two-axis FFT, four-FMA/six-ADD pair mix, B1024/B4096 global FFNs, four SRAM ports, q=4/8 fit, q=16/32 holdout, and no targets. |
+| 289 | 2026-08-18 | inner-loop | H98 run103 is supported: 12 paths/48 configs/96 runs replay, all work/byte gates pass, and 24/24 holdouts have zero error. Full 24-layer totals span 15.05-125.10 ms. |
+| 290 | 2026-08-18 | protocol | Pre-registered H99 after H98 freeze: multiply components by 24 layers, compare eight components plus four totals at 10%, permit no timing adjustment, and stop on failure. |
+| 291 | 2026-08-18 | inner-loop | H99 run104 rejects source-integrated Figure 19 at 0/12, 724.4% MAPE, and 858.4% max. The source path is complete but much slower than the raster; no residual variant follows. |
+| 292 | 2026-08-18 | outer-loop | Close Figure 19 timing adjustment. Next strengthen Figure 24/25 workload identity and exact-shape execution rather than revisit Figure 19 boundaries. |

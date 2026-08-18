@@ -161,3 +161,7 @@ Figure 19's new source path is scoped in
 [`fig19-source-identity.md`](fig19-source-identity.md): its mapping is exact,
 but needs plain forward-FFT and global-BSMM compilers rather than H81/H92
 direct reuse.
+
+H98 implements those paths and H99 rejects their target transfer at 0/12 in
+[`fig19-source-transfer.md`](fig19-source-transfer.md). No residual correction
+is admitted.

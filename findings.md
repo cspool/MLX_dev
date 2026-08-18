@@ -90,6 +90,7 @@ H37 closed the first full-paper ledger with a machine certificate rather than a 
 - H95 supports the target-free 24-structured/8-dense MLX composition. Component and layer arithmetic plus first-principles memory pass at all five N values. Total cycles grow 78.82B→1.374T and inferred GEMM share falls 51.13%→46.91%. These are uncalibrated source-overlay times; Xavier dense-Tensor cycles and speedups remain null.
 - H96 supports a complete Figure 21 evidence ledger, not reproduction. Dense memory passes 5/5 and sparse memory 4/5, but GEMM share passes 0/5 (269.9% MAPE, 516.6% max) and all five speedups are execution-incomplete. Across 20 targets the statuses are 9 reproduced, 6 numerical failures, and 5 incomplete. The inferred serialized schedule is inconsistent with the raster's 8%-32% GEMM share.
 - H97 supports an exact, target-free Figure 19 mapping diagnosis. H23 operations/bytes match fresh profiles for two plain forward FFT axes and global B1024/B4096 FFNs at all four N. H81 FFT-CMP and H92 hierarchical B32 are not directly reusable; H43 aggregation and H83 packet/SRAM/event mechanisms are. The workload is identifiable but still lacks source-integrated timing.
+- H98 supports source-integrated Figure 19 execution: 12 plain-FFT/global-BSMM paths, 48 configs, 96 replaying runs, exact FU/packet work, and 24/24 held-out cycle checks. H99 then rejects the frozen latency transfer at 0/12 points, 724% MAPE, and 858% maximum error. Real tagged-block/FU/SRAM serialization is far slower than H23's analytical timing; no residual correction follows.
 
 ## Patterns and Insights
 
@@ -276,3 +277,6 @@ speedups remain null; the full-figure verdict is false.
 
 Run102 proves Figure 19 can be rebuilt from known shapes, but requires new
 plain-FFT and global-BSMM compiler paths before any timing comparison.
+
+Run103 supplies those compilers and exact timing folds; run104 rejects every
+Figure 19 MLX component/total target and closes the residual route.

@@ -26,3 +26,8 @@ than that unused field.
 
 The immutable result is
 `artifacts/results/fig19-source-identity-run102.json`.
+
+The missing compilers and their strict target transfer are now complete in
+[`fig19-source-paths.md`](fig19-source-paths.md) and
+[`fig19-source-transfer.md`](fig19-source-transfer.md). Work/folding pass, but
+all 12 latency points fail.
