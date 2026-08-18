@@ -105,6 +105,7 @@ H37 closed the first full-paper ledger with a machine certificate rather than a 
 - Refreshed paper-analysis MCP notes verify the scope: the evaluation note labels Figures 15-17 as algorithmic validation; the implementation note explicitly reports cycle-accurate simulator plus taped-out performance and simulator tuning of the reduced design; the two hardware-performance notes partition Figures 18-21 and 22-25. Active completion is now verified at 0/8 rather than provisional.
 - H115 rejects the first correct target join from run119 at 2/24, 43.71% MAPE and 74.59% maximum error. Both passes are long SWA-W256/Q64. FFT predicts 25%-29% versus 58%-84% (all low); QKV predicts 84%-98% versus 52%-76% (all high); SWA is nearly shape-invariant while targets rise with sequence length. Live memory improves H112 but does not unify the metric. MCP supplies no independent basis to replace completed-work throughput with residence, so no residual reinterpretation is admitted.
 - H116 rejects universal counter folding but localizes all 27/400 failures to FFT. Forty exact-zero xfer slots and 373 nonzero holdouts pass; all 24 QKV and 16 SWA paths are fully eligible. Their FMA residence nearly equals issue, ruling out counter renaming as a QKV/SWA repair. FFT FMA residence fails 16/16 holdouts up to 28.67%, so only FFT requires larger target-free steady-state anchors.
+- H117 rejects its all-metric steady-state claim with integrity while qualifying the useful subset. Sixteen q64/q128 FFT configs complete 48/48 executions; q16/q32 fits pass all 80 cycle/compute/load/store/xfer holdouts, but only 9/16 FMA-residence holdouts pass (89/96 overall, 1.22% MAPE, 9.65% max). Since residence is not Figure 25 completed-work throughput, further q extension is stopped. The stable pipeline counters now support a target-free exact Figure 22 coupled rebuild; active completion remains 0/8.
 
 ## Patterns and Insights
 
@@ -112,6 +113,7 @@ H37 closed the first full-paper ledger with a machine certificate rather than a 
 - A faithful model needs both work accounting (FLOPs/bytes/stages) and contention timing (pipeline readiness, tag priority, link occupancy, launch/fill/drain overhead). A pure roofline model cannot test MLX's central scheduling claim.
 - Spatial work must be distributed across physical coordinates, not merely divided into a few long loop strips. H101 and H102 conserve exactly the same operations and bytes, yet QKV FMA occupancy changes from about 25% to more than 99% solely through 4-PE versus 16-PE placement.
 - Full physical occupancy is not paper roofline utilization. Figure 25 normalizes achieved FMA throughput by `min(P_peak, OI*BW)`; physical FU busy cycles omit OI/BW and cannot be compared directly.
+- Counter steady state is metric-specific. H117 shows that coupled FFT cycles and productive compute/load/store/xfer counters can be affine-stable even while latency-weighted FMA residence continues to curve; one failed auxiliary counter must not invalidate the stable execution path or be renamed into paper throughput.
 - The team's public methodology is unusually consistent: SimICT component simulation, gem5/RTL calibration, independent Verilog/Synopsys implementation, and DPU PE/SPM/multi-NoC models. This is a stronger reconstruction basis than architecture resemblance to DSAGEN.
 - Model-declared framework versions are part of the checkpoint: InternLM2's remote code produced incompatible logits under Transformers 5.15 (first-window PPL 387.07) but PPL 5.69 under its declared 4.41.0. Smoke tests caught this before the registered run, and the official evaluator now refuses a different version.
 - Correct operator invariants and analytical sparsity do not identify a model-quality recipe. In run018, factor-fit MSE remains nearly flat at 0.629-0.634 while quality degrades monotonically with replacement depth, so cumulative approximation—not one broken projection—best explains this particular inferred reconstruction.
@@ -197,6 +199,7 @@ H37 closed the first full-paper ledger with a machine certificate rather than a 
 - Do not use H84's full-count extrapolations. They are generated only as rejected diagnostics; saturated anchors and new larger holdouts must pass before computing MLX/Xavier speedup.
 - Do not relax H85's FFT checksum threshold or discard the 4096-row softmax residual. A new source-qualified stable FFT reference and direct softmax use must be registered independently.
 - Stop the Figure 20 Xavier affine-anchor trajectory after H87. H88 must retain null Attention speedups until a genuinely different source-derived scheduler/cache model or direct full execution becomes available.
+- Stop the FFT FMA-residence q-extension trajectory after H117. Every non-residence coupled counter already passes, residence is not Figure 25's completed-work metric, and QKV/SWA residence cannot repair their residuals. Reopen only if a source explicitly defines the paper counter differently.
 
 ## Open Questions
 
@@ -399,3 +402,11 @@ round trips and parent regressions pass. q=4/8 predicts q=16/32 at 96/96 points
 with 0.374% MAPE. Coupled data supply adds up to 72.8% cycles and produces
 family-specific issue ranges without target fitting. The result is frozen
 before any new Figure 25 comparison; completion remains 0/18.
+
+Run120 freezes that source before the Figure 25 join and rejects it at 2/24,
+43.71% MAPE. Run121 then isolates all physical-counter folding failures to FFT.
+Run122 extends those eight paths to q64/q128: all 80 cycle and productive
+compute/load/store/xfer holdouts pass, while seven FMA-residence holdouts do
+not. Residence is retired as a Figure 25 repair; the stable counter subset now
+feeds an exact target-free Figure 22 coupled rebuild. Active completion remains
+zero of eight full simulator-dependent figures.

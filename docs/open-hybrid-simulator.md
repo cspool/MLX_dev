@@ -262,6 +262,13 @@ H116 audits run119's physical counters target-free in
 QKV/SWA counters are stable, while all FFT FMA-residence holdouts fail; the
 next simulator work is an FFT-only steady-state extension.
 
+H117 performs that extension in
+[fft-coupled-counter-steady-state.md](fft-coupled-counter-steady-state.md).
+Sixteen q64/q128 FFT configs and 48 executions pass every integrity gate. All
+80 cycle/compute/load/store/xfer holdouts pass; only seven FMA-residence
+holdouts fail. This is sufficient to freeze the coupled pipeline-counter
+semantics for Figure 22, but not to reinterpret or repair Figure 25.
+
 The active objective is now limited to simulator-dependent hardware performance
 in Figures 18–25, as recorded in
 [simulator-experiment-scope.md](simulator-experiment-scope.md). Accuracy,

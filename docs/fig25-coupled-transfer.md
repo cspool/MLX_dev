@@ -49,6 +49,12 @@ H116 subsequently tests physical counters without targets in
 QKV/SWA residence is nearly identical to issue, so it cannot repair their H115
 residual. FFT FMA residence fails all q=16/32 folds and remains ineligible.
 
+H117's larger q=64/128 extension does not reopen this route. All FFT
+cycle/compute/load/store/xfer folds become stable, but seven FMA-residence
+holdouts still fail and residence remains the wrong semantic quantity for the
+paper's completed-work roofline. Figure 25 therefore stays rejected at 2/24;
+no q extension or counter renaming follows.
+
 Evidence is in
 [run120](../artifacts/results/fig25-coupled-transfer-run120.json), with the
 frozen plan in

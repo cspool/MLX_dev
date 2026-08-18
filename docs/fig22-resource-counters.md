@@ -75,3 +75,16 @@ execution in [coupled-resource-counter-folding.md](coupled-resource-counter-fold
 All QKV/SWA pipeline and FMA counters fold successfully, but FFT compute/xfer
 and especially FMA residence have not reached q=4/8 steady state. No new
 Figure 22 target comparison is admitted yet.
+
+H117 then extends only FFT to q=64/128. Its q=16/32 fits pass all 80 new
+cycle/compute/load/store/xfer holdouts; only seven of 16 FMA-residence
+holdouts fail. This establishes a stable coupled pipeline-counter basis for a
+new exact Figure 22 compiler, while explicitly excluding the non-steady
+residence counter. See
+[fft-coupled-counter-steady-state.md](fft-coupled-counter-steady-state.md).
+
+The next comparison is not allowed to reuse H61's aggregate workload or tune
+from the raster. It must first compile and run the exact eight FFT plus eight
+BSMM Figure 22 cases through the current full-mesh, bounded-context and live
+DMA/SPM ownership path, then freeze productive compute/load/store/xfer
+utilization before loading the 64 target segments.

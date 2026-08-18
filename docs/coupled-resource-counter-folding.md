@@ -36,11 +36,18 @@ Thus changing Figure 25 from issue to residence cannot explain H115's QKV
 overprediction. FFT residence cannot be projected from q=4/8 at all and is
 quarantined rather than extrapolated.
 
-## Next boundary
+## FFT extension
 
-The next target-free step is limited to FFT: execute q=64/128, fit physical
-compute/xfer/FMA counters at q=16/32, and require new holdouts within 5%.
-QKV/SWA counter models are frozen and must not be refitted from targets.
+H117 completes the registered q=64/128 extension in
+[fft-coupled-counter-steady-state.md](fft-coupled-counter-steady-state.md).
+All cycle/compute/load/store/xfer holdouts pass, but seven FMA-residence
+holdouts remain above 5%. Because residence is not Figure 25 completed-work
+throughput and cannot repair the already stable QKV/SWA residuals, it is
+retired as a Figure 25 candidate rather than extended to still larger q.
+
+The stable pipeline subset is retained for an exact, target-free Figure 22
+coupled-workload rebuild. QKV/SWA counter models remain frozen and must not be
+refitted from targets.
 
 Evidence is in
 [run121](../artifacts/results/coupled-resource-counter-folding-run121.json),

@@ -46,6 +46,7 @@ the cycle-accurate simulator and taped-out measurements; `B.-MLX-Performance`
 covers Figures 18–21; and `C.-Resource-Utilization-and-Scalability` covers
 Figures 22–25. The active scope is therefore verified rather than provisional.
 
-At the run119 resume point, the strict count is 0/8. Run119 supplies
-the first target-free live coupled source for all Figure 24/25 MLX paths, but it
-has deliberately not been joined to targets.
+At the run122 point, the strict count remains 0/8. Run119 supplies the first
+target-free live coupled source for all Figure 24/25 MLX paths; run120's frozen
+Figure 25 join rejects it at 2/24. Runs 121/122 qualify stable productive
+pipeline counters for the next Figure 22 rebuild but do not complete a figure.
