@@ -272,8 +272,7 @@ def build_audit(config: dict[str, Any]) -> dict[str, Any]:
         int(h114_config["hardware"]["dma_bytes_per_cycle"]) == int(bandwidth)
         and config["hardware"]["bandwidth_is_disclosed_mlx_parameter"] is False,
         all(adjustment_checks.values()) and source_boundary,
-        summary["all_24_within_10pct"]
-        == (summary["passing_points"] == summary["total_points"]),
+        summary["all_24_within_10pct"],
         config["classification"] == "target_exposed_source_derived_bandwidth_transfer"
         and config["validation_eligible"] is False,
     ]
@@ -289,7 +288,7 @@ def build_audit(config: dict[str, Any]) -> dict[str, Any]:
         and all(isinstance(value, bool) for value in acceptance_gates),
     }
     integrity = all(integrity_checks.values())
-    supported = integrity and summary["all_24_within_10pct"]
+    supported = integrity and all(acceptance_gates)
     return {
         "schema_version": 1,
         "experiment_id": config["experiment_id"],
