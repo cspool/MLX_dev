@@ -26,6 +26,8 @@ class HistoricalDpuMemoryAdapter : public MemoryAdapter {
     uint64_t tile_count{1};
     uint64_t input_bytes_per_tile{64};
     uint64_t output_bytes_per_tile{64};
+    std::vector<uint64_t> input_bytes_by_tile;
+    std::vector<uint64_t> output_bytes_by_tile;
     uint64_t stores_per_tile{1};
     uint64_t dma_bytes_per_cycle{64};
     uint64_t dma_setup_cycles{0};
@@ -50,6 +52,9 @@ class HistoricalDpuMemoryAdapter : public MemoryAdapter {
   bool takeCompletion(uint64_t token) override;
 
   bool idle() const;
+  bool tileReady(uint64_t tile) const;
+  void completeReadyTile(uint64_t tile);
+  void advanceToNextDmaCompletion();
   uint64_t now() const { return cycle_; }
   const Config &config() const { return config_; }
   const std::vector<Event> &events() const { return events_; }
@@ -87,6 +92,8 @@ class HistoricalDpuMemoryAdapter : public MemoryAdapter {
   };
 
   DecodedAddress decode(const MemoryRequest &request) const;
+  uint64_t inputBytes(uint64_t tile) const;
+  uint64_t outputBytes(uint64_t tile) const;
   void processCycle(uint64_t cycle);
   void enqueueFill(uint64_t tile);
   void enqueueDrain(uint64_t tile);
@@ -135,4 +142,3 @@ HistoricalDpuMemoryAdapter::Config LoadHistoricalDpuMemoryConfig(
 }  // namespace mlx
 }  // namespace sim
 }  // namespace dsa
-

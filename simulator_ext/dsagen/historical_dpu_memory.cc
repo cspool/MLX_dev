@@ -7,6 +7,7 @@
 #include <limits>
 #include <sstream>
 #include <stdexcept>
+#include <utility>
 
 namespace dsa {
 namespace sim {
@@ -80,8 +81,38 @@ HistoricalDpuMemoryAdapter::HistoricalDpuMemoryAdapter(Config config)
   if (config_.output_bytes_per_tile > half_bytes_) {
     throw std::invalid_argument("DPU output tile exceeds one SPM half");
   }
+  for (const auto &entry : {
+           std::make_pair(&config_.input_bytes_by_tile, "input"),
+           std::make_pair(&config_.output_bytes_by_tile, "output")}) {
+    if (!entry.first->empty() && entry.first->size() != config_.tile_count) {
+      throw std::invalid_argument(
+          std::string("DPU per-tile ") + entry.second +
+          " byte list must match tile count");
+    }
+    for (uint64_t bytes : *entry.first) {
+      if (bytes == 0 || bytes > half_bytes_) {
+        throw std::invalid_argument(
+            std::string("DPU per-tile ") + entry.second +
+            " bytes must fit one SPM half");
+      }
+    }
+  }
   enqueueFill(0);
   if (config_.tile_count > 1) enqueueFill(1);
+}
+
+uint64_t
+HistoricalDpuMemoryAdapter::inputBytes(uint64_t tile) const
+{
+  return config_.input_bytes_by_tile.empty() ?
+      config_.input_bytes_per_tile : config_.input_bytes_by_tile.at(tile);
+}
+
+uint64_t
+HistoricalDpuMemoryAdapter::outputBytes(uint64_t tile) const
+{
+  return config_.output_bytes_by_tile.empty() ?
+      config_.output_bytes_per_tile : config_.output_bytes_by_tile.at(tile);
 }
 
 HistoricalDpuMemoryAdapter::DecodedAddress
@@ -182,11 +213,11 @@ HistoricalDpuMemoryAdapter::enqueueFill(uint64_t tile)
   }
   state.owner = Owner::Filling;
   state.tile = tile;
+  uint64_t bytes = inputBytes(tile);
   dma_queue_.push_back(
-      {false, tile, buffer, config_.input_bytes_per_tile,
-       config_.input_bytes_per_tile, config_.dma_setup_cycles});
+      {false, tile, buffer, bytes, bytes, config_.dma_setup_cycles});
   max_dma_queue_ = std::max<uint64_t>(max_dma_queue_, dma_queue_.size());
-  record("fill_queued", buffer, tile, config_.input_bytes_per_tile);
+  record("fill_queued", buffer, tile, bytes);
 }
 
 void
@@ -198,11 +229,11 @@ HistoricalDpuMemoryAdapter::enqueueDrain(uint64_t tile)
     throw std::runtime_error("DPU drain queued without matching PE ownership");
   }
   state.owner = Owner::Draining;
+  uint64_t bytes = outputBytes(tile);
   dma_queue_.push_back(
-      {true, tile, buffer, config_.output_bytes_per_tile,
-       config_.output_bytes_per_tile, config_.dma_setup_cycles});
+      {true, tile, buffer, bytes, bytes, config_.dma_setup_cycles});
   max_dma_queue_ = std::max<uint64_t>(max_dma_queue_, dma_queue_.size());
-  record("drain_queued", buffer, tile, config_.output_bytes_per_tile);
+  record("drain_queued", buffer, tile, bytes);
 }
 
 void
@@ -297,6 +328,52 @@ HistoricalDpuMemoryAdapter::idle() const
       !dma_active_ && dma_queue_.empty() && token_routes_.empty();
 }
 
+bool
+HistoricalDpuMemoryAdapter::tileReady(uint64_t tile) const
+{
+  if (tile >= config_.tile_count) return false;
+  const auto &state = buffers_.at(tile % config_.buffer_halves);
+  return state.owner == Owner::Pe && state.tile == tile;
+}
+
+void
+HistoricalDpuMemoryAdapter::completeReadyTile(uint64_t tile)
+{
+  if (!tileReady(tile)) {
+    throw std::runtime_error("DPU controller completed a tile before fill");
+  }
+  releaseTile(tile);
+}
+
+void
+HistoricalDpuMemoryAdapter::advanceToNextDmaCompletion()
+{
+  if (!token_routes_.empty()) {
+    throw std::runtime_error(
+        "DPU DMA fast-forward requires no outstanding PE requests");
+  }
+  uint64_t start = advanced_ ? cycle_ + 1 : 0;
+  cycle_ = start;
+  spad_.advance(cycle_);
+  beginTransfer();
+  if (!dma_active_) {
+    advanced_ = true;
+    return;
+  }
+  uint64_t data_cycles =
+      (active_dma_.remaining_bytes + config_.dma_bytes_per_cycle - 1) /
+      config_.dma_bytes_per_cycle;
+  uint64_t total_cycles = active_dma_.setup_remaining + data_cycles;
+  dma_setup_cycles_ += active_dma_.setup_remaining;
+  dma_data_cycles_ += data_cycles;
+  active_dma_.setup_remaining = 0;
+  active_dma_.remaining_bytes = 0;
+  cycle_ += total_cycles - 1;
+  spad_.advance(cycle_);
+  finishTransfer();
+  advanced_ = true;
+}
+
 void
 HistoricalDpuMemoryAdapter::record(
     const std::string &kind, unsigned buffer, uint64_t tile, uint64_t bytes,
@@ -384,6 +461,19 @@ LoadHistoricalDpuMemoryConfig(const std::string &path)
       Positive(root["input_bytes_per_tile"], "input_bytes_per_tile");
   config.output_bytes_per_tile =
       Positive(root["output_bytes_per_tile"], "output_bytes_per_tile");
+  for (const auto &entry : {
+           std::make_pair("input_bytes_by_tile", &config.input_bytes_by_tile),
+           std::make_pair("output_bytes_by_tile", &config.output_bytes_by_tile)}) {
+    const auto &values = root[entry.first];
+    if (!values.isNull()) {
+      if (!values.isArray()) {
+        throw std::runtime_error(std::string(entry.first) + " must be an array");
+      }
+      for (const auto &value : values) {
+        entry.second->push_back(Positive(value, entry.first));
+      }
+    }
+  }
   config.stores_per_tile =
       Positive(root["stores_per_tile"], "stores_per_tile");
   config.dma_bytes_per_cycle =
