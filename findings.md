@@ -663,3 +663,10 @@ out-of-window edge. Every score, probability copy and 4x2 output matches masked
 NumPy; the singleton first-row softmax is explicitly executed. The 86-cycle
 schedule conserves 134 operations, 400 bytes and 21 skip/24 unit hops. H111's
 80 matched SWA comparisons remain 1.620x-3.925x faster.
+
+Run165 adds the standalone elementwise family. Eight run164 outputs flow
+through residual add, channel scale and SiLU on two spatial tags. Every routed
+preactivation and output matches NumPy; maximum error is `2.78e-17`. The
+36-cycle schedule conserves 88 operations, 192 memory bytes and an exact
+eight-skip/eight-unit route split. H153's two same-work elementwise comparisons
+remain 3.508x faster.

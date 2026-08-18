@@ -1,0 +1,365 @@
+{
+  "schema_version": 1,
+  "experiment_id": "H160",
+  "run_id": "run165",
+  "classification": "target_free_same_input_residual_scale_silu",
+  "validation_eligible": true,
+  "generated_at": "2026-08-18T18:48:08.401540+00:00",
+  "project_commit": "f7bf71097e5507078582f400a336d7cf5b4c0345",
+  "hypothesis_status": "supported",
+  "audit_integrity": true,
+  "paper_performance_targets_consumed": false,
+  "paper_reproduction_claim": "elementwise_functional_plus_existing_same_work_gain_only",
+  "functional_claim": "same_input_residual_scale_silu_on_timed_spatial_schedule",
+  "frozen_inputs": {
+    "swa_functional": {
+      "path": "artifacts/results/swa-functional-run164.json",
+      "bytes": 9096,
+      "sha256": "8c83bbd56cbbfcba74dbdea6c6e9b51511f9a07c990ff26371766d2e34634760",
+      "checks": {
+        "is_file": true,
+        "bytes": true,
+        "sha256": true
+      },
+      "pass": true
+    },
+    "full_array_performance": {
+      "path": "artifacts/results/core-full-array-gain-run158.json",
+      "bytes": 15930,
+      "sha256": "f2faf6a176ca8f0da89bd9fdebf34e16b401db96dfaf51f720328dffa3d20ce1",
+      "checks": {
+        "is_file": true,
+        "bytes": true,
+        "sha256": true
+      },
+      "pass": true
+    }
+  },
+  "generated_inputs": {
+    "compile_manifest": {
+      "path": "artifacts/environment/h160/elementwise-functional-compile-manifest.json",
+      "bytes": 1863,
+      "sha256": "3bb95a74d9b65e5ea489edffb89fe0b16a37a7b55addb4e0fc080e5478498044",
+      "checks": {
+        "is_file": true
+      },
+      "pass": true
+    },
+    "run_manifest": {
+      "path": "artifacts/environment/h160/elementwise-functional-run-manifest.json",
+      "bytes": 83969,
+      "sha256": "78ed9cf9b553c1177fcca844c3db86ac4150771914f3096258f891dd0900c09b",
+      "checks": {
+        "is_file": true
+      },
+      "pass": true
+    }
+  },
+  "parent_checks": {
+    "swa_functional": true,
+    "full_array_performance": true
+  },
+  "compile_checks": {
+    "experiment": true,
+    "target_free": true,
+    "outputs": true,
+    "deterministic": true,
+    "files": true
+  },
+  "contract_checks": {
+    "family": true,
+    "shape": true,
+    "input_parent": true,
+    "blocks": true,
+    "tags": true,
+    "pes": true,
+    "trips": true,
+    "memory_seeds": true,
+    "constant_seeds": true,
+    "mode_only_difference": true,
+    "xfer_wiring": true
+  },
+  "static_checks": {
+    "scalar_multiplies": true,
+    "scalar_adds": true,
+    "pipelines": true,
+    "compute_operations": true,
+    "functional_operations": true,
+    "memory_requests": true,
+    "memory_bytes": true,
+    "events": true,
+    "route_hops": true,
+    "skip_hops": true,
+    "unit_hops": true,
+    "manifest": true
+  },
+  "run_checks": {
+    "experiment": true,
+    "target_free": true,
+    "checks": true,
+    "modes": true,
+    "builds": true
+  },
+  "execution_checks": {
+    "debug": true,
+    "opt": true,
+    "sanitize": true
+  },
+  "numeric_checks": {
+    "enabled": true,
+    "outputs": true,
+    "operations": true,
+    "finite": true
+  },
+  "intermediate_checks": {
+    "preactivation": true,
+    "sigmoid_range": true
+  },
+  "transfer_route_checks": {
+    "events": true,
+    "route_hops": true,
+    "skip_hops": true,
+    "unit_hops": true,
+    "stores": true
+  },
+  "timing_checks": {
+    "cycles": true,
+    "instructions": true,
+    "pipelines": true,
+    "events": true,
+    "routes": true
+  },
+  "parent_semantic_checks": {
+    "h159_chain": true,
+    "h153_elementwise": true
+  },
+  "numpy_reference": {
+    "input": [
+      [
+        2.0,
+        -0.5
+      ],
+      [
+        -0.4707670659086666,
+        2.3825615768934445
+      ],
+      [
+        0.5626768474359518,
+        1.6605627021977556
+      ],
+      [
+        -1.6050116296815415,
+        0.42954016832657216
+      ]
+    ],
+    "preactivation": [
+      [
+        2.625,
+        -0.5249999999999999
+      ],
+      [
+        -0.2134588323858333,
+        1.4869211826700834
+      ],
+      [
+        1.3283460592949399,
+        0.7954220266483166
+      ],
+      [
+        -1.131264537101927,
+        -0.27784487375507094
+      ]
+    ],
+    "sigmoid": [
+      [
+        0.9324533088603709,
+        0.3716838117046338
+      ],
+      [
+        0.4468370016595235,
+        0.8156157091770259
+      ],
+      [
+        0.7905669219990729,
+        0.688994357537412
+      ],
+      [
+        0.24392781056705878,
+        0.43098221296995837
+      ]
+    ],
+    "output": [
+      [
+        2.447689935758474,
+        -0.19513400114493273
+      ],
+      [
+        -0.09538130464102854,
+        1.212756274893802
+      ],
+      [
+        1.0501464554463986,
+        0.5480412882216631
+      ],
+      [
+        -0.2759468817074303,
+        -0.11974619855331918
+      ]
+    ]
+  },
+  "actual_preactivation": [
+    2.625,
+    -0.5249999999999999,
+    -0.2134588323858333,
+    1.4869211826700834,
+    1.3283460592949399,
+    0.7954220266483166,
+    -1.131264537101927,
+    -0.27784487375507094
+  ],
+  "expected_outputs": [
+    2.447689935758474,
+    -0.19513400114493273,
+    -0.09538130464102854,
+    1.212756274893802,
+    1.0501464554463986,
+    0.5480412882216631,
+    -0.2759468817074303,
+    -0.11974619855331918
+  ],
+  "actual_outputs": [
+    2.447689935758474,
+    -0.19513400114493273,
+    -0.09538130464102854,
+    1.212756274893802,
+    1.0501464554463986,
+    0.5480412882216631,
+    -0.2759468817074303,
+    -0.11974619855331915
+  ],
+  "absolute_errors": [
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    2.7755575615628914e-17
+  ],
+  "performance_context": {
+    "qualified_rows": 2,
+    "minimum_speedup": 3.5080205570156395,
+    "maximum_speedup": 3.508022604021986,
+    "all_same_work": true,
+    "all_clear_gain": true
+  },
+  "source_files": {
+    "config": {
+      "path": "configs/simulators/elementwise_functional_v1.yaml",
+      "bytes": 2411,
+      "sha256": "0c5459658d8403241372532ca1717d2b5f79b5b2e4071439795405e437c50e45",
+      "checks": {
+        "is_file": true
+      },
+      "pass": true
+    },
+    "protocol": {
+      "path": "experiments/h160-elementwise-functional/protocol.md",
+      "bytes": 2322,
+      "sha256": "ddbe23099f1fce9dbbbcde7bd010243e72547a71d785b0ae695c658fa8030453",
+      "checks": {
+        "is_file": true
+      },
+      "pass": true
+    },
+    "compiler": {
+      "path": "scripts/compile_elementwise_functional.py",
+      "bytes": 9460,
+      "sha256": "8c9d34c9e8f5d5680955f3f032555e0147dadaa2724d7ab2f1a2e2d220834a62",
+      "checks": {
+        "is_file": true
+      },
+      "pass": true
+    },
+    "runner": {
+      "path": "scripts/run_elementwise_functional.py",
+      "bytes": 3232,
+      "sha256": "1917861762818553554b4ad3532e0d021c154473552fd379401b28565be28520",
+      "checks": {
+        "is_file": true
+      },
+      "pass": true
+    },
+    "auditor": {
+      "path": "scripts/audit_elementwise_functional.py",
+      "bytes": 19681,
+      "sha256": "08d90f0365423dcfb65f78c7e394ffb22f190d8c19036e6d802410e1af6594ee",
+      "checks": {
+        "is_file": true
+      },
+      "pass": true
+    },
+    "test": {
+      "path": "tests/test_elementwise_functional.py",
+      "bytes": 3023,
+      "sha256": "34d4a0c140701ae5e2ef4cf4378283cf64f964a0595299b41da360e0a14a1594",
+      "checks": {
+        "is_file": true
+      },
+      "pass": true
+    }
+  },
+  "target_free_check": true,
+  "acceptance_gates": [
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true
+  ],
+  "summary": {
+    "builds": 3,
+    "outputs": 8,
+    "functional_operations": 88,
+    "maximum_absolute_error": 2.7755575615628914e-17,
+    "cycles": 36,
+    "boundary_events": 8,
+    "route_hops": 16,
+    "skip_hops": 8,
+    "unit_hops": 8,
+    "enabled_disabled_timing_identical": true,
+    "elementwise_functional_complete": true,
+    "completed_operator_payloads": [
+      "bsmm",
+      "fft_cmp",
+      "attention",
+      "swa",
+      "elementwise"
+    ],
+    "operator_payload_coverage": 5,
+    "required_operator_payloads": 6,
+    "existing_elementwise_speedup_minimum": 3.5080205570156395,
+    "existing_elementwise_speedup_maximum": 3.508022604021986,
+    "acceptance_gates_passed": 10,
+    "acceptance_gates_total": 10
+  },
+  "integrity_checks": {
+    "frozen": true,
+    "parents": true,
+    "compile": true,
+    "contract": true,
+    "static": true,
+    "runs": true,
+    "numeric_evaluated": true,
+    "intermediates_evaluated": true,
+    "timing_evaluated": true,
+    "source": true,
+    "acceptance_evaluated": true
+  }
+}

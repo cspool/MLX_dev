@@ -72,6 +72,7 @@
 - 全量静态检查与 pytest 无失败。
 
 当前里程碑：核心架构趋势 claim 已通过 5/5；定时完成路径已支持可验证
-数值负载，BSMM、FFT-CMP、Attention 与 SWA 同输入功能覆盖已通过，算子
-级覆盖为 4/6。下一阶段按 elementwise、完整 block 推进；数值靠近停滞时
+数值负载，五类独立算子（BSMM、FFT-CMP、Attention、SWA、elementwise）
+同输入功能覆盖已通过，算子级覆盖为 5/6。下一阶段完成单次仿真的完整
+block 动态组合；数值靠近停滞时
 执行上述跨实验转向规则，而不是目标值拟合、RTL 或功耗实验。
