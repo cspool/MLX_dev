@@ -107,3 +107,9 @@ H120 supports that mechanism in
 banks/issue width and all work, while four independently queued ports accelerate
 all 16 paths by 1.76x–2.75x and reduce queue-unavailable checks by 77%–88%.
 The new primary counters are frozen before H121; Figure 22 remains incomplete.
+
+H121's frozen join in
+[fig22-multiport-transfer.md](fig22-multiport-transfer.md) passes only 4/64.
+Compute MAPE improves to 37.00%, but unchanged load work over a shorter interval
+produces 531.51% load MAPE. Stop Figure 22 residual variants: the missing
+counter interval and RF/local-load classification require author evidence.

@@ -42,6 +42,12 @@ H121 may join only H120's frozen primary values to the same 64 H60 cells under
 the H119 all-point 10% rule. It may not choose between H118/H120 per point,
 switch denominators, alter port count, or add a counter scale after comparison.
 
+That join is complete in
+[fig22-multiport-transfer.md](fig22-multiport-transfer.md). H121 passes 4/64;
+compute error improves but load overprediction grows to 531.51% MAPE. H120
+remains a supported mechanism, while Figure 22 is rejected under the disclosed
+evidence boundary.
+
 Evidence is in
 [run125](../artifacts/results/fig22-coupled-multiport-run125.json), with the
 frozen plan in

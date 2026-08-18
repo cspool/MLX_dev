@@ -288,6 +288,12 @@ width remain 32, but four independent queues accelerate every exact path by
 1.76x–2.75x. Default one-port and all historical regressions remain exact; no
 paper target is consumed.
 
+H121 joins the frozen output in
+[fig22-multiport-transfer.md](fig22-multiport-transfer.md) and rejects Figure 22
+at 4/64. Port topology improves compute occupancy but exposes that the paper's
+load counter cannot be reconstructed from disclosed semantics. Further
+Figure 22 counter variants are stopped pending author evidence.
+
 The active objective is now limited to simulator-dependent hardware performance
 in Figures 18–25, as recorded in
 [simulator-experiment-scope.md](simulator-experiment-scope.md). Accuracy,
