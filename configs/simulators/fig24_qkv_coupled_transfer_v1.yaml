@@ -1,0 +1,46 @@
+name: fig24-qkv-coupled-transfer-v1
+experiment_id: H127
+run_id: run132
+classification: target_exposed_frozen_fig24_qkv_direct_time_transfer
+validation_eligible: true
+
+frozen_inputs:
+  h126:
+    path: artifacts/results/fig24-qkv-orin-postcache-run131.json
+    bytes: 20534
+    sha256: 003851b677ca47e4313cb9a0210f8d8357f6c5807901eb4936127ecb6f14b35c
+    required_status: supported
+    required_integrity: true
+  h114:
+    path: artifacts/results/coupled-full-mesh-paths-run119.json
+    bytes: 203542
+    sha256: 2e5fb3d24dc74a9b9d4cf253fd8d9bf49c833654e807acde6ecb16906461ad99
+    required_status: supported
+    required_integrity: true
+  targets:
+    path: artifacts/targets/paper_targets.yaml
+    bytes: 14931
+    sha256: c4a22ab8052ff8cb223a729b8ce07320c6826cfee0d37e1a664a8761e018b41e
+    section: fig24_structured_sweep.mlx_over_orin
+
+mapping:
+  operators: [qkv_bsmm, qkv_bsmm_b32, qkv_bsmm_b64]
+  cases: [BERT_512, BERT_8K, Llama2_512, Llama2_1K, Llama2_4K, InternLM2_2K, InternLM2_8K]
+  required_points: 21
+  mlx_clock_hz: 1000000000
+  ratio: orin_total_seconds_div_mlx_total_seconds
+
+acceptance:
+  relative_error_limit: 0.10
+  required_passing_points: 21
+  per_point_or_family_selection: forbidden
+  operation_normalization: forbidden
+  residual_scale_or_offset: forbidden
+  target_derived_schedule: forbidden
+  full_figure_completion: false
+
+source_layout:
+  auditor: scripts/audit_fig24_qkv_coupled_transfer.py
+  test: tests/test_fig24_qkv_coupled_transfer.py
+
+result_path: artifacts/results/fig24-qkv-coupled-transfer-run132.json
