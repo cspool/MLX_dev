@@ -18,11 +18,19 @@ from mlxsim.fig24_25_full_mesh_paths import (
     compile_full_mesh_timed_path,
 )
 from mlxsim.repeat_folding import fit_affine, relative_error
-from scripts.audit_fig24_25_exact_paths import (
-    git_commit,
-    qualify,
-    reconstruct_full_work,
-)
+
+try:
+    from scripts.audit_fig24_25_exact_paths import (
+        git_commit,
+        qualify,
+        reconstruct_full_work,
+    )
+except ModuleNotFoundError:
+    from audit_fig24_25_exact_paths import (
+        git_commit,
+        qualify,
+        reconstruct_full_work,
+    )
 
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
 DEFAULT_CONFIG = PROJECT_ROOT / "configs/simulators/fig24_25_full_mesh_paths_v1.yaml"
