@@ -1,0 +1,448 @@
+diff --git a/src/cpu/minor/ssim/mlx_overlay.cc b/src/cpu/minor/ssim/mlx_overlay.cc
+index a897b63..05c80c2 100644
+--- a/src/cpu/minor/ssim/mlx_overlay.cc
++++ b/src/cpu/minor/ssim/mlx_overlay.cc
+@@ -3,6 +3,7 @@
+ #include "mlx_overlay.hh"
+ 
+ #include <algorithm>
++#include <cmath>
+ #include <fstream>
+ #include <functional>
+ #include <iomanip>
+@@ -72,6 +73,19 @@ PositiveUInt(const Json::Value &value, const std::string &field)
+   return result;
+ }
+ 
++double
++FiniteDouble(const Json::Value &value, const std::string &field)
++{
++  if (!value.isNumeric()) {
++    throw std::runtime_error(field + " must be numeric");
++  }
++  double result = value.asDouble();
++  if (!std::isfinite(result)) {
++    throw std::runtime_error(field + " must be finite");
++  }
++  return result;
++}
++
+ std::vector<unsigned>
+ ParseRegisters(const Json::Value &value, const std::string &field)
+ {
+@@ -172,6 +186,11 @@ Overlay::Overlay(Config config, std::vector<TaggedBlock> blocks)
+       state.contexts.resize(config_.iteration_contexts_per_block);
+     }
+   }
++  for (const auto &seed : config_.functional_register_seeds) {
++    functional_registers_[
++        {seed.pe, seed.tag, seed.iteration, seed.reg}] = seed.value;
++  }
++  functional_memory_ = config_.functional_memory_seeds;
+   stats_.physical_pe_count = static_cast<uint64_t>(config_.routing.mesh_width) *
+       static_cast<uint64_t>(config_.routing.mesh_height);
+   std::set<Coord> mapped_pes;
+@@ -221,6 +240,55 @@ Overlay::FromJsonFile(const std::string &path)
+   config.iteration_contexts_per_block =
+       dpu.get("iteration_contexts_per_block", 1).asUInt();
+ 
++  const auto &functional = root["functional_execution"];
++  if (!functional.isNull()) {
++    if (!functional.isObject()) {
++      throw std::runtime_error("functional_execution must be an object");
++    }
++    config.functional_execution = functional.get("enabled", false).asBool();
++    config.functional_strict_memory =
++        functional.get("strict_memory", true).asBool();
++    const auto &memory = functional["memory"];
++    if (!memory.isNull()) {
++      if (!memory.isArray()) {
++        throw std::runtime_error("functional_execution.memory must be an array");
++      }
++      for (const auto &entry : memory) {
++        if (!entry.isObject() ||
++            (!entry["address"].isUInt64() && !entry["address"].isUInt())) {
++          throw std::runtime_error(
++              "functional_execution.memory entries need address/value");
++        }
++        uint64_t address = entry["address"].asUInt64();
++        if (config.functional_memory_seeds.count(address)) {
++          throw std::runtime_error(
++              "functional_execution.memory addresses must be unique");
++        }
++        config.functional_memory_seeds[address] = FiniteDouble(
++            entry["value"], "functional_execution.memory[].value");
++      }
++    }
++    const auto &registers = functional["registers"];
++    if (!registers.isNull()) {
++      if (!registers.isArray()) {
++        throw std::runtime_error(
++            "functional_execution.registers must be an array");
++      }
++      for (const auto &entry : registers) {
++        FunctionalRegisterSeed seed;
++        seed.pe = ParseCoord(
++            entry["pe"], "functional_execution.registers[].pe");
++        seed.tag = PositiveUInt(
++            entry["tag"], "functional_execution.registers[].tag");
++        seed.iteration = entry.get("iteration", 0).asUInt64();
++        seed.reg = entry["reg"].asUInt();
++        seed.value = FiniteDouble(
++            entry["value"], "functional_execution.registers[].value");
++        config.functional_register_seeds.push_back(seed);
++      }
++    }
++  }
++
+   const auto &pipeline_root = root["pipelines"];
+   for (const std::string name : {"load", "store", "compute", "xfer"}) {
+     const auto &timing = pipeline_root[name];
+@@ -328,6 +396,15 @@ Overlay::FromJsonFile(const std::string &path)
+       instruction.operation = instruction_root["operation"].asString();
+       instruction.reads = ParseRegisters(instruction_root["reads"], "reads");
+       instruction.writes = ParseRegisters(instruction_root["writes"], "writes");
++      if (!instruction_root["immediates"].isNull()) {
++        if (!instruction_root["immediates"].isArray()) {
++          throw std::runtime_error("instructions[].immediates must be an array");
++        }
++        for (const auto &value : instruction_root["immediates"]) {
++          instruction.immediates.push_back(
++              FiniteDouble(value, "instructions[].immediates[]"));
++        }
++      }
+       instruction.memory_address = instruction_root.get("memory_address", 0).asUInt64();
+       if (!instruction_root["memory_address_sequence"].isNull()) {
+         if (!instruction_root["memory_address_sequence"].isArray()) {
+@@ -355,11 +432,14 @@ Overlay::FromJsonFile(const std::string &path)
+             ParseCoord(instruction_root["destination"], "destination");
+         instruction.destination_register =
+             instruction_root["destination_register"].asUInt();
++        instruction.destination_tag = instruction_root.get(
++            "destination_tag", static_cast<Json::UInt64>(block.tag)).asUInt64();
+         if (instruction.writes.empty()) {
+           instruction.writes.push_back(instruction.destination_register);
+         }
+       } else {
+         instruction.destination = block.pe;
++        instruction.destination_tag = block.tag;
+       }
+       block.instructions.push_back(std::move(instruction));
+     }
+@@ -455,6 +535,19 @@ Overlay::validate() const
+   if (config_.routing.skip_steps.empty() || config_.routing.skip_steps.back() != 1) {
+     throw std::runtime_error("MLX routing must include a unit hop");
+   }
++  if (config_.functional_execution) {
++    for (const auto &seed : config_.functional_register_seeds) {
++      if (seed.pe.x < 0 || seed.pe.x >= config_.routing.mesh_width ||
++          seed.pe.y < 0 || seed.pe.y >= config_.routing.mesh_height) {
++        throw std::runtime_error(
++            "functional register seed PE is outside the configured mesh");
++      }
++      if (!tag_blocks_.count(seed.tag)) {
++        throw std::runtime_error(
++            "functional register seed tag is not defined");
++      }
++    }
++  }
+   for (PipelineKind pipeline : {PipelineKind::Load, PipelineKind::Store,
+                                 PipelineKind::Compute, PipelineKind::Xfer}) {
+     auto iterator = config_.pipeline_timing.find(pipeline);
+@@ -528,6 +621,11 @@ Overlay::validate() const
+       }
+       if (instruction.pipeline == PipelineKind::Xfer) {
+         GreedyRoute(block.pe, instruction.destination, config_.routing);
++        if (config_.functional_execution &&
++            !tag_blocks_.count(instruction.destination_tag)) {
++          throw std::runtime_error(
++              "functional xfer destination tag is not defined");
++        }
+         if (instruction.network_plane >= config_.routing.network_planes) {
+           throw std::runtime_error(
+               "DPU network plane is outside the configured physical planes");
+@@ -555,6 +653,33 @@ Overlay::validate() const
+         throw std::runtime_error(
+             "MLX emit-event period must divide block trip count");
+       }
++      if (config_.functional_execution) {
++        std::size_t operands =
++            instruction.reads.size() + instruction.immediates.size();
++        if (instruction.pipeline == PipelineKind::Load &&
++            instruction.writes.empty()) {
++          throw std::runtime_error(
++              "functional load requires a destination register");
++        }
++        if ((instruction.pipeline == PipelineKind::Store ||
++             instruction.pipeline == PipelineKind::Xfer) &&
++            operands != 1) {
++          throw std::runtime_error(
++              "functional store/xfer requires exactly one operand");
++        }
++        if (instruction.pipeline == PipelineKind::Compute) {
++          std::size_t expected =
++              instruction.operation == "fma" ? 3 :
++              (instruction.operation == "fexp" ||
++               instruction.operation == "frsqrt" ||
++               instruction.operation == "shuffle" ? 1 : 2);
++          if (operands != expected || instruction.writes.empty()) {
++            throw std::runtime_error(
++                "functional compute operation has invalid arity/writes: " +
++                instruction.operation);
++          }
++        }
++      }
+       for (const auto &registers : {instruction.reads, instruction.writes}) {
+         std::set<unsigned> banks;
+         for (unsigned reg : registers) {
+@@ -782,6 +907,7 @@ Overlay::completeInstruction(std::size_t block_index)
+       pending_writers_.erase({destination, block.tag, reg});
+     }
+   }
++  executeFunctional(block, instruction, state.iteration);
+   recordEvent("complete", block_index);
+   ++stats_.instructions_completed;
+   if (!instruction.emit_event.empty() &&
+@@ -1035,6 +1161,96 @@ Overlay::memoryAddress(
+   return instruction.memory_address_sequence.at(iteration);
+ }
+ 
++double
++Overlay::functionalRegisterValue(
++    Coord pe, uint64_t tag, uint64_t iteration, unsigned reg) const
++{
++  auto iterator = functional_registers_.find({pe, tag, iteration, reg});
++  if (iterator == functional_registers_.end()) {
++    throw std::runtime_error(
++        "functional register read before write: PE(" +
++        std::to_string(pe.x) + "," + std::to_string(pe.y) + ") tag=" +
++        std::to_string(tag) + " iteration=" + std::to_string(iteration) +
++        " reg=" + std::to_string(reg));
++  }
++  return iterator->second;
++}
++
++void
++Overlay::executeFunctional(
++    const TaggedBlock &block, const Instruction &instruction,
++    uint64_t iteration)
++{
++  if (!config_.functional_execution) return;
++  try {
++    std::vector<double> operands;
++    for (unsigned reg : instruction.reads) {
++      operands.push_back(
++          functionalRegisterValue(block.pe, block.tag, iteration, reg));
++    }
++    operands.insert(
++        operands.end(), instruction.immediates.begin(),
++        instruction.immediates.end());
++    double result = 0.0;
++    if (instruction.pipeline == PipelineKind::Load) {
++      uint64_t address = memoryAddress(instruction, iteration);
++      auto value = functional_memory_.find(address);
++      if (value == functional_memory_.end()) {
++        if (config_.functional_strict_memory) {
++          throw std::runtime_error(
++              "functional load address is uninitialized: " +
++              std::to_string(address));
++        }
++        result = 0.0;
++      } else {
++        result = value->second;
++      }
++    } else if (instruction.pipeline == PipelineKind::Store) {
++      result = operands.at(0);
++      functional_memory_[memoryAddress(instruction, iteration)] = result;
++    } else if (instruction.pipeline == PipelineKind::Xfer) {
++      result = operands.at(0);
++    } else if (instruction.operation == "add") {
++      result = operands.at(0) + operands.at(1);
++    } else if (instruction.operation == "mul") {
++      result = operands.at(0) * operands.at(1);
++    } else if (instruction.operation == "fma") {
++      result = std::fma(operands.at(0), operands.at(1), operands.at(2));
++    } else if (instruction.operation == "fmax") {
++      result = std::fmax(operands.at(0), operands.at(1));
++    } else if (instruction.operation == "fexp") {
++      result = std::exp(operands.at(0));
++    } else if (instruction.operation == "fdiv") {
++      result = operands.at(0) / operands.at(1);
++    } else if (instruction.operation == "frsqrt") {
++      result = 1.0 / std::sqrt(operands.at(0));
++    } else if (instruction.operation == "shuffle") {
++      result = operands.at(0);
++    } else {
++      throw std::runtime_error(
++          "unsupported functional operation: " + instruction.operation);
++    }
++    if (!std::isfinite(result)) {
++      ++stats_.functional_nan_values;
++    }
++    if (instruction.pipeline == PipelineKind::Xfer) {
++      for (unsigned reg : instruction.writes) {
++        functional_registers_[
++            {instruction.destination, instruction.destination_tag, iteration,
++             reg}] = result;
++      }
++    } else if (instruction.pipeline != PipelineKind::Store) {
++      for (unsigned reg : instruction.writes) {
++        functional_registers_[{block.pe, block.tag, iteration, reg}] = result;
++      }
++    }
++    ++stats_.functional_operations;
++  } catch (...) {
++    ++stats_.functional_errors;
++    throw;
++  }
++}
++
+ bool
+ Overlay::canIssue(std::size_t block_index, std::string *reason) const
+ {
+@@ -1524,6 +1740,7 @@ Overlay::completePipelinedInstruction(ContextRef ref)
+   auto &context = block_state.contexts[ref.context_index];
+   const auto &block = blocks_[ref.block_index];
+   const auto &instruction = block.instructions[context.pc];
++  executeFunctional(block, instruction, context.iteration);
+   recordContextEvent("complete", ref);
+   ++stats_.instructions_completed;
+   if (!instruction.emit_event.empty() &&
+@@ -2079,6 +2296,42 @@ Overlay::summaryJson(const std::string &scenario) const
+     out << Quote(item.first) << ":" << item.second;
+     first = false;
+   }
++  out << "},\"functional\":{\"enabled\":"
++      << (config_.functional_execution ? "true" : "false")
++      << ",\"operations\":" << stats_.functional_operations
++      << ",\"nan_values\":" << stats_.functional_nan_values
++      << ",\"errors\":" << stats_.functional_errors;
++  if (config_.functional_execution) {
++    out << ",\"memory\":{";
++    first = true;
++    for (const auto &item : functional_memory_) {
++      if (!first) out << ",";
++      out << Quote(std::to_string(item.first)) << ":";
++      if (std::isfinite(item.second)) {
++        out << std::setprecision(17) << item.second;
++      } else {
++        out << "null";
++      }
++      first = false;
++    }
++    out << "},\"registers\":[";
++    first = true;
++    for (const auto &item : functional_registers_) {
++      if (!first) out << ",";
++      out << "{\"pe\":[" << item.first.pe.x << "," << item.first.pe.y
++          << "],\"tag\":" << item.first.tag
++          << ",\"iteration\":" << item.first.iteration
++          << ",\"reg\":" << item.first.reg << ",\"value\":";
++      if (std::isfinite(item.second)) {
++        out << std::setprecision(17) << item.second;
++      } else {
++        out << "null";
++      }
++      out << "}";
++      first = false;
++    }
++    out << "]";
++  }
+   out << "}}";
+   return out.str();
+ }
+diff --git a/src/cpu/minor/ssim/mlx_overlay.hh b/src/cpu/minor/ssim/mlx_overlay.hh
+index cf98361..2a9ca3e 100644
+--- a/src/cpu/minor/ssim/mlx_overlay.hh
++++ b/src/cpu/minor/ssim/mlx_overlay.hh
+@@ -96,6 +96,14 @@ struct RegisterFileConfig {
+       : banks(banks_), read_ports(read_ports_), write_ports(write_ports_) {}
+ };
+ 
++struct FunctionalRegisterSeed {
++  Coord pe;
++  uint64_t tag{0};
++  uint64_t iteration{0};
++  unsigned reg{0};
++  double value{0.0};
++};
++
+ struct RoutingConfig {
+   int mesh_width{1};
+   int mesh_height{1};
+@@ -130,6 +138,10 @@ struct Config {
+   std::map<PipelineKind, Timing> pipeline_timing;
+   std::map<std::string, FunctionalUnit> functional_units;
+   RoutingConfig routing;
++  bool functional_execution{false};
++  bool functional_strict_memory{true};
++  std::vector<FunctionalRegisterSeed> functional_register_seeds;
++  std::map<uint64_t, double> functional_memory_seeds;
+ };
+ 
+ struct Instruction {
+@@ -138,8 +150,10 @@ struct Instruction {
+   std::string operation;
+   std::vector<unsigned> reads;
+   std::vector<unsigned> writes;
++  std::vector<double> immediates;
+   Coord destination;
+   unsigned destination_register{0};
++  uint64_t destination_tag{0};
+   uint64_t memory_address{0};
+   std::vector<uint64_t> memory_address_sequence;
+   unsigned memory_bytes{8};
+@@ -245,6 +259,9 @@ struct Stats {
+   uint64_t dpu_frfo_issues{0};
+   uint64_t max_active_blocks_per_pe{0};
+   uint64_t max_inflight_iterations_per_block{0};
++  uint64_t functional_operations{0};
++  uint64_t functional_nan_values{0};
++  uint64_t functional_errors{0};
+ };
+ 
+ class Overlay {
+@@ -348,6 +365,21 @@ class Overlay {
+     }
+   };
+ 
++  struct FunctionalRegisterKey {
++    Coord pe;
++    uint64_t tag{0};
++    uint64_t iteration{0};
++    unsigned reg{0};
++    FunctionalRegisterKey(
++        Coord pe_ = Coord(), uint64_t tag_ = 0, uint64_t iteration_ = 0,
++        unsigned reg_ = 0)
++        : pe(pe_), tag(tag_), iteration(iteration_), reg(reg_) {}
++    bool operator<(const FunctionalRegisterKey &other) const {
++      return std::tie(pe, tag, iteration, reg) <
++             std::tie(other.pe, other.tag, other.iteration, other.reg);
++    }
++  };
++
+   struct LinkKey {
+     Coord source;
+     Coord destination;
+@@ -417,6 +449,11 @@ class Overlay {
+   bool canWriteback(std::size_t block_index, std::string *reason) const;
+   void reserveReadPorts(const TaggedBlock &block, const Instruction &instruction);
+   void reserveWritePorts(const TaggedBlock &block, const Instruction &instruction);
++  void executeFunctional(
++      const TaggedBlock &block, const Instruction &instruction,
++      uint64_t iteration);
++  double functionalRegisterValue(
++      Coord pe, uint64_t tag, uint64_t iteration, unsigned reg) const;
+   Coord writebackPe(const TaggedBlock &block, const Instruction &instruction) const;
+   Timing instructionTiming(const Instruction &instruction) const;
+   uint64_t memoryAddress(
+@@ -480,6 +517,8 @@ class Overlay {
+   std::vector<Event> events_;
+   Stats stats_;
+   MemoryAdapter *memory_adapter_{nullptr};
++  std::map<FunctionalRegisterKey, double> functional_registers_;
++  std::map<uint64_t, double> functional_memory_;
+ };
+ 
+ }  // namespace mlx
+
