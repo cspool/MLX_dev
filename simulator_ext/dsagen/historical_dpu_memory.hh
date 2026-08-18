@@ -31,6 +31,7 @@ class HistoricalDpuMemoryAdapter : public MemoryAdapter {
     uint64_t stores_per_tile{1};
     uint64_t dma_bytes_per_cycle{64};
     uint64_t dma_setup_cycles{0};
+    bool record_events{true};
     StandaloneSpadAdapter::Config spad;
   };
 

@@ -379,6 +379,7 @@ HistoricalDpuMemoryAdapter::record(
     const std::string &kind, unsigned buffer, uint64_t tile, uint64_t bytes,
     uint64_t relative, uint64_t physical)
 {
+  if (!config_.record_events) return;
   events_.push_back({cycle_, kind, buffer, tile, bytes, relative, physical});
 }
 
@@ -482,6 +483,10 @@ LoadHistoricalDpuMemoryConfig(const std::string &path)
     throw std::runtime_error("dma_setup_cycles must be an unsigned integer");
   }
   config.dma_setup_cycles = root.get("dma_setup_cycles", 0).asUInt64();
+  if (!root.get("record_events", true).isBool()) {
+    throw std::runtime_error("record_events must be boolean");
+  }
+  config.record_events = root.get("record_events", true).asBool();
   const auto &spad = root["spad"];
   config.spad.bank_width_bytes = static_cast<unsigned>(
       Positive(spad["bank_width_bytes"], "spad.bank_width_bytes"));
