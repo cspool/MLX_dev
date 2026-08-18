@@ -1,0 +1,77 @@
+name: full-mesh-memory-residency-v1
+experiment_id: H107
+run_id: run112
+classification: target_free_full_mesh_memory_residency_and_oi
+validation_eligible: false
+
+frozen_inputs:
+  h102:
+    path: artifacts/results/fig24-25-full-mesh-paths-run107.json
+    bytes: 2848348
+    sha256: 0107a9a0bd25404d49f90ac073d8c0bd04346f95cab13f8e259a1c6e81ae4a7d
+    required_status: supported
+    required_integrity: true
+  h106:
+    path: artifacts/results/historical-dpu-memory-run111.json
+    bytes: 8808
+    sha256: 5c799e785f214a247b85be256e42d3e8f34e52e6f9c81a2c3d4f445aa3dd68a1
+    required_status: supported
+    required_integrity: true
+  contracts:
+    path: artifacts/source-snapshots/h107-full-mesh-memory-contracts-20260818.json
+    bytes: 47304
+    sha256: 2d342f74c22256f79842aa771b3e233ce63cf167cfd05fe43fff9600a656d0a1
+  manuscript:
+    path: MLX Multi-Layer Execution for Structured LLM Workload Acceleration on Spatial Architectures/MLX Multi-Layer Execution for Structured LLM Workload Acceleration on Spatial Architectures.md
+    bytes: 85855
+    sha256: 5785eb81b28741a3806ca42749d7b556bbcd2404e1622ae644a32bae2ade7745
+
+hardware:
+  frequency_hz: 1000000000
+  spm_bytes: 8388608
+  buffer_halves: 2
+  half_bytes: 4194304
+  tile_alignment_bytes: 32
+  dma_bytes_per_cycle: 64
+  dma_setup_cycles: 0
+  dma_provenance: h106_reported_bandwidth_with_explicit_zero_setup_lower_bound
+  fma_effective_flops: 2
+  data_type_bytes: 2
+
+traffic_policy:
+  fft: compulsory_input_once_output_once
+  qkv_bsmm: activation_and_structured_weights_once_output_once
+  swa_selected: query_once_kv_window_per_query_tile_output_once
+  swa_lower_bound: qkv_once_output_once
+  cross_query_tile_kv_reuse: false
+  selection_basis: paper_reports_bandwidth_loss_from_windowed_kv_traffic
+  figure25_residual_used: false
+
+roofline_boundary:
+  operational_intensity_unit: effective_fp16_flop_per_offchip_byte
+  mlx_peak_ops_per_cycle: null
+  mlx_offchip_bandwidth_bytes_per_cycle: null
+  achieved_performance: null
+  roofline_utilization: null
+
+execution:
+  required_paths: 48
+  required_family_counts: {fft: 8, qkv_bsmm: 24, swa: 16}
+  build_modes: [debug, optimized, asan, ubsan]
+  deterministic_replays: 2
+  required_executions: 288
+  paper_performance_targets_consumed: false
+
+source_layout:
+  collector: scripts/collect_h107_memory_contracts.py
+  compiler_core: src/mlxsim/full_mesh_memory_residency.py
+  compiler: scripts/compile_full_mesh_memory_residency.py
+  adapter_header: simulator_ext/dsagen/historical_dpu_memory.hh
+  adapter_source: simulator_ext/dsagen/historical_dpu_memory.cc
+  driver: simulator_ext/dsagen/historical_dpu_schedule_driver.cc
+  runner: scripts/run_full_mesh_memory_residency.py
+  auditor: scripts/audit_full_mesh_memory_residency.py
+
+output_root: artifacts/environment/h107
+result_path: artifacts/results/full-mesh-memory-residency-run112.json
+
