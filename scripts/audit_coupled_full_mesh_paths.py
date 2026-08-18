@@ -56,6 +56,8 @@ def partition_identity(
         "instance_base",
         "predecessors",
         "wait_events",
+        "wait_event_periods",
+        "wait_event_multiplicities",
         "instructions",
     }
     ignored_instruction = {
@@ -106,7 +108,12 @@ def partition_identity(
                     return False
                 if right.get("emit_event") and (
                     not left["emit_event"].endswith(f"__{right['emit_event']}")
-                    or int(left["emit_event_period"]) != int(member["trip_count"])
+                    or int(left["emit_event_period"])
+                    != (
+                        int(member["trip_count"])
+                        if tile_count > 1
+                        else int(right.get("emit_event_period", 1))
+                    )
                 ):
                     return False
     return True

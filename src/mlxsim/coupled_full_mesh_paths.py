@@ -120,19 +120,34 @@ def compile_coupled_path(
                 f"{event_prefix}{event}"
                 for event in original_block.get("wait_events", [])
             ]
-            if original_block.get("wait_event_periods") or original_block.get(
-                "wait_event_multiplicities"
-            ):
+            wait_periods = original_block.get("wait_event_periods") or {}
+            wait_multiplicities = (
+                original_block.get("wait_event_multiplicities") or {}
+            )
+            if tile_count > 1 and (wait_periods or wait_multiplicities):
                 raise ValueError(
                     f"tile partition requires nonperiodic waits: {run_key}"
                 )
+            if wait_periods:
+                block["wait_event_periods"] = {
+                    f"{event_prefix}{event}": value
+                    for event, value in wait_periods.items()
+                }
+            if wait_multiplicities:
+                block["wait_event_multiplicities"] = {
+                    f"{event_prefix}{event}": value
+                    for event, value in wait_multiplicities.items()
+                }
             for instruction_index, instruction in enumerate(block["instructions"]):
                 original_instruction = original_block["instructions"][
                     instruction_index
                 ]
                 instruction["id"] = f"{event_prefix}{original_instruction['id']}"
                 if original_instruction.get("emit_event"):
-                    if int(original_instruction.get("emit_event_period", 1)) != int(
+                    original_period = int(
+                        original_instruction.get("emit_event_period", 1)
+                    )
+                    if tile_count > 1 and original_period != int(
                         original_block["trip_count"]
                     ):
                         raise ValueError(
@@ -141,7 +156,9 @@ def compile_coupled_path(
                     instruction["emit_event"] = (
                         f"{event_prefix}{original_instruction['emit_event']}"
                     )
-                    instruction["emit_event_period"] = trip_count
+                    instruction["emit_event_period"] = (
+                        trip_count if tile_count > 1 else original_period
+                    )
                 pipeline = instruction["pipeline"]
                 if pipeline not in {"load", "store"}:
                     continue
