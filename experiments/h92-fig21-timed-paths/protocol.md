@@ -13,14 +13,16 @@ MUL/ADD/FRSQRT/FEXP/FDIV/SHUFFLE counts in a fixed sequential FU order.
 
 Each component's full per-lane compute trips and 64-byte load/store packet
 counts are divided by their greatest common divisor to form one exact unit
-topology. H91 must prove that this unit topology is identical across all five
-N values; only `full_scale` changes. One load-complete event authorizes the
-first compute block, each FU/stage emits one completion event, and the final
-event authorizes stores. Four H69 column SRAM ports provide real H66 timing.
+topology. Pre-execution formula review rejects a shared topology across N:
+weight loads are layer-constant while activation traffic scales with N. H92
+therefore materializes all 45 shape×family unit topologies independently. One
+load-complete event authorizes the first compute block, each FU/stage emits one
+completion event, and the final event authorizes stores. Four H69 column SRAM
+ports provide real H66 timing.
 
 For every family q=4/8 fit affine cycles and q=16/32 are held out. Support
 requires all 18 holdouts within 5%, exact instruction/FU/load/store scaling,
-byte-identical double runs, and exact full work/bytes for all five shapes. No
+byte-identical double runs, and exact full work/bytes for all 45 paths. No
 Figure 21 target is read.
 
 The immutable output is
