@@ -1,0 +1,57 @@
+name: fig24-25-exact-paths-v1
+experiment_id: H101
+run_id: run106
+classification: target_free_figure24_25_exact_shape_paths
+validation_eligible: false
+
+frozen_inputs:
+  identity:
+    path: artifacts/results/fig24-25-work-identity-run105.json
+    sha256: a947545c62cec6fc79621f5c5a838f8845480c414d75bd37f9285d0cdfd6493d
+    required_status: supported
+    required_integrity: true
+  fft_mechanism:
+    path: artifacts/results/combined-attention-memory-run088.json
+    sha256: a647443c82ae407b18f0253757b43cf245b1626593e03510895f9c87ecd5fa44
+    required_status: supported
+    required_integrity: true
+  projection_mechanism:
+    path: artifacts/results/fig21-timed-paths-run097.json
+    sha256: 14444c351b54ad3e597d5f8c601b19dde989e3ba034ded6e1b4519186730421d
+    required_status: supported
+    required_integrity: true
+  swa_mechanism:
+    path: artifacts/results/fig21-dense-attention-run099.json
+    sha256: 728d6c7ef1577816ce2ecf6e4db0eae27da2a14123ae1bedd1c3f42bf0f6808f
+    required_status: supported
+    required_integrity: true
+  spad:
+    path: artifacts/results/standalone-dsagen-spad-run071.json
+    sha256: 2a816515bf6cb2dcdde3ba6972eb8d095b44a2fde2f2c01ad7d1c63c30f15db8
+    required_status: supported
+    required_integrity: true
+  column_ports:
+    path: artifacts/results/multiport-spad-run074.json
+    sha256: a58c37a45111a8928fd98df8eb52ee8db48b2d1032766351020d11344b16f562
+    required_status: supported
+    required_integrity: true
+
+fit_scales: [4, 8]
+holdout_scales: [16, 32]
+cycle_relative_error_limit: 0.05
+hardware:
+  simd_width: 32
+  vector_bytes: 64
+  lanes: 4
+  active_window: 2
+  spad_ports: 4
+  spad_axis: x
+
+output_root: artifacts/environment/h101
+source_layout:
+  compiler_core: src/mlxsim/fig24_25_exact_paths.py
+  compiler: scripts/compile_fig24_25_exact_paths.py
+  runner: scripts/run_fig24_25_exact_paths.py
+  auditor: scripts/audit_fig24_25_exact_paths.py
+
+result_path: artifacts/results/fig24-25-exact-paths-run106.json
