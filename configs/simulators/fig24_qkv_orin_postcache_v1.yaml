@@ -1,0 +1,52 @@
+name: fig24-qkv-orin-postcache-v1
+experiment_id: H126
+run_id: run131
+classification: target_free_block128_qkv_orin_postcache_fold
+validation_eligible: false
+
+frozen_inputs:
+  h125:
+    path: artifacts/results/fig24-qkv-orin-steady-state-run130.json
+    bytes: 22249
+    sha256: d191e6e3816f154b1f918a926918af9eb125e7817f797a6b83a8b05bdd4435fe
+    required_status: rejected
+    required_integrity: true
+  h125_manifest:
+    path: artifacts/environment/h125/fig24-qkv-orin-steady-state-run-manifest.json
+    bytes: 2758
+    sha256: 0cde78341f81ac20e70b93f4e5521e499ac7e39c781cf4cc3444429cb37e5782
+  h125_config:
+    path: configs/simulators/fig24_qkv_orin_steady_state_v1.yaml
+    bytes: 1525
+    sha256: cf6b7c219dd543952e1fb385aab2a55fba7f4d23c2391e84a47ca8112f3d9906
+
+templates:
+  qkv_bsmm: {stages: 4, block_size: 16}
+  qkv_bsmm_b32: {stages: 5, block_size: 32}
+  qkv_bsmm_b64: {stages: 6, block_size: 64}
+
+folding:
+  base_element_count: 32768
+  fma_per_element_stage: 3
+  block_threads: 128
+  parent_anchor_scale: 32
+  new_anchor_scale: 64
+  holdout_scale: 128
+  relative_error_limit: 0.05
+  required_parent_anchors: 3
+  required_new_runs: 6
+  required_holdouts: 3
+  required_full_estimates: 21
+
+execution:
+  workers: 3
+  max_wall_seconds_per_run: 3600
+  targets_consumed: false
+
+source_layout:
+  runner: scripts/run_fig24_qkv_orin_postcache.py
+  auditor: scripts/audit_fig24_qkv_orin_postcache.py
+  test: tests/test_fig24_qkv_orin_postcache.py
+
+output_root: artifacts/environment/h126
+result_path: artifacts/results/fig24-qkv-orin-postcache-run131.json
