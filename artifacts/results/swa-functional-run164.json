@@ -1,0 +1,420 @@
+{
+  "schema_version": 1,
+  "experiment_id": "H159",
+  "run_id": "run164",
+  "classification": "target_free_same_input_causal_sliding_window_attention",
+  "validation_eligible": true,
+  "generated_at": "2026-08-18T18:40:27.470582+00:00",
+  "project_commit": "3d34d27a5320e787956f0ea57268a8c288ea0c76",
+  "hypothesis_status": "supported",
+  "audit_integrity": true,
+  "paper_performance_targets_consumed": false,
+  "paper_reproduction_claim": "swa_functional_plus_existing_same_work_gain_only",
+  "functional_claim": "same_input_causal_window_edges_softmax_sv_on_timed_schedule",
+  "frozen_inputs": {
+    "attention_functional": {
+      "path": "artifacts/results/attention-functional-run163.json",
+      "bytes": 7886,
+      "sha256": "04c5b934bedc85abe28f263ff9f6b6e639eff3e2eed838fea84c56bb8ce82652",
+      "checks": {
+        "is_file": true,
+        "bytes": true,
+        "sha256": true
+      },
+      "pass": true
+    },
+    "swa_performance": {
+      "path": "artifacts/results/corrected-compute-dma-overlap-run116.json",
+      "bytes": 161811,
+      "sha256": "80d820ba42358e480c22173368b9624830c884a70030a28cc45dbac84159b41f",
+      "checks": {
+        "is_file": true,
+        "bytes": true,
+        "sha256": true
+      },
+      "pass": true
+    }
+  },
+  "generated_inputs": {
+    "compile_manifest": {
+      "path": "artifacts/environment/h159/swa-functional-compile-manifest.json",
+      "bytes": 1941,
+      "sha256": "987a437f9adfdd1b970b62923c92258b8853285fbe2a7f1eb9cdd64dca19f9e2",
+      "checks": {
+        "is_file": true
+      },
+      "pass": true
+    },
+    "run_manifest": {
+      "path": "artifacts/environment/h159/swa-functional-run-manifest.json",
+      "bytes": 113918,
+      "sha256": "366d1c9587e4fc6b61a7db57c15ef3b9e467a4560446dd885f718bfc626c457d",
+      "checks": {
+        "is_file": true
+      },
+      "pass": true
+    }
+  },
+  "parent_checks": {
+    "attention_functional": true,
+    "swa_performance": true
+  },
+  "compile_checks": {
+    "experiment": true,
+    "target_free": true,
+    "outputs": true,
+    "deterministic": true,
+    "files": true
+  },
+  "contract_checks": {
+    "family": true,
+    "shape": true,
+    "q_parent": true,
+    "blocks": true,
+    "tags": true,
+    "pes": true,
+    "trips": true,
+    "memory_seeds": true,
+    "constant_seeds": true,
+    "mode_only_difference": true,
+    "edges_and_wiring": true
+  },
+  "edge_checks": {
+    "exact_valid_edges": true,
+    "no_future_edges": true,
+    "window_bound": true,
+    "row_fanins": true,
+    "score_wiring": true,
+    "probability_wiring": true
+  },
+  "static_checks": {
+    "scalar_multiplies": true,
+    "scalar_adds": true,
+    "pipelines": true,
+    "compute_operations": true,
+    "functional_operations": true,
+    "memory_requests": true,
+    "memory_bytes": true,
+    "events": true,
+    "route_hops": true,
+    "skip_hops": true,
+    "unit_hops": true,
+    "manifest": true
+  },
+  "run_checks": {
+    "experiment": true,
+    "target_free": true,
+    "checks": true,
+    "modes": true,
+    "builds": true
+  },
+  "execution_checks": {
+    "debug": true,
+    "opt": true,
+    "sanitize": true
+  },
+  "numeric_checks": {
+    "enabled": true,
+    "outputs": true,
+    "operations": true,
+    "finite": true
+  },
+  "intermediate_checks": {
+    "scores": true,
+    "probabilities": true,
+    "singleton_probability": true,
+    "probability_rows_sum_one": true
+  },
+  "transfer_route_checks": {
+    "events": true,
+    "route_hops": true,
+    "skip_hops": true,
+    "unit_hops": true,
+    "stores": true
+  },
+  "timing_checks": {
+    "cycles": true,
+    "instructions": true,
+    "pipelines": true,
+    "events": true,
+    "routes": true
+  },
+  "parent_semantic_checks": {
+    "h158_chain": true,
+    "h111_swa": true
+  },
+  "numpy_reference": {
+    "q": [
+      [
+        -0.08117498632871689,
+        1.9280374840501697
+      ],
+      [
+        0.24560344505745324,
+        1.5467959807663048
+      ],
+      [
+        -1.0,
+        0.75
+      ],
+      [
+        2.0,
+        -0.5
+      ]
+    ],
+    "scores": [
+      [
+        -1.3920280710016053
+      ],
+      [
+        -1.0069159963704992,
+        0.5339392740023419
+      ],
+      [
+        -0.9280776503073436,
+        1.1932426932522988
+      ],
+      [
+        -1.5026019100214134,
+        0.282842712474619
+      ]
+    ],
+    "probabilities": [
+      [
+        1.0
+      ],
+      [
+        0.17641097803044445,
+        0.8235890219695555
+      ],
+      [
+        0.10704180146517044,
+        0.8929581985348296
+      ],
+      [
+        0.14363213466125768,
+        0.8563678653387424
+      ]
+    ],
+    "output": [
+      [
+        2.0,
+        -0.5
+      ],
+      [
+        -0.4707670659086666,
+        2.3825615768934445
+      ],
+      [
+        0.5626768474359518,
+        1.6605627021977556
+      ],
+      [
+        -1.6050116296815415,
+        0.42954016832657216
+      ]
+    ]
+  },
+  "actual_scores": [
+    [
+      -1.3920280710016053
+    ],
+    [
+      -1.0069159963704992,
+      0.5339392740023419
+    ],
+    [
+      -0.9280776503073436,
+      1.1932426932522988
+    ],
+    [
+      -1.5026019100214134,
+      0.282842712474619
+    ]
+  ],
+  "actual_probabilities_by_destination": [
+    [
+      [
+        1.0
+      ],
+      [
+        1.0
+      ]
+    ],
+    [
+      [
+        0.17641097803044445,
+        0.8235890219695555
+      ],
+      [
+        0.17641097803044445,
+        0.8235890219695555
+      ]
+    ],
+    [
+      [
+        0.10704180146517044,
+        0.8929581985348296
+      ],
+      [
+        0.10704180146517044,
+        0.8929581985348296
+      ]
+    ],
+    [
+      [
+        0.14363213466125768,
+        0.8563678653387424
+      ],
+      [
+        0.14363213466125768,
+        0.8563678653387424
+      ]
+    ]
+  ],
+  "expected_outputs": [
+    2.0,
+    -0.5,
+    -0.4707670659086666,
+    2.3825615768934445,
+    0.5626768474359518,
+    1.6605627021977556,
+    -1.6050116296815415,
+    0.42954016832657216
+  ],
+  "actual_outputs": [
+    2.0,
+    -0.5,
+    -0.4707670659086666,
+    2.3825615768934445,
+    0.5626768474359518,
+    1.6605627021977556,
+    -1.6050116296815415,
+    0.42954016832657216
+  ],
+  "absolute_errors": [
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0
+  ],
+  "performance_context": {
+    "qualified_rows": 80,
+    "minimum_speedup": 1.6204656822973997,
+    "maximum_speedup": 3.9248503988084633,
+    "all_strictly_improved": true,
+    "family_range_matches": true
+  },
+  "source_files": {
+    "config": {
+      "path": "configs/simulators/swa_functional_v1.yaml",
+      "bytes": 2670,
+      "sha256": "12f001097876b7d9e318cacbaf3e88d3677f65981632a493946f51dce296690a",
+      "checks": {
+        "is_file": true
+      },
+      "pass": true
+    },
+    "protocol": {
+      "path": "experiments/h159-swa-functional/protocol.md",
+      "bytes": 2592,
+      "sha256": "e741d8b4e2a2c27283948cbbcc4de49f4c95603463554d1c3955880ea5ba44e3",
+      "checks": {
+        "is_file": true
+      },
+      "pass": true
+    },
+    "compiler": {
+      "path": "scripts/compile_swa_functional.py",
+      "bytes": 15219,
+      "sha256": "f490d9e40c0db3f1c6563fc3d0defb898cd56cfa1360dfb1584d38c5042c52e1",
+      "checks": {
+        "is_file": true
+      },
+      "pass": true
+    },
+    "runner": {
+      "path": "scripts/run_swa_functional.py",
+      "bytes": 3186,
+      "sha256": "e1550abb0922f112831f7b56e2d70cd3ccacbdce8f2239135ce3399706761838",
+      "checks": {
+        "is_file": true
+      },
+      "pass": true
+    },
+    "auditor": {
+      "path": "scripts/audit_swa_functional.py",
+      "bytes": 23379,
+      "sha256": "44fdf05479bbdc99b60b7a9be9f43c9e74aa726eee7508a6332deb34b98f11db",
+      "checks": {
+        "is_file": true
+      },
+      "pass": true
+    },
+    "test": {
+      "path": "tests/test_swa_functional.py",
+      "bytes": 3014,
+      "sha256": "e2a38632f9f5ebc7c0930c0c83112a24a4626aa405821c1d8cb79d351f2b5b0d",
+      "checks": {
+        "is_file": true
+      },
+      "pass": true
+    }
+  },
+  "target_free_check": true,
+  "acceptance_gates": [
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true
+  ],
+  "summary": {
+    "builds": 3,
+    "valid_edges": 7,
+    "outputs": 8,
+    "functional_operations": 134,
+    "maximum_absolute_error": 0.0,
+    "cycles": 86,
+    "boundary_events": 21,
+    "route_hops": 45,
+    "skip_hops": 21,
+    "unit_hops": 24,
+    "enabled_disabled_timing_identical": true,
+    "swa_functional_complete": true,
+    "completed_operator_payloads": [
+      "bsmm",
+      "fft_cmp",
+      "attention",
+      "swa"
+    ],
+    "operator_payload_coverage": 4,
+    "required_operator_payloads": 6,
+    "existing_swa_speedup_minimum": 1.6204656822973997,
+    "existing_swa_speedup_maximum": 3.9248503988084633,
+    "acceptance_gates_passed": 10,
+    "acceptance_gates_total": 10
+  },
+  "integrity_checks": {
+    "frozen": true,
+    "parents": true,
+    "compile": true,
+    "contract": true,
+    "static": true,
+    "runs": true,
+    "numeric_evaluated": true,
+    "intermediates_evaluated": true,
+    "timing_evaluated": true,
+    "source": true,
+    "acceptance_evaluated": true
+  }
+}

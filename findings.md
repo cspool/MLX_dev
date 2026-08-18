@@ -656,3 +656,10 @@ match NumPy exactly. Ten PEs complete 76 operations in 86 cycles while
 conserving 224 memory bytes and a 12-skip/14-unit route split. The associated
 performance context remains H135's two target-free 3.152x-3.454x compositions;
 SWA is intentionally not inferred from this dense/global test.
+
+Run164 validates SWA independently. Its seven score blocks are exactly the
+causal `N=4, window=2` edges, with row fan-ins 1/2/2/2 and no future or
+out-of-window edge. Every score, probability copy and 4x2 output matches masked
+NumPy; the singleton first-row softmax is explicitly executed. The 86-cycle
+schedule conserves 134 operations, 400 bytes and 21 skip/24 unit hops. H111's
+80 matched SWA comparisons remain 1.620x-3.925x faster.

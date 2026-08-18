@@ -754,14 +754,14 @@ experiments:
       timestamp: "2026-08-17"
 
 outer_loop:
-  cycle: 117
-  last_direction: "Build H159 same-input causal sliding-window Attention with explicit first/middle/last row windows, variable fan-in and stable softmax, retaining independent boundary checks from dense Attention."
-  last_reflection: "H158 composes FFT-CMP Q into exact QK/softmax/SV at 3/6 coverage. SWA must remain independent because its causal mask and clipped edge windows are the missing functional mechanism."
+  cycle: 118
+  last_direction: "Build H160 same-input residual-scale-SiLU elementwise payload from H159 outputs, then compose all validated families into one complete Transformer block."
+  last_reflection: "H159 independently validates clipped causal windows at 4/6 coverage. Elementwise activation/residual semantics are the last standalone family before complete-block composition."
 
 functional_completion:
   status: active
   priority: integrated_same_input_numeric_and_cycle_execution
-  current_hypothesis: H159
+  current_hypothesis: H160
   integrated_scalar_execution:
     experiment_id: H155
     run_id: run160
@@ -775,6 +775,7 @@ functional_completion:
     - bsmm
     - fft_cmp
     - attention
+    - swa
   bsmm:
     experiment_id: H156
     run_id: run161
@@ -808,6 +809,17 @@ functional_completion:
     functional_operations: 76
     cycles: 86
     existing_speedup_range: [3.152285882940425, 3.4539751182127842]
+  swa:
+    experiment_id: H159
+    run_id: run164
+    path: artifacts/results/swa-functional-run164.json
+    status: supported
+    valid_edges: 7
+    outputs: 8
+    maximum_absolute_error: 0.0
+    functional_operations: 134
+    cycles: 86
+    existing_same_work_speedup_range: [1.6204656822973997, 3.9248503988084633]
   required_operator_payloads:
     - bsmm
     - fft_cmp
@@ -900,6 +912,7 @@ recent_milestones_after_h46:
   bsmm_functional_payload: "H156 supports a width-4/two-stage hierarchical BSMM over four PEs/two tags: 8/8 outputs exactly match NumPy, 32 multiplies/16 adds and 48 memory requests/384 bytes conserve, eight transfers take 12 hops, timing is invariant across modes/builds, and H153 supplies four qualified ~3.998x same-work performance rows."
   fft_cmp_functional_payload: "H157 supports complete L4,s0.5 FFT-CMP across five PEs/three tags: F0/F1 paired components and 4/4 compressed outputs exactly match NumPy, 80 operations/96 memory bytes conserve, 24 events traverse 24 skip plus 16 unit hops, timing is invariant, and eight H120 same-work FFT rows retain 1.757x-2.619x gains."
   attention_functional_payload: "H158 supports complete 2x2 scaled dot-product Attention over ten PEs/three tags with Q read from H157: all QK scores, stable-softmax probabilities and 4/4 SV outputs exactly match NumPy, 76 operations/224 bytes and 26 hops conserve, timing is invariant, and H135 provides two target-free 3.152x-3.454x performance contexts."
+  swa_functional_payload: "H159 supports N4/window2 causal SWA over 19 PEs/three tags: exactly seven valid edges with fan-ins 1/2/2/2, all scores/probabilities and 8/8 outputs match masked NumPy, 134 operations/400 bytes and 45 hops conserve, timing is invariant, and 80 H111 same-work SWA points retain 1.620x-3.925x gains."
 
 completion_snapshot_run042:
   certificate_run: run_042
