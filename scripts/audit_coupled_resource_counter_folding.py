@@ -373,7 +373,11 @@ def main() -> int:
             "summary",
             "integrity_checks",
         )
-        matches = all(existing.get(key) == report.get(key) for key in keys)
+        matches = all(
+            json.dumps(existing.get(key), sort_keys=True)
+            == json.dumps(report.get(key), sort_keys=True)
+            for key in keys
+        )
         print(json.dumps({"existing_matches": matches, **report}, indent=2))
         return 0 if matches else 1
     if args.preflight_only:
