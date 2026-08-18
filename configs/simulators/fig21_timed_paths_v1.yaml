@@ -1,0 +1,61 @@
+name: fig21-timed-paths-v1
+experiment_id: H92
+run_id: run097
+classification: target_free_figure21_timed_component_paths
+validation_eligible: false
+
+frozen_inputs:
+  layer_contract:
+    path: artifacts/results/fig21-layer-contract-run096.json
+    sha256: d92d0c477a1525beba1ab613985820dde98c8a7fe7429347210eb5abe9b2bf12
+    required_status: supported
+    required_integrity: true
+  spad:
+    path: artifacts/results/standalone-dsagen-spad-run071.json
+    sha256: 2a816515bf6cb2dcdde3ba6972eb8d095b44a2fde2f2c01ad7d1c63c30f15db8
+    required_status: supported
+    required_integrity: true
+  column_ports:
+    path: artifacts/results/multiport-spad-run074.json
+    sha256: a58c37a45111a8928fd98df8eb52ee8db48b2d1032766351020d11344b16f562
+    required_status: supported
+    required_integrity: true
+  full_block:
+    path: artifacts/results/dsagen-mlx-full-block-run054.json
+    sha256: c80b174192db67a64f76516427fddfc6230712d332e943e095af4e455f5d34fb
+    required_status: supported
+    required_integrity: true
+  grouped_events:
+    path: patches/dsagen/dsa-gem5-mlx-per-event-wait-v1.patch
+    sha256: 27f312be33cec14b1d8eae2b16d1365a3d0297af68148eeedb748a490291275f
+
+families:
+  - structured_qkv
+  - structured_output
+  - structured_ffn1
+  - structured_ffn2
+  - dense_qkv
+  - dense_output
+  - dense_ffn1
+  - dense_ffn2
+  - elementwise
+
+fit_scales: [4, 8]
+holdout_scales: [16, 32]
+cycle_relative_error_limit: 0.05
+hardware:
+  simd_width: 32
+  vector_bytes: 64
+  lanes: 4
+  active_window: 2
+  spad_ports: 4
+  spad_axis: x
+
+output_root: artifacts/environment/h92
+source_layout:
+  compiler_core: src/mlxsim/fig21_timed_paths.py
+  compiler: scripts/compile_fig21_timed_paths.py
+  runner: scripts/run_fig21_timed_paths.py
+  auditor: scripts/audit_fig21_timed_paths.py
+
+result_path: artifacts/results/fig21-timed-paths-run097.json
