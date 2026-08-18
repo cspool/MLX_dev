@@ -1,0 +1,48 @@
+name: fig21-xavier-trend-transfer-v1
+experiment_id: H149
+run_id: run154
+classification: target_exposed_figure21_xavier_direction_audit
+validation_eligible: false
+
+frozen_inputs:
+  h148_composition:
+    path: artifacts/results/fig21-xavier-composition-run153.json
+    bytes: 7450
+    sha256: b91bd9615dd70411323eb48c214db068b4e90dfd310be2704148a4c8704728b2
+    required_status: supported
+    required_integrity: true
+  h96_ledger:
+    path: artifacts/results/fig21-evidence-closure-run101.json
+    bytes: 7467
+    sha256: 9aa60e3ba0114ccecee48ee8eec5724b04ded8d25443f883e7d60c433ad46c8d
+    required_status: supported
+    required_integrity: true
+  targets:
+    path: artifacts/results/fig21-target-completion-run029.json
+    bytes: 14413
+    sha256: ec9b068b77113f8fe5af5f992f90fb6b4d8cf15d107873662a172bb2a3927a3f
+    required_verdict: supported
+  h137_policy:
+    path: artifacts/results/active-simulator-trend-completion-run142.json
+    bytes: 11524
+    sha256: e32eddfc97e97f4ff0b17ec10f1ca0be829a06f7055709712ab01f3549b99dd3
+    required_status: supported
+    required_integrity: true
+
+mapping:
+  sequence_lengths: [128, 256, 512, 1024, 2048]
+  series: speedup_over_xavier
+
+acceptance:
+  minimum_clear_speedup: 1.20
+  required_direction_passes: 5
+  required_trend_passes: 5
+  strict_relative_error_limit: 0.10
+  strict_10pct_retained_as_diagnostic: true
+  target_scale_or_direction_correction: forbidden
+
+source_layout:
+  auditor: scripts/audit_fig21_xavier_trend_transfer.py
+  test: tests/test_fig21_xavier_trend_transfer.py
+
+result_path: artifacts/results/fig21-xavier-trend-transfer-run154.json
