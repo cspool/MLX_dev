@@ -538,3 +538,9 @@ failure. Attention, FFN and total latency curves have identical rank order to
 the paper, and the official open FABNet simulator remains 1.378x-1.616x slower
 than the current-coupled MLX simulator across all four lengths. Primary
 completion becomes 2/8; strict remains 0/8.
+
+Run144 shows that tolerance relaxation does not rescue Figure 22. None of its
+eight BSMM/FFT resource curves reaches rho 0.70; only three preserve endpoint
+direction and FFT transfer utilization is almost exactly reverse-ranked. The
+current resource-counter and port-timing model therefore needs a semantic
+revision before Figure 22 can count.

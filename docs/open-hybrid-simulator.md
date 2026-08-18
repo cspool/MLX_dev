@@ -379,6 +379,11 @@ H138 completes Figure 19's qualitative audit in
 the same rank/order trend, and the independent open FABNet/current MLX ratios
 show 1.378x-1.616x improvement; the primary count becomes 2/8.
 
+H139 rejects Figure 22's qualitative audit in
+[fig22-trend-completion.md](fig22-trend-completion.md). None of eight resource
+curves reaches the frozen rank threshold, confirming a counter/timing-semantics
+gap rather than a merely strict numerical tolerance.
+
 The active objective is now limited to simulator-dependent hardware performance
 in Figures 18–25, as recorded in
 [simulator-experiment-scope.md](simulator-experiment-scope.md). Accuracy,
