@@ -331,6 +331,11 @@ H128 returns to the MLX-only Figure 19 paths in
 192 four-build runs pass; seven FFN paths fold, while all FFT paths and one
 two-tile FFN need larger target-free anchors.
 
+H129 closes those folds in
+[fig19-coupled-steady-state.md](fig19-coupled-steady-state.md). Ten q64/q128
+holdouts pass at 1.23% MAPE, including exact power-of-two multi-tile FFN
+scaling, so all 12 current-coupled components are frozen before target access.
+
 The active objective is now limited to simulator-dependent hardware performance
 in Figures 18–25, as recorded in
 [simulator-experiment-scope.md](simulator-experiment-scope.md). Accuracy,

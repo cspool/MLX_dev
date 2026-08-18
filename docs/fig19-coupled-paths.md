@@ -25,6 +25,11 @@ power-of-two tile counts for the large FFN so each tile retains uniform store
 release counts. It must preserve the seven H128-eligible FFN estimates and may
 not expose Figure 19 targets.
 
+That extension succeeds in
+[fig19-coupled-steady-state.md](fig19-coupled-steady-state.md): all ten new
+holdouts pass within 1.95%, producing a complete 12-path target-free estimate
+set for H130.
+
 Evidence is in
 [run133](../artifacts/results/fig19-coupled-paths-run133.json), with the frozen
 plan in
