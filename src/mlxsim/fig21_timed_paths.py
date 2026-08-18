@@ -8,17 +8,19 @@ from functools import reduce
 from typing import Any
 
 
-def functional_units() -> dict[str, dict[str, int | str]]:
-    return {
+def functional_units(*, include_fmax: bool = False) -> dict[str, dict[str, int | str]]:
+    units: dict[str, dict[str, int | str]] = {
         "add": {"class": "alu", "latency": 2, "initiation_interval": 1},
         "mul": {"class": "mul", "latency": 2, "initiation_interval": 1},
         "fma": {"class": "fma", "latency": 4, "initiation_interval": 1},
-        "fmax": {"class": "reduce", "latency": 2, "initiation_interval": 1},
         "fexp": {"class": "transcendental", "latency": 8, "initiation_interval": 4},
         "fdiv": {"class": "transcendental", "latency": 8, "initiation_interval": 4},
         "frsqrt": {"class": "transcendental", "latency": 8, "initiation_interval": 4},
         "shuffle": {"class": "shuffle", "latency": 2, "initiation_interval": 1},
     }
+    if include_fmax:
+        units["fmax"] = {"class": "reduce", "latency": 2, "initiation_interval": 1}
+    return units
 
 
 def normalize_path(

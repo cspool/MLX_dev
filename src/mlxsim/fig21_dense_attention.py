@@ -203,7 +203,7 @@ def compile_dense_attention(
             pipeline: {"latency": 1, "initiation_interval": 1}
             for pipeline in ("load", "store", "compute", "xfer")
         },
-        "functional_units": functional_units(),
+        "functional_units": functional_units(include_fmax=True),
         "routing": {
             "mesh_width": 4,
             "mesh_height": 4,
