@@ -354,6 +354,11 @@ H133 begins closing Figure 20's Xavier Attention gap in
 [xavier-fft-regime.md](xavier-fft-regime.md). Two stable FFT 64K holdouts pass
 within 2.03%, releasing exact full FFT proxy components without target access.
 
+H134 completes QK/SV/softmax in
+[xavier-attention-components.md](xavier-attention-components.md). Three new
+holdouts pass at 2.13% MAPE and all six non-FFT shape-components become
+eligible, enabling a target-free Xavier total next.
+
 The active objective is now limited to simulator-dependent hardware performance
 in Figures 18–25, as recorded in
 [simulator-experiment-scope.md](simulator-experiment-scope.md). Accuracy,

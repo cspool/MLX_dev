@@ -22,6 +22,10 @@ The next target-free step is to qualify QK and SV at larger counts while reusing
 the already direct full softmax measurements. Only after all four components
 are eligible may a Xavier Attention total and Figure 20 speedup be formed.
 
+H134 completes those components in
+[xavier-attention-components.md](xavier-attention-components.md): all three
+larger-regime holdouts and both direct softmax records qualify.
+
 Evidence is in
 [run138](../artifacts/results/xavier-fft-regime-run138.json), with the frozen
 plan in
