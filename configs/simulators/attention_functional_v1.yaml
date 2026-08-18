@@ -1,0 +1,77 @@
+name: attention-functional-v1
+experiment_id: H158
+run_id: run163
+classification: target_free_same_input_scaled_dot_product_attention
+validation_eligible: true
+
+frozen_inputs:
+  fft_cmp_functional:
+    path: artifacts/results/fft-cmp-functional-run162.json
+    bytes: 7674
+    sha256: 4a6b77bae2a5d33f0592cd96ece60686ffe20d9fb80e9eb42339ce07fc978e1a
+    required_status: supported
+    required_integrity: true
+  attention_performance:
+    path: artifacts/results/xavier-attention-composition-run140.json
+    bytes: 4268
+    sha256: 95f730d982b89dccbf311ddc164c6557f235f078b58b40f1d5d96342e2caac63
+    required_status: supported
+    required_integrity: true
+
+operator_contract:
+  family: attention
+  realization: scaled_dot_product_attention_with_stable_softmax
+  precision: fp64_shadow
+  sequence_length: 2
+  head_dimension: 2
+  value_dimension: 2
+  q_source: fft_cmp_functional_actual_outputs_reshape_2x2
+  k:
+    - [0.5, -1.0]
+    - [1.5, 0.25]
+  v:
+    - [2.0, -0.5]
+    - [-1.0, 3.0]
+  scale: inverse_sqrt_head_dimension
+  placement:
+    qk: [[0, 0], [0, 1], [0, 2], [0, 3]]
+    softmax: [[2, 0], [2, 3]]
+    sv: [[5, 0], [5, 1], [5, 3], [5, 2]]
+  tags: [1, 2, 3]
+
+timing_contract:
+  active_window: 3
+  pe_dependency_model: scoreboard_experimental
+  mesh: [6, 4]
+  skip_steps: [2, 1]
+  functional_enabled_and_disabled_cycles_must_match: true
+
+acceptance:
+  absolute_error_limit: 1.0e-12
+  expected_scalar_multiplies: 24
+  expected_scalar_adds: 14
+  expected_outputs: 4
+  expected_functional_operations: 76
+  expected_pipeline_operations: {load: 24, compute: 36, xfer: 12, store: 4}
+  expected_compute_operations: {add: 2, fdiv: 4, fexp: 4, fma: 12, fmax: 2, mul: 12}
+  expected_memory_requests: 28
+  expected_memory_bytes: 224
+  expected_boundary_events: 12
+  expected_route_hops: 26
+  expected_skip_hops: 12
+  expected_unit_hops: 14
+  expected_blocks: 10
+  expected_pes: 10
+  required_builds: [debug, opt, sanitize]
+  paper_targets_consumed: false
+
+source_layout:
+  config: configs/simulators/attention_functional_v1.yaml
+  protocol: experiments/h158-attention-functional/protocol.md
+  compiler: scripts/compile_attention_functional.py
+  runner: scripts/run_attention_functional.py
+  auditor: scripts/audit_attention_functional.py
+  test: tests/test_attention_functional.py
+
+output_root: artifacts/environment/h158
+result_path: artifacts/results/attention-functional-run163.json
