@@ -1,0 +1,95 @@
+diff --git a/simulator_ext/dsagen/historical_dpu_memory.cc b/simulator_ext/dsagen/historical_dpu_memory.cc
+--- a/simulator_ext/dsagen/historical_dpu_memory.cc
++++ b/simulator_ext/dsagen/historical_dpu_memory.cc
+@@ -63 +63 @@ HistoricalDpuMemoryAdapter::HistoricalDpuMemoryAdapter(Config config)
+-      spad_(config.spad), buffers_(config.buffer_halves)
++      buffers_(config.buffer_halves)
+@@ -73,0 +74,7 @@ HistoricalDpuMemoryAdapter::HistoricalDpuMemoryAdapter(Config config)
++  if (config_.spad_ports == 0 ||
++      (config_.spad_port_axis != "x" && config_.spad_port_axis != "y")) {
++    throw std::invalid_argument("historical DPU SPM ports need a positive count and x/y axis");
++  }
++  for (unsigned port = 0; port < config_.spad_ports; ++port) {
++    spad_ports_.emplace_back(new StandaloneSpadAdapter(config_.spad));
++  }
+@@ -117,0 +125,31 @@ HistoricalDpuMemoryAdapter::outputBytes(uint64_t tile) const
++unsigned
++HistoricalDpuMemoryAdapter::selectSpadPort(const MemoryRequest &request) const
++{
++  int coordinate = config_.spad_port_axis == "x" ? request.pe.x : request.pe.y;
++  if (coordinate < 0) {
++    throw std::runtime_error("historical DPU SPM received a negative PE coordinate");
++  }
++  return static_cast<unsigned>(coordinate) % spad_ports_.size();
++}
++
++std::string
++HistoricalDpuMemoryAdapter::spadSummaryJson() const
++{
++  if (spad_ports_.size() == 1) return spad_ports_.front()->summaryJson();
++  uint64_t requests = 0;
++  uint64_t responses = 0;
++  std::ostringstream out;
++  out << "{\"ports\":" << spad_ports_.size()
++      << ",\"axis\":" << Quote(config_.spad_port_axis)
++      << ",\"requests\":";
++  for (const auto &port : spad_ports_) requests += port->requestsIssued();
++  for (const auto &port : spad_ports_) responses += port->responsesCompleted();
++  out << requests << ",\"responses\":" << responses << ",\"per_port\":[";
++  for (std::size_t index = 0; index < spad_ports_.size(); ++index) {
++    if (index) out << ',';
++    out << spad_ports_[index]->summaryJson();
++  }
++  out << "]}";
++  return out.str();
++}
++
+@@ -154 +192 @@ HistoricalDpuMemoryAdapter::available(const MemoryRequest &request) const
+-  return spad_.available(physical);
++  return spad_ports_[selectSpadPort(physical)]->available(physical);
+@@ -169 +207,2 @@ HistoricalDpuMemoryAdapter::issue(const MemoryRequest &request)
+-  uint64_t local_token = spad_.issue(physical);
++  unsigned port = selectSpadPort(physical);
++  uint64_t local_token = spad_ports_[port]->issue(physical);
+@@ -171 +210 @@ HistoricalDpuMemoryAdapter::issue(const MemoryRequest &request)
+-  token_routes_[token] = {local_token, address.tile, request.write};
++  token_routes_[token] = {port, local_token, address.tile, request.write};
+@@ -189 +228,2 @@ HistoricalDpuMemoryAdapter::takeCompletion(uint64_t token)
+-  if (!spad_.takeCompletion(route->second.local_token)) return false;
++  if (!spad_ports_[route->second.port]->takeCompletion(
++          route->second.local_token)) return false;
+@@ -295 +335 @@ HistoricalDpuMemoryAdapter::processCycle(uint64_t cycle)
+-  spad_.advance(cycle);
++  for (auto &port : spad_ports_) port->advance(cycle);
+@@ -357 +397 @@ HistoricalDpuMemoryAdapter::advanceToNextDmaCompletion()
+-  spad_.advance(cycle_);
++  for (auto &port : spad_ports_) port->advance(cycle_);
+@@ -372 +412 @@ HistoricalDpuMemoryAdapter::advanceToNextDmaCompletion()
+-  spad_.advance(cycle_);
++  for (auto &port : spad_ports_) port->advance(cycle_);
+@@ -435 +475 @@ HistoricalDpuMemoryAdapter::summaryJson() const
+-  out << "],\"spad\":" << spad_.summaryJson() << "}";
++  out << "],\"spad\":" << spadSummaryJson() << "}";
+@@ -489,0 +530,6 @@ LoadHistoricalDpuMemoryConfig(const std::string &path)
++  config.spad_ports = static_cast<unsigned>(
++      Positive(root.get("spad_ports", 1), "spad_ports"));
++  config.spad_port_axis = root.get("spad_port_axis", "x").asString();
++  if (config.spad_port_axis != "x" && config.spad_port_axis != "y") {
++    throw std::runtime_error("spad_port_axis must be x or y");
++  }
+diff --git a/simulator_ext/dsagen/historical_dpu_memory.hh b/simulator_ext/dsagen/historical_dpu_memory.hh
+--- a/simulator_ext/dsagen/historical_dpu_memory.hh
++++ b/simulator_ext/dsagen/historical_dpu_memory.hh
+@@ -8,0 +9 @@
++#include <memory>
+@@ -35,0 +37,2 @@ class HistoricalDpuMemoryAdapter : public MemoryAdapter {
++    unsigned spad_ports{1};
++    std::string spad_port_axis{"x"};
+@@ -82,0 +86 @@ class HistoricalDpuMemoryAdapter : public MemoryAdapter {
++    unsigned port{0};
+@@ -97,0 +102,2 @@ class HistoricalDpuMemoryAdapter : public MemoryAdapter {
++  unsigned selectSpadPort(const MemoryRequest &request) const;
++  std::string spadSummaryJson() const;
+@@ -112 +118 @@ class HistoricalDpuMemoryAdapter : public MemoryAdapter {
+-  StandaloneSpadAdapter spad_;
++  std::vector<std::unique_ptr<StandaloneSpadAdapter>> spad_ports_;

@@ -60,7 +60,7 @@ HistoricalDpuMemoryAdapter::HistoricalDpuMemoryAdapter(Config config)
     : config_(config),
       half_bytes_(config.buffer_halves == 0 ? 0 :
           config.spm_bytes / config.buffer_halves),
-      spad_(config.spad), buffers_(config.buffer_halves)
+      buffers_(config.buffer_halves)
 {
   if (config_.buffer_halves != 2) {
     throw std::invalid_argument("historical DPU memory requires two SPM halves");
@@ -70,6 +70,13 @@ HistoricalDpuMemoryAdapter::HistoricalDpuMemoryAdapter(Config config)
       config_.input_bytes_per_tile == 0 || config_.output_bytes_per_tile == 0 ||
       config_.stores_per_tile == 0 || config_.dma_bytes_per_cycle == 0) {
     throw std::invalid_argument("historical DPU memory dimensions must be positive");
+  }
+  if (config_.spad_ports == 0 ||
+      (config_.spad_port_axis != "x" && config_.spad_port_axis != "y")) {
+    throw std::invalid_argument("historical DPU SPM ports need a positive count and x/y axis");
+  }
+  for (unsigned port = 0; port < config_.spad_ports; ++port) {
+    spad_ports_.emplace_back(new StandaloneSpadAdapter(config_.spad));
   }
   if (config_.logical_tile_stride < half_bytes_) {
     throw std::invalid_argument(
@@ -115,6 +122,37 @@ HistoricalDpuMemoryAdapter::outputBytes(uint64_t tile) const
       config_.output_bytes_per_tile : config_.output_bytes_by_tile.at(tile);
 }
 
+unsigned
+HistoricalDpuMemoryAdapter::selectSpadPort(const MemoryRequest &request) const
+{
+  int coordinate = config_.spad_port_axis == "x" ? request.pe.x : request.pe.y;
+  if (coordinate < 0) {
+    throw std::runtime_error("historical DPU SPM received a negative PE coordinate");
+  }
+  return static_cast<unsigned>(coordinate) % spad_ports_.size();
+}
+
+std::string
+HistoricalDpuMemoryAdapter::spadSummaryJson() const
+{
+  if (spad_ports_.size() == 1) return spad_ports_.front()->summaryJson();
+  uint64_t requests = 0;
+  uint64_t responses = 0;
+  std::ostringstream out;
+  out << "{\"ports\":" << spad_ports_.size()
+      << ",\"axis\":" << Quote(config_.spad_port_axis)
+      << ",\"requests\":";
+  for (const auto &port : spad_ports_) requests += port->requestsIssued();
+  for (const auto &port : spad_ports_) responses += port->responsesCompleted();
+  out << requests << ",\"responses\":" << responses << ",\"per_port\":[";
+  for (std::size_t index = 0; index < spad_ports_.size(); ++index) {
+    if (index) out << ',';
+    out << spad_ports_[index]->summaryJson();
+  }
+  out << "]}";
+  return out.str();
+}
+
 HistoricalDpuMemoryAdapter::DecodedAddress
 HistoricalDpuMemoryAdapter::decode(const MemoryRequest &request) const
 {
@@ -151,7 +189,7 @@ HistoricalDpuMemoryAdapter::available(const MemoryRequest &request) const
   }
   MemoryRequest physical = request;
   physical.address = address.physical;
-  return spad_.available(physical);
+  return spad_ports_[selectSpadPort(physical)]->available(physical);
 }
 
 uint64_t
@@ -166,9 +204,10 @@ HistoricalDpuMemoryAdapter::issue(const MemoryRequest &request)
   }
   MemoryRequest physical = request;
   physical.address = address.physical;
-  uint64_t local_token = spad_.issue(physical);
+  unsigned port = selectSpadPort(physical);
+  uint64_t local_token = spad_ports_[port]->issue(physical);
   uint64_t token = next_token_++;
-  token_routes_[token] = {local_token, address.tile, request.write};
+  token_routes_[token] = {port, local_token, address.tile, request.write};
   ++requests_;
   if (request.write) {
     ++write_requests_;
@@ -186,7 +225,8 @@ HistoricalDpuMemoryAdapter::takeCompletion(uint64_t token)
 {
   auto route = token_routes_.find(token);
   if (route == token_routes_.end()) return false;
-  if (!spad_.takeCompletion(route->second.local_token)) return false;
+  if (!spad_ports_[route->second.port]->takeCompletion(
+          route->second.local_token)) return false;
   uint64_t tile = route->second.tile;
   bool write = route->second.write;
   token_routes_.erase(route);
@@ -292,7 +332,7 @@ void
 HistoricalDpuMemoryAdapter::processCycle(uint64_t cycle)
 {
   cycle_ = cycle;
-  spad_.advance(cycle);
+  for (auto &port : spad_ports_) port->advance(cycle);
   beginTransfer();
   if (!dma_active_) return;
   if (active_dma_.setup_remaining != 0) {
@@ -354,7 +394,7 @@ HistoricalDpuMemoryAdapter::advanceToNextDmaCompletion()
   }
   uint64_t start = advanced_ ? cycle_ + 1 : 0;
   cycle_ = start;
-  spad_.advance(cycle_);
+  for (auto &port : spad_ports_) port->advance(cycle_);
   beginTransfer();
   if (!dma_active_) {
     advanced_ = true;
@@ -369,7 +409,7 @@ HistoricalDpuMemoryAdapter::advanceToNextDmaCompletion()
   active_dma_.setup_remaining = 0;
   active_dma_.remaining_bytes = 0;
   cycle_ += total_cycles - 1;
-  spad_.advance(cycle_);
+  for (auto &port : spad_ports_) port->advance(cycle_);
   finishTransfer();
   advanced_ = true;
 }
@@ -432,7 +472,7 @@ HistoricalDpuMemoryAdapter::summaryJson() const
     if (index) out << ',';
     out << Quote(OwnerName(buffers_[index].owner));
   }
-  out << "],\"spad\":" << spad_.summaryJson() << "}";
+  out << "],\"spad\":" << spadSummaryJson() << "}";
   return out.str();
 }
 
@@ -487,6 +527,12 @@ LoadHistoricalDpuMemoryConfig(const std::string &path)
     throw std::runtime_error("record_events must be boolean");
   }
   config.record_events = root.get("record_events", true).asBool();
+  config.spad_ports = static_cast<unsigned>(
+      Positive(root.get("spad_ports", 1), "spad_ports"));
+  config.spad_port_axis = root.get("spad_port_axis", "x").asString();
+  if (config.spad_port_axis != "x" && config.spad_port_axis != "y") {
+    throw std::runtime_error("spad_port_axis must be x or y");
+  }
   const auto &spad = root["spad"];
   config.spad.bank_width_bytes = static_cast<unsigned>(
       Positive(spad["bank_width_bytes"], "spad.bank_width_bytes"));

@@ -6,6 +6,7 @@
 #include <cstdint>
 #include <deque>
 #include <map>
+#include <memory>
 #include <set>
 #include <string>
 #include <vector>
@@ -33,6 +34,8 @@ class HistoricalDpuMemoryAdapter : public MemoryAdapter {
     uint64_t dma_setup_cycles{0};
     bool record_events{true};
     StandaloneSpadAdapter::Config spad;
+    unsigned spad_ports{1};
+    std::string spad_port_axis{"x"};
   };
 
   struct Event {
@@ -80,6 +83,7 @@ class HistoricalDpuMemoryAdapter : public MemoryAdapter {
   };
 
   struct TokenRoute {
+    unsigned port{0};
     uint64_t local_token{0};
     uint64_t tile{0};
     bool write{false};
@@ -95,6 +99,8 @@ class HistoricalDpuMemoryAdapter : public MemoryAdapter {
   DecodedAddress decode(const MemoryRequest &request) const;
   uint64_t inputBytes(uint64_t tile) const;
   uint64_t outputBytes(uint64_t tile) const;
+  unsigned selectSpadPort(const MemoryRequest &request) const;
+  std::string spadSummaryJson() const;
   void processCycle(uint64_t cycle);
   void enqueueFill(uint64_t tile);
   void enqueueDrain(uint64_t tile);
@@ -109,7 +115,7 @@ class HistoricalDpuMemoryAdapter : public MemoryAdapter {
 
   Config config_;
   uint64_t half_bytes_{0};
-  StandaloneSpadAdapter spad_;
+  std::vector<std::unique_ptr<StandaloneSpadAdapter>> spad_ports_;
   bool advanced_{false};
   uint64_t cycle_{0};
   uint64_t next_token_{1};

@@ -100,6 +100,36 @@ def reverse_patch_check(spec: dict[str, Any]) -> dict[str, Any]:
     }
 
 
+def historical_memory_descendant_check(
+    h114_sources: dict[str, Any],
+) -> dict[str, bool]:
+    patch = (
+        PROJECT_ROOT
+        / "patches/dsagen/dsa-gem5-historical-multiport-spad-v1.patch"
+    )
+    current_header = PROJECT_ROOT / h114_sources["adapter_header"]["path"]
+    current_source = PROJECT_ROOT / h114_sources["adapter_source"]["path"]
+    with tempfile.TemporaryDirectory(prefix="h118-descendant-") as directory:
+        root = Path(directory)
+        target = root / "simulator_ext/dsagen"
+        target.mkdir(parents=True)
+        header = target / "historical_dpu_memory.hh"
+        source = target / "historical_dpu_memory.cc"
+        shutil.copy2(current_header, header)
+        shutil.copy2(current_source, source)
+        reverse = subprocess.run(
+            ["git", "apply", "--unidiff-zero", "--reverse", str(patch)],
+            cwd=root,
+            capture_output=True,
+            text=True,
+            check=False,
+        )
+        return {
+            "header": reverse.returncode == 0
+            and sha256_file(header) == h114_sources["adapter_header"]["sha256"],
+            "source": reverse.returncode == 0
+            and sha256_file(source) == h114_sources["adapter_source"]["sha256"],
+        }
 def build_audit(config: dict[str, Any]) -> dict[str, Any]:
     frozen = {
         name: qualify(PROJECT_ROOT / spec["path"], spec)
@@ -366,11 +396,18 @@ def build_audit(config: dict[str, Any]) -> dict[str, Any]:
         for name, spec in config["patch_control"].items()
     }
     h114_sources = parents["h114"]["source_files"]
+    historical_descendant = historical_memory_descendant_check(h114_sources)
     cpp_source_checks = {
         name: qualify(PROJECT_ROOT / h114_sources[name]["path"])["sha256"]
         == h114_sources[name]["sha256"]
-        for name in ("overlay_header", "adapter_header", "adapter_source", "driver")
+        for name in ("overlay_header", "driver")
     }
+    cpp_source_checks.update(
+        {
+            "adapter_header": historical_descendant["header"],
+            "adapter_source": historical_descendant["source"],
+        }
+    )
     counts = {
         "compile_outputs": len(compiled["outputs"])
         == int(config["workloads"]["required_paths"]),

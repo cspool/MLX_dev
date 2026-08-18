@@ -125,6 +125,10 @@ def sha256(path: Path) -> str:
 
 def trace_patch_audit(config: dict[str, Any]) -> dict[str, Any]:
     patch = PROJECT_ROOT / config["source_layout"]["trace_patch"]
+    descendant_patch = (
+        PROJECT_ROOT
+        / "patches/dsagen/dsa-gem5-historical-multiport-spad-v1.patch"
+    )
     current_header = PROJECT_ROOT / config["source_layout"]["adapter_header"]
     current_source = PROJECT_ROOT / config["source_layout"]["adapter_source"]
     report = {
@@ -146,6 +150,34 @@ def trace_patch_audit(config: dict[str, Any]) -> dict[str, Any]:
         source = target / "historical_dpu_memory.cc"
         shutil.copy2(current_header, header)
         shutil.copy2(current_source, source)
+        descendant_reverse = subprocess.run(
+            [
+                "git",
+                "apply",
+                "--unidiff-zero",
+                "-R",
+                "--check",
+                str(descendant_patch),
+            ],
+            cwd=root,
+            capture_output=True,
+            text=True,
+            check=False,
+        )
+        if descendant_reverse.returncode != 0:
+            report["pass"] = False
+            return report
+        subprocess.run(
+            [
+                "git",
+                "apply",
+                "--unidiff-zero",
+                "-R",
+                str(descendant_patch),
+            ],
+            cwd=root,
+            check=True,
+        )
         reverse = subprocess.run(
             ["git", "apply", "-R", "--check", str(patch)],
             cwd=root,
@@ -172,6 +204,27 @@ def trace_patch_audit(config: dict[str, Any]) -> dict[str, Any]:
             report["forward_check"] = forward.returncode == 0
             if forward.returncode == 0:
                 subprocess.run(["git", "apply", str(patch)], cwd=root, check=True)
+                subprocess.run(
+                    [
+                        "git",
+                        "apply",
+                        "--unidiff-zero",
+                        "--check",
+                        str(descendant_patch),
+                    ],
+                    cwd=root,
+                    check=True,
+                )
+                subprocess.run(
+                    [
+                        "git",
+                        "apply",
+                        "--unidiff-zero",
+                        str(descendant_patch),
+                    ],
+                    cwd=root,
+                    check=True,
+                )
                 report["round_trip_exact"] = (
                     header.read_bytes() == current_header.read_bytes()
                     and source.read_bytes() == current_source.read_bytes()
