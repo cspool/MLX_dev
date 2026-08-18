@@ -1,0 +1,63 @@
+name: xavier-attention-components-v1
+experiment_id: H134
+run_id: run139
+classification: target_free_regime_aware_xavier_qk_sv_components
+validation_eligible: false
+
+frozen_inputs:
+  h133:
+    path: artifacts/results/xavier-fft-regime-run138.json
+    bytes: 10196
+    sha256: ea16fdc8c1b6bd0d8670192bde271f074ace00d06d58ddbd277a7a9029983166
+    required_status: supported
+    required_integrity: true
+  h85:
+    path: artifacts/results/xavier-saturated-attention-run090.json
+    bytes: 15996
+    sha256: 4222533af6399fa815dd5b8583bcc86a0972fc4f8295312fae8a389e89f7a75e
+    required_status: rejected
+    required_integrity: false
+  h85_manifest:
+    path: artifacts/environment/h85/xavier-saturated-run-manifest.json
+    bytes: 3624
+    sha256: 80f169324c6643861edc68e5e8506a585f9dfe8294a93e3b4e8fe8fbe31ca8d6
+  h87:
+    path: artifacts/results/xavier-final-attention-run092.json
+    bytes: 6489
+    sha256: bbe024a575a4b7283817ff9ffd5c869e6a311bd8c85d03d635e291638a659c81
+    required_status: rejected
+    required_integrity: true
+  attention_source:
+    path: simulator_ext/accelsim/mlx_attention_proxy.cu
+    bytes: 13751
+    sha256: e96786969a7c5a4daba2e984e85768b18d3fbde692db337b4493dc91a7a25bbc
+
+jobs:
+  - {name: shared-qk-c8192, binary: attention, family: qk, count: 8192, parameter: 4096, parameter2: 0}
+  - {name: shared-qk-c16384, binary: attention, family: qk, count: 16384, parameter: 4096, parameter2: 0}
+  - {name: N256-sv-c32768, binary: attention, family: sv, count: 32768, parameter: 128, parameter2: 0}
+  - {name: N256-sv-c65536, binary: attention, family: sv, count: 65536, parameter: 128, parameter2: 0}
+  - {name: N8192-sv-c8192, binary: attention, family: sv, count: 8192, parameter: 4096, parameter2: 0}
+  - {name: N8192-sv-c16384, binary: attention, family: sv, count: 16384, parameter: 4096, parameter2: 0}
+
+models:
+  shared_qk: {parent_anchor: shared-qk-c4096, new_anchor: shared-qk-c8192, holdout: shared-qk-c16384, full_counts: {N256: 16384, N8192: 16777216}}
+  N256_sv: {parent_anchor: N256-sv-c16384, new_anchor: N256-sv-c32768, holdout: N256-sv-c65536, full_counts: {N256: 524288}}
+  N8192_sv: {parent_anchor: N8192-sv-c4096, new_anchor: N8192-sv-c8192, holdout: N8192-sv-c16384, full_counts: {N8192: 16777216}}
+
+direct_softmax:
+  N256: {measurement: N256-softmax-c128, full_count: 128}
+  N8192: {measurement: N8192-softmax-c4096, full_count: 4096}
+
+checksum_relative_error_limit: 0.00001
+cycle_relative_error_limit: 0.05
+device_clock_hz: 1377000000
+output_root: artifacts/environment/h134
+
+source_layout:
+  attention_source: simulator_ext/accelsim/mlx_attention_proxy.cu
+  runner: scripts/run_xavier_attention_components.py
+  auditor: scripts/audit_xavier_attention_components.py
+  test: tests/test_xavier_attention_components.py
+
+result_path: artifacts/results/xavier-attention-components-run139.json
