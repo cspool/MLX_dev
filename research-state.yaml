@@ -754,14 +754,23 @@ experiments:
       timestamp: "2026-08-17"
 
 outer_loop:
-  cycle: 113
-  last_direction: "Implement H155 integrated numeric payloads in the real C++ timing completion path, then extend same-input functional coverage from scalar FU chains to BSMM and FFT-CMP."
-  last_reflection: "Core performance claims are complete, but simulator-trend-goal.md still requires same-input numerical outputs for six operator/block families. The current overlay has timing-only RF and memory state, so scalar integrated execution is the highest-priority missing capability."
+  cycle: 114
+  last_direction: "Build H156 same-input BSMM on H155's timed numeric completion path, requiring independent golden output and exact work/traffic conservation before extending to FFT-CMP."
+  last_reflection: "H155 closes the timing-only infrastructure gap with exact scalar outputs and invariant timing across three builds, but correctly leaves operator coverage at 0/6. The next smallest end-to-end operator is BSMM."
 
 functional_completion:
   status: active
   priority: integrated_same_input_numeric_and_cycle_execution
-  current_hypothesis: H155
+  current_hypothesis: H156
+  integrated_scalar_execution:
+    experiment_id: H155
+    run_id: run160
+    path: artifacts/results/functional-payload-run160.json
+    status: supported
+    operations: 24
+    cycles: 71
+    maximum_absolute_error: 0.0
+    enabled_disabled_timing_identical: true
   completed_operator_payloads: []
   required_operator_payloads:
     - bsmm
@@ -851,6 +860,7 @@ recent_milestones_after_h46:
   fig21_full_array_exhaustive: "H152 stopped without a result at 170/360 after the user deprioritized full-figure exhaustion; partial outputs are not promoted wholesale. The 16-PE compiler/mapping is retained for a separately frozen representative same-work claim."
   core_full_array_gain: "H153 supports the core full-array same-work claim: 6/6 N128 QKV/FFN/elementwise comparisons pass at 3.508x-3.998x with exact work/traffic, replay/adapter identity and a 4->16 issue transition."
   core_architecture_claims: "H154 supports the final certificate at 5/5 primary and 3/3 supporting claims. Primary gains span 1.215x-15.018x; full-figure and strict-10% requirements are false by user direction."
+  integrated_functional_payload: "H155 supports real completion-path FP64 shadow execution: 24 load/compute/xfer/store operations finish in 71 cycles with exact two-output golden agreement, timing invariance across enabled/disabled modes, three-build determinism and clean sanitizers; operator coverage remains 0/6."
 
 completion_snapshot_run042:
   certificate_run: run_042

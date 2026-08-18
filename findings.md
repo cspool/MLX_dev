@@ -624,3 +624,11 @@ mesh scaling with skip-hop enabled, full-array utilization and joint complete-
 block scaling all pass, as do DPU non-stop flow, bounded contexts and multiport
 data supply. Primary gains span 1.215x-15.018x. This is a core comparative-
 claim completion, not a strict numerical or every-point full-figure claim.
+
+Run160 closes the simulator's timing-only functional gap at infrastructure
+level. FP64 shadow values now update only when the corresponding timed load,
+compute, transfer or store completes. A two-PE/two-tag chain performs 24
+operations in 71 cycles, crosses two events and two route hops, and produces
+both independent golden values exactly in debug, optimized and sanitized
+builds. Functional enablement leaves every timing statistic unchanged. This
+does not yet count as one of the six required operator payloads.
