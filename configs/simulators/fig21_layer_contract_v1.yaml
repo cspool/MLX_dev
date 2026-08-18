@@ -1,0 +1,52 @@
+name: fig21-layer-contract-v1
+experiment_id: H91
+run_id: run096
+classification: target_free_figure21_executable_layer_contract
+validation_eligible: false
+
+frozen_inputs:
+  identity:
+    path: artifacts/results/fig21-workload-identity-run095.json
+    sha256: f7c9f22af25a9abe8c42129f1ddd03e9b33fdbca5beb617dad98dd9bf3f50da0
+    required_status: supported
+    required_integrity: true
+  attention:
+    path: artifacts/results/combined-attention-memory-run088.json
+    sha256: a647443c82ae407b18f0253757b43cf245b1626593e03510895f9c87ecd5fa44
+    required_status: supported
+    required_integrity: true
+  full_block:
+    path: artifacts/results/dsagen-mlx-full-block-run054.json
+    sha256: c80b174192db67a64f76516427fddfc6230712d332e943e095af4e455f5d34fb
+    required_status: supported
+    required_integrity: true
+  attention_compiler:
+    path: src/mlxsim/dsagen_combined_attention.py
+    sha256: c1b40e7d13959810a799301f376fd6b2ab059c2e2c0d592221c9526ccca18754
+  workload_compiler:
+    path: src/mlxsim/workloads.py
+    sha256: 4b268253d9266fde609bcf3b7cec1fe1752807ef9c456e1dfaa806498e550f62
+
+shape:
+  sequence_lengths: [128, 256, 512, 1024, 2048]
+  batch: 8
+  hidden_dimension: 4096
+  ffn_dimension: 11008
+  block_size: 32
+  compression_ratio: 0.5
+  simd_width: 32
+  vector_bytes: 64
+  active_window: 2
+
+elementwise_contract:
+  rmsnorms_per_layer: 2
+  residuals_per_layer: 2
+  rope_qk_vectors: 2
+  silu_gate_mul_per_element: 2
+  evidence: inferred_llama2_semantics
+
+source_layout:
+  contract: src/mlxsim/fig21_layer_contract.py
+  auditor: scripts/audit_fig21_layer_contract.py
+
+result_path: artifacts/results/fig21-layer-contract-run096.json
