@@ -1,0 +1,773 @@
+{
+  "active_window": 2,
+  "blocks": [
+    {
+      "id": "N2048-u16_load_l0",
+      "instructions": [
+        {
+          "emit_event": "N2048-u16_load_l0",
+          "emit_event_period": 96,
+          "id": "N2048-u16_load_l0",
+          "memory_address": 0,
+          "memory_bytes": 64,
+          "operation": "load",
+          "pipeline": "load",
+          "reads": [],
+          "writes": [
+            0
+          ]
+        }
+      ],
+      "pe": [
+        0,
+        0
+      ],
+      "predecessors": [],
+      "tag": 1,
+      "trip_count": 96,
+      "wait_events": []
+    },
+    {
+      "id": "N2048-u16_qk_l0",
+      "instructions": [
+        {
+          "emit_event": "N2048-u16_score_l0",
+          "emit_event_period": 4096,
+          "id": "N2048-u16_qk_l0",
+          "operation": "fma",
+          "pipeline": "compute",
+          "reads": [],
+          "writes": []
+        }
+      ],
+      "pe": [
+        0,
+        1
+      ],
+      "predecessors": [],
+      "tag": 2,
+      "trip_count": 65536,
+      "wait_event_period": 65536,
+      "wait_events": [
+        "N2048-u16_load_l0"
+      ]
+    },
+    {
+      "id": "N2048-u16_row_l0",
+      "instructions": [
+        {
+          "emit_event": "N2048-u16_row_l0",
+          "emit_event_period": 1,
+          "id": "N2048-u16_row_l0",
+          "operation": "fmax",
+          "pipeline": "compute",
+          "reads": [],
+          "writes": []
+        }
+      ],
+      "pe": [
+        0,
+        2
+      ],
+      "predecessors": [],
+      "tag": 3,
+      "trip_count": 16,
+      "wait_events": [
+        "N2048-u16_score_l0"
+      ]
+    },
+    {
+      "id": "N2048-u16_exp_l0",
+      "instructions": [
+        {
+          "id": "N2048-u16_fexp_l0",
+          "operation": "fexp",
+          "pipeline": "compute",
+          "reads": [],
+          "writes": []
+        },
+        {
+          "emit_event": "N2048-u16_weight_l0",
+          "emit_event_period": 1,
+          "id": "N2048-u16_add_l0",
+          "operation": "add",
+          "pipeline": "compute",
+          "reads": [],
+          "writes": []
+        }
+      ],
+      "pe": [
+        0,
+        3
+      ],
+      "predecessors": [],
+      "tag": 4,
+      "trip_count": 16,
+      "wait_events": [
+        "N2048-u16_row_l0"
+      ]
+    },
+    {
+      "id": "N2048-u16_sv_l0",
+      "instructions": [
+        {
+          "emit_event": "N2048-u16_sv_l0",
+          "emit_event_period": 2048,
+          "id": "N2048-u16_sv_l0",
+          "operation": "fma",
+          "pipeline": "compute",
+          "reads": [],
+          "writes": []
+        }
+      ],
+      "pe": [
+        0,
+        0
+      ],
+      "predecessors": [],
+      "tag": 5,
+      "trip_count": 65536,
+      "wait_event_period": 4096,
+      "wait_events": [
+        "N2048-u16_weight_l0"
+      ]
+    },
+    {
+      "id": "N2048-u16_div_l0",
+      "instructions": [
+        {
+          "id": "N2048-u16_div_l0",
+          "operation": "fdiv",
+          "pipeline": "compute",
+          "reads": [],
+          "writes": []
+        },
+        {
+          "emit_event": "N2048-u16_done_l0",
+          "id": "N2048-u16_store_l0",
+          "memory_address": 67108864,
+          "memory_bytes": 64,
+          "operation": "store",
+          "pipeline": "store",
+          "reads": [
+            0
+          ],
+          "writes": []
+        }
+      ],
+      "pe": [
+        0,
+        0
+      ],
+      "predecessors": [],
+      "tag": 5,
+      "trip_count": 32,
+      "wait_events": [
+        "N2048-u16_sv_l0"
+      ]
+    },
+    {
+      "id": "N2048-u16_load_l1",
+      "instructions": [
+        {
+          "emit_event": "N2048-u16_load_l1",
+          "emit_event_period": 96,
+          "id": "N2048-u16_load_l1",
+          "memory_address": 1048576,
+          "memory_bytes": 64,
+          "operation": "load",
+          "pipeline": "load",
+          "reads": [],
+          "writes": [
+            0
+          ]
+        }
+      ],
+      "pe": [
+        1,
+        0
+      ],
+      "predecessors": [],
+      "tag": 1,
+      "trip_count": 96,
+      "wait_events": []
+    },
+    {
+      "id": "N2048-u16_qk_l1",
+      "instructions": [
+        {
+          "emit_event": "N2048-u16_score_l1",
+          "emit_event_period": 4096,
+          "id": "N2048-u16_qk_l1",
+          "operation": "fma",
+          "pipeline": "compute",
+          "reads": [],
+          "writes": []
+        }
+      ],
+      "pe": [
+        1,
+        1
+      ],
+      "predecessors": [],
+      "tag": 2,
+      "trip_count": 65536,
+      "wait_event_period": 65536,
+      "wait_events": [
+        "N2048-u16_load_l1"
+      ]
+    },
+    {
+      "id": "N2048-u16_row_l1",
+      "instructions": [
+        {
+          "emit_event": "N2048-u16_row_l1",
+          "emit_event_period": 1,
+          "id": "N2048-u16_row_l1",
+          "operation": "fmax",
+          "pipeline": "compute",
+          "reads": [],
+          "writes": []
+        }
+      ],
+      "pe": [
+        1,
+        2
+      ],
+      "predecessors": [],
+      "tag": 3,
+      "trip_count": 16,
+      "wait_events": [
+        "N2048-u16_score_l1"
+      ]
+    },
+    {
+      "id": "N2048-u16_exp_l1",
+      "instructions": [
+        {
+          "id": "N2048-u16_fexp_l1",
+          "operation": "fexp",
+          "pipeline": "compute",
+          "reads": [],
+          "writes": []
+        },
+        {
+          "emit_event": "N2048-u16_weight_l1",
+          "emit_event_period": 1,
+          "id": "N2048-u16_add_l1",
+          "operation": "add",
+          "pipeline": "compute",
+          "reads": [],
+          "writes": []
+        }
+      ],
+      "pe": [
+        1,
+        3
+      ],
+      "predecessors": [],
+      "tag": 4,
+      "trip_count": 16,
+      "wait_events": [
+        "N2048-u16_row_l1"
+      ]
+    },
+    {
+      "id": "N2048-u16_sv_l1",
+      "instructions": [
+        {
+          "emit_event": "N2048-u16_sv_l1",
+          "emit_event_period": 2048,
+          "id": "N2048-u16_sv_l1",
+          "operation": "fma",
+          "pipeline": "compute",
+          "reads": [],
+          "writes": []
+        }
+      ],
+      "pe": [
+        1,
+        0
+      ],
+      "predecessors": [],
+      "tag": 5,
+      "trip_count": 65536,
+      "wait_event_period": 4096,
+      "wait_events": [
+        "N2048-u16_weight_l1"
+      ]
+    },
+    {
+      "id": "N2048-u16_div_l1",
+      "instructions": [
+        {
+          "id": "N2048-u16_div_l1",
+          "operation": "fdiv",
+          "pipeline": "compute",
+          "reads": [],
+          "writes": []
+        },
+        {
+          "emit_event": "N2048-u16_done_l1",
+          "id": "N2048-u16_store_l1",
+          "memory_address": 68157440,
+          "memory_bytes": 64,
+          "operation": "store",
+          "pipeline": "store",
+          "reads": [
+            0
+          ],
+          "writes": []
+        }
+      ],
+      "pe": [
+        1,
+        0
+      ],
+      "predecessors": [],
+      "tag": 5,
+      "trip_count": 32,
+      "wait_events": [
+        "N2048-u16_sv_l1"
+      ]
+    },
+    {
+      "id": "N2048-u16_load_l2",
+      "instructions": [
+        {
+          "emit_event": "N2048-u16_load_l2",
+          "emit_event_period": 96,
+          "id": "N2048-u16_load_l2",
+          "memory_address": 2097152,
+          "memory_bytes": 64,
+          "operation": "load",
+          "pipeline": "load",
+          "reads": [],
+          "writes": [
+            0
+          ]
+        }
+      ],
+      "pe": [
+        2,
+        0
+      ],
+      "predecessors": [],
+      "tag": 1,
+      "trip_count": 96,
+      "wait_events": []
+    },
+    {
+      "id": "N2048-u16_qk_l2",
+      "instructions": [
+        {
+          "emit_event": "N2048-u16_score_l2",
+          "emit_event_period": 4096,
+          "id": "N2048-u16_qk_l2",
+          "operation": "fma",
+          "pipeline": "compute",
+          "reads": [],
+          "writes": []
+        }
+      ],
+      "pe": [
+        2,
+        1
+      ],
+      "predecessors": [],
+      "tag": 2,
+      "trip_count": 65536,
+      "wait_event_period": 65536,
+      "wait_events": [
+        "N2048-u16_load_l2"
+      ]
+    },
+    {
+      "id": "N2048-u16_row_l2",
+      "instructions": [
+        {
+          "emit_event": "N2048-u16_row_l2",
+          "emit_event_period": 1,
+          "id": "N2048-u16_row_l2",
+          "operation": "fmax",
+          "pipeline": "compute",
+          "reads": [],
+          "writes": []
+        }
+      ],
+      "pe": [
+        2,
+        2
+      ],
+      "predecessors": [],
+      "tag": 3,
+      "trip_count": 16,
+      "wait_events": [
+        "N2048-u16_score_l2"
+      ]
+    },
+    {
+      "id": "N2048-u16_exp_l2",
+      "instructions": [
+        {
+          "id": "N2048-u16_fexp_l2",
+          "operation": "fexp",
+          "pipeline": "compute",
+          "reads": [],
+          "writes": []
+        },
+        {
+          "emit_event": "N2048-u16_weight_l2",
+          "emit_event_period": 1,
+          "id": "N2048-u16_add_l2",
+          "operation": "add",
+          "pipeline": "compute",
+          "reads": [],
+          "writes": []
+        }
+      ],
+      "pe": [
+        2,
+        3
+      ],
+      "predecessors": [],
+      "tag": 4,
+      "trip_count": 16,
+      "wait_events": [
+        "N2048-u16_row_l2"
+      ]
+    },
+    {
+      "id": "N2048-u16_sv_l2",
+      "instructions": [
+        {
+          "emit_event": "N2048-u16_sv_l2",
+          "emit_event_period": 2048,
+          "id": "N2048-u16_sv_l2",
+          "operation": "fma",
+          "pipeline": "compute",
+          "reads": [],
+          "writes": []
+        }
+      ],
+      "pe": [
+        2,
+        0
+      ],
+      "predecessors": [],
+      "tag": 5,
+      "trip_count": 65536,
+      "wait_event_period": 4096,
+      "wait_events": [
+        "N2048-u16_weight_l2"
+      ]
+    },
+    {
+      "id": "N2048-u16_div_l2",
+      "instructions": [
+        {
+          "id": "N2048-u16_div_l2",
+          "operation": "fdiv",
+          "pipeline": "compute",
+          "reads": [],
+          "writes": []
+        },
+        {
+          "emit_event": "N2048-u16_done_l2",
+          "id": "N2048-u16_store_l2",
+          "memory_address": 69206016,
+          "memory_bytes": 64,
+          "operation": "store",
+          "pipeline": "store",
+          "reads": [
+            0
+          ],
+          "writes": []
+        }
+      ],
+      "pe": [
+        2,
+        0
+      ],
+      "predecessors": [],
+      "tag": 5,
+      "trip_count": 32,
+      "wait_events": [
+        "N2048-u16_sv_l2"
+      ]
+    },
+    {
+      "id": "N2048-u16_load_l3",
+      "instructions": [
+        {
+          "emit_event": "N2048-u16_load_l3",
+          "emit_event_period": 96,
+          "id": "N2048-u16_load_l3",
+          "memory_address": 3145728,
+          "memory_bytes": 64,
+          "operation": "load",
+          "pipeline": "load",
+          "reads": [],
+          "writes": [
+            0
+          ]
+        }
+      ],
+      "pe": [
+        3,
+        0
+      ],
+      "predecessors": [],
+      "tag": 1,
+      "trip_count": 96,
+      "wait_events": []
+    },
+    {
+      "id": "N2048-u16_qk_l3",
+      "instructions": [
+        {
+          "emit_event": "N2048-u16_score_l3",
+          "emit_event_period": 4096,
+          "id": "N2048-u16_qk_l3",
+          "operation": "fma",
+          "pipeline": "compute",
+          "reads": [],
+          "writes": []
+        }
+      ],
+      "pe": [
+        3,
+        1
+      ],
+      "predecessors": [],
+      "tag": 2,
+      "trip_count": 65536,
+      "wait_event_period": 65536,
+      "wait_events": [
+        "N2048-u16_load_l3"
+      ]
+    },
+    {
+      "id": "N2048-u16_row_l3",
+      "instructions": [
+        {
+          "emit_event": "N2048-u16_row_l3",
+          "emit_event_period": 1,
+          "id": "N2048-u16_row_l3",
+          "operation": "fmax",
+          "pipeline": "compute",
+          "reads": [],
+          "writes": []
+        }
+      ],
+      "pe": [
+        3,
+        2
+      ],
+      "predecessors": [],
+      "tag": 3,
+      "trip_count": 16,
+      "wait_events": [
+        "N2048-u16_score_l3"
+      ]
+    },
+    {
+      "id": "N2048-u16_exp_l3",
+      "instructions": [
+        {
+          "id": "N2048-u16_fexp_l3",
+          "operation": "fexp",
+          "pipeline": "compute",
+          "reads": [],
+          "writes": []
+        },
+        {
+          "emit_event": "N2048-u16_weight_l3",
+          "emit_event_period": 1,
+          "id": "N2048-u16_add_l3",
+          "operation": "add",
+          "pipeline": "compute",
+          "reads": [],
+          "writes": []
+        }
+      ],
+      "pe": [
+        3,
+        3
+      ],
+      "predecessors": [],
+      "tag": 4,
+      "trip_count": 16,
+      "wait_events": [
+        "N2048-u16_row_l3"
+      ]
+    },
+    {
+      "id": "N2048-u16_sv_l3",
+      "instructions": [
+        {
+          "emit_event": "N2048-u16_sv_l3",
+          "emit_event_period": 2048,
+          "id": "N2048-u16_sv_l3",
+          "operation": "fma",
+          "pipeline": "compute",
+          "reads": [],
+          "writes": []
+        }
+      ],
+      "pe": [
+        3,
+        0
+      ],
+      "predecessors": [],
+      "tag": 5,
+      "trip_count": 65536,
+      "wait_event_period": 4096,
+      "wait_events": [
+        "N2048-u16_weight_l3"
+      ]
+    },
+    {
+      "id": "N2048-u16_div_l3",
+      "instructions": [
+        {
+          "id": "N2048-u16_div_l3",
+          "operation": "fdiv",
+          "pipeline": "compute",
+          "reads": [],
+          "writes": []
+        },
+        {
+          "emit_event": "N2048-u16_done_l3",
+          "id": "N2048-u16_store_l3",
+          "memory_address": 70254592,
+          "memory_bytes": 64,
+          "operation": "store",
+          "pipeline": "store",
+          "reads": [
+            0
+          ],
+          "writes": []
+        }
+      ],
+      "pe": [
+        3,
+        0
+      ],
+      "predecessors": [],
+      "tag": 5,
+      "trip_count": 32,
+      "wait_events": [
+        "N2048-u16_sv_l3"
+      ]
+    }
+  ],
+  "functional_units": {
+    "add": {
+      "class": "alu",
+      "initiation_interval": 1,
+      "latency": 2
+    },
+    "fdiv": {
+      "class": "transcendental",
+      "initiation_interval": 4,
+      "latency": 8
+    },
+    "fexp": {
+      "class": "transcendental",
+      "initiation_interval": 4,
+      "latency": 8
+    },
+    "fma": {
+      "class": "fma",
+      "initiation_interval": 1,
+      "latency": 4
+    },
+    "fmax": {
+      "class": "reduce",
+      "initiation_interval": 1,
+      "latency": 2
+    },
+    "frsqrt": {
+      "class": "transcendental",
+      "initiation_interval": 4,
+      "latency": 8
+    },
+    "mul": {
+      "class": "mul",
+      "initiation_interval": 1,
+      "latency": 2
+    },
+    "shuffle": {
+      "class": "shuffle",
+      "initiation_interval": 1,
+      "latency": 2
+    }
+  },
+  "memory_backend": "dsagen_spad",
+  "metadata": {
+    "block_count": 24,
+    "dynamic_event_count": 452,
+    "experiment_id": "H94",
+    "full_scale": 262144,
+    "hidden_dimension": 4096,
+    "memory_requests": 512,
+    "name": "N2048-u16",
+    "offchip_bytes": 32768,
+    "operation_counts": {
+      "add": 64,
+      "fdiv": 128,
+      "fexp": 64,
+      "fma": 524288,
+      "fmax": 64
+    },
+    "paper_target_values_consumed": false,
+    "pipeline_counts": {
+      "compute": 524608,
+      "load": 384,
+      "store": 128,
+      "xfer": 0
+    },
+    "scale": 16,
+    "sequence_length": 2048,
+    "simd_width": 32,
+    "vector_bytes": 64
+  },
+  "pe_dependency_model": "paper_static",
+  "pipelines": {
+    "compute": {
+      "initiation_interval": 1,
+      "latency": 1
+    },
+    "load": {
+      "initiation_interval": 1,
+      "latency": 1
+    },
+    "store": {
+      "initiation_interval": 1,
+      "latency": 1
+    },
+    "xfer": {
+      "initiation_interval": 1,
+      "latency": 1
+    }
+  },
+  "record_events": false,
+  "register_file": {
+    "banks": 4,
+    "read_ports": 2,
+    "write_ports": 1
+  },
+  "routing": {
+    "latency_per_hop": 1,
+    "link_capacity": 1,
+    "mesh_height": 4,
+    "mesh_width": 4,
+    "skip_steps": [
+      2,
+      1
+    ]
+  },
+  "schema_version": 1,
+  "start_in_roi": true
+}

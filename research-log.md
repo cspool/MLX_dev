@@ -278,3 +278,7 @@ Chronological, append-only record of reproduction decisions and evidence.
 | 272 | 2026-08-18 | protocol | Pre-registered H93: unchanged H83 graph, five H91 shapes, u=4/8 fit, u=16/32 holdout, four SRAM ports, exact full FU/SRAM/NoC scaling, and no Figure 21 targets. |
 | 273 | 2026-08-18 | inner-loop | H93 run098 is supported: 20 configs/40 runs replay, all 10 holdouts pass at `8.66e-7` MAPE, and full structured-Attention cycles span 11.47M-2.223B. |
 | 274 | 2026-08-18 | outer-loop | Dense Attention for the eight unmodified layers is the final missing timing path. Implement its full QK/softmax/SV plus SRAM contract before composing 24+8 layers. |
+| 275 | 2026-08-18 | protocol | Pre-registered H94 dense Attention with scale N²/16, exact per-scale QKV load/QK/softmax/SV/FDIV-store ratios, q=4/8 fit, q=16/32 holdout, and no targets. |
+| 276 | 2026-08-18 | implementation | Initial H94 configs expose one missing shared `fmax` FU entry before any cycles. Added the same reduce latency/II as H48/H82, recompiled, and completed 20 configs/40 runs. |
+| 277 | 2026-08-18 | inner-loop | H94 run099 is supported: all ten holdouts and every FU/SRAM/replay gate pass. Full dense-Attention cycles span 33.88M-8.595B. |
+| 278 | 2026-08-18 | outer-loop | MLX-side Figure 21 timing is component-complete. Compose 24 structured plus 8 dense layers target-free, compute component/GEMM shares, and keep speedup unavailable until a dense Xavier denominator exists. |

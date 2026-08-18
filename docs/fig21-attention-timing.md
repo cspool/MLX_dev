@@ -18,5 +18,9 @@ FU, SRAM, NoC, event, and replay gates all pass. These values complete the 24
 structured layers' component timing. Dense Attention for the remaining eight
 layers is still absent and must be timed before end-to-end composition.
 
+Dense Attention is now complete in
+[`fig21-dense-attention.md`](fig21-dense-attention.md), so MLX-side layer
+composition is unblocked.
+
 The immutable result is
 `artifacts/results/fig21-attention-timing-run098.json`.

@@ -687,9 +687,9 @@ experiments:
       timestamp: "2026-08-17"
 
 outer_loop:
-  cycle: 53
-  last_direction: "Implement and validate five batch-8 dense-Attention QK/softmax/SV paths with real SRAM, then compose H92/H93 into 24 structured plus 8 dense layers."
-  last_reflection: "H93 closes structured Attention at 10/10 heldouts. H92 plus H93 now cover every structured-layer component and all dense projections/elementwise work. Dense Attention for eight layers is the sole remaining timing gap."
+  cycle: 54
+  last_direction: "Compose H92/H93/H94 into 24 structured plus 8 dense MLX layers, calculate target-free component and GEMM shares, and preserve Xavier speedup as unavailable until a dense Tensor path is source-executed."
+  last_reflection: "H94 closes the final MLX-side component at 10/10 holdouts. Every structured/dense projection, Attention, and inferred elementwise path now has exact source timing. Figure 21 composition is unblocked; cross-device speedup is not."
 
 recent_milestones_after_h46:
   architecture_contract: "H52 supersedes the GPU-SM analogy with the paper's specialized spatial tagged-block PE; GPGPU-Sim is baseline-only."
@@ -711,6 +711,7 @@ recent_milestones_after_h46:
   fig21_layer_contract: "H91 supports five exact batch-8 layer contracts and structured-Attention graphs; remaining timed paths and 24+8 folding are incomplete."
   fig21_timed_paths: "H92 supports 45 non-Attention paths, 360 deterministic runs, and 90/90 held-out cycle predictions."
   fig21_attention_timing: "H93 supports five structured-Attention models with 10/10 heldouts and exact full work/bytes."
+  fig21_dense_attention: "H94 supports five dense-Attention models with 10/10 heldouts and exact QKV/output SRAM traffic."
 
 completion_snapshot_run042:
   certificate_run: run_042

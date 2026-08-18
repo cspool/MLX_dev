@@ -1,0 +1,941 @@
+{
+  "schema_version": 1,
+  "experiment_id": "H94",
+  "run_id": "run099",
+  "classification": "target_free_figure21_dense_attention_timing",
+  "validation_eligible": false,
+  "generated_at": "2026-08-18T01:04:30.411571+00:00",
+  "project_commit": "436ea2d800a26ff8e6a5c85604fb89f45db10340",
+  "hypothesis_status": "supported",
+  "audit_integrity": true,
+  "frozen_inputs": {
+    "layer_contract": {
+      "path": "artifacts/results/fig21-layer-contract-run096.json",
+      "bytes": 33918,
+      "sha256": "d92d0c477a1525beba1ab613985820dde98c8a7fe7429347210eb5abe9b2bf12",
+      "checks": {
+        "is_file": true,
+        "sha256": true
+      },
+      "pass": true
+    },
+    "timed_paths": {
+      "path": "artifacts/results/fig21-timed-paths-run097.json",
+      "bytes": 337686,
+      "sha256": "14444c351b54ad3e597d5f8c601b19dde989e3ba034ded6e1b4519186730421d",
+      "checks": {
+        "is_file": true,
+        "sha256": true
+      },
+      "pass": true
+    },
+    "structured_attention": {
+      "path": "artifacts/results/fig21-attention-timing-run098.json",
+      "bytes": 29660,
+      "sha256": "8075b341f2b640db8c5008cd956d96266c9fa1615655281fd76893f2a7df850f",
+      "checks": {
+        "is_file": true,
+        "sha256": true
+      },
+      "pass": true
+    },
+    "spad": {
+      "path": "artifacts/results/standalone-dsagen-spad-run071.json",
+      "bytes": 15983,
+      "sha256": "2a816515bf6cb2dcdde3ba6972eb8d095b44a2fde2f2c01ad7d1c63c30f15db8",
+      "checks": {
+        "is_file": true,
+        "sha256": true
+      },
+      "pass": true
+    },
+    "column_ports": {
+      "path": "artifacts/results/multiport-spad-run074.json",
+      "bytes": 54297,
+      "sha256": "a58c37a45111a8928fd98df8eb52ee8db48b2d1032766351020d11344b16f562",
+      "checks": {
+        "is_file": true,
+        "sha256": true
+      },
+      "pass": true
+    }
+  },
+  "parent_checks": {
+    "layer_contract": true,
+    "timed_paths": true,
+    "structured_attention": true,
+    "spad": true,
+    "column_ports": true
+  },
+  "compile_manifest": {
+    "path": "artifacts/environment/h94/fig21-dense-attention-compile-manifest.json",
+    "bytes": 19182,
+    "sha256": "73abd3ffdfa86f93c6cb09e9a65d33e3fbc6e95c3645a727788da9f2306cc54c",
+    "checks": {
+      "is_file": true
+    },
+    "pass": true
+  },
+  "run_manifest": {
+    "path": "artifacts/environment/h94/fig21-dense-attention-run-manifest.json",
+    "bytes": 156656,
+    "sha256": "c86cf877fe211896272dadea8a4ec478a3710c864d1e9694260ba74de64f47f7",
+    "checks": {
+      "is_file": true
+    },
+    "pass": true
+  },
+  "compile_checks": {
+    "N1024-u16": true,
+    "N1024-u32": true,
+    "N1024-u4": true,
+    "N1024-u8": true,
+    "N128-u16": true,
+    "N128-u32": true,
+    "N128-u4": true,
+    "N128-u8": true,
+    "N2048-u16": true,
+    "N2048-u32": true,
+    "N2048-u4": true,
+    "N2048-u8": true,
+    "N256-u16": true,
+    "N256-u32": true,
+    "N256-u4": true,
+    "N256-u8": true,
+    "N512-u16": true,
+    "N512-u32": true,
+    "N512-u4": true,
+    "N512-u8": true
+  },
+  "execution_checks": {
+    "N1024-u16": true,
+    "N1024-u32": true,
+    "N1024-u4": true,
+    "N1024-u8": true,
+    "N128-u16": true,
+    "N128-u32": true,
+    "N128-u4": true,
+    "N128-u8": true,
+    "N2048-u16": true,
+    "N2048-u32": true,
+    "N2048-u4": true,
+    "N2048-u8": true,
+    "N256-u16": true,
+    "N256-u32": true,
+    "N256-u4": true,
+    "N256-u8": true,
+    "N512-u16": true,
+    "N512-u32": true,
+    "N512-u4": true,
+    "N512-u8": true
+  },
+  "full_work_checks": {
+    "N1024": true,
+    "N128": true,
+    "N2048": true,
+    "N256": true,
+    "N512": true
+  },
+  "measurements": {
+    "N1024-u16": {
+      "cycles": 524949,
+      "metadata": {
+        "experiment_id": "H94",
+        "paper_target_values_consumed": false,
+        "name": "N1024-u16",
+        "sequence_length": 1024,
+        "hidden_dimension": 4096,
+        "scale": 16,
+        "simd_width": 32,
+        "vector_bytes": 64,
+        "full_scale": 65536,
+        "operation_counts": {
+          "fma": 524288,
+          "fmax": 64,
+          "fexp": 64,
+          "add": 64,
+          "fdiv": 256
+        },
+        "pipeline_counts": {
+          "load": 768,
+          "store": 256,
+          "compute": 524736,
+          "xfer": 0
+        },
+        "memory_requests": 1024,
+        "offchip_bytes": 65536,
+        "dynamic_event_count": 708,
+        "block_count": 24
+      }
+    },
+    "N1024-u32": {
+      "cycles": 1049877,
+      "metadata": {
+        "experiment_id": "H94",
+        "paper_target_values_consumed": false,
+        "name": "N1024-u32",
+        "sequence_length": 1024,
+        "hidden_dimension": 4096,
+        "scale": 32,
+        "simd_width": 32,
+        "vector_bytes": 64,
+        "full_scale": 65536,
+        "operation_counts": {
+          "fma": 1048576,
+          "fmax": 128,
+          "fexp": 128,
+          "add": 128,
+          "fdiv": 512
+        },
+        "pipeline_counts": {
+          "load": 1536,
+          "store": 512,
+          "compute": 1049472,
+          "xfer": 0
+        },
+        "memory_requests": 2048,
+        "offchip_bytes": 131072,
+        "dynamic_event_count": 1412,
+        "block_count": 24
+      }
+    },
+    "N1024-u4": {
+      "cycles": 131253,
+      "metadata": {
+        "experiment_id": "H94",
+        "paper_target_values_consumed": false,
+        "name": "N1024-u4",
+        "sequence_length": 1024,
+        "hidden_dimension": 4096,
+        "scale": 4,
+        "simd_width": 32,
+        "vector_bytes": 64,
+        "full_scale": 65536,
+        "operation_counts": {
+          "fma": 131072,
+          "fmax": 16,
+          "fexp": 16,
+          "add": 16,
+          "fdiv": 64
+        },
+        "pipeline_counts": {
+          "load": 192,
+          "store": 64,
+          "compute": 131184,
+          "xfer": 0
+        },
+        "memory_requests": 256,
+        "offchip_bytes": 16384,
+        "dynamic_event_count": 180,
+        "block_count": 24
+      }
+    },
+    "N1024-u8": {
+      "cycles": 262485,
+      "metadata": {
+        "experiment_id": "H94",
+        "paper_target_values_consumed": false,
+        "name": "N1024-u8",
+        "sequence_length": 1024,
+        "hidden_dimension": 4096,
+        "scale": 8,
+        "simd_width": 32,
+        "vector_bytes": 64,
+        "full_scale": 65536,
+        "operation_counts": {
+          "fma": 262144,
+          "fmax": 32,
+          "fexp": 32,
+          "add": 32,
+          "fdiv": 128
+        },
+        "pipeline_counts": {
+          "load": 384,
+          "store": 128,
+          "compute": 262368,
+          "xfer": 0
+        },
+        "memory_requests": 512,
+        "offchip_bytes": 32768,
+        "dynamic_event_count": 356,
+        "block_count": 24
+      }
+    },
+    "N128-u16": {
+      "cycles": 529429,
+      "metadata": {
+        "experiment_id": "H94",
+        "paper_target_values_consumed": false,
+        "name": "N128-u16",
+        "sequence_length": 128,
+        "hidden_dimension": 4096,
+        "scale": 16,
+        "simd_width": 32,
+        "vector_bytes": 64,
+        "full_scale": 1024,
+        "operation_counts": {
+          "fma": 524288,
+          "fmax": 64,
+          "fexp": 64,
+          "add": 64,
+          "fdiv": 2048
+        },
+        "pipeline_counts": {
+          "load": 6144,
+          "store": 2048,
+          "compute": 526528,
+          "xfer": 0
+        },
+        "memory_requests": 8192,
+        "offchip_bytes": 524288,
+        "dynamic_event_count": 4292,
+        "block_count": 24
+      }
+    },
+    "N128-u32": {
+      "cycles": 1058837,
+      "metadata": {
+        "experiment_id": "H94",
+        "paper_target_values_consumed": false,
+        "name": "N128-u32",
+        "sequence_length": 128,
+        "hidden_dimension": 4096,
+        "scale": 32,
+        "simd_width": 32,
+        "vector_bytes": 64,
+        "full_scale": 1024,
+        "operation_counts": {
+          "fma": 1048576,
+          "fmax": 128,
+          "fexp": 128,
+          "add": 128,
+          "fdiv": 4096
+        },
+        "pipeline_counts": {
+          "load": 12288,
+          "store": 4096,
+          "compute": 1053056,
+          "xfer": 0
+        },
+        "memory_requests": 16384,
+        "offchip_bytes": 1048576,
+        "dynamic_event_count": 8580,
+        "block_count": 24
+      }
+    },
+    "N128-u4": {
+      "cycles": 132373,
+      "metadata": {
+        "experiment_id": "H94",
+        "paper_target_values_consumed": false,
+        "name": "N128-u4",
+        "sequence_length": 128,
+        "hidden_dimension": 4096,
+        "scale": 4,
+        "simd_width": 32,
+        "vector_bytes": 64,
+        "full_scale": 1024,
+        "operation_counts": {
+          "fma": 131072,
+          "fmax": 16,
+          "fexp": 16,
+          "add": 16,
+          "fdiv": 512
+        },
+        "pipeline_counts": {
+          "load": 1536,
+          "store": 512,
+          "compute": 131632,
+          "xfer": 0
+        },
+        "memory_requests": 2048,
+        "offchip_bytes": 131072,
+        "dynamic_event_count": 1076,
+        "block_count": 24
+      }
+    },
+    "N128-u8": {
+      "cycles": 264725,
+      "metadata": {
+        "experiment_id": "H94",
+        "paper_target_values_consumed": false,
+        "name": "N128-u8",
+        "sequence_length": 128,
+        "hidden_dimension": 4096,
+        "scale": 8,
+        "simd_width": 32,
+        "vector_bytes": 64,
+        "full_scale": 1024,
+        "operation_counts": {
+          "fma": 262144,
+          "fmax": 32,
+          "fexp": 32,
+          "add": 32,
+          "fdiv": 1024
+        },
+        "pipeline_counts": {
+          "load": 3072,
+          "store": 1024,
+          "compute": 263264,
+          "xfer": 0
+        },
+        "memory_requests": 4096,
+        "offchip_bytes": 262144,
+        "dynamic_event_count": 2148,
+        "block_count": 24
+      }
+    },
+    "N2048-u16": {
+      "cycles": 524629,
+      "metadata": {
+        "experiment_id": "H94",
+        "paper_target_values_consumed": false,
+        "name": "N2048-u16",
+        "sequence_length": 2048,
+        "hidden_dimension": 4096,
+        "scale": 16,
+        "simd_width": 32,
+        "vector_bytes": 64,
+        "full_scale": 262144,
+        "operation_counts": {
+          "fma": 524288,
+          "fmax": 64,
+          "fexp": 64,
+          "add": 64,
+          "fdiv": 128
+        },
+        "pipeline_counts": {
+          "load": 384,
+          "store": 128,
+          "compute": 524608,
+          "xfer": 0
+        },
+        "memory_requests": 512,
+        "offchip_bytes": 32768,
+        "dynamic_event_count": 452,
+        "block_count": 24
+      }
+    },
+    "N2048-u32": {
+      "cycles": 1049237,
+      "metadata": {
+        "experiment_id": "H94",
+        "paper_target_values_consumed": false,
+        "name": "N2048-u32",
+        "sequence_length": 2048,
+        "hidden_dimension": 4096,
+        "scale": 32,
+        "simd_width": 32,
+        "vector_bytes": 64,
+        "full_scale": 262144,
+        "operation_counts": {
+          "fma": 1048576,
+          "fmax": 128,
+          "fexp": 128,
+          "add": 128,
+          "fdiv": 256
+        },
+        "pipeline_counts": {
+          "load": 768,
+          "store": 256,
+          "compute": 1049216,
+          "xfer": 0
+        },
+        "memory_requests": 1024,
+        "offchip_bytes": 65536,
+        "dynamic_event_count": 900,
+        "block_count": 24
+      }
+    },
+    "N2048-u4": {
+      "cycles": 131173,
+      "metadata": {
+        "experiment_id": "H94",
+        "paper_target_values_consumed": false,
+        "name": "N2048-u4",
+        "sequence_length": 2048,
+        "hidden_dimension": 4096,
+        "scale": 4,
+        "simd_width": 32,
+        "vector_bytes": 64,
+        "full_scale": 262144,
+        "operation_counts": {
+          "fma": 131072,
+          "fmax": 16,
+          "fexp": 16,
+          "add": 16,
+          "fdiv": 32
+        },
+        "pipeline_counts": {
+          "load": 96,
+          "store": 32,
+          "compute": 131152,
+          "xfer": 0
+        },
+        "memory_requests": 128,
+        "offchip_bytes": 8192,
+        "dynamic_event_count": 116,
+        "block_count": 24
+      }
+    },
+    "N2048-u8": {
+      "cycles": 262325,
+      "metadata": {
+        "experiment_id": "H94",
+        "paper_target_values_consumed": false,
+        "name": "N2048-u8",
+        "sequence_length": 2048,
+        "hidden_dimension": 4096,
+        "scale": 8,
+        "simd_width": 32,
+        "vector_bytes": 64,
+        "full_scale": 262144,
+        "operation_counts": {
+          "fma": 262144,
+          "fmax": 32,
+          "fexp": 32,
+          "add": 32,
+          "fdiv": 64
+        },
+        "pipeline_counts": {
+          "load": 192,
+          "store": 64,
+          "compute": 262304,
+          "xfer": 0
+        },
+        "memory_requests": 256,
+        "offchip_bytes": 16384,
+        "dynamic_event_count": 228,
+        "block_count": 24
+      }
+    },
+    "N256-u16": {
+      "cycles": 526869,
+      "metadata": {
+        "experiment_id": "H94",
+        "paper_target_values_consumed": false,
+        "name": "N256-u16",
+        "sequence_length": 256,
+        "hidden_dimension": 4096,
+        "scale": 16,
+        "simd_width": 32,
+        "vector_bytes": 64,
+        "full_scale": 4096,
+        "operation_counts": {
+          "fma": 524288,
+          "fmax": 64,
+          "fexp": 64,
+          "add": 64,
+          "fdiv": 1024
+        },
+        "pipeline_counts": {
+          "load": 3072,
+          "store": 1024,
+          "compute": 525504,
+          "xfer": 0
+        },
+        "memory_requests": 4096,
+        "offchip_bytes": 262144,
+        "dynamic_event_count": 2244,
+        "block_count": 24
+      }
+    },
+    "N256-u32": {
+      "cycles": 1053717,
+      "metadata": {
+        "experiment_id": "H94",
+        "paper_target_values_consumed": false,
+        "name": "N256-u32",
+        "sequence_length": 256,
+        "hidden_dimension": 4096,
+        "scale": 32,
+        "simd_width": 32,
+        "vector_bytes": 64,
+        "full_scale": 4096,
+        "operation_counts": {
+          "fma": 1048576,
+          "fmax": 128,
+          "fexp": 128,
+          "add": 128,
+          "fdiv": 2048
+        },
+        "pipeline_counts": {
+          "load": 6144,
+          "store": 2048,
+          "compute": 1051008,
+          "xfer": 0
+        },
+        "memory_requests": 8192,
+        "offchip_bytes": 524288,
+        "dynamic_event_count": 4484,
+        "block_count": 24
+      }
+    },
+    "N256-u4": {
+      "cycles": 131733,
+      "metadata": {
+        "experiment_id": "H94",
+        "paper_target_values_consumed": false,
+        "name": "N256-u4",
+        "sequence_length": 256,
+        "hidden_dimension": 4096,
+        "scale": 4,
+        "simd_width": 32,
+        "vector_bytes": 64,
+        "full_scale": 4096,
+        "operation_counts": {
+          "fma": 131072,
+          "fmax": 16,
+          "fexp": 16,
+          "add": 16,
+          "fdiv": 256
+        },
+        "pipeline_counts": {
+          "load": 768,
+          "store": 256,
+          "compute": 131376,
+          "xfer": 0
+        },
+        "memory_requests": 1024,
+        "offchip_bytes": 65536,
+        "dynamic_event_count": 564,
+        "block_count": 24
+      }
+    },
+    "N256-u8": {
+      "cycles": 263445,
+      "metadata": {
+        "experiment_id": "H94",
+        "paper_target_values_consumed": false,
+        "name": "N256-u8",
+        "sequence_length": 256,
+        "hidden_dimension": 4096,
+        "scale": 8,
+        "simd_width": 32,
+        "vector_bytes": 64,
+        "full_scale": 4096,
+        "operation_counts": {
+          "fma": 262144,
+          "fmax": 32,
+          "fexp": 32,
+          "add": 32,
+          "fdiv": 512
+        },
+        "pipeline_counts": {
+          "load": 1536,
+          "store": 512,
+          "compute": 262752,
+          "xfer": 0
+        },
+        "memory_requests": 2048,
+        "offchip_bytes": 131072,
+        "dynamic_event_count": 1124,
+        "block_count": 24
+      }
+    },
+    "N512-u16": {
+      "cycles": 525589,
+      "metadata": {
+        "experiment_id": "H94",
+        "paper_target_values_consumed": false,
+        "name": "N512-u16",
+        "sequence_length": 512,
+        "hidden_dimension": 4096,
+        "scale": 16,
+        "simd_width": 32,
+        "vector_bytes": 64,
+        "full_scale": 16384,
+        "operation_counts": {
+          "fma": 524288,
+          "fmax": 64,
+          "fexp": 64,
+          "add": 64,
+          "fdiv": 512
+        },
+        "pipeline_counts": {
+          "load": 1536,
+          "store": 512,
+          "compute": 524992,
+          "xfer": 0
+        },
+        "memory_requests": 2048,
+        "offchip_bytes": 131072,
+        "dynamic_event_count": 1220,
+        "block_count": 24
+      }
+    },
+    "N512-u32": {
+      "cycles": 1051157,
+      "metadata": {
+        "experiment_id": "H94",
+        "paper_target_values_consumed": false,
+        "name": "N512-u32",
+        "sequence_length": 512,
+        "hidden_dimension": 4096,
+        "scale": 32,
+        "simd_width": 32,
+        "vector_bytes": 64,
+        "full_scale": 16384,
+        "operation_counts": {
+          "fma": 1048576,
+          "fmax": 128,
+          "fexp": 128,
+          "add": 128,
+          "fdiv": 1024
+        },
+        "pipeline_counts": {
+          "load": 3072,
+          "store": 1024,
+          "compute": 1049984,
+          "xfer": 0
+        },
+        "memory_requests": 4096,
+        "offchip_bytes": 262144,
+        "dynamic_event_count": 2436,
+        "block_count": 24
+      }
+    },
+    "N512-u4": {
+      "cycles": 131413,
+      "metadata": {
+        "experiment_id": "H94",
+        "paper_target_values_consumed": false,
+        "name": "N512-u4",
+        "sequence_length": 512,
+        "hidden_dimension": 4096,
+        "scale": 4,
+        "simd_width": 32,
+        "vector_bytes": 64,
+        "full_scale": 16384,
+        "operation_counts": {
+          "fma": 131072,
+          "fmax": 16,
+          "fexp": 16,
+          "add": 16,
+          "fdiv": 128
+        },
+        "pipeline_counts": {
+          "load": 384,
+          "store": 128,
+          "compute": 131248,
+          "xfer": 0
+        },
+        "memory_requests": 512,
+        "offchip_bytes": 32768,
+        "dynamic_event_count": 308,
+        "block_count": 24
+      }
+    },
+    "N512-u8": {
+      "cycles": 262805,
+      "metadata": {
+        "experiment_id": "H94",
+        "paper_target_values_consumed": false,
+        "name": "N512-u8",
+        "sequence_length": 512,
+        "hidden_dimension": 4096,
+        "scale": 8,
+        "simd_width": 32,
+        "vector_bytes": 64,
+        "full_scale": 16384,
+        "operation_counts": {
+          "fma": 262144,
+          "fmax": 32,
+          "fexp": 32,
+          "add": 32,
+          "fdiv": 256
+        },
+        "pipeline_counts": {
+          "load": 768,
+          "store": 256,
+          "compute": 262496,
+          "xfer": 0
+        },
+        "memory_requests": 1024,
+        "offchip_bytes": 65536,
+        "dynamic_event_count": 612,
+        "block_count": 24
+      }
+    }
+  },
+  "models": {
+    "N1024": {
+      "intercept": 21.0,
+      "slope_cycles_per_scale": 32808.0,
+      "holdouts": [
+        {
+          "scale": 16,
+          "actual_cycles": 524949,
+          "predicted_cycles": 524949.0,
+          "relative_error": 0.0,
+          "pass_5pct": true
+        },
+        {
+          "scale": 32,
+          "actual_cycles": 1049877,
+          "predicted_cycles": 1049877.0,
+          "relative_error": 0.0,
+          "pass_5pct": true
+        }
+      ],
+      "full_scale": 65536,
+      "full_predicted_cycles": 2150105109.0
+    },
+    "N128": {
+      "intercept": 21.0,
+      "slope_cycles_per_scale": 33088.0,
+      "holdouts": [
+        {
+          "scale": 16,
+          "actual_cycles": 529429,
+          "predicted_cycles": 529429.0,
+          "relative_error": 0.0,
+          "pass_5pct": true
+        },
+        {
+          "scale": 32,
+          "actual_cycles": 1058837,
+          "predicted_cycles": 1058837.0,
+          "relative_error": 0.0,
+          "pass_5pct": true
+        }
+      ],
+      "full_scale": 1024,
+      "full_predicted_cycles": 33882133.0
+    },
+    "N2048": {
+      "intercept": 21.0,
+      "slope_cycles_per_scale": 32788.0,
+      "holdouts": [
+        {
+          "scale": 16,
+          "actual_cycles": 524629,
+          "predicted_cycles": 524629.0,
+          "relative_error": 0.0,
+          "pass_5pct": true
+        },
+        {
+          "scale": 32,
+          "actual_cycles": 1049237,
+          "predicted_cycles": 1049237.0,
+          "relative_error": 0.0,
+          "pass_5pct": true
+        }
+      ],
+      "full_scale": 262144,
+      "full_predicted_cycles": 8595177493.0
+    },
+    "N256": {
+      "intercept": 21.0,
+      "slope_cycles_per_scale": 32928.0,
+      "holdouts": [
+        {
+          "scale": 16,
+          "actual_cycles": 526869,
+          "predicted_cycles": 526869.0,
+          "relative_error": 0.0,
+          "pass_5pct": true
+        },
+        {
+          "scale": 32,
+          "actual_cycles": 1053717,
+          "predicted_cycles": 1053717.0,
+          "relative_error": 0.0,
+          "pass_5pct": true
+        }
+      ],
+      "full_scale": 4096,
+      "full_predicted_cycles": 134873109.0
+    },
+    "N512": {
+      "intercept": 21.0,
+      "slope_cycles_per_scale": 32848.0,
+      "holdouts": [
+        {
+          "scale": 16,
+          "actual_cycles": 525589,
+          "predicted_cycles": 525589.0,
+          "relative_error": 0.0,
+          "pass_5pct": true
+        },
+        {
+          "scale": 32,
+          "actual_cycles": 1051157,
+          "predicted_cycles": 1051157.0,
+          "relative_error": 0.0,
+          "pass_5pct": true
+        }
+      ],
+      "full_scale": 16384,
+      "full_predicted_cycles": 538181653.0
+    }
+  },
+  "full_estimates": {
+    "N1024": 2150105109.0,
+    "N128": 33882133.0,
+    "N2048": 8595177493.0,
+    "N256": 134873109.0,
+    "N512": 538181653.0
+  },
+  "summary": {
+    "shape_count": 5,
+    "run_count": 20,
+    "passing_holdouts": 10,
+    "total_holdouts": 10,
+    "mape": 0.0,
+    "max_error": 0.0,
+    "all_holdouts_pass": true
+  },
+  "source_files": {
+    "compiler_core": {
+      "path": "src/mlxsim/fig21_dense_attention.py",
+      "bytes": 7267,
+      "sha256": "a208ee7fabcd1a80f61ecd720feb9ea7a71373ee7f5f532bad3df3b2a67d8b16",
+      "checks": {
+        "is_file": true
+      },
+      "pass": true
+    },
+    "compiler": {
+      "path": "scripts/compile_fig21_dense_attention.py",
+      "bytes": 2393,
+      "sha256": "1467b2d69ef39c3878511cf58879e2c613848288f5ddb448ea35f2a68f2a139d",
+      "checks": {
+        "is_file": true
+      },
+      "pass": true
+    },
+    "runner": {
+      "path": "scripts/run_fig21_dense_attention.py",
+      "bytes": 4893,
+      "sha256": "c4c96afd9bbbb315de77461608f35181bde2db7503832d8de7317decc75432e7",
+      "checks": {
+        "is_file": true
+      },
+      "pass": true
+    },
+    "auditor": {
+      "path": "scripts/audit_fig21_dense_attention.py",
+      "bytes": 10818,
+      "sha256": "14879c1c882988f324a6d98abf69116d499072059d19c85dd9b996a1471eadd3",
+      "checks": {
+        "is_file": true
+      },
+      "pass": true
+    }
+  },
+  "integrity_checks": {
+    "frozen_files": true,
+    "parents": true,
+    "compile_manifest": true,
+    "run_manifest": true,
+    "compiler_replay": true,
+    "executions": true,
+    "run_replays": true,
+    "full_work": true,
+    "source_files": true,
+    "targets_absent": true,
+    "counts": true
+  },
+  "paper_performance_targets_consumed": false
+}
