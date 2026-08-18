@@ -316,6 +316,11 @@ passes q16 but finds a synchronized q32 cache cliff for all QKV stage counts.
 This validates the need for regime-aware GPU simulation while keeping every
 full denominator null.
 
+H126 closes the post-cache QKV path in
+[fig24-qkv-orin-postcache.md](fig24-qkv-orin-postcache.md). Three q128 holdouts
+pass at 2.27%–2.47%, and 21 exact-FMA Orin proxy estimates become eligible
+without paper targets. Their author-kernel identity remains explicitly false.
+
 The active objective is now limited to simulator-dependent hardware performance
 in Figures 18–25, as recorded in
 [simulator-experiment-scope.md](simulator-experiment-scope.md). Accuracy,

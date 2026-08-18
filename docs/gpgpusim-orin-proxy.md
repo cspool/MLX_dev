@@ -31,3 +31,8 @@ H125 extends through q32 in
 [fig24-qkv-orin-steady-state.md](fig24-qkv-orin-steady-state.md). q16 is stable,
 but q32 crosses a common cache/working-set boundary and runs about one-third
 slower than pre-cache extrapolation. A post-cache fold is required.
+
+H126 validates that post-cache regime in
+[fig24-qkv-orin-postcache.md](fig24-qkv-orin-postcache.md). q32/q64 predicts all
+q128 templates within 2.47%, yielding 21 exact-FMA QKV estimates under the
+explicit block128 proxy label.

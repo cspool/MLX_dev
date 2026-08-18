@@ -29,6 +29,10 @@ The next target-free experiment must fit q32/q64 and hold out q128 for all
 three stage counts. It may not blend pre-cache points or use Figure 24 targets.
 If post-cache folding still fails, full-work simulation remains ineligible.
 
+That post-cache experiment succeeds in
+[fig24-qkv-orin-postcache.md](fig24-qkv-orin-postcache.md): all q128 checks pass
+within 2.47%, releasing 21 target-free QKV proxy estimates.
+
 Evidence is in
 [run130](../artifacts/results/fig24-qkv-orin-steady-state-run130.json), with the
 frozen plan in
