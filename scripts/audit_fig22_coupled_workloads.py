@@ -7,7 +7,9 @@ import argparse
 import hashlib
 import json
 import math
+import shutil
 import subprocess
+import tempfile
 from datetime import datetime, timezone
 from itertools import pairwise
 from pathlib import Path
@@ -59,6 +61,43 @@ def git_commit() -> str | None:
         check=False,
     )
     return result.stdout.strip() if result.returncode == 0 else None
+
+
+def reverse_patch_check(spec: dict[str, Any]) -> dict[str, Any]:
+    source = PROJECT_ROOT / spec["path"]
+    patch = PROJECT_ROOT / spec["patch"]
+    apply_root = (PROJECT_ROOT / spec["apply_root"]).resolve()
+    relative_source = source.resolve().relative_to(apply_root)
+    current = sha256_file(source)
+    with tempfile.TemporaryDirectory(prefix="h118-patch-") as directory:
+        temporary_root = Path(directory)
+        temporary_source = temporary_root / relative_source
+        temporary_source.parent.mkdir(parents=True, exist_ok=True)
+        shutil.copy2(source, temporary_source)
+        result = subprocess.run(
+            ["git", "apply", "--reverse", str(patch)],
+            cwd=temporary_root,
+            capture_output=True,
+            text=True,
+            check=False,
+        )
+        reversed_digest = (
+            sha256_file(temporary_source) if result.returncode == 0 else None
+        )
+    checks = {
+        "after": current == spec["after_sha256"],
+        "reverse_apply": result.returncode == 0,
+        "before": reversed_digest == spec["before_sha256"],
+    }
+    return {
+        "source": str(source.relative_to(PROJECT_ROOT)),
+        "patch": str(patch.relative_to(PROJECT_ROOT)),
+        "current_sha256": current,
+        "reversed_sha256": reversed_digest,
+        "stderr": result.stderr.strip(),
+        "checks": checks,
+        "pass": all(checks.values()),
+    }
 
 
 def build_audit(config: dict[str, Any]) -> dict[str, Any]:
@@ -322,11 +361,15 @@ def build_audit(config: dict[str, Any]) -> dict[str, Any]:
             for spec in config["frozen_inputs"].values()
         ),
     }
+    patch_checks = {
+        name: reverse_patch_check(spec)
+        for name, spec in config["patch_control"].items()
+    }
     h114_sources = parents["h114"]["source_files"]
     cpp_source_checks = {
         name: qualify(PROJECT_ROOT / h114_sources[name]["path"])["sha256"]
         == h114_sources[name]["sha256"]
-        for name in ("overlay_header", "overlay_source", "adapter_header", "adapter_source", "driver")
+        for name in ("overlay_header", "adapter_header", "adapter_source", "driver")
     }
     counts = {
         "compile_outputs": len(compiled["outputs"])
@@ -358,6 +401,7 @@ def build_audit(config: dict[str, Any]) -> dict[str, Any]:
         all(utilization_checks.values())
         and config["metrics"]["launch_cycles"] is None,
         all(cpp_source_checks.values())
+        and all(item["pass"] for item in patch_checks.values())
         and config["validation_eligible"] is False
         and config["classification"] == "target_free_exact_fig22_coupled_workloads",
     ]
@@ -377,6 +421,7 @@ def build_audit(config: dict[str, Any]) -> dict[str, Any]:
         "counters_evaluated": len(counter_checks) == 16,
         "counts": all(counts.values()),
         "source_files": all(item["pass"] for item in source_files.values()),
+        "patches": all(item["pass"] for item in patch_checks.values()),
         "target_free": all(target_free_checks.values()),
         "acceptance_evaluated": len(acceptance_gates) == 12
         and all(isinstance(value, bool) for value in acceptance_gates),
@@ -426,6 +471,7 @@ def build_audit(config: dict[str, Any]) -> dict[str, Any]:
         "measurements": measurements,
         "utilization_checks": utilization_checks,
         "target_free_checks": target_free_checks,
+        "patch_checks": patch_checks,
         "cpp_source_checks": cpp_source_checks,
         "counts": counts,
         "acceptance_gates": acceptance_gates,

@@ -1,0 +1,42 @@
+diff --git a/src/cpu/minor/ssim/mlx_overlay.cc b/src/cpu/minor/ssim/mlx_overlay.cc
+--- a/src/cpu/minor/ssim/mlx_overlay.cc
++++ b/src/cpu/minor/ssim/mlx_overlay.cc
+@@ -468,5 +468,5 @@ Overlay::validate() const
+   std::set<std::string> block_ids;
+-  std::map<Coord, unsigned> static_instructions_per_pe;
++  std::map<Coord, std::map<uint64_t, unsigned>> instructions_by_tag;
+   std::map<Coord, std::map<uint64_t, unsigned>> operand_contexts_by_tag;
+   for (const auto &block : blocks_) {
+     if (block.id.empty() || !block_ids.insert(block.id).second) {
+@@ -513,7 +513,7 @@ Overlay::validate() const
+       }
+     }
+     std::set<std::string> instruction_ids;
+-    static_instructions_per_pe[block.pe] += block.instructions.size();
++    instructions_by_tag[block.pe][block.tag] += block.instructions.size();
+     operand_contexts_by_tag[block.pe][block.tag] += usesPipelinedContexts() ?
+         static_cast<unsigned>(std::min<uint64_t>(
+             block.trip_count, config_.iteration_contexts_per_block)) : 1;
+@@ -567,9 +567,20 @@ Overlay::validate() const
+       }
+     }
+   }
+-  for (const auto &entry : static_instructions_per_pe) {
++  for (const auto &entry : instructions_by_tag) {
++    std::vector<unsigned> resident_demands;
++    for (const auto &tag_demand : entry.second) {
++      resident_demands.push_back(tag_demand.second);
++    }
++    std::sort(resident_demands.begin(), resident_demands.end(), std::greater<unsigned>());
++    uint64_t resident_instructions = 0;
++    for (std::size_t index = 0;
++         index < std::min<std::size_t>(config_.active_window, resident_demands.size());
++         ++index) {
++      resident_instructions += resident_demands[index];
++    }
+     if (config_.instruction_slots_per_pe != 0 &&
+-        entry.second > config_.instruction_slots_per_pe) {
++        resident_instructions > config_.instruction_slots_per_pe) {
+       throw std::runtime_error("DPU instruction-slot capacity exceeded");
+     }
+   }

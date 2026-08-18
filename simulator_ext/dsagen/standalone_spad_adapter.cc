@@ -24,10 +24,16 @@ bool
 StandaloneSpadAdapter::validRequest(const MemoryRequest &request) const
 {
   unsigned bandwidth = config_.bank_width_bytes * config_.banks;
-  return request.bytes > 0 && request.bytes <= bandwidth &&
-      request.bytes % config_.bank_width_bytes == 0 &&
-      request.address % request.bytes == 0 &&
-      request.address % bandwidth + request.bytes <= bandwidth;
+  if (request.bytes == 0 || request.bytes > bandwidth ||
+      request.address % request.bytes != 0 ||
+      request.address % bandwidth + request.bytes > bandwidth) {
+    return false;
+  }
+  if (request.bytes < config_.bank_width_bytes) {
+    return request.address % config_.bank_width_bytes + request.bytes <=
+        config_.bank_width_bytes;
+  }
+  return request.bytes % config_.bank_width_bytes == 0;
 }
 
 bool
@@ -53,7 +59,9 @@ StandaloneSpadAdapter::issue(const MemoryRequest &request)
   pending.issue_cycle = cycle_;
   unsigned first_bank = static_cast<unsigned>(
       request.address / config_.bank_width_bytes % config_.banks);
-  unsigned chunks = request.bytes / config_.bank_width_bytes;
+  unsigned chunks =
+      (request.bytes + config_.bank_width_bytes - 1) /
+      config_.bank_width_bytes;
   for (unsigned index = 0; index < chunks; ++index) {
     pending.entries.push_back({(first_bank + index) % config_.banks, false, false});
   }
