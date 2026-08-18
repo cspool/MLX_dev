@@ -1,0 +1,61 @@
+name: fig21-xavier-wmma-projection-v1
+experiment_id: H144
+run_id: run149
+classification: target_free_xavier_wmma_projection_folding
+validation_eligible: false
+
+frozen_inputs:
+  h56_xavier:
+    path: artifacts/results/gpgpusim-xavier-proxy-run062.json
+    bytes: 7595
+    sha256: 443843b96d3f01cf27fee02413ae8d8cdc519233aca514cdaeb2d34d0373fe14
+    required_status: supported
+    required_integrity: true
+  h91_contract:
+    path: artifacts/results/fig21-layer-contract-run096.json
+    bytes: 33918
+    sha256: d92d0c477a1525beba1ab613985820dde98c8a7fe7429347210eb5abe9b2bf12
+    required_status: supported
+    required_integrity: true
+  h143_coverage:
+    path: artifacts/results/fig21-xavier-coverage-run148.json
+    bytes: 19293
+    sha256: 0115c705b2274fa6f1c6c8671161073717a36c6550d7fa33876bf8b69084aefd
+    required_status: supported
+    required_integrity: true
+
+xavier:
+  clock_hz: 1377000000
+  config_root: artifacts/environment/h56/config
+  tensor_core_units_per_sm: 4
+  simulated_compute_capability: 70
+
+wmma_workload:
+  tiles: 64
+  tile_shape: [16, 16, 16]
+  fma_equivalents_per_tile_repeat: 4096
+  fit_repeats: [16, 32]
+  holdout_repeats: [64, 128]
+  block_threads: 32
+
+projection_contract:
+  sequence_lengths: [128, 256, 512, 1024, 2048]
+  dense_layers: 32
+  components: [qkv, output, ffn1, ffn2]
+
+acceptance:
+  checksum_relative_error_limit: 1.0e-5
+  holdout_relative_error_limit: 0.05
+  required_holdouts: 2
+  required_projection_shapes: 5
+  targets_consumed: false
+  target_factor_or_efficiency_fit: forbidden
+
+source_layout:
+  cuda_source: simulator_ext/accelsim/mlx_wmma_proxy.cu
+  runner: scripts/run_fig21_xavier_wmma.py
+  auditor: scripts/audit_fig21_xavier_wmma.py
+  test: tests/test_fig21_xavier_wmma.py
+
+output_root: artifacts/environment/h144
+result_path: artifacts/results/fig21-xavier-wmma-run149.json
