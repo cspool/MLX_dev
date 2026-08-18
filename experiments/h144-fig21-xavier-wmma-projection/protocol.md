@@ -43,3 +43,12 @@ H77's sparse CUDA-core model.
 
 The immutable result will be
 `artifacts/results/fig21-xavier-wmma-run149.json`.
+
+## Execution stopping rule
+
+If the first 16-repeat fit anchor parses genuine WMMA PTX and reaches kernel
+enqueue but the simulator exits abnormally before producing cycle/checksum
+statistics, stop the remaining repeat jobs. Record H144 as rejected with the
+failure log and emit no projection estimates. Repeating the same unsupported
+functional-PTX instruction cannot satisfy gates 4-8; a trace-driven successor
+must be separately pre-registered rather than changing H144's execution mode.
