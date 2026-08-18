@@ -1,0 +1,68 @@
+name: fig24-25-full-mesh-paths-v1
+experiment_id: H102
+run_id: run107
+classification: target_free_figure24_25_exact_full_mesh_paths
+validation_eligible: false
+
+frozen_inputs:
+  identity:
+    path: artifacts/results/fig24-25-work-identity-run105.json
+    sha256: a947545c62cec6fc79621f5c5a838f8845480c414d75bd37f9285d0cdfd6493d
+    required_status: supported
+    required_integrity: true
+  fig10_mapping:
+    path: artifacts/results/fig10-mapping-run067.json
+    sha256: 8fad490e285c884fe2ed7b3c5856e628868cbc3e2db500eb1bde89adca79543e
+    required_status: supported
+    required_integrity: true
+  spad:
+    path: artifacts/results/standalone-dsagen-spad-run071.json
+    sha256: 2a816515bf6cb2dcdde3ba6972eb8d095b44a2fde2f2c01ad7d1c63c30f15db8
+    required_status: supported
+    required_integrity: true
+  column_ports:
+    path: artifacts/results/multiport-spad-run074.json
+    sha256: a58c37a45111a8928fd98df8eb52ee8db48b2d1032766351020d11344b16f562
+    required_status: supported
+    required_integrity: true
+
+frozen_sources:
+  h101_config:
+    path: configs/simulators/fig24_25_exact_paths_v1.yaml
+    sha256: c35c8c4510981e3e41ac5727c661516245df9c573e56816066ed538fcef67673
+  h101_protocol:
+    path: experiments/h101-fig24-25-exact-paths/protocol.md
+    sha256: 56d935cdb2036bda061b96287a0f5c41d6ac03a10f2cca252fdd67e23c77fbfa
+
+fit_scales: [4, 8]
+holdout_scales: [16, 32]
+cycle_relative_error_limit: 0.05
+physical_fma_relative_error_limit: 0.05
+qkv_full_fma_utilization_minimum: 0.85
+
+hardware:
+  simd_width: 32
+  vector_bytes: 64
+  mesh_width: 4
+  mesh_height: 4
+  lanes: 16
+  active_window: 2
+  spad_ports: 4
+  spad_axis: x
+
+required:
+  paths: 48
+  configs: 192
+  double_runs: 384
+  cycle_holdouts: 96
+  compute_coordinates_per_phase: 16
+  qkv_paths: 24
+
+output_root: artifacts/environment/h102
+source_layout:
+  compiler_core: src/mlxsim/fig24_25_full_mesh_paths.py
+  compiler: scripts/compile_fig24_25_full_mesh_paths.py
+  runner: scripts/run_fig24_25_full_mesh_paths.py
+  auditor: scripts/audit_fig24_25_full_mesh_paths.py
+
+result_path: artifacts/results/fig24-25-full-mesh-paths-run107.json
