@@ -39,8 +39,13 @@ hardware-performance point is generated from a qualified simulator path and is
 within 10%; target replay, renamed occupancy metrics, incomplete denominators,
 or unmatched proxies do not count.
 
-At the run119 pause point, the provisional strict count is 0/8. Run119 supplies
+The refreshed `paper_analysis_read` MCP verifies this boundary directly from
+four split-paper notes: `VII.-EVALUATION` separates Figures 15–17 as algorithmic
+validation; `A.-Software--Hardware-Implementation` states that performance uses
+the cycle-accurate simulator and taped-out measurements; `B.-MLX-Performance`
+covers Figures 18–21; and `C.-Resource-Utilization-and-Scalability` covers
+Figures 22–25. The active scope is therefore verified rather than provisional.
+
+At the run119 resume point, the strict count is 0/8. Run119 supplies
 the first target-free live coupled source for all Figure 24/25 MLX paths, but it
-has deliberately not been joined to targets. On resume, the refreshed MCP
-configuration should first verify this scope and terminology before the next
-target-facing protocol is registered.
+has deliberately not been joined to targets.
