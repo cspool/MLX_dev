@@ -1,0 +1,46 @@
+name: fig25-trend-completion-v1
+experiment_id: H140
+run_id: run145
+classification: target_exposed_figure25_dual_criterion_trend_audit
+validation_eligible: false
+
+frozen_inputs:
+  h115:
+    path: artifacts/results/fig25-coupled-transfer-run120.json
+    bytes: 25840
+    sha256: 309a756f473bba0e81f33c79f5bd04f753ff9b1978d7a9f31061d5142e1273c7
+    required_status: rejected
+    required_integrity: true
+  h137:
+    path: artifacts/results/active-simulator-trend-completion-run142.json
+    bytes: 11524
+    sha256: e32eddfc97e97f4ff0b17ec10f1ca0be829a06f7055709712ab01f3549b99dd3
+    required_status: supported
+    required_integrity: true
+
+mapping:
+  operators:
+    - fft_cmp
+    - qkv_bsmm
+    - qkv_bsmm_b32
+    - qkv_bsmm_b64
+    - swa_w128_q32
+    - swa_w256_q64
+  cases: [BERT_512, Llama2_1K, InternLM2_4K, BERT_8K]
+
+acceptance:
+  minimum_spearman: 0.70
+  endpoint_direction_required: true
+  required_curve_passes: 6
+  strict_relative_error_limit: 0.10
+  strict_10pct_retained_as_diagnostic: true
+  every_required_series_must_pass: true
+  roofline_or_metric_remap: forbidden
+  scale_offset_or_fit: forbidden
+
+source_layout:
+  auditor: scripts/audit_fig25_trend_completion.py
+  trend_math: scripts/audit_fig19_trend_completion.py
+  test: tests/test_fig25_trend_completion.py
+
+result_path: artifacts/results/fig25-trend-completion-run145.json
