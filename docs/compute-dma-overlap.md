@@ -49,13 +49,20 @@ Figure 25 attempts could fail even after correcting work and mesh placement.
 
 ## Boundary
 
-H108 remains a valid deterministic bandwidth envelope, but its H102 parent
-cycles are not valid for Figure 25 throughput until multi-iteration in-flight
-semantics are implemented and independently tested. Selected MLX bandwidth and
-all Figure 25 reproduction fields remain null; full-paper completion remains
-0/18.
+H108 remains a valid deterministic bandwidth-envelope mechanism, but its H102
+parent cycles are not valid Figure 25 throughput inputs. H109 implements and
+independently tests multi-iteration in-flight semantics. H110 then reruns all
+48 paths, validates 96/96 corrected-cycle holdouts, and measures QKV issue
+utilization of 97.78%–99.79%. H110 also rejects affine physical-residence
+folding because 16 FFT holdouts exceed 5%; those residence estimates must not
+replace achieved throughput.
+
+The H108 envelope has not yet been recomputed with H110 cycles. Selected MLX
+bandwidth and all Figure 25 reproduction fields therefore remain null;
+full-paper completion remains 0/18. Work pauses at this boundary.
 
 Evidence is in
 [run113](../artifacts/results/compute-dma-overlap-run113.json), with the frozen
 plan in [H108 protocol](../experiments/h108-compute-dma-overlap/protocol.md).
-
+The corrected parent evidence is in
+[H110 run115](../artifacts/results/pipelined-full-mesh-paths-run115.json).

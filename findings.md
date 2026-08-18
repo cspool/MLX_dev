@@ -96,6 +96,7 @@ H37 closed the first full-paper ledger with a machine certificate rather than a 
 - H102 supports the paper-derived 16-PE correction. All 384 executions replay; 48/48 work paths, 192/192 full-mesh runs, 96/96 cycle holdouts, and 96/96 physical-FMA holdouts pass. QKV full-work utilization rises from about 25% under four-strip folding to 99.30%-99.93% with identical FU/byte work. This confirms spatial loop placement—not GPU-SM semantics or FU latency—as the dominant occupancy mechanism.
 - H103 is retained as an internally valid physical-FMA occupancy diagnostic, not a Figure 25 reproduction. Its metric omits the paper's `min(P_peak, OI*BW)` denominator and H102 omits windowed-KV bandwidth loss. The 1/24, 59.33% MAPE comparison therefore cannot enter the paper certificate; it only proves that the current full-mesh path is over-saturated.
 - H104 supports the expanded author/simulator lineage audit. Twelve of twelve required primary sources and 13 T1-primary responses qualify. SimICT is supported as the cited/historical cycle-accurate framework; the ICT/Ricore DPU -> DFU-E -> M2-DFU line is the highest-confidence parent-family candidate; an internal SmarCo simulator/RTL/runtime stack is directly reported. Exact chip and source-code reuse remain unresolved. DSAGEN/Assassyn move from likely-origin candidates to open engineering precedents.
+- H105-H109 reconstruct and validate the source-supported DPU control, multi-NoC, two-half-SPM/DMA ownership, full-work residency, and bounded iteration-context layers without consuming MLX targets. H110 then reruns all 48 full-mesh paths: 96/96 corrected-cycle holdouts pass, QKV issue utilization is 97.78%-99.79%, and H102-to-H110 speedup is 3.939x-3.994x for QKV. The joint H110 hypothesis is still rejected because only 80/96 residence holdouts pass; all 16 failures are FFT. Direct cycles/issues remain valid, but the failed residence extrapolation cannot stand in for Figure 25 throughput.
 
 ## Patterns and Insights
 
@@ -350,3 +351,12 @@ event, identity, routing and overflow cases all pass across four builds, while
 H105/H106/H52 and gem5 outputs remain exact. The fix is not retroactive:
 H102 must be recompiled and revalidated before its prior full-cycle estimates
 or H108 envelope can support Figure 25.
+
+Run115 performs that recompile for all 48 exact batch-32 paths. All 384 runs,
+parent/work/event/memory/context checks, and 96 corrected-cycle holdouts pass;
+cycle MAPE is 0.289% and the maximum error is 2.814%. Every path accelerates,
+with 3.939x-3.994x QKV speedup and 97.78%-99.79% QKV issue utilization. H110 is
+nevertheless rejected at 11/12 gates because physical residence passes only
+80/96 holdouts and all 16 FFT holdouts fail, up to 19.89%. This separates a
+valid simulator-throughput correction from an invalid secondary-counter fold.
+No paper target is consumed and full-paper completion remains 0/18.

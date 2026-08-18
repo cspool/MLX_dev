@@ -24,5 +24,14 @@ FMA iterations actually reissue every four cycles. H102's work, coordinate and
 self-consistency gates remain valid, but its full cycle estimates must not be
 used as hardware-throughput evidence until iteration pipelining is corrected.
 
+H109 corrects the simulator defect, and H110 reruns all 48 paths in that
+explicit mode. H110 validates corrected-cycle folding at 96/96 holdouts and
+raises QKV issue utilization to 97.78%–99.79%, with 3.939x–3.994x speedup over
+H102. Its broader registered hypothesis is nevertheless rejected because only
+80/96 physical-residence holdouts pass; all 16 failures are FFT-CMP. The
+corrected cycles and issue counts are retained, while the failed residence
+extrapolation is not. See
+[corrected pipelined full-mesh paths](pipelined-full-mesh-paths.md).
+
 The immutable result is
 `artifacts/results/fig24-25-full-mesh-paths-run107.json`.

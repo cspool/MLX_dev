@@ -218,5 +218,11 @@ until multi-iteration in-flight execution is implemented.
 H109 implements and validates that correction in
 [pipelined-block-contexts.md](pipelined-block-contexts.md). A latency-4/II-1
 eight-trip FMA now issues in cycles 0–7 and completes in 4–11 with four bounded
-contexts, while every legacy result remains byte-identical. H102 still needs a
-target-free recompile in this explicit mode before its cycles can be reused.
+contexts, while every legacy result remains byte-identical.
+
+H110 performs the target-free recompile in
+[pipelined-full-mesh-paths.md](pipelined-full-mesh-paths.md). All 96 corrected
+cycle holdouts pass and QKV issue utilization reaches 97.78%–99.79%, but the
+registered joint hypothesis is rejected because 16 FFT physical-residence
+holdouts fail. The issue/cycle correction is usable; the failed residence fold
+is not. No H108 recomposition or Figure 25 comparison has been started.
