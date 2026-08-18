@@ -612,3 +612,9 @@ Run156 applies only the Xavier work-unit correction. Replay cycles stay
 128/240/464/912 and both holdouts remain exact; the model slope per true FMA
 rises 16x and dense projection estimates become 1.599-25.586 seconds. The MLX
 full-array issue correction remains a separate execution task.
+
+Run158 replaces that issue path with direct evidence rather than a correction
+factor. Six exact-work baseline/current pairs preserve every FU, pipeline and
+memory count; QKV/FFN improve 3.998x, heterogeneous elementwise improves 3.508x,
+and concurrent issue rises from four to sixteen. The full-array core claim is
+therefore reproduced under the user's final criterion.

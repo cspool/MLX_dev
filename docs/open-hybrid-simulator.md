@@ -444,6 +444,11 @@ H151 corrects the GPU unit in
 replay cycles retain exact holdouts at 256 FMA/SASS-HMMA and yield five corrected
 projection estimates without a target factor.
 
+H153 then validates the primary core claim in
+[core-full-array-gain.md](core-full-array-gain.md): six exact same-work
+QKV/FFN/elementwise comparisons improve 3.508x-3.998x while concurrent issue
+rises from four to sixteen. No full-figure pass is required.
+
 The active objective is now limited to simulator-dependent hardware performance
 in Figures 18–25, as recorded in
 [simulator-experiment-scope.md](simulator-experiment-scope.md). Accuracy,

@@ -24,6 +24,8 @@ active_simulator_scope:
     - mesh_scaling_and_skip_hop_routing
     - full_array_resource_utilization
     - complete_block_end_to_end_gain_over_same_work_baseline
+  reproduced_core_claims:
+    - full_array_resource_utilization
   deprioritized_comparisons:
     - prior_accelerator_absolute_numbers
     - exact_gpu_kernel_magnitude_when_not_needed_for_core_claim
@@ -722,9 +724,9 @@ experiments:
       timestamp: "2026-08-17"
 
 outer_loop:
-  cycle: 110
-  last_direction: "Pre-register H153 to compare representative structured-QKV, structured-FFN and mixed-elementwise paths at two exact same-work scales between H92 four-lane paper-static and H152 16-PE scoreboard execution."
-  last_reflection: "User scope stops H152 exhaustive full-figure batch at 170/360. Completed representative paths already conserve identical work/traffic and show about 3.998x QKV/FFN and 3.508x elementwise full-array gains; freeze them separately before auditing."
+  cycle: 111
+  last_direction: "Pre-register H154 to certify all already supported core comparative claims from H109/H111/H113/H120/H141/H153 under the same-work, matching-direction and >=1.2x rule, without reopening full figures."
+  last_reflection: "H153 supports the core full-array claim at 6/6 same-work comparisons: structured QKV/FFN gain about 3.998x, mixed elementwise 3.508x, and max issue rises 4->16. Full-figure completion is explicitly not required."
 
 recent_milestones_after_h46:
   architecture_contract: "H52 supersedes the GPU-SM analogy with the paper's specialized spatial tagged-block PE; GPGPU-Sim is baseline-only."
@@ -804,6 +806,7 @@ recent_milestones_after_h46:
   fig21_scale_semantics: "H150 supports a target-free dual diagnosis: all H92 runs cap at four SIMD32 issues (256GOp/s versus paper 1TOp/s, 3.906x), while H146 records 4096 FMA per SASS HMMA versus the frozen Volta 256 (16x Xavier cycle correction); H95 24+8 serialization is preserved."
   fig21_xavier_hmma_corrected: "H151 supports corrected SASS-HMMA projection semantics: unchanged 128/240/464/912 cycles fold with zero holdout error at 256 FMA/HMMA, producing five dense projection estimates of 1.599-25.586s."
   fig21_full_array_exhaustive: "H152 stopped without a result at 170/360 after the user deprioritized full-figure exhaustion; partial outputs are not promoted wholesale. The 16-PE compiler/mapping is retained for a separately frozen representative same-work claim."
+  core_full_array_gain: "H153 supports the core full-array same-work claim: 6/6 N128 QKV/FFN/elementwise comparisons pass at 3.508x-3.998x with exact work/traffic, replay/adapter identity and a 4->16 issue transition."
 
 completion_snapshot_run042:
   certificate_run: run_042
