@@ -1,0 +1,40 @@
+diff --git a/src/cpu/minor/ssim/mlx_overlay.cc b/src/cpu/minor/ssim/mlx_overlay.cc
+--- a/src/cpu/minor/ssim/mlx_overlay.cc
++++ b/src/cpu/minor/ssim/mlx_overlay.cc
+@@ -1372,0 +1373,15 @@
++std::vector<std::size_t>
++Overlay::activePipelinedBlockIndices() const
++{
++  std::vector<std::size_t> result;
++  for (uint64_t tag : active_tags_) {
++    auto blocks = tag_blocks_.find(tag);
++    if (blocks == tag_blocks_.end()) continue;
++    for (std::size_t block_index : blocks->second) {
++      const auto &state = pipelined_states_[block_index];
++      if (state.active && !state.complete) result.push_back(block_index);
++    }
++  }
++  return result;
++}
++
+@@ -1377,2 +1392 @@
+-  for (std::size_t block_index = 0;
+-       block_index < pipelined_states_.size(); ++block_index) {
++  for (std::size_t block_index : activePipelinedBlockIndices()) {
+@@ -1450,2 +1464 @@
+-  for (std::size_t block_index = 0;
+-       block_index < pipelined_states_.size(); ++block_index) {
++  for (std::size_t block_index : activePipelinedBlockIndices()) {
+@@ -1681,2 +1694 @@
+-  for (std::size_t block_index = 0;
+-       block_index < pipelined_states_.size(); ++block_index) {
++  for (std::size_t block_index : activePipelinedBlockIndices()) {
+@@ -1758,2 +1770 @@
+-  for (std::size_t block_index = 0;
+-       block_index < pipelined_states_.size(); ++block_index) {
++  for (std::size_t block_index : activePipelinedBlockIndices()) {
+diff --git a/src/cpu/minor/ssim/mlx_overlay.hh b/src/cpu/minor/ssim/mlx_overlay.hh
+--- a/src/cpu/minor/ssim/mlx_overlay.hh
++++ b/src/cpu/minor/ssim/mlx_overlay.hh
+@@ -412,0 +413 @@
++  std::vector<std::size_t> activePipelinedBlockIndices() const;
