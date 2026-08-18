@@ -1,0 +1,67 @@
+name: core-full-array-gain-v1
+experiment_id: H153
+run_id: run158
+classification: target_free_core_full_array_same_work_gain
+validation_eligible: true
+
+frozen_inputs:
+  h92_baseline:
+    path: artifacts/results/fig21-timed-paths-run097.json
+    bytes: 337686
+    sha256: 14444c351b54ad3e597d5f8c601b19dde989e3ba034ded6e1b4519186730421d
+    required_status: supported
+    required_integrity: true
+  h141_mapping:
+    path: artifacts/results/fig23-complete-block-run146.json
+    bytes: 12663
+    sha256: 7aad546c0b750086c78b3ec04427143c46da74a9f7ea96ad47b9017ce0d60c69
+    required_status: supported
+    required_integrity: true
+  h150_diagnosis:
+    path: artifacts/results/fig21-scale-semantics-run155.json
+    bytes: 6905
+    sha256: 8383ea05c3d0245bc4fb2f0f7c1e915a9bde932461e6a9634d9d4294ea6f451e
+    required_status: supported
+    required_integrity: true
+  h152_compile_manifest:
+    path: artifacts/environment/h152/fig21-timed-paths-compile-manifest.json
+    bytes: 504202
+    sha256: 19b4d086cc46069427294a22169d63ceb54da1bee6f6f00561ef01f2f08b6ed3
+
+comparison:
+  sequence_length: 128
+  selected_paths:
+    - structured_qkv
+    - structured_ffn1
+    - elementwise
+  same_work_scales:
+    - {baseline_q: 16, full_array_q: 4}
+    - {baseline_q: 32, full_array_q: 8}
+  baseline:
+    lanes: 4
+    active_window: 2
+    pe_dependency_model: paper_static
+  full_array:
+    lanes: 16
+    active_window: 4
+    pe_dependency_model: scoreboard_experimental
+  common:
+    simd_width: 32
+    mesh: [4, 4]
+    physical_pe_count: 16
+    spad_ports: 4
+    spad_axis: x
+
+acceptance:
+  minimum_clear_speedup: 1.20
+  required_comparisons: 6
+  required_passing_comparisons: 6
+  targets_consumed: false
+  residual_scale_or_cycle_factor: forbidden
+
+source_layout:
+  compiler_core: src/mlxsim/fig21_full_array_paths.py
+  auditor: scripts/audit_core_full_array_gain.py
+  test: tests/test_core_full_array_gain.py
+
+result_path: artifacts/results/core-full-array-gain-run158.json
