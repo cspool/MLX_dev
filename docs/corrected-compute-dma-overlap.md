@@ -56,8 +56,10 @@ and full-paper completion remains 0/18.
 The manuscript discloses a nominal compute peak but no numeric MLX off-chip
 bandwidth or memory-interface timing. Consequently, selecting a bandwidth from
 Figure 25 residuals would be calibration rather than independent validation.
-The next admissible target-facing test is a frozen comparison of every existing
-grid point, without fitting or selecting a new bandwidth.
+H112 performs the admissible frozen comparison of every existing grid point in
+[the corrected Figure 25 matrix](fig25-corrected-bandwidth-matrix.md). All five
+bandwidths pass 0/24, and even the diagnostic per-point oracle passes 0/24.
+Thus a scalar bandwidth does not explain the remaining simulator gap.
 
 Evidence is in
 [run116](../artifacts/results/corrected-compute-dma-overlap-run116.json), with

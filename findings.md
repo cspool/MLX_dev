@@ -98,6 +98,7 @@ H37 closed the first full-paper ledger with a machine certificate rather than a 
 - H104 supports the expanded author/simulator lineage audit. Twelve of twelve required primary sources and 13 T1-primary responses qualify. SimICT is supported as the cited/historical cycle-accurate framework; the ICT/Ricore DPU -> DFU-E -> M2-DFU line is the highest-confidence parent-family candidate; an internal SmarCo simulator/RTL/runtime stack is directly reported. Exact chip and source-code reuse remain unresolved. DSAGEN/Assassyn move from likely-origin candidates to open engineering precedents.
 - H105-H109 reconstruct and validate the source-supported DPU control, multi-NoC, two-half-SPM/DMA ownership, full-work residency, and bounded iteration-context layers without consuming MLX targets. H110 then reruns all 48 full-mesh paths: 96/96 corrected-cycle holdouts pass, QKV issue utilization is 97.78%-99.79%, and H102-to-H110 speedup is 3.939x-3.994x for QKV. The joint H110 hypothesis is still rejected because only 80/96 residence holdouts pass; all 16 failures are FFT. Direct cycles/issues remain valid, but the failed residence extrapolation cannot stand in for Figure 25 throughput.
 - H111 supports the corrected target-free compute/DMA envelope. It reuses H108's scheduler with H110 cycles and H107 traffic, reconstructs H110 issue exactly, and makes all 240 sensitivity points strictly faster by 1.215x-3.994x. At 64 B/cycle, pipeline utilization is 40.15%-41.06% for FFT, 97.34%-99.79% for QKV, and 94.30%-97.49% for SWA. The exact 16x32x2 peak is 1024 effective ops/cycle, 2.4% above Table IV's rounded 1000. MLX bandwidth remains undisclosed/unselected and no paper target is consumed.
+- H112 rejects the corrected fixed-grid Figure 25 transfer with integrity: every 16/32/64/128/256 B/cycle row passes 0/24, best-grid MAPE is 59.24%, and even the diagnostic per-point bandwidth oracle passes 0/24. FFT crosses from bandwidth- to compute-limited, but QKV remains 96%-100% against 52%-76% targets and SWA remains 94%-100% against 43%-75%. A scalar bandwidth cannot repair the model. H107's saved per-tile vectors exactly match H111's reconstruction at 48/48 paths, localizing the next gap to live compute-memory coupling and non-ideal service rather than byte partitioning.
 
 ## Patterns and Insights
 
@@ -369,3 +370,11 @@ The 64 B/cycle sensitivities are 40.15%-41.06% for FFT, 97.34%-99.79% for QKV,
 and 94.30%-97.49% for SWA. The result uses exact 1024-op/cycle structural peak,
 excludes failed residence fields, and leaves MLX bandwidth and paper
 reproduction null. The full-paper count remains 0/18.
+
+Run117 applies the correct roofline metric to the frozen Figure 25 target
+matrix. None of the five bandwidths passes any of the 24 cells; MAPE ranges
+59.24%-63.65% and maximum error 120.00%-131.53%. The per-point oracle also
+passes 0/24, so neither a uniform nor pointwise choice from the target-free
+grid explains the residual. QKV/SWA overprediction persists while FFT changes
+sign across bandwidth. A 48/48 byte-vector audit rules out H107-to-H111 tile
+redistribution as the cause. Full-paper completion remains 0/18.

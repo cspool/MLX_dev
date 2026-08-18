@@ -30,3 +30,9 @@ full-paper certificate as a Figure 25 numerical failure.
 No residual correction or per-operator factor is fitted. The immutable
 historical diagnostic is
 `artifacts/results/full-mesh-fma-fig25-transfer-run108.json`.
+
+H112 supersedes the target-facing metric with H111's correct
+`P_achieve/min(P_peak, OI*BW)` pipeline envelope and tests all five bandwidths
+without fitting. Every bandwidth still passes 0/24, with 59.24% best-grid MAPE;
+the per-point bandwidth oracle also passes 0/24. See
+[corrected fixed-bandwidth Figure 25 matrix](fig25-corrected-bandwidth-matrix.md).

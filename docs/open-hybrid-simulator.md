@@ -231,4 +231,11 @@ H111 uses only that valid subset to rebuild H108 in
 [corrected-compute-dma-overlap.md](corrected-compute-dma-overlap.md). All 240
 matched sensitivity points are strictly faster and pass 12/12 gates. The
 manuscript still supplies no numeric MLX bandwidth, so the grid remains an
-unselected envelope and no Figure 25 reproduction is claimed.
+unselected envelope.
+
+H112 freezes that grid before joining Figure 25 in
+[fig25-corrected-bandwidth-matrix.md](fig25-corrected-bandwidth-matrix.md).
+All five bandwidth rows and the per-point oracle pass 0/24. QKV/SWA remain far
+too close to ideal issue/bandwidth roofs, proving that a scalar bandwidth is
+not the missing simulator parameter. The next substrate change must couple
+`dpu_pipelined` contexts directly to the historical DMA/SPM ownership clock.
