@@ -687,9 +687,9 @@ experiments:
       timestamp: "2026-08-17"
 
 outer_loop:
-  cycle: 63
-  last_direction: "Compile H101/H102 exact batch-32 FFT-CMP, QKV and SWA paths into explicit H106 tile/residency schedules; validate full DRAM/SPM bytes and operational intensity without Figure 25 targets."
-  last_reflection: "H106 supports the historical DDR-DMA-two-half-SPM ownership contract with 12/12 gates and exact legacy/gem5 regressions. Its synthetic 37/59-cycle mechanism comparison is not a paper result; full-paper completion remains 0/18."
+  cycle: 64
+  last_direction: "Compose H102 compute cycles with H107 full DMA schedules under target-free overlap bounds and a bandwidth-sensitivity envelope; keep Figure 25 values and undisclosed MLX bandwidth out."
+  last_reflection: "H107 supports all 48 exact OI contracts and exposes windowed-KV traffic, but MLX bandwidth, achieved performance and roofline utilization remain null. Full-paper completion remains 0/18."
 
 recent_milestones_after_h46:
   architecture_contract: "H52 supersedes the GPU-SM analogy with the paper's specialized spatial tagged-block PE; GPGPU-Sim is baseline-only."
@@ -723,6 +723,7 @@ recent_milestones_after_h46:
   author_simulator_lineage: "H104 supports SimICT as the cited/historical framework and ranks the closed ICT/Ricore DPU->DFU-E->M2-DFU line first; exact chip and code reuse remain unresolved."
   simict_dpu_contract: "H105 supports an opt-in source-derived DPU layer with FRFO, task/block/instance identity, capacity gates, and multiple physical NoCs across 78/78 executions; H52 and 569-cycle regressions remain exact, and no paper target is consumed."
   historical_dpu_memory: "H106 supports DDR-DMA-two-half-SPM ownership, parity/relative-address mapping and non-stop tile flow across 36 main plus four auxiliary executions; 768 off-chip bytes and 8/8 PE responses conserve exactly, with no paper target consumed."
+  full_mesh_memory_residency: "H107 supports 48 complete batch-32 schedules, 288 executions and exact OI; SWA window streaming lowers OI from 64/128 to 25.6/51.2 FLOP/B, while bandwidth and roofline utilization remain unavailable."
 
 completion_snapshot_run042:
   certificate_run: run_042

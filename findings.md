@@ -324,3 +324,12 @@ exactly 512 B in and 256 B out, with 8/8 PE responses. The synthetic non-stop
 case is 37 cycles versus 59 for identical-work per-tile barriers, but this is a
 mechanism check rather than the paper's reported average. Exact batch-32
 tile/residency schedules are still required before Figure 25 OI can be tested.
+
+Run112 compiles those full schedules for all 48 batch-32 paths. Independent
+FFT, structured-QKV and SWA formulas match H102 exactly, every 4 MiB aligned
+tile executes through H106, and 288 runs are deterministic and sanitizer
+clean. FFT OI is 17.33–25.33 FLOP/B and QKV-BSMM is 142.75–1527.05. Explicit
+windowed-KV streaming triples SWA reads and reduces OI from optimistic 64/128
+to 25.6/51.2 FLOP/B. This closes the OI input but not the roofline result:
+MLX bandwidth and compute/DMA overlap remain unproven, so utilization stays
+null and the full-paper count remains zero of 18.

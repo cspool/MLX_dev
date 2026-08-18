@@ -200,3 +200,10 @@ keeping every undisclosed DRAM/DMA/SPM latency explicit. Its synthetic
 non-stop mechanism passes 12/12 gates, but its 37-versus-59-cycle comparison is
 not a paper result. Full-work tile/residency compilation is still required
 before Figure 25 operational intensity can be evaluated.
+
+H107 completes that target-free OI prerequisite for all 48 exact batch-32 paths
+in [full-mesh-memory-residency.md](full-mesh-memory-residency.md). FFT-CMP OI
+is 17.33–25.33 FLOP/B, QKV-BSMM is 142.75–1527.05 FLOP/B, and explicit
+windowed-KV streaming lowers SWA from optimistic 64/128 to 25.6/51.2 FLOP/B.
+MLX bandwidth, achieved performance and roofline utilization remain null, so
+no Figure 25 cell is claimed.
