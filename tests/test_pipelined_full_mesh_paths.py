@@ -36,6 +36,7 @@ def test_pipelined_full_mesh_audit() -> None:
     report = build_audit(config)
     assert report["audit_integrity"]
     assert report["hypothesis_status"] == "rejected"
+    assert report["parent_checks"] == {"h109": True, "h102": True}
     assert report["summary"]["paths"] == 48
     assert report["summary"]["configs"] == 192
     assert report["summary"]["double_runs"] == 384

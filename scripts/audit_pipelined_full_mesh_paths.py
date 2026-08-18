@@ -45,9 +45,18 @@ def build_audit(config: dict[str, Any]) -> dict[str, Any]:
         name: qualify(PROJECT_ROOT / item["path"], item)
         for name, item in config["frozen_inputs"].items()
     }
-    h109 = json.loads(
-        (PROJECT_ROOT / config["frozen_inputs"]["h109"]["path"]).read_text()
-    )
+    parent_reports = {
+        name: json.loads((PROJECT_ROOT / item["path"]).read_text())
+        for name, item in config["frozen_inputs"].items()
+        if "required_status" in item
+    }
+    parent_checks = {
+        name: report["hypothesis_status"] == spec["required_status"]
+        and report["audit_integrity"] is spec["required_integrity"]
+        for name, report in parent_reports.items()
+        for spec in (config["frozen_inputs"][name],)
+    }
+    h109 = parent_reports["h109"]
     contracts_snapshot = json.loads(
         (PROJECT_ROOT / config["frozen_inputs"]["contracts"]["path"]).read_text()
     )
@@ -356,6 +365,7 @@ def build_audit(config: dict[str, Any]) -> dict[str, Any]:
     ]
     integrity_checks = {
         "frozen": all(item["pass"] for item in frozen.values()),
+        "parents": all(parent_checks.values()),
         "compile_manifest": compile_file["pass"]
         and compiled["paper_performance_targets_consumed"] is False,
         "run_manifest": run_file["pass"]
@@ -412,6 +422,7 @@ def build_audit(config: dict[str, Any]) -> dict[str, Any]:
         "paper_performance_targets_consumed": False,
         "paper_reproduction_claim": "none_target_free_corrected_throughput_only",
         "frozen_inputs": frozen,
+        "parent_checks": parent_checks,
         "h109_run_manifest": h109_manifest,
         "compile_manifest": compile_file,
         "run_manifest": run_file,
