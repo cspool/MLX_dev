@@ -42,7 +42,11 @@ def parse_run(path: Path) -> dict[str, Any]:
         "cycles": _last_int(content, "gpu_tot_sim_cycle"),
         "instructions": _last_int(content, "gpu_tot_sim_insn"),
         "ctas": _last_int(content, "gpu_tot_issued_cta"),
-        "detailed_mode": "GPGPU-Sim PTX: simulation mode 0" in content,
+        "detailed_mode": (
+            "GPGPU-Sim PTX: simulation mode 0" in content
+            or "GPGPU-Sim uArch: performance model initialization complete."
+            in content
+        ),
         "normal_exit": "GPGPU-Sim: *** exit detected ***" in content,
     }
 
