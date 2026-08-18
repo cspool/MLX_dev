@@ -1,0 +1,58 @@
+name: fig19-source-paths-v1
+experiment_id: H98
+run_id: run103
+classification: target_free_source_integrated_figure19_paths
+validation_eligible: false
+
+frozen_inputs:
+  identity:
+    path: artifacts/results/fig19-source-identity-run102.json
+    sha256: 3d6323e2ddcbeb59498f76754dbe864ea5be08de8a6c26c3160771054bf20bf7
+    required_status: supported
+    required_integrity: true
+  aggregate:
+    path: artifacts/results/dsagen-mlx-aggregate-run049.json
+    sha256: 2d166e60b2e01cb13836860688a7a967b3377160e4217c2a682a0e3a4dca7b3c
+    required_status: supported
+    required_integrity: true
+  packet_memory:
+    path: artifacts/results/combined-attention-memory-run088.json
+    sha256: a647443c82ae407b18f0253757b43cf245b1626593e03510895f9c87ecd5fa44
+    required_status: supported
+    required_integrity: true
+  spad:
+    path: artifacts/results/standalone-dsagen-spad-run071.json
+    sha256: 2a816515bf6cb2dcdde3ba6972eb8d095b44a2fde2f2c01ad7d1c63c30f15db8
+    required_status: supported
+    required_integrity: true
+  column_ports:
+    path: artifacts/results/multiport-spad-run074.json
+    sha256: a58c37a45111a8928fd98df8eb52ee8db48b2d1032766351020d11344b16f562
+    required_status: supported
+    required_integrity: true
+  timed_path_mechanism:
+    path: artifacts/results/fig21-timed-paths-run097.json
+    sha256: 14444c351b54ad3e597d5f8c601b19dde989e3ba034ded6e1b4519186730421d
+    required_status: supported
+    required_integrity: true
+
+sequence_lengths: [128, 256, 512, 1024]
+fit_scales: [4, 8]
+holdout_scales: [16, 32]
+cycle_relative_error_limit: 0.05
+hardware:
+  simd_width: 32
+  vector_bytes: 64
+  lanes: 4
+  active_window: 2
+  spad_ports: 4
+  spad_axis: x
+
+output_root: artifacts/environment/h98
+source_layout:
+  compiler_core: src/mlxsim/fig19_source_paths.py
+  compiler: scripts/compile_fig19_source_paths.py
+  runner: scripts/run_fig19_source_paths.py
+  auditor: scripts/audit_fig19_source_paths.py
+
+result_path: artifacts/results/fig19-source-paths-run103.json
