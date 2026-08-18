@@ -60,10 +60,9 @@ Evidence is in
 frozen plan in
 [H110 protocol](../experiments/h110-pipelined-full-mesh-paths/protocol.md).
 
-## Paused boundary
+## H111 follow-up
 
-Work pauses after H110. If explicitly resumed, the next target-free step is to
-recompute H108's compute/DMA sensitivity envelope from H110's corrected cycles
-and direct issue counts. It must retain an unselected MLX bandwidth and must
-not refit the failed FFT residence model or compare against Figure 25 before a
-new protocol is frozen.
+H111 subsequently recomputes H108's target-free compute/DMA envelope from the
+valid H110 cycles and direct issue counts. It retains an unselected MLX
+bandwidth and does not use the failed FFT residence model. See
+[corrected compute/DMA overlap](corrected-compute-dma-overlap.md).

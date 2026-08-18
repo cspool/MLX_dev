@@ -225,4 +225,10 @@ H110 performs the target-free recompile in
 cycle holdouts pass and QKV issue utilization reaches 97.78%–99.79%, but the
 registered joint hypothesis is rejected because 16 FFT physical-residence
 holdouts fail. The issue/cycle correction is usable; the failed residence fold
-is not. No H108 recomposition or Figure 25 comparison has been started.
+is not.
+
+H111 uses only that valid subset to rebuild H108 in
+[corrected-compute-dma-overlap.md](corrected-compute-dma-overlap.md). All 240
+matched sensitivity points are strictly faster and pass 12/12 gates. The
+manuscript still supplies no numeric MLX bandwidth, so the grid remains an
+unselected envelope and no Figure 25 reproduction is claimed.

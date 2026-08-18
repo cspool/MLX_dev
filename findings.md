@@ -97,6 +97,7 @@ H37 closed the first full-paper ledger with a machine certificate rather than a 
 - H103 is retained as an internally valid physical-FMA occupancy diagnostic, not a Figure 25 reproduction. Its metric omits the paper's `min(P_peak, OI*BW)` denominator and H102 omits windowed-KV bandwidth loss. The 1/24, 59.33% MAPE comparison therefore cannot enter the paper certificate; it only proves that the current full-mesh path is over-saturated.
 - H104 supports the expanded author/simulator lineage audit. Twelve of twelve required primary sources and 13 T1-primary responses qualify. SimICT is supported as the cited/historical cycle-accurate framework; the ICT/Ricore DPU -> DFU-E -> M2-DFU line is the highest-confidence parent-family candidate; an internal SmarCo simulator/RTL/runtime stack is directly reported. Exact chip and source-code reuse remain unresolved. DSAGEN/Assassyn move from likely-origin candidates to open engineering precedents.
 - H105-H109 reconstruct and validate the source-supported DPU control, multi-NoC, two-half-SPM/DMA ownership, full-work residency, and bounded iteration-context layers without consuming MLX targets. H110 then reruns all 48 full-mesh paths: 96/96 corrected-cycle holdouts pass, QKV issue utilization is 97.78%-99.79%, and H102-to-H110 speedup is 3.939x-3.994x for QKV. The joint H110 hypothesis is still rejected because only 80/96 residence holdouts pass; all 16 failures are FFT. Direct cycles/issues remain valid, but the failed residence extrapolation cannot stand in for Figure 25 throughput.
+- H111 supports the corrected target-free compute/DMA envelope. It reuses H108's scheduler with H110 cycles and H107 traffic, reconstructs H110 issue exactly, and makes all 240 sensitivity points strictly faster by 1.215x-3.994x. At 64 B/cycle, pipeline utilization is 40.15%-41.06% for FFT, 97.34%-99.79% for QKV, and 94.30%-97.49% for SWA. The exact 16x32x2 peak is 1024 effective ops/cycle, 2.4% above Table IV's rounded 1000. MLX bandwidth remains undisclosed/unselected and no paper target is consumed.
 
 ## Patterns and Insights
 
@@ -360,3 +361,11 @@ nevertheless rejected at 11/12 gates because physical residence passes only
 80/96 holdouts and all 16 FFT holdouts fail, up to 19.89%. This separates a
 valid simulator-throughput correction from an invalid secondary-counter fold.
 No paper target is consumed and full-paper completion remains 0/18.
+
+Run116 recomposes H110 cycles with all H107 tile schedules under H108's
+unchanged two-resource scheduler. Both 240-point manifests are byte-identical,
+all 12 gates pass, and every point is 1.215x-3.994x faster than its H108 match.
+The 64 B/cycle sensitivities are 40.15%-41.06% for FFT, 97.34%-99.79% for QKV,
+and 94.30%-97.49% for SWA. The result uses exact 1024-op/cycle structural peak,
+excludes failed residence fields, and leaves MLX bandwidth and paper
+reproduction null. The full-paper count remains 0/18.

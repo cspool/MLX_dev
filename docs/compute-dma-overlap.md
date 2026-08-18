@@ -57,12 +57,18 @@ utilization of 97.78%–99.79%. H110 also rejects affine physical-residence
 folding because 16 FFT holdouts exceed 5%; those residence estimates must not
 replace achieved throughput.
 
-The H108 envelope has not yet been recomputed with H110 cycles. Selected MLX
-bandwidth and all Figure 25 reproduction fields therefore remain null;
-full-paper completion remains 0/18. Work pauses at this boundary.
+H111 now performs that recomputation without modifying the H108 scheduler. All
+240 matched points are strictly faster, QKV direct issue reaches
+97.78%–99.79%, and the corrected envelope passes all 12 gates. The 64 B/cycle
+pipeline sensitivities become 40.15%–41.06% for FFT-CMP, 97.34%–99.79% for
+QKV-BSMM, and 94.30%–97.49% for SWA. These remain sensitivities: selected MLX
+bandwidth and all Figure 25 reproduction fields are null, and full-paper
+completion remains 0/18.
 
 Evidence is in
 [run113](../artifacts/results/compute-dma-overlap-run113.json), with the frozen
 plan in [H108 protocol](../experiments/h108-compute-dma-overlap/protocol.md).
 The corrected parent evidence is in
 [H110 run115](../artifacts/results/pipelined-full-mesh-paths-run115.json).
+The recomputed envelope is documented in
+[corrected compute/DMA overlap](corrected-compute-dma-overlap.md).
