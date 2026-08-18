@@ -26,3 +26,8 @@ H124 freezes block128 and tests repeat folding in
 [fig24-qkv-orin-folding.md](fig24-qkv-orin-folding.md). q1/q2 anchors remain
 pre-saturation and fail q8 for all three QKV stage counts; full denominators are
 withheld pending larger anchors.
+
+H125 extends through q32 in
+[fig24-qkv-orin-steady-state.md](fig24-qkv-orin-steady-state.md). q16 is stable,
+but q32 crosses a common cache/working-set boundary and runs about one-third
+slower than pre-cache extrapolation. A post-cache fold is required.

@@ -311,6 +311,11 @@ H124 begins that family-specific path in
 runs pass execution gates, but q1/q2 folding fails q8 for B16/B32/B64. The GPU
 evidence is valid; the small-anchor extrapolation is not.
 
+H125 in [fig24-qkv-orin-steady-state.md](fig24-qkv-orin-steady-state.md)
+passes q16 but finds a synchronized q32 cache cliff for all QKV stage counts.
+This validates the need for regime-aware GPU simulation while keeping every
+full denominator null.
+
 The active objective is now limited to simulator-dependent hardware performance
 in Figures 18–25, as recorded in
 [simulator-experiment-scope.md](simulator-experiment-scope.md). Accuracy,

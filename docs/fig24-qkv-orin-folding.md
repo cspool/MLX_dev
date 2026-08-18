@@ -29,6 +29,11 @@ holdouts for all three templates. If those pass, the 21 QKV Orin estimates can
 be emitted under the explicit block-128 proxy label; FFT-CMP and SWA remain
 separate unfinished GPU contracts.
 
+That extension is reported in
+[fig24-qkv-orin-steady-state.md](fig24-qkv-orin-steady-state.md). q16 passes
+within 0.78%, but q32 reveals a shared cache-capacity transition and invalidates
+all full estimates again.
+
 Evidence is in
 [run129](../artifacts/results/fig24-qkv-orin-folding-run129.json), with the
 frozen plan in
