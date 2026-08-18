@@ -1,0 +1,837 @@
+diff --git a/src/cpu/minor/ssim/mlx_overlay.hh b/src/cpu/minor/ssim/mlx_overlay.hh
+index efcfa50..8928d9f 100644
+--- a/src/cpu/minor/ssim/mlx_overlay.hh
++++ b/src/cpu/minor/ssim/mlx_overlay.hh
+@@ -58,7 +58,8 @@ enum class MemoryBackend {
+ enum class PeDependencyModel {
+   PaperStatic = 0,
+   ScoreboardExperimental = 1,
+-  DpuFrfo = 2
++  DpuFrfo = 2,
++  DpuPipelined = 3
+ };
+ 
+ const char *PipelineName(PipelineKind pipeline);
+@@ -125,6 +126,7 @@ struct Config {
+   unsigned instruction_slots_per_pe{0};
+   unsigned operand_contexts_per_pe{0};
+   unsigned active_blocks_per_pe{0};
++  unsigned iteration_contexts_per_block{1};
+   std::map<PipelineKind, Timing> pipeline_timing;
+   std::map<std::string, FunctionalUnit> functional_units;
+   RoutingConfig routing;
+@@ -242,6 +244,7 @@ struct Stats {
+   std::map<std::string, uint64_t> stalls_by_reason;
+   uint64_t dpu_frfo_issues{0};
+   uint64_t max_active_blocks_per_pe{0};
++  uint64_t max_inflight_iterations_per_block{0};
+ };
+ 
+ class Overlay {
+@@ -287,6 +290,30 @@ class Overlay {
+     uint64_t frfo_ready_cycle{~uint64_t{0}};
+   };
+ 
++  struct IterationContext {
++    bool valid{false};
++    bool inflight{false};
++    bool routing{false};
++    bool external_memory{false};
++    uint64_t iteration{0};
++    std::size_t pc{0};
++    uint64_t ready_cycle{0};
++    uint64_t service_ready_cycle{0};
++    uint64_t next_hop_cycle{0};
++    std::vector<Coord> route;
++    std::size_t route_index{0};
++    uint64_t memory_token{0};
++    uint64_t frfo_ready_cycle{~uint64_t{0}};
++  };
++
++  struct PipelinedBlockState {
++    bool active{false};
++    bool complete{false};
++    uint64_t next_iteration{0};
++    uint64_t completed_iterations{0};
++    std::vector<IterationContext> contexts;
++  };
++
+   struct PipelineKey {
+     Coord pe;
+     PipelineKind pipeline{PipelineKind::Compute};
+@@ -347,6 +374,25 @@ class Overlay {
+           ready_cycle(ready_cycle_) {}
+   };
+ 
++  struct ContextRef {
++    std::size_t block_index{0};
++    std::size_t context_index{0};
++    ContextRef(
++        std::size_t block_index_ = 0, std::size_t context_index_ = 0)
++        : block_index(block_index_), context_index(context_index_) {}
++  };
++
++  struct ContextCandidate {
++    ContextRef ref;
++    PipelineKey pipeline_key;
++    uint64_t ready_cycle{~uint64_t{0}};
++    ContextCandidate(
++        ContextRef ref_ = ContextRef(),
++        PipelineKey pipeline_key_ = PipelineKey(),
++        uint64_t ready_cycle_ = ~uint64_t{0})
++        : ref(ref_), pipeline_key(pipeline_key_), ready_cycle(ready_cycle_) {}
++  };
++
+   void validate() const;
+   void buildTagIndex();
+   void resetCycleResources();
+@@ -356,6 +402,15 @@ class Overlay {
+   void updateCompletedTags();
+   void admitTags();
+   void issueInstructions();
++  void stepPipelined();
++  void routePipelinedPackets();
++  void completePipelinedInstructions();
++  void completePipelinedInstruction(ContextRef ref);
++  void issuePipelinedInstructions();
++  bool canIssuePipelined(ContextRef ref, std::string *reason) const;
++  void issuePipelined(ContextRef ref);
++  void refillPipelinedContexts(std::size_t block_index);
++  void recordPipelinedBusyCycles();
+   bool canIssue(std::size_t block_index, std::string *reason) const;
+   void issueInstruction(std::size_t block_index);
+   bool canWriteback(std::size_t block_index, std::string *reason) const;
+@@ -366,6 +421,8 @@ class Overlay {
+   uint64_t memoryAddress(
+       const TaggedBlock &block, const BlockState &state,
+       const Instruction &instruction) const;
++  uint64_t memoryAddress(
++      const Instruction &instruction, uint64_t iteration) const;
+   std::string fuClass(const Instruction &instruction) const;
+   unsigned registerBank(unsigned reg) const;
+   bool usesExperimentalScoreboard() const {
+@@ -375,9 +432,15 @@ class Overlay {
+   bool tagFinished(uint64_t tag) const;
+   bool predecessorsComplete(uint64_t tag) const;
+   bool iterationEventsReady(std::size_t block_index) const;
++  bool iterationEventsReady(
++      std::size_t block_index, uint64_t iteration) const;
+   bool dpuDependenciesReady(std::size_t block_index) const;
+   bool usesDpuFrfo() const {
+-    return config_.pe_dependency_model == PeDependencyModel::DpuFrfo;
++    return config_.pe_dependency_model == PeDependencyModel::DpuFrfo ||
++        config_.pe_dependency_model == PeDependencyModel::DpuPipelined;
++  }
++  bool usesPipelinedContexts() const {
++    return config_.pe_dependency_model == PeDependencyModel::DpuPipelined;
+   }
+   uint64_t blockInstance(std::size_t block_index) const;
+   unsigned activeBlocksAt(Coord pe) const;
+@@ -385,6 +448,9 @@ class Overlay {
+   void recordEvent(
+       const std::string &kind, std::size_t block_index,
+       const std::map<std::string, std::string> &detail = {});
++  void recordContextEvent(
++      const std::string &kind, ContextRef ref,
++      const std::map<std::string, std::string> &detail = {});
+   void recordTagEvent(
+       const std::string &kind, uint64_t tag,
+       const std::map<std::string, std::string> &detail = {});
+@@ -392,6 +458,7 @@ class Overlay {
+   Config config_;
+   std::vector<TaggedBlock> blocks_;
+   std::vector<BlockState> states_;
++  std::vector<PipelinedBlockState> pipelined_states_;
+   uint64_t cycle_{0};
+   std::map<uint64_t, std::vector<std::size_t>> tag_blocks_;
+   std::map<uint64_t, std::set<uint64_t>> tag_predecessors_;
+diff --git a/src/cpu/minor/ssim/mlx_overlay.cc b/src/cpu/minor/ssim/mlx_overlay.cc
+index ca1e541..98ba36c 100644
+--- a/src/cpu/minor/ssim/mlx_overlay.cc
++++ b/src/cpu/minor/ssim/mlx_overlay.cc
+@@ -136,6 +136,7 @@ ParsePeDependencyModel(const std::string &name)
+ {
+   if (name == "paper_static") return PeDependencyModel::PaperStatic;
+   if (name == "dpu_frfo") return PeDependencyModel::DpuFrfo;
++  if (name == "dpu_pipelined") return PeDependencyModel::DpuPipelined;
+   if (name.empty() || name == "scoreboard_experimental" ||
+       name == "scoreboard") {
+     return PeDependencyModel::ScoreboardExperimental;
+@@ -151,19 +152,25 @@ PeDependencyModelName(PeDependencyModel model)
+     case PeDependencyModel::ScoreboardExperimental:
+       return "scoreboard_experimental";
+     case PeDependencyModel::DpuFrfo: return "dpu_frfo";
++    case PeDependencyModel::DpuPipelined: return "dpu_pipelined";
+   }
+   throw std::runtime_error("invalid PE dependency model");
+ }
+ 
+ Overlay::Overlay(Config config, std::vector<TaggedBlock> blocks)
+     : config_(std::move(config)), blocks_(std::move(blocks)),
+-      states_(blocks_.size())
++      states_(blocks_.size()), pipelined_states_(blocks_.size())
+ {
+   auto &steps = config_.routing.skip_steps;
+   std::sort(steps.begin(), steps.end(), std::greater<int>());
+   steps.erase(std::unique(steps.begin(), steps.end()), steps.end());
+   buildTagIndex();
+   validate();
++  if (usesPipelinedContexts()) {
++    for (auto &state : pipelined_states_) {
++      state.contexts.resize(config_.iteration_contexts_per_block);
++    }
++  }
+   stats_.physical_pe_count = static_cast<uint64_t>(config_.routing.mesh_width) *
+       static_cast<uint64_t>(config_.routing.mesh_height);
+   std::set<Coord> mapped_pes;
+@@ -210,6 +217,8 @@ Overlay::FromJsonFile(const std::string &path)
+       dpu.get("operand_contexts_per_pe", 0).asUInt();
+   config.active_blocks_per_pe =
+       dpu.get("active_blocks_per_pe", 0).asUInt();
++  config.iteration_contexts_per_block =
++      dpu.get("iteration_contexts_per_block", 1).asUInt();
+ 
+   const auto &pipeline_root = root["pipelines"];
+   for (const std::string name : {"load", "store", "compute", "xfer"}) {
+@@ -426,6 +435,14 @@ Overlay::validate() const
+   if (config_.active_window == 0) {
+     throw std::runtime_error("MLX active window must be positive");
+   }
++  if (usesPipelinedContexts() && config_.iteration_contexts_per_block < 2) {
++    throw std::runtime_error(
++        "DPU pipelined mode requires at least two iteration contexts");
++  }
++  if (!usesPipelinedContexts() && config_.iteration_contexts_per_block != 1) {
++    throw std::runtime_error(
++        "DPU iteration contexts require dpu_pipelined mode");
++  }
+   if (config_.register_file.banks == 0 || config_.register_file.read_ports == 0 ||
+       config_.register_file.write_ports == 0) {
+     throw std::runtime_error("MLX register-file dimensions must be positive");
+@@ -496,7 +513,9 @@ Overlay::validate() const
+     }
+     std::set<std::string> instruction_ids;
+     static_instructions_per_pe[block.pe] += block.instructions.size();
+-    ++operand_contexts_per_pe[block.pe];
++    operand_contexts_per_pe[block.pe] += usesPipelinedContexts() ?
++        static_cast<unsigned>(std::min<uint64_t>(
++            block.trip_count, config_.iteration_contexts_per_block)) : 1;
+     for (const auto &instruction : block.instructions) {
+       if (instruction.id.empty() || !instruction_ids.insert(instruction.id).second) {
+         throw std::runtime_error("MLX instruction IDs must be unique within a block");
+@@ -601,6 +620,10 @@ Overlay::step()
+   if (done()) {
+     return;
+   }
++  if (usesPipelinedContexts()) {
++    stepPipelined();
++    return;
++  }
+   if (memory_adapter_) {
+     memory_adapter_->advance(cycle_);
+   }
+@@ -783,7 +806,8 @@ Overlay::tagFinished(uint64_t tag) const
+     return false;
+   }
+   for (std::size_t index : iterator->second) {
+-    if (!states_[index].complete) {
++    if (usesPipelinedContexts() ?
++        !pipelined_states_[index].complete : !states_[index].complete) {
+       return false;
+     }
+   }
+@@ -823,9 +847,15 @@ Overlay::predecessorsComplete(uint64_t tag) const
+ 
+ bool
+ Overlay::iterationEventsReady(std::size_t block_index) const
++{
++  return iterationEventsReady(block_index, states_[block_index].iteration);
++}
++
++bool
++Overlay::iterationEventsReady(
++    std::size_t block_index, uint64_t iteration) const
+ {
+   const auto &block = blocks_[block_index];
+-  const auto &state = states_[block_index];
+   for (const auto &event : block.wait_events) {
+     auto iterator = event_counts_.find(event);
+     uint64_t count = iterator == event_counts_.end() ? 0 : iterator->second;
+@@ -840,7 +870,7 @@ Overlay::iterationEventsReady(std::size_t block_index) const
+       multiplicity = multiplicity_iterator->second;
+     }
+     uint64_t required_event =
+-        (state.iteration / period + 1) * multiplicity - 1;
++        (iteration / period + 1) * multiplicity - 1;
+     if (count <= required_event) {
+       return false;
+     }
+@@ -866,8 +896,11 @@ Overlay::activeBlocksAt(Coord pe) const
+ {
+   unsigned count = 0;
+   for (std::size_t index = 0; index < blocks_.size(); ++index) {
+-    if (blocks_[index].pe == pe && states_[index].active &&
+-        !states_[index].complete) {
++    bool active = usesPipelinedContexts() ?
++        pipelined_states_[index].active : states_[index].active;
++    bool complete = usesPipelinedContexts() ?
++        pipelined_states_[index].complete : states_[index].complete;
++    if (blocks_[index].pe == pe && active && !complete) {
+       ++count;
+     }
+   }
+@@ -905,7 +938,12 @@ Overlay::admitTags()
+       }
+       active_tags_.insert(tag);
+       for (std::size_t index : entry.second) {
+-        states_[index].active = true;
++        if (usesPipelinedContexts()) {
++          pipelined_states_[index].active = true;
++          refillPipelinedContexts(index);
++        } else {
++          states_[index].active = true;
++        }
+       }
+       recordTagEvent(
+           "admit", tag,
+@@ -960,11 +998,18 @@ uint64_t
+ Overlay::memoryAddress(
+     const TaggedBlock &, const BlockState &state,
+     const Instruction &instruction) const
++{
++  return memoryAddress(instruction, state.iteration);
++}
++
++uint64_t
++Overlay::memoryAddress(
++    const Instruction &instruction, uint64_t iteration) const
+ {
+   if (instruction.memory_address_sequence.empty()) {
+     return instruction.memory_address;
+   }
+-  return instruction.memory_address_sequence.at(state.iteration);
++  return instruction.memory_address_sequence.at(iteration);
+ }
+ 
+ bool
+@@ -1274,6 +1319,472 @@ Overlay::issueInstructions()
+       std::max(stats_.max_pipeline_issues_in_cycle, issued_this_cycle);
+ }
+ 
++void
++Overlay::stepPipelined()
++{
++  if (memory_adapter_) {
++    memory_adapter_->advance(cycle_);
++  }
++  resetCycleResources();
++  routePipelinedPackets();
++  completePipelinedInstructions();
++  updateCompletedTags();
++  admitTags();
++  issuePipelinedInstructions();
++  recordPipelinedBusyCycles();
++  ++cycle_;
++  stats_.cycles = cycle_;
++}
++
++void
++Overlay::refillPipelinedContexts(std::size_t block_index)
++{
++  auto &block_state = pipelined_states_[block_index];
++  const auto &block = blocks_[block_index];
++  if (!block_state.active || block_state.complete) return;
++  for (auto &context : block_state.contexts) {
++    if (context.valid || block_state.next_iteration >= block.trip_count) {
++      continue;
++    }
++    context = IterationContext();
++    context.valid = true;
++    context.iteration = block_state.next_iteration++;
++  }
++  uint64_t active = 0;
++  for (const auto &context : block_state.contexts) {
++    active += context.valid;
++  }
++  stats_.max_inflight_iterations_per_block = std::max(
++      stats_.max_inflight_iterations_per_block, active);
++}
++
++void
++Overlay::routePipelinedPackets()
++{
++  std::vector<ContextRef> ready;
++  for (std::size_t block_index = 0;
++       block_index < pipelined_states_.size(); ++block_index) {
++    const auto &state = pipelined_states_[block_index];
++    for (std::size_t context_index = 0;
++         context_index < state.contexts.size(); ++context_index) {
++      const auto &context = state.contexts[context_index];
++      if (context.valid && context.inflight && context.routing &&
++          context.next_hop_cycle <= cycle_) {
++        ready.push_back({block_index, context_index});
++      }
++    }
++  }
++  std::sort(
++      ready.begin(), ready.end(), [this](ContextRef left, ContextRef right) {
++        const auto &left_block = blocks_[left.block_index];
++        const auto &right_block = blocks_[right.block_index];
++        const auto &left_context =
++            pipelined_states_[left.block_index].contexts[left.context_index];
++        const auto &right_context =
++            pipelined_states_[right.block_index].contexts[right.context_index];
++        return std::tie(
++                   left_block.task_id, left_block.numeric_block_id,
++                   left_context.iteration, left_block.id, left.context_index) <
++               std::tie(
++                   right_block.task_id, right_block.numeric_block_id,
++                   right_context.iteration, right_block.id, right.context_index);
++      });
++  for (ContextRef ref : ready) {
++    auto &context =
++        pipelined_states_[ref.block_index].contexts[ref.context_index];
++    const auto &block = blocks_[ref.block_index];
++    const auto &instruction = block.instructions[context.pc];
++    Coord source = context.route[context.route_index];
++    Coord destination = context.route[context.route_index + 1];
++    LinkKey link{source, destination, instruction.network_plane};
++    if (links_this_cycle_[link] >= config_.routing.link_capacity) {
++      ++stats_.link_stalls;
++      ++stats_.stalls_by_reason["link_capacity"];
++      recordContextEvent("stall", ref, {{"reason", "link_capacity"}});
++      continue;
++    }
++    ++links_this_cycle_[link];
++    ++context.route_index;
++    ++stats_.route_hops;
++    ++stats_.route_hops_by_plane[instruction.network_plane];
++    int distance = std::abs(destination.x - source.x) +
++                   std::abs(destination.y - source.y);
++    if (distance > 1) {
++      ++stats_.skip_hops;
++    } else {
++      ++stats_.unit_hops;
++    }
++    recordContextEvent(
++        "route_hop", ref,
++        {{"from", std::to_string(source.x) + "," + std::to_string(source.y)},
++         {"to", std::to_string(destination.x) + "," +
++                    std::to_string(destination.y)},
++         {"step", std::to_string(distance)},
++         {"residual_hops", std::to_string(
++              context.route.size() - context.route_index - 1)}});
++    if (context.route_index + 1 == context.route.size()) {
++      context.routing = false;
++      context.ready_cycle = cycle_ + config_.routing.latency_per_hop;
++    } else {
++      context.next_hop_cycle = cycle_ + config_.routing.latency_per_hop;
++    }
++  }
++}
++
++void
++Overlay::completePipelinedInstructions()
++{
++  std::vector<ContextRef> ready;
++  for (std::size_t block_index = 0;
++       block_index < pipelined_states_.size(); ++block_index) {
++    auto &state = pipelined_states_[block_index];
++    for (std::size_t context_index = 0;
++         context_index < state.contexts.size(); ++context_index) {
++      auto &context = state.contexts[context_index];
++      ContextRef ref{block_index, context_index};
++      if (!context.valid || !context.inflight) continue;
++      if (context.external_memory) {
++        if (memory_adapter_ &&
++            memory_adapter_->takeCompletion(context.memory_token)) {
++          context.external_memory = false;
++          context.ready_cycle = cycle_;
++          ++stats_.external_memory_completions;
++          recordContextEvent(
++              "memory_response", ref,
++              {{"memory_token", std::to_string(context.memory_token)}});
++        } else {
++          ++stats_.external_memory_wait_cycles;
++        }
++      }
++      if (!context.routing && context.ready_cycle <= cycle_) {
++        ready.push_back(ref);
++      }
++    }
++  }
++  std::sort(
++      ready.begin(), ready.end(), [this](ContextRef left, ContextRef right) {
++        const auto &left_block = blocks_[left.block_index];
++        const auto &right_block = blocks_[right.block_index];
++        const auto &left_context =
++            pipelined_states_[left.block_index].contexts[left.context_index];
++        const auto &right_context =
++            pipelined_states_[right.block_index].contexts[right.context_index];
++        return std::tie(
++                   left_block.task_id, left_block.numeric_block_id,
++                   left_context.iteration, left_block.id, left.context_index) <
++               std::tie(
++                   right_block.task_id, right_block.numeric_block_id,
++                   right_context.iteration, right_block.id, right.context_index);
++      });
++  for (ContextRef ref : ready) {
++    completePipelinedInstruction(ref);
++  }
++}
++
++void
++Overlay::completePipelinedInstruction(ContextRef ref)
++{
++  auto &block_state = pipelined_states_[ref.block_index];
++  auto &context = block_state.contexts[ref.context_index];
++  const auto &block = blocks_[ref.block_index];
++  const auto &instruction = block.instructions[context.pc];
++  recordContextEvent("complete", ref);
++  ++stats_.instructions_completed;
++  if (!instruction.emit_event.empty() &&
++      (context.iteration + 1) % instruction.emit_event_period == 0) {
++    uint64_t count = ++event_counts_[instruction.emit_event];
++    ++stats_.boundary_events_emitted;
++    recordContextEvent(
++        "event_emit", ref,
++        {{"event", instruction.emit_event}, {"count", std::to_string(count)}});
++  }
++  context.inflight = false;
++  context.frfo_ready_cycle = ~uint64_t{0};
++  context.external_memory = false;
++  context.memory_token = 0;
++  context.service_ready_cycle = 0;
++  context.route.clear();
++  context.route_index = 0;
++  ++context.pc;
++  if (context.pc != block.instructions.size()) return;
++
++  ++block_state.completed_iterations;
++  if (config_.record_events) {
++    events_.push_back(
++        {cycle_, "iteration_complete", block.tag, block.id,
++         context.iteration + 1, instruction.id, block.pe,
++         PipelineName(instruction.pipeline),
++         {{"completed_iterations",
++           std::to_string(block_state.completed_iterations)},
++          {"context_slot", std::to_string(ref.context_index)},
++          {"instance", std::to_string(
++               block.instance_base + context.iteration)},
++          {"task_id", std::to_string(block.task_id)},
++          {"block_id", std::to_string(block.numeric_block_id)}}});
++  }
++  context.valid = false;
++  context.pc = 0;
++  if (block_state.completed_iterations == block.trip_count) {
++    block_state.complete = true;
++    block_state.active = false;
++    if (config_.record_events) {
++      events_.push_back(
++          {cycle_, "block_complete", block.tag, block.id, block.trip_count,
++           instruction.id, block.pe, PipelineName(instruction.pipeline), {}});
++    }
++  } else {
++    refillPipelinedContexts(ref.block_index);
++  }
++}
++
++bool
++Overlay::canIssuePipelined(ContextRef ref, std::string *reason) const
++{
++  const auto &block = blocks_[ref.block_index];
++  const auto &context =
++      pipelined_states_[ref.block_index].contexts[ref.context_index];
++  const auto &instruction = block.instructions[context.pc];
++  if (context.pc == 0 &&
++      !iterationEventsReady(ref.block_index, context.iteration)) {
++    *reason = "event_dependency";
++    return false;
++  }
++  if ((instruction.pipeline == PipelineKind::Load ||
++       instruction.pipeline == PipelineKind::Store) &&
++      instruction.memory_external &&
++      config_.memory_backend != MemoryBackend::FixedLatency) {
++    if (!memory_adapter_) {
++      *reason = "memory_adapter_missing";
++      return false;
++    }
++    MemoryRequest request(
++        instruction.pipeline == PipelineKind::Store,
++        memoryAddress(instruction, context.iteration), instruction.memory_bytes,
++        block.pe, block.tag, block.id, instruction.id, context.iteration);
++    if (!memory_adapter_->available(request)) {
++      *reason = "memory_queue_full";
++      return false;
++    }
++  }
++  PipelineKey pipeline_key{block.pe, instruction.pipeline};
++  auto pipeline = pipeline_next_issue_.find(pipeline_key);
++  if (pipeline != pipeline_next_issue_.end() && pipeline->second > cycle_) {
++    *reason = "pipeline_initiation";
++    return false;
++  }
++  if (instruction.pipeline == PipelineKind::Compute) {
++    FuKey fu_key{block.pe, fuClass(instruction)};
++    auto fu = fu_next_issue_.find(fu_key);
++    if (fu != fu_next_issue_.end() && fu->second > cycle_) {
++      *reason = "fu_initiation";
++      return false;
++    }
++  }
++  return true;
++}
++
++void
++Overlay::issuePipelined(ContextRef ref)
++{
++  const auto &block = blocks_[ref.block_index];
++  auto &context =
++      pipelined_states_[ref.block_index].contexts[ref.context_index];
++  const auto &instruction = block.instructions[context.pc];
++  uint64_t frfo_ready_cycle = context.frfo_ready_cycle;
++  Timing timing = instructionTiming(instruction);
++  Timing pipeline_timing = config_.pipeline_timing.at(instruction.pipeline);
++  if (context.pc == 0) {
++    for (const auto &event : block.wait_events) {
++      uint64_t producer_tag = event_producer_tags_.at(event);
++      if (!completed_tags_.count(producer_tag)) {
++        ++stats_.event_unblocked_issues_before_tag_complete;
++        break;
++      }
++    }
++  }
++  PipelineKey pipeline_key{block.pe, instruction.pipeline};
++  pipeline_next_issue_[pipeline_key] =
++      cycle_ + pipeline_timing.initiation_interval;
++  if (instruction.pipeline == PipelineKind::Compute) {
++    fu_next_issue_[{block.pe, fuClass(instruction)}] =
++        cycle_ + timing.initiation_interval;
++  }
++  context.inflight = true;
++  context.frfo_ready_cycle = ~uint64_t{0};
++  context.routing = false;
++  context.external_memory = false;
++  context.ready_cycle = cycle_ + timing.latency;
++  context.service_ready_cycle = cycle_ + timing.latency;
++  if ((instruction.pipeline == PipelineKind::Load ||
++       instruction.pipeline == PipelineKind::Store) &&
++      instruction.memory_external &&
++      config_.memory_backend != MemoryBackend::FixedLatency) {
++    MemoryRequest request(
++        instruction.pipeline == PipelineKind::Store,
++        memoryAddress(instruction, context.iteration), instruction.memory_bytes,
++        block.pe, block.tag, block.id, instruction.id, context.iteration);
++    context.memory_token = memory_adapter_->issue(request);
++    context.external_memory = true;
++    context.ready_cycle = std::numeric_limits<uint64_t>::max();
++    ++stats_.external_memory_requests;
++  } else if (instruction.pipeline == PipelineKind::Xfer &&
++             block.pe != instruction.destination) {
++    context.route = GreedyRoute(block.pe, instruction.destination, config_.routing);
++    context.route_index = 0;
++    context.routing = true;
++    context.next_hop_cycle = cycle_ + 1;
++    context.ready_cycle = std::numeric_limits<uint64_t>::max();
++  }
++  std::map<std::string, std::string> detail = {
++      {"latency", std::to_string(timing.latency)},
++      {"initiation_interval", std::to_string(timing.initiation_interval)},
++      {"operation", instruction.operation},
++      {"fu_class", fuClass(instruction)},
++      {"frfo_ready_cycle", std::to_string(frfo_ready_cycle)}};
++  detail["memory_backend"] =
++      !instruction.memory_external ? "local" :
++      (context.external_memory ?
++       (config_.memory_backend == MemoryBackend::DmaAdapter ? "dsagen_dma" :
++        (config_.memory_backend == MemoryBackend::DpuMemoryAdapter ?
++         "dpu_memory" : "adapter")) : "fixed");
++  if (context.external_memory) {
++    detail["memory_token"] = std::to_string(context.memory_token);
++  }
++  if (instruction.pipeline == PipelineKind::Load ||
++      instruction.pipeline == PipelineKind::Store) {
++    detail["memory_address"] =
++        std::to_string(memoryAddress(instruction, context.iteration));
++  }
++  recordContextEvent("issue", ref, detail);
++  ++stats_.instructions_issued;
++  ++stats_.dpu_frfo_issues;
++  ++stats_.issued_by_pipeline[instruction.pipeline];
++  issued_pipelines_this_cycle_.insert(instruction.pipeline);
++}
++
++void
++Overlay::issuePipelinedInstructions()
++{
++  std::vector<ContextCandidate> candidates;
++  for (std::size_t block_index = 0;
++       block_index < pipelined_states_.size(); ++block_index) {
++    auto &state = pipelined_states_[block_index];
++    if (!state.active || state.complete) continue;
++    refillPipelinedContexts(block_index);
++    for (std::size_t context_index = 0;
++         context_index < state.contexts.size(); ++context_index) {
++      auto &context = state.contexts[context_index];
++      if (!context.valid || context.inflight) continue;
++      const auto &block = blocks_[block_index];
++      const auto &instruction = block.instructions[context.pc];
++      if (context.pc == 0 &&
++          !iterationEventsReady(block_index, context.iteration)) {
++        context.frfo_ready_cycle = ~uint64_t{0};
++        continue;
++      }
++      if (context.frfo_ready_cycle == ~uint64_t{0}) {
++        context.frfo_ready_cycle = cycle_;
++      }
++      candidates.push_back(
++          {{block_index, context_index},
++           {block.pe, instruction.pipeline}, context.frfo_ready_cycle});
++    }
++  }
++  std::sort(
++      candidates.begin(), candidates.end(),
++      [this](const ContextCandidate &left, const ContextCandidate &right) {
++        const auto &left_block = blocks_[left.ref.block_index];
++        const auto &right_block = blocks_[right.ref.block_index];
++        const auto &left_context =
++            pipelined_states_[left.ref.block_index]
++                .contexts[left.ref.context_index];
++        const auto &right_context =
++            pipelined_states_[right.ref.block_index]
++                .contexts[right.ref.context_index];
++        return std::make_tuple(
++                   left.pipeline_key.pe, left.pipeline_key.pipeline,
++                   left.ready_cycle, left_block.task_id,
++                   left_block.numeric_block_id, left_context.iteration,
++                   left_block.id, left.ref.context_index) <
++               std::make_tuple(
++                   right.pipeline_key.pe, right.pipeline_key.pipeline,
++                   right.ready_cycle, right_block.task_id,
++                   right_block.numeric_block_id, right_context.iteration,
++                   right_block.id, right.ref.context_index);
++      });
++  std::set<PipelineKey> issued;
++  uint64_t issued_this_cycle = 0;
++  for (const auto &candidate : candidates) {
++    if (issued.count(candidate.pipeline_key)) {
++      ++stats_.stalls_by_reason["pipeline_contention"];
++      recordContextEvent(
++          "stall", candidate.ref, {{"reason", "pipeline_contention"}});
++      continue;
++    }
++    std::string reason;
++    if (!canIssuePipelined(candidate.ref, &reason)) {
++      ++stats_.stalls_by_reason[reason];
++      recordContextEvent("stall", candidate.ref, {{"reason", reason}});
++      continue;
++    }
++    issuePipelined(candidate.ref);
++    issued.insert(candidate.pipeline_key);
++    ++issued_this_cycle;
++  }
++  stats_.max_pipeline_issues_in_cycle =
++      std::max(stats_.max_pipeline_issues_in_cycle, issued_this_cycle);
++}
++
++void
++Overlay::recordPipelinedBusyCycles()
++{
++  std::set<PipelineKind> busy;
++  std::set<PipelineKind> productive;
++  std::set<PipelineKey> resident_pe;
++  std::set<PipelineKey> productive_pe;
++  std::set<FuKey> productive_fu;
++  for (std::size_t block_index = 0;
++       block_index < pipelined_states_.size(); ++block_index) {
++    const auto &block = blocks_[block_index];
++    for (const auto &context : pipelined_states_[block_index].contexts) {
++      if (!context.valid || !context.inflight) continue;
++      const auto &instruction = block.instructions[context.pc];
++      PipelineKind pipeline = instruction.pipeline;
++      PipelineKey key{block.pe, pipeline};
++      busy.insert(pipeline);
++      resident_pe.insert(key);
++      bool external_memory_wait =
++          (pipeline == PipelineKind::Load || pipeline == PipelineKind::Store) &&
++          context.external_memory && context.service_ready_cycle <= cycle_;
++      if (!external_memory_wait) {
++        productive.insert(pipeline);
++        productive_pe.insert(key);
++        if (pipeline == PipelineKind::Compute) {
++          productive_fu.insert({block.pe, fuClass(instruction)});
++        }
++      }
++    }
++  }
++  for (PipelineKind pipeline : busy) {
++    ++stats_.busy_cycles_by_pipeline[pipeline];
++  }
++  for (const auto &key : resident_pe) {
++    ++stats_.resident_pe_cycles_by_pipeline[key.pipeline];
++  }
++  for (const auto &key : productive_pe) {
++    ++stats_.productive_pe_cycles_by_pipeline[key.pipeline];
++  }
++  for (PipelineKind pipeline : productive) {
++    ++stats_.productive_global_cycles_by_pipeline[pipeline];
++  }
++  for (PipelineKind pipeline : issued_pipelines_this_cycle_) {
++    ++stats_.issue_cycles_by_pipeline[pipeline];
++  }
++  for (const auto &key : productive_fu) {
++    ++stats_.productive_pe_cycles_by_fu_class[key.resource_class];
++  }
++}
++
+ void
+ Overlay::recordBusyCycles()
+ {
+@@ -1346,6 +1857,28 @@ Overlay::recordEvent(
+        block.pe, PipelineName(instruction.pipeline), enriched_detail});
+ }
+ 
++void
++Overlay::recordContextEvent(
++    const std::string &kind, ContextRef ref,
++    const std::map<std::string, std::string> &detail)
++{
++  if (!config_.record_events) return;
++  const auto &block = blocks_[ref.block_index];
++  const auto &context =
++      pipelined_states_[ref.block_index].contexts[ref.context_index];
++  const auto &instruction = block.instructions[context.pc];
++  auto enriched = detail;
++  enriched["task_id"] = std::to_string(block.task_id);
++  enriched["block_id"] = std::to_string(block.numeric_block_id);
++  enriched["instance"] =
++      std::to_string(block.instance_base + context.iteration);
++  enriched["context_slot"] = std::to_string(ref.context_index);
++  enriched["network_plane"] = std::to_string(instruction.network_plane);
++  events_.push_back(
++      {cycle_, kind, block.tag, block.id, context.iteration, instruction.id,
++       block.pe, PipelineName(instruction.pipeline), enriched});
++}
++
+ void
+ Overlay::recordTagEvent(
+     const std::string &kind, uint64_t tag,
+@@ -1495,8 +2028,17 @@ Overlay::summaryJson(const std::string &scenario) const
+       out << Quote(std::to_string(plane)) << ":" << count;
+       first = false;
+     }
++    out << "}";
++    if (usesPipelinedContexts()) {
++      out << ",\"iteration_contexts_per_block\":"
++          << config_.iteration_contexts_per_block
++          << ",\"max_inflight_iterations_per_block\":"
++          << stats_.max_inflight_iterations_per_block;
++    }
++  } else {
++    out << "}";
+   }
+-  out << "},\"stalls_by_reason\":{";
++  out << ",\"stalls_by_reason\":{";
+   first = true;
+   for (const auto &item : stats_.stalls_by_reason) {
+     if (!first) out << ",";

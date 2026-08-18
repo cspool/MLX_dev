@@ -336,6 +336,7 @@ def patch_audit(config: dict[str, Any]) -> dict[str, Any]:
         "h105_source_exact": False,
         "forward_check": False,
         "round_trip_exact": False,
+        "newer_patch_stack": {},
     }
     if not patch_path.is_file():
         report["pass"] = False
@@ -348,6 +349,29 @@ def patch_audit(config: dict[str, Any]) -> dict[str, Any]:
         source = target / "mlx_overlay.cc"
         shutil.copy2(header_path, header)
         shutil.copy2(source_path, source)
+        newer_patches = [
+            PROJECT_ROOT
+            / "patches/dsagen/dsa-gem5-pipelined-block-contexts-v1.patch"
+        ]
+        applied_newer = []
+        for newer in newer_patches:
+            if not newer.is_file():
+                continue
+            check = subprocess.run(
+                ["git", "apply", "-R", "--check", str(newer)],
+                cwd=root,
+                capture_output=True,
+                text=True,
+                check=False,
+            )
+            report["newer_patch_stack"][newer.name] = check.returncode == 0
+            if check.returncode != 0:
+                report["pass"] = False
+                return report
+            subprocess.run(
+                ["git", "apply", "-R", str(newer)], cwd=root, check=True
+            )
+            applied_newer.append(newer)
         reverse = subprocess.run(
             ["git", "apply", "-R", "--check", str(patch_path)],
             cwd=root,
@@ -379,6 +403,15 @@ def patch_audit(config: dict[str, Any]) -> dict[str, Any]:
         report["forward_check"] = forward.returncode == 0
         if forward.returncode == 0:
             subprocess.run(["git", "apply", str(patch_path)], cwd=root, check=True)
+            for newer in reversed(applied_newer):
+                subprocess.run(
+                    ["git", "apply", "--check", str(newer)],
+                    cwd=root,
+                    check=True,
+                )
+                subprocess.run(
+                    ["git", "apply", str(newer)], cwd=root, check=True
+                )
             report["round_trip_exact"] = (
                 header.read_bytes() == header_path.read_bytes()
                 and source.read_bytes() == source_path.read_bytes()
@@ -391,7 +424,7 @@ def patch_audit(config: dict[str, Any]) -> dict[str, Any]:
             "forward_check",
             "round_trip_exact",
         )
-    )
+    ) and all(report["newer_patch_stack"].values())
     return report
 
 
@@ -611,4 +644,3 @@ def main() -> int:
 
 if __name__ == "__main__":
     raise SystemExit(main())
-

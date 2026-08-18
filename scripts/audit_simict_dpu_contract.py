@@ -209,6 +209,7 @@ def patch_audit(config: dict[str, Any], run: dict[str, Any]) -> dict[str, Any]:
         "forward_check": False,
         "round_trip_exact": False,
         "legacy_pre_patch_exact": False,
+        "newer_patch_stack": {},
     }
     if not patch_path.is_file():
         report["pass"] = False
@@ -221,6 +222,31 @@ def patch_audit(config: dict[str, Any], run: dict[str, Any]) -> dict[str, Any]:
         source = source_root / "mlx_overlay.cc"
         shutil.copy2(current_header, header)
         shutil.copy2(current_source, source)
+        newer_patches = [
+            PROJECT_ROOT
+            / "patches/dsagen/dsa-gem5-pipelined-block-contexts-v1.patch",
+            PROJECT_ROOT
+            / "patches/dsagen/dsa-gem5-historical-dpu-memory-v1.patch",
+        ]
+        applied_newer = []
+        for newer in newer_patches:
+            if not newer.is_file():
+                continue
+            check = subprocess.run(
+                ["git", "apply", "-R", "--check", str(newer)],
+                cwd=root,
+                capture_output=True,
+                text=True,
+                check=False,
+            )
+            report["newer_patch_stack"][newer.name] = check.returncode == 0
+            if check.returncode != 0:
+                report["pass"] = False
+                return report
+            subprocess.run(
+                ["git", "apply", "-R", str(newer)], cwd=root, check=True
+            )
+            applied_newer.append(newer)
         reverse = subprocess.run(
             ["git", "apply", "-R", "--check", str(patch_path)],
             cwd=root,
@@ -293,6 +319,15 @@ def patch_audit(config: dict[str, Any], run: dict[str, Any]) -> dict[str, Any]:
             subprocess.run(
                 ["git", "apply", str(patch_path)], cwd=root, check=True
             )
+            for newer in reversed(applied_newer):
+                subprocess.run(
+                    ["git", "apply", "--check", str(newer)],
+                    cwd=root,
+                    check=True,
+                )
+                subprocess.run(
+                    ["git", "apply", str(newer)], cwd=root, check=True
+                )
             report["round_trip_exact"] = (
                 header.read_bytes() == current_header.read_bytes()
                 and source.read_bytes() == current_source.read_bytes()
@@ -305,7 +340,7 @@ def patch_audit(config: dict[str, Any], run: dict[str, Any]) -> dict[str, Any]:
             "round_trip_exact",
             "legacy_pre_patch_exact",
         )
-    )
+    ) and all(report["newer_patch_stack"].values())
     return report
 
 
