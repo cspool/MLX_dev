@@ -1,0 +1,49 @@
+name: xavier-attention-composition-v1
+experiment_id: H135
+run_id: run140
+classification: target_free_xavier_mlx_attention_composition
+validation_eligible: false
+
+frozen_inputs:
+  h133:
+    path: artifacts/results/xavier-fft-regime-run138.json
+    bytes: 10196
+    sha256: ea16fdc8c1b6bd0d8670192bde271f074ace00d06d58ddbd277a7a9029983166
+    required_status: supported
+    required_integrity: true
+  h134:
+    path: artifacts/results/xavier-attention-components-run139.json
+    bytes: 17477
+    sha256: 6ac6064ef322e339f92bf38ef34247ded5dbf1bf9e70e420f7dd641adf660dd6
+    required_status: supported
+    required_integrity: true
+  h83:
+    path: artifacts/results/combined-attention-memory-run088.json
+    bytes: 48441
+    sha256: a647443c82ae407b18f0253757b43cf245b1626593e03510895f9c87ecd5fa44
+    required_status: supported
+    required_integrity: true
+
+shapes:
+  N256: {xavier_fft: N256_fftcmp, mlx_model: N256}
+  N8192: {xavier_fft: N8192_fftcmp, mlx_model: N8192}
+
+composition:
+  xavier_components: [fftcmp, qk, softmax, sv]
+  xavier_clock_hz: 1377000000
+  mlx_clock_hz: 1000000000
+  speedup: xavier_total_seconds_div_mlx_total_seconds
+  serialized_components: true
+
+acceptance:
+  required_shapes: 2
+  targets_consumed: false
+  overlap_or_component_factor: forbidden
+  target_derived_clock_or_scale: forbidden
+  author_cuda_mapping_claimed: false
+
+source_layout:
+  auditor: scripts/audit_xavier_attention_composition.py
+  test: tests/test_xavier_attention_composition.py
+
+result_path: artifacts/results/xavier-attention-composition-run140.json
