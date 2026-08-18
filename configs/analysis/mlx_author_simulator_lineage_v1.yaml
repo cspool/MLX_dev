@@ -63,6 +63,115 @@ focused_candidates:
 
 source_order: [crossref, openalex, arxiv, publisher, institution, patent, github, semantic_scholar, web_discovery]
 primary_simulator_terms: [simulator, simulation, cycle-accurate, gem5, RTL, Verilog, FPGA, tape-out, silicon, compiler]
+
+source_snapshot_path: artifacts/source-snapshots/mlx-author-simulator-lineage-20260818.json
+max_primary_payload_bytes: 26214400
+endpoints:
+  - id: ucas_wenming
+    url: https://people.ucas.ac.cn/~liwenming
+    tier: T1-primary
+    parser: html
+    required: true
+    tokens: [M2-DFU, DFU-E, SimICT, BDSim]
+  - id: ucas_wenming_chip
+    url: https://people.ucas.ac.cn/~0024137
+    tier: T1-primary
+    parser: html
+    required: true
+    tokens: [DPU-s, HTC-3000, HTC-3500]
+  - id: ict_xiaochun
+    url: https://www.ict.ac.cn/sourcedb/cn/jssrck/201411/t20141115_4253437.html
+    tier: T1-primary
+    parser: html
+    required: true
+    tokens: [MLX, DFU-E, DPU]
+  - id: ict_haibin
+    url: https://www.ict.cas.cn/sourcedb/cn/jssrck/202603/t20260302_8146715.html
+    tier: T1-primary
+    parser: html
+    required: false
+    tokens: [MLX, CN202510887813.5]
+  - id: zhihua_home
+    url: https://fanzhihua-ict2024.github.io/
+    tier: T1-primary
+    parser: html
+    required: true
+    tokens: [M^2-DFU, MLX, DFGAS, PANDA]
+  - id: shantian_home
+    url: https://shantianqin.github.io/
+    tier: T1-primary
+    parser: html
+    required: true
+    tokens: [SmarCo, Simulator, Runtime, ScratchPad]
+  - id: crad_2019_memory_conflict
+    url: https://crad.ict.ac.cn/fileJSJYJYFZ/journal/article/jsjyjyfz/HTML/2019-12-2720.shtml
+    tier: T1-primary
+    parser: html
+    required: true
+    tokens: [SimICT, Verilog, 4×4, 3]
+  - id: jcst_2022_lookahead_pdf
+    url: https://jcst.ict.ac.cn/fileup/1000-9000/PDF/2022-4-13-0555.pdf
+    tier: T1-primary
+    parser: pdf
+    required: true
+    tokens: [cycle-accurate simulator, SimICT, gem5, 4×4]
+  - id: jcst_2018_loop_pdf
+    url: https://jcst.ict.ac.cn/en/article/pdf/preview/10.1007/s11390-017-1748-5.pdf
+    tier: T1-primary
+    parser: pdf
+    required: true
+    tokens: [SimICT, 8 × 8, SPM]
+  - id: jcst_2018_buffer_pdf
+    url: https://jcst.ict.ac.cn/en/article/pdf/preview/10.1007/s11390-017-1747-6.pdf
+    tier: T1-primary
+    parser: pdf
+    required: true
+    tokens: [SimICT, instruction buffers, blocks in flight]
+  - id: jcst_2017_noc_pdf
+    url: https://jcst.ict.ac.cn/en/article/pdf/preview/10.1007/s11390-017-1703-5.pdf
+    tier: T1-primary
+    parser: pdf
+    required: false
+    tokens: [SimICT, network-on-chip, processing element]
+  - id: kaust_weng
+    url: https://www.kaust.edu.sa/en/study/faculty/jian-weng
+    tier: T1-primary
+    parser: html
+    required: true
+    tokens: [DSAGEN, OverGen, compiler]
+  - id: weng_home
+    url: https://were.github.io/
+    tier: T1-primary
+    parser: html
+    required: true
+    tokens: [Assassyn, DSAGEN, MLX]
+  - id: assassyn_kaust_pdf
+    url: https://repository.kaust.edu.sa/server/api/core/bitstreams/584e0d27-3d19-489e-96fd-a3decf4032e5/content
+    tier: T1-primary
+    parser: pdf
+    required: false
+    tokens: [unified, simulation, RTL]
+  - id: patent_debug_array
+    url: https://patents.google.com/patent/CN111008133A/zh
+    tier: T1-patent
+    parser: html
+    required: true
+    tokens: [程序块, taskid, block id, instance]
+
+metadata_dois:
+  simict: 10.1109/ISLPED.2013.6629308
+  multi_batch_dfu: 10.1145/3637906
+  dfu_e: 10.1109/TPDS.2025.3555329
+  panda: 10.1145/3721288
+  dfgas: 10.1145/3773768
+
+decision_gates:
+  required_author_coverage: 11
+  minimum_t1_primary_successes: 10
+  simict_citation_lineage_required: true
+  simulator_code_reuse_requires_explicit_source: true
+  parent_family_requires_explicit_or_cross_class_matches: 3
+  exact_parent_requires_explicit_statement: true
 result_path: artifacts/results/mlx-author-simulator-lineage-run109.json
 narrative_path: literature/mlx-author-simulator-lineage.md
 auditor: scripts/audit_mlx_author_simulator_lineage.py
