@@ -346,6 +346,10 @@ H131 audits Figure 18 in
 not identify 12 workload fields or six simulator/tapeout provenance fields, so
 neither reduced nor full current paths may be selected from the bars.
 
+H132 packages the current strict scope in
+[active-simulator-completion.md](active-simulator-completion.md): 0/8 complete,
+with two identity gaps, three numerical rejections and three execution gaps.
+
 The active objective is now limited to simulator-dependent hardware performance
 in Figures 18–25, as recorded in
 [simulator-experiment-scope.md](simulator-experiment-scope.md). Accuracy,

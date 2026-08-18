@@ -50,3 +50,8 @@ At the run122 point, the strict count remains 0/8. Run119 supplies the first
 target-free live coupled source for all Figure 24/25 MLX paths; run120's frozen
 Figure 25 join rejects it at 2/24. Runs 121/122 qualify stable productive
 pipeline counters for the next Figure 22 rebuild but do not complete a figure.
+
+H132 supersedes that checkpoint with the latest eight-row certificate in
+[active-simulator-completion.md](active-simulator-completion.md). The count
+remains 0/8: three figures are numerical rejections, three execution-incomplete
+and two identity/provenance-incomplete.
