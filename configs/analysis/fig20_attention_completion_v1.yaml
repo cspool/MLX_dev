@@ -1,0 +1,37 @@
+name: fig20-attention-completion-v1
+experiment_id: H136
+run_id: run141
+classification: target_exposed_figure20_attention_and_ledger_refresh
+validation_eligible: true
+
+frozen_inputs:
+  h135:
+    path: artifacts/results/xavier-attention-composition-run140.json
+    bytes: 4268
+    sha256: 95f730d982b89dccbf311ddc164c6557f235f078b58b40f1d5d96342e2caac63
+    required_status: supported
+    required_integrity: true
+  h88:
+    path: artifacts/results/fig20-matched-evidence-closure-run093.json
+    bytes: 5268
+    sha256: 356bfd16663ea4640d54982bb487e40f2d24673ea9e2834da9f26a9d51546d9c
+    required_status: supported
+    required_integrity: true
+
+attention_mapping:
+  N256: {paper_group: Attn_256, target_index: 1}
+  N8192: {paper_group: Attn_8K, target_index: 5}
+
+acceptance:
+  relative_error_limit: 0.10
+  required_attention_passes: 2
+  required_full_figure_passes: 8
+  projection_changes: forbidden
+  component_or_clock_factor: forbidden
+  residual_scale_or_offset: forbidden
+
+source_layout:
+  auditor: scripts/audit_fig20_attention_completion.py
+  test: tests/test_fig20_attention_completion.py
+
+result_path: artifacts/results/fig20-attention-completion-run141.json
