@@ -1,0 +1,40 @@
+name: fig21-mlx-composition-v1
+experiment_id: H95
+run_id: run100
+classification: target_free_figure21_complete_mlx_composition
+validation_eligible: false
+
+frozen_inputs:
+  identity:
+    path: artifacts/results/fig21-workload-identity-run095.json
+    sha256: f7c9f22af25a9abe8c42129f1ddd03e9b33fdbca5beb617dad98dd9bf3f50da0
+    required_status: supported
+    required_integrity: true
+  layer_contract:
+    path: artifacts/results/fig21-layer-contract-run096.json
+    sha256: d92d0c477a1525beba1ab613985820dde98c8a7fe7429347210eb5abe9b2bf12
+    required_status: supported
+    required_integrity: true
+  timed_paths:
+    path: artifacts/results/fig21-timed-paths-run097.json
+    sha256: 14444c351b54ad3e597d5f8c601b19dde989e3ba034ded6e1b4519186730421d
+    required_status: supported
+    required_integrity: true
+  structured_attention:
+    path: artifacts/results/fig21-attention-timing-run098.json
+    sha256: 8075b341f2b640db8c5008cd956d96266c9fa1615655281fd76893f2a7df850f
+    required_status: supported
+    required_integrity: true
+  dense_attention:
+    path: artifacts/results/fig21-dense-attention-run099.json
+    sha256: 728d6c7ef1577816ce2ecf6e4db0eae27da2a14123ae1bedd1c3f42bf0f6808f
+    required_status: supported
+    required_integrity: true
+
+sequence_lengths: [128, 256, 512, 1024, 2048]
+structured_layers: 24
+dense_layers: 8
+clock_hz: 1000000000
+
+auditor: scripts/audit_fig21_mlx_composition.py
+result_path: artifacts/results/fig21-mlx-composition-run100.json
