@@ -75,7 +75,17 @@ def reverse_patch_check(spec: dict[str, Any]) -> dict[str, Any]:
         temporary_source = temporary_root / relative_source
         temporary_source.parent.mkdir(parents=True, exist_ok=True)
         shutil.copy2(source, temporary_source)
-        for descendant in spec.get("descendant_patches", []):
+        descendants = list(spec.get("descendant_patches", []))
+        if (
+            not descendants
+            and Path(spec["path"]).name == "mlx_overlay.cc"
+            and Path(spec["patch"]).name
+            == "dsa-gem5-active-window-instruction-capacity-v1.patch"
+        ):
+            descendants = [
+                "patches/dsagen/dsa-gem5-functional-payload-v1.patch"
+            ]
+        for descendant in descendants:
             descendant_path = PROJECT_ROOT / descendant
             descendant_result = subprocess.run(
                 [
