@@ -1,0 +1,63 @@
+name: pipelined-full-mesh-paths-v1
+experiment_id: H110
+run_id: run115
+classification: target_free_corrected_full_mesh_throughput_paths
+validation_eligible: false
+
+frozen_inputs:
+  h109:
+    path: artifacts/results/pipelined-block-contexts-run114.json
+    bytes: 8866
+    sha256: c6b7148950333490f8f90bee76e7558256aa0d1a85d2d3810fec6ab6c96bc30b
+    required_status: supported
+    required_integrity: true
+  h102:
+    path: artifacts/results/fig24-25-full-mesh-paths-run107.json
+    bytes: 2848348
+    sha256: 0107a9a0bd25404d49f90ac073d8c0bd04346f95cab13f8e259a1c6e81ae4a7d
+    required_status: supported
+    required_integrity: true
+  contracts:
+    path: artifacts/source-snapshots/h110-pipelined-full-mesh-contracts-20260818.json
+    bytes: 116512
+    sha256: 5c49aa1190383fd70f559dbc9a8b990a7b8c24572e78064ed2ac76c2aa1acf5b
+
+fit_scales: [4, 8]
+holdout_scales: [16, 32]
+cycle_relative_error_limit: 0.05
+physical_fma_relative_error_limit: 0.05
+fma_issue_utilization_minimum: 0.85
+qkv_old_cycle_speedup_minimum: 3.0
+
+hardware:
+  simd_width: 32
+  vector_bytes: 64
+  mesh_width: 4
+  mesh_height: 4
+  physical_pes: 16
+  active_window: 2
+  iteration_contexts_per_block: 4
+  operand_contexts_per_pe: 256
+  context_selection_basis: h109_fma_latency_four
+  operand_capacity_basis: dpu_2018_source_fixture
+  spad_ports: 4
+  spad_axis: x
+
+required:
+  paths: 48
+  configs: 192
+  double_runs: 384
+  cycle_holdouts: 96
+  physical_fma_holdouts: 96
+  qkv_paths: 24
+
+source_layout:
+  collector: scripts/collect_h110_pipelined_contracts.py
+  compiler_core: src/mlxsim/pipelined_full_mesh_paths.py
+  compiler: scripts/compile_pipelined_full_mesh_paths.py
+  runner: scripts/run_pipelined_full_mesh_paths.py
+  auditor: scripts/audit_pipelined_full_mesh_paths.py
+
+output_root: artifacts/environment/h110
+result_path: artifacts/results/pipelined-full-mesh-paths-run115.json
+
