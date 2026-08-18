@@ -1,0 +1,80 @@
+name: corrected-compute-dma-overlap-v1
+experiment_id: H111
+run_id: run116
+classification: target_free_corrected_compute_dma_overlap_envelope
+validation_eligible: false
+
+frozen_inputs:
+  h108:
+    path: artifacts/results/compute-dma-overlap-run113.json
+    bytes: 94253
+    sha256: 25dc7f978325c09b6688335e7e0e57478d53168d8b2165ef50d1aedbd7cc5e92
+    required_status: supported
+    required_integrity: true
+  h108_config:
+    path: configs/simulators/compute_dma_overlap_v1.yaml
+    bytes: 1944
+    sha256: 1eeeb25189691ed7c5191dae3f7cf1ae507bf53004eb39643f2144893b2743af
+  h107:
+    path: artifacts/results/full-mesh-memory-residency-run112.json
+    bytes: 57444
+    sha256: ca917f5a1cf047d5d08cdba39a454955fb7d7d1aae33bef799058bcf38174a59
+    required_status: supported
+    required_integrity: true
+  h110:
+    path: artifacts/results/pipelined-full-mesh-paths-run115.json
+    bytes: 2861404
+    sha256: 6ba5a86ac22135f38e3ed065f12f343fa91a173168b8ab41553d3a48e7b2e18a
+    required_status: rejected
+    required_integrity: true
+    required_cycle_holdouts_pass: true
+    required_residence_holdouts_pass: false
+  manuscript:
+    path: MLX Multi-Layer Execution for Structured LLM Workload Acceleration on Spatial Architectures/MLX Multi-Layer Execution for Structured LLM Workload Acceleration on Spatial Architectures.md
+    bytes: 85855
+    sha256: 5785eb81b28741a3806ca42749d7b556bbcd2404e1622ae644a32bae2ade7745
+
+hardware:
+  frequency_hz: 1000000000
+  physical_pes: 16
+  simd_width: 32
+  effective_ops_per_fma: 2
+  exact_peak_effective_ops_per_cycle: 1024
+  nominal_table_iv_peak_effective_ops_per_cycle: 1000
+  nominal_peak_relative_difference_limit: 0.025
+  bandwidth_sweep_bytes_per_cycle: [16, 32, 64, 128, 256]
+  historical_dpu_anchor_bytes_per_cycle: 64
+  mlx_bandwidth_bytes_per_cycle: null
+
+scheduler:
+  inherited_from: H108
+  buffers: 2
+  compute_resources: 1
+  dma_resources: 1
+  compute_tile_order: ascending
+  dma_queue: fifo
+  initial_transfers: [fill_tile_0, fill_tile_1]
+  reuse_rule: drain_tile_i_before_fill_tile_i_plus_2
+  simultaneous_completion_priority: [dma, compute]
+  compute_partition: balanced_integer_cycles
+
+execution:
+  required_paths: 48
+  family_counts: {fft: 8, qkv_bsmm: 24, swa: 16}
+  required_bandwidth_points: 5
+  required_points: 240
+  deterministic_replays: 2
+  required_records: 480
+  paper_performance_targets_consumed: false
+  forbidden_point_fields:
+    - physical_fma_pe_cycles
+    - fma_residence_utilization
+
+source_layout:
+  base_model: src/mlxsim/compute_dma_overlap.py
+  corrected_model: src/mlxsim/corrected_compute_dma_overlap.py
+  runner: scripts/run_corrected_compute_dma_overlap.py
+  auditor: scripts/audit_corrected_compute_dma_overlap.py
+
+output_root: artifacts/environment/h111
+result_path: artifacts/results/corrected-compute-dma-overlap-run116.json
