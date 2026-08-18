@@ -1,0 +1,67 @@
+{
+  "schema_version": 1,
+  "collected_at": "2026-08-18",
+  "classification": "primary_author_lineage_memory_mechanism_snapshot",
+  "records": {
+    "non_stop_double_buffer_2018": {
+      "title": "A Non-Stop Double Buffering Mechanism for Dataflow Architecture",
+      "doi": "10.1007/s11390-017-1747-6",
+      "url": "https://jcst.ict.ac.cn/en/article/pdf/preview/10.1007/s11390-017-1747-6.pdf?year=2018&issue=1",
+      "bytes": 1452113,
+      "sha256": "e9d6c5f7b203a465d9be58f648a84ed776f311e67d1e41bc25cc2375fe8ae36c",
+      "facts": [
+        {"page": 2, "fact": "On-chip memory is divided into two alternating buffers so PE computation and DMA transfer use different halves."},
+        {"page": 5, "fact": "The tile index selects the buffer by tile_idx modulo two; memory addresses are relative to one buffer."},
+        {"page": 6, "fact": "Per-buffer buf_acc ownership distinguishes PE access from DMA access and completed-block counters release a tile."},
+        {"page": 7, "fact": "The PE request carries buffer position, relative address and tile index; the buffer selects a half with tile_idx modulo two."},
+        {"page": 8, "fact": "The workflow copies results out before copying the next tile in, then transfers ownership to the PE; the array fills and drains once across one DFG."},
+        {"page": 8, "fact": "The model uses SimICT, an 8x8 PE array, 32 instruction slots per PE, eight blocks in flight and FRFO."},
+        {"page": 9, "fact": "The source configuration is 8 MiB SPM, 32 banks, 256 bits per bank, 64 GB/s memory bandwidth and a 1 GHz clock."}
+      ],
+      "not_reported": ["DMA setup latency", "DRAM timing tuple", "SPM response latency", "request queue depth"]
+    },
+    "operand_ram_conflict_2019": {
+      "title": "Optimum Research on Inner-Instruction Memory Access Conflict for Dataflow Architecture",
+      "url": "https://crad.ict.ac.cn/fileJSJYJYFZ/journal/article/jsjyjyfz/HTML/2019-12-2720.shtml",
+      "bytes": 70106,
+      "sha256": "3fe2766bfd2becc1a9909178b28643f28affdc6c65498dcbc4cde24fc6412764",
+      "facts": [
+        {"section": "4.1", "fact": "The SimICT configuration uses a 1 GHz ARM host, 4 GiB DDR4, a 1 GHz 4x4 PE array, eight operand-RAM slices, two 64-bit XY networks and 3 MiB SPM."},
+        {"section": "4.1", "fact": "The host copies instructions and input data into the accelerator through DMA, starts the microcontroller, then copies results back through DMA after completion."},
+        {"section": "introduction", "fact": "Operand RAM is organized as RAM slices; same-instruction operand conflicts stall the pipeline and are distinct from SPM bank conflicts."}
+      ],
+      "not_reported": ["DDR timing tuple", "DMA setup latency", "SPM banking", "cache hierarchy"]
+    },
+    "look_ahead_acknowledgment_2022": {
+      "title": "Accelerating Data Transfer in Dataflow Architectures Through a Look-Ahead Acknowledgment Mechanism",
+      "doi": "10.1007/s11390-020-0555-6",
+      "url": "https://jcst.ict.ac.cn/fileup/1000-9000/PDF/2022-4-13-0555.pdf",
+      "bytes": 1295414,
+      "sha256": "d78751fa2634908fc603be2b03b9a312af27223a8f4b6e951a2bedcace20ec7f",
+      "facts": [
+        {"page": 11, "fact": "The cycle-accurate SimICT model is calibrated against gem5 within 9 percent and uses a SimpleScalar-derived host."},
+        {"page": 11, "fact": "During network congestion, incoming contexts are held in a PE input buffer; its capacity covers the pre-fire queue."},
+        {"page": 12, "fact": "The source configuration has 4 MiB data SPM with 16 banks at 256 bits per bank and 4 MiB instruction SPM with eight banks at 1024 bits per bank."},
+        {"page": 12, "fact": "The system uses 16 GiB DDR4, four physical 4x4 mesh networks, 64-bit packets and one cycle per hop."},
+        {"page": 14, "fact": "The selected pre-fire queue contains eight entries; this is flow-control evidence, not an SPM timing parameter."}
+      ],
+      "not_reported": ["DDR timing tuple", "DMA setup latency", "SPM response latency", "cache hierarchy"]
+    },
+    "mlx_2026": {
+      "title": "MLX: Multi-Layer Execution for Structured LLM Workload Acceleration on Spatial Architectures",
+      "path": "MLX Multi-Layer Execution for Structured LLM Workload Acceleration on Spatial Architectures/MLX Multi-Layer Execution for Structured LLM Workload Acceleration on Spatial Architectures.md",
+      "bytes": 85855,
+      "sha256": "5785eb81b28741a3806ca42749d7b556bbcd2404e1622ae644a32bae2ade7745",
+      "facts": [
+        {"line": 162, "fact": "The disclosed MLX system contains a host controller, scratchpad memory and a PE mesh."},
+        {"line": 238, "fact": "The scratchpad uses SIMD-striped rows and row/column access so FFT and BSMM intermediates remain array-resident."},
+        {"line": 240, "fact": "Stage transitions use explicit scratchpad shuffles/round trips when a larger closed set cannot remain in one compact footprint."}
+      ]
+    }
+  },
+  "decisions": {
+    "implement_now": ["single DMA channel", "off-chip byte conservation", "two SPM halves", "tile-parity mapping", "DMA/PE ownership", "relative address remapping", "non-stop multi-tile execution", "SPM bank timing through the frozen H66 adapter"],
+    "defer": ["look-ahead acknowledgments", "pre-fire queue", "PE input-buffer contexts", "operand-RAM redundancy compiler"],
+    "exclude_without_source": ["accelerator cache hierarchy", "invented DDR timing", "invented DMA startup latency", "paper-residual bandwidth factors"]
+  }
+}
