@@ -341,6 +341,11 @@ Current coupling cuts the old error sharply, but all 12 component/total values
 remain high and the full figure is rejected. Published component sums forbid an
 overlap repair without new author evidence.
 
+H131 audits Figure 18 in
+[fig18-workload-identity.md](fig18-workload-identity.md). Its N/D/s labels do
+not identify 12 workload fields or six simulator/tapeout provenance fields, so
+neither reduced nor full current paths may be selected from the bars.
+
 The active objective is now limited to simulator-dependent hardware performance
 in Figures 18–25, as recorded in
 [simulator-experiment-scope.md](simulator-experiment-scope.md). Accuracy,

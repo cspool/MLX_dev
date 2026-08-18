@@ -1,0 +1,198 @@
+{
+  "schema_version": 1,
+  "experiment_id": "H131",
+  "run_id": "run136",
+  "classification": "target_free_figure18_workload_and_provenance_identity",
+  "validation_eligible": false,
+  "generated_at": "2026-08-18T11:57:50.854926+00:00",
+  "project_commit": "af11a030fb6469f61c2342f44c40bef1ffa4908f",
+  "hypothesis_status": "supported",
+  "audit_integrity": true,
+  "paper_performance_targets_consumed": false,
+  "paper_reproduction_claim": "none_target_free_identity_diagnosis_only",
+  "frozen_inputs": {
+    "paper": {
+      "path": "MLX Multi-Layer Execution for Structured LLM Workload Acceleration on Spatial Architectures/MLX Multi-Layer Execution for Structured LLM Workload Acceleration on Spatial Architectures.md",
+      "bytes": 85855,
+      "sha256": "5785eb81b28741a3806ca42749d7b556bbcd2404e1622ae644a32bae2ade7745",
+      "checks": {
+        "is_file": true,
+        "bytes": true,
+        "sha256": true
+      },
+      "pass": true
+    }
+  },
+  "performance_section": "# B. MLX Performance\n\nPrior Sparse Accelerators: Fig. 18 compares MLX with five representative sparse accelerators, using technologynormalized energy numbers quoted from the original papers [26, 29, 37, 38, 39, 40] and scaled with the process factors in Table IV. SpAtten is the baseline (\"1.0\"). Under two settings of s=0.75/0.5, MLX achieves  $2.93-4.10\\times$  and 4.14-5.8\u00d7 speedups over the first three accelerators under dynamic sparsity, benefiting from a unified butterfly acceleration in both attention and projection. Compared to ViTALiTy, which targets low-rank vision transformers, MLX delivers 1.28\u00d7 and 1.81\u00d7 speedups at comparable FLOP reductions. MLX also outperforms BitVert by 2.3\u00d7; BitVert reports higher energy savings (2\u00d7) mainly due to its INT8 precision, whereas MLX operates in FP16. Fig. 18(c) further reports hardware\u2013software affinity (speedup normalized by FLOP savings). MLX attains consistently high affinity because BSMM/FFT are strongly FMA-dominant: most cycles are spent on regular MAC operations in the PEs, with only modest control and bookkeeping overhead, in contrast to irregular sparse kernels that require data-dependent indexing or selection. This also underscores the practical ease of deploying butterfly sparsity.\n\n![](_page_10_Figure_9.jpeg)\n\nFig. 18: Comparison with prior sparse accelerators on a single transformer block (N=1024, D=512).\n\n![](_page_10_Figure_11.jpeg)\n\n![](_page_10_Figure_12.jpeg)\n\nTABLE V: FPGA Resource Usage Comparison.\n\nFig. 19: Speedup o/ FABNet-Large.\n\n",
+  "implementation_section": "# A. Software / Hardware Implementation\n\nOur design inherits practical experience from a real tapedout design. The proposed MLX architecture is a profiledriven, specialized subset of a general-purpose dataflow design implemented in Verilog RTL and synthesized in 12nm @1GHz using Synopsys DC. Profiling across FFT, BSMM, and dense LLM kernels revealed that many features of the general design were unnecessary for structured operators and impeded the multi-layer execution model. This enabled a streamlined architecture tailored explicitly for hybrid LLM workloads.\n\n**Power & Area:** The floorplan of the full taped-out design (Fig. 14) serves as the reference for projecting area and power. Guided by the parameter analyses in Sec. IV-D, we reduce SIMD width from 32 to 8 and *remove unused units* such as vector shuffles, division, and high-precision floating-point pipelines. The resulting reduced design occupies only 10% of the area and 8% of the power of the original chip (Table II). The full-design power is measured post-silicon, while the reduced-design power is estimated from post-synthesis reports. **Performance:** We report performance using both (i) the cycle-accurate MLX simulator used during architectural exploration and (ii) measurements from the taped-out hardware. Both numbers will be reported to compare with counterpart accelerators with the same peak performance as shown in Table, IV.\n\n**Software Deployment:** A RISC-V CPU serves as the host controller for our accelerator. To embed spatial accelerator bitstreams into C programs, developers write dataflow-style assembly specifying each PE's operations or use a LLVM-based C compiler [35] for programming. A lightweight \"spatial assembler\" then compiles this text format into binary and exports it as a header file for configuration on the MLX.\n\n![](_page_9_Picture_0.jpeg)\n\n|                    | Area-mm <sup>2</sup> | Power-mW    |\n|--------------------|----------------------|-------------|\n| Config Network     | 0.018                | 11.3        |\n| Data Network       | 0.092                | 56.2        |\n| Control Logic      | 0.011                | 7.5         |\n| Tag Buffer         | 0.019                | 9.3         |\n| Register File      | 0.044                | 28.7        |\n| FU (SIMD32)        | 0.298                | 252.4 (70%) |\n| PE (Skip-hop cost) | 0.482 (6.2%)         | 365.4       |\n| PE Array           | 7.712                | 5846.4      |\n| Ruduced (SIMD8)    | 0.772                | 433.8       |\n\nFig. 14: MLX floorplan. TABLE II: Area and Power.\n\n",
+  "disclosure_checks": {
+    "sequence_length": true,
+    "hidden_dimension": true,
+    "compression_ratios": true,
+    "single_block": true,
+    "precision": true
+  },
+  "workload_evidence": {
+    "model_or_block_architecture": {
+      "status": "not_reported",
+      "figure18_specific_value": null
+    },
+    "batch_size": {
+      "status": "not_reported",
+      "figure18_specific_value": null
+    },
+    "structured_vs_dense_component_graph": {
+      "status": "not_reported",
+      "figure18_specific_value": null
+    },
+    "structured_vs_dense_layer_mix": {
+      "status": "not_reported",
+      "figure18_specific_value": null
+    },
+    "block_size_B": {
+      "status": "not_reported",
+      "figure18_specific_value": null
+    },
+    "fft_chunk_length_L": {
+      "status": "not_reported",
+      "figure18_specific_value": null
+    },
+    "per_component_compression_ratio": {
+      "status": "not_reported",
+      "figure18_specific_value": null
+    },
+    "ffn_dimension": {
+      "status": "not_reported",
+      "figure18_specific_value": null
+    },
+    "attention_heads_and_layout": {
+      "status": "not_reported",
+      "figure18_specific_value": null
+    },
+    "elementwise_components": {
+      "status": "not_reported",
+      "figure18_specific_value": null
+    },
+    "memory_residency_and_boundaries": {
+      "status": "not_reported",
+      "figure18_specific_value": null
+    },
+    "launch_and_measurement_interval": {
+      "status": "not_reported",
+      "figure18_specific_value": null
+    }
+  },
+  "provenance_evidence": {
+    "full_vs_reduced_mlx_design_per_series": {
+      "status": "not_reported",
+      "figure18_specific_value": null
+    },
+    "simulator_vs_tapeout_measurement_per_series": {
+      "status": "not_reported",
+      "figure18_specific_value": null
+    },
+    "latency_baseline_value_and_source": {
+      "status": "not_reported",
+      "figure18_specific_value": null
+    },
+    "energy_measurement_interval": {
+      "status": "not_reported",
+      "figure18_specific_value": null
+    },
+    "mlx_power_source_per_setting": {
+      "status": "not_reported",
+      "figure18_specific_value": null
+    },
+    "process_scaling_applied_to_mlx": {
+      "status": "not_reported",
+      "figure18_specific_value": null
+    }
+  },
+  "classification_checks": {
+    "workload_count": true,
+    "provenance_count": true,
+    "workload_classified": true,
+    "provenance_classified": true
+  },
+  "exact_workload_identified": false,
+  "exact_performance_provenance_identified": false,
+  "designs": {
+    "reduced": {
+      "simd_width": 8,
+      "peak_ops_per_second": 256000000000,
+      "measurement_statement": "tuned in simulator"
+    },
+    "full": {
+      "simd_width": 32,
+      "peak_ops_per_second": 1000000000000,
+      "measurement_statement": "taped-out design compared against NVIDIA GPUs"
+    },
+    "figure18_series_assignment": null
+  },
+  "design_checks": {
+    "reduced_simd": true,
+    "both_sources": true,
+    "reduced_peak": true,
+    "full_peak": true,
+    "unassigned": true
+  },
+  "target_free_checks": {
+    "config": true,
+    "no_target_artifact": true,
+    "no_speedup_values": true,
+    "no_transfer": true
+  },
+  "acceptance_gates": [
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true
+  ],
+  "summary": {
+    "workload_fields": 12,
+    "missing_workload_fields": 12,
+    "provenance_fields": 6,
+    "missing_provenance_fields": 6,
+    "exact_workload_identified": false,
+    "exact_performance_provenance_identified": false,
+    "acceptance_gates_passed": 10,
+    "acceptance_gates_total": 10,
+    "active_simulator_figures_reproduced": 0,
+    "active_simulator_figures_total": 8
+  },
+  "source_files": {
+    "auditor": {
+      "path": "scripts/audit_fig18_workload_identity.py",
+      "bytes": 9452,
+      "sha256": "50d6dad16b512c533609450f32d0ee96b9242ded184080321ccb327497e8b784",
+      "checks": {
+        "is_file": true
+      },
+      "pass": true
+    },
+    "test": {
+      "path": "tests/test_fig18_workload_identity.py",
+      "bytes": 636,
+      "sha256": "830157451828d8129ecd70053449a9f7ea06148f6ca8f7be82a4e6460435f606",
+      "checks": {
+        "is_file": true
+      },
+      "pass": true
+    }
+  },
+  "integrity_checks": {
+    "paper": true,
+    "disclosures": true,
+    "classifications": true,
+    "designs": true,
+    "target_free": true,
+    "source_files": true,
+    "acceptance_evaluated": true
+  }
+}
