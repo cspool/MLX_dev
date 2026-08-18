@@ -1,0 +1,88 @@
+name: swa-functional-v1
+experiment_id: H159
+run_id: run164
+classification: target_free_same_input_causal_sliding_window_attention
+validation_eligible: true
+
+frozen_inputs:
+  attention_functional:
+    path: artifacts/results/attention-functional-run163.json
+    bytes: 7886
+    sha256: 04c5b934bedc85abe28f263ff9f6b6e639eff3e2eed838fea84c56bb8ce82652
+    required_status: supported
+    required_integrity: true
+  swa_performance:
+    path: artifacts/results/corrected-compute-dma-overlap-run116.json
+    bytes: 161811
+    sha256: 80d820ba42358e480c22173368b9624830c884a70030a28cc45dbac84159b41f
+    required_status: supported
+    required_integrity: true
+
+operator_contract:
+  family: swa
+  realization: causal_scaled_dot_product_sliding_window_attention
+  precision: fp64_shadow
+  sequence_length: 4
+  window: 2
+  head_dimension: 2
+  value_dimension: 2
+  q_prefix_source: attention_functional_actual_outputs_reshape_2x2
+  q_suffix:
+    - [-1.0, 0.75]
+    - [2.0, -0.5]
+  k:
+    - [0.5, -1.0]
+    - [1.5, 0.25]
+    - [-0.75, 1.25]
+    - [0.4, 0.8]
+  v:
+    - [2.0, -0.5]
+    - [-1.0, 3.0]
+    - [0.75, 1.5]
+    - [-2.0, 0.25]
+  valid_keys_by_query: [[0], [0, 1], [1, 2], [2, 3]]
+  scale: inverse_sqrt_head_dimension
+  placement:
+    score: [[0, 0], [0, 1], [0, 2], [0, 3], [0, 4], [0, 5], [0, 6]]
+    softmax: [[2, 0], [2, 2], [2, 4], [2, 6]]
+    sv: [[5, 0], [5, 1], [5, 2], [5, 3], [5, 4], [5, 5], [5, 6], [5, 7]]
+  tags: [1, 2, 3]
+
+timing_contract:
+  active_window: 3
+  pe_dependency_model: scoreboard_experimental
+  mesh: [6, 8]
+  skip_steps: [2, 1]
+  functional_enabled_and_disabled_cycles_must_match: true
+
+acceptance:
+  absolute_error_limit: 1.0e-12
+  expected_valid_edges: 7
+  expected_row_fanins: [1, 2, 2, 2]
+  expected_scalar_multiplies: 42
+  expected_scalar_adds: 24
+  expected_outputs: 8
+  expected_functional_operations: 134
+  expected_pipeline_operations: {load: 42, compute: 63, xfer: 21, store: 8}
+  expected_compute_operations: {add: 4, fdiv: 7, fexp: 7, fma: 20, fmax: 3, mul: 22}
+  expected_memory_requests: 50
+  expected_memory_bytes: 400
+  expected_boundary_events: 21
+  expected_route_hops: 45
+  expected_skip_hops: 21
+  expected_unit_hops: 24
+  expected_blocks: 19
+  expected_pes: 19
+  required_builds: [debug, opt, sanitize]
+  paper_targets_consumed: false
+
+source_layout:
+  config: configs/simulators/swa_functional_v1.yaml
+  protocol: experiments/h159-swa-functional/protocol.md
+  compiler: scripts/compile_swa_functional.py
+  runner: scripts/run_swa_functional.py
+  auditor: scripts/audit_swa_functional.py
+  test: tests/test_swa_functional.py
+
+output_root: artifacts/environment/h159
+result_path: artifacts/results/swa-functional-run164.json
