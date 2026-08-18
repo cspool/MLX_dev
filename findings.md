@@ -544,3 +544,9 @@ eight BSMM/FFT resource curves reaches rho 0.70; only three preserve endpoint
 direction and FFT transfer utilization is almost exactly reverse-ranked. The
 current resource-counter and port-timing model therefore needs a semantic
 revision before Figure 22 can count.
+
+Run145 similarly rejects Figure 25's full trend. FFT-CMP is perfectly ordered,
+but QKV and SWA estimates saturate around their compute/bandwidth ceilings and
+fail to preserve the four-case ordering. All endpoints still rise, which
+localizes the issue to case-dependent mapping/traffic rather than the overall
+direction, but only 1/6 curves passes.

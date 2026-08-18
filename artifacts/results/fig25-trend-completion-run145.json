@@ -1,0 +1,280 @@
+{
+  "schema_version": 1,
+  "experiment_id": "H140",
+  "run_id": "run145",
+  "classification": "target_exposed_figure25_dual_criterion_trend_audit",
+  "validation_eligible": false,
+  "generated_at": "2026-08-18T13:52:10.714544+00:00",
+  "project_commit": "0811d6f0e774156fc99a1276dcd50cbe9ca271d1",
+  "hypothesis_status": "rejected",
+  "audit_integrity": true,
+  "paper_performance_targets_consumed": true,
+  "paper_reproduction_claim": "figure25_trend_rejected",
+  "frozen_inputs": {
+    "h115": {
+      "path": "artifacts/results/fig25-coupled-transfer-run120.json",
+      "bytes": 25840,
+      "sha256": "309a756f473bba0e81f33c79f5bd04f753ff9b1978d7a9f31061d5142e1273c7",
+      "checks": {
+        "is_file": true,
+        "bytes": true,
+        "sha256": true
+      },
+      "pass": true
+    },
+    "h137": {
+      "path": "artifacts/results/active-simulator-trend-completion-run142.json",
+      "bytes": 11524,
+      "sha256": "e32eddfc97e97f4ff0b17ec10f1ca0be829a06f7055709712ab01f3549b99dd3",
+      "checks": {
+        "is_file": true,
+        "bytes": true,
+        "sha256": true
+      },
+      "pass": true
+    }
+  },
+  "parent_checks": {
+    "h115": true,
+    "h137": true
+  },
+  "policy_checks": {
+    "minimum_spearman": true,
+    "endpoint_direction": true,
+    "all_series": true
+  },
+  "finite_check": true,
+  "matrix_check": true,
+  "denominator_check": true,
+  "curve_audits": {
+    "fft_cmp": {
+      "operator": "fft_cmp",
+      "cases": [
+        "BERT_512",
+        "Llama2_1K",
+        "InternLM2_4K",
+        "BERT_8K"
+      ],
+      "target_values": [
+        0.579,
+        0.602,
+        0.734,
+        0.84
+      ],
+      "prediction_values": [
+        0.2522181923249766,
+        0.26165351995056163,
+        0.27869924546571023,
+        0.28607245249752355
+      ],
+      "spearman": 0.9999999999999998,
+      "spearman_pass": true,
+      "target_endpoint_direction": 1,
+      "prediction_endpoint_direction": 1,
+      "endpoint_direction_match": true,
+      "trend_pass": true
+    },
+    "qkv_bsmm": {
+      "operator": "qkv_bsmm",
+      "cases": [
+        "BERT_512",
+        "Llama2_1K",
+        "InternLM2_4K",
+        "BERT_8K"
+      ],
+      "target_values": [
+        0.533,
+        0.645,
+        0.642,
+        0.754
+      ],
+      "prediction_values": [
+        0.9305562804585198,
+        0.9814304426926496,
+        0.9818127312395086,
+        0.9314162336474203
+      ],
+      "spearman": 0.19999999999999996,
+      "spearman_pass": false,
+      "target_endpoint_direction": 1,
+      "prediction_endpoint_direction": 1,
+      "endpoint_direction_match": true,
+      "trend_pass": false
+    },
+    "qkv_bsmm_b32": {
+      "operator": "qkv_bsmm_b32",
+      "cases": [
+        "BERT_512",
+        "Llama2_1K",
+        "InternLM2_4K",
+        "BERT_8K"
+      ],
+      "target_values": [
+        0.529,
+        0.635,
+        0.642,
+        0.764
+      ],
+      "prediction_values": [
+        0.8938541898306969,
+        0.9709228618247562,
+        0.9712912557535092,
+        0.9400645488858258
+      ],
+      "spearman": 0.3999999999999999,
+      "spearman_pass": false,
+      "target_endpoint_direction": 1,
+      "prediction_endpoint_direction": 1,
+      "endpoint_direction_match": true,
+      "trend_pass": false
+    },
+    "qkv_bsmm_b64": {
+      "operator": "qkv_bsmm_b64",
+      "cases": [
+        "BERT_512",
+        "Llama2_1K",
+        "InternLM2_4K",
+        "BERT_8K"
+      ],
+      "target_values": [
+        0.52,
+        0.572,
+        0.642,
+        0.761
+      ],
+      "prediction_values": [
+        0.8352545421114039,
+        0.9527673661189764,
+        0.9531276670209434,
+        0.90397574751816
+      ],
+      "spearman": 0.3999999999999999,
+      "spearman_pass": false,
+      "target_endpoint_direction": 1,
+      "prediction_endpoint_direction": 1,
+      "endpoint_direction_match": true,
+      "trend_pass": false
+    },
+    "swa_w128_q32": {
+      "operator": "swa_w128_q32",
+      "cases": [
+        "BERT_512",
+        "Llama2_1K",
+        "InternLM2_4K",
+        "BERT_8K"
+      ],
+      "target_values": [
+        0.43,
+        0.465,
+        0.7,
+        0.73
+      ],
+      "prediction_values": [
+        0.5502403256913763,
+        0.5504634622359145,
+        0.5504636010783863,
+        0.5502417129938443
+      ],
+      "spearman": 0.3999999999999999,
+      "spearman_pass": false,
+      "target_endpoint_direction": 1,
+      "prediction_endpoint_direction": 1,
+      "endpoint_direction_match": true,
+      "trend_pass": false
+    },
+    "swa_w256_q64": {
+      "operator": "swa_w256_q64",
+      "cases": [
+        "BERT_512",
+        "Llama2_1K",
+        "InternLM2_4K",
+        "BERT_8K"
+      ],
+      "target_values": [
+        0.441,
+        0.457,
+        0.711,
+        0.75
+      ],
+      "prediction_values": [
+        0.70963147899432,
+        0.7100015794126061,
+        0.7100016949051473,
+        0.7096326327176853
+      ],
+      "spearman": 0.3999999999999999,
+      "spearman_pass": false,
+      "target_endpoint_direction": 1,
+      "prediction_endpoint_direction": 1,
+      "endpoint_direction_match": true,
+      "trend_pass": false
+    }
+  },
+  "source_files": {
+    "auditor": {
+      "path": "scripts/audit_fig25_trend_completion.py",
+      "bytes": 10369,
+      "sha256": "2f5858e9e8865cac8f973ee52c4050843743d17c3dc2ce8410c58ada1d0f699c",
+      "checks": {
+        "is_file": true
+      },
+      "pass": true
+    },
+    "trend_math": {
+      "path": "scripts/audit_fig19_trend_completion.py",
+      "bytes": 13595,
+      "sha256": "d2a6992d548a40c6251693bd9d1098c19128b94aa609c2b8319b73dbc183eba2",
+      "checks": {
+        "is_file": true
+      },
+      "pass": true
+    },
+    "test": {
+      "path": "tests/test_fig25_trend_completion.py",
+      "bytes": 859,
+      "sha256": "296b4b4bc6a0e90b36ae960409e78f2267b359e1eb905d5e171f24ad20c44786",
+      "checks": {
+        "is_file": true
+      },
+      "pass": true
+    }
+  },
+  "source_check": true,
+  "acceptance_gates": [
+    true,
+    true,
+    true,
+    true,
+    true,
+    false,
+    true,
+    false,
+    true,
+    true
+  ],
+  "summary": {
+    "curves": 6,
+    "spearman_passes": 1,
+    "endpoint_direction_passes": 6,
+    "trend_curve_passes": 1,
+    "strict_point_passes": 2,
+    "strict_point_total": 24,
+    "figure25_trend_reproduced": false,
+    "figure25_strict_reproduced": false,
+    "active_simulator_figures_reproduced": 2,
+    "active_simulator_figures_total": 8,
+    "acceptance_gates_passed": 8,
+    "acceptance_gates_total": 10
+  },
+  "integrity_checks": {
+    "frozen": true,
+    "parents": true,
+    "policy": true,
+    "finite": true,
+    "matrix": true,
+    "statistics": true,
+    "denominator": true,
+    "source": true,
+    "acceptance_evaluated": true
+  }
+}

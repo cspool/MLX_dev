@@ -384,6 +384,11 @@ H139 rejects Figure 22's qualitative audit in
 curves reaches the frozen rank threshold, confirming a counter/timing-semantics
 gap rather than a merely strict numerical tolerance.
 
+H140 rejects Figure 25 in
+[fig25-trend-completion.md](fig25-trend-completion.md). FFT-CMP preserves the
+four-case ordering, but five QKV/SWA curves flatten or reorder under the current
+roofline path; active completion remains 2/8.
+
 The active objective is now limited to simulator-dependent hardware performance
 in Figures 18–25, as recorded in
 [simulator-experiment-scope.md](simulator-experiment-scope.md). Accuracy,
