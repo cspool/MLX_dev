@@ -33,6 +33,16 @@ def test_coupled_path_preserves_scaled_work_and_oi() -> None:
     assert document["memory_backend"] == "dpu_memory"
     assert baseline["memory_backend"] == "dsagen_spad"
     assert len(document["blocks"]) == len(baseline["blocks"])
+    for block in document["blocks"]:
+        for instruction in block["instructions"]:
+            if instruction["pipeline"] not in {"load", "store"}:
+                continue
+            for address in instruction["memory_address_sequence"]:
+                relative = address % config["hardware"]["half_bytes"]
+                assert relative % instruction["memory_bytes"] == 0
+                assert (
+                    relative % 1024 + instruction["memory_bytes"] <= 1024
+                )
 
 
 def test_coupled_full_mesh_audit() -> None:

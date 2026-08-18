@@ -31,9 +31,9 @@ def _relative_address(
 ) -> int:
     if bytes_ <= 0 or bytes_ > half_bytes:
         raise ValueError("memory instruction exceeds one SPM half")
-    span = half_bytes - bytes_ + 1
-    relative = address % span
-    return relative - relative % alignment
+    request_alignment = math.lcm(alignment, bytes_)
+    relative = address % half_bytes
+    return relative - relative % request_alignment
 
 
 def compile_coupled_path(
@@ -71,6 +71,10 @@ def compile_coupled_path(
     output_by_tile = balanced_aligned(write_bytes, tile_count, alignment)
     stride = int(hardware["logical_tile_stride"])
     cursors = {"load": 0, "store": 0}
+    request_addresses_valid = True
+    spad_bandwidth = int(hardware["spm"]["bank_width_bytes"]) * int(
+        hardware["spm"]["banks"]
+    )
     for block in document["blocks"]:
         trip_count = int(block["trip_count"])
         for instruction in block["instructions"]:
@@ -93,6 +97,10 @@ def compile_coupled_path(
                     alignment=alignment,
                 )
                 sequence.append(tile * stride + relative)
+                request_addresses_valid = request_addresses_valid and (
+                    relative % bytes_ == 0
+                    and relative % spad_bandwidth + bytes_ <= spad_bandwidth
+                )
             cursors[pipeline] += trip_count
             instruction["memory_address"] = sequence[0]
             instruction["memory_address_sequence"] = sequence
@@ -183,6 +191,7 @@ def compile_coupled_path(
             ),
             "capacity": max([*input_by_tile, *output_by_tile]) <= half_bytes,
             "store_divisibility": cursors["store"] % tile_count == 0,
+            "request_alignment": request_addresses_valid,
             "oi": effective_flops / (read_bytes + write_bytes)
             == float(path["selected_oi_flop_per_byte"]),
             "target_free": document["metadata"][
