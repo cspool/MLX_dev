@@ -1,0 +1,53 @@
+name: xavier-fft-regime-v1
+experiment_id: H133
+run_id: run138
+classification: target_free_regime_aware_xavier_fft_folding
+validation_eligible: false
+
+frozen_inputs:
+  h87:
+    path: artifacts/results/xavier-final-attention-run092.json
+    bytes: 6489
+    sha256: bbe024a575a4b7283817ff9ffd5c869e6a311bd8c85d03d635e291638a659c81
+    required_status: rejected
+    required_integrity: true
+  h87_manifest:
+    path: artifacts/environment/h87/xavier-final-run-manifest.json
+    bytes: 1451
+    sha256: ab6ffeddd899fd1d33cbfbc54ad5a6d597de1cf08fde7a2fdea5693037b6c7b9
+  h87_config:
+    path: configs/simulators/xavier_final_attention_v1.yaml
+    bytes: 1797
+    sha256: e073efd3569aa3fc195a2fcb4ad71bf33158785247f5bcb88f58499d8e7561d1
+  stable_fft_source:
+    path: simulator_ext/accelsim/mlx_fft_stable_proxy.cu
+    sha256: 11c83400213067531c863eb94af9dcea877b2eb4b806353f04da15d1fe5f9b59
+  h126_regime_evidence:
+    path: artifacts/results/fig24-qkv-orin-postcache-run131.json
+    bytes: 20534
+    sha256: 003851b677ca47e4313cb9a0210f8d8357f6c5807901eb4936127ecb6f14b35c
+    required_status: supported
+    required_integrity: true
+
+jobs:
+  - {name: N256-stablefft-c32768, binary: stable_fft, family: fftcmp, count: 32768, parameter: 8, parameter2: 7}
+  - {name: N256-stablefft-c65536, binary: stable_fft, family: fftcmp, count: 65536, parameter: 8, parameter2: 7}
+  - {name: N8192-stablefft-c32768, binary: stable_fft, family: fftcmp, count: 32768, parameter: 13, parameter2: 12}
+  - {name: N8192-stablefft-c65536, binary: stable_fft, family: fftcmp, count: 65536, parameter: 13, parameter2: 12}
+
+models:
+  N256_fftcmp: {parent_anchor: N256-stablefft-c16384, new_anchor: N256-stablefft-c32768, holdout: N256-stablefft-c65536, full_count: 1572864}
+  N8192_fftcmp: {parent_anchor: N8192-stablefft-c16384, new_anchor: N8192-stablefft-c32768, holdout: N8192-stablefft-c65536, full_count: 50331648}
+
+checksum_relative_error_limit: 0.00001
+cycle_relative_error_limit: 0.05
+device_clock_hz: 1377000000
+output_root: artifacts/environment/h133
+
+source_layout:
+  stable_fft_source: simulator_ext/accelsim/mlx_fft_stable_proxy.cu
+  runner: scripts/run_xavier_fft_regime.py
+  auditor: scripts/audit_xavier_fft_regime.py
+  test: tests/test_xavier_fft_regime.py
+
+result_path: artifacts/results/xavier-fft-regime-run138.json
