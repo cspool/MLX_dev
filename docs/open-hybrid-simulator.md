@@ -399,6 +399,11 @@ H142 completes the qualitative join in
 windows pass all 15 scaling comparisons, raising primary completion to 3/8;
 the 23/30 strict diagnostic and representative-schedule caveat remain explicit.
 
+H143 audits Figure 21's remaining denominator in
+[fig21-xavier-coverage.md](fig21-xavier-coverage.md). The existing Xavier config
+enables tensor units but has never executed WMMA/MMA; sparse projection and
+structured-Attention proxies are rejected as dense-model substitutes.
+
 The active objective is now limited to simulator-dependent hardware performance
 in Figures 18–25, as recorded in
 [simulator-experiment-scope.md](simulator-experiment-scope.md). Accuracy,

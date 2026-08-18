@@ -561,3 +561,9 @@ Run147 joins both complete-block windows without choosing the better one. All
 30 speedup cells retain clear above-baseline scaling, while 23/30 happen to fall
 within 10%. Figure 23 therefore counts under the qualitative goal, but not the
 strict goal, and still does not claim the exact unpublished block schedule.
+
+Run148 localizes Figure 21's execution gap. MLX timing is complete for all five
+shapes, but dense Xavier has no qualified family. The H56 timing config declares
+four tensor units while its actual BSMM PTX has no WMMA/MMA instruction; H77 and
+H135 model sparse/structured kernels and cannot stand in for the dense model.
+Fifty-five matched component executions remain across five shapes.

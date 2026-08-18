@@ -1,0 +1,770 @@
+{
+  "schema_version": 1,
+  "experiment_id": "H143",
+  "run_id": "run148",
+  "classification": "target_free_figure21_dense_xavier_coverage_audit",
+  "validation_eligible": false,
+  "generated_at": "2026-08-18T14:18:50.724419+00:00",
+  "project_commit": "afdeb09d0c612e8926f10b6018b27662bee8e051",
+  "hypothesis_status": "supported",
+  "audit_integrity": true,
+  "paper_performance_targets_consumed": false,
+  "paper_reproduction_claim": "none_target_free_dense_xavier_gap_only",
+  "frozen_inputs": {
+    "paper": {
+      "path": "MLX Multi-Layer Execution for Structured LLM Workload Acceleration on Spatial Architectures/MLX Multi-Layer Execution for Structured LLM Workload Acceleration on Spatial Architectures.md",
+      "bytes": 85855,
+      "sha256": "5785eb81b28741a3806ca42749d7b556bbcd2404e1622ae644a32bae2ade7745",
+      "checks": {
+        "is_file": true,
+        "bytes": true,
+        "sha256": true
+      },
+      "pass": true
+    },
+    "h95_mlx": {
+      "path": "artifacts/results/fig21-mlx-composition-run100.json",
+      "bytes": 7818,
+      "sha256": "9628b4204d9d4d1fe73b3a92f8bec2977d6cf9c7af254aa9ee4552c811fe12a1",
+      "checks": {
+        "is_file": true,
+        "bytes": true,
+        "sha256": true
+      },
+      "pass": true
+    },
+    "h96_closure": {
+      "path": "artifacts/results/fig21-evidence-closure-run101.json",
+      "bytes": 7467,
+      "sha256": "9aa60e3ba0114ccecee48ee8eec5724b04ded8d25443f883e7d60c433ad46c8d",
+      "checks": {
+        "is_file": true,
+        "bytes": true,
+        "sha256": true
+      },
+      "pass": true
+    },
+    "h56_xavier": {
+      "path": "artifacts/results/gpgpusim-xavier-proxy-run062.json",
+      "bytes": 7595,
+      "sha256": "443843b96d3f01cf27fee02413ae8d8cdc519233aca514cdaeb2d34d0373fe14",
+      "checks": {
+        "is_file": true,
+        "bytes": true,
+        "sha256": true
+      },
+      "pass": true
+    },
+    "h56_bsmm_ptx": {
+      "path": "artifacts/environment/h56/runs/bsmm/mlx_gpu_proxy.1.sm_70.ptx",
+      "bytes": 17203,
+      "sha256": "a62db10f392ae75cccc8e6566b0cce34c9dd8c648fe45602ca7c171973965b64",
+      "checks": {
+        "is_file": true,
+        "bytes": true,
+        "sha256": true
+      },
+      "pass": true
+    },
+    "h77_sparse_projection": {
+      "path": "artifacts/results/matched-projection-estimator-run082.json",
+      "bytes": 5533,
+      "sha256": "e9df44d2b6c025fa141c71564e47708e68f9f306cb3992f495a65f9ce3c93ec7",
+      "checks": {
+        "is_file": true,
+        "bytes": true,
+        "sha256": true
+      },
+      "pass": true
+    },
+    "h135_structured_attention": {
+      "path": "artifacts/results/xavier-attention-composition-run140.json",
+      "bytes": 4268,
+      "sha256": "95f730d982b89dccbf311ddc164c6557f235f078b58b40f1d5d96342e2caac63",
+      "checks": {
+        "is_file": true,
+        "bytes": true,
+        "sha256": true
+      },
+      "pass": true
+    }
+  },
+  "parent_checks": {
+    "h95_mlx": true,
+    "h96_closure": true,
+    "h56_xavier": true,
+    "h77_sparse_projection": true,
+    "h135_structured_attention": true
+  },
+  "paper_checks": {
+    "figure21": true,
+    "dense_xavier": true,
+    "tensor_cores": true,
+    "all_operators": true,
+    "rmsnorm": true,
+    "positional_embedding": true
+  },
+  "mlx_checks": {
+    "rows": true,
+    "sequences": true,
+    "positive": true,
+    "xavier_null": true
+  },
+  "closure_checks": {
+    "five_missing": true,
+    "reason": true
+  },
+  "tensor_config_checks": {
+    "parent_limitation": true,
+    "derived_qualified": true,
+    "tensor_available": true,
+    "four_units": true,
+    "ptx_no_wmma": true,
+    "ptx_no_mma_sync": true
+  },
+  "sparse_projection_checks": {
+    "two_shapes": true,
+    "sparse_families": true,
+    "attention_excluded": true,
+    "cuda_fma_model": true,
+    "not_dense_tensor": true
+  },
+  "structured_attention_checks": {
+    "two_shapes": true,
+    "structured_components": true,
+    "transparent_proxy": true,
+    "not_dense_full_attention": true
+  },
+  "existing_elementwise_execution": false,
+  "family_rows": [
+    {
+      "sequence_length": 128,
+      "family": "dense_tensor_projection",
+      "components": [
+        "qkv",
+        "output",
+        "ffn1",
+        "ffn2"
+      ],
+      "qualified": false,
+      "reason": "matched_dense_xavier_execution_missing"
+    },
+    {
+      "sequence_length": 128,
+      "family": "dense_attention",
+      "components": [
+        "qk",
+        "softmax",
+        "sv"
+      ],
+      "qualified": false,
+      "reason": "matched_dense_xavier_execution_missing"
+    },
+    {
+      "sequence_length": 128,
+      "family": "elementwise",
+      "components": [
+        "rmsnorm",
+        "rope",
+        "residual",
+        "activation"
+      ],
+      "qualified": false,
+      "reason": "matched_dense_xavier_execution_missing"
+    },
+    {
+      "sequence_length": 256,
+      "family": "dense_tensor_projection",
+      "components": [
+        "qkv",
+        "output",
+        "ffn1",
+        "ffn2"
+      ],
+      "qualified": false,
+      "reason": "matched_dense_xavier_execution_missing"
+    },
+    {
+      "sequence_length": 256,
+      "family": "dense_attention",
+      "components": [
+        "qk",
+        "softmax",
+        "sv"
+      ],
+      "qualified": false,
+      "reason": "matched_dense_xavier_execution_missing"
+    },
+    {
+      "sequence_length": 256,
+      "family": "elementwise",
+      "components": [
+        "rmsnorm",
+        "rope",
+        "residual",
+        "activation"
+      ],
+      "qualified": false,
+      "reason": "matched_dense_xavier_execution_missing"
+    },
+    {
+      "sequence_length": 512,
+      "family": "dense_tensor_projection",
+      "components": [
+        "qkv",
+        "output",
+        "ffn1",
+        "ffn2"
+      ],
+      "qualified": false,
+      "reason": "matched_dense_xavier_execution_missing"
+    },
+    {
+      "sequence_length": 512,
+      "family": "dense_attention",
+      "components": [
+        "qk",
+        "softmax",
+        "sv"
+      ],
+      "qualified": false,
+      "reason": "matched_dense_xavier_execution_missing"
+    },
+    {
+      "sequence_length": 512,
+      "family": "elementwise",
+      "components": [
+        "rmsnorm",
+        "rope",
+        "residual",
+        "activation"
+      ],
+      "qualified": false,
+      "reason": "matched_dense_xavier_execution_missing"
+    },
+    {
+      "sequence_length": 1024,
+      "family": "dense_tensor_projection",
+      "components": [
+        "qkv",
+        "output",
+        "ffn1",
+        "ffn2"
+      ],
+      "qualified": false,
+      "reason": "matched_dense_xavier_execution_missing"
+    },
+    {
+      "sequence_length": 1024,
+      "family": "dense_attention",
+      "components": [
+        "qk",
+        "softmax",
+        "sv"
+      ],
+      "qualified": false,
+      "reason": "matched_dense_xavier_execution_missing"
+    },
+    {
+      "sequence_length": 1024,
+      "family": "elementwise",
+      "components": [
+        "rmsnorm",
+        "rope",
+        "residual",
+        "activation"
+      ],
+      "qualified": false,
+      "reason": "matched_dense_xavier_execution_missing"
+    },
+    {
+      "sequence_length": 2048,
+      "family": "dense_tensor_projection",
+      "components": [
+        "qkv",
+        "output",
+        "ffn1",
+        "ffn2"
+      ],
+      "qualified": false,
+      "reason": "matched_dense_xavier_execution_missing"
+    },
+    {
+      "sequence_length": 2048,
+      "family": "dense_attention",
+      "components": [
+        "qk",
+        "softmax",
+        "sv"
+      ],
+      "qualified": false,
+      "reason": "matched_dense_xavier_execution_missing"
+    },
+    {
+      "sequence_length": 2048,
+      "family": "elementwise",
+      "components": [
+        "rmsnorm",
+        "rope",
+        "residual",
+        "activation"
+      ],
+      "qualified": false,
+      "reason": "matched_dense_xavier_execution_missing"
+    }
+  ],
+  "component_rows": [
+    {
+      "sequence_length": 128,
+      "family": "dense_tensor_projection",
+      "component": "qkv",
+      "qualified": false,
+      "required_execution": "wmma_tensorcore"
+    },
+    {
+      "sequence_length": 128,
+      "family": "dense_tensor_projection",
+      "component": "output",
+      "qualified": false,
+      "required_execution": "wmma_tensorcore"
+    },
+    {
+      "sequence_length": 128,
+      "family": "dense_tensor_projection",
+      "component": "ffn1",
+      "qualified": false,
+      "required_execution": "wmma_tensorcore"
+    },
+    {
+      "sequence_length": 128,
+      "family": "dense_tensor_projection",
+      "component": "ffn2",
+      "qualified": false,
+      "required_execution": "wmma_tensorcore"
+    },
+    {
+      "sequence_length": 128,
+      "family": "dense_attention",
+      "component": "qk",
+      "qualified": false,
+      "required_execution": "wmma_tensorcore"
+    },
+    {
+      "sequence_length": 128,
+      "family": "dense_attention",
+      "component": "softmax",
+      "qualified": false,
+      "required_execution": "cuda_core"
+    },
+    {
+      "sequence_length": 128,
+      "family": "dense_attention",
+      "component": "sv",
+      "qualified": false,
+      "required_execution": "wmma_tensorcore"
+    },
+    {
+      "sequence_length": 128,
+      "family": "elementwise",
+      "component": "rmsnorm",
+      "qualified": false,
+      "required_execution": "cuda_core"
+    },
+    {
+      "sequence_length": 128,
+      "family": "elementwise",
+      "component": "rope",
+      "qualified": false,
+      "required_execution": "cuda_core"
+    },
+    {
+      "sequence_length": 128,
+      "family": "elementwise",
+      "component": "residual",
+      "qualified": false,
+      "required_execution": "cuda_core"
+    },
+    {
+      "sequence_length": 128,
+      "family": "elementwise",
+      "component": "activation",
+      "qualified": false,
+      "required_execution": "cuda_core"
+    },
+    {
+      "sequence_length": 256,
+      "family": "dense_tensor_projection",
+      "component": "qkv",
+      "qualified": false,
+      "required_execution": "wmma_tensorcore"
+    },
+    {
+      "sequence_length": 256,
+      "family": "dense_tensor_projection",
+      "component": "output",
+      "qualified": false,
+      "required_execution": "wmma_tensorcore"
+    },
+    {
+      "sequence_length": 256,
+      "family": "dense_tensor_projection",
+      "component": "ffn1",
+      "qualified": false,
+      "required_execution": "wmma_tensorcore"
+    },
+    {
+      "sequence_length": 256,
+      "family": "dense_tensor_projection",
+      "component": "ffn2",
+      "qualified": false,
+      "required_execution": "wmma_tensorcore"
+    },
+    {
+      "sequence_length": 256,
+      "family": "dense_attention",
+      "component": "qk",
+      "qualified": false,
+      "required_execution": "wmma_tensorcore"
+    },
+    {
+      "sequence_length": 256,
+      "family": "dense_attention",
+      "component": "softmax",
+      "qualified": false,
+      "required_execution": "cuda_core"
+    },
+    {
+      "sequence_length": 256,
+      "family": "dense_attention",
+      "component": "sv",
+      "qualified": false,
+      "required_execution": "wmma_tensorcore"
+    },
+    {
+      "sequence_length": 256,
+      "family": "elementwise",
+      "component": "rmsnorm",
+      "qualified": false,
+      "required_execution": "cuda_core"
+    },
+    {
+      "sequence_length": 256,
+      "family": "elementwise",
+      "component": "rope",
+      "qualified": false,
+      "required_execution": "cuda_core"
+    },
+    {
+      "sequence_length": 256,
+      "family": "elementwise",
+      "component": "residual",
+      "qualified": false,
+      "required_execution": "cuda_core"
+    },
+    {
+      "sequence_length": 256,
+      "family": "elementwise",
+      "component": "activation",
+      "qualified": false,
+      "required_execution": "cuda_core"
+    },
+    {
+      "sequence_length": 512,
+      "family": "dense_tensor_projection",
+      "component": "qkv",
+      "qualified": false,
+      "required_execution": "wmma_tensorcore"
+    },
+    {
+      "sequence_length": 512,
+      "family": "dense_tensor_projection",
+      "component": "output",
+      "qualified": false,
+      "required_execution": "wmma_tensorcore"
+    },
+    {
+      "sequence_length": 512,
+      "family": "dense_tensor_projection",
+      "component": "ffn1",
+      "qualified": false,
+      "required_execution": "wmma_tensorcore"
+    },
+    {
+      "sequence_length": 512,
+      "family": "dense_tensor_projection",
+      "component": "ffn2",
+      "qualified": false,
+      "required_execution": "wmma_tensorcore"
+    },
+    {
+      "sequence_length": 512,
+      "family": "dense_attention",
+      "component": "qk",
+      "qualified": false,
+      "required_execution": "wmma_tensorcore"
+    },
+    {
+      "sequence_length": 512,
+      "family": "dense_attention",
+      "component": "softmax",
+      "qualified": false,
+      "required_execution": "cuda_core"
+    },
+    {
+      "sequence_length": 512,
+      "family": "dense_attention",
+      "component": "sv",
+      "qualified": false,
+      "required_execution": "wmma_tensorcore"
+    },
+    {
+      "sequence_length": 512,
+      "family": "elementwise",
+      "component": "rmsnorm",
+      "qualified": false,
+      "required_execution": "cuda_core"
+    },
+    {
+      "sequence_length": 512,
+      "family": "elementwise",
+      "component": "rope",
+      "qualified": false,
+      "required_execution": "cuda_core"
+    },
+    {
+      "sequence_length": 512,
+      "family": "elementwise",
+      "component": "residual",
+      "qualified": false,
+      "required_execution": "cuda_core"
+    },
+    {
+      "sequence_length": 512,
+      "family": "elementwise",
+      "component": "activation",
+      "qualified": false,
+      "required_execution": "cuda_core"
+    },
+    {
+      "sequence_length": 1024,
+      "family": "dense_tensor_projection",
+      "component": "qkv",
+      "qualified": false,
+      "required_execution": "wmma_tensorcore"
+    },
+    {
+      "sequence_length": 1024,
+      "family": "dense_tensor_projection",
+      "component": "output",
+      "qualified": false,
+      "required_execution": "wmma_tensorcore"
+    },
+    {
+      "sequence_length": 1024,
+      "family": "dense_tensor_projection",
+      "component": "ffn1",
+      "qualified": false,
+      "required_execution": "wmma_tensorcore"
+    },
+    {
+      "sequence_length": 1024,
+      "family": "dense_tensor_projection",
+      "component": "ffn2",
+      "qualified": false,
+      "required_execution": "wmma_tensorcore"
+    },
+    {
+      "sequence_length": 1024,
+      "family": "dense_attention",
+      "component": "qk",
+      "qualified": false,
+      "required_execution": "wmma_tensorcore"
+    },
+    {
+      "sequence_length": 1024,
+      "family": "dense_attention",
+      "component": "softmax",
+      "qualified": false,
+      "required_execution": "cuda_core"
+    },
+    {
+      "sequence_length": 1024,
+      "family": "dense_attention",
+      "component": "sv",
+      "qualified": false,
+      "required_execution": "wmma_tensorcore"
+    },
+    {
+      "sequence_length": 1024,
+      "family": "elementwise",
+      "component": "rmsnorm",
+      "qualified": false,
+      "required_execution": "cuda_core"
+    },
+    {
+      "sequence_length": 1024,
+      "family": "elementwise",
+      "component": "rope",
+      "qualified": false,
+      "required_execution": "cuda_core"
+    },
+    {
+      "sequence_length": 1024,
+      "family": "elementwise",
+      "component": "residual",
+      "qualified": false,
+      "required_execution": "cuda_core"
+    },
+    {
+      "sequence_length": 1024,
+      "family": "elementwise",
+      "component": "activation",
+      "qualified": false,
+      "required_execution": "cuda_core"
+    },
+    {
+      "sequence_length": 2048,
+      "family": "dense_tensor_projection",
+      "component": "qkv",
+      "qualified": false,
+      "required_execution": "wmma_tensorcore"
+    },
+    {
+      "sequence_length": 2048,
+      "family": "dense_tensor_projection",
+      "component": "output",
+      "qualified": false,
+      "required_execution": "wmma_tensorcore"
+    },
+    {
+      "sequence_length": 2048,
+      "family": "dense_tensor_projection",
+      "component": "ffn1",
+      "qualified": false,
+      "required_execution": "wmma_tensorcore"
+    },
+    {
+      "sequence_length": 2048,
+      "family": "dense_tensor_projection",
+      "component": "ffn2",
+      "qualified": false,
+      "required_execution": "wmma_tensorcore"
+    },
+    {
+      "sequence_length": 2048,
+      "family": "dense_attention",
+      "component": "qk",
+      "qualified": false,
+      "required_execution": "wmma_tensorcore"
+    },
+    {
+      "sequence_length": 2048,
+      "family": "dense_attention",
+      "component": "softmax",
+      "qualified": false,
+      "required_execution": "cuda_core"
+    },
+    {
+      "sequence_length": 2048,
+      "family": "dense_attention",
+      "component": "sv",
+      "qualified": false,
+      "required_execution": "wmma_tensorcore"
+    },
+    {
+      "sequence_length": 2048,
+      "family": "elementwise",
+      "component": "rmsnorm",
+      "qualified": false,
+      "required_execution": "cuda_core"
+    },
+    {
+      "sequence_length": 2048,
+      "family": "elementwise",
+      "component": "rope",
+      "qualified": false,
+      "required_execution": "cuda_core"
+    },
+    {
+      "sequence_length": 2048,
+      "family": "elementwise",
+      "component": "residual",
+      "qualified": false,
+      "required_execution": "cuda_core"
+    },
+    {
+      "sequence_length": 2048,
+      "family": "elementwise",
+      "component": "activation",
+      "qualified": false,
+      "required_execution": "cuda_core"
+    }
+  ],
+  "coverage_checks": {
+    "family_rows": true,
+    "component_rows": true,
+    "qualified_zero": true,
+    "all_shapes": true,
+    "all_families": true
+  },
+  "source_files": {
+    "auditor": {
+      "path": "scripts/audit_fig21_xavier_coverage.py",
+      "bytes": 12530,
+      "sha256": "032a53f166bcf277cefba5239d079d05bdd6d254510fdf36c588a04a0a60b665",
+      "checks": {
+        "is_file": true
+      },
+      "pass": true
+    },
+    "test": {
+      "path": "tests/test_fig21_xavier_coverage.py",
+      "bytes": 961,
+      "sha256": "1ed905c73b36be3417b2652a0c65490edcad421d36b92d4c9e091688df020bcb",
+      "checks": {
+        "is_file": true
+      },
+      "pass": true
+    }
+  },
+  "target_free_check": true,
+  "acceptance_gates": [
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true
+  ],
+  "summary": {
+    "mlx_complete_rows": 5,
+    "missing_speedup_rows": 5,
+    "required_xavier_family_rows": 15,
+    "required_xavier_component_rows": 55,
+    "qualified_xavier_family_rows": 0,
+    "h56_tensor_units_enabled": true,
+    "h56_executed_tensor_instructions": false,
+    "figure21_dense_xavier_complete": false,
+    "active_simulator_figures_reproduced": 3,
+    "active_simulator_figures_total": 8,
+    "acceptance_gates_passed": 10,
+    "acceptance_gates_total": 10
+  },
+  "integrity_checks": {
+    "frozen": true,
+    "parents": true,
+    "paper": true,
+    "mlx": true,
+    "closure": true,
+    "tensor_config": true,
+    "sparse_projection": true,
+    "structured_attention": true,
+    "coverage": true,
+    "source": true,
+    "acceptance_evaluated": true
+  }
+}
