@@ -1,0 +1,65 @@
+name: fig19-coupled-steady-state-v1
+experiment_id: H129
+run_id: run134
+classification: target_free_figure19_coupled_steady_state
+validation_eligible: false
+
+frozen_inputs:
+  h128:
+    path: artifacts/results/fig19-coupled-paths-run133.json
+    bytes: 40545
+    sha256: 1d7bae8a9c84a2c0a4cdae1df4c2e0826638628f99b627ae3b3d40f6cb65d922
+    required_status: rejected
+    required_integrity: true
+  h128_compile:
+    path: artifacts/environment/h128/fig19-coupled-compile-manifest.json
+    bytes: 114456
+    sha256: f4447022cd417027ee439459282f592077958689ec8cfaaac5fc7abdd061926b
+  h128_run:
+    path: artifacts/environment/h128/fig19-coupled-run-manifest.json
+    bytes: 968923
+    sha256: 36f539995abee3197dbe976741b66f6a0cf8337f1d4f08918aa9bfa9581f2bfc
+  h128_config:
+    path: configs/simulators/fig19_coupled_paths_v1.yaml
+    bytes: 2447
+    sha256: 89d22f4b2e700e25a892ce6cc3f2fd9f681cc95703ef25c80ace99e318c80126
+
+paths:
+  - N128-fft2d
+  - N256-fft2d
+  - N512-fft2d
+  - N1024-fft2d
+  - N1024-global_ffn2
+
+scales:
+  fit: [16, 32]
+  holdout: [64, 128]
+  cycle_relative_error_limit: 0.05
+
+capacity:
+  tile_count_policy: next_power_of_two_at_least_capacity_minimum
+  tile_alignment_bytes: 32
+  uniform_stores_required: true
+
+execution:
+  required_paths: 5
+  required_configs: 10
+  optimized_replays: 2
+  sanitizer_modes: [asan, ubsan]
+  required_optimized_executions: 20
+  required_sanitizer_executions: 20
+  required_executions: 40
+  required_holdouts: 10
+  required_combined_full_estimates: 12
+  max_cycles: 50000000
+  workers: 10
+  targets_consumed: false
+
+source_layout:
+  compiler: scripts/compile_fig19_coupled_steady_state.py
+  runner: scripts/run_fig19_coupled_steady_state.py
+  auditor: scripts/audit_fig19_coupled_steady_state.py
+  test: tests/test_fig19_coupled_steady_state.py
+
+output_root: artifacts/environment/h129
+result_path: artifacts/results/fig19-coupled-steady-state-run134.json
