@@ -269,6 +269,13 @@ Sixteen q64/q128 FFT configs and 48 executions pass every integrity gate. All
 holdouts fail. This is sufficient to freeze the coupled pipeline-counter
 semantics for Figure 22, but not to reinterpret or repair Figure 25.
 
+H118 then executes the exact SIMD8 Figure 22 workload set in
+[fig22-coupled-workloads.md](fig22-coupled-workloads.md). Sixteen full-size
+paths and 64 four-build runs conserve all source and memory contracts. The run
+also fixes two cross-configuration simulator defects—active-window instruction
+residency and aligned sub-bank requests—with reversible patches and frozen
+parent regressions. Its utilization is target-free pending H119.
+
 The active objective is now limited to simulator-dependent hardware performance
 in Figures 18–25, as recorded in
 [simulator-experiment-scope.md](simulator-experiment-scope.md). Accuracy,

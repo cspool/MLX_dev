@@ -106,6 +106,7 @@ H37 closed the first full-paper ledger with a machine certificate rather than a 
 - H115 rejects the first correct target join from run119 at 2/24, 43.71% MAPE and 74.59% maximum error. Both passes are long SWA-W256/Q64. FFT predicts 25%-29% versus 58%-84% (all low); QKV predicts 84%-98% versus 52%-76% (all high); SWA is nearly shape-invariant while targets rise with sequence length. Live memory improves H112 but does not unify the metric. MCP supplies no independent basis to replace completed-work throughput with residence, so no residual reinterpretation is admitted.
 - H116 rejects universal counter folding but localizes all 27/400 failures to FFT. Forty exact-zero xfer slots and 373 nonzero holdouts pass; all 24 QKV and 16 SWA paths are fully eligible. Their FMA residence nearly equals issue, ruling out counter renaming as a QKV/SWA repair. FFT FMA residence fails 16/16 holdouts up to 28.67%, so only FFT requires larger target-free steady-state anchors.
 - H117 rejects its all-metric steady-state claim with integrity while qualifying the useful subset. Sixteen q64/q128 FFT configs complete 48/48 executions; q16/q32 fits pass all 80 cycle/compute/load/store/xfer holdouts, but only 9/16 FMA-residence holdouts pass (89/96 overall, 1.22% MAPE, 9.65% max). Since residence is not Figure 25 completed-work throughput, further q extension is stopped. The stable pipeline counters now support a target-free exact Figure 22 coupled rebuild; active completion remains 0/8.
+- H118 supports the exact target-free Figure 22 source path. All 16 SIMD8/4x4 BSMM/FFT sizes execute directly across 64 optimized/sanitized runs with exact H62 work/events/routes and H106 traffic/ownership. Two real substrate defects are corrected reversibly: instruction slots now count only the active tag window, and aligned 16-byte requests can occupy one 32-byte bank. Frozen end-to-end utilization spans 19.62%-37.89% compute, 11.79%-20.68% load, 1.33%-1.83% store and 6.88%-14.67% xfer; no target has been joined and completion remains 0/8.
 
 ## Patterns and Insights
 
@@ -114,6 +115,8 @@ H37 closed the first full-paper ledger with a machine certificate rather than a 
 - Spatial work must be distributed across physical coordinates, not merely divided into a few long loop strips. H101 and H102 conserve exactly the same operations and bytes, yet QKV FMA occupancy changes from about 25% to more than 99% solely through 4-PE versus 16-PE placement.
 - Full physical occupancy is not paper roofline utilization. Figure 25 normalizes achieved FMA throughput by `min(P_peak, OI*BW)`; physical FU busy cycles omit OI/BW and cannot be compared directly.
 - Counter steady state is metric-specific. H117 shows that coupled FFT cycles and productive compute/load/store/xfer counters can be affine-stable even while latency-weighted FMA residence continues to curve; one failed auxiliary counter must not invalidate the stable execution path or be renamed into paper throughput.
+- Capacity must follow residency, not program depth. The paper's tagged instruction store is constant-footprint because only the active layer window resides; summing templates across every logical tag silently rejects valid long FFT programs and contradicts the architecture being modeled.
+- Bank width is a service granularity, not necessarily a minimum vector size. A naturally aligned SIMD8 half-bank request is a valid one-bank access; rejecting it as permanently unavailable creates a false memory deadlock rather than modeled contention.
 - The team's public methodology is unusually consistent: SimICT component simulation, gem5/RTL calibration, independent Verilog/Synopsys implementation, and DPU PE/SPM/multi-NoC models. This is a stronger reconstruction basis than architecture resemblance to DSAGEN.
 - Model-declared framework versions are part of the checkpoint: InternLM2's remote code produced incompatible logits under Transformers 5.15 (first-window PPL 387.07) but PPL 5.69 under its declared 4.41.0. Smoke tests caught this before the registered run, and the official evaluator now refuses a different version.
 - Correct operator invariants and analytical sparsity do not identify a model-quality recipe. In run018, factor-fit MSE remains nearly flat at 0.629-0.634 while quality degrades monotonically with replacement depth, so cumulative approximation—not one broken projection—best explains this particular inferred reconstruction.
@@ -410,3 +413,10 @@ compute/load/store/xfer holdouts pass, while seven FMA-residence holdouts do
 not. Residence is retired as a Figure 25 repair; the stable counter subset now
 feeds an exact target-free Figure 22 coupled rebuild. Active completion remains
 zero of eight full simulator-dependent figures.
+
+Run123 completes that rebuild. Sixteen direct SIMD8/4x4 BSMM/FFT paths execute
+64 times across optimized, ASan and UBSan builds with 12/12 target-free gates.
+The first smoke exposed and then independently corrected active-window
+instruction residency and 16-byte-on-32-byte-bank service. Primary compute
+utilization is 19.62%-37.89%; it is frozen for a later all-64-point Figure 22
+join, not interpreted from the target residual.

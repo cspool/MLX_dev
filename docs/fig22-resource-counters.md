@@ -88,3 +88,10 @@ from the raster. It must first compile and run the exact eight FFT plus eight
 BSMM Figure 22 cases through the current full-mesh, bounded-context and live
 DMA/SPM ownership path, then freeze productive compute/load/store/xfer
 utilization before loading the 64 target segments.
+
+H118 completes that target-free boundary in
+[fig22-coupled-workloads.md](fig22-coupled-workloads.md). All 16 direct paths
+and 64 optimized/sanitized executions pass 12/12 gates. The frozen primary
+ranges are 19.62%–37.89% compute, 11.79%–20.68% load, 1.33%–1.83% store and
+6.88%–14.67% xfer. These values have not yet been joined to H60; H119 must use
+them unchanged and require all 64 points within 10%.
