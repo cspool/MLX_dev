@@ -20,8 +20,8 @@ output. NumPy masks invalid/future keys before row-wise softmax.
 ## Exact conservation contract
 
 The 19-PE/three-tag schedule executes 134 operations: 42 loads, 63 compute, 21
-transfers and eight stores. Compute is 22 mul, 20 fma, four add, three fmax,
-seven fexp and seven fdiv, equal to 42 scalar multiplications and 24 additions.
+transfers and eight stores. Compute is 23 mul, 19 fma, four add, three fmax,
+seven fexp and seven fdiv, equal to 42 scalar multiplications and 23 additions.
 It issues 50 memory requests/400 bytes and 21 events over 45 hops (21 skip, 24
 unit).
 
