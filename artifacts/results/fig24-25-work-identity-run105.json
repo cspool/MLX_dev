@@ -1,0 +1,2903 @@
+{
+  "schema_version": 1,
+  "experiment_id": "H100",
+  "run_id": "run105",
+  "classification": "target_free_figure24_25_exact_work_identity",
+  "validation_eligible": false,
+  "generated_at": "2026-08-18T01:34:39.622185+00:00",
+  "project_commit": "15df78dc9e9a83127e7ffbd297d446212dcb074e",
+  "hypothesis_status": "supported",
+  "audit_integrity": true,
+  "frozen_inputs": {
+    "fig24_runs": {
+      "path": "artifacts/results/fig24-fu-rerun-run078.json",
+      "bytes": 154240,
+      "sha256": "c25a72a32d8ed37bbb9d09b0747167c712f7fbbf5c0ca54edc580e9a6c0203c1",
+      "checks": {
+        "is_file": true,
+        "sha256": true
+      },
+      "pass": true
+    },
+    "fig25_runs": {
+      "path": "artifacts/results/fu-counters-run076.json",
+      "bytes": 197181,
+      "sha256": "31b63a260a596bff6aafaa418bca877898683529f6f36ad04066757c254833c0",
+      "checks": {
+        "is_file": true,
+        "sha256": true
+      },
+      "pass": true
+    },
+    "fig24_manifest": {
+      "path": "artifacts/environment/h73/fig24-fu-compile-manifest.json",
+      "bytes": 70926,
+      "sha256": "f8cc654f21c18237f0c4de53cc073b0baaa9ab7f21dba59f5007ad7d5b3609d2",
+      "checks": {
+        "is_file": true,
+        "sha256": true
+      },
+      "pass": true
+    },
+    "fig25_manifest": {
+      "path": "artifacts/environment/h71/fu-counter-compile-manifest.json",
+      "bytes": 22049,
+      "sha256": "cea2ca53b14636502bf55831bdf7156bbaf5df55002c0f6cc210dfe0a34aa566",
+      "checks": {
+        "is_file": true,
+        "sha256": true
+      },
+      "pass": true
+    },
+    "fig24_config": {
+      "path": "configs/simulators/fig24_cross_simulator_v1.yaml",
+      "bytes": 3000,
+      "sha256": "86f246c537d85c006e5538bec493feff7baa9af2888686128776411b28b3a679",
+      "checks": {
+        "is_file": true,
+        "sha256": true
+      },
+      "pass": true
+    },
+    "fig25_config": {
+      "path": "configs/simulators/dsagen_mlx_fig25_transfer_v1.yaml",
+      "bytes": 2292,
+      "sha256": "a3b850d2b90f8f71b634bbb0c2e360daf91d1e82ad268d72efdb5a216f70b5e0",
+      "checks": {
+        "is_file": true,
+        "sha256": true
+      },
+      "pass": true
+    },
+    "attention_signature": {
+      "path": "artifacts/results/attention-work-signature-run084.json",
+      "bytes": 7936,
+      "sha256": "109091f15841245b3d2727fbfa492ea1671cb053a30c0278359833026919c3c6",
+      "checks": {
+        "is_file": true,
+        "sha256": true
+      },
+      "pass": true
+    },
+    "timed_paths": {
+      "path": "artifacts/results/fig21-timed-paths-run097.json",
+      "bytes": 337686,
+      "sha256": "14444c351b54ad3e597d5f8c601b19dde989e3ba034ded6e1b4519186730421d",
+      "checks": {
+        "is_file": true,
+        "sha256": true
+      },
+      "pass": true
+    },
+    "dense_attention": {
+      "path": "artifacts/results/fig21-dense-attention-run099.json",
+      "bytes": 23587,
+      "sha256": "728d6c7ef1577816ce2ecf6e4db0eae27da2a14123ae1bedd1c3f42bf0f6808f",
+      "checks": {
+        "is_file": true,
+        "sha256": true
+      },
+      "pass": true
+    }
+  },
+  "parent_checks": {
+    "fig24_runs": true,
+    "fig25_runs": true
+  },
+  "comparisons": [
+    {
+      "surface": "fig24",
+      "key": "fft_cmp--BERT_512",
+      "case": {
+        "name": "BERT_512",
+        "n": 512,
+        "d": 1024,
+        "batch": 32
+      },
+      "operator": {
+        "name": "fft_cmp",
+        "family": "fft",
+        "mlx_stages": 7,
+        "gpu_operation": "fft",
+        "gpu_parameter": 6,
+        "gpu_fma_per_element_stage": 2
+      },
+      "actual": {
+        "stage_count": 18,
+        "fu": {
+          "fma": 1308622848,
+          "add": 1962934272,
+          "shuffle": 25165824
+        }
+      },
+      "proxy": {
+        "stage_count": 7,
+        "fu": {
+          "add": 3456,
+          "fma": 2304,
+          "shuffle": 96
+        }
+      },
+      "represented_fractions": {
+        "fma": 1.7606295072115386e-06,
+        "add": 1.7606295072115386e-06,
+        "shuffle": 3.814697265625e-06
+      },
+      "stage_match": false,
+      "full_work_represented": false
+    },
+    {
+      "surface": "fig24",
+      "key": "qkv_bsmm--BERT_512",
+      "case": {
+        "name": "BERT_512",
+        "n": 512,
+        "d": 1024,
+        "batch": 32
+      },
+      "operator": {
+        "name": "qkv_bsmm",
+        "family": "qkv_bsmm",
+        "block_size": 16,
+        "mlx_stages": 4,
+        "gpu_operation": "bsmm",
+        "gpu_parameter": 4,
+        "gpu_fma_per_element_stage": 3
+      },
+      "actual": {
+        "stage_count": 4,
+        "fu": {
+          "fma": 25769803776
+        },
+        "execution_template_add_estimate": 12884901888
+      },
+      "proxy": {
+        "stage_count": 4,
+        "fu": {
+          "add": 768,
+          "fma": 1536
+        }
+      },
+      "represented_fractions": {
+        "fma": 5.960464477539063e-08
+      },
+      "stage_match": true,
+      "full_work_represented": false
+    },
+    {
+      "surface": "fig24",
+      "key": "qkv_bsmm_b32--BERT_512",
+      "case": {
+        "name": "BERT_512",
+        "n": 512,
+        "d": 1024,
+        "batch": 32
+      },
+      "operator": {
+        "name": "qkv_bsmm_b32",
+        "family": "qkv_bsmm",
+        "block_size": 32,
+        "mlx_stages": 5,
+        "gpu_operation": "bsmm",
+        "gpu_parameter": 5,
+        "gpu_fma_per_element_stage": 3
+      },
+      "actual": {
+        "stage_count": 5,
+        "fu": {
+          "fma": 16106127360
+        },
+        "execution_template_add_estimate": 8053063680
+      },
+      "proxy": {
+        "stage_count": 5,
+        "fu": {
+          "add": 960,
+          "fma": 1920
+        }
+      },
+      "represented_fractions": {
+        "fma": 1.1920928955078125e-07
+      },
+      "stage_match": true,
+      "full_work_represented": false
+    },
+    {
+      "surface": "fig24",
+      "key": "qkv_bsmm_b64--BERT_512",
+      "case": {
+        "name": "BERT_512",
+        "n": 512,
+        "d": 1024,
+        "batch": 32
+      },
+      "operator": {
+        "name": "qkv_bsmm_b64",
+        "family": "qkv_bsmm",
+        "block_size": 64,
+        "mlx_stages": 6,
+        "gpu_operation": "bsmm",
+        "gpu_parameter": 6,
+        "gpu_fma_per_element_stage": 3
+      },
+      "actual": {
+        "stage_count": 6,
+        "fu": {
+          "fma": 9663676416
+        },
+        "execution_template_add_estimate": 4831838208
+      },
+      "proxy": {
+        "stage_count": 6,
+        "fu": {
+          "add": 1152,
+          "fma": 2304
+        }
+      },
+      "represented_fractions": {
+        "fma": 2.384185791015625e-07
+      },
+      "stage_match": true,
+      "full_work_represented": false
+    },
+    {
+      "surface": "fig24",
+      "key": "swa_w128_q32--BERT_512",
+      "case": {
+        "name": "BERT_512",
+        "n": 512,
+        "d": 1024,
+        "batch": 32
+      },
+      "operator": {
+        "name": "swa_w128_q32",
+        "family": "swa",
+        "window": 128,
+        "query_tile": 32,
+        "mlx_score_fma_groups": 32,
+        "mlx_sv_fma_groups": 32,
+        "mlx_kv_load_waves": 4,
+        "gpu_operation": "swa",
+        "gpu_parameter": 16,
+        "gpu_fma_per_element_parameter": 1
+      },
+      "actual": {
+        "stage_count": 4,
+        "fu": {
+          "fma": 4294967296,
+          "fmax": 2097152,
+          "fexp": 2097152,
+          "add": 2097152,
+          "fdiv": 16777216
+        },
+        "query_tile": 32
+      },
+      "proxy": {
+        "stage_count": 4,
+        "fu": {
+          "add": 32,
+          "fdiv": 32,
+          "fexp": 32,
+          "fma": 2048,
+          "fmax": 32
+        }
+      },
+      "represented_fractions": {
+        "fma": 4.76837158203125e-07,
+        "fmax": 1.52587890625e-05,
+        "fexp": 1.52587890625e-05,
+        "add": 1.52587890625e-05,
+        "fdiv": 1.9073486328125e-06
+      },
+      "stage_match": true,
+      "full_work_represented": false
+    },
+    {
+      "surface": "fig24",
+      "key": "swa_w256_q64--BERT_512",
+      "case": {
+        "name": "BERT_512",
+        "n": 512,
+        "d": 1024,
+        "batch": 32
+      },
+      "operator": {
+        "name": "swa_w256_q64",
+        "family": "swa",
+        "window": 256,
+        "query_tile": 64,
+        "mlx_score_fma_groups": 128,
+        "mlx_sv_fma_groups": 128,
+        "mlx_kv_load_waves": 8,
+        "gpu_operation": "swa",
+        "gpu_parameter": 32,
+        "gpu_fma_per_element_parameter": 1
+      },
+      "actual": {
+        "stage_count": 4,
+        "fu": {
+          "fma": 8589934592,
+          "fmax": 4194304,
+          "fexp": 4194304,
+          "add": 4194304,
+          "fdiv": 16777216
+        },
+        "query_tile": 64
+      },
+      "proxy": {
+        "stage_count": 4,
+        "fu": {
+          "add": 32,
+          "fdiv": 32,
+          "fexp": 32,
+          "fma": 8192,
+          "fmax": 32
+        }
+      },
+      "represented_fractions": {
+        "fma": 9.5367431640625e-07,
+        "fmax": 7.62939453125e-06,
+        "fexp": 7.62939453125e-06,
+        "add": 7.62939453125e-06,
+        "fdiv": 1.9073486328125e-06
+      },
+      "stage_match": true,
+      "full_work_represented": false
+    },
+    {
+      "surface": "fig24",
+      "key": "fft_cmp--BERT_8K",
+      "case": {
+        "name": "BERT_8K",
+        "n": 8192,
+        "d": 1024,
+        "batch": 32
+      },
+      "operator": {
+        "name": "fft_cmp",
+        "family": "fft",
+        "mlx_stages": 7,
+        "gpu_operation": "fft",
+        "gpu_parameter": 6,
+        "gpu_fma_per_element_stage": 2
+      },
+      "actual": {
+        "stage_count": 26,
+        "fu": {
+          "fma": 30601641984,
+          "add": 45902462976,
+          "shuffle": 402653184
+        }
+      },
+      "proxy": {
+        "stage_count": 7,
+        "fu": {
+          "add": 55296,
+          "fma": 36864,
+          "shuffle": 1536
+        }
+      },
+      "represented_fractions": {
+        "fma": 1.2046412417763157e-06,
+        "add": 1.2046412417763157e-06,
+        "shuffle": 3.814697265625e-06
+      },
+      "stage_match": false,
+      "full_work_represented": false
+    },
+    {
+      "surface": "fig24",
+      "key": "qkv_bsmm--BERT_8K",
+      "case": {
+        "name": "BERT_8K",
+        "n": 8192,
+        "d": 1024,
+        "batch": 32
+      },
+      "operator": {
+        "name": "qkv_bsmm",
+        "family": "qkv_bsmm",
+        "block_size": 16,
+        "mlx_stages": 4,
+        "gpu_operation": "bsmm",
+        "gpu_parameter": 4,
+        "gpu_fma_per_element_stage": 3
+      },
+      "actual": {
+        "stage_count": 4,
+        "fu": {
+          "fma": 412316860416
+        },
+        "execution_template_add_estimate": 206158430208
+      },
+      "proxy": {
+        "stage_count": 4,
+        "fu": {
+          "add": 12288,
+          "fma": 24576
+        }
+      },
+      "represented_fractions": {
+        "fma": 5.960464477539063e-08
+      },
+      "stage_match": true,
+      "full_work_represented": false
+    },
+    {
+      "surface": "fig24",
+      "key": "qkv_bsmm_b32--BERT_8K",
+      "case": {
+        "name": "BERT_8K",
+        "n": 8192,
+        "d": 1024,
+        "batch": 32
+      },
+      "operator": {
+        "name": "qkv_bsmm_b32",
+        "family": "qkv_bsmm",
+        "block_size": 32,
+        "mlx_stages": 5,
+        "gpu_operation": "bsmm",
+        "gpu_parameter": 5,
+        "gpu_fma_per_element_stage": 3
+      },
+      "actual": {
+        "stage_count": 5,
+        "fu": {
+          "fma": 257698037760
+        },
+        "execution_template_add_estimate": 128849018880
+      },
+      "proxy": {
+        "stage_count": 5,
+        "fu": {
+          "add": 15360,
+          "fma": 30720
+        }
+      },
+      "represented_fractions": {
+        "fma": 1.1920928955078125e-07
+      },
+      "stage_match": true,
+      "full_work_represented": false
+    },
+    {
+      "surface": "fig24",
+      "key": "qkv_bsmm_b64--BERT_8K",
+      "case": {
+        "name": "BERT_8K",
+        "n": 8192,
+        "d": 1024,
+        "batch": 32
+      },
+      "operator": {
+        "name": "qkv_bsmm_b64",
+        "family": "qkv_bsmm",
+        "block_size": 64,
+        "mlx_stages": 6,
+        "gpu_operation": "bsmm",
+        "gpu_parameter": 6,
+        "gpu_fma_per_element_stage": 3
+      },
+      "actual": {
+        "stage_count": 6,
+        "fu": {
+          "fma": 154618822656
+        },
+        "execution_template_add_estimate": 77309411328
+      },
+      "proxy": {
+        "stage_count": 6,
+        "fu": {
+          "add": 18432,
+          "fma": 36864
+        }
+      },
+      "represented_fractions": {
+        "fma": 2.384185791015625e-07
+      },
+      "stage_match": true,
+      "full_work_represented": false
+    },
+    {
+      "surface": "fig24",
+      "key": "swa_w128_q32--BERT_8K",
+      "case": {
+        "name": "BERT_8K",
+        "n": 8192,
+        "d": 1024,
+        "batch": 32
+      },
+      "operator": {
+        "name": "swa_w128_q32",
+        "family": "swa",
+        "window": 128,
+        "query_tile": 32,
+        "mlx_score_fma_groups": 32,
+        "mlx_sv_fma_groups": 32,
+        "mlx_kv_load_waves": 4,
+        "gpu_operation": "swa",
+        "gpu_parameter": 16,
+        "gpu_fma_per_element_parameter": 1
+      },
+      "actual": {
+        "stage_count": 4,
+        "fu": {
+          "fma": 68719476736,
+          "fmax": 33554432,
+          "fexp": 33554432,
+          "add": 33554432,
+          "fdiv": 268435456
+        },
+        "query_tile": 32
+      },
+      "proxy": {
+        "stage_count": 4,
+        "fu": {
+          "add": 512,
+          "fdiv": 512,
+          "fexp": 512,
+          "fma": 32768,
+          "fmax": 512
+        }
+      },
+      "represented_fractions": {
+        "fma": 4.76837158203125e-07,
+        "fmax": 1.52587890625e-05,
+        "fexp": 1.52587890625e-05,
+        "add": 1.52587890625e-05,
+        "fdiv": 1.9073486328125e-06
+      },
+      "stage_match": true,
+      "full_work_represented": false
+    },
+    {
+      "surface": "fig24",
+      "key": "swa_w256_q64--BERT_8K",
+      "case": {
+        "name": "BERT_8K",
+        "n": 8192,
+        "d": 1024,
+        "batch": 32
+      },
+      "operator": {
+        "name": "swa_w256_q64",
+        "family": "swa",
+        "window": 256,
+        "query_tile": 64,
+        "mlx_score_fma_groups": 128,
+        "mlx_sv_fma_groups": 128,
+        "mlx_kv_load_waves": 8,
+        "gpu_operation": "swa",
+        "gpu_parameter": 32,
+        "gpu_fma_per_element_parameter": 1
+      },
+      "actual": {
+        "stage_count": 4,
+        "fu": {
+          "fma": 137438953472,
+          "fmax": 67108864,
+          "fexp": 67108864,
+          "add": 67108864,
+          "fdiv": 268435456
+        },
+        "query_tile": 64
+      },
+      "proxy": {
+        "stage_count": 4,
+        "fu": {
+          "add": 512,
+          "fdiv": 512,
+          "fexp": 512,
+          "fma": 131072,
+          "fmax": 512
+        }
+      },
+      "represented_fractions": {
+        "fma": 9.5367431640625e-07,
+        "fmax": 7.62939453125e-06,
+        "fexp": 7.62939453125e-06,
+        "add": 7.62939453125e-06,
+        "fdiv": 1.9073486328125e-06
+      },
+      "stage_match": true,
+      "full_work_represented": false
+    },
+    {
+      "surface": "fig24",
+      "key": "fft_cmp--Llama2_512",
+      "case": {
+        "name": "Llama2_512",
+        "n": 512,
+        "d": 4096,
+        "batch": 32
+      },
+      "operator": {
+        "name": "fft_cmp",
+        "family": "fft",
+        "mlx_stages": 7,
+        "gpu_operation": "fft",
+        "gpu_parameter": 6,
+        "gpu_fma_per_element_stage": 2
+      },
+      "actual": {
+        "stage_count": 18,
+        "fu": {
+          "fma": 5234491392,
+          "add": 7851737088,
+          "shuffle": 100663296
+        }
+      },
+      "proxy": {
+        "stage_count": 7,
+        "fu": {
+          "add": 13824,
+          "fma": 9216,
+          "shuffle": 384
+        }
+      },
+      "represented_fractions": {
+        "fma": 1.7606295072115386e-06,
+        "add": 1.7606295072115386e-06,
+        "shuffle": 3.814697265625e-06
+      },
+      "stage_match": false,
+      "full_work_represented": false
+    },
+    {
+      "surface": "fig24",
+      "key": "qkv_bsmm--Llama2_512",
+      "case": {
+        "name": "Llama2_512",
+        "n": 512,
+        "d": 4096,
+        "batch": 32
+      },
+      "operator": {
+        "name": "qkv_bsmm",
+        "family": "qkv_bsmm",
+        "block_size": 16,
+        "mlx_stages": 4,
+        "gpu_operation": "bsmm",
+        "gpu_parameter": 4,
+        "gpu_fma_per_element_stage": 3
+      },
+      "actual": {
+        "stage_count": 4,
+        "fu": {
+          "fma": 412316860416
+        },
+        "execution_template_add_estimate": 206158430208
+      },
+      "proxy": {
+        "stage_count": 4,
+        "fu": {
+          "add": 3072,
+          "fma": 6144
+        }
+      },
+      "represented_fractions": {
+        "fma": 1.4901161193847656e-08
+      },
+      "stage_match": true,
+      "full_work_represented": false
+    },
+    {
+      "surface": "fig24",
+      "key": "qkv_bsmm_b32--Llama2_512",
+      "case": {
+        "name": "Llama2_512",
+        "n": 512,
+        "d": 4096,
+        "batch": 32
+      },
+      "operator": {
+        "name": "qkv_bsmm_b32",
+        "family": "qkv_bsmm",
+        "block_size": 32,
+        "mlx_stages": 5,
+        "gpu_operation": "bsmm",
+        "gpu_parameter": 5,
+        "gpu_fma_per_element_stage": 3
+      },
+      "actual": {
+        "stage_count": 5,
+        "fu": {
+          "fma": 257698037760
+        },
+        "execution_template_add_estimate": 128849018880
+      },
+      "proxy": {
+        "stage_count": 5,
+        "fu": {
+          "add": 3840,
+          "fma": 7680
+        }
+      },
+      "represented_fractions": {
+        "fma": 2.9802322387695312e-08
+      },
+      "stage_match": true,
+      "full_work_represented": false
+    },
+    {
+      "surface": "fig24",
+      "key": "qkv_bsmm_b64--Llama2_512",
+      "case": {
+        "name": "Llama2_512",
+        "n": 512,
+        "d": 4096,
+        "batch": 32
+      },
+      "operator": {
+        "name": "qkv_bsmm_b64",
+        "family": "qkv_bsmm",
+        "block_size": 64,
+        "mlx_stages": 6,
+        "gpu_operation": "bsmm",
+        "gpu_parameter": 6,
+        "gpu_fma_per_element_stage": 3
+      },
+      "actual": {
+        "stage_count": 6,
+        "fu": {
+          "fma": 154618822656
+        },
+        "execution_template_add_estimate": 77309411328
+      },
+      "proxy": {
+        "stage_count": 6,
+        "fu": {
+          "add": 4608,
+          "fma": 9216
+        }
+      },
+      "represented_fractions": {
+        "fma": 5.960464477539063e-08
+      },
+      "stage_match": true,
+      "full_work_represented": false
+    },
+    {
+      "surface": "fig24",
+      "key": "swa_w128_q32--Llama2_512",
+      "case": {
+        "name": "Llama2_512",
+        "n": 512,
+        "d": 4096,
+        "batch": 32
+      },
+      "operator": {
+        "name": "swa_w128_q32",
+        "family": "swa",
+        "window": 128,
+        "query_tile": 32,
+        "mlx_score_fma_groups": 32,
+        "mlx_sv_fma_groups": 32,
+        "mlx_kv_load_waves": 4,
+        "gpu_operation": "swa",
+        "gpu_parameter": 16,
+        "gpu_fma_per_element_parameter": 1
+      },
+      "actual": {
+        "stage_count": 4,
+        "fu": {
+          "fma": 17179869184,
+          "fmax": 2097152,
+          "fexp": 2097152,
+          "add": 2097152,
+          "fdiv": 67108864
+        },
+        "query_tile": 32
+      },
+      "proxy": {
+        "stage_count": 4,
+        "fu": {
+          "add": 128,
+          "fdiv": 128,
+          "fexp": 128,
+          "fma": 8192,
+          "fmax": 128
+        }
+      },
+      "represented_fractions": {
+        "fma": 4.76837158203125e-07,
+        "fmax": 6.103515625e-05,
+        "fexp": 6.103515625e-05,
+        "add": 6.103515625e-05,
+        "fdiv": 1.9073486328125e-06
+      },
+      "stage_match": true,
+      "full_work_represented": false
+    },
+    {
+      "surface": "fig24",
+      "key": "swa_w256_q64--Llama2_512",
+      "case": {
+        "name": "Llama2_512",
+        "n": 512,
+        "d": 4096,
+        "batch": 32
+      },
+      "operator": {
+        "name": "swa_w256_q64",
+        "family": "swa",
+        "window": 256,
+        "query_tile": 64,
+        "mlx_score_fma_groups": 128,
+        "mlx_sv_fma_groups": 128,
+        "mlx_kv_load_waves": 8,
+        "gpu_operation": "swa",
+        "gpu_parameter": 32,
+        "gpu_fma_per_element_parameter": 1
+      },
+      "actual": {
+        "stage_count": 4,
+        "fu": {
+          "fma": 34359738368,
+          "fmax": 4194304,
+          "fexp": 4194304,
+          "add": 4194304,
+          "fdiv": 67108864
+        },
+        "query_tile": 64
+      },
+      "proxy": {
+        "stage_count": 4,
+        "fu": {
+          "add": 128,
+          "fdiv": 128,
+          "fexp": 128,
+          "fma": 32768,
+          "fmax": 128
+        }
+      },
+      "represented_fractions": {
+        "fma": 9.5367431640625e-07,
+        "fmax": 3.0517578125e-05,
+        "fexp": 3.0517578125e-05,
+        "add": 3.0517578125e-05,
+        "fdiv": 1.9073486328125e-06
+      },
+      "stage_match": true,
+      "full_work_represented": false
+    },
+    {
+      "surface": "fig24",
+      "key": "fft_cmp--Llama2_1K",
+      "case": {
+        "name": "Llama2_1K",
+        "n": 1024,
+        "d": 4096,
+        "batch": 32
+      },
+      "operator": {
+        "name": "fft_cmp",
+        "family": "fft",
+        "mlx_stages": 7,
+        "gpu_operation": "fft",
+        "gpu_parameter": 6,
+        "gpu_fma_per_element_stage": 2
+      },
+      "actual": {
+        "stage_count": 20,
+        "fu": {
+          "fma": 11676942336,
+          "add": 17515413504,
+          "shuffle": 201326592
+        }
+      },
+      "proxy": {
+        "stage_count": 7,
+        "fu": {
+          "add": 27648,
+          "fma": 18432,
+          "shuffle": 768
+        }
+      },
+      "represented_fractions": {
+        "fma": 1.5784954202586207e-06,
+        "add": 1.5784954202586207e-06,
+        "shuffle": 3.814697265625e-06
+      },
+      "stage_match": false,
+      "full_work_represented": false
+    },
+    {
+      "surface": "fig24",
+      "key": "qkv_bsmm--Llama2_1K",
+      "case": {
+        "name": "Llama2_1K",
+        "n": 1024,
+        "d": 4096,
+        "batch": 32
+      },
+      "operator": {
+        "name": "qkv_bsmm",
+        "family": "qkv_bsmm",
+        "block_size": 16,
+        "mlx_stages": 4,
+        "gpu_operation": "bsmm",
+        "gpu_parameter": 4,
+        "gpu_fma_per_element_stage": 3
+      },
+      "actual": {
+        "stage_count": 4,
+        "fu": {
+          "fma": 824633720832
+        },
+        "execution_template_add_estimate": 412316860416
+      },
+      "proxy": {
+        "stage_count": 4,
+        "fu": {
+          "add": 6144,
+          "fma": 12288
+        }
+      },
+      "represented_fractions": {
+        "fma": 1.4901161193847656e-08
+      },
+      "stage_match": true,
+      "full_work_represented": false
+    },
+    {
+      "surface": "fig24",
+      "key": "qkv_bsmm_b32--Llama2_1K",
+      "case": {
+        "name": "Llama2_1K",
+        "n": 1024,
+        "d": 4096,
+        "batch": 32
+      },
+      "operator": {
+        "name": "qkv_bsmm_b32",
+        "family": "qkv_bsmm",
+        "block_size": 32,
+        "mlx_stages": 5,
+        "gpu_operation": "bsmm",
+        "gpu_parameter": 5,
+        "gpu_fma_per_element_stage": 3
+      },
+      "actual": {
+        "stage_count": 5,
+        "fu": {
+          "fma": 515396075520
+        },
+        "execution_template_add_estimate": 257698037760
+      },
+      "proxy": {
+        "stage_count": 5,
+        "fu": {
+          "add": 7680,
+          "fma": 15360
+        }
+      },
+      "represented_fractions": {
+        "fma": 2.9802322387695312e-08
+      },
+      "stage_match": true,
+      "full_work_represented": false
+    },
+    {
+      "surface": "fig24",
+      "key": "qkv_bsmm_b64--Llama2_1K",
+      "case": {
+        "name": "Llama2_1K",
+        "n": 1024,
+        "d": 4096,
+        "batch": 32
+      },
+      "operator": {
+        "name": "qkv_bsmm_b64",
+        "family": "qkv_bsmm",
+        "block_size": 64,
+        "mlx_stages": 6,
+        "gpu_operation": "bsmm",
+        "gpu_parameter": 6,
+        "gpu_fma_per_element_stage": 3
+      },
+      "actual": {
+        "stage_count": 6,
+        "fu": {
+          "fma": 309237645312
+        },
+        "execution_template_add_estimate": 154618822656
+      },
+      "proxy": {
+        "stage_count": 6,
+        "fu": {
+          "add": 9216,
+          "fma": 18432
+        }
+      },
+      "represented_fractions": {
+        "fma": 5.960464477539063e-08
+      },
+      "stage_match": true,
+      "full_work_represented": false
+    },
+    {
+      "surface": "fig24",
+      "key": "swa_w128_q32--Llama2_1K",
+      "case": {
+        "name": "Llama2_1K",
+        "n": 1024,
+        "d": 4096,
+        "batch": 32
+      },
+      "operator": {
+        "name": "swa_w128_q32",
+        "family": "swa",
+        "window": 128,
+        "query_tile": 32,
+        "mlx_score_fma_groups": 32,
+        "mlx_sv_fma_groups": 32,
+        "mlx_kv_load_waves": 4,
+        "gpu_operation": "swa",
+        "gpu_parameter": 16,
+        "gpu_fma_per_element_parameter": 1
+      },
+      "actual": {
+        "stage_count": 4,
+        "fu": {
+          "fma": 34359738368,
+          "fmax": 4194304,
+          "fexp": 4194304,
+          "add": 4194304,
+          "fdiv": 134217728
+        },
+        "query_tile": 32
+      },
+      "proxy": {
+        "stage_count": 4,
+        "fu": {
+          "add": 256,
+          "fdiv": 256,
+          "fexp": 256,
+          "fma": 16384,
+          "fmax": 256
+        }
+      },
+      "represented_fractions": {
+        "fma": 4.76837158203125e-07,
+        "fmax": 6.103515625e-05,
+        "fexp": 6.103515625e-05,
+        "add": 6.103515625e-05,
+        "fdiv": 1.9073486328125e-06
+      },
+      "stage_match": true,
+      "full_work_represented": false
+    },
+    {
+      "surface": "fig24",
+      "key": "swa_w256_q64--Llama2_1K",
+      "case": {
+        "name": "Llama2_1K",
+        "n": 1024,
+        "d": 4096,
+        "batch": 32
+      },
+      "operator": {
+        "name": "swa_w256_q64",
+        "family": "swa",
+        "window": 256,
+        "query_tile": 64,
+        "mlx_score_fma_groups": 128,
+        "mlx_sv_fma_groups": 128,
+        "mlx_kv_load_waves": 8,
+        "gpu_operation": "swa",
+        "gpu_parameter": 32,
+        "gpu_fma_per_element_parameter": 1
+      },
+      "actual": {
+        "stage_count": 4,
+        "fu": {
+          "fma": 68719476736,
+          "fmax": 8388608,
+          "fexp": 8388608,
+          "add": 8388608,
+          "fdiv": 134217728
+        },
+        "query_tile": 64
+      },
+      "proxy": {
+        "stage_count": 4,
+        "fu": {
+          "add": 256,
+          "fdiv": 256,
+          "fexp": 256,
+          "fma": 65536,
+          "fmax": 256
+        }
+      },
+      "represented_fractions": {
+        "fma": 9.5367431640625e-07,
+        "fmax": 3.0517578125e-05,
+        "fexp": 3.0517578125e-05,
+        "add": 3.0517578125e-05,
+        "fdiv": 1.9073486328125e-06
+      },
+      "stage_match": true,
+      "full_work_represented": false
+    },
+    {
+      "surface": "fig24",
+      "key": "fft_cmp--Llama2_4K",
+      "case": {
+        "name": "Llama2_4K",
+        "n": 4096,
+        "d": 4096,
+        "batch": 32
+      },
+      "operator": {
+        "name": "fft_cmp",
+        "family": "fft",
+        "mlx_stages": 7,
+        "gpu_operation": "fft",
+        "gpu_parameter": 6,
+        "gpu_fma_per_element_stage": 2
+      },
+      "actual": {
+        "stage_count": 24,
+        "fu": {
+          "fma": 56371445760,
+          "add": 84557168640,
+          "shuffle": 805306368
+        }
+      },
+      "proxy": {
+        "stage_count": 7,
+        "fu": {
+          "add": 55296,
+          "fma": 36864,
+          "shuffle": 1536
+        }
+      },
+      "represented_fractions": {
+        "fma": 6.539481026785714e-07,
+        "add": 6.539481026785714e-07,
+        "shuffle": 1.9073486328125e-06
+      },
+      "stage_match": false,
+      "full_work_represented": false
+    },
+    {
+      "surface": "fig24",
+      "key": "qkv_bsmm--Llama2_4K",
+      "case": {
+        "name": "Llama2_4K",
+        "n": 4096,
+        "d": 4096,
+        "batch": 32
+      },
+      "operator": {
+        "name": "qkv_bsmm",
+        "family": "qkv_bsmm",
+        "block_size": 16,
+        "mlx_stages": 4,
+        "gpu_operation": "bsmm",
+        "gpu_parameter": 4,
+        "gpu_fma_per_element_stage": 3
+      },
+      "actual": {
+        "stage_count": 4,
+        "fu": {
+          "fma": 3298534883328
+        },
+        "execution_template_add_estimate": 1649267441664
+      },
+      "proxy": {
+        "stage_count": 4,
+        "fu": {
+          "add": 12288,
+          "fma": 24576
+        }
+      },
+      "represented_fractions": {
+        "fma": 7.450580596923828e-09
+      },
+      "stage_match": true,
+      "full_work_represented": false
+    },
+    {
+      "surface": "fig24",
+      "key": "qkv_bsmm_b32--Llama2_4K",
+      "case": {
+        "name": "Llama2_4K",
+        "n": 4096,
+        "d": 4096,
+        "batch": 32
+      },
+      "operator": {
+        "name": "qkv_bsmm_b32",
+        "family": "qkv_bsmm",
+        "block_size": 32,
+        "mlx_stages": 5,
+        "gpu_operation": "bsmm",
+        "gpu_parameter": 5,
+        "gpu_fma_per_element_stage": 3
+      },
+      "actual": {
+        "stage_count": 5,
+        "fu": {
+          "fma": 2061584302080
+        },
+        "execution_template_add_estimate": 1030792151040
+      },
+      "proxy": {
+        "stage_count": 5,
+        "fu": {
+          "add": 15360,
+          "fma": 30720
+        }
+      },
+      "represented_fractions": {
+        "fma": 1.4901161193847656e-08
+      },
+      "stage_match": true,
+      "full_work_represented": false
+    },
+    {
+      "surface": "fig24",
+      "key": "qkv_bsmm_b64--Llama2_4K",
+      "case": {
+        "name": "Llama2_4K",
+        "n": 4096,
+        "d": 4096,
+        "batch": 32
+      },
+      "operator": {
+        "name": "qkv_bsmm_b64",
+        "family": "qkv_bsmm",
+        "block_size": 64,
+        "mlx_stages": 6,
+        "gpu_operation": "bsmm",
+        "gpu_parameter": 6,
+        "gpu_fma_per_element_stage": 3
+      },
+      "actual": {
+        "stage_count": 6,
+        "fu": {
+          "fma": 1236950581248
+        },
+        "execution_template_add_estimate": 618475290624
+      },
+      "proxy": {
+        "stage_count": 6,
+        "fu": {
+          "add": 18432,
+          "fma": 36864
+        }
+      },
+      "represented_fractions": {
+        "fma": 2.9802322387695312e-08
+      },
+      "stage_match": true,
+      "full_work_represented": false
+    },
+    {
+      "surface": "fig24",
+      "key": "swa_w128_q32--Llama2_4K",
+      "case": {
+        "name": "Llama2_4K",
+        "n": 4096,
+        "d": 4096,
+        "batch": 32
+      },
+      "operator": {
+        "name": "swa_w128_q32",
+        "family": "swa",
+        "window": 128,
+        "query_tile": 32,
+        "mlx_score_fma_groups": 32,
+        "mlx_sv_fma_groups": 32,
+        "mlx_kv_load_waves": 4,
+        "gpu_operation": "swa",
+        "gpu_parameter": 16,
+        "gpu_fma_per_element_parameter": 1
+      },
+      "actual": {
+        "stage_count": 4,
+        "fu": {
+          "fma": 137438953472,
+          "fmax": 16777216,
+          "fexp": 16777216,
+          "add": 16777216,
+          "fdiv": 536870912
+        },
+        "query_tile": 32
+      },
+      "proxy": {
+        "stage_count": 4,
+        "fu": {
+          "add": 512,
+          "fdiv": 512,
+          "fexp": 512,
+          "fma": 32768,
+          "fmax": 512
+        }
+      },
+      "represented_fractions": {
+        "fma": 2.384185791015625e-07,
+        "fmax": 3.0517578125e-05,
+        "fexp": 3.0517578125e-05,
+        "add": 3.0517578125e-05,
+        "fdiv": 9.5367431640625e-07
+      },
+      "stage_match": true,
+      "full_work_represented": false
+    },
+    {
+      "surface": "fig24",
+      "key": "swa_w256_q64--Llama2_4K",
+      "case": {
+        "name": "Llama2_4K",
+        "n": 4096,
+        "d": 4096,
+        "batch": 32
+      },
+      "operator": {
+        "name": "swa_w256_q64",
+        "family": "swa",
+        "window": 256,
+        "query_tile": 64,
+        "mlx_score_fma_groups": 128,
+        "mlx_sv_fma_groups": 128,
+        "mlx_kv_load_waves": 8,
+        "gpu_operation": "swa",
+        "gpu_parameter": 32,
+        "gpu_fma_per_element_parameter": 1
+      },
+      "actual": {
+        "stage_count": 4,
+        "fu": {
+          "fma": 274877906944,
+          "fmax": 33554432,
+          "fexp": 33554432,
+          "add": 33554432,
+          "fdiv": 536870912
+        },
+        "query_tile": 64
+      },
+      "proxy": {
+        "stage_count": 4,
+        "fu": {
+          "add": 512,
+          "fdiv": 512,
+          "fexp": 512,
+          "fma": 131072,
+          "fmax": 512
+        }
+      },
+      "represented_fractions": {
+        "fma": 4.76837158203125e-07,
+        "fmax": 1.52587890625e-05,
+        "fexp": 1.52587890625e-05,
+        "add": 1.52587890625e-05,
+        "fdiv": 9.5367431640625e-07
+      },
+      "stage_match": true,
+      "full_work_represented": false
+    },
+    {
+      "surface": "fig24",
+      "key": "fft_cmp--InternLM2_2K",
+      "case": {
+        "name": "InternLM2_2K",
+        "n": 2048,
+        "d": 4096,
+        "batch": 32
+      },
+      "operator": {
+        "name": "fft_cmp",
+        "family": "fft",
+        "mlx_stages": 7,
+        "gpu_operation": "fft",
+        "gpu_parameter": 6,
+        "gpu_fma_per_element_stage": 2
+      },
+      "actual": {
+        "stage_count": 22,
+        "fu": {
+          "fma": 25769803776,
+          "add": 38654705664,
+          "shuffle": 402653184
+        }
+      },
+      "proxy": {
+        "stage_count": 7,
+        "fu": {
+          "add": 55296,
+          "fma": 36864,
+          "shuffle": 1536
+        }
+      },
+      "represented_fractions": {
+        "fma": 1.430511474609375e-06,
+        "add": 1.430511474609375e-06,
+        "shuffle": 3.814697265625e-06
+      },
+      "stage_match": false,
+      "full_work_represented": false
+    },
+    {
+      "surface": "fig24",
+      "key": "qkv_bsmm--InternLM2_2K",
+      "case": {
+        "name": "InternLM2_2K",
+        "n": 2048,
+        "d": 4096,
+        "batch": 32
+      },
+      "operator": {
+        "name": "qkv_bsmm",
+        "family": "qkv_bsmm",
+        "block_size": 16,
+        "mlx_stages": 4,
+        "gpu_operation": "bsmm",
+        "gpu_parameter": 4,
+        "gpu_fma_per_element_stage": 3
+      },
+      "actual": {
+        "stage_count": 4,
+        "fu": {
+          "fma": 1649267441664
+        },
+        "execution_template_add_estimate": 824633720832
+      },
+      "proxy": {
+        "stage_count": 4,
+        "fu": {
+          "add": 12288,
+          "fma": 24576
+        }
+      },
+      "represented_fractions": {
+        "fma": 1.4901161193847656e-08
+      },
+      "stage_match": true,
+      "full_work_represented": false
+    },
+    {
+      "surface": "fig24",
+      "key": "qkv_bsmm_b32--InternLM2_2K",
+      "case": {
+        "name": "InternLM2_2K",
+        "n": 2048,
+        "d": 4096,
+        "batch": 32
+      },
+      "operator": {
+        "name": "qkv_bsmm_b32",
+        "family": "qkv_bsmm",
+        "block_size": 32,
+        "mlx_stages": 5,
+        "gpu_operation": "bsmm",
+        "gpu_parameter": 5,
+        "gpu_fma_per_element_stage": 3
+      },
+      "actual": {
+        "stage_count": 5,
+        "fu": {
+          "fma": 1030792151040
+        },
+        "execution_template_add_estimate": 515396075520
+      },
+      "proxy": {
+        "stage_count": 5,
+        "fu": {
+          "add": 15360,
+          "fma": 30720
+        }
+      },
+      "represented_fractions": {
+        "fma": 2.9802322387695312e-08
+      },
+      "stage_match": true,
+      "full_work_represented": false
+    },
+    {
+      "surface": "fig24",
+      "key": "qkv_bsmm_b64--InternLM2_2K",
+      "case": {
+        "name": "InternLM2_2K",
+        "n": 2048,
+        "d": 4096,
+        "batch": 32
+      },
+      "operator": {
+        "name": "qkv_bsmm_b64",
+        "family": "qkv_bsmm",
+        "block_size": 64,
+        "mlx_stages": 6,
+        "gpu_operation": "bsmm",
+        "gpu_parameter": 6,
+        "gpu_fma_per_element_stage": 3
+      },
+      "actual": {
+        "stage_count": 6,
+        "fu": {
+          "fma": 618475290624
+        },
+        "execution_template_add_estimate": 309237645312
+      },
+      "proxy": {
+        "stage_count": 6,
+        "fu": {
+          "add": 18432,
+          "fma": 36864
+        }
+      },
+      "represented_fractions": {
+        "fma": 5.960464477539063e-08
+      },
+      "stage_match": true,
+      "full_work_represented": false
+    },
+    {
+      "surface": "fig24",
+      "key": "swa_w128_q32--InternLM2_2K",
+      "case": {
+        "name": "InternLM2_2K",
+        "n": 2048,
+        "d": 4096,
+        "batch": 32
+      },
+      "operator": {
+        "name": "swa_w128_q32",
+        "family": "swa",
+        "window": 128,
+        "query_tile": 32,
+        "mlx_score_fma_groups": 32,
+        "mlx_sv_fma_groups": 32,
+        "mlx_kv_load_waves": 4,
+        "gpu_operation": "swa",
+        "gpu_parameter": 16,
+        "gpu_fma_per_element_parameter": 1
+      },
+      "actual": {
+        "stage_count": 4,
+        "fu": {
+          "fma": 68719476736,
+          "fmax": 8388608,
+          "fexp": 8388608,
+          "add": 8388608,
+          "fdiv": 268435456
+        },
+        "query_tile": 32
+      },
+      "proxy": {
+        "stage_count": 4,
+        "fu": {
+          "add": 512,
+          "fdiv": 512,
+          "fexp": 512,
+          "fma": 32768,
+          "fmax": 512
+        }
+      },
+      "represented_fractions": {
+        "fma": 4.76837158203125e-07,
+        "fmax": 6.103515625e-05,
+        "fexp": 6.103515625e-05,
+        "add": 6.103515625e-05,
+        "fdiv": 1.9073486328125e-06
+      },
+      "stage_match": true,
+      "full_work_represented": false
+    },
+    {
+      "surface": "fig24",
+      "key": "swa_w256_q64--InternLM2_2K",
+      "case": {
+        "name": "InternLM2_2K",
+        "n": 2048,
+        "d": 4096,
+        "batch": 32
+      },
+      "operator": {
+        "name": "swa_w256_q64",
+        "family": "swa",
+        "window": 256,
+        "query_tile": 64,
+        "mlx_score_fma_groups": 128,
+        "mlx_sv_fma_groups": 128,
+        "mlx_kv_load_waves": 8,
+        "gpu_operation": "swa",
+        "gpu_parameter": 32,
+        "gpu_fma_per_element_parameter": 1
+      },
+      "actual": {
+        "stage_count": 4,
+        "fu": {
+          "fma": 137438953472,
+          "fmax": 16777216,
+          "fexp": 16777216,
+          "add": 16777216,
+          "fdiv": 268435456
+        },
+        "query_tile": 64
+      },
+      "proxy": {
+        "stage_count": 4,
+        "fu": {
+          "add": 512,
+          "fdiv": 512,
+          "fexp": 512,
+          "fma": 131072,
+          "fmax": 512
+        }
+      },
+      "represented_fractions": {
+        "fma": 9.5367431640625e-07,
+        "fmax": 3.0517578125e-05,
+        "fexp": 3.0517578125e-05,
+        "add": 3.0517578125e-05,
+        "fdiv": 1.9073486328125e-06
+      },
+      "stage_match": true,
+      "full_work_represented": false
+    },
+    {
+      "surface": "fig24",
+      "key": "fft_cmp--InternLM2_8K",
+      "case": {
+        "name": "InternLM2_8K",
+        "n": 8192,
+        "d": 4096,
+        "batch": 32
+      },
+      "operator": {
+        "name": "fft_cmp",
+        "family": "fft",
+        "mlx_stages": 7,
+        "gpu_operation": "fft",
+        "gpu_parameter": 6,
+        "gpu_fma_per_element_stage": 2
+      },
+      "actual": {
+        "stage_count": 26,
+        "fu": {
+          "fma": 122406567936,
+          "add": 183609851904,
+          "shuffle": 1610612736
+        }
+      },
+      "proxy": {
+        "stage_count": 7,
+        "fu": {
+          "add": 55296,
+          "fma": 36864,
+          "shuffle": 1536
+        }
+      },
+      "represented_fractions": {
+        "fma": 3.0116031044407893e-07,
+        "add": 3.0116031044407893e-07,
+        "shuffle": 9.5367431640625e-07
+      },
+      "stage_match": false,
+      "full_work_represented": false
+    },
+    {
+      "surface": "fig24",
+      "key": "qkv_bsmm--InternLM2_8K",
+      "case": {
+        "name": "InternLM2_8K",
+        "n": 8192,
+        "d": 4096,
+        "batch": 32
+      },
+      "operator": {
+        "name": "qkv_bsmm",
+        "family": "qkv_bsmm",
+        "block_size": 16,
+        "mlx_stages": 4,
+        "gpu_operation": "bsmm",
+        "gpu_parameter": 4,
+        "gpu_fma_per_element_stage": 3
+      },
+      "actual": {
+        "stage_count": 4,
+        "fu": {
+          "fma": 6597069766656
+        },
+        "execution_template_add_estimate": 3298534883328
+      },
+      "proxy": {
+        "stage_count": 4,
+        "fu": {
+          "add": 12288,
+          "fma": 24576
+        }
+      },
+      "represented_fractions": {
+        "fma": 3.725290298461914e-09
+      },
+      "stage_match": true,
+      "full_work_represented": false
+    },
+    {
+      "surface": "fig24",
+      "key": "qkv_bsmm_b32--InternLM2_8K",
+      "case": {
+        "name": "InternLM2_8K",
+        "n": 8192,
+        "d": 4096,
+        "batch": 32
+      },
+      "operator": {
+        "name": "qkv_bsmm_b32",
+        "family": "qkv_bsmm",
+        "block_size": 32,
+        "mlx_stages": 5,
+        "gpu_operation": "bsmm",
+        "gpu_parameter": 5,
+        "gpu_fma_per_element_stage": 3
+      },
+      "actual": {
+        "stage_count": 5,
+        "fu": {
+          "fma": 4123168604160
+        },
+        "execution_template_add_estimate": 2061584302080
+      },
+      "proxy": {
+        "stage_count": 5,
+        "fu": {
+          "add": 15360,
+          "fma": 30720
+        }
+      },
+      "represented_fractions": {
+        "fma": 7.450580596923828e-09
+      },
+      "stage_match": true,
+      "full_work_represented": false
+    },
+    {
+      "surface": "fig24",
+      "key": "qkv_bsmm_b64--InternLM2_8K",
+      "case": {
+        "name": "InternLM2_8K",
+        "n": 8192,
+        "d": 4096,
+        "batch": 32
+      },
+      "operator": {
+        "name": "qkv_bsmm_b64",
+        "family": "qkv_bsmm",
+        "block_size": 64,
+        "mlx_stages": 6,
+        "gpu_operation": "bsmm",
+        "gpu_parameter": 6,
+        "gpu_fma_per_element_stage": 3
+      },
+      "actual": {
+        "stage_count": 6,
+        "fu": {
+          "fma": 2473901162496
+        },
+        "execution_template_add_estimate": 1236950581248
+      },
+      "proxy": {
+        "stage_count": 6,
+        "fu": {
+          "add": 18432,
+          "fma": 36864
+        }
+      },
+      "represented_fractions": {
+        "fma": 1.4901161193847656e-08
+      },
+      "stage_match": true,
+      "full_work_represented": false
+    },
+    {
+      "surface": "fig24",
+      "key": "swa_w128_q32--InternLM2_8K",
+      "case": {
+        "name": "InternLM2_8K",
+        "n": 8192,
+        "d": 4096,
+        "batch": 32
+      },
+      "operator": {
+        "name": "swa_w128_q32",
+        "family": "swa",
+        "window": 128,
+        "query_tile": 32,
+        "mlx_score_fma_groups": 32,
+        "mlx_sv_fma_groups": 32,
+        "mlx_kv_load_waves": 4,
+        "gpu_operation": "swa",
+        "gpu_parameter": 16,
+        "gpu_fma_per_element_parameter": 1
+      },
+      "actual": {
+        "stage_count": 4,
+        "fu": {
+          "fma": 274877906944,
+          "fmax": 33554432,
+          "fexp": 33554432,
+          "add": 33554432,
+          "fdiv": 1073741824
+        },
+        "query_tile": 32
+      },
+      "proxy": {
+        "stage_count": 4,
+        "fu": {
+          "add": 512,
+          "fdiv": 512,
+          "fexp": 512,
+          "fma": 32768,
+          "fmax": 512
+        }
+      },
+      "represented_fractions": {
+        "fma": 1.1920928955078125e-07,
+        "fmax": 1.52587890625e-05,
+        "fexp": 1.52587890625e-05,
+        "add": 1.52587890625e-05,
+        "fdiv": 4.76837158203125e-07
+      },
+      "stage_match": true,
+      "full_work_represented": false
+    },
+    {
+      "surface": "fig24",
+      "key": "swa_w256_q64--InternLM2_8K",
+      "case": {
+        "name": "InternLM2_8K",
+        "n": 8192,
+        "d": 4096,
+        "batch": 32
+      },
+      "operator": {
+        "name": "swa_w256_q64",
+        "family": "swa",
+        "window": 256,
+        "query_tile": 64,
+        "mlx_score_fma_groups": 128,
+        "mlx_sv_fma_groups": 128,
+        "mlx_kv_load_waves": 8,
+        "gpu_operation": "swa",
+        "gpu_parameter": 32,
+        "gpu_fma_per_element_parameter": 1
+      },
+      "actual": {
+        "stage_count": 4,
+        "fu": {
+          "fma": 549755813888,
+          "fmax": 67108864,
+          "fexp": 67108864,
+          "add": 67108864,
+          "fdiv": 1073741824
+        },
+        "query_tile": 64
+      },
+      "proxy": {
+        "stage_count": 4,
+        "fu": {
+          "add": 512,
+          "fdiv": 512,
+          "fexp": 512,
+          "fma": 131072,
+          "fmax": 512
+        }
+      },
+      "represented_fractions": {
+        "fma": 2.384185791015625e-07,
+        "fmax": 7.62939453125e-06,
+        "fexp": 7.62939453125e-06,
+        "add": 7.62939453125e-06,
+        "fdiv": 4.76837158203125e-07
+      },
+      "stage_match": true,
+      "full_work_represented": false
+    },
+    {
+      "surface": "fig25",
+      "key": "fft_cmp--BERT_512",
+      "case": {
+        "name": "BERT_512",
+        "n": 512,
+        "d": 1024,
+        "batch": 32
+      },
+      "operator": {
+        "name": "fft_cmp",
+        "family": "fft",
+        "stages": 7
+      },
+      "actual": {
+        "stage_count": 18,
+        "fu": {
+          "fma": 1308622848,
+          "add": 1962934272,
+          "shuffle": 25165824
+        }
+      },
+      "proxy": {
+        "stage_count": 7,
+        "fu": {
+          "add": 3456,
+          "fma": 2304,
+          "shuffle": 96
+        }
+      },
+      "represented_fractions": {
+        "fma": 1.7606295072115386e-06,
+        "add": 1.7606295072115386e-06,
+        "shuffle": 3.814697265625e-06
+      },
+      "stage_match": false,
+      "full_work_represented": false
+    },
+    {
+      "surface": "fig25",
+      "key": "qkv_bsmm--BERT_512",
+      "case": {
+        "name": "BERT_512",
+        "n": 512,
+        "d": 1024,
+        "batch": 32
+      },
+      "operator": {
+        "name": "qkv_bsmm",
+        "family": "qkv_bsmm",
+        "block_size": 16,
+        "stages": 4
+      },
+      "actual": {
+        "stage_count": 4,
+        "fu": {
+          "fma": 25769803776
+        },
+        "execution_template_add_estimate": 12884901888
+      },
+      "proxy": {
+        "stage_count": 4,
+        "fu": {
+          "add": 768,
+          "fma": 1536
+        }
+      },
+      "represented_fractions": {
+        "fma": 5.960464477539063e-08
+      },
+      "stage_match": true,
+      "full_work_represented": false
+    },
+    {
+      "surface": "fig25",
+      "key": "qkv_bsmm_b32--BERT_512",
+      "case": {
+        "name": "BERT_512",
+        "n": 512,
+        "d": 1024,
+        "batch": 32
+      },
+      "operator": {
+        "name": "qkv_bsmm_b32",
+        "family": "qkv_bsmm",
+        "block_size": 32,
+        "stages": 5
+      },
+      "actual": {
+        "stage_count": 5,
+        "fu": {
+          "fma": 16106127360
+        },
+        "execution_template_add_estimate": 8053063680
+      },
+      "proxy": {
+        "stage_count": 5,
+        "fu": {
+          "add": 960,
+          "fma": 1920
+        }
+      },
+      "represented_fractions": {
+        "fma": 1.1920928955078125e-07
+      },
+      "stage_match": true,
+      "full_work_represented": false
+    },
+    {
+      "surface": "fig25",
+      "key": "qkv_bsmm_b64--BERT_512",
+      "case": {
+        "name": "BERT_512",
+        "n": 512,
+        "d": 1024,
+        "batch": 32
+      },
+      "operator": {
+        "name": "qkv_bsmm_b64",
+        "family": "qkv_bsmm",
+        "block_size": 64,
+        "stages": 6
+      },
+      "actual": {
+        "stage_count": 6,
+        "fu": {
+          "fma": 9663676416
+        },
+        "execution_template_add_estimate": 4831838208
+      },
+      "proxy": {
+        "stage_count": 6,
+        "fu": {
+          "add": 1152,
+          "fma": 2304
+        }
+      },
+      "represented_fractions": {
+        "fma": 2.384185791015625e-07
+      },
+      "stage_match": true,
+      "full_work_represented": false
+    },
+    {
+      "surface": "fig25",
+      "key": "swa_w128_q32--BERT_512",
+      "case": {
+        "name": "BERT_512",
+        "n": 512,
+        "d": 1024,
+        "batch": 32
+      },
+      "operator": {
+        "name": "swa_w128_q32",
+        "family": "swa",
+        "window": 128,
+        "query_tile": 32,
+        "fma_repeats": 1
+      },
+      "actual": {
+        "stage_count": 4,
+        "fu": {
+          "fma": 4294967296,
+          "fmax": 2097152,
+          "fexp": 2097152,
+          "add": 2097152,
+          "fdiv": 16777216
+        },
+        "query_tile": 32
+      },
+      "proxy": {
+        "stage_count": 4,
+        "fu": {
+          "add": 32,
+          "fdiv": 32,
+          "fexp": 32,
+          "fma": 2048,
+          "fmax": 32
+        }
+      },
+      "represented_fractions": {
+        "fma": 4.76837158203125e-07,
+        "fmax": 1.52587890625e-05,
+        "fexp": 1.52587890625e-05,
+        "add": 1.52587890625e-05,
+        "fdiv": 1.9073486328125e-06
+      },
+      "stage_match": true,
+      "full_work_represented": false
+    },
+    {
+      "surface": "fig25",
+      "key": "swa_w256_q64--BERT_512",
+      "case": {
+        "name": "BERT_512",
+        "n": 512,
+        "d": 1024,
+        "batch": 32
+      },
+      "operator": {
+        "name": "swa_w256_q64",
+        "family": "swa",
+        "window": 256,
+        "query_tile": 64,
+        "fma_repeats": 2
+      },
+      "actual": {
+        "stage_count": 4,
+        "fu": {
+          "fma": 8589934592,
+          "fmax": 4194304,
+          "fexp": 4194304,
+          "add": 4194304,
+          "fdiv": 16777216
+        },
+        "query_tile": 64
+      },
+      "proxy": {
+        "stage_count": 4,
+        "fu": {
+          "add": 32,
+          "fdiv": 32,
+          "fexp": 32,
+          "fma": 8192,
+          "fmax": 32
+        }
+      },
+      "represented_fractions": {
+        "fma": 9.5367431640625e-07,
+        "fmax": 7.62939453125e-06,
+        "fexp": 7.62939453125e-06,
+        "add": 7.62939453125e-06,
+        "fdiv": 1.9073486328125e-06
+      },
+      "stage_match": true,
+      "full_work_represented": false
+    },
+    {
+      "surface": "fig25",
+      "key": "fft_cmp--Llama2_1K",
+      "case": {
+        "name": "Llama2_1K",
+        "n": 1024,
+        "d": 4096,
+        "batch": 32
+      },
+      "operator": {
+        "name": "fft_cmp",
+        "family": "fft",
+        "stages": 7
+      },
+      "actual": {
+        "stage_count": 20,
+        "fu": {
+          "fma": 11676942336,
+          "add": 17515413504,
+          "shuffle": 201326592
+        }
+      },
+      "proxy": {
+        "stage_count": 7,
+        "fu": {
+          "add": 6912,
+          "fma": 4608,
+          "shuffle": 192
+        }
+      },
+      "represented_fractions": {
+        "fma": 3.9462385506465517e-07,
+        "add": 3.9462385506465517e-07,
+        "shuffle": 9.5367431640625e-07
+      },
+      "stage_match": false,
+      "full_work_represented": false
+    },
+    {
+      "surface": "fig25",
+      "key": "qkv_bsmm--Llama2_1K",
+      "case": {
+        "name": "Llama2_1K",
+        "n": 1024,
+        "d": 4096,
+        "batch": 32
+      },
+      "operator": {
+        "name": "qkv_bsmm",
+        "family": "qkv_bsmm",
+        "block_size": 16,
+        "stages": 4
+      },
+      "actual": {
+        "stage_count": 4,
+        "fu": {
+          "fma": 824633720832
+        },
+        "execution_template_add_estimate": 412316860416
+      },
+      "proxy": {
+        "stage_count": 4,
+        "fu": {
+          "add": 1536,
+          "fma": 3072
+        }
+      },
+      "represented_fractions": {
+        "fma": 3.725290298461914e-09
+      },
+      "stage_match": true,
+      "full_work_represented": false
+    },
+    {
+      "surface": "fig25",
+      "key": "qkv_bsmm_b32--Llama2_1K",
+      "case": {
+        "name": "Llama2_1K",
+        "n": 1024,
+        "d": 4096,
+        "batch": 32
+      },
+      "operator": {
+        "name": "qkv_bsmm_b32",
+        "family": "qkv_bsmm",
+        "block_size": 32,
+        "stages": 5
+      },
+      "actual": {
+        "stage_count": 5,
+        "fu": {
+          "fma": 515396075520
+        },
+        "execution_template_add_estimate": 257698037760
+      },
+      "proxy": {
+        "stage_count": 5,
+        "fu": {
+          "add": 1920,
+          "fma": 3840
+        }
+      },
+      "represented_fractions": {
+        "fma": 7.450580596923828e-09
+      },
+      "stage_match": true,
+      "full_work_represented": false
+    },
+    {
+      "surface": "fig25",
+      "key": "qkv_bsmm_b64--Llama2_1K",
+      "case": {
+        "name": "Llama2_1K",
+        "n": 1024,
+        "d": 4096,
+        "batch": 32
+      },
+      "operator": {
+        "name": "qkv_bsmm_b64",
+        "family": "qkv_bsmm",
+        "block_size": 64,
+        "stages": 6
+      },
+      "actual": {
+        "stage_count": 6,
+        "fu": {
+          "fma": 309237645312
+        },
+        "execution_template_add_estimate": 154618822656
+      },
+      "proxy": {
+        "stage_count": 6,
+        "fu": {
+          "add": 2304,
+          "fma": 4608
+        }
+      },
+      "represented_fractions": {
+        "fma": 1.4901161193847656e-08
+      },
+      "stage_match": true,
+      "full_work_represented": false
+    },
+    {
+      "surface": "fig25",
+      "key": "swa_w128_q32--Llama2_1K",
+      "case": {
+        "name": "Llama2_1K",
+        "n": 1024,
+        "d": 4096,
+        "batch": 32
+      },
+      "operator": {
+        "name": "swa_w128_q32",
+        "family": "swa",
+        "window": 128,
+        "query_tile": 32,
+        "fma_repeats": 1
+      },
+      "actual": {
+        "stage_count": 4,
+        "fu": {
+          "fma": 34359738368,
+          "fmax": 4194304,
+          "fexp": 4194304,
+          "add": 4194304,
+          "fdiv": 134217728
+        },
+        "query_tile": 32
+      },
+      "proxy": {
+        "stage_count": 4,
+        "fu": {
+          "add": 64,
+          "fdiv": 64,
+          "fexp": 64,
+          "fma": 4096,
+          "fmax": 64
+        }
+      },
+      "represented_fractions": {
+        "fma": 1.1920928955078125e-07,
+        "fmax": 1.52587890625e-05,
+        "fexp": 1.52587890625e-05,
+        "add": 1.52587890625e-05,
+        "fdiv": 4.76837158203125e-07
+      },
+      "stage_match": true,
+      "full_work_represented": false
+    },
+    {
+      "surface": "fig25",
+      "key": "swa_w256_q64--Llama2_1K",
+      "case": {
+        "name": "Llama2_1K",
+        "n": 1024,
+        "d": 4096,
+        "batch": 32
+      },
+      "operator": {
+        "name": "swa_w256_q64",
+        "family": "swa",
+        "window": 256,
+        "query_tile": 64,
+        "fma_repeats": 2
+      },
+      "actual": {
+        "stage_count": 4,
+        "fu": {
+          "fma": 68719476736,
+          "fmax": 8388608,
+          "fexp": 8388608,
+          "add": 8388608,
+          "fdiv": 134217728
+        },
+        "query_tile": 64
+      },
+      "proxy": {
+        "stage_count": 4,
+        "fu": {
+          "add": 64,
+          "fdiv": 64,
+          "fexp": 64,
+          "fma": 16384,
+          "fmax": 64
+        }
+      },
+      "represented_fractions": {
+        "fma": 2.384185791015625e-07,
+        "fmax": 7.62939453125e-06,
+        "fexp": 7.62939453125e-06,
+        "add": 7.62939453125e-06,
+        "fdiv": 4.76837158203125e-07
+      },
+      "stage_match": true,
+      "full_work_represented": false
+    },
+    {
+      "surface": "fig25",
+      "key": "fft_cmp--InternLM2_4K",
+      "case": {
+        "name": "InternLM2_4K",
+        "n": 4096,
+        "d": 4096,
+        "batch": 32
+      },
+      "operator": {
+        "name": "fft_cmp",
+        "family": "fft",
+        "stages": 7
+      },
+      "actual": {
+        "stage_count": 24,
+        "fu": {
+          "fma": 56371445760,
+          "add": 84557168640,
+          "shuffle": 805306368
+        }
+      },
+      "proxy": {
+        "stage_count": 7,
+        "fu": {
+          "add": 27648,
+          "fma": 18432,
+          "shuffle": 768
+        }
+      },
+      "represented_fractions": {
+        "fma": 3.269740513392857e-07,
+        "add": 3.269740513392857e-07,
+        "shuffle": 9.5367431640625e-07
+      },
+      "stage_match": false,
+      "full_work_represented": false
+    },
+    {
+      "surface": "fig25",
+      "key": "qkv_bsmm--InternLM2_4K",
+      "case": {
+        "name": "InternLM2_4K",
+        "n": 4096,
+        "d": 4096,
+        "batch": 32
+      },
+      "operator": {
+        "name": "qkv_bsmm",
+        "family": "qkv_bsmm",
+        "block_size": 16,
+        "stages": 4
+      },
+      "actual": {
+        "stage_count": 4,
+        "fu": {
+          "fma": 3298534883328
+        },
+        "execution_template_add_estimate": 1649267441664
+      },
+      "proxy": {
+        "stage_count": 4,
+        "fu": {
+          "add": 6144,
+          "fma": 12288
+        }
+      },
+      "represented_fractions": {
+        "fma": 3.725290298461914e-09
+      },
+      "stage_match": true,
+      "full_work_represented": false
+    },
+    {
+      "surface": "fig25",
+      "key": "qkv_bsmm_b32--InternLM2_4K",
+      "case": {
+        "name": "InternLM2_4K",
+        "n": 4096,
+        "d": 4096,
+        "batch": 32
+      },
+      "operator": {
+        "name": "qkv_bsmm_b32",
+        "family": "qkv_bsmm",
+        "block_size": 32,
+        "stages": 5
+      },
+      "actual": {
+        "stage_count": 5,
+        "fu": {
+          "fma": 2061584302080
+        },
+        "execution_template_add_estimate": 1030792151040
+      },
+      "proxy": {
+        "stage_count": 5,
+        "fu": {
+          "add": 7680,
+          "fma": 15360
+        }
+      },
+      "represented_fractions": {
+        "fma": 7.450580596923828e-09
+      },
+      "stage_match": true,
+      "full_work_represented": false
+    },
+    {
+      "surface": "fig25",
+      "key": "qkv_bsmm_b64--InternLM2_4K",
+      "case": {
+        "name": "InternLM2_4K",
+        "n": 4096,
+        "d": 4096,
+        "batch": 32
+      },
+      "operator": {
+        "name": "qkv_bsmm_b64",
+        "family": "qkv_bsmm",
+        "block_size": 64,
+        "stages": 6
+      },
+      "actual": {
+        "stage_count": 6,
+        "fu": {
+          "fma": 1236950581248
+        },
+        "execution_template_add_estimate": 618475290624
+      },
+      "proxy": {
+        "stage_count": 6,
+        "fu": {
+          "add": 9216,
+          "fma": 18432
+        }
+      },
+      "represented_fractions": {
+        "fma": 1.4901161193847656e-08
+      },
+      "stage_match": true,
+      "full_work_represented": false
+    },
+    {
+      "surface": "fig25",
+      "key": "swa_w128_q32--InternLM2_4K",
+      "case": {
+        "name": "InternLM2_4K",
+        "n": 4096,
+        "d": 4096,
+        "batch": 32
+      },
+      "operator": {
+        "name": "swa_w128_q32",
+        "family": "swa",
+        "window": 128,
+        "query_tile": 32,
+        "fma_repeats": 1
+      },
+      "actual": {
+        "stage_count": 4,
+        "fu": {
+          "fma": 137438953472,
+          "fmax": 16777216,
+          "fexp": 16777216,
+          "add": 16777216,
+          "fdiv": 536870912
+        },
+        "query_tile": 32
+      },
+      "proxy": {
+        "stage_count": 4,
+        "fu": {
+          "add": 256,
+          "fdiv": 256,
+          "fexp": 256,
+          "fma": 16384,
+          "fmax": 256
+        }
+      },
+      "represented_fractions": {
+        "fma": 1.1920928955078125e-07,
+        "fmax": 1.52587890625e-05,
+        "fexp": 1.52587890625e-05,
+        "add": 1.52587890625e-05,
+        "fdiv": 4.76837158203125e-07
+      },
+      "stage_match": true,
+      "full_work_represented": false
+    },
+    {
+      "surface": "fig25",
+      "key": "swa_w256_q64--InternLM2_4K",
+      "case": {
+        "name": "InternLM2_4K",
+        "n": 4096,
+        "d": 4096,
+        "batch": 32
+      },
+      "operator": {
+        "name": "swa_w256_q64",
+        "family": "swa",
+        "window": 256,
+        "query_tile": 64,
+        "fma_repeats": 2
+      },
+      "actual": {
+        "stage_count": 4,
+        "fu": {
+          "fma": 274877906944,
+          "fmax": 33554432,
+          "fexp": 33554432,
+          "add": 33554432,
+          "fdiv": 536870912
+        },
+        "query_tile": 64
+      },
+      "proxy": {
+        "stage_count": 4,
+        "fu": {
+          "add": 256,
+          "fdiv": 256,
+          "fexp": 256,
+          "fma": 65536,
+          "fmax": 256
+        }
+      },
+      "represented_fractions": {
+        "fma": 2.384185791015625e-07,
+        "fmax": 7.62939453125e-06,
+        "fexp": 7.62939453125e-06,
+        "add": 7.62939453125e-06,
+        "fdiv": 4.76837158203125e-07
+      },
+      "stage_match": true,
+      "full_work_represented": false
+    },
+    {
+      "surface": "fig25",
+      "key": "fft_cmp--BERT_8K",
+      "case": {
+        "name": "BERT_8K",
+        "n": 8192,
+        "d": 1024,
+        "batch": 32
+      },
+      "operator": {
+        "name": "fft_cmp",
+        "family": "fft",
+        "stages": 7
+      },
+      "actual": {
+        "stage_count": 26,
+        "fu": {
+          "fma": 30601641984,
+          "add": 45902462976,
+          "shuffle": 402653184
+        }
+      },
+      "proxy": {
+        "stage_count": 7,
+        "fu": {
+          "add": 55296,
+          "fma": 36864,
+          "shuffle": 1536
+        }
+      },
+      "represented_fractions": {
+        "fma": 1.2046412417763157e-06,
+        "add": 1.2046412417763157e-06,
+        "shuffle": 3.814697265625e-06
+      },
+      "stage_match": false,
+      "full_work_represented": false
+    },
+    {
+      "surface": "fig25",
+      "key": "qkv_bsmm--BERT_8K",
+      "case": {
+        "name": "BERT_8K",
+        "n": 8192,
+        "d": 1024,
+        "batch": 32
+      },
+      "operator": {
+        "name": "qkv_bsmm",
+        "family": "qkv_bsmm",
+        "block_size": 16,
+        "stages": 4
+      },
+      "actual": {
+        "stage_count": 4,
+        "fu": {
+          "fma": 412316860416
+        },
+        "execution_template_add_estimate": 206158430208
+      },
+      "proxy": {
+        "stage_count": 4,
+        "fu": {
+          "add": 12288,
+          "fma": 24576
+        }
+      },
+      "represented_fractions": {
+        "fma": 5.960464477539063e-08
+      },
+      "stage_match": true,
+      "full_work_represented": false
+    },
+    {
+      "surface": "fig25",
+      "key": "qkv_bsmm_b32--BERT_8K",
+      "case": {
+        "name": "BERT_8K",
+        "n": 8192,
+        "d": 1024,
+        "batch": 32
+      },
+      "operator": {
+        "name": "qkv_bsmm_b32",
+        "family": "qkv_bsmm",
+        "block_size": 32,
+        "stages": 5
+      },
+      "actual": {
+        "stage_count": 5,
+        "fu": {
+          "fma": 257698037760
+        },
+        "execution_template_add_estimate": 128849018880
+      },
+      "proxy": {
+        "stage_count": 5,
+        "fu": {
+          "add": 15360,
+          "fma": 30720
+        }
+      },
+      "represented_fractions": {
+        "fma": 1.1920928955078125e-07
+      },
+      "stage_match": true,
+      "full_work_represented": false
+    },
+    {
+      "surface": "fig25",
+      "key": "qkv_bsmm_b64--BERT_8K",
+      "case": {
+        "name": "BERT_8K",
+        "n": 8192,
+        "d": 1024,
+        "batch": 32
+      },
+      "operator": {
+        "name": "qkv_bsmm_b64",
+        "family": "qkv_bsmm",
+        "block_size": 64,
+        "stages": 6
+      },
+      "actual": {
+        "stage_count": 6,
+        "fu": {
+          "fma": 154618822656
+        },
+        "execution_template_add_estimate": 77309411328
+      },
+      "proxy": {
+        "stage_count": 6,
+        "fu": {
+          "add": 18432,
+          "fma": 36864
+        }
+      },
+      "represented_fractions": {
+        "fma": 2.384185791015625e-07
+      },
+      "stage_match": true,
+      "full_work_represented": false
+    },
+    {
+      "surface": "fig25",
+      "key": "swa_w128_q32--BERT_8K",
+      "case": {
+        "name": "BERT_8K",
+        "n": 8192,
+        "d": 1024,
+        "batch": 32
+      },
+      "operator": {
+        "name": "swa_w128_q32",
+        "family": "swa",
+        "window": 128,
+        "query_tile": 32,
+        "fma_repeats": 1
+      },
+      "actual": {
+        "stage_count": 4,
+        "fu": {
+          "fma": 68719476736,
+          "fmax": 33554432,
+          "fexp": 33554432,
+          "add": 33554432,
+          "fdiv": 268435456
+        },
+        "query_tile": 32
+      },
+      "proxy": {
+        "stage_count": 4,
+        "fu": {
+          "add": 512,
+          "fdiv": 512,
+          "fexp": 512,
+          "fma": 32768,
+          "fmax": 512
+        }
+      },
+      "represented_fractions": {
+        "fma": 4.76837158203125e-07,
+        "fmax": 1.52587890625e-05,
+        "fexp": 1.52587890625e-05,
+        "add": 1.52587890625e-05,
+        "fdiv": 1.9073486328125e-06
+      },
+      "stage_match": true,
+      "full_work_represented": false
+    },
+    {
+      "surface": "fig25",
+      "key": "swa_w256_q64--BERT_8K",
+      "case": {
+        "name": "BERT_8K",
+        "n": 8192,
+        "d": 1024,
+        "batch": 32
+      },
+      "operator": {
+        "name": "swa_w256_q64",
+        "family": "swa",
+        "window": 256,
+        "query_tile": 64,
+        "fma_repeats": 2
+      },
+      "actual": {
+        "stage_count": 4,
+        "fu": {
+          "fma": 137438953472,
+          "fmax": 67108864,
+          "fexp": 67108864,
+          "add": 67108864,
+          "fdiv": 268435456
+        },
+        "query_tile": 64
+      },
+      "proxy": {
+        "stage_count": 4,
+        "fu": {
+          "add": 512,
+          "fdiv": 512,
+          "fexp": 512,
+          "fma": 131072,
+          "fmax": 512
+        }
+      },
+      "represented_fractions": {
+        "fma": 9.5367431640625e-07,
+        "fmax": 7.62939453125e-06,
+        "fexp": 7.62939453125e-06,
+        "add": 7.62939453125e-06,
+        "fdiv": 1.9073486328125e-06
+      },
+      "stage_match": true,
+      "full_work_represented": false
+    }
+  ],
+  "source_next_steps": {
+    "fft_cmp": "generalize H83 variable-depth compiler to every N/D/batch case",
+    "qkv_bsmm": "generalize H92 five/variable-stage projection paths to B16/B32/B64",
+    "swa": "generalize H94 grouped Attention to fixed W/Q windowed work"
+  },
+  "summary": {
+    "comparison_count": 66,
+    "full_work_count": 0,
+    "stage_match_count": 55,
+    "minimum_represented_fraction": 3.725290298461914e-09,
+    "maximum_represented_fraction": 6.103515625e-05,
+    "by_surface": {
+      "fig24": {
+        "comparison_count": 42,
+        "full_work_count": 0,
+        "stage_match_count": 35
+      },
+      "fig25": {
+        "comparison_count": 24,
+        "full_work_count": 0,
+        "stage_match_count": 20
+      }
+    }
+  },
+  "integrity_checks": {
+    "frozen_files": true,
+    "parents": true,
+    "counts": true,
+    "mismatch_proven": true,
+    "fractions": true,
+    "targets_consumed": false
+  },
+  "paper_performance_targets_consumed": false
+}

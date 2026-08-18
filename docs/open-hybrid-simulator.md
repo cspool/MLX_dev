@@ -165,3 +165,8 @@ direct reuse.
 H98 implements those paths and H99 rejects their target transfer at 0/12 in
 [`fig19-source-transfer.md`](fig19-source-transfer.md). No residual correction
 is admitted.
+
+Figure 24/25 proxy identity is quantified in
+[`fig24-25-work-identity.md`](fig24-25-work-identity.md): all 66 proxies cover
+less than `6.11e-5` of at least one required FU workload despite many matching
+stage counts.

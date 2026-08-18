@@ -296,3 +296,6 @@ Chronological, append-only record of reproduction decisions and evidence.
 | 290 | 2026-08-18 | protocol | Pre-registered H99 after H98 freeze: multiply components by 24 layers, compare eight components plus four totals at 10%, permit no timing adjustment, and stop on failure. |
 | 291 | 2026-08-18 | inner-loop | H99 run104 rejects source-integrated Figure 19 at 0/12, 724.4% MAPE, and 858.4% max. The source path is complete but much slower than the raster; no residual variant follows. |
 | 292 | 2026-08-18 | outer-loop | Close Figure 19 timing adjustment. Next strengthen Figure 24/25 workload identity and exact-shape execution rather than revisit Figure 19 boundaries. |
+| 293 | 2026-08-18 | protocol | Pre-registered H100: paper batch 32, full FFT-CMP/QKV/SWA per-FU formulas, separate Figure 24/25 case sets, hash-bound H71/H73 compile work, and no heatmap/ratio targets. |
+| 294 | 2026-08-18 | inner-loop | H100 run105 is supported: 0/66 proxies represent full work; fractions are `3.73e-9`-`6.10e-5`; 55 stage counts match but do not rescue identity. |
+| 295 | 2026-08-18 | outer-loop | Replace proxy trips with exact batch-32 shape compilers: generalize H83 FFT, H92 B16/B32/B64 QKV, and H94 W128/Q32/W256/Q64 SWA, then validate folding before targets. |
