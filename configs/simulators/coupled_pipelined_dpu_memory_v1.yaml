@@ -1,0 +1,120 @@
+name: coupled-pipelined-dpu-memory-v1
+experiment_id: H113
+run_id: run118
+classification: target_free_live_compute_memory_coupling_contract
+validation_eligible: false
+
+frozen_inputs:
+  h109:
+    path: artifacts/results/pipelined-block-contexts-run114.json
+    bytes: 8866
+    sha256: c6b7148950333490f8f90bee76e7558256aa0d1a85d2d3810fec6ab6c96bc30b
+    required_status: supported
+    required_integrity: true
+  h106:
+    path: artifacts/results/historical-dpu-memory-run111.json
+    bytes: 8808
+    sha256: 5c799e785f214a247b85be256e42d3e8f34e52e6f9c81a2c3d4f445aa3dd68a1
+    required_status: supported
+    required_integrity: true
+  h107:
+    path: artifacts/results/full-mesh-memory-residency-run112.json
+    bytes: 57444
+    sha256: ca917f5a1cf047d5d08cdba39a454955fb7d7d1aae33bef799058bcf38174a59
+    required_status: supported
+    required_integrity: true
+  h112:
+    path: artifacts/results/fig25-corrected-bandwidth-matrix-run117.json
+    bytes: 107466
+    sha256: f880c48fb4c76e710e43344566712e25595216b29b08f630cdf4652c79fb1352
+    required_status: rejected
+    required_integrity: true
+  memory_sources:
+    path: artifacts/source-snapshots/h106-dpu-memory-sources-20260818.json
+    bytes: 5485
+    sha256: 942600cd2e14f21e0b302e0e72e67281a24e6fee13cf5c103e6ca3c1ad6e72a3
+
+hardware:
+  frequency_hz: 1000000000
+  dma_bytes_per_cycle: 64
+  dma_setup_cycles: 0
+  spm_bytes: 8388608
+  buffer_halves: 2
+  logical_tile_stride: 4194304
+  spm:
+    bank_width_bytes: 32
+    banks: 32
+    request_buffer_entries: 4
+    issue_width: 32
+    bank_provision: 1
+    bank_fifo_entries: 1
+
+execution:
+  pe_dependency_model: dpu_pipelined
+  memory_backend: dpu_memory
+  contexts_full: 4
+  contexts_limited: 2
+  operand_contexts_per_pe: 64
+  fma_latency: 4
+  fma_initiation_interval: 1
+  deterministic_replays: 2
+  build_modes: [debug, optimized, asan, ubsan]
+  required_scenarios: 6
+  required_executions: 36
+  paper_performance_targets_consumed: false
+
+scenarios:
+  single_tile_ctx4:
+    tiles: 1
+    blocks_per_tile: 1
+    trip_count: 8
+    contexts: 4
+    mode: non_stop
+  single_tile_ctx2:
+    tiles: 1
+    blocks_per_tile: 1
+    trip_count: 8
+    contexts: 2
+    mode: non_stop
+  four_tile_non_stop_ctx4:
+    tiles: 4
+    blocks_per_tile: 1
+    trip_count: 4
+    contexts: 4
+    mode: non_stop
+  four_tile_baseline_ctx4:
+    tiles: 4
+    blocks_per_tile: 1
+    trip_count: 4
+    contexts: 4
+    mode: baseline
+  same_bank_ctx4:
+    tiles: 1
+    blocks_per_tile: 2
+    trip_count: 4
+    contexts: 4
+    mode: non_stop
+  split_bank_ctx4:
+    tiles: 1
+    blocks_per_tile: 2
+    trip_count: 4
+    contexts: 4
+    mode: non_stop
+
+regressions:
+  h106_manifest: artifacts/environment/h106/historical-dpu-memory-run-manifest.json
+  h109_manifest: artifacts/environment/h109/pipelined-block-contexts-run-manifest.json
+
+source_layout:
+  scenario_core: src/mlxsim/coupled_pipelined_dpu_memory.py
+  compiler: scripts/compile_coupled_pipelined_dpu_memory.py
+  runner: scripts/run_coupled_pipelined_dpu_memory.py
+  auditor: scripts/audit_coupled_pipelined_dpu_memory.py
+  driver: simulator_ext/dsagen/historical_dpu_memory_driver.cc
+  overlay_header: third_party/dsa-framework/dsa-gem5/src/cpu/minor/ssim/mlx_overlay.hh
+  overlay_source: third_party/dsa-framework/dsa-gem5/src/cpu/minor/ssim/mlx_overlay.cc
+  adapter_header: simulator_ext/dsagen/historical_dpu_memory.hh
+  adapter_source: simulator_ext/dsagen/historical_dpu_memory.cc
+
+output_root: artifacts/environment/h113
+result_path: artifacts/results/coupled-pipelined-dpu-memory-run118.json
