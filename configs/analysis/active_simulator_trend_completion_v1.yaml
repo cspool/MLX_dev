@@ -1,0 +1,50 @@
+name: active-simulator-trend-completion-v1
+experiment_id: H137
+run_id: run142
+classification: dual_criterion_simulator_scope_completion_certificate
+validation_eligible: false
+
+frozen_evidence:
+  fig18: {path: artifacts/results/fig18-workload-identity-run136.json, bytes: 9634, sha256: ae0b793ab3815968d085d559292b3169c2d8d810084e8a531f91dab6ec72fffa}
+  fig19: {path: artifacts/results/fig19-coupled-transfer-run135.json, bytes: 8151, sha256: 0310d74b703171b9ecbf2b5cf090547a7f308528b46a004857dfb4e959da30d5}
+  fig20: {path: artifacts/results/fig20-attention-completion-run141.json, bytes: 8165, sha256: 2fd983a8a1424ecfbcf8487d7852517b9f22a3e0957e476c0a6fe981d1c7f01f}
+  fig21: {path: artifacts/results/fig21-evidence-closure-run101.json, bytes: 7467, sha256: 9aa60e3ba0114ccecee48ee8eec5724b04ded8d25443f883e7d60c433ad46c8d}
+  fig22: {path: artifacts/results/fig22-multiport-transfer-run126.json, bytes: 34616, sha256: 0977ccc97958cd49532e758a85f14e4d089a95f7237ab0ff0c1bafd173dfb601}
+  fig23: {path: artifacts/results/fig23-workload-identity-run127.json, bytes: 11510, sha256: d9535bceff75507c9b94b9528e2549a412946f0da318588d251c5235666a673c}
+  fig24: {path: artifacts/results/fig24-qkv-coupled-transfer-run132.json, bytes: 13982, sha256: a3baecb0eaddc736949bd6552d64d780596052c17935c2ed0e7a8ad4377ebea0}
+  fig25: {path: artifacts/results/fig25-coupled-transfer-run120.json, bytes: 25840, sha256: 309a756f473bba0e81f33c79f5bd04f753ff9b1978d7a9f31061d5142e1273c7}
+
+scope:
+  figures: [18, 19, 20, 21, 22, 23, 24, 25]
+  completion_unit: full_figure
+  required_figures: 8
+  expected_primary_reproduced: [20]
+  expected_strict_reproduced: []
+  trend_audit_pending: [19, 22, 25]
+
+trend_policy:
+  minimum_clear_speedup: 1.20
+  ordered_curve_minimum_spearman: 0.70
+  ordered_curve_endpoint_direction_required: true
+  every_required_series_must_pass: true
+  complete_execution_required: true
+  workload_identity_required: true
+  strict_10pct_retained_as_diagnostic: true
+
+primary_status_taxonomy:
+  - trend_reproduced
+  - trend_audit_pending
+  - execution_incomplete
+  - identity_or_provenance_incomplete
+
+strict_status_taxonomy:
+  - strict_reproduced
+  - strict_numerical_rejection
+  - execution_incomplete
+  - identity_or_provenance_incomplete
+
+source_layout:
+  auditor: scripts/audit_active_simulator_trend_completion.py
+  test: tests/test_active_simulator_trend_completion.py
+
+result_path: artifacts/results/active-simulator-trend-completion-run142.json
