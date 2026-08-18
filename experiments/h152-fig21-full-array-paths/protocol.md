@@ -42,3 +42,12 @@ every path.
 
 The immutable result will be
 `artifacts/results/fig21-full-array-paths-run157.json`.
+
+## User-directed scope stop before result generation
+
+The user changed primary completion from full-figure coverage to core
+architectural gains while H152 was running. Stop the exhaustive batch after 170
+of 360 executions; do not create run157 or claim H152 support. Preserve partial
+files only as candidate evidence. H153 separately freezes three representative
+core workloads and two exact same-work scales, including both replays and
+adapter records, before evaluating the 4-lane-to-16-PE gain.
