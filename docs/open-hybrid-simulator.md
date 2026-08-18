@@ -429,6 +429,11 @@ H148 composes the complete denominator in
 opposite-direction result before target access: the old H95 MLX timing is about
 675x slower than the compute-only Xavier service proxy.
 
+H149 freezes that failure in
+[fig21-xavier-trend-transfer.md](fig21-xavier-trend-transfer.md): all five
+speedup directions fail, so the repair target is H92/H95's MLX mapping rather
+than the already frozen Xavier traces.
+
 The active objective is now limited to simulator-dependent hardware performance
 in Figures 18–25, as recorded in
 [simulator-experiment-scope.md](simulator-experiment-scope.md). Accuracy,

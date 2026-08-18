@@ -710,9 +710,9 @@ experiments:
       timestamp: "2026-08-17"
 
 outer_loop:
-  cycle: 106
-  last_direction: "Pre-register H149 to compare H148's frozen five end-to-end ratios with Figure 21 under both strict and qualitative gates, then redirect any direction failure to the H95 MLX mapping rather than altering Xavier traces."
-  last_reflection: "H148 completes target-free Xavier/MLX composition but all five ratios are only 0.001475x-0.001481x, meaning the current H95 MLX path is roughly 675x slower than the compute-only Xavier proxy; the direction is frozen before target access."
+  cycle: 107
+  last_direction: "Pre-register H150 target-free to audit H92/H95 physical PE occupancy and 24+8-layer serialization against the source-integrated H141 full-mesh/full-block mapping, then specify the exact multi-layer event graph required for a corrected MLX path."
+  last_reflection: "H149 rejects Figure 21 speedup direction at 0/5 qualitative and 0/5 strict with 99.92% MAPE. H146/H147 remain frozen; H92/H95's under-parallelized, layer-serialized MLX mapping is the repair target."
 
 recent_milestones_after_h46:
   architecture_contract: "H52 supersedes the GPU-SM analogy with the paper's specialized spatial tagged-block PE; GPGPU-Sim is baseline-only."
@@ -788,6 +788,7 @@ recent_milestones_after_h46:
   fig21_xavier_hmma_traceg: "H146 supports source-derived compute-only HMMA traceg timing: four 64-CTA replays yield 128/240/464/912 cycles, 16/32 predicts 64/128 with zero error, and five H91 32-layer dense projection estimates are released with a synthetic-not-captured label."
   fig21_xavier_scalar_traceg: "H147 supports source-derived compute-only SP/SFU/ALU service timing: 12 replays and 6/6 zero-error holdouts conserve every H91 mapped operation and release five dense-attention plus five elementwise estimates."
   fig21_xavier_composition: "H148 supports complete target-free composition: five Xavier totals are 0.116-2.034s, but frozen H95 MLX totals are 78.825-1373.701s, yielding only 0.001475x-0.001481x Xavier/MLX ratios and exposing an MLX mapping-scale failure before target access."
+  fig21_xavier_trend_transfer: "H149 rejects Figure 21 speedup direction with integrity: 0/5 direction, clear-improvement, trend and strict passes, 99.92% MAPE, while H96's other 15 rows remain unchanged and active completion stays 3/8."
 
 completion_snapshot_run042:
   certificate_run: run_042

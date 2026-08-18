@@ -595,3 +595,9 @@ Run153 composes all Xavier families before reading Figure 21 targets. The GPU
 proxy needs 0.116-2.034 seconds, while H95 claims 78.8-1373.7 seconds for MLX;
 all ratios collapse near 0.00148x. This localizes the next simulator bug to the
 old MLX full-shape mapping/parallelism scale, not to a missing Xavier component.
+
+Run154 confirms the target-facing consequence: all five directions and all five
+strict comparisons fail, with 99.92% MAPE. Ratio inversion is forbidden because
+both parents already define Xavier time divided by MLX time. H92/H95's limited
+PE occupancy and serialized 24+8-layer sum must be replaced by a real
+full-mesh, multi-layer event schedule.
