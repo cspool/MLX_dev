@@ -282,3 +282,6 @@ Chronological, append-only record of reproduction decisions and evidence.
 | 276 | 2026-08-18 | implementation | Initial H94 configs expose one missing shared `fmax` FU entry before any cycles. Added the same reduce latency/II as H48/H82, recompiled, and completed 20 configs/40 runs. |
 | 277 | 2026-08-18 | inner-loop | H94 run099 is supported: all ten holdouts and every FU/SRAM/replay gate pass. Full dense-Attention cycles span 33.88M-8.595B. |
 | 278 | 2026-08-18 | outer-loop | MLX-side Figure 21 timing is component-complete. Compose 24 structured plus 8 dense layers target-free, compute component/GEMM shares, and keep speedup unavailable until a dense Xavier denominator exists. |
+| 279 | 2026-08-18 | protocol | Pre-registered H95 target-free composition: 24 structured and 8 dense layers, H92/H93/H94 cycles, dense-projection-only GEMM share, independent H6 memory formula, and null Xavier/speedup fields. |
+| 280 | 2026-08-18 | inner-loop | H95 run100 is supported: all five component/layer/memory rows pass. MLX cycles span 78.82B-1.374T and GEMM share 51.13%-46.91%; speedup remains unavailable. |
+| 281 | 2026-08-18 | outer-loop | Freeze H95, then expose Figure 21 targets only to compare GEMM share and memory. Mark all speedup cells execution-incomplete because dense Xavier Tensor execution is absent. |

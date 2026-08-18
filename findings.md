@@ -87,6 +87,7 @@ H37 closed the first full-paper ledger with a machine certificate rather than a 
 - H92 supports all 45 timed non-Attention Figure 21 paths. Shape-specific gcd units preserve constant weights plus N-scaled activations, four-port SRAM requests, structured five-stage versus dense one-stage schedules, and inferred elementwise FU mixes. All 360 runs replay and all 90 holdouts have zero error. Full structured-projection cycles rise 1.58B→25.19B and dense cycles 5.04B→80.56B across N=128→2048; Attention and 24+8 folding remain excluded.
 - H93 supports all five batch-8 structured-Attention timing models. Forty runs replay through the H83 SIMD32/NoC/four-port-SRAM graph; 10/10 holdouts pass with `8.66e-7` MAPE. Full cycles rise 11.47M→2.223B from N=128→2048. Dense Attention remains the sole missing component before 24+8 composition.
 - H94 supports five dense-Attention models. Q/K/V loads, QK/FMAX/FEXP/ADD/SV/FDIV, output stores, and four-port SRAM responses all replay; 10/10 holdouts have zero error. Full cycles rise 33.88M→8.595B. Every MLX-side Figure 21 component is now timed, while the Xavier dense-Tensor denominator remains absent.
+- H95 supports the target-free 24-structured/8-dense MLX composition. Component and layer arithmetic plus first-principles memory pass at all five N values. Total cycles grow 78.82B→1.374T and inferred GEMM share falls 51.13%→46.91%. These are uncalibrated source-overlay times; Xavier dense-Tensor cycles and speedups remain null.
 
 ## Patterns and Insights
 
@@ -264,3 +265,6 @@ Run098 times all five structured-Attention shapes with 10/10 heldouts passing;
 dense Attention is explicitly left for the next gate.
 
 Run099 closes dense Attention at 10/10 heldouts and exact FU/SRAM work.
+
+Run100 composes every MLX-side path across 32 layers and retains a null Xavier
+denominator rather than reviving H6's rejected roofline transfer.

@@ -18,3 +18,6 @@ component needed for 24 structured plus 8 dense layer composition.
 
 The immutable result is
 `artifacts/results/fig21-dense-attention-run099.json`.
+
+The complete 24+8 MLX composition is reported in
+[`fig21-mlx-composition.md`](fig21-mlx-composition.md).

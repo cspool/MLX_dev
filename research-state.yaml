@@ -687,9 +687,9 @@ experiments:
       timestamp: "2026-08-17"
 
 outer_loop:
-  cycle: 54
-  last_direction: "Compose H92/H93/H94 into 24 structured plus 8 dense MLX layers, calculate target-free component and GEMM shares, and preserve Xavier speedup as unavailable until a dense Tensor path is source-executed."
-  last_reflection: "H94 closes the final MLX-side component at 10/10 holdouts. Every structured/dense projection, Attention, and inferred elementwise path now has exact source timing. Figure 21 composition is unblocked; cross-device speedup is not."
+  cycle: 55
+  last_direction: "Expose Figure 21 targets only for H95 GEMM-share and memory audits; keep speedup execution-incomplete without a dense Xavier Tensor path, then update the completion ledger."
+  last_reflection: "H95 closes the complete MLX 24+8 composition and memory arithmetic. Its source-overlay cycles are target-free but very large, with 47%-51% GEMM share. Xavier dense-Tensor timing remains the only missing cross-device denominator."
 
 recent_milestones_after_h46:
   architecture_contract: "H52 supersedes the GPU-SM analogy with the paper's specialized spatial tagged-block PE; GPGPU-Sim is baseline-only."
@@ -712,6 +712,7 @@ recent_milestones_after_h46:
   fig21_timed_paths: "H92 supports 45 non-Attention paths, 360 deterministic runs, and 90/90 held-out cycle predictions."
   fig21_attention_timing: "H93 supports five structured-Attention models with 10/10 heldouts and exact full work/bytes."
   fig21_dense_attention: "H94 supports five dense-Attention models with 10/10 heldouts and exact QKV/output SRAM traffic."
+  fig21_mlx_composition: "H95 supports complete 24+8 MLX timing and memory with null Xavier speedup."
 
 completion_snapshot_run042:
   certificate_run: run_042
