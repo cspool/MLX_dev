@@ -24,5 +24,9 @@ These cycles are target-free and source-executed, but the component-level
 serialization is an inferred schedule. Five matched Attention timing models
 and the 24-structured/8-dense fold remain required before Figure 21 comparison.
 
+Structured Attention is now timed in
+[`fig21-attention-timing.md`](fig21-attention-timing.md). Dense Attention remains
+the last missing component before layer composition.
+
 The immutable result is
 `artifacts/results/fig21-timed-paths-run097.json`.

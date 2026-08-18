@@ -687,9 +687,9 @@ experiments:
       timestamp: "2026-08-17"
 
 outer_loop:
-  cycle: 52
-  last_direction: "Execute the five H91 batch-8 Attention graphs at registered u scales, validate held-out folding, then combine their full cycles with H92 paths and fold 24 structured plus 8 dense layers."
-  last_reflection: "H92 closes every non-Attention timing path with 90/90 heldouts and exact work/SRAM replay. Full path cycles are immutable. Figure 21 now lacks only matched batch-8 Attention timing and final layer composition."
+  cycle: 53
+  last_direction: "Implement and validate five batch-8 dense-Attention QK/softmax/SV paths with real SRAM, then compose H92/H93 into 24 structured plus 8 dense layers."
+  last_reflection: "H93 closes structured Attention at 10/10 heldouts. H92 plus H93 now cover every structured-layer component and all dense projections/elementwise work. Dense Attention for eight layers is the sole remaining timing gap."
 
 recent_milestones_after_h46:
   architecture_contract: "H52 supersedes the GPU-SM analogy with the paper's specialized spatial tagged-block PE; GPGPU-Sim is baseline-only."
@@ -710,6 +710,7 @@ recent_milestones_after_h46:
   fig21_identity: "H90 supports exact analytical work but proves no current source-integrated batch-8 five-shape 24+8-layer execution exists."
   fig21_layer_contract: "H91 supports five exact batch-8 layer contracts and structured-Attention graphs; remaining timed paths and 24+8 folding are incomplete."
   fig21_timed_paths: "H92 supports 45 non-Attention paths, 360 deterministic runs, and 90/90 held-out cycle predictions."
+  fig21_attention_timing: "H93 supports five structured-Attention models with 10/10 heldouts and exact full work/bytes."
 
 completion_snapshot_run042:
   certificate_run: run_042

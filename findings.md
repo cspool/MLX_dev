@@ -85,6 +85,7 @@ H37 closed the first full-paper ledger with a machine certificate rather than a 
 - H90 supports a target-free Figure 21 identity diagnosis. H6's analytical batch-8 work exactly matches fresh QKV/Attention/output/FFN profiles at all five sequence lengths, so its failure is not work arithmetic. Source-integrated coverage is still unmatched: H48 is trip=2 phase coverage, H77/H83 are batch=1 at only N=256/8192, output projection is absent, and no run executes dense/elementwise paths or the 24+8 layer mix.
 - H91 supports five batch-8 one-layer contracts. Generalized H83 u=1 graphs scale exactly to every structured-Attention FU and byte count at N=128-2048 with <=32 instructions/PE. Output projection and dense/structured component signatures are present, and inferred elementwise FU counts are positive. Keeping compressed Q/K/V on NoC removes 25.17-402.65 MB of isolated-component round trips. Only Attention is timed/executable so far; full layer latency remains unclaimed.
 - H92 supports all 45 timed non-Attention Figure 21 paths. Shape-specific gcd units preserve constant weights plus N-scaled activations, four-port SRAM requests, structured five-stage versus dense one-stage schedules, and inferred elementwise FU mixes. All 360 runs replay and all 90 holdouts have zero error. Full structured-projection cycles rise 1.58B→25.19B and dense cycles 5.04B→80.56B across N=128→2048; Attention and 24+8 folding remain excluded.
+- H93 supports all five batch-8 structured-Attention timing models. Forty runs replay through the H83 SIMD32/NoC/four-port-SRAM graph; 10/10 holdouts pass with `8.66e-7` MAPE. Full cycles rise 11.47M→2.223B from N=128→2048. Dense Attention remains the sole missing component before 24+8 composition.
 
 ## Patterns and Insights
 
@@ -257,3 +258,6 @@ folding 32 layers.
 
 Run097 times every non-Attention path. Ninety held-out predictions and all
 work/SRAM/replay gates pass exactly; no Figure 21 target is consumed.
+
+Run098 times all five structured-Attention shapes with 10/10 heldouts passing;
+dense Attention is explicitly left for the next gate.
