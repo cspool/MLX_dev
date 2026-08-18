@@ -1,0 +1,42 @@
+name: fig22-multiport-transfer-v1
+experiment_id: H121
+run_id: run126
+classification: target_exposed_frozen_fig22_multiport_transfer
+validation_eligible: true
+
+frozen_inputs:
+  h120:
+    path: artifacts/results/fig22-coupled-multiport-run125.json
+    bytes: 26566
+    sha256: fc294f7b7707b4bb7a8407bccbb5b68cdf9036e9bbde2095df02c330e0ce5454
+    required_status: supported
+    required_integrity: true
+  h60:
+    path: artifacts/results/fig22-resource-targets-run065.json
+    bytes: 28112
+    sha256: c404f2d1a20b50dcc39937a982565d3ef542db54bebb85045a32d4527bcd1cf6
+    required_verdict: supported
+    required_summary_pass: true
+
+mapping:
+  bsmm: bsmm
+  fft: chunk_fft
+  sizes: [64, 128, 256, 512, 1024, 2048, 4096, 8192]
+  resources: [compute, load, store, xfer]
+  prediction_field: primary_end_to_end_utilization
+  required_points: 64
+
+acceptance:
+  relative_error_limit: 0.10
+  required_passing_points: 64
+  single_or_multiport_selection: forbidden
+  diagnostic_denominator: forbidden
+  launch_or_counter_correction: forbidden
+  resource_operator_size_factors: forbidden
+  residual_or_oracle: forbidden
+
+source_layout:
+  auditor: scripts/audit_fig22_multiport_transfer.py
+  test: tests/test_fig22_multiport_transfer.py
+
+result_path: artifacts/results/fig22-multiport-transfer-run126.json
