@@ -121,6 +121,7 @@ H37 closed the first full-paper ledger with a machine certificate rather than a 
 - H130 rejects the frozen current-coupled Figure 19 join at 0/12, 180.27% MAPE and 232.69% max. Attention/FFN/total MAPE are 171.55%/187.11%/182.15%; predicted totals are 5.28-39.81 ms versus 2.23-15.64 ms. This is much better than H99's 724% but uniformly high. Target components already sum to total and H97 fixes 24 layers, so overlap/layer/frequency residual repairs are disallowed. Active completion remains 0/8.
 - H131 proves Figure 18 is underidentified before execution. The figure reports one block, N=1024, D=512, s=0.75/0.5 and FP16, but 12 workload fields and six measurement-provenance fields are all unreported. The paper distinguishes reduced SIMD8/256G simulator and full SIMD32/1T tapeout paths without assigning Figure 18 series to either. Combined with H7's affinity inconsistency, no residual-selected simulator path is admissible; active completion remains 0/8.
 - H132 supports the latest active-scope evidence certificate, not reproduction. Across Figures 18-25, zero full figures reproduce: two are identity/provenance incomplete (18,23), three numerical rejections (19,22,25), and three execution-incomplete (20,21,24). Partial passes and supported mechanism runs are explicitly non-promotable.
+- H133 supports regime-aware Xavier FFT-CMP folding. Four new stable-source detailed runs have zero checksum error; c16K/c32K predicts c64K within 2.03% for N256 and 1.25% for N8192. Eligible full FFT components are 4.362M/227.398M cycles. No Figure 20 target or MLX cycle is consumed; QK/SV/total remain open.
 
 ## Patterns and Insights
 
@@ -507,3 +508,7 @@ internally inconsistent bars.
 
 Run137 freezes the current eight-figure ledger at 0/8 and directs work toward
 execution-incomplete evidence rather than further residual variants.
+
+Run138 uses independent regime evidence to reopen only Xavier FFT. Both larger
+holdouts pass, converting two formerly rejected component folds into eligible
+target-free full estimates.

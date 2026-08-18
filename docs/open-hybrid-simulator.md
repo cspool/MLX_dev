@@ -350,6 +350,10 @@ H132 packages the current strict scope in
 [active-simulator-completion.md](active-simulator-completion.md): 0/8 complete,
 with two identity gaps, three numerical rejections and three execution gaps.
 
+H133 begins closing Figure 20's Xavier Attention gap in
+[xavier-fft-regime.md](xavier-fft-regime.md). Two stable FFT 64K holdouts pass
+within 2.03%, releasing exact full FFT proxy components without target access.
+
 The active objective is now limited to simulator-dependent hardware performance
 in Figures 18–25, as recorded in
 [simulator-experiment-scope.md](simulator-experiment-scope.md). Accuracy,

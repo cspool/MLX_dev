@@ -26,3 +26,8 @@ Immutable results:
 
 - `artifacts/results/xavier-qualified-attention-run091.json`;
 - `artifacts/results/xavier-final-attention-run092.json`.
+
+H133 later reopens only the FFT component using independent post-cache regime
+evidence rather than Figure 20 residuals; see
+[xavier-fft-regime.md](xavier-fft-regime.md). Both larger 64K holdouts pass and
+yield eligible full FFT estimates, while QK/SV/total remain separate.
