@@ -1,0 +1,341 @@
+{
+  "schema_version": 1,
+  "experiment_id": "H158",
+  "run_id": "run163",
+  "classification": "target_free_same_input_scaled_dot_product_attention",
+  "validation_eligible": true,
+  "generated_at": "2026-08-18T18:30:50.043231+00:00",
+  "project_commit": "9774e40bc901a4239f678827ad91f302071e546a",
+  "hypothesis_status": "supported",
+  "audit_integrity": true,
+  "paper_performance_targets_consumed": false,
+  "paper_reproduction_claim": "attention_functional_plus_existing_composition_gain_only",
+  "functional_claim": "same_input_qk_stable_softmax_sv_on_timed_spatial_schedule",
+  "frozen_inputs": {
+    "fft_cmp_functional": {
+      "path": "artifacts/results/fft-cmp-functional-run162.json",
+      "bytes": 7674,
+      "sha256": "4a6b77bae2a5d33f0592cd96ece60686ffe20d9fb80e9eb42339ce07fc978e1a",
+      "checks": {
+        "is_file": true,
+        "bytes": true,
+        "sha256": true
+      },
+      "pass": true
+    },
+    "attention_performance": {
+      "path": "artifacts/results/xavier-attention-composition-run140.json",
+      "bytes": 4268,
+      "sha256": "95f730d982b89dccbf311ddc164c6557f235f078b58b40f1d5d96342e2caac63",
+      "checks": {
+        "is_file": true,
+        "bytes": true,
+        "sha256": true
+      },
+      "pass": true
+    }
+  },
+  "generated_inputs": {
+    "compile_manifest": {
+      "path": "artifacts/environment/h158/attention-functional-compile-manifest.json",
+      "bytes": 1951,
+      "sha256": "26b54f78c6982dcebf91a35ee38fbc4c592d181cf70a7da66a6974c71aa43da0",
+      "checks": {
+        "is_file": true
+      },
+      "pass": true
+    },
+    "run_manifest": {
+      "path": "artifacts/environment/h158/attention-functional-run-manifest.json",
+      "bytes": 72314,
+      "sha256": "f96f80b74f1d8148d709e0d1412c12e8280e5f734a27d42d28e53222f96f10d4",
+      "checks": {
+        "is_file": true
+      },
+      "pass": true
+    }
+  },
+  "parent_checks": {
+    "fft_cmp_functional": true,
+    "attention_performance": true
+  },
+  "compile_checks": {
+    "experiment": true,
+    "target_free": true,
+    "outputs": true,
+    "deterministic": true,
+    "files": true
+  },
+  "contract_checks": {
+    "family": true,
+    "shape": true,
+    "q_parent": true,
+    "blocks": true,
+    "tags": true,
+    "pes": true,
+    "trips": true,
+    "memory_seeds": true,
+    "constant_seeds": true,
+    "mode_only_difference": true,
+    "xfer_wiring": true
+  },
+  "static_checks": {
+    "scalar_multiplies": true,
+    "scalar_adds": true,
+    "pipelines": true,
+    "compute_operations": true,
+    "functional_operations": true,
+    "memory_requests": true,
+    "memory_bytes": true,
+    "events": true,
+    "route_hops": true,
+    "skip_hops": true,
+    "unit_hops": true,
+    "manifest": true
+  },
+  "run_checks": {
+    "experiment": true,
+    "target_free": true,
+    "checks": true,
+    "modes": true,
+    "builds": true
+  },
+  "execution_checks": {
+    "debug": true,
+    "opt": true,
+    "sanitize": true
+  },
+  "numeric_checks": {
+    "enabled": true,
+    "outputs": true,
+    "operations": true,
+    "finite": true
+  },
+  "intermediate_checks": {
+    "scores": true,
+    "probabilities": true,
+    "probability_rows_sum_one": true
+  },
+  "transfer_route_checks": {
+    "events": true,
+    "route_hops": true,
+    "skip_hops": true,
+    "unit_hops": true,
+    "stores": true
+  },
+  "timing_checks": {
+    "cycles": true,
+    "instructions": true,
+    "pipelines": true,
+    "events": true,
+    "routes": true
+  },
+  "parent_semantic_checks": {
+    "h157_chain": true,
+    "h135_attention": true
+  },
+  "numpy_reference": {
+    "q": [
+      [
+        1.625,
+        -0.375
+      ],
+      [
+        -2.5625,
+        2.4375
+      ]
+    ],
+    "scores": [
+      [
+        0.8396893026590251,
+        1.6572815184059706
+      ],
+      [
+        -2.6295533425374735,
+        -2.2870484954002395
+      ]
+    ],
+    "probabilities": [
+      [
+        0.3062750045570944,
+        0.6937249954429057
+      ],
+      [
+        0.41520114835248445,
+        0.5847988516475157
+      ]
+    ],
+    "output": [
+      [
+        -0.08117498632871689,
+        1.9280374840501697
+      ],
+      [
+        0.24560344505745324,
+        1.5467959807663048
+      ]
+    ]
+  },
+  "actual_scores": [
+    [
+      0.8396893026590251,
+      1.6572815184059706
+    ],
+    [
+      -2.6295533425374735,
+      -2.2870484954002395
+    ]
+  ],
+  "actual_probabilities_by_destination": [
+    [
+      [
+        0.3062750045570944,
+        0.6937249954429057
+      ],
+      [
+        0.3062750045570944,
+        0.6937249954429057
+      ]
+    ],
+    [
+      [
+        0.41520114835248445,
+        0.5847988516475157
+      ],
+      [
+        0.41520114835248445,
+        0.5847988516475157
+      ]
+    ]
+  ],
+  "expected_outputs": [
+    -0.08117498632871689,
+    1.9280374840501697,
+    0.24560344505745324,
+    1.5467959807663048
+  ],
+  "actual_outputs": [
+    -0.08117498632871689,
+    1.9280374840501697,
+    0.24560344505745324,
+    1.5467959807663048
+  ],
+  "absolute_errors": [
+    0.0,
+    0.0,
+    0.0,
+    0.0
+  ],
+  "performance_context": {
+    "qualified_rows": 2,
+    "minimum_speedup": 3.152285882940425,
+    "maximum_speedup": 3.4539751182127842,
+    "all_clear_gain": true
+  },
+  "source_files": {
+    "config": {
+      "path": "configs/simulators/attention_functional_v1.yaml",
+      "bytes": 2383,
+      "sha256": "50751828f32695f1c2b16ad8905116db3dcb16a7e758a27682d864d6d57de278",
+      "checks": {
+        "is_file": true
+      },
+      "pass": true
+    },
+    "protocol": {
+      "path": "experiments/h158-attention-functional/protocol.md",
+      "bytes": 2546,
+      "sha256": "887d3e95deed90f3aef4cc805da3390facd539595e91852f5e5c69c6954afc2c",
+      "checks": {
+        "is_file": true
+      },
+      "pass": true
+    },
+    "compiler": {
+      "path": "scripts/compile_attention_functional.py",
+      "bytes": 13182,
+      "sha256": "8ddc809405cf007db63c2b962f8669796e9fcce255d87c8ce50ae9e39d267b6c",
+      "checks": {
+        "is_file": true
+      },
+      "pass": true
+    },
+    "runner": {
+      "path": "scripts/run_attention_functional.py",
+      "bytes": 3224,
+      "sha256": "98f7cc72898333edfd9c089542fb2610284cbb37e0b78cdc5db72d7f2c5e9925",
+      "checks": {
+        "is_file": true
+      },
+      "pass": true
+    },
+    "auditor": {
+      "path": "scripts/audit_attention_functional.py",
+      "bytes": 21733,
+      "sha256": "bb48c296bc28d99ae66def35b1a6f147ba05408748cf4c21ca044f9e42426c9a",
+      "checks": {
+        "is_file": true
+      },
+      "pass": true
+    },
+    "test": {
+      "path": "tests/test_attention_functional.py",
+      "bytes": 2812,
+      "sha256": "1c2320ac8132fd3158d2055730aaf603c384510dccc6303f28534ce9d75ac421",
+      "checks": {
+        "is_file": true
+      },
+      "pass": true
+    }
+  },
+  "target_free_check": true,
+  "acceptance_gates": [
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true
+  ],
+  "summary": {
+    "builds": 3,
+    "outputs": 4,
+    "functional_operations": 76,
+    "maximum_absolute_error": 0.0,
+    "cycles": 86,
+    "boundary_events": 12,
+    "route_hops": 26,
+    "skip_hops": 12,
+    "unit_hops": 14,
+    "enabled_disabled_timing_identical": true,
+    "attention_functional_complete": true,
+    "completed_operator_payloads": [
+      "bsmm",
+      "fft_cmp",
+      "attention"
+    ],
+    "operator_payload_coverage": 3,
+    "required_operator_payloads": 6,
+    "existing_attention_speedup_minimum": 3.152285882940425,
+    "existing_attention_speedup_maximum": 3.4539751182127842,
+    "acceptance_gates_passed": 10,
+    "acceptance_gates_total": 10
+  },
+  "integrity_checks": {
+    "frozen": true,
+    "parents": true,
+    "compile": true,
+    "contract": true,
+    "static": true,
+    "runs": true,
+    "numeric_evaluated": true,
+    "intermediates_evaluated": true,
+    "timing_evaluated": true,
+    "source": true,
+    "acceptance_evaluated": true
+  }
+}

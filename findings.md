@@ -648,3 +648,11 @@ and eight retained real/imag components match NumPy exactly. The 90-cycle
 schedule conserves 80 operations, 96 memory bytes and 40 hops, including the
 registered 24 skip hops. Its first zero-cycle duplicate-ID rejection is kept as
 a validator witness; only static names changed before the passing rerun.
+
+Run163 composes that payload into complete scaled dot-product Attention. Q is
+read from run162, not copied into a new free input. Four QK scores, stable
+softmax probabilities at all eight destination registers, and four SV outputs
+match NumPy exactly. Ten PEs complete 76 operations in 86 cycles while
+conserving 224 memory bytes and a 12-skip/14-unit route split. The associated
+performance context remains H135's two target-free 3.152x-3.454x compositions;
+SWA is intentionally not inferred from this dense/global test.

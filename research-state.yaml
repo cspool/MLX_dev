@@ -754,14 +754,14 @@ experiments:
       timestamp: "2026-08-17"
 
 outer_loop:
-  cycle: 116
-  last_direction: "Build H158 same-input scaled dot-product Attention by consuming frozen FFT-CMP-shaped Q/K/V values, and validate QK, stable softmax and SV stages independently before composing the final output."
-  last_reflection: "H157 completes the full FFT-CMP semantic path at 2/6 coverage with exact complex and compressed outputs. Dense/global Attention is the next operator; SWA remains separate to preserve an independent window-boundary test."
+  cycle: 117
+  last_direction: "Build H159 same-input causal sliding-window Attention with explicit first/middle/last row windows, variable fan-in and stable softmax, retaining independent boundary checks from dense Attention."
+  last_reflection: "H158 composes FFT-CMP Q into exact QK/softmax/SV at 3/6 coverage. SWA must remain independent because its causal mask and clipped edge windows are the missing functional mechanism."
 
 functional_completion:
   status: active
   priority: integrated_same_input_numeric_and_cycle_execution
-  current_hypothesis: H158
+  current_hypothesis: H159
   integrated_scalar_execution:
     experiment_id: H155
     run_id: run160
@@ -774,6 +774,7 @@ functional_completion:
   completed_operator_payloads:
     - bsmm
     - fft_cmp
+    - attention
   bsmm:
     experiment_id: H156
     run_id: run161
@@ -795,6 +796,18 @@ functional_completion:
     functional_operations: 80
     cycles: 90
     existing_same_work_speedup_range: [1.757396449704142, 2.6189793052927173]
+  attention:
+    experiment_id: H158
+    run_id: run163
+    path: artifacts/results/attention-functional-run163.json
+    status: supported
+    outputs: 4
+    score_values: 4
+    routed_probability_values: 8
+    maximum_absolute_error: 0.0
+    functional_operations: 76
+    cycles: 86
+    existing_speedup_range: [3.152285882940425, 3.4539751182127842]
   required_operator_payloads:
     - bsmm
     - fft_cmp
@@ -886,6 +899,7 @@ recent_milestones_after_h46:
   integrated_functional_payload: "H155 supports real completion-path FP64 shadow execution: 24 load/compute/xfer/store operations finish in 71 cycles with exact two-output golden agreement, timing invariance across enabled/disabled modes, three-build determinism and clean sanitizers; operator coverage remains 0/6."
   bsmm_functional_payload: "H156 supports a width-4/two-stage hierarchical BSMM over four PEs/two tags: 8/8 outputs exactly match NumPy, 32 multiplies/16 adds and 48 memory requests/384 bytes conserve, eight transfers take 12 hops, timing is invariant across modes/builds, and H153 supplies four qualified ~3.998x same-work performance rows."
   fft_cmp_functional_payload: "H157 supports complete L4,s0.5 FFT-CMP across five PEs/three tags: F0/F1 paired components and 4/4 compressed outputs exactly match NumPy, 80 operations/96 memory bytes conserve, 24 events traverse 24 skip plus 16 unit hops, timing is invariant, and eight H120 same-work FFT rows retain 1.757x-2.619x gains."
+  attention_functional_payload: "H158 supports complete 2x2 scaled dot-product Attention over ten PEs/three tags with Q read from H157: all QK scores, stable-softmax probabilities and 4/4 SV outputs exactly match NumPy, 76 operations/224 bytes and 26 hops conserve, timing is invariant, and H135 provides two target-free 3.152x-3.454x performance contexts."
 
 completion_snapshot_run042:
   certificate_run: run_042
