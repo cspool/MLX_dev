@@ -8,8 +8,10 @@ all 16 physical coordinates.
 - QKV B16/B32/B64 divides H101's per-stage trip count by four and maps 16
   independent strips onto the full mesh.
 - FFT-CMP maps each of the three Q/K/V branches over all 16 PEs and divides
-  each branch/lane trip by four. Distinct branch tags time-multiplex the PE;
-  total FMA, ADD, SHUFFLE, and packet work is unchanged.
+  each branch/lane trip by four. The three independent branches fold into the
+  trip count of one static block per PE/stage, retaining adjacent stage tags,
+  at most 24 active instructions per PE, and unchanged total FMA, ADD,
+  SHUFFLE, packet, and branch-address work.
 - SWA W128/Q32 and W256/Q64 maps load, QK, row reduction, exponentiation,
   SV, division, and store phases over all 16 PEs with trip counts divided by
   four. q is always a multiple of four, so no fractional work is introduced.
