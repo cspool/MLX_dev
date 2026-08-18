@@ -1,0 +1,500 @@
+{
+  "schema_version": 1,
+  "experiment_id": "H97",
+  "run_id": "run102",
+  "classification": "target_free_figure19_source_identity_audit",
+  "validation_eligible": false,
+  "generated_at": "2026-08-18T01:16:39.445459+00:00",
+  "project_commit": "7e891d782567c2cc6669ad70b424de6848cf94da",
+  "hypothesis_status": "supported",
+  "audit_integrity": true,
+  "source_integrated_timing_available": false,
+  "mapping_identifiable": true,
+  "frozen_inputs": {
+    "h23": {
+      "path": "artifacts/results/fig19-mlx-event-transfer-run027.json",
+      "bytes": 52104,
+      "sha256": "7e597b952392cc51011793cc58c3383808426dfc054b54bfe56ee0733479736d",
+      "checks": {
+        "is_file": true,
+        "sha256": true
+      },
+      "pass": true
+    },
+    "components": {
+      "path": "artifacts/results/fig19-components-run026.json",
+      "bytes": 12201,
+      "sha256": "de1358f1b28a51f990742745a7ef603e578a3c3ad01175323b0ad9897722018c",
+      "checks": {
+        "is_file": true,
+        "sha256": true
+      },
+      "pass": true
+    },
+    "aggregate": {
+      "path": "artifacts/results/dsagen-mlx-aggregate-run049.json",
+      "bytes": 28394,
+      "sha256": "2d166e60b2e01cb13836860688a7a967b3377160e4217c2a682a0e3a4dca7b3c",
+      "checks": {
+        "is_file": true,
+        "sha256": true
+      },
+      "pass": true
+    },
+    "fftcmp": {
+      "path": "artifacts/results/fft-steady-state-folding-run086.json",
+      "bytes": 38154,
+      "sha256": "bc05cd96eb6cc12aa2d5b7894c09bf291e23694ce1316a287b627d3128548e6f",
+      "checks": {
+        "is_file": true,
+        "sha256": true
+      },
+      "pass": true
+    },
+    "b32_paths": {
+      "path": "artifacts/results/fig21-timed-paths-run097.json",
+      "bytes": 337686,
+      "sha256": "14444c351b54ad3e597d5f8c601b19dde989e3ba034ded6e1b4519186730421d",
+      "checks": {
+        "is_file": true,
+        "sha256": true
+      },
+      "pass": true
+    },
+    "packet_memory": {
+      "path": "artifacts/results/combined-attention-memory-run088.json",
+      "bytes": 48441,
+      "sha256": "a647443c82ae407b18f0253757b43cf245b1626593e03510895f9c87ecd5fa44",
+      "checks": {
+        "is_file": true,
+        "sha256": true
+      },
+      "pass": true
+    },
+    "h23_config": {
+      "path": "configs/analysis/fig19_mlx_event_transfer_v1.yaml",
+      "bytes": 1086,
+      "sha256": "9044d63b3cbf0c8ef805c3f86b104f3f9be78e8401bcb2da06beed7709b4f68f",
+      "checks": {
+        "is_file": true,
+        "sha256": true
+      },
+      "pass": true
+    }
+  },
+  "parent_checks": {
+    "h23": true,
+    "components": true,
+    "aggregate": true,
+    "fftcmp": true,
+    "b32_paths": true,
+    "packet_memory": true
+  },
+  "model": {
+    "num_layers": 24,
+    "hidden_dim": 1024,
+    "ffn_inner_dim": 4096,
+    "batch": 1,
+    "sequence_lengths": [
+      128,
+      256,
+      512,
+      1024
+    ]
+  },
+  "mapping": {
+    "attention": [
+      {
+        "kernel": "fft",
+        "axis": "hidden",
+        "n": "hidden_dim",
+        "d": "sequence_length",
+        "chunk_length": "hidden_dim",
+        "projections": 1
+      },
+      {
+        "kernel": "fft",
+        "axis": "token",
+        "n": "sequence_length",
+        "d": "hidden_dim",
+        "chunk_length": "sequence_length",
+        "projections": 1
+      }
+    ],
+    "ffn": [
+      {
+        "kernel": "bsmm",
+        "d": "hidden_dim",
+        "output_dim": "ffn_inner_dim",
+        "block_size": "hidden_dim",
+        "projections": 1
+      },
+      {
+        "kernel": "bsmm",
+        "d": "ffn_inner_dim",
+        "output_dim": "hidden_dim",
+        "block_size": "ffn_inner_dim",
+        "projections": 1
+      }
+    ]
+  },
+  "profiles": {
+    "N128": {
+      "attention": [
+        {
+          "kernel": "fft",
+          "name": "fig19-attention-0-N128",
+          "n": 1024,
+          "d": 128,
+          "output_dim": 128,
+          "block_size": 32,
+          "operations": 6553600.0,
+          "offchip_bytes": 524288.0,
+          "stage_count": 10,
+          "metadata": {
+            "chunk_length": 1024,
+            "retained_length": 512,
+            "stage_count": 10
+          }
+        },
+        {
+          "kernel": "fft",
+          "name": "fig19-attention-1-N128",
+          "n": 128,
+          "d": 1024,
+          "output_dim": 1024,
+          "block_size": 32,
+          "operations": 4587520.0,
+          "offchip_bytes": 524288.0,
+          "stage_count": 7,
+          "metadata": {
+            "chunk_length": 128,
+            "retained_length": 64,
+            "stage_count": 7
+          }
+        }
+      ],
+      "ffn": [
+        {
+          "kernel": "bsmm",
+          "name": "fig19-ffn-0-N128",
+          "n": 128,
+          "d": 1024,
+          "output_dim": 4096,
+          "block_size": 1024,
+          "operations": 20971520.0,
+          "offchip_bytes": 1474560.0,
+          "stage_count": 10,
+          "metadata": {
+            "butterfly_density": 0.01953125,
+            "stage_count": 10
+          }
+        },
+        {
+          "kernel": "bsmm",
+          "name": "fig19-ffn-1-N128",
+          "n": 128,
+          "d": 4096,
+          "output_dim": 1024,
+          "block_size": 4096,
+          "operations": 6291456.0,
+          "offchip_bytes": 1359872.0,
+          "stage_count": 12,
+          "metadata": {
+            "butterfly_density": 0.005859375,
+            "stage_count": 12
+          }
+        }
+      ]
+    },
+    "N256": {
+      "attention": [
+        {
+          "kernel": "fft",
+          "name": "fig19-attention-0-N256",
+          "n": 1024,
+          "d": 256,
+          "output_dim": 256,
+          "block_size": 32,
+          "operations": 13107200.0,
+          "offchip_bytes": 1048576.0,
+          "stage_count": 10,
+          "metadata": {
+            "chunk_length": 1024,
+            "retained_length": 512,
+            "stage_count": 10
+          }
+        },
+        {
+          "kernel": "fft",
+          "name": "fig19-attention-1-N256",
+          "n": 256,
+          "d": 1024,
+          "output_dim": 1024,
+          "block_size": 32,
+          "operations": 10485760.0,
+          "offchip_bytes": 1048576.0,
+          "stage_count": 8,
+          "metadata": {
+            "chunk_length": 256,
+            "retained_length": 128,
+            "stage_count": 8
+          }
+        }
+      ],
+      "ffn": [
+        {
+          "kernel": "bsmm",
+          "name": "fig19-ffn-0-N256",
+          "n": 256,
+          "d": 1024,
+          "output_dim": 4096,
+          "block_size": 1024,
+          "operations": 41943040.0,
+          "offchip_bytes": 2785280.0,
+          "stage_count": 10,
+          "metadata": {
+            "butterfly_density": 0.01953125,
+            "stage_count": 10
+          }
+        },
+        {
+          "kernel": "bsmm",
+          "name": "fig19-ffn-1-N256",
+          "n": 256,
+          "d": 4096,
+          "output_dim": 1024,
+          "block_size": 4096,
+          "operations": 12582912.0,
+          "offchip_bytes": 2670592.0,
+          "stage_count": 12,
+          "metadata": {
+            "butterfly_density": 0.005859375,
+            "stage_count": 12
+          }
+        }
+      ]
+    },
+    "N512": {
+      "attention": [
+        {
+          "kernel": "fft",
+          "name": "fig19-attention-0-N512",
+          "n": 1024,
+          "d": 512,
+          "output_dim": 512,
+          "block_size": 32,
+          "operations": 26214400.0,
+          "offchip_bytes": 2097152.0,
+          "stage_count": 10,
+          "metadata": {
+            "chunk_length": 1024,
+            "retained_length": 512,
+            "stage_count": 10
+          }
+        },
+        {
+          "kernel": "fft",
+          "name": "fig19-attention-1-N512",
+          "n": 512,
+          "d": 1024,
+          "output_dim": 1024,
+          "block_size": 32,
+          "operations": 23592960.0,
+          "offchip_bytes": 2097152.0,
+          "stage_count": 9,
+          "metadata": {
+            "chunk_length": 512,
+            "retained_length": 256,
+            "stage_count": 9
+          }
+        }
+      ],
+      "ffn": [
+        {
+          "kernel": "bsmm",
+          "name": "fig19-ffn-0-N512",
+          "n": 512,
+          "d": 1024,
+          "output_dim": 4096,
+          "block_size": 1024,
+          "operations": 83886080.0,
+          "offchip_bytes": 5406720.0,
+          "stage_count": 10,
+          "metadata": {
+            "butterfly_density": 0.01953125,
+            "stage_count": 10
+          }
+        },
+        {
+          "kernel": "bsmm",
+          "name": "fig19-ffn-1-N512",
+          "n": 512,
+          "d": 4096,
+          "output_dim": 1024,
+          "block_size": 4096,
+          "operations": 25165824.0,
+          "offchip_bytes": 5292032.0,
+          "stage_count": 12,
+          "metadata": {
+            "butterfly_density": 0.005859375,
+            "stage_count": 12
+          }
+        }
+      ]
+    },
+    "N1024": {
+      "attention": [
+        {
+          "kernel": "fft",
+          "name": "fig19-attention-0-N1024",
+          "n": 1024,
+          "d": 1024,
+          "output_dim": 1024,
+          "block_size": 32,
+          "operations": 52428800.0,
+          "offchip_bytes": 4194304.0,
+          "stage_count": 10,
+          "metadata": {
+            "chunk_length": 1024,
+            "retained_length": 512,
+            "stage_count": 10
+          }
+        },
+        {
+          "kernel": "fft",
+          "name": "fig19-attention-1-N1024",
+          "n": 1024,
+          "d": 1024,
+          "output_dim": 1024,
+          "block_size": 32,
+          "operations": 52428800.0,
+          "offchip_bytes": 4194304.0,
+          "stage_count": 10,
+          "metadata": {
+            "chunk_length": 1024,
+            "retained_length": 512,
+            "stage_count": 10
+          }
+        }
+      ],
+      "ffn": [
+        {
+          "kernel": "bsmm",
+          "name": "fig19-ffn-0-N1024",
+          "n": 1024,
+          "d": 1024,
+          "output_dim": 4096,
+          "block_size": 1024,
+          "operations": 167772160.0,
+          "offchip_bytes": 10649600.0,
+          "stage_count": 10,
+          "metadata": {
+            "butterfly_density": 0.01953125,
+            "stage_count": 10
+          }
+        },
+        {
+          "kernel": "bsmm",
+          "name": "fig19-ffn-1-N1024",
+          "n": 1024,
+          "d": 4096,
+          "output_dim": 1024,
+          "block_size": 4096,
+          "operations": 50331648.0,
+          "offchip_bytes": 10534912.0,
+          "stage_count": 12,
+          "metadata": {
+            "butterfly_density": 0.005859375,
+            "stage_count": 12
+          }
+        }
+      ]
+    }
+  },
+  "mapping_checks": {
+    "N128": {
+      "attention_operations": true,
+      "attention_bytes": true,
+      "ffn_operations": true,
+      "ffn_bytes": true,
+      "hidden_fft_plain": true,
+      "token_fft_plain": true,
+      "no_fft_compression": true,
+      "global_ffn_stages": true,
+      "global_ffn_blocks": true
+    },
+    "N256": {
+      "attention_operations": true,
+      "attention_bytes": true,
+      "ffn_operations": true,
+      "ffn_bytes": true,
+      "hidden_fft_plain": true,
+      "token_fft_plain": true,
+      "no_fft_compression": true,
+      "global_ffn_stages": true,
+      "global_ffn_blocks": true
+    },
+    "N512": {
+      "attention_operations": true,
+      "attention_bytes": true,
+      "ffn_operations": true,
+      "ffn_bytes": true,
+      "hidden_fft_plain": true,
+      "token_fft_plain": true,
+      "no_fft_compression": true,
+      "global_ffn_stages": true,
+      "global_ffn_blocks": true
+    },
+    "N1024": {
+      "attention_operations": true,
+      "attention_bytes": true,
+      "ffn_operations": true,
+      "ffn_bytes": true,
+      "hidden_fft_plain": true,
+      "token_fft_plain": true,
+      "no_fft_compression": true,
+      "global_ffn_stages": true,
+      "global_ffn_blocks": true
+    }
+  },
+  "source_coverage": {
+    "aggregate_radix": {
+      "available": true,
+      "evidence": "H43 exact radix aggregation includes FFT8192 structure",
+      "direct_fig19_compiler": false
+    },
+    "fftcmp": {
+      "available": true,
+      "directly_reusable": false,
+      "reason": "H81 includes truncate plus inverse stages; Figure 19 requires plain forward FFT"
+    },
+    "b32_paths": {
+      "available": true,
+      "directly_reusable": false,
+      "reason": "H92 uses hierarchical B32 five-stage projections; Figure 19 requires global B1024/B4096"
+    },
+    "packet_memory": {
+      "available": true,
+      "directly_reusable": true,
+      "scope": "SIMD32 packets, grouped events, four-port SRAM"
+    }
+  },
+  "gap_checks": {
+    "mapping_exact": true,
+    "four_shapes": true,
+    "two_fft_axes": true,
+    "two_global_ffn": true,
+    "plain_fft_compiler_needed": true,
+    "global_bsmm_compiler_needed": true,
+    "mechanism_reuse_available": true
+  },
+  "integrity_checks": {
+    "frozen_files": true,
+    "parents": true,
+    "mapping": true,
+    "gaps": true,
+    "targets_consumed": false
+  },
+  "paper_performance_targets_consumed": false
+}
