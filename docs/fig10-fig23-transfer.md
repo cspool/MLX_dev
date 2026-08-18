@@ -23,3 +23,9 @@ executable shuffle/SPM mechanism.
 
 The immutable result is
 `artifacts/results/fig10-fig23-transfer-run070.json`.
+
+H122 later audits workload identity in
+[fig23-workload-identity.md](fig23-workload-identity.md). H64 is confirmed as a
+single-BSMM fixed-memory proxy; the paper does not disclose 13 fields needed to
+construct the stated transformer block. H65's 12/15 therefore cannot be
+promoted to strict full-figure completion.

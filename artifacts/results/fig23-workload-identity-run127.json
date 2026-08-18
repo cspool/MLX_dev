@@ -1,0 +1,356 @@
+{
+  "schema_version": 1,
+  "experiment_id": "H122",
+  "run_id": "run127",
+  "classification": "target_free_figure23_workload_identifiability_audit",
+  "validation_eligible": false,
+  "generated_at": "2026-08-18T10:12:19.697723+00:00",
+  "project_commit": "130c021a4c4c33d4f85169676e84c5dad4c2443a",
+  "hypothesis_status": "supported",
+  "audit_integrity": true,
+  "paper_performance_targets_consumed": false,
+  "paper_reproduction_claim": "none_target_free_identity_diagnosis_only",
+  "frozen_inputs": {
+    "paper": {
+      "path": "MLX Multi-Layer Execution for Structured LLM Workload Acceleration on Spatial Architectures/MLX Multi-Layer Execution for Structured LLM Workload Acceleration on Spatial Architectures.md",
+      "bytes": 85855,
+      "sha256": "5785eb81b28741a3806ca42749d7b556bbcd2404e1622ae644a32bae2ade7745",
+      "checks": {
+        "is_file": true,
+        "bytes": true,
+        "sha256": true
+      },
+      "pass": true
+    },
+    "h64": {
+      "path": "artifacts/results/fig10-scalability-run069.json",
+      "bytes": 49036,
+      "sha256": "520d152a792225dfe3ec6ba3189fa3048f226c977fb3ff4621fc8cc321bdc530",
+      "checks": {
+        "is_file": true,
+        "bytes": true,
+        "sha256": true
+      },
+      "pass": true
+    },
+    "h64_manifest": {
+      "path": "artifacts/environment/h64/fig10-scalability-compile-manifest.json",
+      "bytes": 5105816,
+      "sha256": "e6c6dd6010dae9180f01a95ebe829ebab12514e2589e4c571f923e1bda543584",
+      "checks": {
+        "is_file": true,
+        "bytes": true,
+        "sha256": true
+      },
+      "pass": true
+    },
+    "h64_config": {
+      "path": "configs/simulators/fig10_scalability_v1.yaml",
+      "bytes": 992,
+      "sha256": "c00e3fef311157ca0f3a67e8b4d1f9324c1377e5c38761df3f281b7777e24f02",
+      "checks": {
+        "is_file": true,
+        "bytes": true,
+        "sha256": true
+      },
+      "pass": true
+    },
+    "h90": {
+      "path": "artifacts/results/fig21-workload-identity-run095.json",
+      "bytes": 16671,
+      "sha256": "f7c9f22af25a9abe8c42129f1ddd03e9b33fdbca5beb617dad98dd9bf3f50da0",
+      "checks": {
+        "is_file": true,
+        "bytes": true,
+        "sha256": true
+      },
+      "pass": true
+    },
+    "h91": {
+      "path": "artifacts/results/fig21-layer-contract-run096.json",
+      "bytes": 33918,
+      "sha256": "d92d0c477a1525beba1ab613985820dde98c8a7fe7429347210eb5abe9b2bf12",
+      "checks": {
+        "is_file": true,
+        "bytes": true,
+        "sha256": true
+      },
+      "pass": true
+    }
+  },
+  "parent_checks": {
+    "h64": true,
+    "h90": true,
+    "h91": true
+  },
+  "paper_checks": {
+    "sequence_lengths": true,
+    "hidden_dimension": true,
+    "batch": true,
+    "simd": true,
+    "meshes": true,
+    "peak_scaling": true,
+    "shape_contract": true
+  },
+  "figure23_section": "# C. Resource Utilization and Scalability\n\nFig. 22 summarizes PE utilization on BSMM and FFT-CMP kernels. For small sizes, kernel-launch overhead is around 17%, but it drops below 12% as kernel sizes grow. We group load/store/transfer units as a unified data-supply pipeline, which exhibits consistent latency behavior. BSMM and FFT show similar utilization trends since both map to multi-stage butterfly operators, with minor differences caused by real versus complex arithmetic. Overall compute utilization reaches about 90%, showing that our instruction scheduling effectively hides data-movement latency and pipeline idleness.\n\nWe evaluate scalability using transformer blocks of sizes  $N=\\{512,1K,2K,4K,8K\\}$  with D=512, batched by 8 to provide sufficient parallelism for all designs. Four configurations are tested by combining 8- vs. 32-way SIMD with  $4\\times4$  vs.  $8\\times8$  meshes, each offering  $4\\times$  peak compute scaling. As shown in Fig. 23, both dimensions scale nearly linearly, yielding mean speedups of  $3.9\\times$  (SIMD) and  $3.6\\times$  (mesh), and up to  $14\\times$ \n\n![](_page_11_Figure_9.jpeg)\n\nFig. 22: PE resource utilization breakdown.\n\n![](_page_11_Figure_11.jpeg)\n\nFig. 23: The scalability over SIMD degree and mesh size.\n\nwhen scaled jointly. SIMD benefits directly from token-level parallelism, but cannot grow indefinitely due to multi-ported *registerFile* cost and limited per-layer parallelism.\n\nMesh scaling offers a more sustainable path by exploiting inter-layer pipelining. A lightweight skip-hop interconnect reduces multi-hop latency and enables near-linear scaling for the  $8\\times8$  mesh, with almost 6.2% area overhead and modest timing overhead even at 1 GHz in 12 nm.\n\n",
+  "identity_evidence": {
+    "block_component_sequence": {
+      "status": "not_reported",
+      "figure23_section_occurrences": 0
+    },
+    "structured_vs_dense_layer_mix": {
+      "status": "not_reported",
+      "figure23_section_occurrences": 0
+    },
+    "projection_count_and_shapes": {
+      "status": "not_reported",
+      "figure23_section_occurrences": 0
+    },
+    "attention_operator_and_fft_compression": {
+      "status": "not_reported",
+      "figure23_section_occurrences": 0
+    },
+    "block_size_B": {
+      "status": "not_reported",
+      "figure23_section_occurrences": 0
+    },
+    "chunk_length_L": {
+      "status": "not_reported",
+      "figure23_section_occurrences": 0
+    },
+    "compression_ratio_s": {
+      "status": "not_reported",
+      "figure23_section_occurrences": 0
+    },
+    "ffn_dimension": {
+      "status": "not_reported",
+      "figure23_section_occurrences": 0
+    },
+    "head_count_or_layout": {
+      "status": "not_reported",
+      "figure23_section_occurrences": 0
+    },
+    "elementwise_instruction_mix": {
+      "status": "not_reported",
+      "figure23_section_occurrences": 0
+    },
+    "memory_residency_and_inter_component_boundaries": {
+      "status": "not_reported",
+      "figure23_section_occurrences": 0
+    },
+    "launch_and_measurement_interval": {
+      "status": "not_reported",
+      "figure23_section_occurrences": 0
+    },
+    "active_window_by_mesh": {
+      "status": "not_reported",
+      "figure23_section_occurrences": 0
+    }
+  },
+  "identity_checks": {
+    "field_count": true,
+    "all_classified": true,
+    "missing_present": true
+  },
+  "exact_workload_identified": false,
+  "h64_full_transformer_block": false,
+  "h64_manifest_checks": {
+    "outputs": true,
+    "baselines": true,
+    "hardware_shapes": true,
+    "target_free": true,
+    "config_proxy": true
+  },
+  "h64_proxy_checks": {
+    "512-baseline": true,
+    "1024-baseline": true,
+    "2048-baseline": true,
+    "4096-baseline": true,
+    "8192-baseline": true
+  },
+  "h64_baseline_rows": {
+    "512-baseline": {
+      "checks": {
+        "operator": true,
+        "width": true,
+        "batch": true,
+        "sequence": true,
+        "fixed_memory": true,
+        "active_window": true,
+        "output_formula": true,
+        "instruction_formula": true,
+        "memory_formula": true,
+        "transfer_formula": true
+      },
+      "lane_normalized_work": {
+        "event_lane_work": 18874368,
+        "instruction_lane_work": 94371840,
+        "memory_lane_work": 12582912,
+        "output_lane_work": 18874368,
+        "transfer_lane_work": 14680064
+      },
+      "expected_output_lane_work": 18874368
+    },
+    "1024-baseline": {
+      "checks": {
+        "operator": true,
+        "width": true,
+        "batch": true,
+        "sequence": true,
+        "fixed_memory": true,
+        "active_window": true,
+        "output_formula": true,
+        "instruction_formula": true,
+        "memory_formula": true,
+        "transfer_formula": true
+      },
+      "lane_normalized_work": {
+        "event_lane_work": 37748736,
+        "instruction_lane_work": 188743680,
+        "memory_lane_work": 25165824,
+        "output_lane_work": 37748736,
+        "transfer_lane_work": 29360128
+      },
+      "expected_output_lane_work": 37748736
+    },
+    "2048-baseline": {
+      "checks": {
+        "operator": true,
+        "width": true,
+        "batch": true,
+        "sequence": true,
+        "fixed_memory": true,
+        "active_window": true,
+        "output_formula": true,
+        "instruction_formula": true,
+        "memory_formula": true,
+        "transfer_formula": true
+      },
+      "lane_normalized_work": {
+        "event_lane_work": 75497472,
+        "instruction_lane_work": 377487360,
+        "memory_lane_work": 50331648,
+        "output_lane_work": 75497472,
+        "transfer_lane_work": 58720256
+      },
+      "expected_output_lane_work": 75497472
+    },
+    "4096-baseline": {
+      "checks": {
+        "operator": true,
+        "width": true,
+        "batch": true,
+        "sequence": true,
+        "fixed_memory": true,
+        "active_window": true,
+        "output_formula": true,
+        "instruction_formula": true,
+        "memory_formula": true,
+        "transfer_formula": true
+      },
+      "lane_normalized_work": {
+        "event_lane_work": 150994944,
+        "instruction_lane_work": 754974720,
+        "memory_lane_work": 100663296,
+        "output_lane_work": 150994944,
+        "transfer_lane_work": 117440512
+      },
+      "expected_output_lane_work": 150994944
+    },
+    "8192-baseline": {
+      "checks": {
+        "operator": true,
+        "width": true,
+        "batch": true,
+        "sequence": true,
+        "fixed_memory": true,
+        "active_window": true,
+        "output_formula": true,
+        "instruction_formula": true,
+        "memory_formula": true,
+        "transfer_formula": true
+      },
+      "lane_normalized_work": {
+        "event_lane_work": 301989888,
+        "instruction_lane_work": 1509949440,
+        "memory_lane_work": 201326592,
+        "output_lane_work": 301989888,
+        "transfer_lane_work": 234881024
+      },
+      "expected_output_lane_work": 301989888
+    }
+  },
+  "component_checks": {
+    "single_bsmm_call": true,
+    "no_complete_components": true
+  },
+  "methodology_checks": {
+    "h90_supported_only": true,
+    "h91_supported_only": true,
+    "no_h91_shape_import": true
+  },
+  "target_free_checks": {
+    "no_target_result": true,
+    "no_fit": true,
+    "no_residual": true,
+    "config": true
+  },
+  "acceptance_gates": [
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true
+  ],
+  "summary": {
+    "required_identity_fields": 13,
+    "reported_identity_fields": 0,
+    "missing_identity_fields": 13,
+    "h64_configs": 20,
+    "h64_baseline_rows": 5,
+    "exact_workload_identified": false,
+    "h64_full_transformer_block": false,
+    "acceptance_gates_passed": 10,
+    "acceptance_gates_total": 10,
+    "active_simulator_figures_reproduced": 0,
+    "active_simulator_figures_total": 8
+  },
+  "source_files": {
+    "auditor": {
+      "path": "scripts/audit_fig23_workload_identity.py",
+      "bytes": 12815,
+      "sha256": "e459b634c84c0a817e32adac17d4692eaa73ae50e9fb97b10555b77e95351c59",
+      "checks": {
+        "is_file": true
+      },
+      "pass": true
+    },
+    "test": {
+      "path": "tests/test_fig23_workload_identity.py",
+      "bytes": 608,
+      "sha256": "681e0e53fe08a5920baa38b7b4326405a71f83594e69471f15034c08ae3ef45a",
+      "checks": {
+        "is_file": true
+      },
+      "pass": true
+    }
+  },
+  "integrity_checks": {
+    "frozen": true,
+    "parents": true,
+    "paper": true,
+    "identity_evaluated": true,
+    "manifest": true,
+    "proxy": true,
+    "components": true,
+    "methodology": true,
+    "target_free": true,
+    "source_files": true,
+    "acceptance_evaluated": true
+  }
+}

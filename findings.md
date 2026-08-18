@@ -110,6 +110,7 @@ H37 closed the first full-paper ledger with a machine certificate rather than a 
 - H119 rejects the frozen Figure 22 transfer at 3/64, 82.73% MAPE and 229.85% maximum error. Compute and store pass 0/16 and are uniformly low; load passes 0/16 and is uniformly high; xfer passes 3/16. The consistent signs reject a launch-only explanation and localize the next source mechanism to data-supply concurrency/counter semantics. No denominator selection or residual scale is admitted; active completion remains 0/8.
 - H120 supports H69's pre-existing port topology inside live H106 memory. Four ports partition—not replicate—the fixed 32 banks and issue width 32; BSMM uses x/columns and FFT y/rows. All 16 paths and 64 four-build runs pass, plus 19 exact parent regressions. Every path accelerates 1.757x-2.745x and queue-unavailable checks fall to 11.59%-22.57% of H118. Primary compute utilization rises to 41.98%-73.68%; H120 remains target-free and completion stays 0/8.
 - H121 rejects the frozen multi-port Figure 22 transfer at 4/64, 168.27% MAPE and 704.70% maximum error. Compute remains uniformly low (37.00% MAPE), while load is uniformly high (531.51% MAPE); store/xfer pass 3/16 and 1/16. The supported port mechanism cannot identify the paper's counter interval or RF/local-load classification. Figure 22 residual variants stop pending author evidence; active completion remains 0/8.
+- H122 proves Figure 23's exact transformer-block workload is underidentified. The paragraph discloses N, D=512, batch=8 and four SIMD/mesh configurations but reports none of 13 required component/sparsity/memory/schedule fields. H64's 20 configs exactly execute one D=512 BSMM over N*batch lanes with fixed memory and omit FFT-CMP, attention, output, FFNs and elementwise work. Prior 12/15 proxy scaling cannot count as the full figure; active completion remains 0/8.
 
 ## Patterns and Insights
 
@@ -123,6 +124,7 @@ H37 closed the first full-paper ledger with a machine certificate rather than a 
 - A source-valid memory hierarchy can still have the wrong array attachment. H106's 32 banks and DMA ownership are historically grounded, but its single four-entry DSAGEN request queue is an open-adapter assumption; H119's load-high/compute-low split is consistent with over-serialization, while H69 independently supplies a per-column/per-row port candidate.
 - Conserving total banks and issue width does not imply equivalent concurrency. H120's four independent queues preserve 32 banks/32 aggregate issues yet reduce queue unavailability by 77%-88% and roughly double cycles, validating port topology as a first-order simulator mechanism rather than a bandwidth scale.
 - Better architectural timing need not improve every utilization counter. H120 shortens the denominator while preserving logical load work, so H121's load utilization moves farther from the raster even as compute occupancy improves. This separates a real simulator correction from an unresolved author counter definition.
+- Shape labels do not identify a transformer-block benchmark. Figure 23's N/D/batch tuple determines tensor extents but not component graph, sparsity parameters, layer mix or timing boundary; H64's exact one-BSMM lane formula is therefore insufficient despite numerically close scaling ratios.
 - The team's public methodology is unusually consistent: SimICT component simulation, gem5/RTL calibration, independent Verilog/Synopsys implementation, and DPU PE/SPM/multi-NoC models. This is a stronger reconstruction basis than architecture resemblance to DSAGEN.
 - Model-declared framework versions are part of the checkpoint: InternLM2's remote code produced incompatible logits under Transformers 5.15 (first-window PPL 387.07) but PPL 5.69 under its declared 4.41.0. Smoke tests caught this before the registered run, and the official evaluator now refuses a different version.
 - Correct operator invariants and analytical sparsity do not identify a model-quality recipe. In run018, factor-fit MSE remains nearly flat at 0.629-0.634 while quality degrades monotonically with replacement depth, so cumulative approximation—not one broken projection—best explains this particular inferred reconstruction.
@@ -441,3 +443,8 @@ Run126 rejects the frozen join at 4/64. Compute error falls to 37.00% MAPE, but
 load reaches 531.51% MAPE because the same counted loads occupy a shorter
 execution interval. Figure 22 closes as evidence-limited rather than being
 tuned further.
+
+Run127 then audits Figure 23 identity. All 13 required block fields are absent
+from its experiment paragraph, while H64 is exactly one fixed-memory BSMM. The
+full figure is not reconstructible from that proxy, so work moves to Figure 24's
+matched GPU denominator.

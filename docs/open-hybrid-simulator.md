@@ -294,6 +294,12 @@ at 4/64. Port topology improves compute occupancy but exposes that the paper's
 load counter cannot be reconstructed from disclosed semantics. Further
 Figure 22 counter variants are stopped pending author evidence.
 
+H122 audits Figure 23 in
+[fig23-workload-identity.md](fig23-workload-identity.md). The paper fixes shapes
+and hardware configurations but omits all 13 complete-block identity fields;
+H64 executes one BSMM only. Existing scaling curves remain proxy evidence and
+do not justify further target-driven simulator changes.
+
 The active objective is now limited to simulator-dependent hardware performance
 in Figures 18–25, as recorded in
 [simulator-experiment-scope.md](simulator-experiment-scope.md). Accuracy,
