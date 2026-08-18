@@ -1,0 +1,28 @@
+name: full-mesh-fma-fig25-transfer-v1
+experiment_id: H103
+run_id: run108
+classification: target_exposed_exact_full_mesh_physical_fma_transfer
+validation_eligible: false
+
+frozen_inputs:
+  full_mesh:
+    path: artifacts/results/fig24-25-full-mesh-paths-run107.json
+    sha256: 0107a9a0bd25404d49f90ac073d8c0bd04346f95cab13f8e259a1c6e81ae4a7d
+    required_status: supported
+    required_integrity: true
+  targets:
+    path: artifacts/targets/paper_targets.yaml
+    bytes: 14931
+    sha256: c4a22ab8052ff8cb223a729b8ce07320c6826cfee0d37e1a664a8761e018b41e
+    key: fig25_roofline_utilization.heatmap.mlx
+
+mapping:
+  cases: [BERT_512, Llama2_1K, InternLM2_4K, BERT_8K]
+  operators: [fft_cmp, qkv_bsmm, qkv_bsmm_b32, qkv_bsmm_b64, swa_w128_q32, swa_w256_q64]
+  physical_pes: 16
+  relative_error_limit: 0.10
+  required_points: 24
+
+metric: productive_fma_pe_cycles_div_cycles_times_physical_pes
+auditor: scripts/audit_full_mesh_fma_fig25_transfer.py
+result_path: artifacts/results/full-mesh-fma-fig25-transfer-run108.json
