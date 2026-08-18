@@ -389,6 +389,11 @@ H140 rejects Figure 25 in
 four-case ordering, but five QKV/SWA curves flatten or reorder under the current
 roofline path; active completion remains 2/8.
 
+H141 replaces Figure 23's single-BSMM proxy with the target-free complete-block
+sweep in [fig23-complete-block.md](fig23-complete-block.md). Forty configs and
+120 three-build executions conserve work exactly and show robust SIMD, mesh and
+joint scaling before target access.
+
 The active objective is now limited to simulator-dependent hardware performance
 in Figures 18–25, as recorded in
 [simulator-experiment-scope.md](simulator-experiment-scope.md). Accuracy,

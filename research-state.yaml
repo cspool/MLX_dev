@@ -710,9 +710,9 @@ experiments:
       timestamp: "2026-08-17"
 
 outer_loop:
-  cycle: 98
-  last_direction: "Pre-register H141 target-free to test Figure 23 SIMD/mesh scaling over a grid of complete Transformer-block workloads, so missing single-workload identity can be resolved by robustness rather than target-selected guessing."
-  last_reflection: "H140 rejects Figure 25 under the trend rule: only FFT-CMP passes, while QKV/SWA curves have rho=0.2-0.4 despite all endpoint directions matching. The current roofline path saturates too early; primary completion remains 2/8."
+  cycle: 99
+  last_direction: "Pre-register H142 to join H141's frozen complete-block speedups to Figure 23 under the qualitative rule, requiring every N/window SIMD, mesh and joint comparison to retain clear scaling."
+  last_reflection: "H141 supports target-free complete-block robustness across 40 configs/120 runs: SIMD 3.687x-4.001x, mesh 3.532x-3.795x and joint 7.938x-15.018x with exact scalarized work conservation. Active completion remains 2/8 pending target join."
 
 recent_milestones_after_h46:
   architecture_contract: "H52 supersedes the GPU-SM analogy with the paper's specialized spatial tagged-block PE; GPGPU-Sim is baseline-only."
@@ -780,6 +780,7 @@ recent_milestones_after_h46:
   fig19_trend_completion: "H138 supports Figure 19 trend completion: all three latency curves have Spearman 1.0 with matching endpoint direction and all four official-FABNet/current-MLX ratios are 1.378x-1.616x; strict MLX/FABNet diagnostics remain 0/12 and 0/4."
   fig22_trend_completion: "H139 rejects Figure 22 trend completion with integrity: 0/8 resource curves pass rho>=0.70 plus endpoint direction, only 3/8 endpoints match, strict remains 4/64, and active primary completion stays 2/8."
   fig25_trend_completion: "H140 rejects Figure 25 trend completion with integrity: FFT-CMP is the sole passing curve (1/6), all endpoints match but QKV/SWA rho is 0.2-0.4, strict remains 2/24, and active primary completion stays 2/8."
+  fig23_complete_block_robustness: "H141 supports a target-free representative full-block sweep: 40 configs and 120 debug/opt/sanitized runs conserve all scalarized work; SIMD/mesh/joint speedups are 3.687x-4.001x, 3.532x-3.795x and 7.938x-15.018x across N512-8192 and windows2/4."
 
 completion_snapshot_run042:
   certificate_run: run_042

@@ -550,3 +550,9 @@ but QKV and SWA estimates saturate around their compute/bandwidth ceilings and
 fail to preserve the four-case ordering. All endpoints still rise, which
 localizes the issue to case-dependent mapping/traffic rather than the overall
 direction, but only 1/6 curves passes.
+
+Run146 addresses Figure 23's identity gap without selecting a target residual.
+A complete 28-stage structured block is spatially sharded across every PE, and
+SIMD/mesh changes conserve scalarized work exactly. All 120 executions agree
+across builds; two active windows and five disclosed sequence lengths give
+3.687x-4.001x SIMD, 3.532x-3.795x mesh and 7.938x-15.018x joint speedups.
