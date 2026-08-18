@@ -41,6 +41,15 @@ frozen clear-improvement threshold. The original 10% result remains a separate
 strict diagnostic; target replay, renamed metrics, incomplete denominators, or
 unmatched workload identities still do not count under either rule.
 
+Before H152 produced its result, the user narrowed the objective again: the
+primary completion unit is now a core architectural comparative claim, not a
+full figure. A claim passes only with a qualified same-work baseline, the same
+direction as the paper and at least 1.2x gain. Full-figure coverage and the 10%
+ledger remain diagnostics. Work therefore prioritizes tagged CDC/multi-layer
+latency hiding, SIMD scaling, mesh/skip-hop scaling, full-array utilization and
+complete-block gain, chiefly in Figures 21/22/23/25. Absolute historical or GPU
+details that do not affect those claims are deprioritized.
+
 The refreshed `paper_analysis_read` MCP verifies this boundary directly from
 four split-paper notes: `VII.-EVALUATION` separates Figures 15–17 as algorithmic
 validation; `A.-Software--Hardware-Implementation` states that performance uses

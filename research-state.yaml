@@ -1,6 +1,6 @@
 project:
-  title: "MLX paper reproduction"
-  question: "Can a transparent open surrogate of the unpublished MLX simulator reproduce every simulator-dependent hardware-performance experiment's comparative trend with a clear improvement, while retaining 10% numerical agreement as a diagnostic and separating measured, digitized, inferred, and calibrated evidence?"
+  title: "MLX core-architecture performance reproduction"
+  question: "Can a transparent open surrogate reproduce the MLX paper's core architectural innovations as clear, directionally matching gains over qualified same-work baselines, while retaining full-figure and 10% results only as diagnostics?"
   status: active
   started: "2026-08-16"
   domain: "spatial accelerator architecture simulation and structured LLM inference"
@@ -8,7 +8,7 @@ project:
 active_simulator_scope:
   status: verified_from_paper_analysis_mcp
   included_figures: [18, 19, 20, 21, 22, 23, 24, 25]
-  completion_unit: full_figure
+  completion_unit: core_architecture_comparative_claim
   required_full_figures: 8
   reproduced_full_figures: 3
   strict_reproduced_full_figures: 0
@@ -16,12 +16,24 @@ active_simulator_scope:
   primary_completion_criterion: qualitative_trend_with_clear_improvement
   minimum_clear_speedup: 1.20
   strict_10pct_role: retained_secondary_diagnostic
+  full_figure_role: retained_secondary_diagnostic
+  core_priority_figures: [21, 22, 23, 25]
+  core_claims:
+    - tagged_cdc_and_multi_layer_latency_hiding
+    - simd_scaling
+    - mesh_scaling_and_skip_hop_routing
+    - full_array_resource_utilization
+    - complete_block_end_to_end_gain_over_same_work_baseline
+  deprioritized_comparisons:
+    - prior_accelerator_absolute_numbers
+    - exact_gpu_kernel_magnitude_when_not_needed_for_core_claim
+    - complete_non_core_figure_coverage
   excluded:
     - accuracy_perplexity_and_training
     - algorithm_only_flop_reduction
     - standalone_native_gpu_profiling
     - other_simulator_independent_results
-  rule: "Excluded experiments remain provenance only and must not motivate simulator changes."
+  rule: "Primary completion is per core comparative claim: qualified same-work baseline, matching direction, and >=1.2x clear gain. Full-figure coverage and <=10% numerical agreement are diagnostics only. Excluded or deprioritized experiments remain provenance and must not motivate simulator changes."
   mcp_evidence:
     - "VII.-EVALUATION.md: Figures 15-17 are algorithmic/training validation."
     - "A.-Software--Hardware-Implementation.md: cycle-accurate simulator plus taped-out performance; reduced design simulator tuning."
