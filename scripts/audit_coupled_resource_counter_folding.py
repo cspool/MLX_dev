@@ -375,7 +375,9 @@ def main() -> int:
         )
         matches = all(
             json.dumps(existing.get(key), sort_keys=True)
-            == json.dumps(report.get(key), sort_keys=True)
+            == json.dumps(
+                json.loads(json.dumps(report.get(key))), sort_keys=True
+            )
             for key in keys
         )
         print(json.dumps({"existing_matches": matches, **report}, indent=2))
