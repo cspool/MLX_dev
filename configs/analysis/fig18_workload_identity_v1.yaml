@@ -1,0 +1,52 @@
+name: fig18-workload-identity-v1
+experiment_id: H131
+run_id: run136
+classification: target_free_figure18_workload_and_provenance_identity
+validation_eligible: false
+
+frozen_inputs:
+  paper:
+    path: MLX Multi-Layer Execution for Structured LLM Workload Acceleration on Spatial Architectures/MLX Multi-Layer Execution for Structured LLM Workload Acceleration on Spatial Architectures.md
+    bytes: 85855
+    sha256: 5785eb81b28741a3806ca42749d7b556bbcd2404e1622ae644a32bae2ade7745
+
+paper_disclosed:
+  sequence_length: 1024
+  hidden_dimension: 512
+  compression_ratios: [0.75, 0.5]
+  unit: single_transformer_block
+  precision: fp16
+
+required_workload_fields:
+  - model_or_block_architecture
+  - batch_size
+  - structured_vs_dense_component_graph
+  - structured_vs_dense_layer_mix
+  - block_size_B
+  - fft_chunk_length_L
+  - per_component_compression_ratio
+  - ffn_dimension
+  - attention_heads_and_layout
+  - elementwise_components
+  - memory_residency_and_boundaries
+  - launch_and_measurement_interval
+
+required_provenance_fields:
+  - full_vs_reduced_mlx_design_per_series
+  - simulator_vs_tapeout_measurement_per_series
+  - latency_baseline_value_and_source
+  - energy_measurement_interval
+  - mlx_power_source_per_setting
+  - process_scaling_applied_to_mlx
+
+acceptance:
+  exact_workload_identified_expected: false
+  exact_performance_provenance_identified_expected: false
+  targets_consumed: false
+  simulator_change_allowed: false
+
+source_layout:
+  auditor: scripts/audit_fig18_workload_identity.py
+  test: tests/test_fig18_workload_identity.py
+
+result_path: artifacts/results/fig18-workload-identity-run136.json
