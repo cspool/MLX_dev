@@ -1,0 +1,73 @@
+name: complete-block-functional-v1
+experiment_id: H161
+run_id: run166
+classification: target_free_single_execution_complete_transformer_block
+validation_eligible: true
+
+frozen_inputs:
+  elementwise_functional:
+    path: artifacts/results/elementwise-functional-run165.json
+    bytes: 8476
+    sha256: 3ab47905accf3c02c4f77b604d2a0627c11040201614881765f29869f6ce152b
+    required_status: supported
+    required_integrity: true
+  complete_block_performance:
+    path: artifacts/results/fig23-complete-block-run146.json
+    bytes: 12663
+    sha256: 7aad546c0b750086c78b3ec04427143c46da74a9f7ea96ad47b9017ce0d60c69
+    required_status: supported
+    required_integrity: true
+
+components:
+  - {name: bsmm, config: configs/simulators/bsmm_functional_v1.yaml, tag_offset: 0, x_offset: 0}
+  - {name: fft_cmp, config: configs/simulators/fft_cmp_functional_v1.yaml, tag_offset: 2, x_offset: 2}
+  - {name: attention, config: configs/simulators/attention_functional_v1.yaml, tag_offset: 5, x_offset: 6}
+  - {name: swa, config: configs/simulators/swa_functional_v1.yaml, tag_offset: 8, x_offset: 12}
+  - {name: elementwise, config: configs/simulators/elementwise_functional_v1.yaml, tag_offset: 11, x_offset: 18}
+
+composition_contract:
+  order: [bsmm, fft_cmp, attention, swa, elementwise]
+  dynamic_links:
+    - bsmm_outputs_to_fft_cmp_inputs
+    - fft_cmp_outputs_to_attention_q
+    - attention_outputs_to_swa_q_prefix
+    - swa_outputs_to_elementwise_inputs
+  synchronization: final_tag_predecessor_to_next_component_first_tag
+  memory_linking: replace_downstream_seed_and_load_address_with_upstream_store_address
+  tags: 13
+  mesh: [22, 8]
+  skip_steps: [2, 1]
+  active_window: 13
+
+acceptance:
+  absolute_error_limit: 1.0e-12
+  expected_components: 5
+  expected_dynamic_links: 4
+  expected_tags: 13
+  expected_blocks: 54
+  expected_pes: 54
+  expected_outputs: 8
+  expected_scalar_multiplies: 152
+  expected_scalar_adds: 97
+  expected_functional_operations: 466
+  expected_pipeline_operations: {load: 130, compute: 231, xfer: 73, store: 32}
+  expected_compute_operations: {add: 36, fdiv: 19, fexp: 19, fma: 61, fmax: 5, mul: 91}
+  expected_memory_requests: 162
+  expected_memory_bytes: 1296
+  expected_boundary_events: 73
+  expected_route_hops: 139
+  expected_skip_hops: 65
+  expected_unit_hops: 74
+  required_builds: [debug, opt, sanitize]
+  paper_targets_consumed: false
+
+source_layout:
+  config: configs/simulators/complete_block_functional_v1.yaml
+  protocol: experiments/h161-complete-block-functional/protocol.md
+  compiler: scripts/compile_complete_block_functional.py
+  runner: scripts/run_complete_block_functional.py
+  auditor: scripts/audit_complete_block_functional.py
+  test: tests/test_complete_block_functional.py
+
+output_root: artifacts/environment/h161
+result_path: artifacts/results/complete-block-functional-run166.json
