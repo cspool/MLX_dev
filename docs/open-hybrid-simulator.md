@@ -147,3 +147,7 @@ is correct, but the real source path lacks the complete batch-8, five-shape,
 H91 supplies the five exact batch-8 layer contracts and replayable structured-
 Attention graphs in [`fig21-layer-contract.md`](fig21-layer-contract.md); timed
 projection/dense/elementwise blocks and 24+8 folding remain next.
+
+H92 supplies all timed non-Attention paths in
+[`fig21-timed-paths.md`](fig21-timed-paths.md); five batch-8 Attention models
+and the final layer fold remain.

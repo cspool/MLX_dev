@@ -28,5 +28,10 @@ H91 validates work and graph structure, not layer latency. QKV/output/FFN,
 dense, and elementwise paths still need executable timed blocks before 24+8
 layer folding.
 
+Those nine missing timed paths are now complete in
+[`fig21-timed-paths.md`](fig21-timed-paths.md): 90/90 held-out cycle checks pass
+with exact full work and SRAM requests. Attention and 32-layer composition are
+still separate gates.
+
 The immutable result is
 `artifacts/results/fig21-layer-contract-run096.json`.
