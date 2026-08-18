@@ -527,3 +527,8 @@ baseline (minimum estimated speedup 2.0208x), so the qualitative ledger passes
 8/8. The strict diagnostic remains 1/8: the long Attention point is within
 1.69%, while the short point overpredicts the reported gain. This is recorded
 as trend reproduction, not numerical reproduction.
+
+Run142 refreshes the full simulator-dependent scope under both criteria. Only
+Figure 20 has a completed trend audit, yielding primary 1/8 versus strict 0/8.
+Three complete numerical figures (19/22/25) move to trend-audit-pending; missing
+execution in 21/24 and missing workload identity in 18/23 remain hard blockers.

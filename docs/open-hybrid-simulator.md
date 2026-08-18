@@ -369,6 +369,11 @@ all eight user-directed trend cells, while the retained strict diagnostic is
 only 1/8; the active primary count becomes 1/8 without rewriting the numerical
 failures.
 
+H137 refreshes all eight figures in
+[active-simulator-trend-completion.md](active-simulator-trend-completion.md).
+It certifies primary 1/8 and strict 0/8, and separates three ready trend audits
+from two execution gaps and two identity/provenance gaps.
+
 The active objective is now limited to simulator-dependent hardware performance
 in Figures 18–25, as recorded in
 [simulator-experiment-scope.md](simulator-experiment-scope.md). Accuracy,

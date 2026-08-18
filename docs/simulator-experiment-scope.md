@@ -63,3 +63,8 @@ H136 is the first result under the amended primary rule. Figure 20 passes all
 and the strict full-figure count remains 0/8. H137 will refresh the entire
 eight-figure certificate without treating missing identity or execution as a
 trend pass.
+
+H137 performs that refresh in
+[active-simulator-trend-completion.md](active-simulator-trend-completion.md).
+The count remains primary 1/8 and strict 0/8; Figure 19/22/25 are explicitly
+pending trend audits, not presumed passes.
