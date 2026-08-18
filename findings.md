@@ -520,3 +520,10 @@ Every Xavier Attention component is now eligible for target-free composition.
 
 Run140 forms complete serialized totals and two finite speedups, removing
 Figure 20's Attention execution-incomplete status before the frozen target join.
+
+Run141 applies the user-directed criterion frozen before result generation.
+All eight Figure 20 predictions agree that MLX is clearly faster than the
+baseline (minimum estimated speedup 2.0208x), so the qualitative ledger passes
+8/8. The strict diagnostic remains 1/8: the long Attention point is within
+1.69%, while the short point overpredicts the reported gain. This is recorded
+as trend reproduction, not numerical reproduction.

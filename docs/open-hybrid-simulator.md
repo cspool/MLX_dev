@@ -363,6 +363,12 @@ H135 composes complete totals in
 [xavier-attention-composition.md](xavier-attention-composition.md). The frozen
 transparent-proxy Attention speedups are 3.454x and 3.152x before target access.
 
+H136 completes the target join in
+[fig20-attention-completion.md](fig20-attention-completion.md). Figure 20 passes
+all eight user-directed trend cells, while the retained strict diagnostic is
+only 1/8; the active primary count becomes 1/8 without rewriting the numerical
+failures.
+
 The active objective is now limited to simulator-dependent hardware performance
 in Figures 18–25, as recorded in
 [simulator-experiment-scope.md](simulator-experiment-scope.md). Accuracy,

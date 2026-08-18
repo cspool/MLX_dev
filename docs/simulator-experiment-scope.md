@@ -34,10 +34,12 @@ change should target those residuals.
 ## Completion rule
 
 The active completion unit is eight full figures, not the historical 18-row
-full-paper ledger. A figure completes only when every required MLX
-hardware-performance point is generated from a qualified simulator path and is
-within 10%; target replay, renamed occupancy metrics, incomplete denominators,
-or unmatched proxies do not count.
+full-paper ledger. Before H136 generated its target-facing result, the user
+changed the primary gate from every value within 10% to the same comparative
+direction with a clear improvement. For speedup comparisons, `>=1.2x` is the
+frozen clear-improvement threshold. The original 10% result remains a separate
+strict diagnostic; target replay, renamed metrics, incomplete denominators, or
+unmatched workload identities still do not count under either rule.
 
 The refreshed `paper_analysis_read` MCP verifies this boundary directly from
 four split-paper notes: `VII.-EVALUATION` separates Figures 15–17 as algorithmic
@@ -55,3 +57,9 @@ H132 supersedes that checkpoint with the latest eight-row certificate in
 [active-simulator-completion.md](active-simulator-completion.md). The count
 remains 0/8: three figures are numerical rejections, three execution-incomplete
 and two identity/provenance-incomplete.
+
+H136 is the first result under the amended primary rule. Figure 20 passes all
+8/8 trend cells but only 1/8 strict cells, so the current primary count is 1/8
+and the strict full-figure count remains 0/8. H137 will refresh the entire
+eight-figure certificate without treating missing identity or execution as a
+trend pass.
