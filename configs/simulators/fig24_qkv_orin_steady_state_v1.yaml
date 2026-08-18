@@ -1,0 +1,51 @@
+name: fig24-qkv-orin-steady-state-v1
+experiment_id: H125
+run_id: run130
+classification: target_free_block128_qkv_orin_steady_state
+validation_eligible: false
+
+frozen_inputs:
+  h124:
+    path: artifacts/results/fig24-qkv-orin-folding-run129.json
+    bytes: 22362
+    sha256: 52f335b9c962a3c6c34f378bc9699db3e5f971e529e82e793e585e305cc5699a
+    required_status: rejected
+    required_integrity: true
+  h124_manifest:
+    path: artifacts/environment/h124/fig24-qkv-orin-run-manifest.json
+    bytes: 5044
+    sha256: 883b6faa60632e34b8bf60a1ece9b1950038248f3105cb302fc583f1b8ab1730
+  h124_config:
+    path: configs/simulators/fig24_qkv_orin_folding_v1.yaml
+    bytes: 2564
+    sha256: efca697082f7650e1bdc93c0084510ea3611e23871afb276b4ae0d371c0387a4
+
+templates:
+  qkv_bsmm: {stages: 4, block_size: 16}
+  qkv_bsmm_b32: {stages: 5, block_size: 32}
+  qkv_bsmm_b64: {stages: 6, block_size: 64}
+
+folding:
+  base_element_count: 32768
+  fma_per_element_stage: 3
+  block_threads: 128
+  fit_scales: [4, 8]
+  holdout_scales: [16, 32]
+  relative_error_limit: 0.05
+  required_parent_anchors: 6
+  required_new_runs: 6
+  required_holdouts: 6
+  required_full_estimates: 21
+
+execution:
+  workers: 3
+  max_wall_seconds_per_run: 1800
+  targets_consumed: false
+
+source_layout:
+  runner: scripts/run_fig24_qkv_orin_steady_state.py
+  auditor: scripts/audit_fig24_qkv_orin_steady_state.py
+  test: tests/test_fig24_qkv_orin_steady_state.py
+
+output_root: artifacts/environment/h125
+result_path: artifacts/results/fig24-qkv-orin-steady-state-run130.json
