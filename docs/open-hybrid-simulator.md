@@ -252,6 +252,11 @@ configs, 480 executions and 96 cycle holdouts pass. Full coupled FMA issue is
 25.22%–28.61% for FFT, 83.53%–98.43% for QKV and 55.02%–71.00% for SWA. These
 are target-free outputs; work pauses before a new Figure 25 join.
 
+H115 performs the frozen join in
+[fig25-coupled-transfer.md](fig25-coupled-transfer.md). Two long-SWA cells pass,
+but FFT remains uniformly low and QKV uniformly high; full Figure 25 is
+rejected at 2/24 and 43.71% MAPE. No residual factor follows.
+
 The active objective is now limited to simulator-dependent hardware performance
 in Figures 18–25, as recorded in
 [simulator-experiment-scope.md](simulator-experiment-scope.md). Accuracy,

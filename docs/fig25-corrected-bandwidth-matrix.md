@@ -69,6 +69,10 @@ H114 now completes full-path coupling in
 this target matrix. The frozen target comparison remains H112 until work is
 resumed and a new no-tuning protocol is registered.
 
+H115 is that no-tuning successor. At the coupled 64 B/cycle source-derived
+sensitivity it passes 2/24 with 43.71% MAPE; see
+[coupled Figure 25 transfer](fig25-coupled-transfer.md).
+
 Evidence is in
 [run117](../artifacts/results/fig25-corrected-bandwidth-matrix-run117.json),
 with the frozen plan in

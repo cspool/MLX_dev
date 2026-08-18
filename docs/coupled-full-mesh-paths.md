@@ -56,10 +56,10 @@ field, but the active objective has subsequently been narrowed to the eight
 simulator-dependent hardware figures; see
 [simulator experiment scope](simulator-experiment-scope.md).
 
-Work pauses after run119 by user request. After resume and MCP refresh, the
-next admissible step is to verify the `paper-analysis-*` tools and the active
-Figure 18–25 boundary, then pre-register a no-tuning target comparison using
-these frozen full coupled estimates. No H115 protocol has been created.
+Work paused after run119 by user request, before any H115 protocol existed.
+After resume, MCP verified the scope and H115 performed the frozen comparison
+in [fig25-coupled-transfer.md](fig25-coupled-transfer.md). It improves the prior
+matrix to 2/24 but rejects full Figure 25 without modifying run119.
 
 Evidence is in
 [run119](../artifacts/results/coupled-full-mesh-paths-run119.json), with the
