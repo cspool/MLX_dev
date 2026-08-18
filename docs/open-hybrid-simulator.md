@@ -300,6 +300,12 @@ and hardware configurations but omits all 13 complete-block identity fields;
 H64 executes one BSMM only. Existing scaling curves remain proxy evidence and
 do not justify further target-driven simulator changes.
 
+H123 exercises the open GPU side directly in
+[fig24-gpu-schedule-ambiguity.md](fig24-gpu-schedule-ambiguity.md). Three
+GPGPU-Sim Orin runs conserve exact QKV FMA work and simulated instructions, but
+CTA shape alone creates 6.149% cycle spread. Figure 24 now requires separately
+frozen GPU schedules per operator family, not work-normalized micro-proxies.
+
 The active objective is now limited to simulator-dependent hardware performance
 in Figures 18–25, as recorded in
 [simulator-experiment-scope.md](simulator-experiment-scope.md). Accuracy,

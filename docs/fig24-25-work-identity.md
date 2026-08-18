@@ -20,3 +20,9 @@ utilization transfer.
 
 The immutable result is
 `artifacts/results/fig24-25-work-identity-run105.json`.
+
+H123 adds a matched Orin-side identifiability witness in
+[fig24-gpu-schedule-ambiguity.md](fig24-gpu-schedule-ambiguity.md). Exact FMA
+and instruction counts still allow 6.149% cycle variation from CTA shape alone,
+so H100's operation profiles require an explicitly frozen CUDA mapping rather
+than a seconds-per-FMA transfer.

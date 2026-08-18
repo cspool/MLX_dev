@@ -15,3 +15,9 @@ measured proxy property, not a fitted Figure 20/24 factor.
 The configuration is not vendor-validated and cannot by itself validate the
 paper's Orin bars. It supplies a transparent execution-driven denominator for
 the next no-fit cross-simulator transfer.
+
+H123 later holds exact QKV FMA work, code, data, binary and configuration fixed
+while changing only CTA shape; see
+[fig24-gpu-schedule-ambiguity.md](fig24-gpu-schedule-ambiguity.md). Cycles vary
+by 6.149% despite equal simulated instruction counts, proving that arithmetic
+identity alone does not recover the authors' Orin schedule.
