@@ -29,6 +29,11 @@ join the 21 QKV estimates with H114 MLX cycles and the corresponding paper
 targets. If the exact-FMA proxy fails strongly, the missing GPU kernel mapping
 rather than arithmetic work is the limiting evidence.
 
+That join is complete in
+[fig24-qkv-coupled-transfer.md](fig24-qkv-coupled-transfer.md). It passes 0/21
+and overpredicts every ratio by roughly one order of magnitude, so FFT/SWA are
+not extended with the same GPU mapping.
+
 Evidence is in
 [run131](../artifacts/results/fig24-qkv-orin-postcache-run131.json), with the
 frozen plan in

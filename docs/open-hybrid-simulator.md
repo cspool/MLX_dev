@@ -321,6 +321,11 @@ H126 closes the post-cache QKV path in
 pass at 2.27%–2.47%, and 21 exact-FMA Orin proxy estimates become eligible
 without paper targets. Their author-kernel identity remains explicitly false.
 
+H127 freezes those estimates before the direct Figure 24 QKV join in
+[fig24-qkv-coupled-transfer.md](fig24-qkv-coupled-transfer.md). All 21 ratios
+are 6.09x–7.18x versus 0.58x–1.36x targets. This closes the staged-memory GPU
+proxy route without extending it to FFT/SWA.
+
 The active objective is now limited to simulator-dependent hardware performance
 in Figures 18–25, as recorded in
 [simulator-experiment-scope.md](simulator-experiment-scope.md). Accuracy,

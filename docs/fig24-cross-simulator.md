@@ -21,3 +21,8 @@ H73/H74 later repeat all 42 MLX cases with physical FU counters and Fig.9
 column-port memory. The corrected audit in
 [`fu-fig24-transfer.md`](fu-fig24-transfer.md) still rejects, now isolating the
 dominant problem as unmatched MLX/GPU proxy work rather than PE hazards.
+
+H101/H114 subsequently fix MLX work/timing, and H126 supplies exact-FMA QKV
+Orin proxy estimates. Their frozen direct-time join in
+[fig24-qkv-coupled-transfer.md](fig24-qkv-coupled-transfer.md) still passes
+0/21 because the staged global-memory CUDA mapping is not the author's kernel.
