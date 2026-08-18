@@ -1,0 +1,334 @@
+{
+  "schema_version": 1,
+  "experiment_id": "H157",
+  "run_id": "run162",
+  "classification": "target_free_same_input_chunked_fft_compression",
+  "validation_eligible": true,
+  "generated_at": "2026-08-18T18:21:57.479191+00:00",
+  "project_commit": "3d3a8155c6d16b65fc1ef98a5bc550f5c67247f0",
+  "hypothesis_status": "supported",
+  "audit_integrity": true,
+  "paper_performance_targets_consumed": false,
+  "paper_reproduction_claim": "fft_cmp_functional_plus_existing_multiport_gain_only",
+  "functional_claim": "same_input_chunked_fft_truncate_short_irfft_on_timed_schedule",
+  "semantic_status": "inferred_operator_contract_not_author_code",
+  "frozen_inputs": {
+    "bsmm_functional": {
+      "path": "artifacts/results/bsmm-functional-run161.json",
+      "bytes": 6987,
+      "sha256": "0a3a0a186d0ec4b6c6b0f0279f2b1e959d93d6aff8c5b54e8ff9906d0d779165",
+      "checks": {
+        "is_file": true,
+        "bytes": true,
+        "sha256": true
+      },
+      "pass": true
+    },
+    "fft_multiport_performance": {
+      "path": "artifacts/results/fig22-coupled-multiport-run125.json",
+      "bytes": 26566,
+      "sha256": "fc294f7b7707b4bb7a8407bccbb5b68cdf9036e9bbde2095df02c330e0ce5454",
+      "checks": {
+        "is_file": true,
+        "bytes": true,
+        "sha256": true
+      },
+      "pass": true
+    }
+  },
+  "generated_inputs": {
+    "compile_manifest": {
+      "path": "artifacts/environment/h157/fft-cmp-functional-compile-manifest.json",
+      "bytes": 1817,
+      "sha256": "ee2f5ec8d6dbb54758ea29cb8eadab7a7014730a06ac5f82c03ba0e07da61837",
+      "checks": {
+        "is_file": true
+      },
+      "pass": true
+    },
+    "run_manifest": {
+      "path": "artifacts/environment/h157/fft-cmp-functional-run-manifest.json",
+      "bytes": 77789,
+      "sha256": "17df073d89c785cd4279e5c3a0fd26a8e91c102f310a370de65660d6c4d95d75",
+      "checks": {
+        "is_file": true
+      },
+      "pass": true
+    }
+  },
+  "parent_checks": {
+    "bsmm_functional": true,
+    "fft_multiport_performance": true
+  },
+  "compile_checks": {
+    "experiment": true,
+    "target_free": true,
+    "outputs": true,
+    "deterministic": true,
+    "files": true
+  },
+  "contract_checks": {
+    "family": true,
+    "semantic_basis": true,
+    "shape": true,
+    "blocks": true,
+    "tags": true,
+    "pes": true,
+    "trips": true,
+    "memory_seeds": true,
+    "constant_seeds": true,
+    "mode_only_difference": true,
+    "xfer_wiring": true
+  },
+  "static_checks": {
+    "scalar_multiplies": true,
+    "scalar_adds": true,
+    "pipelines": true,
+    "compute_operations": true,
+    "functional_operations": true,
+    "memory_requests": true,
+    "memory_bytes": true,
+    "events": true,
+    "route_hops": true,
+    "skip_hops": true,
+    "unit_hops": true,
+    "manifest": true
+  },
+  "run_checks": {
+    "experiment": true,
+    "target_free": true,
+    "checks": true,
+    "modes": true,
+    "builds": true
+  },
+  "execution_checks": {
+    "debug": true,
+    "opt": true,
+    "sanitize": true
+  },
+  "numeric_checks": {
+    "enabled": true,
+    "outputs": true,
+    "operations": true,
+    "finite": true
+  },
+  "transfer_route_checks": {
+    "retained_complex_bins": true,
+    "events": true,
+    "route_hops": true,
+    "skip_hops": true,
+    "unit_hops": true,
+    "stores": true
+  },
+  "timing_checks": {
+    "cycles": true,
+    "instructions": true,
+    "pipelines": true,
+    "events": true,
+    "routes": true
+  },
+  "parent_semantic_checks": {
+    "h156_chain": true,
+    "h120_fft_rows": true
+  },
+  "numpy_full_spectra": [
+    [
+      {
+        "real": 2.5,
+        "imag": 0.0
+      },
+      {
+        "real": 2.0,
+        "imag": -1.5
+      },
+      {
+        "real": -2.5,
+        "imag": 0.0
+      },
+      {
+        "real": 2.0,
+        "imag": 1.5
+      }
+    ],
+    [
+      {
+        "real": -0.25,
+        "imag": 0.0
+      },
+      {
+        "real": -5.0,
+        "imag": -1.75
+      },
+      {
+        "real": 2.25,
+        "imag": 0.0
+      },
+      {
+        "real": -5.0,
+        "imag": 1.75
+      }
+    ]
+  ],
+  "actual_retained_bins": [
+    [
+      {
+        "real": 2.5,
+        "imag": 0.0
+      },
+      {
+        "real": 2.0,
+        "imag": -1.5
+      }
+    ],
+    [
+      {
+        "real": -0.25,
+        "imag": 0.0
+      },
+      {
+        "real": -5.0,
+        "imag": -1.75
+      }
+    ]
+  ],
+  "expected_outputs": [
+    1.625,
+    -0.375,
+    -2.5625,
+    2.4375
+  ],
+  "actual_outputs": [
+    1.625,
+    -0.375,
+    -2.5625,
+    2.4375
+  ],
+  "absolute_errors": [
+    0.0,
+    0.0,
+    0.0,
+    0.0
+  ],
+  "performance_context": {
+    "qualified_rows": 8,
+    "all_same_work_proxy": true,
+    "all_strictly_improved": true,
+    "minimum_speedup": 1.757396449704142,
+    "maximum_speedup": 2.6189793052927173
+  },
+  "source_files": {
+    "config": {
+      "path": "configs/simulators/fft_cmp_functional_v1.yaml",
+      "bytes": 2410,
+      "sha256": "e2a3c0e906bc81a48c5c5e535115fe14c47f395d777ae51df5aeaa8b0615a41e",
+      "checks": {
+        "is_file": true
+      },
+      "pass": true
+    },
+    "protocol": {
+      "path": "experiments/h157-fft-cmp-functional/protocol.md",
+      "bytes": 2997,
+      "sha256": "db0ca3d13c1edd9445ff46142a334eac06a535b87dafb9e4a2087b25f7e643c7",
+      "checks": {
+        "is_file": true
+      },
+      "pass": true
+    },
+    "semantic_reference": {
+      "path": "src/mlxsim/structured.py",
+      "bytes": 11865,
+      "sha256": "2065aa76b8942109fbef735ddf90de42853ce2b9a2baa52063541fd5c2ab853e",
+      "checks": {
+        "is_file": true
+      },
+      "pass": true
+    },
+    "compiler": {
+      "path": "scripts/compile_fft_cmp_functional.py",
+      "bytes": 17289,
+      "sha256": "ab704af2f64c862b397d8e204ac52492c1f9815cc77415dddcc68a45c88ce08b",
+      "checks": {
+        "is_file": true
+      },
+      "pass": true
+    },
+    "runner": {
+      "path": "scripts/run_fft_cmp_functional.py",
+      "bytes": 3216,
+      "sha256": "59a40684ebc6e2996df597c58fb8045f73554002b7ebfc8fa1dd9dcae2b04b97",
+      "checks": {
+        "is_file": true
+      },
+      "pass": true
+    },
+    "auditor": {
+      "path": "scripts/audit_fft_cmp_functional.py",
+      "bytes": 21616,
+      "sha256": "ffcfa606f25172f719d10ff329f96074efadb9477cc3350d9992524ae467b6e6",
+      "checks": {
+        "is_file": true
+      },
+      "pass": true
+    },
+    "test": {
+      "path": "tests/test_fft_cmp_functional.py",
+      "bytes": 2493,
+      "sha256": "e08e9a77c9ef8037d6801280351e107a843292ba53b40977763f9b579b11c207",
+      "checks": {
+        "is_file": true
+      },
+      "pass": true
+    }
+  },
+  "target_free_check": true,
+  "acceptance_gates": [
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true
+  ],
+  "summary": {
+    "builds": 3,
+    "batch": 2,
+    "outputs": 4,
+    "functional_operations": 80,
+    "maximum_absolute_error": 0.0,
+    "cycles": 90,
+    "boundary_events": 24,
+    "route_hops": 40,
+    "skip_hops": 24,
+    "unit_hops": 16,
+    "enabled_disabled_timing_identical": true,
+    "fft_cmp_functional_complete": true,
+    "completed_operator_payloads": [
+      "bsmm",
+      "fft_cmp"
+    ],
+    "operator_payload_coverage": 2,
+    "required_operator_payloads": 6,
+    "existing_fft_speedup_minimum": 1.757396449704142,
+    "existing_fft_speedup_maximum": 2.6189793052927173,
+    "acceptance_gates_passed": 10,
+    "acceptance_gates_total": 10
+  },
+  "integrity_checks": {
+    "frozen": true,
+    "parents": true,
+    "compile": true,
+    "contract": true,
+    "static": true,
+    "runs": true,
+    "numeric_evaluated": true,
+    "complex_evaluated": true,
+    "timing_evaluated": true,
+    "source": true,
+    "acceptance_evaluated": true
+  }
+}

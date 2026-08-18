@@ -754,14 +754,14 @@ experiments:
       timestamp: "2026-08-17"
 
 outer_loop:
-  cycle: 115
-  last_direction: "Build H157 same-input FFT-CMP by first freezing a source/architecture-derived complex butterfly representation, then require independent NumPy FFT-stage outputs and exact arithmetic/traffic conservation."
-  last_reflection: "H156 completes BSMM at 1/6 coverage with exact outputs and conservation, so no numerical tuning is warranted. FFT-CMP is the next independent operator and exposes the currently missing complex-arithmetic representation."
+  cycle: 116
+  last_direction: "Build H158 same-input scaled dot-product Attention by consuming frozen FFT-CMP-shaped Q/K/V values, and validate QK, stable softmax and SV stages independently before composing the final output."
+  last_reflection: "H157 completes the full FFT-CMP semantic path at 2/6 coverage with exact complex and compressed outputs. Dense/global Attention is the next operator; SWA remains separate to preserve an independent window-boundary test."
 
 functional_completion:
   status: active
   priority: integrated_same_input_numeric_and_cycle_execution
-  current_hypothesis: H157
+  current_hypothesis: H158
   integrated_scalar_execution:
     experiment_id: H155
     run_id: run160
@@ -773,6 +773,7 @@ functional_completion:
     enabled_disabled_timing_identical: true
   completed_operator_payloads:
     - bsmm
+    - fft_cmp
   bsmm:
     experiment_id: H156
     run_id: run161
@@ -783,6 +784,17 @@ functional_completion:
     functional_operations: 88
     cycles: 71
     existing_same_work_speedup_range: [3.9979536956715123, 3.997971631263274]
+  fft_cmp:
+    experiment_id: H157
+    run_id: run162
+    path: artifacts/results/fft-cmp-functional-run162.json
+    status: supported
+    outputs: 4
+    retained_complex_components: 8
+    maximum_absolute_error: 0.0
+    functional_operations: 80
+    cycles: 90
+    existing_same_work_speedup_range: [1.757396449704142, 2.6189793052927173]
   required_operator_payloads:
     - bsmm
     - fft_cmp
@@ -873,6 +885,7 @@ recent_milestones_after_h46:
   core_architecture_claims: "H154 supports the final certificate at 5/5 primary and 3/3 supporting claims. Primary gains span 1.215x-15.018x; full-figure and strict-10% requirements are false by user direction."
   integrated_functional_payload: "H155 supports real completion-path FP64 shadow execution: 24 load/compute/xfer/store operations finish in 71 cycles with exact two-output golden agreement, timing invariance across enabled/disabled modes, three-build determinism and clean sanitizers; operator coverage remains 0/6."
   bsmm_functional_payload: "H156 supports a width-4/two-stage hierarchical BSMM over four PEs/two tags: 8/8 outputs exactly match NumPy, 32 multiplies/16 adds and 48 memory requests/384 bytes conserve, eight transfers take 12 hops, timing is invariant across modes/builds, and H153 supplies four qualified ~3.998x same-work performance rows."
+  fft_cmp_functional_payload: "H157 supports complete L4,s0.5 FFT-CMP across five PEs/three tags: F0/F1 paired components and 4/4 compressed outputs exactly match NumPy, 80 operations/96 memory bytes conserve, 24 events traverse 24 skip plus 16 unit hops, timing is invariant, and eight H120 same-work FFT rows retain 1.757x-2.619x gains."
 
 completion_snapshot_run042:
   certificate_run: run_042

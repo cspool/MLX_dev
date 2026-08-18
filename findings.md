@@ -640,3 +640,11 @@ multiplications, 16 additions, 48 memory requests/384 bytes, eight transfers
 and 12 hops are conserved. Enabled and disabled schedules both take 71 cycles
 across three builds. The functional claim connects to four existing H153
 same-work structured-BSMM gains of about 3.998x without creating a new ratio.
+
+Run162 completes actual FFT-CMP rather than a plain FFT proxy. Paired scalar
+registers carry complex butterflies through F0-F3; only F0/F1 proceed through
+the frozen even-Nyquist and length-2 inverse-resampling path. All four outputs
+and eight retained real/imag components match NumPy exactly. The 90-cycle
+schedule conserves 80 operations, 96 memory bytes and 40 hops, including the
+registered 24 skip hops. Its first zero-cycle duplicate-ID rejection is kept as
+a validator witness; only static names changed before the passing rerun.
