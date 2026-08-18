@@ -590,3 +590,8 @@ Run152 adds the scalar side with source-derived FADD, MUFU.EX2 and SHFL.IDX
 traces. Twelve Xavier replays pass, all six holdouts are exact, and the H91
 operation maps conserve dense attention and elementwise counts exactly. The
 three Xavier families are now complete but remain compute-only service proxies.
+
+Run153 composes all Xavier families before reading Figure 21 targets. The GPU
+proxy needs 0.116-2.034 seconds, while H95 claims 78.8-1373.7 seconds for MLX;
+all ratios collapse near 0.00148x. This localizes the next simulator bug to the
+old MLX full-shape mapping/parallelism scale, not to a missing Xavier component.

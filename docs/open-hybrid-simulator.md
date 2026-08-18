@@ -424,6 +424,11 @@ H147 completes the remaining services in
 replays and six exact holdouts map every H91 dense-attention and elementwise
 operation without a target or efficiency factor.
 
+H148 composes the complete denominator in
+[fig21-xavier-composition.md](fig21-xavier-composition.md). It exposes an
+opposite-direction result before target access: the old H95 MLX timing is about
+675x slower than the compute-only Xavier service proxy.
+
 The active objective is now limited to simulator-dependent hardware performance
 in Figures 18–25, as recorded in
 [simulator-experiment-scope.md](simulator-experiment-scope.md). Accuracy,
