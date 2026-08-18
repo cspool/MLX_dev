@@ -34,6 +34,7 @@ def test_qkv_full_mesh_conserves_four_strip_work() -> None:
     assert new["dynamic_event_count"] == new["dynamic_event_demand_count"]
     assert all(len(coordinates) == 16 for coordinates in new["compute_coordinates_by_step"])
     assert len({tuple(block["pe"]) for block in document["blocks"]}) == 16
+    assert new["max_active_instructions_per_pe"] == 2
 
 
 def test_fft_full_mesh_conserves_four_strip_work() -> None:
@@ -80,3 +81,4 @@ def test_swa_full_mesh_conserves_four_strip_work() -> None:
         for phase in new["compute_coordinates_by_phase"]
     )
     assert len({tuple(block["pe"]) for block in document["blocks"]}) == 16
+    assert new["max_active_instructions_per_pe"] == 5

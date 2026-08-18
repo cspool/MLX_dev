@@ -600,7 +600,7 @@ def compile_full_mesh_swa_path(
             {"phase": phase, "coordinates": coordinates}
             for phase in ("qk", "row", "exp", "sv", "div")
         ],
-        "max_active_instructions_per_pe": 4,
+        "max_active_instructions_per_pe": 5,
     }
     return _document(blocks, metadata), metadata
 
