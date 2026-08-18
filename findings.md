@@ -678,3 +678,10 @@ upstream stores; tags 1-13 enforce component order. The 54-PE schedule performs
 memory boundaries all match an independent from-origin NumPy recomputation,
 and the final maximum error is `2.78e-17`. Existing H141 joint block gains stay
 7.938x-15.018x, so all six functional families/block are now covered.
+
+Run167 is the final scope certificate. It joins H154's 5/5 primary and 3/3
+supporting performance claims with run166's 6/6 functional payloads, H109/H113
+stress evidence and a fresh `416 passed, 0 failed` repository suite. The
+minimum primary gain is 1.215x and maximum is 15.018x. Completion deliberately
+does not promote the old full-figure or strict-10% diagnostics and excludes
+RTL, power and area, matching the final goal document.
