@@ -670,3 +670,11 @@ preactivation and output matches NumPy; maximum error is `2.78e-17`. The
 36-cycle schedule conserves 88 operations, 192 memory bytes and an exact
 eight-skip/eight-unit route split. H153's two same-work elementwise comparisons
 remain 3.508x faster.
+
+Run166 closes the complete-block gap with one execution rather than a result
+join. Twenty-four downstream seeds are removed and their loads point to live
+upstream stores; tags 1-13 enforce component order. The 54-PE schedule performs
+466 operations in 365 cycles. BSMM, FFT-CMP, Attention, SWA and elementwise
+memory boundaries all match an independent from-origin NumPy recomputation,
+and the final maximum error is `2.78e-17`. Existing H141 joint block gains stay
+7.938x-15.018x, so all six functional families/block are now covered.

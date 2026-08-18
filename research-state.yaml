@@ -754,14 +754,14 @@ experiments:
       timestamp: "2026-08-17"
 
 outer_loop:
-  cycle: 119
-  last_direction: "Build H161 as one 13-tag C++ execution that dynamically links H156 BSMM -> H157 FFT-CMP -> H158 Attention -> H159 SWA -> H160 elementwise through shared output/input addresses and tag predecessors."
-  last_reflection: "H160 completes all five standalone families at 5/6 coverage. The last functional gap is genuine in-simulator complete-block composition, not another isolated operator or target-ratio adjustment."
+  cycle: 120
+  last_direction: "Run fresh full-repository Ruff and pytest, then issue a final goal certificate joining H154 core-performance trends with H161 6/6 functional coverage and existing stress/conservation regressions."
+  last_reflection: "H161 closes all six functional operator/block requirements in one dynamically linked execution. Only fresh whole-repository verification and a completion certificate remain; strict full-figure residuals stay diagnostic by scope."
 
 functional_completion:
   status: active
   priority: integrated_same_input_numeric_and_cycle_execution
-  current_hypothesis: H161
+  current_hypothesis: H162
   integrated_scalar_execution:
     experiment_id: H155
     run_id: run160
@@ -777,6 +777,7 @@ functional_completion:
     - attention
     - swa
     - elementwise
+    - complete_transformer_block
   bsmm:
     experiment_id: H156
     run_id: run161
@@ -831,6 +832,21 @@ functional_completion:
     functional_operations: 88
     cycles: 36
     existing_same_work_speedup_range: [3.5080205570156395, 3.508022604021986]
+  complete_transformer_block:
+    experiment_id: H161
+    run_id: run166
+    path: artifacts/results/complete-block-functional-run166.json
+    status: supported
+    components: 5
+    dynamic_links: 4
+    tags: 13
+    blocks: 54
+    mapped_pes: 54
+    outputs: 8
+    maximum_absolute_error: 2.7755575615628914e-17
+    functional_operations: 466
+    cycles: 365
+    existing_joint_speedup_range: [7.938172043010753, 15.01807617817947]
   required_operator_payloads:
     - bsmm
     - fft_cmp
@@ -925,6 +941,7 @@ recent_milestones_after_h46:
   attention_functional_payload: "H158 supports complete 2x2 scaled dot-product Attention over ten PEs/three tags with Q read from H157: all QK scores, stable-softmax probabilities and 4/4 SV outputs exactly match NumPy, 76 operations/224 bytes and 26 hops conserve, timing is invariant, and H135 provides two target-free 3.152x-3.454x performance contexts."
   swa_functional_payload: "H159 supports N4/window2 causal SWA over 19 PEs/three tags: exactly seven valid edges with fan-ins 1/2/2/2, all scores/probabilities and 8/8 outputs match masked NumPy, 134 operations/400 bytes and 45 hops conserve, timing is invariant, and 80 H111 same-work SWA points retain 1.620x-3.925x gains."
   elementwise_functional_payload: "H160 supports a 4x2 residual-add/channel-scale/SiLU chain over 16 PEs/two tags with inputs read from H159: all preactivations and 8/8 outputs match NumPy at 2.78e-17 max error, 88 operations/192 bytes and 16 hops conserve, timing is invariant, and two H153 same-work rows retain 3.508x gains."
+  complete_block_functional_payload: "H161 supports one dynamically linked BSMM->FFT-CMP->Attention->SWA->elementwise execution over 54 PEs/13 tags: all five boundaries and 8/8 outputs match a from-origin NumPy chain at 2.78e-17 max error, 466 operations/1296 bytes and 139 hops conserve, timing is invariant, and H141 joint complete-block gains retain 7.938x-15.018x. Functional coverage is 6/6."
 
 completion_snapshot_run042:
   certificate_run: run_042
