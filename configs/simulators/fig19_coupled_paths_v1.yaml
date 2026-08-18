@@ -1,0 +1,83 @@
+name: fig19-coupled-paths-v1
+experiment_id: H128
+run_id: run133
+classification: target_free_current_coupled_figure19_paths
+validation_eligible: false
+
+frozen_inputs:
+  h98:
+    path: artifacts/results/fig19-source-paths-run103.json
+    bytes: 94902
+    sha256: e26287634b683b584b1a4463cfa279535b1a4463cfa279535b1afec0868b7c0c70fbcbc2f4e700ef
+    required_status: supported
+    required_integrity: true
+  h98_manifest:
+    path: artifacts/environment/h98/fig19-source-paths-compile-manifest.json
+    bytes: 101749
+    sha256: 6d83653478cda02a9857aed146f5d67dff436929ca0eec7b7c85381d3636389f
+  h98_config:
+    path: configs/simulators/fig19_source_paths_v1.yaml
+    bytes: 1977
+    sha256: ef275e7838b35e6e8936ace9096da2fcbaf54707f67c0084635222baf94ea3d8
+  h120:
+    path: artifacts/results/fig22-coupled-multiport-run125.json
+    bytes: 26566
+    sha256: fc294f7b7707b4bb7a8407bccbb5b68cdf9036e9bbde2095df02c330e0ce5454
+    required_status: supported
+    required_integrity: true
+  h118_config:
+    path: configs/simulators/fig22_coupled_workloads_v1.yaml
+    bytes: 5918
+    sha256: 61ec4d1368410a0e8a5c7656e96315af4fc14151f18044e95096d083e6c088b7
+
+scales:
+  fit: [4, 8]
+  holdout: [16, 32]
+  cycle_relative_error_limit: 0.05
+
+hardware:
+  physical_pes: 16
+  active_window: 2
+  instruction_slots_per_pe: 32
+  active_blocks_per_pe: 8
+  operand_contexts_per_pe: 256
+  iteration_contexts_per_block: 4
+  vector_bytes: 64
+  spm_bytes: 8388608
+  buffer_halves: 2
+  logical_tile_stride: 4194304
+  dma_bytes_per_cycle: 64
+  dma_setup_cycles: 0
+  spad_ports: 4
+  operator_axis: {fft2d: y, global_ffn: x}
+  per_port_spad:
+    bank_width_bytes: 32
+    banks: 8
+    request_buffer_entries: 4
+    issue_width: 8
+    bank_provision: 1
+    bank_fifo_entries: 1
+
+execution:
+  required_paths: 12
+  required_configs: 48
+  optimized_replays: 2
+  sanitizer_modes: [asan, ubsan]
+  required_optimized_executions: 96
+  required_sanitizer_executions: 96
+  required_executions: 192
+  required_holdouts: 24
+  max_cycles: 50000000
+  workers: 16
+  targets_consumed: false
+
+source_layout:
+  compiler_core: src/mlxsim/fig19_coupled_paths.py
+  compiler: scripts/compile_fig19_coupled_paths.py
+  runner: scripts/run_fig19_coupled_paths.py
+  auditor: scripts/audit_fig19_coupled_paths.py
+  test: tests/test_fig19_coupled_paths.py
+  driver: simulator_ext/dsagen/historical_dpu_memory_driver.cc
+
+output_root: artifacts/environment/h128
+result_path: artifacts/results/fig19-coupled-paths-run133.json
