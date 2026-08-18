@@ -127,12 +127,15 @@ def reconstruct_full_work(
         // scale
     )
     expected_fu = {name: int(value) for name, value in contract["actual"]["fu"].items()}
+    reconstructed_stages = metadata.get("stage_count")
+    if reconstructed_stages is None:
+        reconstructed_stages = metadata.get("normalized", {}).get("stage_count")
     checks = {
         "fu": reconstructed_fu == expected_fu,
         "load_bytes": reconstructed_load == expected_load,
         "store_bytes": reconstructed_store == expected_store,
-        "stage_count": int(metadata.get("stage_count", contract["actual"]["stage_count"]))
-        == int(contract["actual"]["stage_count"]),
+        "stage_count": reconstructed_stages is not None
+        and int(reconstructed_stages) == int(contract["actual"]["stage_count"]),
     }
     if family == "swa":
         checks["query_tile"] = int(metadata["query_tile"]) == int(
