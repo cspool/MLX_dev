@@ -1,0 +1,276 @@
+{
+  "schema_version": 1,
+  "experiment_id": "H151",
+  "run_id": "run156",
+  "classification": "target_free_corrected_sass_hmma_projection_model",
+  "validation_eligible": false,
+  "generated_at": "2026-08-18T15:02:20.744641+00:00",
+  "project_commit": "15cdddb8c696aa9ed767922467fe7ebe3c5d9e8e",
+  "hypothesis_status": "supported",
+  "audit_integrity": true,
+  "paper_performance_targets_consumed": false,
+  "paper_reproduction_claim": "none_target_free_corrected_sass_hmma_projection",
+  "frozen_inputs": {
+    "h91_contract": {
+      "path": "artifacts/results/fig21-layer-contract-run096.json",
+      "bytes": 33918,
+      "sha256": "d92d0c477a1525beba1ab613985820dde98c8a7fe7429347210eb5abe9b2bf12",
+      "checks": {
+        "is_file": true,
+        "bytes": true,
+        "sha256": true
+      },
+      "pass": true
+    },
+    "h146_hmma": {
+      "path": "artifacts/results/fig21-xavier-hmma-traceg-run151.json",
+      "bytes": 9527,
+      "sha256": "a016654a3a0a5363b7d3386ea93e06986a763825ad8fc3c11638e9d9f8153f9d",
+      "checks": {
+        "is_file": true,
+        "bytes": true,
+        "sha256": true
+      },
+      "pass": true
+    },
+    "h150_diagnosis": {
+      "path": "artifacts/results/fig21-scale-semantics-run155.json",
+      "bytes": 6905,
+      "sha256": "8383ea05c3d0245bc4fb2f0f7c1e915a9bde932461e6a9634d9d4294ea6f451e",
+      "checks": {
+        "is_file": true,
+        "bytes": true,
+        "sha256": true
+      },
+      "pass": true
+    }
+  },
+  "parent_checks": {
+    "h91_contract": true,
+    "h146_hmma": true,
+    "h150_diagnosis": true
+  },
+  "decomposition_checks": {
+    "old": true,
+    "sass_count": true,
+    "corrected": true
+  },
+  "replay_checks": {
+    "identity": true,
+    "cycles": true,
+    "replays": true
+  },
+  "work_rows": {
+    "16": {
+      "repeats": 16,
+      "ctas": 64,
+      "sass_hmma_instructions": 1024,
+      "fma_equivalents_per_sass_hmma": 256,
+      "corrected_fma_equivalents": 262144,
+      "old_h146_fma_equivalents": 4194304,
+      "cycles": 128
+    },
+    "32": {
+      "repeats": 32,
+      "ctas": 64,
+      "sass_hmma_instructions": 2048,
+      "fma_equivalents_per_sass_hmma": 256,
+      "corrected_fma_equivalents": 524288,
+      "old_h146_fma_equivalents": 8388608,
+      "cycles": 240
+    },
+    "64": {
+      "repeats": 64,
+      "ctas": 64,
+      "sass_hmma_instructions": 4096,
+      "fma_equivalents_per_sass_hmma": 256,
+      "corrected_fma_equivalents": 1048576,
+      "old_h146_fma_equivalents": 16777216,
+      "cycles": 464
+    },
+    "128": {
+      "repeats": 128,
+      "ctas": 64,
+      "sass_hmma_instructions": 8192,
+      "fma_equivalents_per_sass_hmma": 256,
+      "corrected_fma_equivalents": 2097152,
+      "old_h146_fma_equivalents": 33554432,
+      "cycles": 912
+    }
+  },
+  "work_checks": {
+    "16": true,
+    "32": true,
+    "64": true,
+    "128": true
+  },
+  "cycle_model": {
+    "intercept": 16.0,
+    "slope_cycles_per_fma": 0.00042724609375,
+    "fit_repeats": [
+      16,
+      32
+    ]
+  },
+  "holdouts": [
+    {
+      "repeat": 64,
+      "corrected_fma_equivalents": 1048576,
+      "actual_cycles": 464,
+      "predicted_cycles": 464.0,
+      "relative_error": 0.0,
+      "pass": true
+    },
+    {
+      "repeat": 128,
+      "corrected_fma_equivalents": 2097152,
+      "actual_cycles": 912,
+      "predicted_cycles": 912.0,
+      "relative_error": 0.0,
+      "pass": true
+    }
+  ],
+  "projection_estimates": {
+    "N128": {
+      "component_fma_equivalents_per_layer": {
+        "qkv": 51539607552,
+        "output": 17179869184,
+        "ffn1": 46170898432,
+        "ffn2": 46170898432
+      },
+      "dense_layers": 32,
+      "total_fma_equivalents": 5153960755200,
+      "xavier_cycles": 2202009616.0,
+      "xavier_seconds": 1.5991355236020335,
+      "old_h146_cycles": 137625616.0,
+      "corrected_over_old_cycles": 15.999998256138596,
+      "mapping_claim": "source_corrected_compute_only_SASS_HMMA_traceg_proxy"
+    },
+    "N256": {
+      "component_fma_equivalents_per_layer": {
+        "qkv": 103079215104,
+        "output": 34359738368,
+        "ffn1": 92341796864,
+        "ffn2": 92341796864
+      },
+      "dense_layers": 32,
+      "total_fma_equivalents": 10307921510400,
+      "xavier_cycles": 4404019216.0,
+      "xavier_seconds": 3.1982710355846042,
+      "old_h146_cycles": 275251216.0,
+      "corrected_over_old_cycles": 15.999999128069247,
+      "mapping_claim": "source_corrected_compute_only_SASS_HMMA_traceg_proxy"
+    },
+    "N512": {
+      "component_fma_equivalents_per_layer": {
+        "qkv": 206158430208,
+        "output": 68719476736,
+        "ffn1": 184683593728,
+        "ffn2": 184683593728
+      },
+      "dense_layers": 32,
+      "total_fma_equivalents": 20615843020800,
+      "xavier_cycles": 8808038416.0,
+      "xavier_seconds": 6.396542059549746,
+      "old_h146_cycles": 550502416.0,
+      "corrected_over_old_cycles": 15.999999564034612,
+      "mapping_claim": "source_corrected_compute_only_SASS_HMMA_traceg_proxy"
+    },
+    "N1024": {
+      "component_fma_equivalents_per_layer": {
+        "qkv": 412316860416,
+        "output": 137438953472,
+        "ffn1": 369367187456,
+        "ffn2": 369367187456
+      },
+      "dense_layers": 32,
+      "total_fma_equivalents": 41231686041600,
+      "xavier_cycles": 17616076816.0,
+      "xavier_seconds": 12.793084107480029,
+      "old_h146_cycles": 1101004816.0,
+      "corrected_over_old_cycles": 15.999999782017301,
+      "mapping_claim": "source_corrected_compute_only_SASS_HMMA_traceg_proxy"
+    },
+    "N2048": {
+      "component_fma_equivalents_per_layer": {
+        "qkv": 824633720832,
+        "output": 274877906944,
+        "ffn1": 738734374912,
+        "ffn2": 738734374912
+      },
+      "dense_layers": 32,
+      "total_fma_equivalents": 82463372083200,
+      "xavier_cycles": 35232153616.0,
+      "xavier_seconds": 25.586168203340595,
+      "old_h146_cycles": 2202009616.0,
+      "corrected_over_old_cycles": 15.99999989100865,
+      "mapping_claim": "source_corrected_compute_only_SASS_HMMA_traceg_proxy"
+    }
+  },
+  "estimate_checks": {
+    "N128": true,
+    "N256": true,
+    "N512": true,
+    "N1024": true,
+    "N2048": true
+  },
+  "source_files": {
+    "auditor": {
+      "path": "scripts/audit_fig21_xavier_hmma_corrected.py",
+      "bytes": 12232,
+      "sha256": "8e8c3484aba5827ae3c51bceb55b6751fddca5a6a4376089c53a6d4baea5f7ca",
+      "checks": {
+        "is_file": true
+      },
+      "pass": true
+    },
+    "test": {
+      "path": "tests/test_fig21_xavier_hmma_corrected.py",
+      "bytes": 878,
+      "sha256": "b7937d53d6afaf8403825a18da770530f06c3d882cd15b68fb7358e9f3b04736",
+      "checks": {
+        "is_file": true
+      },
+      "pass": true
+    }
+  },
+  "target_free_check": true,
+  "acceptance_gates": [
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true
+  ],
+  "summary": {
+    "replay_cycles_unchanged": true,
+    "corrected_fma_per_sass_hmma": 256,
+    "holdout_passes": 2,
+    "holdout_total": 2,
+    "holdout_mape": 0.0,
+    "holdout_max_error": 0.0,
+    "projection_estimates": 5,
+    "minimum_projection_seconds": 1.5991355236020335,
+    "maximum_projection_seconds": 25.586168203340595,
+    "active_simulator_figures_reproduced": 3,
+    "active_simulator_figures_total": 8,
+    "acceptance_gates_passed": 10,
+    "acceptance_gates_total": 10
+  },
+  "integrity_checks": {
+    "frozen": true,
+    "parents": true,
+    "decomposition": true,
+    "replays": true,
+    "work": true,
+    "model_evaluated": true,
+    "estimates_evaluated": true,
+    "source": true,
+    "acceptance_evaluated": true
+  }
+}

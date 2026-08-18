@@ -607,3 +607,8 @@ SIMD32 issues, equivalent to 256 GOp/s, while the Xavier comparison uses the
 paper's 1-TOp/s full design. Independently, a source-derived trace HMMA is a
 SASS instruction worth 256 FMA, not the 4096-FMA PTX WMMA assigned by H146.
 The required corrections are 3.906x and 16x, neither learned from targets.
+
+Run156 applies only the Xavier work-unit correction. Replay cycles stay
+128/240/464/912 and both holdouts remain exact; the model slope per true FMA
+rises 16x and dense projection estimates become 1.599-25.586 seconds. The MLX
+full-array issue correction remains a separate execution task.

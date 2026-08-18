@@ -439,6 +439,11 @@ H150 refines the diagnosis in
 full-array issue gap and an independent 16x SASS-HMMA work-label error on the
 Xavier side, both derived from source contracts rather than target residuals.
 
+H151 corrects the GPU unit in
+[fig21-xavier-hmma-corrected.md](fig21-xavier-hmma-corrected.md). The same four
+replay cycles retain exact holdouts at 256 FMA/SASS-HMMA and yield five corrected
+projection estimates without a target factor.
+
 The active objective is now limited to simulator-dependent hardware performance
 in Figures 18–25, as recorded in
 [simulator-experiment-scope.md](simulator-experiment-scope.md). Accuracy,
