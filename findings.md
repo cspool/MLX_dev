@@ -123,6 +123,7 @@ H37 closed the first full-paper ledger with a machine certificate rather than a 
 - H132 supports the latest active-scope evidence certificate, not reproduction. Across Figures 18-25, zero full figures reproduce: two are identity/provenance incomplete (18,23), three numerical rejections (19,22,25), and three execution-incomplete (20,21,24). Partial passes and supported mechanism runs are explicitly non-promotable.
 - H133 supports regime-aware Xavier FFT-CMP folding. Four new stable-source detailed runs have zero checksum error; c16K/c32K predicts c64K within 2.03% for N256 and 1.25% for N8192. Eligible full FFT components are 4.362M/227.398M cycles. No Figure 20 target or MLX cycle is consumed; QK/SV/total remain open.
 - H134 supports regime-aware Xavier QK/SV folding and direct softmax reuse. Six new detailed runs pass; shared-QK, N256-SV and N8192-SV holdouts err 3.89%/0.66%/1.86% (2.13% MAPE). All six non-FFT shape-components are eligible, with direct 128/4096-row softmax retained. No Figure 20 target or total is consumed.
+- H135 supports complete target-free Xavier/MLX Attention composition. Four eligible Xavier components sum to 23.709M/18.834B cycles; against H83's 4.985M/4.339B MLX cycles at fixed 1.377GHz/1GHz, speedups are 3.454x/3.152x. No Figure 20 target, overlap or factor is consumed.
 
 ## Patterns and Insights
 
@@ -516,3 +517,6 @@ target-free full estimates.
 
 Run139 completes QK/SV/softmax at 3/3 held-out folds plus two direct full runs.
 Every Xavier Attention component is now eligible for target-free composition.
+
+Run140 forms complete serialized totals and two finite speedups, removing
+Figure 20's Attention execution-incomplete status before the frozen target join.

@@ -359,6 +359,10 @@ H134 completes QK/SV/softmax in
 holdouts pass at 2.13% MAPE and all six non-FFT shape-components become
 eligible, enabling a target-free Xavier total next.
 
+H135 composes complete totals in
+[xavier-attention-composition.md](xavier-attention-composition.md). The frozen
+transparent-proxy Attention speedups are 3.454x and 3.152x before target access.
+
 The active objective is now limited to simulator-dependent hardware performance
 in Figures 18–25, as recorded in
 [simulator-experiment-scope.md](simulator-experiment-scope.md). Accuracy,

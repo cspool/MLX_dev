@@ -24,6 +24,10 @@ H135 may now combine them with H133 FFT and H83 MLX cycles under fixed
 1.377-GHz/1-GHz clocks, target-free. Only H136 may compare the two Attention
 speedups with Figure 20.
 
+That composition succeeds in
+[xavier-attention-composition.md](xavier-attention-composition.md), producing
+3.454x/3.152x target-free speedups for N256/N8192.
+
 Evidence is in
 [run139](../artifacts/results/xavier-attention-components-run139.json), with
 the frozen plan in

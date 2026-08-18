@@ -1,0 +1,163 @@
+{
+  "schema_version": 1,
+  "experiment_id": "H135",
+  "run_id": "run140",
+  "classification": "target_free_xavier_mlx_attention_composition",
+  "validation_eligible": false,
+  "generated_at": "2026-08-18T13:31:19.722685+00:00",
+  "project_commit": "bc82e65d9825675583b65aba6b2505bd0fb4c242",
+  "hypothesis_status": "supported",
+  "audit_integrity": true,
+  "paper_performance_targets_consumed": false,
+  "paper_reproduction_claim": "none_target_free_attention_composition_only",
+  "frozen_inputs": {
+    "h133": {
+      "path": "artifacts/results/xavier-fft-regime-run138.json",
+      "bytes": 10196,
+      "sha256": "ea16fdc8c1b6bd0d8670192bde271f074ace00d06d58ddbd277a7a9029983166",
+      "checks": {
+        "is_file": true,
+        "bytes": true,
+        "sha256": true
+      },
+      "pass": true
+    },
+    "h134": {
+      "path": "artifacts/results/xavier-attention-components-run139.json",
+      "bytes": 17477,
+      "sha256": "6ac6064ef322e339f92bf38ef34247ded5dbf1bf9e70e420f7dd641adf660dd6",
+      "checks": {
+        "is_file": true,
+        "bytes": true,
+        "sha256": true
+      },
+      "pass": true
+    },
+    "h83": {
+      "path": "artifacts/results/combined-attention-memory-run088.json",
+      "bytes": 48441,
+      "sha256": "a647443c82ae407b18f0253757b43cf245b1626593e03510895f9c87ecd5fa44",
+      "checks": {
+        "is_file": true,
+        "bytes": true,
+        "sha256": true
+      },
+      "pass": true
+    }
+  },
+  "parent_checks": {
+    "h133": true,
+    "h134": true,
+    "h83": true
+  },
+  "component_checks": {
+    "N256": true,
+    "N8192": true
+  },
+  "finite_checks": {
+    "N256": true,
+    "N8192": true
+  },
+  "clock_checks": {
+    "xavier": true,
+    "mlx": true
+  },
+  "compositions": {
+    "N256": {
+      "xavier_components": {
+        "fftcmp": 4361939.0,
+        "qk": 8989120.0,
+        "softmax": 48299.0,
+        "sv": 10309272.0
+      },
+      "xavier_total_cycles": 23708630.0,
+      "xavier_clock_hz": 1377000000,
+      "xavier_total_seconds": 0.017217596223674653,
+      "mlx_model": "N256",
+      "mlx_cycles": 4984864.0,
+      "mlx_clock_hz": 1000000000,
+      "mlx_seconds": 0.004984864,
+      "speedup": 3.4539751182127842,
+      "speedup_definition": "xavier_total_seconds_div_mlx_total_seconds",
+      "xavier_mapping_claim": "transparent_proxy_not_author_cuda"
+    },
+    "N8192": {
+      "xavier_components": {
+        "fftcmp": 227397886.0,
+        "qk": 9250488772.0,
+        "softmax": 5428292.0,
+        "sv": 9351004864.0
+      },
+      "xavier_total_cycles": 18834319814.0,
+      "xavier_clock_hz": 1377000000,
+      "xavier_total_seconds": 13.677792167029775,
+      "mlx_model": "N8192",
+      "mlx_cycles": 4339007525.0,
+      "mlx_clock_hz": 1000000000,
+      "mlx_seconds": 4.339007525,
+      "speedup": 3.152285882940425,
+      "speedup_definition": "xavier_total_seconds_div_mlx_total_seconds",
+      "xavier_mapping_claim": "transparent_proxy_not_author_cuda"
+    }
+  },
+  "target_free_checks": {
+    "config": true,
+    "no_target": true,
+    "no_fit": true,
+    "no_factor": true,
+    "no_overlap": true
+  },
+  "acceptance_gates": [
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true
+  ],
+  "summary": {
+    "shapes": 2,
+    "eligible_xavier_components": 8,
+    "speedups": {
+      "N256": 3.4539751182127842,
+      "N8192": 3.152285882940425
+    },
+    "acceptance_gates_passed": 10,
+    "acceptance_gates_total": 10,
+    "active_simulator_figures_reproduced": 0,
+    "active_simulator_figures_total": 8
+  },
+  "source_files": {
+    "auditor": {
+      "path": "scripts/audit_xavier_attention_composition.py",
+      "bytes": 8713,
+      "sha256": "1960569986123445a04c9bb32e4b22ff6c429edc64c1dce4e64f234254049868",
+      "checks": {
+        "is_file": true
+      },
+      "pass": true
+    },
+    "test": {
+      "path": "tests/test_xavier_attention_composition.py",
+      "bytes": 581,
+      "sha256": "ae3e1cfc2d833d30f258111c673247a6051f96c4c7569787cf8b67e7c58330b2",
+      "checks": {
+        "is_file": true
+      },
+      "pass": true
+    }
+  },
+  "integrity_checks": {
+    "frozen": true,
+    "parents": true,
+    "components": true,
+    "finite": true,
+    "clocks": true,
+    "source": true,
+    "acceptance_evaluated": true
+  }
+}
