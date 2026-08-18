@@ -192,3 +192,11 @@ task/block/instance identity, instruction/operand/active-block capacities, and
 independent physical NoC planes. Its 12/12 gates include H52 event-level and
 full-gem5 569-cycle regressions. It consumes no paper performance target and
 does not change the current 0/18 full-paper reproduction certificate.
+
+H106 adds the source-derived DDR/DMA/two-half-SPM ownership layer in
+[historical-dpu-memory.md](historical-dpu-memory.md). It conserves tile,
+relative-address, bank and off-chip traffic through the same overlay, while
+keeping every undisclosed DRAM/DMA/SPM latency explicit. Its synthetic
+non-stop mechanism passes 12/12 gates, but its 37-versus-59-cycle comparison is
+not a paper result. Full-work tile/residency compilation is still required
+before Figure 25 operational intensity can be evaluated.

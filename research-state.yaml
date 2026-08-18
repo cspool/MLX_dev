@@ -1,7 +1,7 @@
 project:
   title: "MLX paper reproduction"
   question: "Can a transparent open surrogate of the unpublished MLX simulator reproduce every reported experiment within 10% while separating measured, digitized, inferred, and calibrated evidence?"
-  status: paused
+  status: active
   started: "2026-08-16"
   domain: "spatial accelerator architecture simulation and structured LLM inference"
 
@@ -687,9 +687,9 @@ experiments:
       timestamp: "2026-08-17"
 
 outer_loop:
-  cycle: 62
-  last_direction: "Paused after H105 by user request. On explicit resume, reconstruct source-derived DRAM/cache/DMA/SPM and non-stop buffering before any new paper-facing timing comparison."
-  last_reflection: "H105 supports the target-free open DPU contract with 12/12 gates and preserved legacy/gem5 behavior. It does not prove SimICT code reuse or reproduce an MLX result; the full-paper count remains 0/18."
+  cycle: 63
+  last_direction: "Compile H101/H102 exact batch-32 FFT-CMP, QKV and SWA paths into explicit H106 tile/residency schedules; validate full DRAM/SPM bytes and operational intensity without Figure 25 targets."
+  last_reflection: "H106 supports the historical DDR-DMA-two-half-SPM ownership contract with 12/12 gates and exact legacy/gem5 regressions. Its synthetic 37/59-cycle mechanism comparison is not a paper result; full-paper completion remains 0/18."
 
 recent_milestones_after_h46:
   architecture_contract: "H52 supersedes the GPU-SM analogy with the paper's specialized spatial tagged-block PE; GPGPU-Sim is baseline-only."
@@ -722,6 +722,7 @@ recent_milestones_after_h46:
   fig25_full_mesh_transfer: "H103 is diagnostic-only: 1/24 physical-occupancy comparisons pass, but the metric omits Figure 25's OI/BW roofline denominator and cannot certify reproduction."
   author_simulator_lineage: "H104 supports SimICT as the cited/historical framework and ranks the closed ICT/Ricore DPU->DFU-E->M2-DFU line first; exact chip and code reuse remain unresolved."
   simict_dpu_contract: "H105 supports an opt-in source-derived DPU layer with FRFO, task/block/instance identity, capacity gates, and multiple physical NoCs across 78/78 executions; H52 and 569-cycle regressions remain exact, and no paper target is consumed."
+  historical_dpu_memory: "H106 supports DDR-DMA-two-half-SPM ownership, parity/relative-address mapping and non-stop tile flow across 36 main plus four auxiliary executions; 768 off-chip bytes and 8/8 PE responses conserve exactly, with no paper target consumed."
 
 completion_snapshot_run042:
   certificate_run: run_042

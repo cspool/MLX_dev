@@ -315,3 +315,12 @@ exact after scenario-name normalization, and enabled/disabled dsa-gem5 both
 retain 569 ROI cycles. This validates an open architecture layer, not the
 unpublished SimICT source or any MLX performance result; full-paper completion
 remains zero of 18.
+
+Run111 adds the historically documented data-supply state machine to that same
+overlay. It models a single DMA stream, two parity-selected SPM halves,
+DMA/PE ownership, relative-address remapping and result-drain-before-refill,
+while reusing H66 bank timing. All 40 executions and 12 gates pass; traffic is
+exactly 512 B in and 256 B out, with 8/8 PE responses. The synthetic non-stop
+case is 37 cycles versus 59 for identical-work per-tile barriers, but this is a
+mechanism check rather than the paper's reported average. Exact batch-32
+tile/residency schedules are still required before Figure 25 OI can be tested.
