@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import argparse
+import ast
 import json
 import math
 from datetime import datetime, timezone
@@ -227,11 +228,23 @@ def build_audit(config: dict[str, Any]) -> dict[str, Any]:
         name: qualify(PROJECT_ROOT / path)
         for name, path in config["source_layout"].items()
     }
-    source_text = (PROJECT_ROOT / config["source_layout"]["auditor"]).read_text()
-    source_boundary = all(
-        token not in source_text
-        for token in ("operator_scale =", "family_scale =", "residual_scale =")
+    source_tree = ast.parse(
+        (PROJECT_ROOT / config["source_layout"]["auditor"]).read_text()
     )
+    assigned_identifiers = {
+        node.id
+        for node in ast.walk(source_tree)
+        if isinstance(node, ast.Name) and isinstance(node.ctx, ast.Store)
+    }
+    assigned_identifiers.update(
+        node.arg for node in ast.walk(source_tree) if isinstance(node, ast.arg)
+    )
+    source_boundary = {
+        "operator_scale",
+        "family_scale",
+        "residual_scale",
+        "pointwise_adjustment",
+    }.isdisjoint(assigned_identifiers)
     acceptance_gates = [
         all(item["pass"] for item in frozen.values()) and all(parent_checks.values()),
         parent_checks["h114_complete"]
