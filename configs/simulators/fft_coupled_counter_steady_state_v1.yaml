@@ -1,0 +1,63 @@
+name: fft-coupled-counter-steady-state-v1
+experiment_id: H117
+run_id: run122
+classification: target_free_fft_coupled_counter_steady_state
+validation_eligible: false
+
+frozen_inputs:
+  h116:
+    path: artifacts/results/coupled-resource-counter-folding-run121.json
+    bytes: 249003
+    sha256: 71edd4ee331b7537a692825f5921353aa59b7e4a1b8b407737508f79cf0898cb
+    required_status: rejected
+    required_integrity: true
+  h114:
+    path: artifacts/results/coupled-full-mesh-paths-run119.json
+    bytes: 203542
+    sha256: 2e5fb3d24dc74a9b9d4cf253fd8d9bf49c833654e807acde6ecb16906461ad99
+    required_status: supported
+    required_integrity: true
+  h114_config:
+    path: configs/simulators/coupled_full_mesh_paths_v1.yaml
+    bytes: 3827
+    sha256: de20c31a6e33dea2f9ce0045ced71c43bf08fede1a295072150c3aff4834fc3f
+  h107:
+    path: artifacts/results/full-mesh-memory-residency-run112.json
+    bytes: 57444
+    sha256: ca917f5a1cf047d5d08cdba39a454955fb7d7d1aae33bef799058bcf38174a59
+    required_status: supported
+    required_integrity: true
+
+scales:
+  fit: [16, 32]
+  holdout: [64, 128]
+  relative_error_limit: 0.05
+
+metrics:
+  - cycles
+  - productive_compute_pe_cycles
+  - productive_load_pe_cycles
+  - productive_store_pe_cycles
+  - productive_xfer_pe_cycles
+  - productive_fma_pe_cycles
+
+execution:
+  required_paths: 8
+  new_scales: [64, 128]
+  required_configs: 16
+  optimized_replays: 2
+  sanitizer_modes: [asan, ubsan]
+  sanitizer_scales: [64]
+  required_optimized_executions: 32
+  required_sanitizer_executions: 16
+  required_executions: 48
+  paper_performance_targets_consumed: false
+
+source_layout:
+  compiler: scripts/compile_fft_coupled_counter_steady_state.py
+  runner: scripts/run_fft_coupled_counter_steady_state.py
+  auditor: scripts/audit_fft_coupled_counter_steady_state.py
+  test: tests/test_fft_coupled_counter_steady_state.py
+
+output_root: artifacts/environment/h117
+result_path: artifacts/results/fft-coupled-counter-steady-state-run122.json
