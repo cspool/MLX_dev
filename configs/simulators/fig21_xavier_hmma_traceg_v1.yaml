@@ -1,0 +1,90 @@
+name: fig21-xavier-hmma-traceg-v1
+experiment_id: H146
+run_id: run151
+classification: target_free_source_derived_hmma_traceg_xavier_projection
+validation_eligible: false
+
+frozen_inputs:
+  h56_xavier:
+    path: artifacts/results/gpgpusim-xavier-proxy-run062.json
+    bytes: 7595
+    sha256: 443843b96d3f01cf27fee02413ae8d8cdc519233aca514cdaeb2d34d0373fe14
+    required_status: supported
+    required_integrity: true
+  h91_contract:
+    path: artifacts/results/fig21-layer-contract-run096.json
+    bytes: 33918
+    sha256: d92d0c477a1525beba1ab613985820dde98c8a7fe7429347210eb5abe9b2bf12
+    required_status: supported
+    required_integrity: true
+  h144_ptx_failure:
+    path: artifacts/results/fig21-xavier-wmma-run149.json
+    bytes: 4320
+    sha256: 630516ab9751e4ff9ba284f71a988bc70866c3ef60df6902ac01d1e0fda8a6c5
+    required_status: rejected
+    required_integrity: true
+  h145_nvbit_failure:
+    path: artifacts/results/fig21-xavier-wmma-trace-run150.json
+    bytes: 5740
+    sha256: 4a0a6b2547e6307f5122285e1defae04dfd30fe18ac81ef1ee727b763227c52e
+    required_status: rejected
+    required_integrity: true
+  accelsim_binary:
+    path: third_party/accel-sim-framework/gpu-simulator/bin/release/accel-sim.out
+    bytes: 7185272
+    sha256: 3212f2565873286e599bdce2280428f7c3d3de227b92a605dbf2e8d506bb4dad
+  trace_config:
+    path: third_party/accel-sim-framework/gpu-simulator/configs/tested-cfgs/SM7_QV100/trace.config
+    bytes: 672
+    sha256: 19dd14b3a4b6c1a1cb2833bd091f0dbd485ad79336ef7d4b0c9db1f7c46f504e
+  volta_opcode:
+    path: third_party/accel-sim-framework/gpu-simulator/ISA_Def/volta_opcode.h
+    bytes: 7168
+    sha256: dc88c632ab09210faf8239bd9eb988056641e0643642d622dc43304c4b787da4
+  trace_parser:
+    path: third_party/accel-sim-framework/gpu-simulator/trace-parser/trace_parser.cc
+    bytes: 15248
+    sha256: 9545c56336c8fa25cb7af842ce6955bf4e08b41835f9cfea2dcfa9a8a5802c28
+
+xavier_replay:
+  config_root: artifacts/environment/h56/config
+  clock_hz: 1377000000
+  trace_config: third_party/accel-sim-framework/gpu-simulator/configs/tested-cfgs/SM7_QV100/trace.config
+  accelsim_binary: third_party/accel-sim-framework/gpu-simulator/bin/release/accel-sim.out
+
+trace_contract:
+  identity: source_derived_compute_only_HMMA_microtrace
+  binary_version: 70
+  grid: [64, 1, 1]
+  block: [32, 1, 1]
+  warps_per_cta: 1
+  hmma_opcode: HMMA
+  accumulator_dependency: R3_to_R3
+  fixed_non_hmma_instructions_per_warp: 2
+  memory_instructions: 0
+  fma_equivalents_per_hmma: 4096
+  fit_repeats: [16, 32]
+  holdout_repeats: [64, 128]
+
+projection_contract:
+  sequence_lengths: [128, 256, 512, 1024, 2048]
+  dense_layers: 32
+  components: [qkv, output, ffn1, ffn2]
+
+acceptance:
+  holdout_relative_error_limit: 0.05
+  required_traces: 4
+  required_replays: 4
+  required_holdouts: 2
+  required_projection_shapes: 5
+  targets_consumed: false
+  target_factor_or_efficiency_fit: forbidden
+
+source_layout:
+  generator: scripts/generate_fig21_hmma_traceg.py
+  runner: scripts/run_fig21_hmma_traceg.py
+  auditor: scripts/audit_fig21_hmma_traceg.py
+  test: tests/test_fig21_hmma_traceg.py
+
+output_root: artifacts/environment/h146
+result_path: artifacts/results/fig21-xavier-hmma-traceg-run151.json
