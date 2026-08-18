@@ -12,8 +12,8 @@ For every registered case:
   FDIV work for W128/Q32 or W256/Q64.
 
 The audit compares these scalar FU counts with H73's 42 and H71's 24 executed
-proxy counts, records represented fractions, and verifies stage/topology
-identity separately from work identity.
+proxy counts from their hash-frozen compile manifests, records represented
+fractions, and verifies stage/topology identity separately from work identity.
 
 Support means proving every proxy under-represents at least one required FU
 work count or stage dimension and enumerating which current source compiler can
