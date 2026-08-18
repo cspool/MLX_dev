@@ -1,0 +1,44 @@
+name: fig22-coupled-transfer-v1
+experiment_id: H119
+run_id: run124
+classification: target_exposed_frozen_fig22_coupled_transfer
+validation_eligible: true
+
+frozen_inputs:
+  h118:
+    path: artifacts/results/fig22-coupled-workloads-run123.json
+    bytes: 23914
+    sha256: 87892c11cfcabf4a59562e369378712c31ec282137a9f0414473821408e8bcfe
+    required_status: supported
+    required_integrity: true
+  h60:
+    path: artifacts/results/fig22-resource-targets-run065.json
+    bytes: 28112
+    sha256: c404f2d1a20b50dcc39937a982565d3ef542db54bebb85045a32d4527bcd1cf6
+    required_verdict: supported
+    required_summary_pass: true
+
+mapping:
+  bsmm: bsmm
+  fft: chunk_fft
+  sizes: [64, 128, 256, 512, 1024, 2048, 4096, 8192]
+  resources: [compute, load, store, xfer]
+  prediction_field: primary_end_to_end_utilization
+  diagnostic_field_forbidden: diagnostic_overlay_utilization
+  required_points: 64
+
+acceptance:
+  relative_error_limit: 0.10
+  required_passing_points: 64
+  figure_complete_only_if_all_points_pass: true
+  denominator_selection: forbidden
+  launch_insertion: forbidden
+  resource_scaling: forbidden
+  operator_or_size_factors: forbidden
+  residual_correction: forbidden
+
+source_layout:
+  auditor: scripts/audit_fig22_coupled_transfer.py
+  test: tests/test_fig22_coupled_transfer.py
+
+result_path: artifacts/results/fig22-coupled-transfer-run124.json
