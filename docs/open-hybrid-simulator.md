@@ -434,6 +434,11 @@ H149 freezes that failure in
 speedup directions fail, so the repair target is H92/H95's MLX mapping rather
 than the already frozen Xavier traces.
 
+H150 refines the diagnosis in
+[fig21-scale-semantics.md](fig21-scale-semantics.md). It finds a 3.906x MLX
+full-array issue gap and an independent 16x SASS-HMMA work-label error on the
+Xavier side, both derived from source contracts rather than target residuals.
+
 The active objective is now limited to simulator-dependent hardware performance
 in Figures 18–25, as recorded in
 [simulator-experiment-scope.md](simulator-experiment-scope.md). Accuracy,

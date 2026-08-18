@@ -601,3 +601,9 @@ strict comparisons fail, with 99.92% MAPE. Ratio inversion is forbidden because
 both parents already define Xavier time divided by MLX time. H92/H95's limited
 PE occupancy and serialized 24+8-layer sum must be replaced by a real
 full-mesh, multi-layer event schedule.
+
+Run155 separates two scale bugs. Every H92 run exposes only four concurrent
+SIMD32 issues, equivalent to 256 GOp/s, while the Xavier comparison uses the
+paper's 1-TOp/s full design. Independently, a source-derived trace HMMA is a
+SASS instruction worth 256 FMA, not the 4096-FMA PTX WMMA assigned by H146.
+The required corrections are 3.906x and 16x, neither learned from targets.
