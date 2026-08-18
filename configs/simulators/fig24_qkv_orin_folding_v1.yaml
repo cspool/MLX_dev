@@ -1,0 +1,75 @@
+name: fig24-qkv-orin-folding-v1
+experiment_id: H124
+run_id: run129
+classification: target_free_block128_qkv_orin_repeat_folding
+validation_eligible: false
+
+frozen_inputs:
+  h101:
+    path: artifacts/results/fig24-25-exact-paths-run106.json
+    bytes: 517805
+    sha256: 73b505a008d38fbb65fd138ca583da8a3800ac3a0384eb60b43a201d20daf8af
+    required_status: supported
+    required_integrity: true
+  h101_manifest:
+    path: artifacts/environment/h101/fig24-25-exact-compile-manifest.json
+    bytes: 316034
+    sha256: 7f5bb9908e03e54b644ddb5a0547ac281c4310a179e24f727b7ed8449601519a
+  h123:
+    path: artifacts/results/fig24-gpu-schedule-ambiguity-run128.json
+    bytes: 8196
+    sha256: 5eaa70307f1e07283f12073dbfb71bf283d36f13df768d3bfb092682c08cbcfa
+    required_status: supported
+    required_integrity: true
+  orin_config:
+    path: artifacts/environment/h54/config/gpgpusim.config
+    bytes: 5460
+    sha256: 1e1fb072fa26213186c7c9a5d2935a06cc70e1a5ba7aa444f817779d0ccc5335
+  orin_interconnect:
+    path: artifacts/environment/h54/config/config_ampere_islip.icnt
+    bytes: 1351
+    sha256: f1c6b2f7340605bbc500e8fc8bed457aeeffaa5774f4cb2d572feb8df4a619ca
+  cuda_source:
+    path: simulator_ext/accelsim/mlx_fig24_schedule_witness.cu
+    bytes: 4009
+    sha256: ca25f2dba5e008603e9e8ab086f3292d468697e1006c40d26cacb77a07152dd1
+
+templates:
+  qkv_bsmm: {stages: 4, block_size: 16}
+  qkv_bsmm_b32: {stages: 5, block_size: 32}
+  qkv_bsmm_b64: {stages: 6, block_size: 64}
+
+folding:
+  base_element_count: 32768
+  fma_per_element_stage: 3
+  block_threads: 128
+  fit_scales: [1, 2]
+  holdout_scales: [4, 8]
+  relative_error_limit: 0.05
+  figure24_cases: [BERT_512, BERT_8K, Llama2_512, Llama2_1K, Llama2_4K, InternLM2_2K, InternLM2_8K]
+  required_templates: 3
+  required_runs: 12
+  required_holdouts: 6
+  required_full_estimates: 21
+
+acceptance:
+  checksum_relative_error_limit: 0.000001
+  targets_consumed: false
+  cta_mapping: frozen_h51_block128_transparent_proxy
+  author_cuda_mapping_claimed: false
+
+toolchain:
+  nvcc: /usr/local/cuda-11.8/bin/nvcc
+  host_compiler: /usr/bin/g++-11
+  architecture: compute_86
+  execution: GPGPU_Sim_detailed_PTX
+  gpgpusim_root: third_party/accel-sim-framework/gpu-simulator/gpgpu-sim
+  cuda_shim: third_party/envs/cuda-11.8-cuobjdump
+
+source_layout:
+  runner: scripts/run_fig24_qkv_orin_folding.py
+  auditor: scripts/audit_fig24_qkv_orin_folding.py
+  test: tests/test_fig24_qkv_orin_folding.py
+
+output_root: artifacts/environment/h124
+result_path: artifacts/results/fig24-qkv-orin-folding-run129.json
