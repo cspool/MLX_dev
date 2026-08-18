@@ -77,12 +77,20 @@ trace_control:
   adapter_header_before_sha256: 2dac6191a0484b26cfee480078a75f05a1378a3a83866caeb9a54c9f4dbf9fc5
   adapter_source_before_sha256: 9132eac4a5ad2676c0628e1fe6c026e67df0426aae41206efbd6631504cf7aa2
 
+capacity_control:
+  accounting: maximum_resident_demand_over_active_window_tags
+  whole_program_sum_forbidden: true
+  overlay_header_before_sha256: 3675305b47f89f227cfb36bdb571302feefa495a1ddee9fd655081a231c5f4b8
+  overlay_source_before_sha256: 7f19a23835579b9fde946137caeeb63b7675dabe8db7426375e5a01c2f5569f8
+
 regressions:
   h106_manifest: artifacts/environment/h106/historical-dpu-memory-run-manifest.json
   h109_manifest: artifacts/environment/h109/pipelined-block-contexts-run-manifest.json
   h113_manifest: artifacts/environment/h113/coupled-pipelined-dpu-memory-run-manifest.json
 
 source_layout:
+  overlay_header: third_party/dsa-framework/dsa-gem5/src/cpu/minor/ssim/mlx_overlay.hh
+  overlay_source: third_party/dsa-framework/dsa-gem5/src/cpu/minor/ssim/mlx_overlay.cc
   adapter_header: simulator_ext/dsagen/historical_dpu_memory.hh
   adapter_source: simulator_ext/dsagen/historical_dpu_memory.cc
   scenario_core: src/mlxsim/coupled_full_mesh_paths.py
@@ -90,7 +98,8 @@ source_layout:
   runner: scripts/run_coupled_full_mesh_paths.py
   auditor: scripts/audit_coupled_full_mesh_paths.py
   driver: simulator_ext/dsagen/historical_dpu_memory_driver.cc
-  patch: patches/dsagen/dsa-gem5-memory-trace-control-v1.patch
+  trace_patch: patches/dsagen/dsa-gem5-memory-trace-control-v1.patch
+  capacity_patch: patches/dsagen/dsa-gem5-active-window-capacity-v1.patch
 
 output_root: artifacts/environment/h114
 result_path: artifacts/results/coupled-full-mesh-paths-run119.json

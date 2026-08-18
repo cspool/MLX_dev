@@ -15,12 +15,26 @@ at every registered point, then packed by the real 4 MiB half capacity. The
 
 ## Live memory mapping
 
-Change only the H110 memory backend from `dsagen_spad` to `dpu_memory` and
-replace each dynamic load/store address with a deterministic tile-relative
-sequence. Global load and store cursors distribute requests across packed tiles;
-all 192 dynamic store totals divide their tile count exactly, so the existing
-scalar `stores_per_tile` release rule remains exact. Original relative address
-bits are preserved modulo half capacity to retain bank diversity.
+Change the H110 memory backend from `dsagen_spad` to `dpu_memory`. One global
+tag-major address remap was rejected during implementation smoke because it
+must finish every load tag before reaching the stores that release tile 0/1,
+so tile 2 can never fill. The accepted compiler must instead split every
+block's trip count across packed tiles, copy the complete tag/event graph per
+tile, and execute those graphs in tile-major tag order. Per-block partitions
+must sum exactly to the original trip count. Each copied emit event is renamed
+per tile and still fires once at that copied block's completion; all 2,864
+multi-tile emitters have this source form and no periodic wait/multiplicity.
+
+Tile-local load/store sequences preserve original relative address and bank
+alignment. All 192 dynamic store totals divide their tile count exactly, so
+the existing scalar `stores_per_tile` release rule remains exact.
+
+Replicating a streamed program exposes another pre-result implementation issue:
+the H109 validator sums operand contexts across the entire program, although
+the DPU admits at most `active_window` tags. Replace this with the conservative
+maximum demand of any active-window-sized tag set per PE. H109's two-tag
+overflow remains over capacity, while completed/nonresident tile graphs no
+longer consume instruction-buffer state.
 
 Input/output tile vectors use the same aligned balanced packing as H107. Every
 tile therefore observes scaled DMA fill/drain plus live PE request/response,
@@ -43,14 +57,15 @@ ASan and UBSan, for 480 total executions and 96 sanitizer executions.
 1. Frozen H113/H110/H107/contract bytes qualify; H113/H107 are supported with
    integrity and H110 is rejected with integrity only because residence, while
    all 96 H110 cycle holdouts pass.
-2. Exactly 48 paths and 192 configs recompile deterministically; blocks, FUs,
-   routes, pipelines, tags, events and all non-memory instructions remain H110
-   identical.
+2. Exactly 48 paths and 192 configs recompile deterministically; every H110
+   block is partitioned across tile-local graphs with exact trip/work sums,
+   unchanged FUs/routes/pipelines/instruction bodies and bijectively renamed
+   tags/events.
 3. Dynamic FU/pipeline work equals H110 at every q; scaled H107 read/write bytes
    equal exact `full_bytes*q/full_scale` and preserve OI.
 4. Tile counts equal 4 MiB capacity packing, span 1–24, every byte vector is
-   positive/aligned/capacity-safe, and every tile receives the exact registered
-   store count.
+   positive/aligned/capacity-safe, every tile receives the exact registered
+   store count, and active-window capacity stays within the frozen 256 contexts.
 5. All 480 executions complete; instructions, FMA issues, external requests,
    responses, adapter reads/writes, releases, drains and off-chip bytes conserve.
 6. Every run reports positive ownership and memory wait evidence, zero ownership
@@ -63,8 +78,9 @@ ASan and UBSan, for 480 total executions and 96 sanitizer executions.
    rejects cycle folding without invalidating correctly executed coupled runs.
 10. For every path, q=full_scale reconstructs exact H107 bytes/tile count and
     exact H110 FU work; a full coupled cycle is emitted only from a passing fold.
-11. ASan/UBSan runs are clean; the trace-control patch is reversible; H106,
-    H109 and H113 frozen manifests remain qualified and default behavior exact.
+11. ASan/UBSan runs are clean; trace-control and active-window-capacity patches
+    are reversible; H106, H109 and H113 regressions remain exact, including the
+    H109 operand-overflow rejection.
 12. Compiler/runner source contains no Figure 25 target, selected MLX bandwidth,
     residual scale or family correction; full-paper completion remains 0/18.
 
