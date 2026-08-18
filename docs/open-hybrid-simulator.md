@@ -374,6 +374,11 @@ H137 refreshes all eight figures in
 It certifies primary 1/8 and strict 0/8, and separates three ready trend audits
 from two execution gaps and two identity/provenance gaps.
 
+H138 completes Figure 19's qualitative audit in
+[fig19-trend-completion.md](fig19-trend-completion.md). All latency curves have
+the same rank/order trend, and the independent open FABNet/current MLX ratios
+show 1.378x-1.616x improvement; the primary count becomes 2/8.
+
 The active objective is now limited to simulator-dependent hardware performance
 in Figures 18–25, as recorded in
 [simulator-experiment-scope.md](simulator-experiment-scope.md). Accuracy,

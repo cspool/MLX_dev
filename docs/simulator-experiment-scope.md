@@ -68,3 +68,7 @@ H137 performs that refresh in
 [active-simulator-trend-completion.md](active-simulator-trend-completion.md).
 The count remains primary 1/8 and strict 0/8; Figure 19/22/25 are explicitly
 pending trend audits, not presumed passes.
+
+H138 completes Figure 19 under that frozen trend policy, raising the primary
+count to 2/8 while strict completion remains 0/8. Figure 22/25 remain pending
+their own full-series audits.

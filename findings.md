@@ -532,3 +532,9 @@ Run142 refreshes the full simulator-dependent scope under both criteria. Only
 Figure 20 has a completed trend audit, yielding primary 1/8 versus strict 0/8.
 Three complete numerical figures (19/22/25) move to trend-audit-pending; missing
 execution in 21/24 and missing workload identity in 18/23 remain hard blockers.
+
+Run143 closes Figure 19 qualitatively without hiding either parent's strict
+failure. Attention, FFN and total latency curves have identical rank order to
+the paper, and the official open FABNet simulator remains 1.378x-1.616x slower
+than the current-coupled MLX simulator across all four lengths. Primary
+completion becomes 2/8; strict remains 0/8.
