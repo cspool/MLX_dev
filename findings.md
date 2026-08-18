@@ -632,3 +632,11 @@ operations in 71 cycles, crosses two events and two route hops, and produces
 both independent golden values exactly in debug, optimized and sanitized
 builds. Functional enablement leaves every timing statistic unchanged. This
 does not yet count as one of the six required operator payloads.
+
+Run161 is the first complete operator payload. A width-4 hierarchical BSMM
+executes two sparse 2x2 stages over four spatial PEs and two tags. All eight
+outputs match an independently assembled NumPy matrix chain exactly; 32
+multiplications, 16 additions, 48 memory requests/384 bytes, eight transfers
+and 12 hops are conserved. Enabled and disabled schedules both take 71 cycles
+across three builds. The functional claim connects to four existing H153
+same-work structured-BSMM gains of about 3.998x without creating a new ratio.

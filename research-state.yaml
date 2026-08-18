@@ -754,14 +754,14 @@ experiments:
       timestamp: "2026-08-17"
 
 outer_loop:
-  cycle: 114
-  last_direction: "Build H156 same-input BSMM on H155's timed numeric completion path, requiring independent golden output and exact work/traffic conservation before extending to FFT-CMP."
-  last_reflection: "H155 closes the timing-only infrastructure gap with exact scalar outputs and invariant timing across three builds, but correctly leaves operator coverage at 0/6. The next smallest end-to-end operator is BSMM."
+  cycle: 115
+  last_direction: "Build H157 same-input FFT-CMP by first freezing a source/architecture-derived complex butterfly representation, then require independent NumPy FFT-stage outputs and exact arithmetic/traffic conservation."
+  last_reflection: "H156 completes BSMM at 1/6 coverage with exact outputs and conservation, so no numerical tuning is warranted. FFT-CMP is the next independent operator and exposes the currently missing complex-arithmetic representation."
 
 functional_completion:
   status: active
   priority: integrated_same_input_numeric_and_cycle_execution
-  current_hypothesis: H156
+  current_hypothesis: H157
   integrated_scalar_execution:
     experiment_id: H155
     run_id: run160
@@ -771,7 +771,18 @@ functional_completion:
     cycles: 71
     maximum_absolute_error: 0.0
     enabled_disabled_timing_identical: true
-  completed_operator_payloads: []
+  completed_operator_payloads:
+    - bsmm
+  bsmm:
+    experiment_id: H156
+    run_id: run161
+    path: artifacts/results/bsmm-functional-run161.json
+    status: supported
+    outputs: 8
+    maximum_absolute_error: 0.0
+    functional_operations: 88
+    cycles: 71
+    existing_same_work_speedup_range: [3.9979536956715123, 3.997971631263274]
   required_operator_payloads:
     - bsmm
     - fft_cmp
@@ -861,6 +872,7 @@ recent_milestones_after_h46:
   core_full_array_gain: "H153 supports the core full-array same-work claim: 6/6 N128 QKV/FFN/elementwise comparisons pass at 3.508x-3.998x with exact work/traffic, replay/adapter identity and a 4->16 issue transition."
   core_architecture_claims: "H154 supports the final certificate at 5/5 primary and 3/3 supporting claims. Primary gains span 1.215x-15.018x; full-figure and strict-10% requirements are false by user direction."
   integrated_functional_payload: "H155 supports real completion-path FP64 shadow execution: 24 load/compute/xfer/store operations finish in 71 cycles with exact two-output golden agreement, timing invariance across enabled/disabled modes, three-build determinism and clean sanitizers; operator coverage remains 0/6."
+  bsmm_functional_payload: "H156 supports a width-4/two-stage hierarchical BSMM over four PEs/two tags: 8/8 outputs exactly match NumPy, 32 multiplies/16 adds and 48 memory requests/384 bytes conserve, eight transfers take 12 hops, timing is invariant across modes/builds, and H153 supplies four qualified ~3.998x same-work performance rows."
 
 completion_snapshot_run042:
   certificate_run: run_042
