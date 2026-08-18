@@ -1,0 +1,68 @@
+name: simulator-trend-goal-completion-v1
+experiment_id: H162
+run_id: run167
+classification: final_core_trend_and_functional_completion_certificate
+validation_eligible: true
+
+frozen_inputs:
+  core_performance:
+    path: artifacts/results/core-architecture-claims-run159.json
+    bytes: 6813
+    sha256: 3b7bba0021a03d13252884bd81361a5cbfd35d699ceddbc1d72c62595891208c
+    required_status: supported
+    required_integrity: true
+  complete_block_functional:
+    path: artifacts/results/complete-block-functional-run166.json
+    bytes: 10323
+    sha256: 9288d1169c173a6ba5ddc668bc2543e4a1dc00e4ceecd7cba8ef07022d7b7feb
+    required_status: supported
+    required_integrity: true
+  bounded_contexts:
+    path: artifacts/results/pipelined-block-contexts-run114.json
+    bytes: 8866
+    sha256: c6b7148950333490f8f90bee76e7558256aa0d1a85d2d3810fec6ab6c96bc30b
+    required_status: supported
+    required_integrity: true
+  coupled_memory:
+    path: artifacts/results/coupled-pipelined-dpu-memory-run118.json
+    bytes: 13276
+    sha256: 895b7b7d375b2b1a2f94e303633201bae61511c799d6346026a73b93a6487e8b
+    required_status: supported
+    required_integrity: true
+
+completion_contract:
+  core_primary_claims: 5
+  core_supporting_claims: 3
+  minimum_clear_speedup: 1.2
+  functional_payloads: 6
+  maximum_functional_absolute_error: 1.0e-12
+  required_functional_payloads:
+    - bsmm
+    - fft_cmp
+    - attention
+    - swa
+    - elementwise
+    - complete_transformer_block
+  strict_full_figure_required: false
+  strict_10pct_required: false
+  rtl_required: false
+  power_area_required: false
+
+verification:
+  ruff_command: [.venv/bin/ruff, check, scripts, src, tests]
+  pytest_command: [.venv/bin/pytest, -q]
+  expected_pytest_passed: 416
+  expected_pytest_failed: 0
+  expected_pytest_warnings: 17
+
+source_layout:
+  goal: docs/simulator-trend-goal.md
+  config: configs/simulators/simulator_trend_goal_completion_v1.yaml
+  protocol: experiments/h162-simulator-trend-goal-completion/protocol.md
+  runner: scripts/run_simulator_trend_goal_verification.py
+  auditor: scripts/audit_simulator_trend_goal_completion.py
+  test: tests/test_simulator_trend_goal_completion.py
+
+output_root: artifacts/environment/h162
+verification_manifest: artifacts/environment/h162/simulator-trend-goal-verification-manifest.json
+result_path: artifacts/results/simulator-trend-goal-completion-run167.json
