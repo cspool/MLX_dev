@@ -1,0 +1,65 @@
+name: fig25-coupled-transfer-v1
+experiment_id: H115
+run_id: run120
+classification: target_exposed_source_derived_bandwidth_transfer
+validation_eligible: false
+active_simulator_figure: 25
+
+frozen_inputs:
+  h114:
+    path: artifacts/results/coupled-full-mesh-paths-run119.json
+    bytes: 203542
+    sha256: 2e5fb3d24dc74a9b9d4cf253fd8d9bf49c833654e807acde6ecb16906461ad99
+    required_status: supported
+    required_integrity: true
+  h114_config:
+    path: configs/simulators/coupled_full_mesh_paths_v1.yaml
+    bytes: 3827
+    sha256: de20c31a6e33dea2f9ce0045ced71c43bf08fede1a295072150c3aff4834fc3f
+  h107:
+    path: artifacts/results/full-mesh-memory-residency-run112.json
+    bytes: 57444
+    sha256: ca917f5a1cf047d5d08cdba39a454955fb7d7d1aae33bef799058bcf38174a59
+    required_status: supported
+    required_integrity: true
+  h112:
+    path: artifacts/results/fig25-corrected-bandwidth-matrix-run117.json
+    bytes: 107466
+    sha256: f880c48fb4c76e710e43344566712e25595216b29b08f630cdf4652c79fb1352
+    required_status: rejected
+    required_integrity: true
+  targets:
+    path: artifacts/targets/paper_targets.yaml
+    bytes: 14931
+    sha256: c4a22ab8052ff8cb223a729b8ce07320c6826cfee0d37e1a664a8761e018b41e
+    key: fig25_roofline_utilization.heatmap.mlx
+
+mapping:
+  cases: [BERT_512, Llama2_1K, InternLM2_4K, BERT_8K]
+  operators: [fft_cmp, qkv_bsmm, qkv_bsmm_b32, qkv_bsmm_b64, swa_w128_q32, swa_w256_q64]
+  required_points: 24
+  relative_error_limit: 0.10
+
+hardware:
+  physical_pes: 16
+  simd_width: 32
+  effective_ops_per_fma: 2
+  exact_peak_effective_ops_per_cycle: 1024
+  bandwidth_bytes_per_cycle: 64
+  bandwidth_provenance: h106_2018_author_lineage_64GBps_at_1GHz_sensitivity
+  bandwidth_is_disclosed_mlx_parameter: false
+
+metric: achieved_effective_fma_ops_div_min_exact_peak_and_oi_times_bandwidth
+
+selection_rules:
+  target_derived_parameters: false
+  residual_scale: null
+  family_correction: null
+  pointwise_adjustment: null
+  post_result_adjustment: false
+
+source_layout:
+  auditor: scripts/audit_fig25_coupled_transfer.py
+  test: tests/test_fig25_coupled_transfer.py
+
+result_path: artifacts/results/fig25-coupled-transfer-run120.json
