@@ -257,136 +257,133 @@ def compile_full_mesh_fft_cmp_path(
     blocks = []
     operations: dict[str, int] = defaultdict(int)
     pipelines = {name: 0 for name in ("load", "store", "compute", "xfer")}
-    previous: dict[tuple[int, int, int], str] = {}
-    locations = {(branch, slot): slot for branch in range(3) for slot in range(16)}
+    previous: dict[tuple[int, int], str] = {}
+    locations = {slot: slot for slot in range(16)}
     compute_coords = []
     for stage in range(stages):
         shuffle = stage == forward_stages
         inverse = stage > forward_stages
         final = stage == stages - 1
-        trip = unit if inverse else 2 * unit
-        for branch in range(3):
-            coordinates = []
-            next_locations: dict[int, int] = {}
-            for slot in range(16):
-                location = locations[(branch, slot)]
-                waits = []
-                multiplicities = {}
-                if stage:
-                    if stage == forward_stages + 1:
-                        event = previous[(branch, slot, 0)]
-                        waits = [event]
-                        multiplicities[event] = 2
-                    else:
-                        waits = [previous[(branch, slot, stream)] for stream in (0, 1)]
-                instructions = []
-                if stage == 0:
+        branch_trip = unit if inverse else 2 * unit
+        trip = 3 * branch_trip
+        coordinates = []
+        next_locations: dict[int, int] = {}
+        for slot in range(16):
+            location = locations[slot]
+            waits = []
+            multiplicities = {}
+            if stage:
+                if stage == forward_stages + 1:
+                    event = previous[(slot, 0)]
+                    waits = [event]
+                    multiplicities[event] = 2
+                else:
+                    waits = [previous[(slot, stream)] for stream in (0, 1)]
+            instructions = []
+            if stage == 0:
+                for packet in (0, 1):
+                    sequence = [
+                        ((iteration % 3) * 32 + slot * 2 + packet) * 0x100000
+                        for iteration in range(trip)
+                    ]
+                    instructions.append(
+                        {
+                            "id": f"{name}_s{stage}_pe{slot}_load{packet}",
+                            "pipeline": "load",
+                            "operation": "load",
+                            "reads": [],
+                            "writes": [packet],
+                            "memory_address": sequence[0],
+                            "memory_address_sequence": sequence,
+                            "memory_bytes": 64,
+                        }
+                    )
+            destination = location ^ (1 << (stage % 4))
+            if shuffle:
+                instructions.append(
+                    _compute(f"{name}_s{stage}_pe{slot}_shuffle", "shuffle")
+                )
+                operations["shuffle"] += trip
+                event = f"{name}_s{stage}_pe{slot}_retained"
+                instructions.append(
+                    {
+                        "id": f"{name}_s{stage}_pe{slot}_xfer",
+                        "pipeline": "xfer",
+                        "operation": "xfer",
+                        "reads": [],
+                        "writes": [0],
+                        "destination": _coord(destination),
+                        "destination_register": 0,
+                        "emit_event": event,
+                    }
+                )
+                previous[(slot, 0)] = event
+                next_locations[slot] = destination
+            else:
+                for index in range(4):
+                    instructions.append(
+                        _compute(f"{name}_s{stage}_pe{slot}_fma{index}", "fma")
+                    )
+                for index in range(6):
+                    instructions.append(
+                        _compute(f"{name}_s{stage}_pe{slot}_add{index}", "add")
+                    )
+                operations["fma"] += 4 * trip
+                operations["add"] += 6 * trip
+                if final:
                     for packet in (0, 1):
+                        sequence = [
+                            0x10000000
+                            + ((iteration % 3) * 32 + slot * 2 + packet) * 0x100000
+                            for iteration in range(trip)
+                        ]
                         instructions.append(
                             {
-                                "id": f"{name}_s{stage}_b{branch}_pe{slot}_load{packet}",
-                                "pipeline": "load",
-                                "operation": "load",
-                                "reads": [],
-                                "writes": [packet],
-                                "memory_address": (
-                                    branch * 32 + slot * 2 + packet
-                                )
-                                * 0x100000,
+                                "id": f"{name}_s{stage}_pe{slot}_store{packet}",
+                                "pipeline": "store",
+                                "operation": "store",
+                                "reads": [packet],
+                                "writes": [],
+                                "memory_address": sequence[0],
+                                "memory_address_sequence": sequence,
                                 "memory_bytes": 64,
                             }
                         )
-                destination = location ^ (1 << (stage % 4))
-                if shuffle:
-                    instructions.append(
-                        _compute(
-                            f"{name}_s{stage}_b{branch}_pe{slot}_shuffle", "shuffle"
-                        )
-                    )
-                    operations["shuffle"] += trip
-                    event = f"{name}_s{stage}_b{branch}_pe{slot}_retained"
-                    instructions.append(
-                        {
-                            "id": f"{name}_s{stage}_b{branch}_pe{slot}_xfer",
-                            "pipeline": "xfer",
-                            "operation": "xfer",
-                            "reads": [],
-                            "writes": [branch],
-                            "destination": _coord(destination),
-                            "destination_register": branch,
-                            "emit_event": event,
-                        }
-                    )
-                    previous[(branch, slot, 0)] = event
-                    next_locations[slot] = destination
                 else:
-                    for index in range(4):
+                    for stream in (0, 1):
+                        event = f"{name}_s{stage}_pe{slot}_p{stream}"
                         instructions.append(
-                            _compute(
-                                f"{name}_s{stage}_b{branch}_pe{slot}_fma{index}",
-                                "fma",
-                            )
+                            {
+                                "id": f"{name}_s{stage}_pe{slot}_xfer{stream}",
+                                "pipeline": "xfer",
+                                "operation": "xfer",
+                                "reads": [],
+                                "writes": [stream],
+                                "destination": _coord(destination),
+                                "destination_register": stream,
+                                "emit_event": event,
+                            }
                         )
-                    for index in range(6):
-                        instructions.append(
-                            _compute(
-                                f"{name}_s{stage}_b{branch}_pe{slot}_add{index}",
-                                "add",
-                            )
-                        )
-                    operations["fma"] += 4 * trip
-                    operations["add"] += 6 * trip
-                    if final:
-                        for packet in (0, 1):
-                            instructions.append(
-                                {
-                                    "id": f"{name}_s{stage}_b{branch}_pe{slot}_store{packet}",
-                                    "pipeline": "store",
-                                    "operation": "store",
-                                    "reads": [packet],
-                                    "writes": [],
-                                    "memory_address": 0x10000000
-                                    + (branch * 32 + slot * 2 + packet) * 0x100000,
-                                    "memory_bytes": 64,
-                                }
-                            )
-                    else:
-                        for stream in (0, 1):
-                            event = f"{name}_s{stage}_b{branch}_pe{slot}_p{stream}"
-                            instructions.append(
-                                {
-                                    "id": f"{name}_s{stage}_b{branch}_pe{slot}_xfer{stream}",
-                                    "pipeline": "xfer",
-                                    "operation": "xfer",
-                                    "reads": [],
-                                    "writes": [stream],
-                                    "destination": _coord(destination),
-                                    "destination_register": stream,
-                                    "emit_event": event,
-                                }
-                            )
-                            previous[(branch, slot, stream)] = event
-                        next_locations[slot] = destination
-                block: dict[str, Any] = {
-                    "id": f"{name}_s{stage}_b{branch}_pe{slot}",
-                    "tag": stage * 3 + branch + 1,
-                    "pe": _coord(location),
-                    "trip_count": trip,
-                    "predecessors": [],
-                    "wait_events": waits,
-                    "instructions": instructions,
-                }
-                if multiplicities:
-                    block["wait_event_multiplicities"] = multiplicities
-                blocks.append(block)
-                coordinates.append(_coord(location))
-                for instruction in instructions:
-                    pipelines[instruction["pipeline"]] += trip
-            for slot, location in next_locations.items():
-                locations[(branch, slot)] = location
-            compute_coords.append(
-                {"stage": stage, "branch": branch, "coordinates": coordinates}
-            )
+                        previous[(slot, stream)] = event
+                    next_locations[slot] = destination
+            block: dict[str, Any] = {
+                "id": f"{name}_s{stage}_pe{slot}",
+                "tag": stage + 1,
+                "pe": _coord(location),
+                "trip_count": trip,
+                "predecessors": [],
+                "wait_events": waits,
+                "instructions": instructions,
+            }
+            if multiplicities:
+                block["wait_event_multiplicities"] = multiplicities
+            blocks.append(block)
+            coordinates.append(_coord(location))
+            for instruction in instructions:
+                pipelines[instruction["pipeline"]] += trip
+        for slot, location in next_locations.items():
+            locations[slot] = location
+        compute_coords.append({"stage": stage, "coordinates": coordinates})
     full_scale = batch * hidden_dimension * sequence_length // 512
     event_balance = _event_balance(blocks)
     metadata = {
@@ -399,7 +396,8 @@ def compile_full_mesh_fft_cmp_path(
         "scale": scale,
         "full_scale": full_scale,
         "stage_count": stages,
-        "tag_count": stages * 3,
+        "tag_count": stages,
+        "branch_fold": 3,
         "forward_stages": forward_stages,
         "inverse_stages": inverse_stages,
         "operation_counts": dict(operations),
