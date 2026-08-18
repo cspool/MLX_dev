@@ -22,3 +22,7 @@ explicitly null.
 
 The immutable result is
 `artifacts/results/fig21-mlx-composition-run100.json`.
+
+The frozen target comparison is in
+[`fig21-evidence-closure.md`](fig21-evidence-closure.md): memory mostly passes,
+GEMM share fails all points, and speedup remains execution-incomplete.

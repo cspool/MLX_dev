@@ -151,3 +151,8 @@ projection/dense/elementwise blocks and 24+8 folding remain next.
 H92 supplies all timed non-Attention paths in
 [`fig21-timed-paths.md`](fig21-timed-paths.md); five batch-8 Attention models
 and the final layer fold remain.
+
+H93-H95 complete the MLX layer fold, and H96 closes its target evidence in
+[`fig21-evidence-closure.md`](fig21-evidence-closure.md). Memory passes 9/10,
+GEMM share fails 0/5, and five speedups remain unavailable without Xavier
+Tensor execution.
