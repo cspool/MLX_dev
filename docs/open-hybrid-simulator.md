@@ -214,3 +214,9 @@ source-level throughput defect: one inflight instruction state per tagged block
 turns latency-4/II-1 FMA trips into effective II=4. H102's high physical-FMA
 residence is therefore not high issue throughput. Figure 25 work must pause
 until multi-iteration in-flight execution is implemented.
+
+H109 implements and validates that correction in
+[pipelined-block-contexts.md](pipelined-block-contexts.md). A latency-4/II-1
+eight-trip FMA now issues in cycles 0–7 and completes in 4–11 with four bounded
+contexts, while every legacy result remains byte-identical. H102 still needs a
+target-free recompile in this explicit mode before its cycles can be reused.

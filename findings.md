@@ -342,3 +342,11 @@ four-cycle residence while scalar FMA throughput remains near 25% peak. The
 bandwidth envelope itself passes 12/12 gates, but its parent cycles are
 diagnostic-only for Figure 25. Multi-iteration in-flight execution must be
 implemented before any further target comparison.
+
+Run114 fixes that defect with an explicit bounded-context mode. Four contexts
+make latency-4/II-1 FMA issue every cycle and complete eight trips in 12 cycles;
+two contexts preserve capacity bubbles and take 18 cycles. Multi-instruction,
+event, identity, routing and overflow cases all pass across four builds, while
+H105/H106/H52 and gem5 outputs remain exact. The fix is not retroactive:
+H102 must be recompiled and revalidated before its prior full-cycle estimates
+or H108 envelope can support Figure 25.

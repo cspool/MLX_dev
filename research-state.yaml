@@ -687,9 +687,9 @@ experiments:
       timestamp: "2026-08-17"
 
 outer_loop:
-  cycle: 65
-  last_direction: "Correct one-inflight-per-block execution with bounded multi-iteration contexts; prove latency-4/II-1 FMA issues every cycle while preserving completion/events, H105/H106 and legacy outputs before rerunning H102."
-  last_reflection: "H108 supports a deterministic overlap envelope but diagnoses H102 cycles as throughput-invalid: physical FMA residence is near 99% while single-inflight trip issue is near 25% peak. Figure 25 remains null and full-paper completion remains 0/18."
+  cycle: 66
+  last_direction: "Recompile all 48 H102 paths in dpu_pipelined mode with independently frozen context capacity; validate work/events and corrected cycle/FMA throughput before updating H108."
+  last_reflection: "H109 fixes the single-inflight defect: latency-4/II-1 FMA issues every cycle with four bounded contexts, and all legacy outputs remain exact. No paper row is yet reproduced; full-paper completion remains 0/18."
 
 recent_milestones_after_h46:
   architecture_contract: "H52 supersedes the GPU-SM analogy with the paper's specialized spatial tagged-block PE; GPGPU-Sim is baseline-only."
@@ -725,6 +725,7 @@ recent_milestones_after_h46:
   historical_dpu_memory: "H106 supports DDR-DMA-two-half-SPM ownership, parity/relative-address mapping and non-stop tile flow across 36 main plus four auxiliary executions; 768 off-chip bytes and 8/8 PE responses conserve exactly, with no paper target consumed."
   full_mesh_memory_residency: "H107 supports 48 complete batch-32 schedules, 288 executions and exact OI; SWA window streaming lowers OI from 64/128 to 25.6/51.2 FLOP/B, while bandwidth and roofline utilization remain unavailable."
   compute_dma_overlap: "H108 supports 240-point bandwidth/overlap bounds but exposes one-inflight tagged-block semantics that turn latency-4/II-1 FMA trips into effective II=4; parent cycles are invalid for Figure 25 throughput."
+  pipelined_block_contexts: "H109 supports bounded multi-iteration tagged blocks: four contexts issue latency-4/II-1 FMA every cycle, two contexts expose exact capacity bubbles, and all legacy/gem5 regressions remain byte-identical."
 
 completion_snapshot_run042:
   certificate_run: run_042
