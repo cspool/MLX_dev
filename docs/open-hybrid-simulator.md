@@ -404,6 +404,11 @@ H143 audits Figure 21's remaining denominator in
 enables tensor units but has never executed WMMA/MMA; sparse projection and
 structured-Attention proxies are rejected as dense-model substitutes.
 
+H144 tests functional-PTX WMMA in
+[fig21-xavier-wmma.md](fig21-xavier-wmma.md). Genuine WMMA PTX reaches kernel
+enqueue but crashes the functional simulator before metrics, so no projection
+estimate is emitted and the next route is trace-driven Accel-Sim.
+
 The active objective is now limited to simulator-dependent hardware performance
 in Figures 18–25, as recorded in
 [simulator-experiment-scope.md](simulator-experiment-scope.md). Accuracy,

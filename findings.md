@@ -567,3 +567,9 @@ shapes, but dense Xavier has no qualified family. The H56 timing config declares
 four tensor units while its actual BSMM PTX has no WMMA/MMA instruction; H77 and
 H135 model sparse/structured kernels and cannot stand in for the dense model.
 Fifty-five matched component executions remain across five shapes.
+
+Run149 proves the functional-PTX simulator cannot execute the missing WMMA
+semantics. The new kernel compiles to WMMA load/MMA/store, parses successfully
+and is pushed to the GPU stream, then the simulator segfaults before any cycle
+or checksum output. The foundational stop leaves all projections null and
+routes TensorCore work to Accel-Sim's intended trace-driven specialized unit.

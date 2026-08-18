@@ -1,0 +1,162 @@
+{
+  "schema_version": 1,
+  "experiment_id": "H144",
+  "run_id": "run149",
+  "classification": "target_free_xavier_wmma_projection_folding",
+  "validation_eligible": false,
+  "generated_at": "2026-08-18T14:26:29.602185+00:00",
+  "project_commit": "2ecd560d7e78f5df8a06aba221fc51c812133bd1",
+  "hypothesis_status": "rejected",
+  "audit_integrity": true,
+  "paper_performance_targets_consumed": false,
+  "paper_reproduction_claim": "none_wmma_functional_ptx_unsupported",
+  "failure_class": "gpgpusim_functional_ptx_wmma_post_enqueue_crash",
+  "recommended_successor": "accelsim_trace_driven_tensor_core",
+  "frozen_inputs": {
+    "h56_xavier": {
+      "path": "artifacts/results/gpgpusim-xavier-proxy-run062.json",
+      "bytes": 7595,
+      "sha256": "443843b96d3f01cf27fee02413ae8d8cdc519233aca514cdaeb2d34d0373fe14",
+      "checks": {
+        "is_file": true,
+        "bytes": true,
+        "sha256": true
+      },
+      "pass": true
+    },
+    "h91_contract": {
+      "path": "artifacts/results/fig21-layer-contract-run096.json",
+      "bytes": 33918,
+      "sha256": "d92d0c477a1525beba1ab613985820dde98c8a7fe7429347210eb5abe9b2bf12",
+      "checks": {
+        "is_file": true,
+        "bytes": true,
+        "sha256": true
+      },
+      "pass": true
+    },
+    "h143_coverage": {
+      "path": "artifacts/results/fig21-xavier-coverage-run148.json",
+      "bytes": 19293,
+      "sha256": "0115c705b2274fa6f1c6c8671161073717a36c6550d7fa33876bf8b69084aefd",
+      "checks": {
+        "is_file": true,
+        "bytes": true,
+        "sha256": true
+      },
+      "pass": true
+    }
+  },
+  "generated_inputs": {
+    "run_manifest": {
+      "path": "artifacts/environment/h144/xavier-wmma-run-manifest-r16.json",
+      "bytes": 906,
+      "sha256": "644af97acfb89232867c7dab1c7511ad91bb873acdcb2ef53113cce46a5dbb37",
+      "checks": {
+        "is_file": true
+      },
+      "pass": true
+    }
+  },
+  "parent_checks": {
+    "h56_xavier": true,
+    "h91_contract": true,
+    "h143_coverage": true
+  },
+  "xavier_config_check": true,
+  "ptx_checks": {
+    "qualified": true,
+    "wmma_load": true,
+    "wmma_mma": true,
+    "wmma_store": true,
+    "compute_70": true
+  },
+  "failure_checks": {
+    "single_anchor": true,
+    "returncode": true,
+    "stage": true,
+    "ptx_parsed": true,
+    "kernel_enqueued": true,
+    "no_cycles": true,
+    "no_summary": true,
+    "abnormal_exit": true,
+    "stopping_rule": true
+  },
+  "projection_estimates": {},
+  "source_files": {
+    "cuda_source": {
+      "path": "simulator_ext/accelsim/mlx_wmma_proxy.cu",
+      "bytes": 3863,
+      "sha256": "53c4ba2a1c3e778d29e416c897d2dc53f432756652d7d3e80fcbe5355e689a31",
+      "checks": {
+        "is_file": true
+      },
+      "pass": true
+    },
+    "runner": {
+      "path": "scripts/run_fig21_xavier_wmma.py",
+      "bytes": 7940,
+      "sha256": "ad52f07c4de0ea81707bbc20f84978c8f64efd9e3b6ecda9a1ba384bba53ce78",
+      "checks": {
+        "is_file": true
+      },
+      "pass": true
+    },
+    "auditor": {
+      "path": "scripts/audit_fig21_xavier_wmma.py",
+      "bytes": 9484,
+      "sha256": "be6fbc0c8ce1bd6bb42f44c949e61de76255deb5960a547d43d390632a263050",
+      "checks": {
+        "is_file": true
+      },
+      "pass": true
+    },
+    "test": {
+      "path": "tests/test_fig21_xavier_wmma.py",
+      "bytes": 912,
+      "sha256": "591a09830a7379c2e54f74b9bbf64580c201d23bfaa102023a6606731782ff32",
+      "checks": {
+        "is_file": true
+      },
+      "pass": true
+    }
+  },
+  "target_free_check": true,
+  "acceptance_gates": [
+    true,
+    true,
+    true,
+    false,
+    false,
+    false,
+    false,
+    false,
+    true,
+    true
+  ],
+  "summary": {
+    "planned_runs": 4,
+    "attempted_runs": 1,
+    "successful_runs": 0,
+    "ptx_wmma_present": true,
+    "failure_stage": "post_kernel_enqueue_crash",
+    "returncode": 139,
+    "projection_estimates": 0,
+    "figure21_dense_projection_complete": false,
+    "active_simulator_figures_reproduced": 3,
+    "active_simulator_figures_total": 8,
+    "acceptance_gates_passed": 5,
+    "acceptance_gates_total": 10
+  },
+  "integrity_checks": {
+    "frozen": true,
+    "parents": true,
+    "xavier_config": true,
+    "ptx": true,
+    "failure_captured": true,
+    "stopping_rule": true,
+    "no_estimates": true,
+    "source": true,
+    "acceptance_evaluated": true
+  }
+}
