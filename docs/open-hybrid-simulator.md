@@ -414,6 +414,11 @@ H145 tests live SASS capture in
 tracer is unsupported by the current driver before application execution, so
 the trace-driven route must use a transparent source-derived HMMA microtrace.
 
+H146 implements that microtrace in
+[fig21-xavier-hmma-traceg.md](fig21-xavier-hmma-traceg.md). Four Accel-Sim
+replays and two exact holdouts qualify five compute-only dense projection
+estimates, all explicitly labeled synthetic rather than captured.
+
 The active objective is now limited to simulator-dependent hardware performance
 in Figures 18–25, as recorded in
 [simulator-experiment-scope.md](simulator-experiment-scope.md). Accuracy,

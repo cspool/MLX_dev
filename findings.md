@@ -579,3 +579,9 @@ recognizes the RTX4090 process but returns CUDA_ERROR_NOT_SUPPORTED under driver
 595.84 before the application runs; no trace or replay exists. This rules out
 pretending that a captured SASS schedule is available and motivates an
 explicitly synthetic HMMA trace derived from exact WMMA work.
+
+Run151 validates that transparent substitute. Accel-Sim's own Volta opcode map
+routes source-derived HMMA instructions to tensor unit 3; four unmodified Xavier
+replays scale from 128 to 912 cycles, and the 16/32 fit predicts both 64/128
+holdouts exactly. Five compute-only dense projection estimates are released,
+with the absence of captured SASS and memory instructions kept in the claim.
