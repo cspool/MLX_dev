@@ -306,6 +306,11 @@ GPGPU-Sim Orin runs conserve exact QKV FMA work and simulated instructions, but
 CTA shape alone creates 6.149% cycle spread. Figure 24 now requires separately
 frozen GPU schedules per operator family, not work-normalized micro-proxies.
 
+H124 begins that family-specific path in
+[fig24-qkv-orin-folding.md](fig24-qkv-orin-folding.md). All 12 exact block128
+runs pass execution gates, but q1/q2 folding fails q8 for B16/B32/B64. The GPU
+evidence is valid; the small-anchor extrapolation is not.
+
 The active objective is now limited to simulator-dependent hardware performance
 in Figures 18–25, as recorded in
 [simulator-experiment-scope.md](simulator-experiment-scope.md). Accuracy,

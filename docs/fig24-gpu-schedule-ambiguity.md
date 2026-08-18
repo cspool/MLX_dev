@@ -35,6 +35,10 @@ The next step is a block-128 QKV repeat-folding experiment across B16/B32/B64,
 with new q holdouts and no Figure 24 target. FFT-CMP and SWA require separate
 topology-aware GPU contracts before a full 42-cell denominator exists.
 
+That first fold is complete in
+[fig24-qkv-orin-folding.md](fig24-qkv-orin-folding.md). q1/q2 predicts q4 but
+misses all q8 checks by 7.55%–8.17%, so no full Orin cycle is admitted yet.
+
 Evidence is in
 [run128](../artifacts/results/fig24-gpu-schedule-ambiguity-run128.json), with
 the frozen plan in

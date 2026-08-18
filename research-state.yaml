@@ -706,9 +706,9 @@ experiments:
       timestamp: "2026-08-17"
 
 outer_loop:
-  cycle: 81
-  last_direction: "Pre-register target-free block-128 Orin repeat folding for exact proportional QKV B16/B32/B64 work, with new saturation holdouts and no Figure 24 targets."
-  last_reflection: "H123 holds FMA/instructions fixed but finds 6.149% CTA-shape cycle spread. Exact work needs an explicit GPU schedule; retain H51 block128 as a transparent proxy, not an author mapping. Active completion remains 0/8."
+  cycle: 82
+  last_direction: "Pre-register H125 to fit block128 QKV Orin cycles at q4/q8 and execute q16/q32 holdouts for B16/B32/B64, target-free."
+  last_reflection: "H124 q1/q2 passes q4 but fails every q8 by 7.55%-8.17%, localizing a shared grid-saturation onset. All 21 full estimates remain null; active completion is 0/8."
 
 recent_milestones_after_h46:
   architecture_contract: "H52 supersedes the GPU-SM analogy with the paper's specialized spatial tagged-block PE; GPGPU-Sim is baseline-only."
@@ -759,6 +759,7 @@ recent_milestones_after_h46:
   fig22_multiport_transfer: "H121 rejects Figure 22 at 4/64, 168.27% MAPE and 704.70% max; compute remains low and load becomes uniformly high, closing residual variants pending author counter evidence."
   fig23_workload_identity: "H122 supports a negative identity diagnosis: 0/13 complete-block fields are reported for Figure 23, and H64's 20 configs execute one fixed-memory D=512 BSMM rather than a transformer block."
   fig24_gpu_schedule_ambiguity: "H123 supports a target-free Orin witness: equal 393,216 scalar FMAs and 4,194,304 instructions vary 6.149% in cycles across block32/128/1024, proving CTA mapping is part of the denominator."
+  fig24_qkv_orin_folding: "H124 rejects q1/q2 QKV Orin folding at 3/6 holdouts; q4 passes but q8 misses 7.55%-8.17%, so all 21 full estimates remain null."
 
 completion_snapshot_run042:
   certificate_run: run_042

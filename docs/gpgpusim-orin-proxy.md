@@ -21,3 +21,8 @@ while changing only CTA shape; see
 [fig24-gpu-schedule-ambiguity.md](fig24-gpu-schedule-ambiguity.md). Cycles vary
 by 6.149% despite equal simulated instruction counts, proving that arithmetic
 identity alone does not recover the authors' Orin schedule.
+
+H124 freezes block128 and tests repeat folding in
+[fig24-qkv-orin-folding.md](fig24-qkv-orin-folding.md). q1/q2 anchors remain
+pre-saturation and fail q8 for all three QKV stage counts; full denominators are
+withheld pending larger anchors.
