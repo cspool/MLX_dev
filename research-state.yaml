@@ -59,6 +59,13 @@ active_simulator_scope:
     - standalone_native_gpu_profiling
     - other_simulator_independent_results
   rule: "Primary completion is per core comparative claim: qualified same-work baseline, matching direction, and >=1.2x clear gain. Full-figure coverage and <=10% numerical agreement are diagnostics only. Excluded or deprioritized experiments remain provenance and must not motivate simulator changes."
+  stalled_experiment_policy:
+    - freeze_the_result_and_residual_without_target_fitting
+    - pivot_to_another_experiment_that_isolates_the_missing_mechanism
+    - validate_the_mechanism_target_free
+    - regress_all_functional_and_same_work_performance_evidence
+    - return_to_the_original_experiment_as_a_held_out_transfer
+    - preserve_negative_results_when_cross_experiment_evidence_rejects_the_mechanism
   mcp_evidence:
     - "VII.-EVALUATION.md: Figures 15-17 are algorithmic/training validation."
     - "A.-Software--Hardware-Implementation.md: cycle-accurate simulator plus taped-out performance; reduced design simulator tuning."
