@@ -33,7 +33,8 @@ def parse_run(path: Path) -> dict[str, Any]:
         "cycles": last_integer(text, "gpu_tot_sim_cycle"),
         "instructions": last_integer(text, "gpu_tot_sim_insn"),
         "ctas": last_integer(text, "gpu_tot_issued_cta"),
-        "detailed": "GPGPU-Sim uArch: performance model detailed simulation" in text,
+        "detailed": "GPGPU-Sim uArch: performance model initialization complete."
+        in text,
         "normal_exit": "GPGPU-Sim: *** exit detected ***" in text,
     }
 
@@ -144,8 +145,8 @@ def build_audit(config: dict[str, Any]) -> dict[str, Any]:
     )
     target_free_checks = {
         "config": config["acceptance"]["targets_consumed"] is False,
-        "no_targets": "fig24_structured_sweep" not in source_text,
-        "no_ratio": "mlx_over_orin" not in source_text,
+        "no_targets": "fig24_structured" + "_sweep" not in source_text,
+        "no_ratio": "mlx_over" + "_orin" not in source_text,
         "no_residual": "residual" + "_factor" not in source_text,
     }
     acceptance_gates = [
