@@ -95,3 +95,9 @@ and 64 optimized/sanitized executions pass 12/12 gates. The frozen primary
 ranges are 19.62%–37.89% compute, 11.79%–20.68% load, 1.33%–1.83% store and
 6.88%–14.67% xfer. These values have not yet been joined to H60; H119 must use
 them unchanged and require all 64 points within 10%.
+
+H119 performs that strict join in
+[fig22-coupled-transfer.md](fig22-coupled-transfer.md) and rejects Figure 22 at
+3/64, 82.73% MAPE. Compute/store are uniformly low and load uniformly high.
+No scale follows. The next target-free mechanism is limited to H69's already
+registered diagram-derived column/row SRAM ports coupled into H106 memory.

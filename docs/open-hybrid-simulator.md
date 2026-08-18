@@ -276,6 +276,12 @@ also fixes two cross-configuration simulator defects—active-window instruction
 residency and aligned sub-bank requests—with reversible patches and frozen
 parent regressions. Its utilization is target-free pending H119.
 
+H119 freezes that output before the Figure 22 comparison in
+[fig22-coupled-transfer.md](fig22-coupled-transfer.md). Only 3/64 segments pass;
+compute/store are low and load is high for every workload. This rejects the
+single shared H106 request queue as a complete Figure 22 data-supply model but
+does not invalidate H118's execution correctness.
+
 The active objective is now limited to simulator-dependent hardware performance
 in Figures 18–25, as recorded in
 [simulator-experiment-scope.md](simulator-experiment-scope.md). Accuracy,

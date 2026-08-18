@@ -52,6 +52,11 @@ target matrix. It must require all 64 points within 10% and forbid denominator
 selection, launch insertion, resource scaling, operator factors or any other
 post-hoc correction.
 
+That join is complete in
+[fig22-coupled-transfer.md](fig22-coupled-transfer.md): only 3/64 points pass,
+with compute/store uniformly low and load uniformly high. H118 remains valid
+source execution evidence, but not a Figure 22 reproduction.
+
 Evidence is in
 [run123](../artifacts/results/fig22-coupled-workloads-run123.json), with the
 frozen design in
