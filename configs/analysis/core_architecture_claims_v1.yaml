@@ -1,0 +1,72 @@
+name: core-architecture-claims-v1
+experiment_id: H154
+run_id: run159
+classification: core_architecture_comparative_claim_certificate
+validation_eligible: false
+
+frozen_inputs:
+  h109_contexts:
+    path: artifacts/results/pipelined-block-contexts-run114.json
+    bytes: 8866
+    sha256: c6b7148950333490f8f90bee76e7558256aa0d1a85d2d3810fec6ab6c96bc30b
+    required_status: supported
+    required_integrity: true
+  h111_overlap:
+    path: artifacts/results/corrected-compute-dma-overlap-run116.json
+    bytes: 161811
+    sha256: 80d820ba42358e480c22173368b9624830c884a70030a28cc45dbac84159b41f
+    required_status: supported
+    required_integrity: true
+  h113_dpu_memory:
+    path: artifacts/results/coupled-pipelined-dpu-memory-run118.json
+    bytes: 13276
+    sha256: 895b7b7d375b2b1a2f94e303633201bae61511c799d6346026a73b93a6487e8b
+    required_status: supported
+    required_integrity: true
+  h120_multiport:
+    path: artifacts/results/fig22-coupled-multiport-run125.json
+    bytes: 26566
+    sha256: fc294f7b7707b4bb7a8407bccbb5b68cdf9036e9bbde2095df02c330e0ce5454
+    required_status: supported
+    required_integrity: true
+  h141_complete_block:
+    path: artifacts/results/fig23-complete-block-run146.json
+    bytes: 12663
+    sha256: 7aad546c0b750086c78b3ec04427143c46da74a9f7ea96ad47b9017ce0d60c69
+    required_status: supported
+    required_integrity: true
+  h153_full_array:
+    path: artifacts/results/core-full-array-gain-run158.json
+    bytes: 15930
+    sha256: f2faf6a176ca8f0da89bd9fdebf34e16b401db96dfaf51f720328dffa3d20ce1
+    required_status: supported
+    required_integrity: true
+
+primary_claims:
+  - tagged_cdc_and_multi_layer_latency_hiding
+  - simd_scaling
+  - mesh_scaling_with_skip_hop_enabled
+  - full_array_resource_utilization
+  - complete_block_end_to_end_gain_over_same_work_baseline
+
+supporting_claims:
+  - dpu_double_buffer_non_stop_flow
+  - bounded_context_dpu_overlap
+  - multiport_data_supply
+
+acceptance:
+  minimum_clear_speedup: 1.20
+  required_primary_claims: 5
+  required_passing_primary_claims: 5
+  required_supporting_claims: 3
+  required_passing_supporting_claims: 3
+  full_figure_required: false
+  strict_10pct_required: false
+  paper_targets_consumed: false
+  target_factor_or_claim_inflation: forbidden
+
+source_layout:
+  auditor: scripts/audit_core_architecture_claims.py
+  test: tests/test_core_architecture_claims.py
+
+result_path: artifacts/results/core-architecture-claims-run159.json
