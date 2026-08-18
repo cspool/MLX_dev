@@ -38,10 +38,11 @@ def compile_fig19_coupled_path(
     input_bytes = int(source_metadata["pipeline_counts"]["load"]) * vector_bytes
     output_bytes = int(source_metadata["pipeline_counts"]["store"]) * vector_bytes
     half_bytes = int(hardware["spm_bytes"]) // int(hardware["buffer_halves"])
-    tile_count = max(
+    minimum_tiles = max(
         math.ceil(input_bytes / half_bytes),
         math.ceil(output_bytes / half_bytes),
     )
+    tile_count = 1 << (minimum_tiles - 1).bit_length()
     input_by_tile = balanced_aligned(input_bytes, tile_count, 32)
     output_by_tile = balanced_aligned(output_bytes, tile_count, 32)
     original_blocks = source["blocks"]
