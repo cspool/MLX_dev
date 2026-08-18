@@ -1,0 +1,66 @@
+
+
+
+
+
+
+
+
+.version 7.8
+.target sm_86
+.address_size 64
+
+
+
+.visible .entry _Z10bsmm_stagePKfPfii(
+.param .u64 _Z10bsmm_stagePKfPfii_param_0,
+.param .u64 _Z10bsmm_stagePKfPfii_param_1,
+.param .u32 _Z10bsmm_stagePKfPfii_param_2,
+.param .u32 _Z10bsmm_stagePKfPfii_param_3
+)
+{
+.reg .pred %p<3>;
+.reg .f32 %f<12>;
+.reg .b32 %r<9>;
+.reg .b64 %rd<10>;
+
+
+ld.param.u64 %rd1, [_Z10bsmm_stagePKfPfii_param_0];
+ld.param.u64 %rd2, [_Z10bsmm_stagePKfPfii_param_1];
+ld.param.u32 %r2, [_Z10bsmm_stagePKfPfii_param_2];
+ld.param.u32 %r3, [_Z10bsmm_stagePKfPfii_param_3];
+mov.u32 %r4, %ntid.x;
+mov.u32 %r5, %ctaid.x;
+mov.u32 %r6, %tid.x;
+mad.lo.s32 %r1, %r5, %r4, %r6;
+setp.ge.s32 %p1, %r1, %r2;
+@%p1 bra $L__BB0_2;
+
+cvta.to.global.u64 %rd3, %rd1;
+cvta.to.global.u64 %rd4, %rd2;
+xor.b32 %r7, %r1, %r3;
+setp.lt.s32 %p2, %r7, %r2;
+selp.b32 %r8, %r7, %r1, %p2;
+mul.wide.s32 %rd5, %r1, 4;
+add.s64 %rd6, %rd3, %rd5;
+mul.wide.s32 %rd7, %r8, 4;
+add.s64 %rd8, %rd3, %rd7;
+ld.global.f32 %f1, [%rd8];
+mul.f32 %f2, %f1, 0f3E800000;
+ld.global.f32 %f3, [%rd6];
+mov.f32 %f4, 0f3F400000;
+fma.rn.f32 %f5, %f3, %f4, %f2;
+mul.f32 %f6, %f3, 0f3F000000;
+mov.f32 %f7, 0f3F000000;
+fma.rn.f32 %f8, %f1, %f7, %f6;
+mul.f32 %f9, %f8, 0f3E000000;
+mov.f32 %f10, 0f3F600000;
+fma.rn.f32 %f11, %f5, %f10, %f9;
+add.s64 %rd9, %rd4, %rd5;
+st.global.f32 [%rd9], %f11;
+
+$L__BB0_2:
+ret;
+
+}
+
