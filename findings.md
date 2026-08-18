@@ -333,3 +333,12 @@ windowed-KV streaming triples SWA reads and reduces OI from optimistic 64/128
 to 25.6/51.2 FLOP/B. This closes the OI input but not the roofline result:
 MLX bandwidth and compute/DMA overlap remain unproven, so utilization stays
 null and the full-paper count remains zero of 18.
+
+Run113 composes those bytes with H102 cycles across five bandwidth sensitivities
+and exposes a simulator defect. Although FMA declares latency 4 and II 1, one
+tagged block has only one inflight instruction state, so a long trip reissues
+every four cycles. H102's approximately 99% physical-FMA counter measures
+four-cycle residence while scalar FMA throughput remains near 25% peak. The
+bandwidth envelope itself passes 12/12 gates, but its parent cycles are
+diagnostic-only for Figure 25. Multi-iteration in-flight execution must be
+implemented before any further target comparison.

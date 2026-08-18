@@ -207,3 +207,10 @@ is 17.33–25.33 FLOP/B, QKV-BSMM is 142.75–1527.05 FLOP/B, and explicit
 windowed-KV streaming lowers SWA from optimistic 64/128 to 25.6/51.2 FLOP/B.
 MLX bandwidth, achieved performance and roofline utilization remain null, so
 no Figure 25 cell is claimed.
+
+H108 composes compute and DMA bounds in
+[compute-dma-overlap.md](compute-dma-overlap.md), but also discovers a
+source-level throughput defect: one inflight instruction state per tagged block
+turns latency-4/II-1 FMA trips into effective II=4. H102's high physical-FMA
+residence is therefore not high issue throughput. Figure 25 work must pause
+until multi-iteration in-flight execution is implemented.

@@ -16,10 +16,13 @@ twice through real DSAGEN SRAM responses. The immutable audit passes:
 - 96/96 physical-FMA holdouts, MAPE `0.001165`, maximum `0.010607`;
 - 24/24 QKV full-work utilization gates, minimum `0.993037`.
 
-The result proves that H101's approximately 25% QKV utilization came from
-mapping four strips onto a 16-PE machine, not from GPU-SM-like scheduling or FU
-latency. It remains target-free and validation-ineligible because the native
-MLX simulator and trace are unpublished.
+The result proves that H101's approximately 25% physical-residence utilization
+was partly caused by mapping four strips onto a 16-PE machine. H108 subsequently
+finds that H102's approximately 99% value is not near-peak issue throughput:
+each long-trip block permits only one iteration in flight, so latency-4/II-1
+FMA iterations actually reissue every four cycles. H102's work, coordinate and
+self-consistency gates remain valid, but its full cycle estimates must not be
+used as hardware-throughput evidence until iteration pipelining is corrected.
 
 The immutable result is
 `artifacts/results/fig24-25-full-mesh-paths-run107.json`.
