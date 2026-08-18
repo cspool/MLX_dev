@@ -1,0 +1,122 @@
+name: fig22-coupled-workloads-v1
+experiment_id: H118
+run_id: run123
+classification: target_free_exact_fig22_coupled_workloads
+validation_eligible: false
+
+frozen_inputs:
+  h62:
+    path: artifacts/results/fig10-mapping-run067.json
+    bytes: 34027
+    sha256: 8fad490e285c884fe2ed7b3c5856e628868cbc3e2db500eb1bde89adca79543e
+    required_status: supported
+    required_integrity: true
+  h62_compile:
+    path: artifacts/environment/h62/fig10-compile-manifest.json
+    bytes: 1635436
+    sha256: 898ab86038a80f4b942f80a4cc2756761ecb58fbddfb3d771dae4278323eaa16
+  h106:
+    path: artifacts/results/historical-dpu-memory-run111.json
+    bytes: 8808
+    sha256: 5c799e785f214a247b85be256e42d3e8f34e52e6f9c81a2c3d4f445aa3dd68a1
+    required_status: supported
+    required_integrity: true
+  h109:
+    path: artifacts/results/pipelined-block-contexts-run114.json
+    bytes: 8866
+    sha256: c6b7148950333490f8f90bee76e7558256aa0d1a85d2d3810fec6ab6c96bc30b
+    required_status: supported
+    required_integrity: true
+  h113:
+    path: artifacts/results/coupled-pipelined-dpu-memory-run118.json
+    bytes: 13276
+    sha256: 895b7b7d375b2b1a2f94e303633201bae61511c799d6346026a73b93a6487e8b
+    required_status: supported
+    required_integrity: true
+  h114:
+    path: artifacts/results/coupled-full-mesh-paths-run119.json
+    bytes: 203542
+    sha256: 2e5fb3d24dc74a9b9d4cf253fd8d9bf49c833654e807acde6ecb16906461ad99
+    required_status: supported
+    required_integrity: true
+  h117:
+    path: artifacts/results/fft-coupled-counter-steady-state-run122.json
+    bytes: 53510
+    sha256: 5ab66b748781302bc7fcfab27375a6561f2335b40ae268b48c572a7715fb4d32
+    required_status: rejected
+    required_integrity: true
+
+workloads:
+  operators: [bsmm, fft]
+  sizes: [64, 128, 256, 512, 1024, 2048, 4096, 8192]
+  required_paths: 16
+  direct_full_execution: true
+
+hardware:
+  mesh: [4, 4]
+  physical_pes: 16
+  simd_width: 8
+  vector_bytes: 16
+  active_window: 3
+  active_window_provenance: fig9_three_phase_load_compute_forward_inference_frozen_h62
+  instruction_slots_per_pe: 32
+  active_blocks_per_pe: 8
+  operand_contexts_per_pe: 256
+  capacity_provenance: h105_dpu_2018_fixture
+  iteration_contexts_per_block: 4
+  context_provenance: h109_latency4_ii1_fma
+  spm_bytes: 8388608
+  buffer_halves: 2
+  logical_tile_stride: 4194304
+  input_vectors_per_output: 2
+  output_vectors_per_output: 1
+  dma_bytes_per_cycle: 64
+  dma_setup_cycles: 0
+  spm:
+    bank_width_bytes: 32
+    banks: 32
+    request_buffer_entries: 4
+    issue_width: 32
+    bank_provision: 1
+    bank_fifo_entries: 1
+  memory_provenance: h106_2018_non_stop_lower_bound_plus_h66_bank_timing
+
+metrics:
+  primary_denominator: end_to_end_cycles_times_physical_pes
+  diagnostic_denominator: overlay_cycles_times_physical_pes
+  resources: [compute, load, store, xfer]
+  launch_cycles: null
+  launch_cycles_provenance: not_reported_not_inferred
+
+execution:
+  optimized_replays: 2
+  sanitizer_modes: [asan, ubsan]
+  required_optimized_executions: 32
+  required_sanitizer_executions: 32
+  required_executions: 64
+  max_cycles: 50000000
+  workers: 16
+  paper_performance_targets_consumed: false
+
+target_exclusion:
+  forbidden_paths:
+    - artifacts/results/fig22-resource-targets-run065.json
+    - artifacts/targets/paper_targets.yaml
+    - configs/analysis/fig22_resource_targets_v1.yaml
+  forbidden_fields:
+    - target
+    - relative_error
+    - pass_10pct
+    - correction_factor
+    - residual
+
+source_layout:
+  compiler_core: src/mlxsim/fig22_coupled_workloads.py
+  compiler: scripts/compile_fig22_coupled_workloads.py
+  runner: scripts/run_fig22_coupled_workloads.py
+  auditor: scripts/audit_fig22_coupled_workloads.py
+  test: tests/test_fig22_coupled_workloads.py
+  driver: simulator_ext/dsagen/historical_dpu_memory_driver.cc
+
+output_root: artifacts/environment/h118
+result_path: artifacts/results/fig22-coupled-workloads-run123.json
