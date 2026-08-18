@@ -1,0 +1,83 @@
+name: simict-dpu-contract-v1
+experiment_id: H105
+run_id: run110
+classification: target_free_source_derived_simict_dpu_contract
+validation_eligible: false
+
+frozen_inputs:
+  lineage:
+    path: artifacts/results/mlx-author-simulator-lineage-run109.json
+    sha256: 8878f1f533c0cd8db4c900e5b2c73f406d7dcfaf807dc658626a450189c74141
+    required_status: supported
+    required_integrity: true
+  overlay:
+    path: artifacts/results/dsagen-mlx-overlay-microtrace-run047.json
+    sha256: bbbc50aea2080e44be53a2163ca3b73af8d140ffdc5b034095a5e085ec735872
+    required_status: supported
+    required_integrity: true
+  pe_semantics:
+    path: artifacts/results/mlx-pe-semantics-correction-run058.json
+    sha256: 5573dcc3b4317077803ad135aa0be863b94db00aefdfeec545b9504cd9642d1e
+    required_status: supported
+    required_integrity: true
+  spad:
+    path: artifacts/results/standalone-dsagen-spad-run071.json
+    sha256: 2a816515bf6cb2dcdde3ba6972eb8d095b44a2fde2f2c01ad7d1c63c30f15db8
+    required_status: supported
+    required_integrity: true
+
+fixtures:
+  dpu_2019_4x4:
+    mesh: [4, 4]
+    frequency_hz: 1000000000
+    operand_rs_banks: 8
+    noc_planes: 2
+    noc_packet_bits: 64
+    spm_bytes: 3145728
+    host_isa: ARM
+    host_execution_in_h105: false
+    dram_bytes: 4294967296
+  dpu_2018_8x8:
+    mesh: [8, 8]
+    simd_width: 4
+    fmac_per_pe: 4
+    alu64_per_pe: 8
+    instruction_slots_per_pe: 32
+    active_blocks_per_pe: 8
+    operand_contexts_per_pe: 256
+    noc_planes: null
+    spm_bytes: 8388608
+  dpu_2022_4x4:
+    mesh: [4, 4]
+    simd_width: 4
+    fmac_per_pe: 4
+    alu64_per_pe: 8
+    instruction_slots_per_pe: 128
+    array_instruction_slots: 2048
+    active_blocks_per_pe: null
+    operand_contexts_per_pe: null
+    noc_planes: 4
+    spm_bytes: 8388608
+    host_model: SimpleScalar-derived
+    calibration: gem5
+
+execution:
+  pe_dependency_model: dpu_frfo
+  deterministic_replays: 2
+  build_modes: [debug, optimized, asan, ubsan]
+  required_scenarios: 12
+  require_legacy_summary_exact: true
+  paper_performance_targets_consumed: false
+
+source_layout:
+  overlay_header: third_party/dsa-framework/dsa-gem5/src/cpu/minor/ssim/mlx_overlay.hh
+  overlay_source: third_party/dsa-framework/dsa-gem5/src/cpu/minor/ssim/mlx_overlay.cc
+  driver: simulator_ext/dsagen/dpu_contract_driver.cc
+  fixtures: src/mlxsim/simict_dpu_contract.py
+  compiler: scripts/compile_simict_dpu_contract.py
+  runner: scripts/run_simict_dpu_contract.py
+  auditor: scripts/audit_simict_dpu_contract.py
+  patch: patches/dsagen/dsa-gem5-simict-dpu-contract-v1.patch
+
+output_root: artifacts/environment/h105
+result_path: artifacts/results/simict-dpu-contract-run110.json
