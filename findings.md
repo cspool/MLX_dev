@@ -618,3 +618,9 @@ factor. Six exact-work baseline/current pairs preserve every FU, pipeline and
 memory count; QKV/FFN improve 3.998x, heterogeneous elementwise improves 3.508x,
 and concurrent issue rises from four to sixteen. The full-array core claim is
 therefore reproduced under the user's final criterion.
+
+Run159 certifies the final core objective. Tagged latency hiding, SIMD scaling,
+mesh scaling with skip-hop enabled, full-array utilization and joint complete-
+block scaling all pass, as do DPU non-stop flow, bounded contexts and multiport
+data supply. Primary gains span 1.215x-15.018x. This is a core comparative-
+claim completion, not a strict numerical or every-point full-figure claim.

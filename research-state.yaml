@@ -1,12 +1,12 @@
 project:
   title: "MLX core-architecture performance reproduction"
   question: "Can a transparent open surrogate reproduce the MLX paper's core architectural innovations as clear, directionally matching gains over qualified same-work baselines, while retaining full-figure and 10% results only as diagnostics?"
-  status: active
+  status: complete
   started: "2026-08-16"
   domain: "spatial accelerator architecture simulation and structured LLM inference"
 
 active_simulator_scope:
-  status: verified_from_paper_analysis_mcp
+  status: core_architecture_claims_complete
   included_figures: [18, 19, 20, 21, 22, 23, 24, 25]
   completion_unit: core_architecture_comparative_claim
   required_full_figures: 8
@@ -25,7 +25,24 @@ active_simulator_scope:
     - full_array_resource_utilization
     - complete_block_end_to_end_gain_over_same_work_baseline
   reproduced_core_claims:
+    - tagged_cdc_and_multi_layer_latency_hiding
+    - simd_scaling
+    - mesh_scaling_and_skip_hop_routing
     - full_array_resource_utilization
+    - complete_block_end_to_end_gain_over_same_work_baseline
+  reproduced_supporting_claims:
+    - dpu_double_buffer_non_stop_flow
+    - bounded_context_dpu_overlap
+    - multiport_data_supply
+  core_claim_certificate:
+    experiment_id: H154
+    run_id: run159
+    path: artifacts/results/core-architecture-claims-run159.json
+    sha256: 3b7bba0021a03d13252884bd81361a5cbfd35d699ceddbc1d72c62595891208c
+    primary_claims_reproduced: 5
+    primary_claims_total: 5
+    supporting_claims_reproduced: 3
+    supporting_claims_total: 3
   deprioritized_comparisons:
     - prior_accelerator_absolute_numbers
     - exact_gpu_kernel_magnitude_when_not_needed_for_core_claim
@@ -724,9 +741,9 @@ experiments:
       timestamp: "2026-08-17"
 
 outer_loop:
-  cycle: 111
-  last_direction: "Pre-register H154 to certify all already supported core comparative claims from H109/H111/H113/H120/H141/H153 under the same-work, matching-direction and >=1.2x rule, without reopening full figures."
-  last_reflection: "H153 supports the core full-array claim at 6/6 same-work comparisons: structured QKV/FFN gain about 3.998x, mixed elementwise 3.508x, and max issue rises 4->16. Full-figure completion is explicitly not required."
+  cycle: 112
+  last_direction: "Core architecture objective complete; preserve full-figure and <=10% ledgers as diagnostics and do not reopen deprioritized absolute comparisons without a new user request."
+  last_reflection: "H154 certifies 5/5 primary and 3/3 supporting core comparative claims at 1.215x-15.018x with qualified target-free same-work evidence. Full figures and <=10% are explicitly not required under the user's final criterion."
 
 recent_milestones_after_h46:
   architecture_contract: "H52 supersedes the GPU-SM analogy with the paper's specialized spatial tagged-block PE; GPGPU-Sim is baseline-only."
@@ -807,6 +824,7 @@ recent_milestones_after_h46:
   fig21_xavier_hmma_corrected: "H151 supports corrected SASS-HMMA projection semantics: unchanged 128/240/464/912 cycles fold with zero holdout error at 256 FMA/HMMA, producing five dense projection estimates of 1.599-25.586s."
   fig21_full_array_exhaustive: "H152 stopped without a result at 170/360 after the user deprioritized full-figure exhaustion; partial outputs are not promoted wholesale. The 16-PE compiler/mapping is retained for a separately frozen representative same-work claim."
   core_full_array_gain: "H153 supports the core full-array same-work claim: 6/6 N128 QKV/FFN/elementwise comparisons pass at 3.508x-3.998x with exact work/traffic, replay/adapter identity and a 4->16 issue transition."
+  core_architecture_claims: "H154 supports the final certificate at 5/5 primary and 3/3 supporting claims. Primary gains span 1.215x-15.018x; full-figure and strict-10% requirements are false by user direction."
 
 completion_snapshot_run042:
   certificate_run: run_042

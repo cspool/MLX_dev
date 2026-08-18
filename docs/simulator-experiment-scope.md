@@ -86,3 +86,8 @@ H142 subsequently completes Figure 23 using a complete-block, two-window
 robustness sweep. The primary count is now 3/8; strict full-figure completion is
 still 0/8, and the result is labeled as representative rather than the authors'
 unpublished exact schedule.
+
+H154 supersedes figure-count completion as the final primary certificate after
+the user's core-claim scope change. It passes 5/5 primary and 3/3 supporting
+architectural claims at >=1.2x. The historical 3/8 qualitative full-figure and
+0/8 strict full-figure counts remain available only as diagnostics.

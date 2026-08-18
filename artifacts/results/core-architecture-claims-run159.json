@@ -1,0 +1,244 @@
+{
+  "schema_version": 1,
+  "experiment_id": "H154",
+  "run_id": "run159",
+  "classification": "core_architecture_comparative_claim_certificate",
+  "validation_eligible": false,
+  "generated_at": "2026-08-18T15:38:04.804631+00:00",
+  "project_commit": "e707f57427a3fe6851bcd0fc0aa9292074e5d051",
+  "hypothesis_status": "supported",
+  "audit_integrity": true,
+  "paper_performance_targets_consumed": false,
+  "paper_reproduction_claim": "core_architecture_comparative_claims_complete",
+  "completion_criterion": {
+    "unit": "core_architecture_comparative_claim",
+    "minimum_clear_speedup": 1.2,
+    "same_work_or_matched_parent_required": true,
+    "matching_direction_required": true,
+    "full_figure_required": false,
+    "strict_10pct_required": false
+  },
+  "frozen_inputs": {
+    "h109_contexts": {
+      "path": "artifacts/results/pipelined-block-contexts-run114.json",
+      "bytes": 8866,
+      "sha256": "c6b7148950333490f8f90bee76e7558256aa0d1a85d2d3810fec6ab6c96bc30b",
+      "checks": {
+        "is_file": true,
+        "bytes": true,
+        "sha256": true
+      },
+      "pass": true
+    },
+    "h111_overlap": {
+      "path": "artifacts/results/corrected-compute-dma-overlap-run116.json",
+      "bytes": 161811,
+      "sha256": "80d820ba42358e480c22173368b9624830c884a70030a28cc45dbac84159b41f",
+      "checks": {
+        "is_file": true,
+        "bytes": true,
+        "sha256": true
+      },
+      "pass": true
+    },
+    "h113_dpu_memory": {
+      "path": "artifacts/results/coupled-pipelined-dpu-memory-run118.json",
+      "bytes": 13276,
+      "sha256": "895b7b7d375b2b1a2f94e303633201bae61511c799d6346026a73b93a6487e8b",
+      "checks": {
+        "is_file": true,
+        "bytes": true,
+        "sha256": true
+      },
+      "pass": true
+    },
+    "h120_multiport": {
+      "path": "artifacts/results/fig22-coupled-multiport-run125.json",
+      "bytes": 26566,
+      "sha256": "fc294f7b7707b4bb7a8407bccbb5b68cdf9036e9bbde2095df02c330e0ce5454",
+      "checks": {
+        "is_file": true,
+        "bytes": true,
+        "sha256": true
+      },
+      "pass": true
+    },
+    "h141_complete_block": {
+      "path": "artifacts/results/fig23-complete-block-run146.json",
+      "bytes": 12663,
+      "sha256": "7aad546c0b750086c78b3ec04427143c46da74a9f7ea96ad47b9017ce0d60c69",
+      "checks": {
+        "is_file": true,
+        "bytes": true,
+        "sha256": true
+      },
+      "pass": true
+    },
+    "h153_full_array": {
+      "path": "artifacts/results/core-full-array-gain-run158.json",
+      "bytes": 15930,
+      "sha256": "f2faf6a176ca8f0da89bd9fdebf34e16b401db96dfaf51f720328dffa3d20ce1",
+      "checks": {
+        "is_file": true,
+        "bytes": true,
+        "sha256": true
+      },
+      "pass": true
+    }
+  },
+  "parent_checks": {
+    "h109_contexts": true,
+    "h111_overlap": true,
+    "h113_dpu_memory": true,
+    "h120_multiport": true,
+    "h141_complete_block": true,
+    "h153_full_array": true
+  },
+  "primary_claims": {
+    "tagged_cdc_and_multi_layer_latency_hiding": {
+      "evidence": [
+        "H109",
+        "H111"
+      ],
+      "comparison_count": 241,
+      "minimum_speedup": 1.2145669667070895,
+      "maximum_speedup": 3.994137773899527,
+      "same_work_or_matched_parent": true,
+      "direction": "current_tagged_pipeline_faster",
+      "pass": true
+    },
+    "simd_scaling": {
+      "evidence": [
+        "H141"
+      ],
+      "comparison_count": 10,
+      "minimum_speedup": 3.686641697877653,
+      "maximum_speedup": 4.001258178158027,
+      "same_work_or_matched_parent": true,
+      "direction": "simd32_faster_than_simd8",
+      "pass": true
+    },
+    "mesh_scaling_with_skip_hop_enabled": {
+      "evidence": [
+        "H141"
+      ],
+      "comparison_count": 10,
+      "minimum_speedup": 3.532215357458076,
+      "maximum_speedup": 3.7949511400651468,
+      "same_work_or_matched_parent": true,
+      "direction": "mesh8x8_faster_than_mesh4x4_with_skip_hop_enabled",
+      "isolated_skip_hop_ablation_claimed": false,
+      "pass": true
+    },
+    "full_array_resource_utilization": {
+      "evidence": [
+        "H153"
+      ],
+      "comparison_count": 6,
+      "minimum_speedup": 3.5080205570156395,
+      "maximum_speedup": 3.997971631263274,
+      "same_work_or_matched_parent": true,
+      "direction": "16_PE_scoreboard_faster_than_4_lane_paper_static",
+      "issue_transition": [
+        4,
+        16
+      ],
+      "pass": true
+    },
+    "complete_block_end_to_end_gain_over_same_work_baseline": {
+      "evidence": [
+        "H141"
+      ],
+      "comparison_count": 10,
+      "minimum_speedup": 7.938172043010753,
+      "maximum_speedup": 15.01807617817947,
+      "same_work_or_matched_parent": true,
+      "direction": "joint_simd_mesh_complete_block_faster",
+      "pass": true
+    }
+  },
+  "supporting_claims": {
+    "dpu_double_buffer_non_stop_flow": {
+      "evidence": [
+        "H113"
+      ],
+      "speedup": 1.4102564102564104,
+      "direction": "non_stop_faster_than_baseline",
+      "pass": true
+    },
+    "bounded_context_dpu_overlap": {
+      "evidence": [
+        "H113"
+      ],
+      "speedup": 1.6296296296296295,
+      "direction": "ctx4_faster_than_ctx2",
+      "pass": true
+    },
+    "multiport_data_supply": {
+      "evidence": [
+        "H120"
+      ],
+      "speedup": 1.757396449704142,
+      "maximum_speedup": 2.7452617106942943,
+      "comparison_count": 16,
+      "direction": "four_partitioned_ports_faster",
+      "pass": true
+    }
+  },
+  "source_files": {
+    "auditor": {
+      "path": "scripts/audit_core_architecture_claims.py",
+      "bytes": 13247,
+      "sha256": "8445d05fbdfa7daabca4d5f056b12e0f27e0e2d44d125014be9893ee01ae9804",
+      "checks": {
+        "is_file": true
+      },
+      "pass": true
+    },
+    "test": {
+      "path": "tests/test_core_architecture_claims.py",
+      "bytes": 932,
+      "sha256": "f7a3770904cf602c252b0d320c03546532a8e97047dfd02dd7a8eb3ddc316b34",
+      "checks": {
+        "is_file": true
+      },
+      "pass": true
+    }
+  },
+  "target_free_check": true,
+  "acceptance_gates": [
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true
+  ],
+  "summary": {
+    "primary_claims": 5,
+    "primary_claims_reproduced": 5,
+    "supporting_claims": 3,
+    "supporting_claims_reproduced": 3,
+    "minimum_primary_speedup": 1.2145669667070895,
+    "maximum_primary_speedup": 15.01807617817947,
+    "core_architecture_goal_complete": true,
+    "full_figure_required": false,
+    "strict_10pct_required": false,
+    "acceptance_gates_passed": 10,
+    "acceptance_gates_total": 10
+  },
+  "integrity_checks": {
+    "frozen": true,
+    "parents": true,
+    "names": true,
+    "primary_evaluated": true,
+    "supporting_evaluated": true,
+    "finite": true,
+    "source": true,
+    "acceptance_evaluated": true
+  }
+}

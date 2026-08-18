@@ -449,6 +449,11 @@ H153 then validates the primary core claim in
 QKV/FFN/elementwise comparisons improve 3.508x-3.998x while concurrent issue
 rises from four to sixteen. No full-figure pass is required.
 
+H154 closes the user-directed objective in
+[core-architecture-claims.md](core-architecture-claims.md). Five primary and
+three supporting architectural claims pass the common >=1.2x same-work rule;
+old full-figure and <=10% ledgers remain diagnostics only.
+
 The active objective is now limited to simulator-dependent hardware performance
 in Figures 18–25, as recorded in
 [simulator-experiment-scope.md](simulator-experiment-scope.md). Accuracy,
