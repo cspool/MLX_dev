@@ -42,6 +42,28 @@ frozen DPU capacities/contexts, and selecting `dpu_memory`. Execute every full
 size directly—no q folding or full-size extrapolation. Run each of 16 configs
 twice optimized and once under ASan and UBSan: 64 total executions.
 
+### Pre-result implementation correction
+
+The first full runner smoke stopped before producing an accepted summary and
+exposed two substrate defects at the already frozen SIMD8/32-slot boundary:
+
+1. the DPU validator summed instruction templates across every program tag,
+   even though the paper's layer-encoded store and H114's capacity correction
+   make only the active tag window resident; and
+2. H106's standalone 32-byte-bank adapter rejected every non-crossing 16-byte
+   SIMD8 request because it required request size to be a whole bank multiple.
+
+H118 may correct only these two general mechanisms. Instruction-slot demand is
+the sum of the largest `active_window` per-tag demands at each PE, matching the
+already frozen operand-capacity rule. A request smaller than one bank word may
+occupy one bank only when naturally aligned and contained within that bank;
+whole/multi-bank behavior remains unchanged. H105's one-tag slot overflow,
+H106/H113 memory traces, H109 bounded contexts, H114 full paths and all legacy
+tests must remain exact. The numerical workload, 16-byte vector size, four
+contexts, memory bandwidth, counter definitions and target exclusion do not
+change. These corrections are separately reversible patches and are
+confirmatory under the original hypothesis rather than residual-driven tuning.
+
 ## Acceptance gates
 
 1. H62/H106/H109/H113/H114/H117 bytes and statuses qualify; H117 specifically
@@ -71,8 +93,9 @@ twice optimized and once under ASan and UBSan: 64 total executions.
 11. Primary and diagnostic utilizations are finite and in [0,1], remain
     separately labeled, and no launch correction, counter multiplier, family
     factor or target-derived selection is present.
-12. H118 changes no C++ simulator source, Figure 25 result, or active 0/8
-    completion count.
+12. Only the two pre-result C++ corrections above are present and reversible;
+    their parent regressions pass, while Figure 25 and the active 0/8
+    completion count remain unchanged.
 
 Support requires all 12 gates. The immutable target-free result will be
 `artifacts/results/fig22-coupled-workloads-run123.json`. Only a separately
