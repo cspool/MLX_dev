@@ -116,6 +116,7 @@ H37 closed the first full-paper ledger with a machine certificate rather than a 
 - H125 rejects the q4/q8 QKV fold after six new detailed q16/q32 runs. All q16 checks pass at 0.55%-0.78%, but every q32 check fails at 32.66%-33.54%. The shared jump across 4/5/6 stages coincides with two buffers growing from roughly 4 MiB to 8 MiB, identifying a cache/working-set regime transition. All 21 estimates remain null and target-free.
 - H126 supports post-cache QKV Orin folding. Six q64/q128 detailed runs pass all execution gates; q32/q64 predicts q128 within 2.27%-2.47% for B16/B32/B64 (2.37% MAPE). All 21 H101 QKV full-q mappings reconstruct exact scalar FMA work and now have finite block128 proxy cycles/seconds spanning 0.138-94.140 s. No target or MLX cycle is consumed.
 - H127 rejects the frozen direct-time Figure 24 QKV subset at 0/21, 761.99% MAPE and 1100.94% maximum error. Every prediction is high at 6.09x-7.18x versus 0.58x-1.36x targets. Exact FMA and post-cache timing validate the transparent proxy internally but expose its staged global-memory CUDA mapping as unlike the authors' optimized Orin kernel. FFT/SWA are not extended on this path; active completion remains 0/8.
+- H128 rejects universal small-anchor Figure 19 folding but validates the current coupled execution. All 48 configs and 192 four-build runs conserve exact H98 graphs/work/traffic. Fifteen of 24 holdouts pass; all eight FFT holdouts fail at 15.60%-25.24%, plus N1024-global-FFN2 q32 at 27.31% after its first two-tile transition. Seven FFN paths are eligible and 2.23x-3.18x faster than H98. No target is consumed.
 
 ## Patterns and Insights
 
@@ -135,6 +136,7 @@ H37 closed the first full-paper ledger with a machine certificate rather than a 
 - GPU scaling is piecewise across memory regimes. H125's pre-cache q4/q8 line predicts q16 almost exactly but cannot cross the q32 cache boundary; full Figure 24 workloads require a separately validated post-cache slope rather than a global affine fit.
 - Once the Orin proxy is beyond cache capacity, QKV cycles become predictably affine: H126's q128 errors stay below 2.5% across stage counts. This licenses exact-work proxy timing while preserving the separate uncertainty about author CUDA tiling and memory fusion.
 - Internal proxy validity is not cross-implementation identity. H126's folds are excellent, yet H127 misses every target by multiples because an exact-FMA staged global-memory kernel is fundamentally slower than the undisclosed fused/tiled Orin implementation.
+- The current MLX coupling materially changes prior conclusions: H128 accelerates stable Figure 19 FFN paths by more than 2x while preserving exact work. FFT and tile-count transitions again require larger anchors, reinforcing that extrapolation regimes—not residual scales—must be validated separately.
 - The team's public methodology is unusually consistent: SimICT component simulation, gem5/RTL calibration, independent Verilog/Synopsys implementation, and DPU PE/SPM/multi-NoC models. This is a stronger reconstruction basis than architecture resemblance to DSAGEN.
 - Model-declared framework versions are part of the checkpoint: InternLM2's remote code produced incompatible logits under Transformers 5.15 (first-window PPL 387.07) but PPL 5.69 under its declared 4.41.0. Smoke tests caught this before the registered run, and the official evaluator now refuses a different version.
 - Correct operator invariants and analytical sparsity do not identify a model-quality recipe. In run018, factor-fit MSE remains nearly flat at 0.629-0.634 while quality degrades monotonically with replacement depth, so cumulative approximation—not one broken projection—best explains this particular inferred reconstruction.
@@ -479,3 +481,7 @@ transparent kernel is close enough before FFT/SWA development continues.
 Run132 performs that join and rejects all 21 cells. The transparent kernel
 predicts 6.09x-7.18x MLX speedup against targets below 1.36x; the GPU mapping,
 not work arithmetic, is the blocker. The proxy route stops before FFT/SWA.
+
+Run133 upgrades Figure 19 to current coupled timing. Execution is exact, but
+only 15/24 folds pass; all FFT and one two-tile FFN path require q64/q128
+steady-state evidence before full estimates can be compared.

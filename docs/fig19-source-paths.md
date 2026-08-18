@@ -24,3 +24,8 @@ Full 24-layer estimates are:
 
 The immutable result is
 `artifacts/results/fig19-source-paths-run103.json`.
+
+H128 upgrades the same exact graphs to bounded contexts and live ported
+DMA/SPM memory in [fig19-coupled-paths.md](fig19-coupled-paths.md). All runs
+pass and stable FFN paths accelerate 2.23x–3.18x, but FFT and one tile-boundary
+FFN fold require larger anchors before a new target join.

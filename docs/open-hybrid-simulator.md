@@ -326,6 +326,11 @@ H127 freezes those estimates before the direct Figure 24 QKV join in
 are 6.09x–7.18x versus 0.58x–1.36x targets. This closes the staged-memory GPU
 proxy route without extending it to FFT/SWA.
 
+H128 returns to the MLX-only Figure 19 paths in
+[fig19-coupled-paths.md](fig19-coupled-paths.md). Forty-eight exact configs and
+192 four-build runs pass; seven FFN paths fold, while all FFT paths and one
+two-tile FFN need larger target-free anchors.
+
 The active objective is now limited to simulator-dependent hardware performance
 in Figures 18–25, as recorded in
 [simulator-experiment-scope.md](simulator-experiment-scope.md). Accuracy,
