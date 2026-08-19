@@ -1053,3 +1053,12 @@ power normalization leaves RF 295%/832% high, data/control networks roughly
 RTL must use a compact/macro-like RF, a buffered multi-link data network,
 registered tag control, and genuinely omit divide/exp/shuffle logic from the
 reduced lanes.
+
+Run205 shows that those structural corrections are directionally useful but
+insufficient. Data/tag/FU area move to 19.9%/16.7%/6.5% error and RF to 35.4%.
+However, the reduced design cannot reuse full non-compute structures, and a
+testbench that toggles every buffered link together overstates network power
+while scalar program issue understates 32-lane FU power. The next iteration
+must register separate reduced topology parameters and translate Figure22
+utilization into per-domain activity duty factors, still with only aggregate
+technology scales.
