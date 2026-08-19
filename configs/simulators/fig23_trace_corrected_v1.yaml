@@ -1,0 +1,87 @@
+name: fig23-trace-corrected-v1
+experiment_id: H184
+run_id: run189
+classification: target_informed_trace_corrected_Figure23_simulator_execution
+validation_eligible: false
+
+frozen_inputs:
+  selected_model:
+    path: artifacts/results/fig19-20-23-gap-attribution-run188.json
+    bytes: 37530
+    sha256: d38bd8ddc7cb6e131662241549f53df97015053b87a72b00277137d970001aef
+    required_status: supported
+    required_integrity: true
+  rtx4090_trace:
+    path: artifacts/results/fig19-20-23-rtx4090-trace-run187.json
+    bytes: 52250
+    sha256: b958398750a3a34a2426ae24b22a1014a199486f31d38a0b67dc6ea3bd4afbb9
+    required_status: supported
+    required_integrity: true
+  raw_simulator:
+    path: artifacts/results/fig23-complete-block-run146.json
+    bytes: 12663
+    sha256: 7aad546c0b750086c78b3ec04427143c46da74a9f7ea96ad47b9017ce0d60c69
+    required_status: supported
+    required_integrity: true
+  current_audit:
+    path: artifacts/results/fig23-complete-block-trend-run147.json
+    bytes: 17251
+    sha256: f2526f1f4aca39a9c90005ae11a6176d680ce5dbfd9c721ef007916a7724ac8a
+    required_status: supported
+    required_integrity: true
+  raw_compile_manifest:
+    path: artifacts/environment/h141/complete-block-compile-manifest.json
+    bytes: 195194
+    sha256: bb30c3d87e7baa8c34e1c66269a745433885b6fb2227c129789b462fe98f2f3b
+  raw_run_manifest:
+    path: artifacts/environment/h141/complete-block-run-manifest.json
+    bytes: 369335
+    sha256: a3b2a3b0afa722775e229c07b5111f55c3129e3bcee5a3497ce69847ab600610
+
+latency_service:
+  schema_version: 1
+  model: trace_knee_underfill_congestion
+  selected_parameter_path: figure23.parameters
+  trace_knee_sequence_length: 2048
+  credit_series: [simd32_8x8]
+  congestion_series: [simd8_8x8, simd32_8x8]
+  unchanged_series: [baseline, simd32_4x4]
+  rounding: nearest_integer_cycles
+  target_informed: true
+
+execution:
+  sequence_lengths: [512, 1024, 2048, 4096, 8192]
+  active_windows: [2, 4]
+  configurations: [baseline, simd32_4x4, simd8_8x8, simd32_8x8]
+  expected_configs: 40
+  builds: [debug, opt, sanitize]
+  expected_runs: 120
+  max_cycles: 100000000
+  workers: 6
+
+acceptance:
+  maximum_relative_error: 0.15
+  required_points: 30
+  required_passing_points: 30
+  required_direction_matches: 30
+  maximum_holdout_relative_error: 0.15
+  require_raw_cycle_identity: true
+  require_work_identity: true
+  require_build_identity: true
+  require_sanitizer_clean: true
+  independent_validation_claimed: false
+
+source_layout:
+  protocol: experiments/h184-fig23-trace-corrected/protocol.md
+  config: configs/simulators/fig23_trace_corrected_v1.yaml
+  core_header: third_party/dsa-framework/dsa-gem5/src/cpu/minor/ssim/mlx_overlay.hh
+  core_source: third_party/dsa-framework/dsa-gem5/src/cpu/minor/ssim/mlx_overlay.cc
+  compiler: scripts/compile_fig23_trace_corrected.py
+  runner: scripts/run_fig23_trace_corrected.py
+  auditor: scripts/audit_fig23_trace_corrected.py
+  test: tests/test_fig23_trace_corrected.py
+
+output_root: artifacts/environment/h184
+compile_manifest: artifacts/environment/h184/fig23-trace-corrected-compile-manifest.json
+run_manifest: artifacts/environment/h184/fig23-trace-corrected-run-manifest.json
+result_path: artifacts/results/fig23-trace-corrected-run189.json
