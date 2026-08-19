@@ -1,0 +1,80 @@
+name: automatic-model-frontend-v1
+experiment_id: H190
+run_id: run195
+classification: automatic_FX_ONNX_to_MLX_profile_frontend
+validation_eligible: true
+
+frozen_inputs:
+  same_input_parent:
+    path: artifacts/results/same-input-numerical-equivalence-run194.json
+    bytes: 12365
+    sha256: 7d3eab1c853eb474dc5d13c8e7ea6c7068788ae28427b832964f212de07596f9
+    required_status: supported
+    required_integrity: true
+  lowering_parent:
+    path: artifacts/results/unified-workload-lowering-run192.json
+    bytes: 11155
+    sha256: 7ecfafd918f47163a2a5f97e9643a31531f3775550050fba84d6d91757c335b2
+    required_status: supported
+    required_integrity: true
+  workload_spec:
+    path: configs/workloads/mlx_fig19_20_23_v1.yaml
+    bytes: 2593
+    sha256: f8a5fe8dccc36c27574f63209bc373ac35619f6536a82953ccb07715a6247d58
+
+model_contract:
+  name: auto_structured_block
+  batch: 1
+  sequence_length: 16
+  hidden_dimension: 32
+  ffn_dimension: 64
+  block_size: 8
+  dtype: float32
+  input_shape: [1, 16, 32]
+  canonical_kinds: [rmsnorm, bsmm, fft_cmp, attention, bsmm, elementwise]
+  canonical_names: [norm, qkv, fft_cmp, attention, output, silu]
+
+planning:
+  mesh: [4, 4]
+  simd_width: 8
+  register_count: 64
+  register_banks: 8
+  spm_bytes: 8388608
+  dma_alignment_bytes: 64
+  cdc_policy: maximal_supported_connected_region
+  tag_policy: topological_order
+  placement_policy: round_robin_mesh
+  register_policy: bank_rotating_output
+  memory_policy: aligned_liveness_reuse
+
+acceptance:
+  required_frontends: 2
+  required_nodes_per_frontend: 6
+  required_total_nodes: 12
+  required_canonical_matches: 6
+  required_profiles: 12
+  required_executions: 24
+  required_lineage_entries: 12
+  require_shape_identity: true
+  require_dependency_identity: true
+  require_cdc_coverage: true
+  require_unique_tags: true
+  require_legal_pe_placement: true
+  require_legal_register_allocation: true
+  require_spm_capacity: true
+  require_replay_identity: true
+
+source_layout:
+  protocol: experiments/h190-automatic-model-frontend/protocol.md
+  config: configs/analysis/automatic_model_frontend_v1.yaml
+  pyproject: pyproject.toml
+  frontend: src/mlxsim/model_frontend.py
+  cli: scripts/import_model_frontend.py
+  runner: scripts/run_automatic_model_frontend.py
+  auditor: scripts/audit_automatic_model_frontend.py
+  test: tests/test_automatic_model_frontend.py
+
+output_root: artifacts/environment/h190
+frontend_manifest: artifacts/environment/h190/frontend-manifest.json
+execution_manifest: artifacts/environment/h190/frontend-execution-manifest.json
+result_path: artifacts/results/automatic-model-frontend-run195.json
