@@ -839,3 +839,16 @@ comparisons, and Figure20 passes 8/8 trend cells; their strict failures remain
 visible. Together with run183's 42-row native4090 replacement, the requested
 24/23/19/20 exploration tier is complete. Figures22/25 remain reference-only;
 Figure18 is the sole remaining item.
+
+Run185 completes the final Figure18 exploration without erasing its source
+ambiguity. All 12 missing workload fields are populated only as labeled
+cross-figure inferences, while all six measurement-provenance fields remain
+unresolved. The lower 1.249x affinity bound comes from H172's same-work
+data-ready scheduler gain; the upper 3.891x bound is the mean H141 N1024
+SIMD8-to-SIMD32 block gain. Their 2.570x midpoint predicts 3.513x and 5.226x
+latency gains for s=0.75/0.5, respectively 14.32% and 9.89% from the reported
+4.1x and 5.8x. Both reported latency and affinity points fall inside the
+mechanism-derived interval. The external accelerators and all seven energy
+values remain reported references, with no power or energy estimate. This is
+a bounded, paper-informed completion of exploration, not independent Figure18
+reproduction.

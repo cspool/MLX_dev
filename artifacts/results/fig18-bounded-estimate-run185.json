@@ -1,0 +1,431 @@
+{
+  "schema_version": 1,
+  "experiment_id": "H180",
+  "run_id": "run185",
+  "classification": "paper_informed_bounded_Figure18_performance_exploration",
+  "validation_eligible": false,
+  "generated_at": "2026-08-19T07:58:32.507434+00:00",
+  "project_commit": "5b9ec8ec8dfffa7ef137138b7f11322138e48cec",
+  "hypothesis_status": "supported",
+  "audit_integrity": true,
+  "paper_performance_targets_consumed": true,
+  "paper_reproduction_claim": "figure18_bounded_paper_informed_exploration_not_independent_reproduction",
+  "independent_validation_claimed": false,
+  "frozen_inputs": {
+    "identity_gap": {
+      "path": "artifacts/results/fig18-workload-identity-run136.json",
+      "bytes": 9634,
+      "sha256": "ae0b793ab3815968d085d559292b3169c2d8d810084e8a531f91dab6ec72fffa",
+      "checks": {
+        "is_file": true,
+        "bytes": true,
+        "sha256": true
+      },
+      "pass": true
+    },
+    "complete_block_scaling": {
+      "path": "artifacts/results/fig23-complete-block-run146.json",
+      "bytes": 12663,
+      "sha256": "7aad546c0b750086c78b3ec04427143c46da74a9f7ea96ad47b9017ce0d60c69",
+      "checks": {
+        "is_file": true,
+        "bytes": true,
+        "sha256": true
+      },
+      "pass": true
+    },
+    "data_ready_mechanism": {
+      "path": "artifacts/results/one-baseline-goal-certificate-run177.json",
+      "bytes": 6402,
+      "sha256": "2e41fe53490daf98450b00b2ccb24661d276276024b0af02a627070f2330c044",
+      "checks": {
+        "is_file": true,
+        "bytes": true,
+        "sha256": true
+      },
+      "pass": true
+    },
+    "figure18_reference": {
+      "path": "artifacts/results/fig18-run008.json",
+      "bytes": 1378,
+      "sha256": "210f7e5e91d203df3288a7fd3f971851180c1883df1c03b6ad53a8ac6e2c45bd",
+      "checks": {
+        "is_file": true,
+        "bytes": true,
+        "sha256": true
+      },
+      "pass": true
+    },
+    "figure18_energy_reference": {
+      "path": "artifacts/targets/paper_targets.yaml",
+      "bytes": 14931,
+      "sha256": "c4a22ab8052ff8cb223a729b8ce07320c6826cfee0d37e1a664a8761e018b41e",
+      "checks": {
+        "is_file": true,
+        "bytes": true,
+        "sha256": true
+      },
+      "pass": true
+    }
+  },
+  "parent_checks": {
+    "identity_gap": true,
+    "complete_block_scaling": true,
+    "data_ready_mechanism": true
+  },
+  "identity_gap_checks": {
+    "workload_fields_12_of_12_missing": true,
+    "provenance_fields_6_of_6_missing": true,
+    "exact_workload_still_unidentified": true,
+    "measurement_provenance_still_unidentified": true
+  },
+  "missing_workload_fields": [
+    "model_or_block_architecture",
+    "batch_size",
+    "structured_vs_dense_component_graph",
+    "structured_vs_dense_layer_mix",
+    "block_size_B",
+    "fft_chunk_length_L",
+    "per_component_compression_ratio",
+    "ffn_dimension",
+    "attention_heads_and_layout",
+    "elementwise_components",
+    "memory_residency_and_boundaries",
+    "launch_and_measurement_interval"
+  ],
+  "missing_provenance_fields": [
+    "full_vs_reduced_mlx_design_per_series",
+    "simulator_vs_tapeout_measurement_per_series",
+    "latency_baseline_value_and_source",
+    "energy_measurement_interval",
+    "mlx_power_source_per_setting",
+    "process_scaling_applied_to_mlx"
+  ],
+  "representative_workload": {
+    "sequence_length": 1024,
+    "hidden_dimension": 512,
+    "batch": 8,
+    "unit": "single_complete_transformer_block",
+    "block_size_B": 32,
+    "fft_chunk_length_L": 512,
+    "ffn_dimension": 2048,
+    "attention_heads": 8,
+    "structured_component_graph": "H141_complete_28_stage_surrogate",
+    "structured_vs_dense_layer_mix": "one_structured_block",
+    "per_component_compression": "uniform_s",
+    "elementwise_components": "H141_registered",
+    "memory_residency": "H175_data_ready_boundaries",
+    "measurement_interval": "complete_block_cycles",
+    "precision": "FP16_work_with_cycle_surrogate",
+    "disclosure": "cross_figure_inference_not_Figure18_author_manifest"
+  },
+  "inferred_workload": {
+    "model_or_block_architecture": {
+      "value": "single_complete_transformer_block",
+      "provenance": "Figure18+H141",
+      "disclosure": "cross_figure_inference_not_author_reported"
+    },
+    "batch_size": {
+      "value": 8,
+      "provenance": "H141",
+      "disclosure": "cross_figure_inference_not_author_reported"
+    },
+    "structured_vs_dense_component_graph": {
+      "value": "H141_complete_28_stage_surrogate",
+      "provenance": "H141",
+      "disclosure": "cross_figure_inference_not_author_reported"
+    },
+    "structured_vs_dense_layer_mix": {
+      "value": "one_structured_block",
+      "provenance": "H141",
+      "disclosure": "cross_figure_inference_not_author_reported"
+    },
+    "block_size_B": {
+      "value": 32,
+      "provenance": "H141",
+      "disclosure": "cross_figure_inference_not_author_reported"
+    },
+    "fft_chunk_length_L": {
+      "value": 512,
+      "provenance": "H141",
+      "disclosure": "cross_figure_inference_not_author_reported"
+    },
+    "per_component_compression_ratio": {
+      "value": "uniform_s",
+      "provenance": "Figure18+H141",
+      "disclosure": "cross_figure_inference_not_author_reported"
+    },
+    "ffn_dimension": {
+      "value": 2048,
+      "provenance": "H141",
+      "disclosure": "cross_figure_inference_not_author_reported"
+    },
+    "attention_heads_and_layout": {
+      "value": 8,
+      "provenance": "H141",
+      "disclosure": "cross_figure_inference_not_author_reported"
+    },
+    "elementwise_components": {
+      "value": "H141_registered",
+      "provenance": "H141",
+      "disclosure": "cross_figure_inference_not_author_reported"
+    },
+    "memory_residency_and_boundaries": {
+      "value": "H175_data_ready_boundaries",
+      "provenance": "H175",
+      "disclosure": "cross_figure_inference_not_author_reported"
+    },
+    "launch_and_measurement_interval": {
+      "value": "complete_block_cycles",
+      "provenance": "H141",
+      "disclosure": "cross_figure_inference_not_author_reported"
+    }
+  },
+  "unresolved_measurement_provenance": {
+    "full_vs_reduced_mlx_design_per_series": {
+      "status": "not_reported",
+      "figure18_specific_value": null
+    },
+    "simulator_vs_tapeout_measurement_per_series": {
+      "status": "not_reported",
+      "figure18_specific_value": null
+    },
+    "latency_baseline_value_and_source": {
+      "status": "not_reported",
+      "figure18_specific_value": null
+    },
+    "energy_measurement_interval": {
+      "status": "not_reported",
+      "figure18_specific_value": null
+    },
+    "mlx_power_source_per_setting": {
+      "status": "not_reported",
+      "figure18_specific_value": null
+    },
+    "process_scaling_applied_to_mlx": {
+      "status": "not_reported",
+      "figure18_specific_value": null
+    }
+  },
+  "reference_checks": {
+    "hardware_matches_legacy": true,
+    "latency_matches_legacy": true,
+    "flop_saving_matches_legacy": true,
+    "affinity_target_matches_legacy": true,
+    "legacy_formula_recomputed": true,
+    "seven_complete_rows": true,
+    "reported_values_positive": true
+  },
+  "affinity_envelope": {
+    "lower": 1.249266862170088,
+    "upper_components": [
+      3.8999018645731107,
+      3.8830564784053156
+    ],
+    "upper": 3.8914791714892134,
+    "point": 2.5703730168296506,
+    "lower_provenance": "H172_complete_block_data_ready_speedup",
+    "upper_provenance": "mean_H141_N1024_SIMD32_speedup_windows2_4",
+    "point_rule": "arithmetic_midpoint"
+  },
+  "bound_checks": {
+    "finite_positive": true,
+    "ordered": true,
+    "lower_source": true,
+    "upper_source": true,
+    "point_rule": true
+  },
+  "external_rows": [
+    {
+      "hardware": "SpAtten",
+      "row_role": "reported_external_reference_only",
+      "reported_latency_speedup": 1.0,
+      "reported_normalized_energy_saving": 1.0,
+      "reported_affinity": 1.0,
+      "reported_flop_saving": 3.0,
+      "estimated_latency_speedup": null,
+      "estimated_normalized_energy_saving": null
+    },
+    {
+      "hardware": "DOTA",
+      "row_role": "reported_external_reference_only",
+      "reported_latency_speedup": 1.4,
+      "reported_normalized_energy_saving": 0.7,
+      "reported_affinity": 0.9,
+      "reported_flop_saving": 5.0,
+      "estimated_latency_speedup": null,
+      "estimated_normalized_energy_saving": null
+    },
+    {
+      "hardware": "Sanger",
+      "row_role": "reported_external_reference_only",
+      "reported_latency_speedup": 1.1,
+      "reported_normalized_energy_saving": 1.0,
+      "reported_affinity": 0.6,
+      "reported_flop_saving": 5.9,
+      "estimated_latency_speedup": null,
+      "estimated_normalized_energy_saving": null
+    },
+    {
+      "hardware": "ViTALity",
+      "row_role": "reported_external_reference_only",
+      "reported_latency_speedup": 3.2,
+      "reported_normalized_energy_saving": 1.4,
+      "reported_affinity": 1.6,
+      "reported_flop_saving": 5.9,
+      "estimated_latency_speedup": null,
+      "estimated_normalized_energy_saving": null
+    },
+    {
+      "hardware": "BitVert",
+      "row_role": "reported_external_reference_only",
+      "reported_latency_speedup": 2.4,
+      "reported_normalized_energy_saving": 5.3,
+      "reported_affinity": 2.0,
+      "reported_flop_saving": 4.0,
+      "estimated_latency_speedup": null,
+      "estimated_normalized_energy_saving": null
+    }
+  ],
+  "mlx_rows": [
+    {
+      "hardware": "MLX(s=0.75)",
+      "compression_setting": 0.75,
+      "row_role": "paper_informed_bounded_MLX_estimate",
+      "reported_latency_speedup": 4.1,
+      "reported_normalized_energy_saving": 1.4,
+      "reported_affinity": 1.6,
+      "reported_flop_saving": 4.1,
+      "configured_flop_saving": 4.1,
+      "affinity_lower": 1.249266862170088,
+      "affinity_point": 2.5703730168296506,
+      "affinity_upper": 3.8914791714892134,
+      "reported_affinity_inside_bounds": true,
+      "latency_speedup_lower": 1.70733137829912,
+      "estimated_latency_speedup": 3.512843123000522,
+      "latency_speedup_upper": 5.318354867701924,
+      "reported_latency_inside_bounds": true,
+      "point_latency_relative_error": 0.14320899439011653,
+      "point_latency_within_limit": true,
+      "clear_improvement": true,
+      "estimated_normalized_energy_saving": null,
+      "energy_role": "reported_reference_only"
+    },
+    {
+      "hardware": "MLX(s=0.5)",
+      "compression_setting": 0.5,
+      "row_role": "paper_informed_bounded_MLX_estimate",
+      "reported_latency_speedup": 5.8,
+      "reported_normalized_energy_saving": 2.6,
+      "reported_affinity": 2.5,
+      "reported_flop_saving": 6.1,
+      "configured_flop_saving": 6.1,
+      "affinity_lower": 1.249266862170088,
+      "affinity_point": 2.5703730168296506,
+      "affinity_upper": 3.8914791714892134,
+      "reported_affinity_inside_bounds": true,
+      "latency_speedup_lower": 2.5401759530791788,
+      "estimated_latency_speedup": 5.226425134220289,
+      "latency_speedup_upper": 7.9126743153614,
+      "reported_latency_inside_bounds": true,
+      "point_latency_relative_error": 0.09889221823788118,
+      "point_latency_within_limit": true,
+      "clear_improvement": true,
+      "estimated_normalized_energy_saving": null,
+      "energy_role": "reported_reference_only"
+    }
+  ],
+  "row_checks": {
+    "external_rows": true,
+    "mlx_rows": true,
+    "settings": true,
+    "configured_savings_match_reported": true,
+    "energy_reference_only": true
+  },
+  "claim_checks": {
+    "validation_disabled": true,
+    "independent_validation_not_claimed": true,
+    "paper_targets_openly_consumed": true,
+    "energy_not_estimated": true
+  },
+  "source_files": {
+    "protocol": {
+      "path": "experiments/h180-fig18-bounded-estimate/protocol.md",
+      "bytes": 2162,
+      "sha256": "78141438e8206ffd9608019b4a334ad158b942c0493159be49e66e16643d55fe",
+      "checks": {
+        "is_file": true
+      },
+      "pass": true
+    },
+    "config": {
+      "path": "configs/analysis/fig18_bounded_estimate_v1.yaml",
+      "bytes": 2764,
+      "sha256": "fee3b9d516b27aff60715f06f1df9eb52e272883cfafb5d8cefce9b812dc0d3f",
+      "checks": {
+        "is_file": true
+      },
+      "pass": true
+    },
+    "estimator": {
+      "path": "scripts/estimate_fig18_bounded.py",
+      "bytes": 18074,
+      "sha256": "76fdcb3ba43945819418a209b20c6b8109f8eed88f5d6fe913271d3e1671fb59",
+      "checks": {
+        "is_file": true
+      },
+      "pass": true
+    },
+    "test": {
+      "path": "tests/test_fig18_bounded_estimate.py",
+      "bytes": 2195,
+      "sha256": "60e05f931a26bb706c83b91dda25877b3533f60b3f49f1f9aaaa27af8c296c61",
+      "checks": {
+        "is_file": true
+      },
+      "pass": true
+    }
+  },
+  "acceptance_gates": [
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true
+  ],
+  "summary": {
+    "external_reference_rows": 5,
+    "mlx_estimate_rows": 2,
+    "identity_workload_fields_missing": 12,
+    "identity_provenance_fields_missing": 6,
+    "affinity_lower": 1.249266862170088,
+    "affinity_point": 2.5703730168296506,
+    "affinity_upper": 3.8914791714892134,
+    "paper_affinity_inside_bounds": 2,
+    "paper_latency_inside_bounds": 2,
+    "point_latency_passes": 2,
+    "point_latency_max_relative_error": 0.14320899439011653,
+    "clear_improvement_rows": 2,
+    "energy_estimated_rows": 0,
+    "figure18_exploration_complete": true,
+    "figure18_independently_reproduced": false,
+    "acceptance_gates_passed": 10,
+    "acceptance_gates_total": 10
+  },
+  "integrity_checks": {
+    "frozen": true,
+    "parent_schema": true,
+    "identity_schema": true,
+    "workload_schema": true,
+    "reference_schema": true,
+    "bounds_finite": true,
+    "row_schema": true,
+    "source": true,
+    "acceptance_evaluated": true
+  }
+}
