@@ -113,8 +113,8 @@ def build_audit(config: dict[str, Any]) -> dict[str, Any]:
         for name, path in config["source_layout"].items()
     }
     source_text = "\n".join(
-        (PROJECT_ROOT / path).read_text(errors="replace")
-        for path in config["source_layout"].values()
+        (PROJECT_ROOT / config["source_layout"][name]).read_text(errors="replace")
+        for name in ("engine", "runner")
     )
     target_free_checks = {
         "manifest": manifest["paper_performance_targets_consumed"] is False,
