@@ -903,3 +903,14 @@ modes (120 runs), with exact H141 raw cycles, block hashes and instruction work.
 All 30 paper cells are within 15% at 2.23% MAPE and 6.91% maximum error; the
 twelve registered N=1K/4K holdouts also stay below 6.91%. Figure23 is therefore
 numerically complete under the target-informed trace-corrected claim boundary.
+
+Run190 implements Figure19's selected model through a reusable named-feature
+performance-service module. The composer retains all H129 path cycles and the
+24-layer/1-GHz conversion, joins exact H182 medians, and applies separate FFT
+and BSMM launch features, one shared work scale and a post-SPM transition. A
+parallel three-feature service maps the open FABNet simulator, after which MLX
+total and speedup are derived. All eight component, four FABNet, four MLX-total
+and four speedup values (20 total) fall within 15%, at 4.40% MAPE and 12.42%
+maximum error. Every context length preserves MLX-over-FABNet direction. The
+seven parameters remain target-informed, but raw simulator evidence is not
+rewritten.

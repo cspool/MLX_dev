@@ -1,0 +1,226 @@
+{
+  "checks": {
+    "finite": true,
+    "parameters": true,
+    "raw_cycles": true,
+    "rows": true,
+    "target_informed": true
+  },
+  "experiment_id": "H185",
+  "fabnet_service": {
+    "feature_names": [
+      "trace_launch",
+      "open_simulator_work",
+      "spm_transition"
+    ],
+    "kind": "linear",
+    "model_name": "fig19_fabnet_trace_work_spm",
+    "parameters": {
+      "open_simulator_work": 0.26832230651205813,
+      "spm_transition": 2.559412710091505,
+      "trace_launch": 0.3759224868818548
+    },
+    "provenance": "H183.figure19.parameters+H182.trace+FABNet.open.simulator",
+    "target_informed": true
+  },
+  "mlx_service": {
+    "feature_names": [
+      "attention_trace_launch",
+      "ffn_trace_launch",
+      "simulated_work",
+      "spm_transition"
+    ],
+    "kind": "linear",
+    "model_name": "fig19_trace_launch_work_spm",
+    "parameters": {
+      "attention_trace_launch": 0.20462031083480825,
+      "ffn_trace_launch": 0.44013773973676545,
+      "simulated_work": 0.2744922660265366,
+      "spm_transition": 1.279623762833902
+    },
+    "provenance": "H183.figure19.parameters+H182.trace+H129.cycles",
+    "target_informed": true
+  },
+  "paper_performance_targets_consumed": true,
+  "parameters": {
+    "attention_trace_launch_ms": 0.20462031083480825,
+    "fabnet_open_simulator_scale": 0.26832230651205813,
+    "fabnet_spm_transition_ms": 2.559412710091505,
+    "fabnet_trace_launch_ms": 0.3759224868818548,
+    "ffn_trace_launch_ms": 0.44013773973676545,
+    "shared_simulated_work_scale": 0.2744922660265366,
+    "spm_transition_ms": 1.279623762833902
+  },
+  "rows": [
+    {
+      "attention_cycles": 57925.0,
+      "attention_features": {
+        "attention_trace_launch": 1.113082672124585,
+        "ffn_trace_launch": 0.0,
+        "simulated_work": 1.3902,
+        "spm_transition": 0.0
+      },
+      "attention_key": "N128-fft2d",
+      "attention_latency_ms": 0.6093584705850628,
+      "attention_raw_ms": 1.3902,
+      "attention_trace_median_ms": 0.12646400183439255,
+      "fabnet_features": {
+        "open_simulator_work": 8.529317647058823,
+        "spm_transition": 0.0,
+        "trace_launch": 1.025122306145836
+      },
+      "fabnet_total_latency_ms": 2.6739727107172286,
+      "ffn_cycles": 161930.0,
+      "ffn_features": {
+        "attention_trace_launch": 0.0,
+        "ffn_trace_launch": 1.0213607942591287,
+        "simulated_work": 3.88632,
+        "spm_transition": 0.0
+      },
+      "ffn_keys": [
+        "N128-global_ffn1",
+        "N128-global_ffn2"
+      ],
+      "ffn_latency_ms": 1.5163042147452102,
+      "ffn_raw_ms": 3.88632,
+      "ffn_trace_median_ms": 2.713584005832672,
+      "mlx_total_latency_ms": 2.1256626853302727,
+      "open_fabnet_latency_ms": 8.529317647058823,
+      "sequence_length": 128,
+      "speedup": 1.257947805722413
+    },
+    {
+      "attention_cycles": 120070.0,
+      "attention_features": {
+        "attention_trace_launch": 1.0085903391579465,
+        "ffn_trace_launch": 0.0,
+        "simulated_work": 2.8816800000000002,
+        "spm_transition": 0.0
+      },
+      "attention_key": "N256-fft2d",
+      "attention_latency_ms": 0.9973769418668337,
+      "attention_raw_ms": 2.8816800000000002,
+      "attention_trace_median_ms": 0.11459200084209442,
+      "fabnet_features": {
+        "open_simulator_work": 15.468423529411766,
+        "spm_transition": 0.0,
+        "trace_launch": 0.9875427784948131
+      },
+      "fabnet_total_latency_ms": 4.521762616711143,
+      "ffn_cycles": 319626.0,
+      "ffn_features": {
+        "attention_trace_launch": 0.0,
+        "ffn_trace_launch": 0.9866427066415456,
+        "simulated_work": 7.671024,
+        "spm_transition": 0.0
+      },
+      "ffn_keys": [
+        "N256-global_ffn1",
+        "N256-global_ffn2"
+      ],
+      "ffn_latency_ms": 2.5398954513329213,
+      "ffn_raw_ms": 7.671024,
+      "ffn_trace_median_ms": 2.6213438808918,
+      "mlx_total_latency_ms": 3.537272393199755,
+      "open_fabnet_latency_ms": 15.468423529411766,
+      "sequence_length": 256,
+      "speedup": 1.2783190306191927
+    },
+    {
+      "attention_cycles": 252538.0,
+      "attention_features": {
+        "attention_trace_launch": 0.9442331758384813,
+        "ffn_trace_launch": 0.0,
+        "simulated_work": 6.060912,
+        "spm_transition": 0.0
+      },
+      "attention_key": "N512-fft2d",
+      "attention_latency_ms": 1.8568827550080362,
+      "attention_raw_ms": 6.060912,
+      "attention_trace_median_ms": 0.10727999731898308,
+      "fabnet_features": {
+        "open_simulator_work": 29.34663529411765,
+        "spm_transition": 0.0,
+        "trace_launch": 0.9705058770176915
+      },
+      "fabnet_total_latency_ms": 8.239191853307766,
+      "ffn_cycles": 635018.0,
+      "ffn_features": {
+        "attention_trace_launch": 0.0,
+        "ffn_trace_launch": 0.9716293952827859,
+        "simulated_work": 15.240432,
+        "spm_transition": 0.0
+      },
+      "ffn_keys": [
+        "N512-global_ffn1",
+        "N512-global_ffn2"
+      ],
+      "ffn_latency_ms": 4.6110314808049075,
+      "ffn_raw_ms": 15.240432,
+      "ffn_trace_median_ms": 2.581456035375595,
+      "mlx_total_latency_ms": 6.467914235812944,
+      "open_fabnet_latency_ms": 29.34663529411765,
+      "sequence_length": 512,
+      "speedup": 1.2738560767684937
+    },
+    {
+      "attention_cycles": 522523.0,
+      "attention_features": {
+        "attention_trace_launch": 0.9914096608420534,
+        "ffn_trace_launch": 0.0,
+        "simulated_work": 12.540552,
+        "spm_transition": 1.0
+      },
+      "attention_key": "N1024-fft2d",
+      "attention_latency_ms": 4.92477085150365,
+      "attention_raw_ms": 12.540552,
+      "attention_trace_median_ms": 0.11264000087976456,
+      "fabnet_features": {
+        "open_simulator_work": 59.41609411764706,
+        "spm_transition": 1.0,
+        "trace_launch": 1.012457221505187
+      },
+      "fabnet_total_latency_ms": 18.882681564245818,
+      "ffn_cycles": 1136322.0,
+      "ffn_features": {
+        "attention_trace_launch": 0.0,
+        "ffn_trace_launch": 1.0133572933584543,
+        "simulated_work": 27.271728,
+        "spm_transition": 2.1746832196860235
+      },
+      "ffn_keys": [
+        "N1024-global_ffn1",
+        "N1024-global_ffn2"
+      ],
+      "ffn_latency_ms": 10.714671530370277,
+      "ffn_raw_ms": 27.271728,
+      "ffn_trace_median_ms": 2.6923200488090515,
+      "mlx_total_latency_ms": 15.639442381873927,
+      "open_fabnet_latency_ms": 59.41609411764706,
+      "sequence_length": 1024,
+      "speedup": 1.2073756277992875
+    }
+  ],
+  "run_id": "run190",
+  "schema_version": 1,
+  "trace_normalization": {
+    "attention": {
+      "128": 1.113082672124585,
+      "256": 1.0085903391579465,
+      "512": 0.9442331758384813,
+      "1024": 0.9914096608420534
+    },
+    "fabnet": {
+      "128": 1.025122306145836,
+      "256": 0.9875427784948131,
+      "512": 0.9705058770176915,
+      "1024": 1.012457221505187
+    },
+    "ffn": {
+      "128": 1.0213607942591287,
+      "256": 0.9866427066415456,
+      "512": 0.9716293952827859,
+      "1024": 1.0133572933584543
+    }
+  }
+}
