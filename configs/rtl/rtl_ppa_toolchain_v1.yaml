@@ -1,0 +1,85 @@
+name: rtl-ppa-toolchain-v1
+experiment_id: H197
+run_id: run202
+classification: open_equivalent_rtl_ppa_toolchain_not_synopsys_12nm
+validation_eligible: true
+
+frozen_inputs:
+  paper:
+    path: MLX Multi-Layer Execution for Structured LLM Workload Acceleration on Spatial Architectures/MLX Multi-Layer Execution for Structured LLM Workload Acceleration on Spatial Architectures.md
+    bytes: 85855
+    sha256: 5785eb81b28741a3806ca42749d7b556bbcd2404e1622ae644a32bae2ade7745
+  targets:
+    path: artifacts/targets/paper_targets.yaml
+    bytes: 14931
+    sha256: c4a22ab8052ff8cb223a729b8ce07320c6826cfee0d37e1a664a8761e018b41e
+  liberty:
+    path: /opt/OpenROAD-flow-scripts/flow/platforms/nangate45/lib/NangateOpenCellLibrary_typical.lib
+    bytes: 6692032
+    sha256: 8d540a4d4cf6d09d27c87ad067857a9c0c2eeb023ab7a56e058cd3113db4e9b1
+  tech_lef:
+    path: /opt/OpenROAD-flow-scripts/flow/platforms/nangate45/lef/NangateOpenCellLibrary.tech.lef
+    bytes: 19485
+    sha256: 834a79295054cd4209178d1bade67c353863c47bb4b3c22ee38b862b7cec37f2
+  macro_lef:
+    path: /opt/OpenROAD-flow-scripts/flow/platforms/nangate45/lef/NangateOpenCellLibrary.macro.lef
+    bytes: 349950
+    sha256: 840b01e500826096d1edcc752350834da647fdbf360798f243f8122b52b357c3
+  platform_license:
+    path: /opt/OpenROAD-flow-scripts/flow/platforms/nangate45/LICENSE
+    bytes: 10174
+    sha256: 0d542e0c8804e39aa7f37eb00da5a762149dc682d7829451287e11b938e94594
+
+external_toolchain:
+  orfs_root: /opt/OpenROAD-flow-scripts
+  orfs_commit: 6101364b2d7909dd797e1e3e7f80695401cfa4e4
+  yosys_version_token: "Yosys 0.9"
+  iverilog_version_token: "Icarus Verilog version 11.0"
+  verilator_version_token: "Verilator 4.038"
+  openroad_version_token: "v2.0-17598-ga008522d8"
+  abc_binary: /usr/bin/berkeley-abc
+
+paper_contract:
+  rtl_language_token: implemented in Verilog RTL
+  synthesis_token: synthesized in 12nm @1GHz using Synopsys DC
+  full_power_token: full-design power is measured post-silicon
+  reduced_power_token: reduced-design power is estimated from post-synthesis reports
+  frequency_ghz: 1.0
+  target_section: table2_area_power
+  component_names:
+    - config_network
+    - data_network
+    - control_logic
+    - tag_buffer
+    - register_file
+    - fu_simd32
+    - pe
+    - pe_array
+    - reduced_simd8
+
+smoke:
+  top: ppa_smoke
+  testbench_top: tb_ppa_smoke
+  rtl: rtl/ppa/smoke/ppa_smoke.sv
+  testbench: rtl/ppa/smoke/tb_ppa_smoke.sv
+  verilator_harness: rtl/ppa/smoke/sim_main.cpp
+  power_tcl: rtl/ppa/smoke/openroad_power.tcl
+  clock_period_ns: 1.0
+  vcd_scope: tb_ppa_smoke
+  required_test_token: PPA_SMOKE_PASS
+
+source_layout:
+  protocol: experiments/h197-rtl-ppa-toolchain/protocol.md
+  config: configs/rtl/rtl_ppa_toolchain_v1.yaml
+  bootstrap: scripts/bootstrap_rtl_ppa_tools.sh
+  runner: scripts/run_rtl_ppa_toolchain.py
+  auditor: scripts/audit_rtl_ppa_toolchain.py
+  test: tests/test_rtl_ppa_toolchain.py
+  rtl: rtl/ppa/smoke/ppa_smoke.sv
+  testbench: rtl/ppa/smoke/tb_ppa_smoke.sv
+  verilator_harness: rtl/ppa/smoke/sim_main.cpp
+  power_tcl: rtl/ppa/smoke/openroad_power.tcl
+
+output_root: artifacts/environment/h197
+manifest_path: artifacts/environment/h197/rtl-ppa-toolchain-manifest.json
+result_path: artifacts/results/rtl-ppa-toolchain-run202.json
