@@ -1,0 +1,77 @@
+name: fig22-resource-schema-transfer-v1
+experiment_id: H167
+run_id: run172
+classification: target_exposed_pre_registered_resource_domain_schema_transfer
+validation_eligible: true
+
+frozen_inputs:
+  h166:
+    path: artifacts/results/resource-domain-ledger-run171.json
+    bytes: 67568
+    sha256: e06ae7ca06dc191cbce6f78053170e4315e49c5a2026eaa2cbae23234f6b5d45
+    required_status: supported
+    required_integrity: true
+    required_metric: null
+    required_schema: null
+    required_targets_consumed: false
+  h60:
+    path: artifacts/results/fig22-resource-targets-run065.json
+    bytes: 28112
+    sha256: c404f2d1a20b50dcc39937a982565d3ef542db54bebb85045a32d4527bcd1cf6
+    required_verdict: supported
+    required_summary_pass: true
+
+mapping:
+  operators: [bsmm, fft]
+  target_panels: {bsmm: bsmm, fft: chunk_fft}
+  sizes: [64, 128, 256, 512, 1024, 2048, 4096, 8192]
+  resources: [compute, load, store, xfer]
+  required_points_per_schema: 64
+  required_stack_points_per_schema: 16
+  schemas:
+    physical_pe:
+      compute: compute_physical_capacity
+      load: h163_physical_load
+      store: h163_physical_store
+      xfer: h163_physical_xfer
+    component_issue:
+      compute: compute_global_overlay_busy
+      load: external_load_pe_service
+      store: external_store_pe_service
+      xfer: xfer_issue_pe_service
+    component_hop:
+      compute: compute_global_overlay_busy
+      load: external_load_pe_service
+      store: external_store_pe_service
+      xfer: xfer_hop_pe_service
+    payload_bandwidth:
+      compute: compute_global_overlay_busy
+      load: external_read_payload_bytes / (end_to_end_cycles * 512B_per_cycle)
+      store: external_write_payload_bytes / (end_to_end_cycles * 512B_per_cycle)
+      xfer: xfer_hop_pe_service
+    wire_bandwidth:
+      compute: compute_global_overlay_busy
+      load: external_read_payload_bytes / (end_to_end_cycles * 1024B_per_cycle)
+      store: external_write_payload_bytes / (end_to_end_cycles * 1024B_per_cycle)
+      xfer: xfer_hop_pe_service
+
+acceptance:
+  minimum_spearman: 0.70
+  endpoint_direction_required: true
+  required_curves_per_schema: 8
+  required_trend_curves_per_complete_schema: 8
+  strict_relative_error_limit: 0.10
+  required_strict_points_per_complete_schema: 64
+  require_at_least_one_global_trend_schema: true
+  strict_completion_is_diagnostic: true
+  require_data_supply_stack_audit: true
+  per_operator_resource_or_size_schema_selection: forbidden
+  prediction_scaling_offset_or_fit: forbidden
+
+source_layout:
+  protocol: experiments/h167-fig22-resource-schemas/protocol.md
+  config: configs/analysis/fig22_resource_schema_transfer_v1.yaml
+  auditor: scripts/audit_fig22_resource_schema_transfer.py
+  test: tests/test_fig22_resource_schema_transfer.py
+
+result_path: artifacts/results/fig22-resource-schema-transfer-run172.json
