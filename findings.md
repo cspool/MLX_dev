@@ -1044,3 +1044,12 @@ latch-free and nonzero. The target-free Nangate45 composition is far from the
 paper's relative breakdown: the reconstructed RF is oversized while data and
 control networks are undersized. This makes component-ratio correction, not a
 single global technology factor, the next mechanistic task.
+
+Run204 quantifies that structural mismatch with real VCD-driven OpenROAD power.
+After rejecting zero-annotation and delta-cycle artifacts, one full-PE area and
+power normalization leaves RF 295%/832% high, data/control networks roughly
+94%-99% low, and the reduced design 225%/364% high. FU area alone is within
+15%. This rules out technology scaling as the missing explanation. The next
+RTL must use a compact/macro-like RF, a buffered multi-link data network,
+registered tag control, and genuinely omit divide/exp/shuffle logic from the
+reduced lanes.
