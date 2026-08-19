@@ -1,0 +1,60 @@
+name: one-baseline-goal-certificate-v1
+experiment_id: H172
+run_id: run177
+classification: final_one_baseline_complete_functional_performance_certificate
+validation_eligible: true
+
+frozen_inputs:
+  h171:
+    path: artifacts/results/data-ready-complete-block-run176.json
+    bytes: 16048
+    sha256: 1724e4863ec0e7184675fbc3a83df330347d1d088ee2a4bfb9db3010cb78dcb8
+    required_status: supported
+    required_integrity: true
+  h170:
+    path: artifacts/results/single-baseline-complete-block-run175.json
+    bytes: 13055
+    sha256: 1e857627b92c75d8397a59b4f9b36c950b8da364c9b9c8e2e12a6bff9f117385
+    required_status: rejected
+    required_integrity: true
+
+completion_contract:
+  baseline_id: single_layer_serial_spatial_baseline
+  mlx_id: multi_layer_execution_data_ready
+  architectures: 2
+  main_baselines: 1
+  cumulative_prefixes: 4
+  minimum_clear_speedup: 1.20
+  required_clear_improvement_prefixes: 4
+  functional_payloads: 6
+  complete_functional_operations: 466
+  complete_memory_requests: 162
+  complete_boundary_events: 97
+  complete_route_hops: 139
+  complete_outputs: 8
+  maximum_functional_absolute_error: 1.0e-12
+  baseline_active_tags: 1
+  minimum_mlx_active_tags: 2
+  minimum_early_data_ready_issues: 1
+  exact_paper_numbers_required: false
+  full_paper_required: false
+  rtl_power_area_required: false
+
+verification:
+  ruff_command: [.venv/bin/ruff, check, scripts, src, tests]
+  pytest_command: [.venv/bin/pytest, -q]
+  expected_pytest_passed: 439
+  expected_pytest_failed: 0
+  expected_pytest_warnings: 17
+
+source_layout:
+  goal: docs/one-baseline-goal.md
+  protocol: experiments/h172-one-baseline-goal-certificate/protocol.md
+  config: configs/simulators/one_baseline_goal_certificate_v1.yaml
+  runner: scripts/run_one_baseline_goal_verification.py
+  auditor: scripts/audit_one_baseline_goal_certificate.py
+  test: tests/test_one_baseline_goal_certificate.py
+
+output_root: artifacts/environment/h172
+verification_manifest: artifacts/environment/h172/one-baseline-goal-verification-manifest.json
+result_path: artifacts/results/one-baseline-goal-certificate-run177.json
