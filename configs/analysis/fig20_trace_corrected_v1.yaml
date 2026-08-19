@@ -1,0 +1,75 @@
+name: fig20-trace-corrected-v1
+experiment_id: H186
+run_id: run191
+classification: target_informed_trace_corrected_Figure20_composition
+validation_eligible: false
+
+frozen_inputs:
+  selected_model:
+    path: artifacts/results/fig19-20-23-gap-attribution-run188.json
+    bytes: 37530
+    sha256: d38bd8ddc7cb6e131662241549f53df97015053b87a72b00277137d970001aef
+    required_status: supported
+    required_integrity: true
+  rtx4090_trace:
+    path: artifacts/results/fig19-20-23-rtx4090-trace-run187.json
+    bytes: 52250
+    sha256: b958398750a3a34a2426ae24b22a1014a199486f31d38a0b67dc6ea3bd4afbb9
+    required_status: supported
+    required_integrity: true
+  legacy_execution:
+    path: artifacts/results/fig20-run006.json
+    bytes: 41754
+    sha256: 1a349e197759607657a5ae3ff03ffa05a9af06f0c7ffbd4ec267db14c4d5976d
+  current_audit:
+    path: artifacts/results/fig20-attention-completion-run141.json
+    bytes: 8165
+    sha256: 2fd983a8a1424ecfbcf8487d7852517b9f22a3e0957e476c0a6fe981d1c7f01f
+    required_status: supported
+    required_integrity: true
+  targets:
+    path: artifacts/targets/paper_targets.yaml
+    bytes: 14931
+    sha256: c4a22ab8052ff8cb223a729b8ce07320c6826cfee0d37e1a664a8761e018b41e
+
+composition:
+  sequence_lengths: [256, 8192]
+  panels: [versus_dense_tcu, versus_sparse_cuda]
+  operators: [qkv, attention, ffn1, ffn2]
+  projection_operators: [qkv, ffn1, ffn2]
+  dense_trace_components:
+    qkv: dense_tcu_qkv
+    attention: dense_flash_attention
+    ffn1: dense_tcu_ffn1
+    ffn2: dense_tcu_ffn2
+  sparse_trace_components:
+    qkv: sparse_cuda_qkv
+    attention: sparse_cuda_fft_attention
+    ffn1: sparse_cuda_ffn1
+    ffn2: sparse_cuda_ffn2
+  selected_parameter_path: figure20.parameters
+  target_informed: true
+
+acceptance:
+  maximum_relative_error: 0.15
+  required_speedup_bars: 16
+  required_geomeans: 2
+  required_reported_points: 18
+  required_passing_points: 18
+  required_direction_matches: 16
+  require_raw_execution_identity: true
+  require_trace_feature_identity: true
+  require_parameter_count: 11
+  independent_validation_claimed: false
+
+source_layout:
+  protocol: experiments/h186-fig20-trace-corrected/protocol.md
+  config: configs/analysis/fig20_trace_corrected_v1.yaml
+  service: src/mlxsim/performance_service.py
+  composer: scripts/compose_fig20_trace_corrected.py
+  auditor: scripts/audit_fig20_trace_corrected.py
+  test: tests/test_fig20_trace_corrected.py
+
+output_root: artifacts/environment/h186
+composition_manifest: artifacts/environment/h186/fig20-trace-corrected-composition.json
+result_path: artifacts/results/fig20-trace-corrected-run191.json
