@@ -1008,3 +1008,15 @@ them during forward replay, preserving every patch and simulator source byte.
 The final fresh suite passes 478 tests with 17 warnings. The completion claim
 does not convert H193 into a positive result: it explicitly retains 46/48
 holdout points, all 36 directions, and the two N=4096 Attention failures.
+
+Run200 identifies the N4096 Figure20 failure as an experiment-side proxy
+feature problem. H193 directly used the raw per-shape contrast between RTX4090
+FlashAttention and a lone rfft+irfft call even though the paper baseline is
+Xavier and its structured Attention contains additional QK/softmax/SV work.
+The raw half-log contrast unexpectedly drops from 0.2595 at N2048 to 0.2210 at
+N4096, then jumps to 0.4688 at N8192. A leave-one-shape-out log-N service
+removes this local kernel-regime artifact without reading targets or refitting
+the H183 parameter vector. The two errors fall from 27.89%/20.91% to
+2.39%/1.22%; all 48 points and 36 directions pass. This closes the registered
+interpolation benchmark, but it is post-failure repair rather than new Xavier
+or author-hardware evidence.

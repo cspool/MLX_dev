@@ -1210,7 +1210,7 @@ simulator_next_work_execution:
   handoff: docs/simulator-next-work-complete.md
 
 fig20_n4096_attention_repair:
-  status: active
+  status: repair_complete_final_regression_pending
   source_failure:
     experiment_id: H193
     run_id: run198
@@ -1222,8 +1222,23 @@ fig20_n4096_attention_repair:
     preserve_all_directions: true
     prohibit_target_access_in_predictor: true
     prohibit_parameter_refit: true
-  current_hypothesis: H195
-  planned_result: artifacts/results/fig20-attention-holdout-repair-run200.json
+  completed_hypotheses:
+    - experiment_id: H195
+      run_id: run200
+      path: artifacts/results/fig20-attention-holdout-repair-run200.json
+      sha256: 416c18ba362563e52045e31688a81384d3893e38cfb9ed08660f443e3921bf11
+      status: supported
+      audit_integrity: true
+      dense_tcu_error_before: 0.278883033420841
+      dense_tcu_error_after: 0.02393709215891343
+      sparse_cuda_error_before: 0.20910755381178708
+      sparse_cuda_error_after: 0.012186453214418887
+      passing_points: 48/48
+      direction_matches: 36/36
+      parameters_refit: false
+      independent_validation_claimed: false
+  current_hypothesis: H196
+  next_step: fresh_full_regression_and_repaired_joint_certificate
 
 functional_completion:
   status: complete
