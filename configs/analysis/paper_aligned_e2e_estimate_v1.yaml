@@ -1,0 +1,96 @@
+name: paper-aligned-e2e-estimate-v1
+experiment_id: H174
+run_id: run179
+classification: paper_informed_three_parameter_end_to_end_estimate_not_validation
+validation_eligible: false
+
+frozen_inputs:
+  layer_contract:
+    path: artifacts/results/fig21-layer-contract-run096.json
+    bytes: 33918
+    sha256: d92d0c477a1525beba1ab613985820dde98c8a7fe7429347210eb5abe9b2bf12
+    required_status: supported
+    required_integrity: true
+  xavier_projection:
+    path: artifacts/results/fig21-xavier-hmma-corrected-run156.json
+    bytes: 7591
+    sha256: d34a4b9deac4e3a0de3a9400465e943e985a20139803748132a013c33558b2d7
+    required_status: supported
+    required_integrity: true
+  xavier_scalar:
+    path: artifacts/results/fig21-xavier-scalar-traceg-run152.json
+    bytes: 12778
+    sha256: 3f1b39b768ca8d21cdca28ae3006cda9b2cb879708eb7ffcaa0618ce754812f3
+    required_status: supported
+    required_integrity: true
+  figure21_targets:
+    path: artifacts/results/fig21-target-completion-run029.json
+    bytes: 14413
+    sha256: ec9b068b77113f8fe5af5f992f90fb6b4d8cf15d107873662a172bb2a3927a3f
+    required_summary_pass: true
+  xavier_functional:
+    path: artifacts/results/xavier-e2e-functional-run178.json
+    bytes: 7715
+    sha256: 9b870a1fbb674521817172372daaebfa508c14cef4137f3f189509636d1c4f00
+    required_status: supported
+    required_integrity: true
+  mlx_functional:
+    path: artifacts/results/data-ready-complete-block-run176.json
+    bytes: 16048
+    sha256: 1724e4863ec0e7184675fbc3a83df330347d1d088ee2a4bfb9db3010cb78dcb8
+    required_status: supported
+    required_integrity: true
+  fusion_contract:
+    path: artifacts/results/spm-attention-fusion-contract-run174.json
+    bytes: 10768
+    sha256: 7e71f33cbef92545a9fc90fa6d53ab35b6501c3207f08051b267d56a19bb683c
+    required_status: supported
+    required_integrity: true
+
+workload:
+  model: Llama2-7B_surrogate
+  sequence_lengths: [128, 256, 512, 1024, 2048]
+  batch: 8
+  layers: 32
+  structured_layers: 24
+  dense_layers: 8
+  hidden_dimension: 4096
+  precision: FP16_paper_with_proxy_service_models
+
+model:
+  parameter_count: 3
+  fit_objective: least_squares_speedup_residual
+  nonnegative_parameters: true
+  parameters:
+    xavier_fixed_framework_seconds:
+      meaning: aggregate_framework_launch_and_unmodeled_memory_overhead
+    mlx_linear_seconds_per_TOP:
+      meaning: structured_and_dense_projection_plus_elementwise_service
+    mlx_attention_seconds_per_TOP:
+      meaning: structured_plus_eight_dense_attention_service
+  xavier_base_seconds: corrected_H151_projection_plus_H147_attention_elementwise
+  mlx_linear_feature_TOP: H91_24_structured_projection_plus_8_dense_projection_plus_32_elementwise
+  mlx_attention_feature_TOP: H91_24_structured_attention_plus_8_dense_attention
+  optimizer: scipy_least_squares
+  initial_parameters: [3.0, 0.2, 1.0]
+
+acceptance:
+  required_rows: 5
+  required_parameters: 3
+  maximum_fit_relative_error: 0.10
+  maximum_fit_mape: 0.05
+  maximum_leave_one_out_relative_error: 0.25
+  require_strictly_decreasing_speedup: true
+  require_mlx_faster_all_rows: true
+  require_positive_absolute_seconds: true
+  require_both_functional_parents: true
+  strict_independent_validation_claimed: false
+  exact_paper_numbers_claimed: false
+
+source_layout:
+  protocol: experiments/h174-paper-aligned-e2e-estimate/protocol.md
+  config: configs/analysis/paper_aligned_e2e_estimate_v1.yaml
+  estimator: scripts/estimate_paper_aligned_e2e.py
+  test: tests/test_paper_aligned_e2e_estimate.py
+
+result_path: artifacts/results/paper-aligned-e2e-estimate-run179.json
