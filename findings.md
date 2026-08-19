@@ -1062,3 +1062,10 @@ while scalar program issue understates 32-lane FU power. The next iteration
 must register separate reduced topology parameters and translate Figure22
 utilization into per-domain activity duty factors, still with only aggregate
 technology scales.
+
+Run206 validates the profiled-subset direction for area: config and RF enter
+15%, tag/FU approach 20%, and total area MAPE drops to 20.1%. Independent
+reduced non-compute synthesis cuts its error from 364% to 33%. Power exposes a
+clock-architecture problem: sequential memories/networks pay clock internal
+power on every cycle, whereas the large combinational FU only switches on data
+changes. Domain clock gating is required before activity ratios are meaningful.
