@@ -15,11 +15,12 @@ workload mappings and missing native evidence must remain separate.
 - H123 proves a 6.149% Orin cycle spread from CTA shape alone at equal work.
 - H143 finds zero qualified dense-Xavier family rows for Figure 21 before later
   compute-only synthetic services.
-- H18's H100 cross-figure analytical prediction is rejected.
+- The source note records that the earlier H100 cross-figure analytical path
+  was rejected, but H168 does not read its target-exposed result file.
 - The 2026-08-19 source note freezes NVIDIA facts, Accel-Sim/GPGPU-Sim pins and
   FlashGPU-Sim SM90 pin `f3d4bba`.
 
-No paper performance bar is consumed by this audit.
+No paper performance bar or target-exposed artifact is consumed by this audit.
 
 ## Device classification
 
