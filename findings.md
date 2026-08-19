@@ -914,3 +914,13 @@ and four speedup values (20 total) fall within 15%, at 4.40% MAPE and 12.42%
 maximum error. Every context length preserves MLX-over-FABNet direction. The
 seven parameters remain target-informed, but raw simulator evidence is not
 rewritten.
+
+Run191 implements Figure20's operator/scale mapping with the same reusable
+log-linear service. Eight projection parameters cover panel bases, QKV/FFN
+offsets and short-to-bulk scale changes. Three separate Attention parameters
+consume H182's dense-Flash versus CUDA-FFT log contrast, preserving its actual
+N=256/N=8192 crossover. All sixteen bars and both derived panel geometric means
+are within 15%, at 2.84% MAPE and 6.90% maximum error. All baseline directions,
+sixteen legacy MLX execution ledgers and sixteen RTX4090 trace features match.
+Figures23/19/20 now meet the numerical threshold; the remaining required work
+is a unified, replayable workload-lowering path and a joint final audit.

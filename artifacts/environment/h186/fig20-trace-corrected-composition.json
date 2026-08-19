@@ -1,0 +1,424 @@
+{
+  "attention_service": {
+    "feature_names": [
+      "dense_attention_base",
+      "sparse_attention_base",
+      "attention_trace_contrast_slope"
+    ],
+    "kind": "log_linear",
+    "model_name": "fig20_attention_trace_contrast",
+    "parameters": {
+      "attention_trace_contrast_slope": -1.6264909176885287,
+      "dense_attention_base": 0.7719772979523464,
+      "sparse_attention_base": 0.37841443757136295
+    },
+    "provenance": "H183.figure20.parameters+H182.dense_fft_contrast",
+    "target_informed": true
+  },
+  "checks": {
+    "finite": true,
+    "geomeans": true,
+    "legacy": true,
+    "parameters": true,
+    "rows": true,
+    "target_informed": true,
+    "trace": true
+  },
+  "experiment_id": "H186",
+  "geomeans": {
+    "versus_dense_tcu": 3.3001776618191885,
+    "versus_sparse_cuda": 3.27914471127459
+  },
+  "paper_performance_targets_consumed": true,
+  "parameters": {
+    "attention_trace_contrast_slope": -1.6264909176885287,
+    "dense_attention_base": 0.7719772979523464,
+    "dense_bulk_scale_slope": -0.02886755984348838,
+    "dense_projection_base": 1.591187846882668,
+    "ffn1_bulk_scale_delta": -0.02658276207254788,
+    "ffn1_projection_offset": -0.054751726353668755,
+    "ffn2_bulk_scale_delta": 0.05208292861027426,
+    "ffn2_projection_offset": -0.25347857349403413,
+    "sparse_attention_base": 0.37841443757136295,
+    "sparse_bulk_scale_slope": -0.02888468634694497,
+    "sparse_projection_base": 1.4768650882509506
+  },
+  "projection_service": {
+    "feature_names": [
+      "dense_projection_base",
+      "sparse_projection_base",
+      "ffn1_projection_offset",
+      "ffn2_projection_offset",
+      "dense_bulk_scale_slope",
+      "sparse_bulk_scale_slope",
+      "ffn1_bulk_scale_delta",
+      "ffn2_bulk_scale_delta"
+    ],
+    "kind": "log_linear",
+    "model_name": "fig20_projection_panel_scale",
+    "parameters": {
+      "dense_bulk_scale_slope": -0.02886755984348838,
+      "dense_projection_base": 1.591187846882668,
+      "ffn1_bulk_scale_delta": -0.02658276207254788,
+      "ffn1_projection_offset": -0.054751726353668755,
+      "ffn2_bulk_scale_delta": 0.05208292861027426,
+      "ffn2_projection_offset": -0.25347857349403413,
+      "sparse_bulk_scale_slope": -0.02888468634694497,
+      "sparse_projection_base": 1.4768650882509506
+    },
+    "provenance": "H183.figure20.parameters+H182.scale_regime",
+    "target_informed": true
+  },
+  "rows": [
+    {
+      "features": {
+        "dense_bulk_scale_slope": 0.0,
+        "dense_projection_base": 1.0,
+        "ffn1_bulk_scale_delta": 0.0,
+        "ffn1_projection_offset": 0.0,
+        "ffn2_bulk_scale_delta": 0.0,
+        "ffn2_projection_offset": 0.0,
+        "sparse_bulk_scale_slope": 0.0,
+        "sparse_projection_base": 0.0
+      },
+      "legacy_case": "qkv-N256",
+      "legacy_mlx_latency_us": 9147.586139534442,
+      "legacy_mlx_offchip_bytes": 39845888.0,
+      "legacy_mlx_operations": 8053063680.0,
+      "operator": "qkv",
+      "panel": "versus_dense_tcu",
+      "sequence_length": 256,
+      "service": "projection",
+      "speedup": 4.909577292121094,
+      "trace_key": "fig20-N256-dense_tcu_qkv",
+      "trace_median_ms": 0.19660800695419312
+    },
+    {
+      "features": {
+        "attention_trace_contrast_slope": -0.03162453131896524,
+        "dense_attention_base": 1.0,
+        "sparse_attention_base": 0.0
+      },
+      "legacy_case": "attention-N256",
+      "legacy_mlx_latency_us": 718.5162797101336,
+      "legacy_mlx_offchip_bytes": 13631488.0,
+      "legacy_mlx_operations": 449413120.0,
+      "operator": "attention",
+      "panel": "versus_dense_tcu",
+      "sequence_length": 256,
+      "service": "attention",
+      "speedup": 2.2782652791911344,
+      "trace_key": "fig20-N256-dense_flash_attention",
+      "trace_median_ms": 0.08846399933099747
+    },
+    {
+      "features": {
+        "dense_bulk_scale_slope": 0.0,
+        "dense_projection_base": 1.0,
+        "ffn1_bulk_scale_delta": 0.0,
+        "ffn1_projection_offset": 1.0,
+        "ffn2_bulk_scale_delta": 0.0,
+        "ffn2_projection_offset": 0.0,
+        "sparse_bulk_scale_slope": 0.0,
+        "sparse_projection_base": 0.0
+      },
+      "legacy_case": "ffn1-N256",
+      "legacy_mlx_latency_us": 8194.988,
+      "legacy_mlx_offchip_bytes": 35913728.0,
+      "legacy_mlx_operations": 7214202880.0,
+      "operator": "ffn1",
+      "panel": "versus_dense_tcu",
+      "sequence_length": 256,
+      "service": "projection",
+      "speedup": 4.647995821354079,
+      "trace_key": "fig20-N256-dense_tcu_ffn1",
+      "trace_median_ms": 0.1807359978556633
+    },
+    {
+      "features": {
+        "dense_bulk_scale_slope": 0.0,
+        "dense_projection_base": 1.0,
+        "ffn1_bulk_scale_delta": 0.0,
+        "ffn1_projection_offset": 0.0,
+        "ffn2_bulk_scale_delta": 0.0,
+        "ffn2_projection_offset": 1.0,
+        "sparse_bulk_scale_slope": 0.0,
+        "sparse_projection_base": 0.0
+      },
+      "legacy_case": "ffn2-N256",
+      "legacy_mlx_latency_us": 8194.988,
+      "legacy_mlx_offchip_bytes": 35913728.0,
+      "legacy_mlx_operations": 7214202880.0,
+      "operator": "ffn2",
+      "panel": "versus_dense_tcu",
+      "sequence_length": 256,
+      "service": "projection",
+      "speedup": 3.810305133210611,
+      "trace_key": "fig20-N256-dense_tcu_ffn2",
+      "trace_median_ms": 0.17865599691867828
+    },
+    {
+      "features": {
+        "dense_bulk_scale_slope": 3.4657359027997265,
+        "dense_projection_base": 1.0,
+        "ffn1_bulk_scale_delta": 0.0,
+        "ffn1_projection_offset": 0.0,
+        "ffn2_bulk_scale_delta": 0.0,
+        "ffn2_projection_offset": 0.0,
+        "sparse_bulk_scale_slope": 0.0,
+        "sparse_projection_base": 0.0
+      },
+      "legacy_case": "qkv-N8192",
+      "legacy_mlx_latency_us": 292636.8244651021,
+      "legacy_mlx_offchip_bytes": 299892736.0,
+      "legacy_mlx_operations": 257698037760.0,
+      "operator": "qkv",
+      "panel": "versus_dense_tcu",
+      "sequence_length": 8192,
+      "service": "projection",
+      "speedup": 4.442158950195275,
+      "trace_key": "fig20-N8192-dense_tcu_qkv",
+      "trace_median_ms": 5.706751823425293
+    },
+    {
+      "features": {
+        "attention_trace_contrast_slope": 0.4687898823435404,
+        "dense_attention_base": 1.0,
+        "sparse_attention_base": 0.0
+      },
+      "legacy_case": "attention-N8192",
+      "legacy_mlx_latency_us": 302939.9877840577,
+      "legacy_mlx_offchip_bytes": 436207616.0,
+      "legacy_mlx_operations": 284541583360.0,
+      "operator": "attention",
+      "panel": "versus_dense_tcu",
+      "sequence_length": 8192,
+      "service": "attention",
+      "speedup": 1.0095400307450508,
+      "trace_key": "fig20-N8192-dense_flash_attention",
+      "trace_median_ms": 3.791872024536133
+    },
+    {
+      "features": {
+        "dense_bulk_scale_slope": 3.4657359027997265,
+        "dense_projection_base": 1.0,
+        "ffn1_bulk_scale_delta": 3.4657359027997265,
+        "ffn1_projection_offset": 1.0,
+        "ffn2_bulk_scale_delta": 0.0,
+        "ffn2_projection_offset": 0.0,
+        "sparse_bulk_scale_slope": 0.0,
+        "sparse_projection_base": 0.0
+      },
+      "legacy_case": "ffn1-N8192",
+      "legacy_mlx_latency_us": 262154.304,
+      "legacy_mlx_offchip_bytes": 275644416.0,
+      "legacy_mlx_operations": 230854492160.0,
+      "operator": "ffn1",
+      "panel": "versus_dense_tcu",
+      "sequence_length": 8192,
+      "service": "projection",
+      "speedup": 3.835347137757607,
+      "trace_key": "fig20-N8192-dense_tcu_ffn1",
+      "trace_median_ms": 5.189631938934326
+    },
+    {
+      "features": {
+        "dense_bulk_scale_slope": 3.4657359027997265,
+        "dense_projection_base": 1.0,
+        "ffn1_bulk_scale_delta": 0.0,
+        "ffn1_projection_offset": 0.0,
+        "ffn2_bulk_scale_delta": 3.4657359027997265,
+        "ffn2_projection_offset": 1.0,
+        "sparse_bulk_scale_slope": 0.0,
+        "sparse_projection_base": 0.0
+      },
+      "legacy_case": "ffn2-N8192",
+      "legacy_mlx_latency_us": 262154.304,
+      "legacy_mlx_offchip_bytes": 275644416.0,
+      "legacy_mlx_operations": 230854492160.0,
+      "operator": "ffn2",
+      "panel": "versus_dense_tcu",
+      "sequence_length": 8192,
+      "service": "projection",
+      "speedup": 4.129546565131331,
+      "trace_key": "fig20-N8192-dense_tcu_ffn2",
+      "trace_median_ms": 4.727807998657227
+    },
+    {
+      "features": {
+        "dense_bulk_scale_slope": 0.0,
+        "dense_projection_base": 0.0,
+        "ffn1_bulk_scale_delta": 0.0,
+        "ffn1_projection_offset": 0.0,
+        "ffn2_bulk_scale_delta": 0.0,
+        "ffn2_projection_offset": 0.0,
+        "sparse_bulk_scale_slope": 0.0,
+        "sparse_projection_base": 1.0
+      },
+      "legacy_case": "qkv-N256",
+      "legacy_mlx_latency_us": 9147.586139534442,
+      "legacy_mlx_offchip_bytes": 39845888.0,
+      "legacy_mlx_operations": 8053063680.0,
+      "operator": "qkv",
+      "panel": "versus_sparse_cuda",
+      "sequence_length": 256,
+      "service": "projection",
+      "speedup": 4.379195747565335,
+      "trace_key": "fig20-N256-sparse_cuda_qkv",
+      "trace_median_ms": 1.570800006389618
+    },
+    {
+      "features": {
+        "attention_trace_contrast_slope": 0.0316245313189651,
+        "dense_attention_base": 0.0,
+        "sparse_attention_base": 1.0
+      },
+      "legacy_case": "attention-N256",
+      "legacy_mlx_latency_us": 718.5162797101336,
+      "legacy_mlx_offchip_bytes": 13631488.0,
+      "legacy_mlx_operations": 449413120.0,
+      "operator": "attention",
+      "panel": "versus_sparse_cuda",
+      "sequence_length": 256,
+      "service": "attention",
+      "speedup": 1.386770169942431,
+      "trace_key": "fig20-N256-sparse_cuda_fft_attention",
+      "trace_median_ms": 0.09424000233411789
+    },
+    {
+      "features": {
+        "dense_bulk_scale_slope": 0.0,
+        "dense_projection_base": 0.0,
+        "ffn1_bulk_scale_delta": 0.0,
+        "ffn1_projection_offset": 1.0,
+        "ffn2_bulk_scale_delta": 0.0,
+        "ffn2_projection_offset": 0.0,
+        "sparse_bulk_scale_slope": 0.0,
+        "sparse_projection_base": 1.0
+      },
+      "legacy_case": "ffn1-N256",
+      "legacy_mlx_latency_us": 8194.988,
+      "legacy_mlx_offchip_bytes": 35913728.0,
+      "legacy_mlx_operations": 7214202880.0,
+      "operator": "ffn1",
+      "panel": "versus_sparse_cuda",
+      "sequence_length": 256,
+      "service": "projection",
+      "speedup": 4.145872918273468,
+      "trace_key": "fig20-N256-sparse_cuda_ffn1",
+      "trace_median_ms": 1.5120480060577393
+    },
+    {
+      "features": {
+        "dense_bulk_scale_slope": 0.0,
+        "dense_projection_base": 0.0,
+        "ffn1_bulk_scale_delta": 0.0,
+        "ffn1_projection_offset": 0.0,
+        "ffn2_bulk_scale_delta": 0.0,
+        "ffn2_projection_offset": 1.0,
+        "sparse_bulk_scale_slope": 0.0,
+        "sparse_projection_base": 1.0
+      },
+      "legacy_case": "ffn2-N256",
+      "legacy_mlx_latency_us": 8194.988,
+      "legacy_mlx_offchip_bytes": 35913728.0,
+      "legacy_mlx_operations": 7214202880.0,
+      "operator": "ffn2",
+      "panel": "versus_sparse_cuda",
+      "sequence_length": 256,
+      "service": "projection",
+      "speedup": 3.398677939760749,
+      "trace_key": "fig20-N256-sparse_cuda_ffn2",
+      "trace_median_ms": 0.5780479907989502
+    },
+    {
+      "features": {
+        "dense_bulk_scale_slope": 0.0,
+        "dense_projection_base": 0.0,
+        "ffn1_bulk_scale_delta": 0.0,
+        "ffn1_projection_offset": 0.0,
+        "ffn2_bulk_scale_delta": 0.0,
+        "ffn2_projection_offset": 0.0,
+        "sparse_bulk_scale_slope": 3.4657359027997265,
+        "sparse_projection_base": 1.0
+      },
+      "legacy_case": "qkv-N8192",
+      "legacy_mlx_latency_us": 292636.8244651021,
+      "legacy_mlx_offchip_bytes": 299892736.0,
+      "legacy_mlx_operations": 257698037760.0,
+      "operator": "qkv",
+      "panel": "versus_sparse_cuda",
+      "sequence_length": 8192,
+      "service": "projection",
+      "speedup": 3.962037423092726,
+      "trace_key": "fig20-N8192-sparse_cuda_qkv",
+      "trace_median_ms": 7.2478718757629395
+    },
+    {
+      "features": {
+        "attention_trace_contrast_slope": -0.4687898823435403,
+        "dense_attention_base": 0.0,
+        "sparse_attention_base": 1.0
+      },
+      "legacy_case": "attention-N8192",
+      "legacy_mlx_latency_us": 302939.9877840577,
+      "legacy_mlx_offchip_bytes": 436207616.0,
+      "legacy_mlx_operations": 284541583360.0,
+      "operator": "attention",
+      "panel": "versus_sparse_cuda",
+      "sequence_length": 8192,
+      "service": "attention",
+      "speedup": 3.12957409530966,
+      "trace_key": "fig20-N8192-sparse_cuda_fft_attention",
+      "trace_median_ms": 1.4847999811172485
+    },
+    {
+      "features": {
+        "dense_bulk_scale_slope": 0.0,
+        "dense_projection_base": 0.0,
+        "ffn1_bulk_scale_delta": 3.4657359027997265,
+        "ffn1_projection_offset": 1.0,
+        "ffn2_bulk_scale_delta": 0.0,
+        "ffn2_projection_offset": 0.0,
+        "sparse_bulk_scale_slope": 3.4657359027997265,
+        "sparse_projection_base": 1.0
+      },
+      "legacy_case": "ffn1-N8192",
+      "legacy_mlx_latency_us": 262154.304,
+      "legacy_mlx_offchip_bytes": 275644416.0,
+      "legacy_mlx_operations": 230854492160.0,
+      "operator": "ffn1",
+      "panel": "versus_sparse_cuda",
+      "sequence_length": 8192,
+      "service": "projection",
+      "speedup": 3.420811605509797,
+      "trace_key": "fig20-N8192-sparse_cuda_ffn1",
+      "trace_median_ms": 6.9468159675598145
+    },
+    {
+      "features": {
+        "dense_bulk_scale_slope": 0.0,
+        "dense_projection_base": 0.0,
+        "ffn1_bulk_scale_delta": 0.0,
+        "ffn1_projection_offset": 0.0,
+        "ffn2_bulk_scale_delta": 3.4657359027997265,
+        "ffn2_projection_offset": 1.0,
+        "sparse_bulk_scale_slope": 3.4657359027997265,
+        "sparse_projection_base": 1.0
+      },
+      "legacy_case": "ffn2-N8192",
+      "legacy_mlx_latency_us": 262154.304,
+      "legacy_mlx_offchip_bytes": 275644416.0,
+      "legacy_mlx_operations": 230854492160.0,
+      "operator": "ffn2",
+      "panel": "versus_sparse_cuda",
+      "sequence_length": 8192,
+      "service": "projection",
+      "speedup": 3.68321309860718,
+      "trace_key": "fig20-N8192-sparse_cuda_ffn2",
+      "trace_median_ms": 6.503424167633057
+    }
+  ],
+  "run_id": "run191",
+  "schema_version": 1
+}
