@@ -23,6 +23,10 @@ The input is `configs/workloads/mlx_fig19_20_23_v1.yaml`. Each graph declares:
 - lowering adapter and native execution format;
 - symbolic source/config references resolved by the experiment config.
 
+In compact form, the path is `model/operator graph YAML -> schema/DAG
+validation -> lowering adapter -> native simulator artifact -> execution and
+audit manifest`.
+
 `scripts/lower_mlx_workload.py` validates the DAG and calls
 `mlxsim.workload_lowering`. Its outputs are native simulator artifacts—not a
 new opaque IR:

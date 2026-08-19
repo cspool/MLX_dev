@@ -48,7 +48,9 @@ def build_audit(config: dict[str, Any]) -> dict[str, Any]:
             set(order) == {str(node["id"]) for node in spec["graphs"][graph]["operators"]}
             for graph, order in orders.items()
         ),
-        "unique": len({node for order in orders.values() for node in order})
+        "unique": len(
+            {f"{graph_id}.{node}" for graph_id, order in orders.items() for node in order}
+        )
         == sum(len(order) for order in orders.values()),
     }
     lowering_path = PROJECT_ROOT / config["lowering_manifest"]
@@ -206,7 +208,7 @@ def build_audit(config: dict[str, Any]) -> dict[str, Any]:
     documentation = (PROJECT_ROOT / config["source_layout"]["documentation"]).read_text()
     documentation_checks = {
         "pipeline": "model/operator graph YAML" in documentation
-        and "backend adapter" in documentation,
+        and "lowering adapter" in documentation,
         "formats": all(value in documentation for value in contract["execution_formats"]),
         "boundary": "not claimed to be the paper authors' unpublished" in documentation,
     }
@@ -227,7 +229,7 @@ def build_audit(config: dict[str, Any]) -> dict[str, Any]:
         "parents": len(parent_checks) == 5,
         "graphs": len(graph_checks) == 4,
         "lineage": len(lineage_checks) == 3,
-        "lowering": len(lowering_checks) == 6,
+        "lowering": len(lowering_checks) == 7,
         "detailed_schema": len(detailed_schema_checks) == 4,
         "analytical_schema": len(analytical_schema_checks) == 8,
         "artifact_replay": len(artifact_replay_checks) == 12,
