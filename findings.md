@@ -759,3 +759,14 @@ every depth, but the curve falls from 1.381x to 1.167x and the complete block
 misses the 1.20x gate. The cause is not work or correctness: H161 inserts a
 whole-component predecessor barrier at all four dynamic links. H171 will retain
 those barriers only for the baseline and use store-ready data events for MLX.
+
+Run176 closes that causal gap. Eighteen store-ready definitions cover all 24
+linked values and add the same 24 event emissions to baseline and MLX. The
+baseline keeps 21 component barriers; MLX removes only those barriers and waits
+on exact address producers. Both execute the same 466 operations, 162 memory
+requests, 97 events and 139 hops and match every cumulative golden within
+2.78e-17. MLX speedups are 1.625x (BSMM+FFT), 1.385x (+Attention), 1.278x
+(+SWA) and 1.249x (complete block), all above 1.20x. Baseline max active tags is
+one versus MLX's thirteen, with 41 MLX issues unlocked before the producer tag
+globally completes. This is the first single-baseline experiment with both
+complete functional correctness and clear same-work performance evidence.
