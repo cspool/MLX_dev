@@ -14,11 +14,12 @@ Figure23/19/20 values within 15% and all 50 baseline directions.
   Summary reports scheduler-progress, injected-stall, pre-ROI and measured
   cycles separately.
 - Figure19: materialize each nonzero trace-launch, work and SPM-transition
-  contribution as an integer cycle interval. Totals and speedups are derived
-  only from interval sums.
+  contribution from the separately frozen H185 composition as an integer cycle
+  interval. Totals and speedups are derived only from interval sums.
 - Figure20: materialize MLX and baseline launch/work/congestion timelines using
-  H182 trace proportions; calibrated log services determine service rates, not
-  a post-hoc reported ratio. Speedups derive from total baseline/MLX cycles.
+  H182 trace proportions and the separately frozen H186 composition;
+  calibrated log services determine service rates, not a post-hoc reported
+  ratio. Speedups derive from total baseline/MLX cycles.
 
 ## Acceptance gates
 
