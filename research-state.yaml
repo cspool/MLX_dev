@@ -754,9 +754,9 @@ experiments:
       timestamp: "2026-08-17"
 
 outer_loop:
-  cycle: 124
-  last_direction: "Run a target-free active-window and tag-coverage sweep from the paper's B_T*C >= T_load+T_xfer condition, preserving exact work and the four-port topology. Use held-out Figure 22 only after schedule candidates are frozen."
-  last_reflection: "H164 rejects counter remapping decisively: every one of seven globally consistent identities passes 0/8 Figure-22 trend curves, with no strict-complete identity. The residual therefore lies in execution coverage or memory timing, not merely the reported utilization denominator."
+  cycle: 125
+  last_direction: "Rebuild the per-block compute budget from the paper's 8x8 SIMD-aligned PE tile and structured intra-block reuse, without Figure-22 targets. Preserve load/xfer graphs and expose the resulting candidate only after work and execution are frozen."
+  last_reflection: "H165 rejects a uniform maximum active window: window5 has only modest 0.977x-1.102x effects and two regressions. The current proxy's near-one compute/load instruction ratio conflicts with the paper's explicit 8x8 tile reuse, making block compute budget a stronger causal gap than further window tuning."
 
 strict_numeric_refresh:
   status: active
@@ -779,7 +779,16 @@ strict_numeric_refresh:
       trend_complete_identities: 0/7
       strict_complete_identities: 0/7
       diagnosis: counter_identity_insufficient_schedule_or_memory_next
-  current_hypothesis: H165
+    - experiment_id: H165
+      run_id: run170
+      path: artifacts/results/active-window-coverage-run170.json
+      sha256: ee17858cf07a87765f83f2ea758906becad3f88d5fc45c43133c87eddc1148f1
+      status: rejected
+      audit_integrity: true
+      candidate_non_regressions: 14/16
+      candidate_speedup_range: 0.9767x-1.1024x
+      candidate_median_speedup: 1.0404x
+  current_hypothesis: H166
   target_policy: source_derived_candidates_then_paper_held_out
   open_simulator_pins:
     dam_rs: 8771934ce6074bea0d8d901cf787aae8983ae42e
@@ -788,6 +797,7 @@ strict_numeric_refresh:
   ranked_directions:
     - counter_identity_ledger
     - active_window_coverage_sweep
+    - intra_block_tile_compute_budget
     - spm_capacity_attention_fusion
     - native_or_explicit_proxy_gpu_mapping
 

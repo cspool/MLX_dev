@@ -703,3 +703,12 @@ zero of eight ordered trend curves, and none reaches 64/64 within 10%; the best
 single-point count is only 7/64. Changing the utilization denominator or
 calling spatial occupancy a pipeline utilization therefore cannot explain the
 paper. The next falsifiable gap is the execution schedule and memory timing.
+
+Run170 tests the paper's coverage-window explanation without Figure 22. Static
+footprints make windows one through five globally legal under 32 instructions
+per PE and reject six through eight on at least one path. All 192 executions
+preserve work and window three replays H120 exactly, but the preselected maximum
+window five is not uniformly better: it improves 12 paths, ties two and slows
+BSMM64/FFT512, for 0.977x-1.102x speedup and 1.040x median. The candidate is
+therefore rejected. Window size alone is too weak; the paper's explicit 8x8
+tile reuse indicates that the simplified block compute budget is the next gap.
