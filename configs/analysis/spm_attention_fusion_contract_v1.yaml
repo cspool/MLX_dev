@@ -1,0 +1,82 @@
+name: spm-attention-fusion-contract-v1
+experiment_id: H169
+run_id: run174
+classification: target_free_same_team_patent_spm_fusion_contract_audit
+validation_eligible: true
+
+frozen_inputs:
+  structured_attention:
+    path: artifacts/results/fig21-attention-timing-run098.json
+    bytes: 29660
+    sha256: 8075b341f2b640db8c5008cd956d96266c9fa1615655281fd76893f2a7df850f
+    required_status: supported
+    required_integrity: true
+  dense_attention:
+    path: artifacts/results/fig21-dense-attention-run099.json
+    bytes: 23587
+    sha256: 728d6c7ef1577816ce2ecf6e4db0eae27da2a14123ae1bedd1c3f42bf0f6808f
+    required_status: supported
+    required_integrity: true
+  mlx_composition:
+    path: artifacts/results/fig21-mlx-composition-run100.json
+    bytes: 7818
+    sha256: 9628b4204d9d4d1fe73b3a92f8bec2977d6cf9c7af254aa9ee4552c811fe12a1
+    required_status: supported
+    required_integrity: true
+  resource_domains:
+    path: artifacts/results/resource-domain-ledger-run171.json
+    bytes: 67568
+    sha256: e06ae7ca06dc191cbce6f78053170e4315e49c5a2026eaa2cbae23234f6b5d45
+    required_status: supported
+    required_integrity: true
+  source_refresh:
+    path: literature/mlx-open-simulator-refresh-2026-08-19.md
+    bytes: 7209
+    sha256: 6fd523736bc138e047a491f6bbfe672f3ea4e3fb514fc89987fd62998106ec63
+
+shapes:
+  sequence_lengths: [128, 256, 512, 1024, 2048]
+  embedding_dimension: 4096
+  element_bytes: 2
+  spm_bytes: 8388608
+  expected_kernel_counts: {128: 1, 256: 1, 512: 1, 1024: 1, 2048: 2}
+
+patent_rule:
+  source: https://patents.google.com/patent/CN119940434B/zh
+  patent: CN119940434B
+  fit_condition: sequence_length_times_embedding_dimension_times_element_bytes_lte_spm_bytes
+  fit_kernel_count: 1
+  streaming_kernel_count: 2
+  operations_fused: 5
+  disclosure_class: same_team_patent_precedent_not_MLX_implementation_disclosure
+
+current_model:
+  structured_compiler: src/mlxsim/dsagen_combined_attention.py
+  structured_compile_runner: scripts/compile_fig21_attention_timing.py
+  dense_compile_runner: scripts/compile_fig21_dense_attention.py
+  current_kernel_count_per_shape: 1
+  explicit_launch_cycles: null
+  explicit_second_kernel_boundary: null
+
+acceptance:
+  required_shapes: 5
+  required_one_kernel_shapes: 4
+  required_two_kernel_shapes: 1
+  required_current_matches: 4
+  required_current_mismatches: 1
+  required_timing_eligible_rows: 4
+  required_timing_blocked_rows: 1
+  require_exact_work_preserved: true
+  require_no_invented_boundary_or_launch_latency: true
+  require_no_paper_performance_targets: true
+
+source_layout:
+  protocol: experiments/h169-spm-fusion-contract/protocol.md
+  config: configs/analysis/spm_attention_fusion_contract_v1.yaml
+  structured_compiler: src/mlxsim/dsagen_combined_attention.py
+  structured_runner: scripts/compile_fig21_attention_timing.py
+  dense_runner: scripts/compile_fig21_dense_attention.py
+  auditor: scripts/audit_spm_attention_fusion_contract.py
+  test: tests/test_spm_attention_fusion_contract.py
+
+result_path: artifacts/results/spm-attention-fusion-contract-run174.json
