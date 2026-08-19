@@ -1035,3 +1035,12 @@ annotations to report internal, switching and leakage power. The smoke design's
 -0.415 ns slack at a 1-ns period is an important negative check: later MLX
 arithmetic must be explicitly pipelined. The flow is an open-method substitute,
 not the paper's unavailable Synopsys/12-nm/post-silicon environment.
+
+Run203 turns the PE contract into executable RTL rather than a simulator-only
+description. The same assembled BSMM, FFT-CMP and SWA programs pass Icarus and
+Verilator, including tag priority, four independent issue classes, RF replay,
+skip-hop 3=[2,1] routing and registered FP16 operations. Ten Yosys tops are
+latch-free and nonzero. The target-free Nangate45 composition is far from the
+paper's relative breakdown: the reconstructed RF is oversized while data and
+control networks are undersized. This makes component-ratio correction, not a
+single global technology factor, the next mechanistic task.

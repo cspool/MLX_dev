@@ -1,0 +1,354 @@
+{
+  "checks": {
+    "lineage": true,
+    "nonempty": true,
+    "programs": true,
+    "reduced": true,
+    "unique_names": true
+  },
+  "encoding": {
+    "destination": [
+      53,
+      50
+    ],
+    "dx": [
+      37,
+      33
+    ],
+    "dy": [
+      32,
+      28
+    ],
+    "immediate": [
+      27,
+      20
+    ],
+    "opcode": [
+      63,
+      60
+    ],
+    "pipeline": [
+      55,
+      54
+    ],
+    "sources": [
+      [
+        49,
+        46
+      ],
+      [
+        45,
+        42
+      ],
+      [
+        41,
+        38
+      ]
+    ],
+    "tag": [
+      59,
+      56
+    ],
+    "word_bits": 64
+  },
+  "experiment_id": "H198",
+  "opcodes": {
+    "add": 3,
+    "div": 6,
+    "exp": 5,
+    "fma": 2,
+    "load": 0,
+    "max": 4,
+    "mul": 9,
+    "shuffle": 7,
+    "store": 1,
+    "xfer": 8
+  },
+  "paper_performance_targets_consumed": false,
+  "pipelines": {
+    "add": 2,
+    "div": 2,
+    "exp": 2,
+    "fma": 2,
+    "load": 0,
+    "max": 2,
+    "mul": 2,
+    "shuffle": 2,
+    "store": 1,
+    "xfer": 3
+  },
+  "programs": [
+    {
+      "hex_bytes": 85,
+      "hex_path": "artifacts/environment/h198/programs/bsmm.hex",
+      "hex_sha256": "ff681a5b2023258f2530568e78e767f6ebeecd441d1ec37dd7de0d4fbaf6f8a9",
+      "instruction_count": 5,
+      "lineage": [
+        {
+          "encoded_word": "0100000000400000",
+          "index": 0,
+          "opcode": 0,
+          "pipeline": 0,
+          "source_operation": {
+            "dst": 0,
+            "immediate": 4,
+            "op": "load",
+            "tag": 1
+          }
+        },
+        {
+          "encoded_word": "2184084000000000",
+          "index": 1,
+          "opcode": 2,
+          "pipeline": 2,
+          "source_operation": {
+            "dst": 1,
+            "op": "fma",
+            "src0": 0,
+            "src1": 2,
+            "src2": 1,
+            "tag": 1
+          }
+        },
+        {
+          "encoded_word": "228c50c000000000",
+          "index": 2,
+          "opcode": 2,
+          "pipeline": 2,
+          "source_operation": {
+            "dst": 3,
+            "op": "fma",
+            "src0": 1,
+            "src1": 4,
+            "src2": 3,
+            "tag": 2
+          }
+        },
+        {
+          "encoded_word": "82cc000600000000",
+          "index": 3,
+          "opcode": 8,
+          "pipeline": 3,
+          "source_operation": {
+            "dst": 3,
+            "dx": 3,
+            "dy": 0,
+            "op": "xfer",
+            "tag": 2
+          }
+        },
+        {
+          "encoded_word": "1240c00000400000",
+          "index": 4,
+          "opcode": 1,
+          "pipeline": 1,
+          "source_operation": {
+            "immediate": 4,
+            "op": "store",
+            "src0": 3,
+            "tag": 2
+          }
+        }
+      ],
+      "name": "bsmm",
+      "paper_operator": "hierarchical_butterfly_sparse_matrix_multiply",
+      "reduced_eligible": true,
+      "source_path": "configs/rtl/workloads/bsmm.yaml",
+      "source_sha256": "64c21c513dc64c560ed9a19b370a533ffad92c07578837b485be48045e1b4e85"
+    },
+    {
+      "hex_bytes": 102,
+      "hex_path": "artifacts/environment/h198/programs/fft_cmp.hex",
+      "hex_sha256": "0fe7faf741f7c2d63aafd0e1437e7cb128eb7656b6f7804a387911c135b22099",
+      "instruction_count": 6,
+      "lineage": [
+        {
+          "encoded_word": "0300000000400000",
+          "index": 0,
+          "opcode": 0,
+          "pipeline": 0,
+          "source_operation": {
+            "dst": 0,
+            "immediate": 4,
+            "op": "load",
+            "tag": 3
+          }
+        },
+        {
+          "encoded_word": "2384084000000000",
+          "index": 1,
+          "opcode": 2,
+          "pipeline": 2,
+          "source_operation": {
+            "dst": 1,
+            "op": "fma",
+            "src0": 0,
+            "src1": 2,
+            "src2": 1,
+            "tag": 3
+          }
+        },
+        {
+          "encoded_word": "33884c0000000000",
+          "index": 2,
+          "opcode": 3,
+          "pipeline": 2,
+          "source_operation": {
+            "dst": 2,
+            "op": "add",
+            "src0": 1,
+            "src1": 3,
+            "tag": 3
+          }
+        },
+        {
+          "encoded_word": "7488800000000000",
+          "index": 3,
+          "opcode": 7,
+          "pipeline": 2,
+          "source_operation": {
+            "dst": 2,
+            "op": "shuffle",
+            "src0": 2,
+            "tag": 4
+          }
+        },
+        {
+          "encoded_word": "84c8003a20000000",
+          "index": 4,
+          "opcode": 8,
+          "pipeline": 3,
+          "source_operation": {
+            "dst": 2,
+            "dx": -3,
+            "dy": 2,
+            "op": "xfer",
+            "tag": 4
+          }
+        },
+        {
+          "encoded_word": "1440800000400000",
+          "index": 5,
+          "opcode": 1,
+          "pipeline": 1,
+          "source_operation": {
+            "immediate": 4,
+            "op": "store",
+            "src0": 2,
+            "tag": 4
+          }
+        }
+      ],
+      "name": "fft_cmp",
+      "paper_operator": "chunk_fft_compression",
+      "reduced_eligible": false,
+      "source_path": "configs/rtl/workloads/fft_cmp.yaml",
+      "source_sha256": "9af29406035e5b0d1362f344e2179379b197934306b9d0616b0cd0ff68eb0aff"
+    },
+    {
+      "hex_bytes": 119,
+      "hex_path": "artifacts/environment/h198/programs/swa.hex",
+      "hex_sha256": "a01ddb0c2c3da4ba8538fa6a977aff279526b6cf99d39b4665ad8593b6330e6e",
+      "instruction_count": 7,
+      "lineage": [
+        {
+          "encoded_word": "0500000000400000",
+          "index": 0,
+          "opcode": 0,
+          "pipeline": 0,
+          "source_operation": {
+            "dst": 0,
+            "immediate": 4,
+            "op": "load",
+            "tag": 5
+          }
+        },
+        {
+          "encoded_word": "2584084000000000",
+          "index": 1,
+          "opcode": 2,
+          "pipeline": 2,
+          "source_operation": {
+            "dst": 1,
+            "op": "fma",
+            "src0": 0,
+            "src1": 2,
+            "src2": 1,
+            "tag": 5
+          }
+        },
+        {
+          "encoded_word": "46884c0000000000",
+          "index": 2,
+          "opcode": 4,
+          "pipeline": 2,
+          "source_operation": {
+            "dst": 2,
+            "op": "max",
+            "src0": 1,
+            "src1": 3,
+            "tag": 6
+          }
+        },
+        {
+          "encoded_word": "568c800000000000",
+          "index": 3,
+          "opcode": 5,
+          "pipeline": 2,
+          "source_operation": {
+            "dst": 3,
+            "op": "exp",
+            "src0": 2,
+            "tag": 6
+          }
+        },
+        {
+          "encoded_word": "6790d40000000000",
+          "index": 4,
+          "opcode": 6,
+          "pipeline": 2,
+          "source_operation": {
+            "dst": 4,
+            "op": "div",
+            "src0": 3,
+            "src1": 5,
+            "tag": 7
+          }
+        },
+        {
+          "encoded_word": "2799018000000000",
+          "index": 5,
+          "opcode": 2,
+          "pipeline": 2,
+          "source_operation": {
+            "dst": 6,
+            "op": "fma",
+            "src0": 4,
+            "src1": 0,
+            "src2": 6,
+            "tag": 7
+          }
+        },
+        {
+          "encoded_word": "1741800000400000",
+          "index": 6,
+          "opcode": 1,
+          "pipeline": 1,
+          "source_operation": {
+            "immediate": 4,
+            "op": "store",
+            "src0": 6,
+            "tag": 7
+          }
+        }
+      ],
+      "name": "swa",
+      "paper_operator": "folded_sliding_window_attention",
+      "reduced_eligible": false,
+      "source_path": "configs/rtl/workloads/swa.yaml",
+      "source_sha256": "a6414bd2d5e00647ca09197773d8a97ea33c42703478028e35dfb8500847ec4e"
+    }
+  ],
+  "run_id": "run203",
+  "schema_version": 1
+}

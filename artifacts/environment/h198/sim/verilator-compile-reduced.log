@@ -1,0 +1,8 @@
+make: Entering directory '/workspace/MLX_dev/artifacts/environment/h198/sim/verilator-reduced'
+g++  -I.  -MMD -I/usr/share/verilator/include -I/usr/share/verilator/include/vltstd -DVM_COVERAGE=0 -DVM_SC=0 -DVM_TRACE=1 -faligned-new -fcf-protection=none -Wno-bool-operation -Wno-sign-compare -Wno-uninitialized -Wno-unused-but-set-variable -Wno-unused-parameter -Wno-unused-variable -Wno-shadow     -std=c++17  -Os -c -o sim_mlx_pe.o /workspace/MLX_dev/rtl/mlx/sim_mlx_pe.cpp
+/usr/bin/perl /usr/share/verilator/bin/verilator_includer -DVL_INCLUDE_OPT=include Vmlx_pe_top.cpp Vmlx_pe_top__Trace.cpp Vmlx_pe_top__Slow.cpp Vmlx_pe_top__Syms.cpp Vmlx_pe_top__Trace__Slow.cpp > Vmlx_pe_top__ALL.cpp
+g++  -I.  -MMD -I/usr/share/verilator/include -I/usr/share/verilator/include/vltstd -DVM_COVERAGE=0 -DVM_SC=0 -DVM_TRACE=1 -faligned-new -fcf-protection=none -Wno-bool-operation -Wno-sign-compare -Wno-uninitialized -Wno-unused-but-set-variable -Wno-unused-parameter -Wno-unused-variable -Wno-shadow     -std=c++17  -Os -c -o Vmlx_pe_top__ALL.o Vmlx_pe_top__ALL.cpp
+ar -cr Vmlx_pe_top__ALL.a Vmlx_pe_top__ALL.o
+ranlib Vmlx_pe_top__ALL.a
+g++    sim_mlx_pe.o verilated.o verilated_vcd_c.o Vmlx_pe_top__ALL.a      -o Vmlx_pe_top
+make: Leaving directory '/workspace/MLX_dev/artifacts/environment/h198/sim/verilator-reduced'
