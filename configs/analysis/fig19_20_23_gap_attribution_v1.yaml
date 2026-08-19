@@ -1,0 +1,98 @@
+name: fig19-20-23-gap-attribution-v1
+experiment_id: H183
+run_id: run188
+classification: target_exposed_shared_parameter_gap_attribution
+validation_eligible: false
+
+frozen_inputs:
+  rtx4090_trace:
+    path: artifacts/results/fig19-20-23-rtx4090-trace-run187.json
+    bytes: 52250
+    sha256: b958398750a3a34a2426ae24b22a1014a199486f31d38a0b67dc6ea3bd4afbb9
+    required_status: supported
+    required_integrity: true
+  fig23_simulator:
+    path: artifacts/results/fig23-complete-block-run146.json
+    bytes: 12663
+    sha256: 7aad546c0b750086c78b3ec04427143c46da74a9f7ea96ad47b9017ce0d60c69
+    required_status: supported
+    required_integrity: true
+  fig23_current_audit:
+    path: artifacts/results/fig23-complete-block-trend-run147.json
+    bytes: 17251
+    sha256: f2526f1f4aca39a9c90005ae11a6176d680ce5dbfd9c721ef007916a7724ac8a
+    required_status: supported
+    required_integrity: true
+  fig19_simulator:
+    path: artifacts/results/fig19-coupled-steady-state-run134.json
+    bytes: 12881
+    sha256: d456e7cbf21d9a651615c1cd1d137650e11d3d6e6c2ce84c6540c58945aa7866
+    required_status: supported
+    required_integrity: true
+  fig19_current_audit:
+    path: artifacts/results/fig19-trend-completion-run143.json
+    bytes: 6305
+    sha256: f610342a6b852dc617a0aca444ff545469ac0d2be61d27a68d0a9656e247086e
+    required_status: supported
+    required_integrity: true
+  fig19_fabnet:
+    path: artifacts/results/fig19-fabnet-run016.json
+    bytes: 6536
+    sha256: fb00ed1c7546b8beedd3fe722f9e365fa5eec37984f7d5ee3f20eae0d46451b0
+  fig20_legacy:
+    path: artifacts/results/fig20-run006.json
+    bytes: 41754
+    sha256: 1a349e197759607657a5ae3ff03ffa05a9af06f0c7ffbd4ec267db14c4d5976d
+  fig20_current_audit:
+    path: artifacts/results/fig20-attention-completion-run141.json
+    bytes: 8165
+    sha256: 2fd983a8a1424ecfbcf8487d7852517b9f22a3e0957e476c0a6fe981d1c7f01f
+    required_status: supported
+    required_integrity: true
+  targets:
+    path: artifacts/targets/paper_targets.yaml
+    bytes: 14931
+    sha256: c4a22ab8052ff8cb223a729b8ce07320c6826cfee0d37e1a664a8761e018b41e
+
+models:
+  figure23:
+    family: cycle_startup_credit_plus_post_knee_congestion
+    knee_sequence_length: 2048
+    unchanged_series: [simd32_4x4]
+    corrected_series: [simd8_8x8, simd32_8x8]
+    maximum_parameters: 4
+    calibration_sequences: [512, 2048, 8192]
+    holdout_sequences: [1024, 4096]
+  figure19:
+    family: trace_launch_plus_simulated_work_plus_spm_transition
+    transition_after_sequence: 512
+    modeled_series: [attention_latency_ms, ffn_latency_ms, fabnet_total_latency_ms]
+    maximum_parameters: 7
+    calibration_sequences: [128, 512, 1024]
+    holdout_sequences: [256]
+    derive_total_and_speedup: true
+  figure20:
+    family: trace_service_log_linear_panel_mapping
+    panels: [versus_dense_tcu, versus_sparse_cuda]
+    operators: [qkv, attention, ffn1, ffn2]
+    maximum_parameters: 8
+    calibration_policy: leave_one_operator_pair_out
+    derive_geomean: true
+
+acceptance:
+  maximum_relative_error: 0.15
+  minimum_clear_speedup: 1.0
+  require_all_target_points_finite: true
+  require_all_full_fit_points_within_limit: true
+  require_all_baseline_directions: true
+  maximum_cross_validation_relative_error: 0.35
+  prohibit_per_point_parameters: true
+  require_parameter_count_below_point_count: true
+
+source_layout:
+  protocol: experiments/h183-fig19-20-23-gap-attribution/protocol.md
+  config: configs/analysis/fig19_20_23_gap_attribution_v1.yaml
+  analyzer: scripts/analyze_fig19_20_23_gap_attribution.py
+  test: tests/test_fig19_20_23_gap_attribution.py
+
+result_path: artifacts/results/fig19-20-23-gap-attribution-run188.json
