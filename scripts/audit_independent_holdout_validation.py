@@ -239,6 +239,7 @@ def build_audit(config: dict[str, Any]) -> dict[str, Any]:
     }
     integrity = all(integrity_checks.values())
     supported = integrity and all(acceptance_gates)
+    failure_points = [point for point in points if point["relative_error"] > limit]
     return {
         "schema_version": 1,
         "experiment_id": config["experiment_id"],
@@ -259,6 +260,18 @@ def build_audit(config: dict[str, Any]) -> dict[str, Any]:
         "gpu_checks": gpu_checks,
         "separation_checks": separation_checks,
         "points": points,
+        "failure_points": failure_points,
+        "scope_diagnosis": (
+            "Figure20_N4096_attention_crossover_differs_from_two_endpoint_logN_reference"
+            if failure_points
+            and all(
+                point["figure"] == 20
+                and point["sequence_length"] == 4096
+                and point["series"].endswith(":attention")
+                for point in failure_points
+            )
+            else None
+        ),
         "numerical_checks": numerical_checks,
         "source_files": source_files,
         "acceptance_gates": acceptance_gates,
@@ -272,12 +285,14 @@ def build_audit(config: dict[str, Any]) -> dict[str, Any]:
             "figure20_points": len(figure_points[20]),
             "total_points": len(points),
             "passing_points": sum(point["relative_error"] <= limit for point in points),
+            "failing_points": len(failure_points),
             "direction_matches": sum(point["direction_match"] is True for point in directional),
             "mape": sum(point["relative_error"] for point in points) / len(points),
             "max_relative_error": max(point["relative_error"] for point in points),
             "parameters_refit": False,
             "reference_kind": "post_prediction_logN_interpolation",
             "independent_holdout_validation_complete": supported,
+            "independent_holdout_experiment_complete": integrity,
             "acceptance_gates_passed": sum(acceptance_gates),
             "acceptance_gates_total": len(acceptance_gates),
         },
@@ -304,6 +319,8 @@ def main() -> int:
             "gpu_checks",
             "separation_checks",
             "points",
+            "failure_points",
+            "scope_diagnosis",
             "numerical_checks",
             "acceptance_gates",
             "summary",
