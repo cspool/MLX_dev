@@ -1,0 +1,59 @@
+name: fig20-attention-repair-goal-certificate-v1
+experiment_id: H196
+run_id: run201
+classification: post_failure_attention_repair_completion_certificate
+validation_eligible: false
+
+frozen_inputs:
+  simulator_next_work:
+    path: artifacts/results/simulator-next-work-goal-run199.json
+    bytes: 8085
+    sha256: 5dc6a8abb1f82d3734955b89234a77764b72c6aea6ce13fcacbc9c48f0ae63a1
+    experiment_id: H194
+    run_id: run199
+    required_status: supported
+    required_integrity: true
+  attention_repair:
+    path: artifacts/results/fig20-attention-holdout-repair-run200.json
+    bytes: 25322
+    sha256: 416c18ba362563e52045e31688a81384d3893e38cfb9ed08660f443e3921bf11
+    experiment_id: H195
+    run_id: run200
+    required_status: supported
+    required_integrity: true
+
+completion_contract:
+  simulator_objectives: 5
+  old_certificate_gates: 11
+  repair_gates: 10
+  total_points: 48
+  passing_points: 48
+  direction_matches: 36
+  changed_points: 6
+  unchanged_points: 42
+  n4096_points: 2
+  maximum_relative_error: 0.15
+  old_dense_error: 0.278883033420841
+  old_sparse_error: 0.20910755381178708
+  parameters_refit: false
+  independent_validation_claimed: false
+
+verification:
+  ruff_command: [.venv/bin/ruff, check, scripts, src, tests]
+  pytest_command: [.venv/bin/pytest, -q]
+  expected_pytest_passed: 482
+  expected_pytest_failed: 0
+  expected_pytest_warnings: 17
+
+source_layout:
+  protocol: experiments/h196-fig20-attention-repair-certificate/protocol.md
+  config: configs/analysis/fig20_attention_repair_goal_certificate_v1.yaml
+  runner: scripts/run_fig20_attention_repair_verification.py
+  auditor: scripts/audit_fig20_attention_repair_goal.py
+  test: tests/test_fig20_attention_repair_goal.py
+  repair_handoff: docs/fig20-attention-holdout-repair.md
+  simulator_handoff: docs/simulator-next-work-complete.md
+
+output_root: artifacts/environment/h196
+verification_manifest: artifacts/environment/h196/verification-manifest.json
+result_path: artifacts/results/fig20-attention-repair-goal-run201.json
