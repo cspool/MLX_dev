@@ -1,0 +1,48 @@
+name: fig24-rtx4090-postcache-v1
+experiment_id: H178
+run_id: run183
+classification: target_free_RTX4090_SWA256_post_regime_extension
+validation_eligible: true
+
+frozen_inputs:
+  h177:
+    path: artifacts/results/fig24-rtx4090-native-run182.json
+    bytes: 27698
+    sha256: d578e7230da4b82b88ddcf71a453b9a77576bffc547a2989c72ceef5b3c8cf3c
+    required_status: rejected
+    required_integrity: true
+  h177_manifest:
+    path: artifacts/environment/h177/fig24-rtx4090-native-run-manifest.json
+    bytes: 32124
+    sha256: d29ae8d257aab4419207625e9563ee112aba3f70857b61c950dc3ebdb17f179c
+  h177_config:
+    path: configs/simulators/fig24_rtx4090_native_v1.yaml
+    bytes: 2154
+    sha256: 5a6f356e4e3f69812101642a60d61ec309ce292f9dd0e59a4fa7f0ebee020415
+
+gpu: {index: 0, expected_name: NVIDIA GeForce RTX 4090, expected_compute_capability: "8.9"}
+service: {operation: swa, parameter: 256, repeat: 1}
+post_regime:
+  fit_counts: [262144, 524288]
+  holdout_counts: [1048576]
+  warmup_iterations: 10
+  timed_iterations: 50
+
+acceptance:
+  required_new_timings: 3
+  maximum_holdout_relative_error: 0.10
+  required_inherited_models: 9
+  required_total_models: 10
+  required_figure24_rows: 42
+  paper_targets_consumed: false
+
+source_layout:
+  protocol: experiments/h178-fig24-swa-postcache/protocol.md
+  config: configs/simulators/fig24_rtx4090_postcache_v1.yaml
+  cuda_source: simulator_ext/native/fig24_rtx4090_bench.cu
+  runner: scripts/run_fig24_rtx4090_postcache.py
+  auditor: scripts/audit_fig24_rtx4090_postcache.py
+  test: tests/test_fig24_rtx4090_postcache.py
+
+output_root: artifacts/environment/h178
+result_path: artifacts/results/fig24-rtx4090-postcache-run183.json
