@@ -1,0 +1,106 @@
+name: fig19-20-23-rtx4090-trace-v1
+experiment_id: H182
+run_id: run187
+classification: target_free_shape_matched_RTX4090_service_trace
+validation_eligible: true
+
+frozen_inputs:
+  fig23_identity:
+    path: artifacts/results/fig23-workload-identity-run127.json
+    bytes: 11510
+    sha256: d9535bceff75507c9b94b9528e2549a412946f0da318588d251c5235666a673c
+    required_status: supported
+    required_integrity: true
+  fig19_identity:
+    path: artifacts/results/fig19-source-identity-run102.json
+    bytes: 13017
+    sha256: 3d6323e2ddcbeb59498f76754dbe864ea5be08de8a6c26c3160771054bf20bf7
+    required_status: supported
+    required_integrity: true
+  fig20_identity:
+    path: artifacts/results/fig20-workload-identity-run080.json
+    bytes: 14034
+    sha256: 464215470b8d56f944d85bf9ef419fddb3977072b1511735e9adc9ddc16b66af
+    required_status: supported
+    required_integrity: true
+  native4090_parent:
+    path: artifacts/results/fig24-rtx4090-postcache-run183.json
+    bytes: 28039
+    sha256: 9492cd13f5e348a2a56f8fbc3d144711fb167ce2a1ee8a3dc4041d9d9226535c
+    required_status: supported
+    required_integrity: true
+
+gpu:
+  index: 0
+  expected_name: NVIDIA GeForce RTX 4090
+  expected_uuid: GPU-316b42a1-49a5-f647-aa0c-05b853d289a8
+  expected_compute_capability: "8.9"
+  torch_dtype_dense: float16
+  torch_dtype_structured: float32
+  allow_tf32: false
+  clock_locking: false
+
+workloads:
+  figure19:
+    sequence_lengths: [128, 256, 512, 1024]
+    batch: 1
+    hidden_dimension: 1024
+    ffn_dimension: 4096
+    heads: 32
+    head_dimension: 32
+    block_size: 32
+    trace_components: [fft2d, bsmm_ffn1, bsmm_ffn2]
+  figure20:
+    sequence_lengths: [256, 8192]
+    batch: 1
+    hidden_dimension: 4096
+    ffn_dimension: 11008
+    heads: 32
+    head_dimension: 128
+    block_size: 32
+    compression_ratio: 0.5
+    trace_components:
+      - dense_tcu_qkv
+      - sparse_cuda_qkv
+      - dense_flash_attention
+      - sparse_cuda_fft_attention
+      - dense_tcu_ffn1
+      - sparse_cuda_ffn1
+      - dense_tcu_ffn2
+      - sparse_cuda_ffn2
+  figure23:
+    sequence_lengths: [512, 1024, 2048, 4096, 8192]
+    batch: 8
+    hidden_dimension: 512
+    block_size: 32
+    trace_components: [fft_cmp, bsmm]
+
+timing:
+  warmup_iterations: 3
+  timed_iterations: 7
+  small_case_extra_iterations: 5
+  small_case_max_sequence: 512
+  quantiles: [0.25, 0.5, 0.75]
+  synchronize_each_sample: true
+  deterministic_seed: 182
+
+acceptance:
+  required_figure19_cases: 12
+  required_figure20_cases: 16
+  required_figure23_cases: 10
+  required_total_cases: 38
+  require_all_samples_positive_finite: true
+  require_all_outputs_finite: true
+  require_native_gpu_identity: true
+  paper_targets_consumed: false
+
+source_layout:
+  protocol: experiments/h182-fig19-20-23-rtx4090-trace/protocol.md
+  config: configs/simulators/fig19_20_23_rtx4090_trace_v1.yaml
+  runner: scripts/run_fig19_20_23_rtx4090_trace.py
+  auditor: scripts/audit_fig19_20_23_rtx4090_trace.py
+  test: tests/test_fig19_20_23_rtx4090_trace.py
+
+output_root: artifacts/environment/h182
+manifest_path: artifacts/environment/h182/rtx4090-shape-trace-manifest.json
+result_path: artifacts/results/fig19-20-23-rtx4090-trace-run187.json
