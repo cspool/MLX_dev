@@ -1,0 +1,69 @@
+name: utilization-ledger-v1
+experiment_id: H163
+run_id: run168
+classification: target_free_open_simulator_counter_identity_ledger
+validation_eligible: true
+
+frozen_inputs:
+  h120:
+    path: artifacts/results/fig22-coupled-multiport-run125.json
+    bytes: 26566
+    sha256: fc294f7b7707b4bb7a8407bccbb5b68cdf9036e9bbde2095df02c330e0ce5454
+    required_status: supported
+    required_integrity: true
+  h120_run:
+    path: artifacts/environment/h120/fig22-coupled-multiport-run-manifest.json
+    bytes: 330141
+    sha256: 3ab38af325a417546129c21f1d149c1f27bd601367ecfbcc4b7e4776b9ff1a73
+  source_refresh:
+    path: literature/mlx-open-simulator-refresh-2026-08-19.md
+    bytes: 7209
+    sha256: 6fd523736bc138e047a491f6bbfe672f3ea4e3fb514fc89987fd62998106ec63
+
+open_source_pins:
+  dam_rs: 8771934ce6074bea0d8d901cf787aae8983ae42e
+  npusim: f0378abe89e16a1f8a78cd2ce3ed20c1ccae3f3f
+  stonne: 22634b8b7668c2691bc2df8f612232d90839df20
+
+workloads:
+  operators: [bsmm, fft]
+  sizes: [64, 128, 256, 512, 1024, 2048, 4096, 8192]
+  required_paths: 16
+  selected_mode: optimized
+  selected_replay: 1
+
+metric_identities:
+  physical_capacity_fraction: productive_pe_cycles / (end_to_end_cycles * physical_pes)
+  overlay_capacity_fraction: productive_pe_cycles / (overlay_cycles * physical_pes)
+  temporal_busy_fraction: productive_global_cycles / end_to_end_cycles
+  temporal_issue_fraction: issue_cycles / end_to_end_cycles
+  active_spatial_fraction: productive_pe_cycles / (productive_global_cycles * physical_pes)
+  resident_productive_fraction: productive_pe_cycles / resident_pe_cycles
+  issued_capacity_fraction: issued_instructions / (end_to_end_cycles * physical_pes)
+  fu_capacity_fraction: productive_pe_fu_cycles / (end_to_end_cycles * physical_pes)
+  port_request_share: port_requests / all_port_requests
+  port_service_share: issued_bank_operations / all_port_issued_bank_operations
+
+acceptance:
+  required_pipeline_metrics: [compute, load, store, xfer]
+  required_source_records: 16
+  require_all_finite_unit_interval: true
+  require_exact_factorization: true
+  require_port_shares_sum_one: true
+  require_no_metric_selection: true
+  paper_targets_consumed: false
+
+target_exclusion:
+  forbidden_paths:
+    - artifacts/results/fig22-resource-targets-run065.json
+    - artifacts/targets/fig22_resource_breakdown_pixels.yaml
+    - artifacts/targets/paper_targets.yaml
+  forbidden_tokens: [target, relative_error, pass_10pct, fit, correction_factor]
+
+source_layout:
+  source_note: literature/mlx-open-simulator-refresh-2026-08-19.md
+  config: configs/simulators/utilization_ledger_v1.yaml
+  auditor: scripts/audit_utilization_ledger.py
+  test: tests/test_utilization_ledger.py
+
+result_path: artifacts/results/utilization-ledger-run168.json
