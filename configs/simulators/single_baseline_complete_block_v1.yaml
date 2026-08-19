@@ -1,0 +1,93 @@
+name: single-baseline-complete-block-v1
+experiment_id: H170
+run_id: run175
+classification: target_free_same_input_single_baseline_complete_functional_performance
+validation_eligible: true
+
+frozen_inputs:
+  h161:
+    path: artifacts/results/complete-block-functional-run166.json
+    bytes: 10323
+    sha256: 9288d1169c173a6ba5ddc668bc2543e4a1dc00e4ceecd7cba8ef07022d7b7feb
+    required_status: supported
+    required_integrity: true
+  h161_config:
+    path: configs/simulators/complete_block_functional_v1.yaml
+    bytes: 2829
+    sha256: c7a1edf04399378b78d1185db8b53b56cc150a00c7dc4576dffb20d70f3f9849
+  h161_compiler:
+    path: scripts/compile_complete_block_functional.py
+    bytes: 11260
+    sha256: 5516ca887e3a744bc3fedf3fdf5177b81147ee37260f66c2ea845c7f4a632606
+  h161_auditor:
+    path: scripts/audit_complete_block_functional.py
+    bytes: 24262
+    sha256: 7fa717073aff4fe4c2a4ea82fe78a16d9209ef609ee28ec320e08c83275f6c20
+
+baseline:
+  id: single_layer_serial_spatial_baseline
+  active_window: 1
+  interpretation: conventional_one_active_layer_on_same_programmable_spatial_array
+
+mlx:
+  id: multi_layer_execution
+  active_window: 13
+  interpretation: bounded_multi_tag_cross_layer_overlap
+
+shared_hardware:
+  mesh: [22, 8]
+  skip_steps: [2, 1]
+  register_file: {banks: 16, read_ports: 3, write_ports: 4}
+  pipelines: [load, store, compute, xfer]
+  pe_dependency_model: scoreboard_experimental
+  memory_backend: fixed
+
+prefixes:
+  bsmm_fft:
+    final_component: fft_cmp
+    expected_outputs: 4
+    required_components: [bsmm, fft_cmp]
+  attention:
+    final_component: attention
+    expected_outputs: 4
+    required_components: [bsmm, fft_cmp, attention]
+  swa:
+    final_component: swa
+    expected_outputs: 8
+    required_components: [bsmm, fft_cmp, attention, swa]
+  complete:
+    final_component: elementwise
+    expected_outputs: 8
+    required_components: [bsmm, fft_cmp, attention, swa, elementwise]
+
+execution:
+  architectures: [single_layer_serial_spatial_baseline, multi_layer_execution]
+  functional_modes: [enabled, disabled]
+  builds: [debug, opt, sanitize]
+  expected_configs: 16
+  expected_runs: 48
+  workers: 12
+  paper_performance_targets_consumed: false
+
+acceptance:
+  absolute_error_limit: 1.0e-12
+  minimum_clear_speedup: 1.20
+  require_all_prefixes_mlx_non_regression: true
+  require_complete_block_clear_speedup: true
+  require_same_work_all_pairs: true
+  require_same_input_all_pairs: true
+  require_both_architectures_functionally_correct: true
+  require_enabled_disabled_timing_identity: true
+  require_all_builds_deterministic_and_sanitizer_clean: true
+  require_no_paper_performance_targets: true
+
+source_layout:
+  protocol: experiments/h170-single-baseline-complete-block/protocol.md
+  config: configs/simulators/single_baseline_complete_block_v1.yaml
+  compiler: scripts/compile_single_baseline_complete_block.py
+  runner: scripts/run_single_baseline_complete_block.py
+  auditor: scripts/audit_single_baseline_complete_block.py
+  test: tests/test_single_baseline_complete_block.py
+
+output_root: artifacts/environment/h170
+result_path: artifacts/results/single-baseline-complete-block-run175.json
