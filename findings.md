@@ -712,3 +712,12 @@ window five is not uniformly better: it improves 12 paths, ties two and slows
 BSMM64/FFT512, for 0.977x-1.102x speedup and 1.040x median. The candidate is
 therefore rejected. Window size alone is too weak; the paper's explicit 8x8
 tile reuse indicates that the simplified block compute budget is the next gap.
+
+The dense-tile interpretation after run170 is corrected before implementation:
+the paper's 8x8 tile belongs to Figure 13 dense MM, not Figure 22 BSMM/FFT, so no
+hidden compute multiplier is added. Run171 instead separates resource domains.
+All issued loads split exactly into external SPM reads and local loads; stores,
+requests, bytes, xfer issues, unit/skip hops and four SRAM ports conserve. The
+ledger records 64 GB/s historical DMA, 1024 B/cycle SRAM wire capacity and 512
+B/cycle SIMD8 payload capacity as inferred rather than disclosed values. Its 13
+metrics are target-free and no Figure-22 schema is selected.

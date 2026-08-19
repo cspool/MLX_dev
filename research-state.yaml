@@ -754,9 +754,9 @@ experiments:
       timestamp: "2026-08-17"
 
 outer_loop:
-  cycle: 125
-  last_direction: "Build H166's target-free resource-domain ledger, separating external SPM service, local loads, transfer issues/hops, DMA bytes and SRAM bank capacities. Then test only complete pre-registered schemas against Figure 22."
-  last_reflection: "The 8x8 tile cited after H165 belongs to dense MM, so it cannot justify a BSMM/FFT compute multiplier. The valid next distinction comes from Figure 22's unified data-supply text and open-simulator component accounting, not synthetic work inflation."
+  cycle: 126
+  last_direction: "Expose complete H166 component-service schemas to Figure 22 without per-resource selection: compute global-overlay busy, external load/store, and either xfer issue or hop service. Retain physical-PE and bank-capacity schemas as explicit alternatives."
+  last_reflection: "H166 validates the missing domain separation without targets. External and local loads are distinct; DMA, SRAM wire, SRAM payload, xfer instruction and route-hop capacities all conserve. The paper-facing question can now be tested as complete schemas rather than arbitrary counter swaps."
 
 strict_numeric_refresh:
   status: active
@@ -788,7 +788,17 @@ strict_numeric_refresh:
       candidate_non_regressions: 14/16
       candidate_speedup_range: 0.9767x-1.1024x
       candidate_median_speedup: 1.0404x
-  current_hypothesis: H166
+    - experiment_id: H166
+      run_id: run171
+      path: artifacts/results/resource-domain-ledger-run171.json
+      sha256: e06ae7ca06dc191cbce6f78053170e4315e49c5a2026eaa2cbae23234f6b5d45
+      status: supported
+      audit_integrity: true
+      registered_metrics: 13
+      dma_bandwidth: 64GB/s_lineage_derived
+      spad_capacity: 1024B_per_cycle_wire_512B_per_cycle_payload
+      metric_or_schema_selected: false
+  current_hypothesis: H167
   target_policy: source_derived_candidates_then_paper_held_out
   open_simulator_pins:
     dam_rs: 8771934ce6074bea0d8d901cf787aae8983ae42e
