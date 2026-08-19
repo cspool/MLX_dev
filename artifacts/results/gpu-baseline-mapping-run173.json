@@ -1,0 +1,393 @@
+{
+  "schema_version": 1,
+  "experiment_id": "H168",
+  "run_id": "run173",
+  "classification": "target_free_open_gpu_simulator_mapping_and_gap_audit",
+  "validation_eligible": true,
+  "generated_at": "2026-08-19T04:52:10.742022+00:00",
+  "project_commit": "1777f2d2665e462e836c473299ed0bb1fbde29e6",
+  "hypothesis_status": "supported",
+  "audit_integrity": true,
+  "paper_performance_targets_consumed": false,
+  "paper_reproduction_claim": "none_gpu_mapping_and_gap_audit_only",
+  "frozen_inputs": {
+    "source_note": {
+      "path": "literature/mlx-gpu-baseline-mapping-2026-08-19.md",
+      "bytes": 7421,
+      "sha256": "9e19c86fc80276b5483c6bf939640338e37275d56a30abef8cd3c68a9088ab90",
+      "checks": {
+        "is_file": true,
+        "bytes": true,
+        "sha256": true
+      },
+      "pass": true
+    },
+    "xavier_proxy": {
+      "path": "artifacts/results/gpgpusim-xavier-proxy-run062.json",
+      "bytes": 7595,
+      "sha256": "443843b96d3f01cf27fee02413ae8d8cdc519233aca514cdaeb2d34d0373fe14",
+      "checks": {
+        "is_file": true,
+        "bytes": true,
+        "sha256": true
+      },
+      "pass": true
+    },
+    "orin_proxy": {
+      "path": "artifacts/results/gpgpusim-orin-proxy-run060.json",
+      "bytes": 7608,
+      "sha256": "62eae2e80adb5c21b13d11b622ea1238818320e6db8e9b924472e8035193e193",
+      "checks": {
+        "is_file": true,
+        "bytes": true,
+        "sha256": true
+      },
+      "pass": true
+    },
+    "rtx3090_proxy": {
+      "path": "artifacts/results/gpgpusim-rtx3090-proxy-run057.json",
+      "bytes": 9156,
+      "sha256": "4b654a898455057240ac9fd0c3e6efbb382b8eec394c609f0dd1e0629a1bf358",
+      "checks": {
+        "is_file": true,
+        "bytes": true,
+        "sha256": true
+      },
+      "pass": true
+    },
+    "orin_schedule": {
+      "path": "artifacts/results/fig24-gpu-schedule-ambiguity-run128.json",
+      "bytes": 8196,
+      "sha256": "5eaa70307f1e07283f12073dbfb71bf283d36f13df768d3bfb092682c08cbcfa",
+      "checks": {
+        "is_file": true,
+        "bytes": true,
+        "sha256": true
+      },
+      "pass": true
+    },
+    "xavier_coverage": {
+      "path": "artifacts/results/fig21-xavier-coverage-run148.json",
+      "bytes": 19293,
+      "sha256": "0115c705b2274fa6f1c6c8671161073717a36c6550d7fa33876bf8b69084aefd",
+      "checks": {
+        "is_file": true,
+        "bytes": true,
+        "sha256": true
+      },
+      "pass": true
+    }
+  },
+  "proxy_checks": {
+    "xavier_proxy": true,
+    "orin_proxy": true,
+    "rtx3090_proxy": true
+  },
+  "evidence_checks": {
+    "orin_schedule": true,
+    "xavier_coverage": true
+  },
+  "pin_checks": {
+    "project_accelsim": true,
+    "project_gpgpusim": true,
+    "refreshed_accelsim_release": true,
+    "refreshed_gpgpusim_dev": true,
+    "flashgpusim": true
+  },
+  "config_availability": {
+    "local_tested_configs": [
+      "SM2_GTX480",
+      "SM3_KEPLER_TITAN",
+      "SM6_TITANX",
+      "SM75_RTX2060",
+      "SM75_RTX2060_S",
+      "SM7_GV100",
+      "SM7_QV100",
+      "SM7_TITANV",
+      "SM86_RTX3070"
+    ],
+    "xavier_sm72": false,
+    "orin_sm87": false,
+    "rtx3090": false,
+    "h100_sm90": false,
+    "rtx3070_sm86": true,
+    "titanv_sm70": true
+  },
+  "device_records": {
+    "xavier": {
+      "paper_figures": [
+        20,
+        21
+      ],
+      "hardware_isa": "SM72",
+      "vendor_identity_covered": true,
+      "preferred_open_simulator": "Accel-Sim/GPGPU-Sim",
+      "open_candidate_available": true,
+      "local_timing_template": "SM70_TITANV",
+      "exact_isa_template": false,
+      "local_executable_proxy": true,
+      "executed_proxy_workloads": [
+        "bsmm",
+        "fft",
+        "swa",
+        "vectoradd"
+      ],
+      "functional_proxy_pass": true,
+      "native_target_tuned_config": false,
+      "native_exact_application_trace": false,
+      "native_hardware_correlation": false,
+      "strict_validation_eligible": false,
+      "preferred_next_path": "native_Xavier_tuner_plus_SASS",
+      "evidence": {
+        "qualified_dense_families": 0,
+        "required_dense_families": 15,
+        "executed_tensor_instructions": false
+      },
+      "blocking_gates": {
+        "native_target_tuned_config": false,
+        "native_exact_application_trace": false,
+        "native_hardware_correlation": false,
+        "exact_author_kernel_schedule": false,
+        "dense_end_to_end_family_coverage": false
+      }
+    },
+    "orin": {
+      "paper_figures": [
+        2,
+        24,
+        25
+      ],
+      "hardware_isa": "SM87",
+      "vendor_identity_covered": true,
+      "preferred_open_simulator": "Accel-Sim/GPGPU-Sim",
+      "open_candidate_available": true,
+      "local_timing_template": "SM86_RTX3070",
+      "exact_isa_template": false,
+      "local_executable_proxy": true,
+      "executed_proxy_workloads": [
+        "bsmm",
+        "fft",
+        "swa",
+        "vectoradd"
+      ],
+      "functional_proxy_pass": true,
+      "native_target_tuned_config": false,
+      "native_exact_application_trace": false,
+      "native_hardware_correlation": false,
+      "strict_validation_eligible": false,
+      "preferred_next_path": "native_Orin_tuner_plus_SASS",
+      "evidence": {
+        "equal_work_cycle_spread": 0.06148997764667086,
+        "schedule_sensitive": true
+      },
+      "blocking_gates": {
+        "native_target_tuned_config": false,
+        "native_exact_application_trace": false,
+        "native_hardware_correlation": false,
+        "exact_author_kernel_schedule": false,
+        "cta_schedule_identity": false
+      }
+    },
+    "rtx3090": {
+      "paper_figures": [
+        24,
+        25
+      ],
+      "hardware_isa": "SM86",
+      "vendor_identity_covered": true,
+      "preferred_open_simulator": "Accel-Sim/GPGPU-Sim",
+      "open_candidate_available": true,
+      "local_timing_template": "SM86_RTX3070",
+      "exact_isa_template": true,
+      "local_executable_proxy": true,
+      "executed_proxy_workloads": [
+        "bsmm",
+        "fft",
+        "swa",
+        "vectoradd"
+      ],
+      "functional_proxy_pass": true,
+      "native_target_tuned_config": false,
+      "native_exact_application_trace": false,
+      "native_hardware_correlation": false,
+      "strict_validation_eligible": false,
+      "preferred_next_path": "native_RTX3090_tuner_plus_SASS",
+      "evidence": {
+        "isa_family_match": true,
+        "base_template": "third_party/accel-sim-framework/gpu-simulator/gpgpu-sim/configs/tested-cfgs/SM86_RTX3070/gpgpusim.config"
+      },
+      "blocking_gates": {
+        "native_target_tuned_config": false,
+        "native_exact_application_trace": false,
+        "native_hardware_correlation": false,
+        "exact_author_kernel_schedule": false,
+        "native_cache_and_launch_timing": false
+      }
+    },
+    "h100": {
+      "paper_figures": [
+        3,
+        17
+      ],
+      "hardware_isa": "SM90",
+      "vendor_identity_covered": true,
+      "preferred_open_simulator": "FlashGPU-Sim",
+      "open_candidate_available": true,
+      "local_timing_template": "none",
+      "exact_isa_template": false,
+      "local_executable_proxy": false,
+      "executed_proxy_workloads": [],
+      "functional_proxy_pass": false,
+      "native_target_tuned_config": false,
+      "native_exact_application_trace": false,
+      "native_hardware_correlation": false,
+      "strict_validation_eligible": false,
+      "preferred_next_path": "FlashGPU-Sim_SM90_plus_native_H100_correlation",
+      "evidence": {
+        "flashgpusim_pin": "f3d4bba7174213c06330e5c88d71b42b2aa66a72",
+        "local_h100_config": false,
+        "source_note_candidate": "FlashGPU-Sim_SM90_H100"
+      },
+      "blocking_gates": {
+        "native_target_tuned_config": false,
+        "native_exact_application_trace": false,
+        "native_hardware_correlation": false,
+        "exact_author_kernel_schedule": false,
+        "local_execution": false,
+        "h100_workload_validation": false
+      }
+    }
+  },
+  "device_checks": {
+    "xavier": true,
+    "orin": true,
+    "rtx3090": true,
+    "h100": true
+  },
+  "role_coverage": [
+    2,
+    3,
+    17,
+    20,
+    21,
+    24,
+    25
+  ],
+  "counts": {
+    "devices": 4,
+    "vendor_identity_coverage": 4,
+    "open_candidate_coverage": 4,
+    "local_executable_proxies": 3,
+    "native_tuned_configs": 0,
+    "native_application_traces": 0,
+    "validation_eligible_devices": 0
+  },
+  "coverage_checks": {
+    "devices": true,
+    "vendor_identity_coverage": true,
+    "open_candidate_coverage": true,
+    "local_executable_proxies": true,
+    "native_tuned_configs": true,
+    "native_application_traces": true,
+    "validation_eligible_devices": true
+  },
+  "classification_checks": {
+    "device_checks": true,
+    "paper_roles": true,
+    "rtx_closest": true,
+    "flash_h100": true,
+    "local_config_gaps": true
+  },
+  "source_files": {
+    "protocol": {
+      "path": "experiments/h168-gpu-baseline-mapping/protocol.md",
+      "bytes": 2636,
+      "sha256": "0424aba7cbcc52a10ef2699b19a669ea3bfcf67d1687ac4a1619cc6c0f9aaa55",
+      "checks": {
+        "is_file": true
+      },
+      "pass": true
+    },
+    "config": {
+      "path": "configs/analysis/gpu_baseline_mapping_v1.yaml",
+      "bytes": 3330,
+      "sha256": "3e80bae90aaa153ff637508b8bdebaf9cf7fd2bf686156480a4f9988b011185d",
+      "checks": {
+        "is_file": true
+      },
+      "pass": true
+    },
+    "source_note": {
+      "path": "literature/mlx-gpu-baseline-mapping-2026-08-19.md",
+      "bytes": 7421,
+      "sha256": "9e19c86fc80276b5483c6bf939640338e37275d56a30abef8cd3c68a9088ab90",
+      "checks": {
+        "is_file": true
+      },
+      "pass": true
+    },
+    "auditor": {
+      "path": "scripts/audit_gpu_baseline_mapping.py",
+      "bytes": 15049,
+      "sha256": "041a121a49cdc1d52bf8a10696b07a91e92e4ecf16e5a16871bb1eed6f1cf273",
+      "checks": {
+        "is_file": true
+      },
+      "pass": true
+    },
+    "test": {
+      "path": "tests/test_gpu_baseline_mapping.py",
+      "bytes": 1554,
+      "sha256": "88cc0b7d7870fb3db82a40bea5f5a7022eee6ce5411da6c5da864f8f5574542d",
+      "checks": {
+        "is_file": true
+      },
+      "pass": true
+    }
+  },
+  "target_free_checks": {
+    "all_inputs_target_free": true,
+    "no_target_artifact_path": true,
+    "source_note_no_values": true,
+    "result_claim": true
+  },
+  "acceptance_gates": [
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true
+  ],
+  "summary": {
+    "devices": 4,
+    "vendor_identity_coverage": 4,
+    "open_candidate_coverage": 4,
+    "local_executable_proxies": 3,
+    "native_tuned_configs": 0,
+    "native_application_traces": 0,
+    "validation_eligible_devices": 0,
+    "paper_figure_roles": 7,
+    "closest_current_proxy": "rtx3090_on_SM86_RTX3070_template",
+    "preferred_h100_candidate": "FlashGPU-Sim_SM90_H100",
+    "all_current_denominators_proxy_only": true,
+    "acceptance_gates_passed": 10,
+    "acceptance_gates_total": 10
+  },
+  "integrity_checks": {
+    "frozen": true,
+    "proxies": true,
+    "evidence": true,
+    "pins": true,
+    "devices": true,
+    "counts": true,
+    "classifications": true,
+    "sources": true,
+    "target_free": true,
+    "acceptance_evaluated": true
+  }
+}

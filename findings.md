@@ -730,3 +730,13 @@ Nevertheless every fixed schema passes zero of eight ordered curves. Resource
 semantics explain much of the magnitude error but not the size trend. Further
 Figure-22 counter/bandwidth tuning is stopped in favor of GPU mapping and the
 independently sourced SPM-capacity fusion mechanism.
+
+Run173 completes the GPU mapping audit without claiming performance validity.
+Xavier, Orin, RTX3090 and H100 all have vendor identity plus an open candidate;
+the first three have executable local proxies, but none of four has the native
+tuned configuration, exact application trace and hardware correlation required
+for strict validation. RTX3090 is structurally closest because both target and
+template are SM86, although cache/timing still come from RTX3070. FlashGPU-Sim
+`f3d4bba` is the preferred SM90/H100 candidate. Xavier remains an SM70-to-SM72
+proxy, Orin an SM86-to-SM87 proxy with a measured 6.149% CTA-shape ambiguity,
+and Figure 21 still has no captured dense-Xavier end-to-end denominator.
