@@ -1,0 +1,398 @@
+{
+  "schema_version": 1,
+  "experiment_id": "H187",
+  "run_id": "run192",
+  "classification": "unified_model_graph_to_mlx_simulator_toolchain",
+  "validation_eligible": true,
+  "generated_at": "2026-08-19T10:38:03.825104+00:00",
+  "project_commit": "29715264613461d12be49577e600e519c4f77443",
+  "hypothesis_status": "supported",
+  "audit_integrity": true,
+  "paper_performance_targets_consumed": true,
+  "paper_reproduction_claim": "unified_repository_toolchain_not_author_compiler",
+  "frozen_inputs": {
+    "workload_spec": {
+      "path": "configs/workloads/mlx_fig19_20_23_v1.yaml",
+      "bytes": 2593,
+      "sha256": "f8a5fe8dccc36c27574f63209bc373ac35619f6536a82953ccb07715a6247d58",
+      "checks": {
+        "is_file": true,
+        "bytes": true,
+        "sha256": true
+      },
+      "pass": true
+    },
+    "figure23_result": {
+      "path": "artifacts/results/fig23-trace-corrected-run189.json",
+      "bytes": 22333,
+      "sha256": "2c6ef6aeda12781399f82f6f22900d3560e702a2c85cfa0e774c13c736800059",
+      "checks": {
+        "is_file": true,
+        "bytes": true,
+        "sha256": true
+      },
+      "pass": true
+    },
+    "figure19_result": {
+      "path": "artifacts/results/fig19-trace-corrected-run190.json",
+      "bytes": 10845,
+      "sha256": "8b302da5def7e675614353a67eb2d5f83929d1c97827d8c13ab2daaccd30ff4f",
+      "checks": {
+        "is_file": true,
+        "bytes": true,
+        "sha256": true
+      },
+      "pass": true
+    },
+    "figure20_result": {
+      "path": "artifacts/results/fig20-trace-corrected-run191.json",
+      "bytes": 12434,
+      "sha256": "16c3a14061c19135a92e2cea9f5cc3b856f268bdab0ca93a72f2fd9e4abb3f08",
+      "checks": {
+        "is_file": true,
+        "bytes": true,
+        "sha256": true
+      },
+      "pass": true
+    },
+    "selected_model": {
+      "path": "artifacts/results/fig19-20-23-gap-attribution-run188.json",
+      "bytes": 37530,
+      "sha256": "d38bd8ddc7cb6e131662241549f53df97015053b87a72b00277137d970001aef",
+      "checks": {
+        "is_file": true,
+        "bytes": true,
+        "sha256": true
+      },
+      "pass": true
+    },
+    "rtx4090_trace": {
+      "path": "artifacts/results/fig19-20-23-rtx4090-trace-run187.json",
+      "bytes": 52250,
+      "sha256": "b958398750a3a34a2426ae24b22a1014a199486f31d38a0b67dc6ea3bd4afbb9",
+      "checks": {
+        "is_file": true,
+        "bytes": true,
+        "sha256": true
+      },
+      "pass": true
+    },
+    "fig23_base_overlay": {
+      "path": "artifacts/environment/h48/mlx-full-block-fixed.json",
+      "bytes": 283959,
+      "sha256": "66f44eb4b1f0092ae88e93c7a14285254e3295d281315ea7e7f61788d2bc0e03",
+      "checks": {
+        "is_file": true,
+        "bytes": true,
+        "sha256": true
+      },
+      "pass": true
+    },
+    "fig19_source_manifest": {
+      "path": "artifacts/environment/h98/fig19-source-paths-compile-manifest.json",
+      "bytes": 101749,
+      "sha256": "6d83653478cda02a9857aed146f5d67dff436929ca0eec7b7c85381d3636389f",
+      "checks": {
+        "is_file": true,
+        "bytes": true,
+        "sha256": true
+      },
+      "pass": true
+    },
+    "fig19_source_config": {
+      "path": "configs/simulators/fig19_source_paths_v1.yaml",
+      "bytes": 1977,
+      "sha256": "ef275e7838b35e6e8936ace9096da2fcbaf54707f67c0084635222baf94ea3d8",
+      "checks": {
+        "is_file": true,
+        "bytes": true,
+        "sha256": true
+      },
+      "pass": true
+    },
+    "fig19_coupled_config": {
+      "path": "configs/simulators/fig19_coupled_paths_v1.yaml",
+      "bytes": 2447,
+      "sha256": "89d22f4b2e700e25a892ce6cc3f2fd9f681cc95703ef25c80ace99e318c80126",
+      "checks": {
+        "is_file": true,
+        "bytes": true,
+        "sha256": true
+      },
+      "pass": true
+    },
+    "mlx_full_hardware": {
+      "path": "configs/hardware/mlx_full.yaml",
+      "bytes": 532,
+      "sha256": "97f8ed084c2f62eef41eb86de0b06ba43bf9947d301ac3b24d894d2f83d6053c",
+      "checks": {
+        "is_file": true,
+        "bytes": true,
+        "sha256": true
+      },
+      "pass": true
+    }
+  },
+  "parent_checks": {
+    "figure23_result": true,
+    "figure19_result": true,
+    "figure20_result": true,
+    "selected_model": true,
+    "rtx4090_trace": true
+  },
+  "graph_checks": {
+    "graphs": true,
+    "nodes": true,
+    "complete": true,
+    "unique": true
+  },
+  "topological_orders": {
+    "figure23_complete_block": [
+      "rmsnorm",
+      "rope",
+      "qkv",
+      "fft_cmp",
+      "attention",
+      "output",
+      "ffn"
+    ],
+    "figure19_fabnet_block": [
+      "fft2d_attention",
+      "global_ffn1",
+      "global_ffn2"
+    ],
+    "figure20_llama_kernels": [
+      "qkv",
+      "ffn1",
+      "attention",
+      "ffn2"
+    ]
+  },
+  "lineage_checks": {
+    "figure23_complete_block": true,
+    "figure19_fabnet_block": true,
+    "figure20_llama_kernels": true
+  },
+  "lowering_manifest": {
+    "path": "artifacts/environment/h187/lowering-manifest.json",
+    "bytes": 25351,
+    "sha256": "d613e226213cc69ca0775e92ec1fa7b8d5e3e15c35680b76d14dfbb2c0936f62",
+    "checks": {
+      "is_file": true
+    },
+    "pass": true
+  },
+  "lowering_checks": {
+    "checks": true,
+    "units": true,
+    "overlay_units": true,
+    "memory": true,
+    "analytical": true,
+    "formats": true,
+    "orders": true
+  },
+  "detailed_schema_checks": {
+    "figure23_complete_block:overlay": true,
+    "figure19_fabnet_block:fft2d_attention": true,
+    "figure19_fabnet_block:global_ffn1": true,
+    "figure19_fabnet_block:global_ffn2": true
+  },
+  "analytical_schema_checks": {
+    "figure20_llama_kernels:qkv:N256": true,
+    "figure20_llama_kernels:ffn1:N256": true,
+    "figure20_llama_kernels:attention:N256": true,
+    "figure20_llama_kernels:ffn2:N256": true,
+    "figure20_llama_kernels:qkv:N8192": true,
+    "figure20_llama_kernels:ffn1:N8192": true,
+    "figure20_llama_kernels:attention:N8192": true,
+    "figure20_llama_kernels:ffn2:N8192": true
+  },
+  "artifact_replay_checks": {
+    "figure23_complete_block:overlay": true,
+    "figure19_fabnet_block:fft2d_attention": true,
+    "figure19_fabnet_block:global_ffn1": true,
+    "figure19_fabnet_block:global_ffn2": true,
+    "figure20_llama_kernels:qkv:N256": true,
+    "figure20_llama_kernels:ffn1:N256": true,
+    "figure20_llama_kernels:attention:N256": true,
+    "figure20_llama_kernels:ffn2:N256": true,
+    "figure20_llama_kernels:qkv:N8192": true,
+    "figure20_llama_kernels:ffn1:N8192": true,
+    "figure20_llama_kernels:attention:N8192": true,
+    "figure20_llama_kernels:ffn2:N8192": true
+  },
+  "schema_checks": {
+    "detailed": true,
+    "analytical": true,
+    "memory": true,
+    "replay": true
+  },
+  "execution_manifest": {
+    "path": "artifacts/environment/h187/execution-manifest.json",
+    "bytes": 352662,
+    "sha256": "67cc96c7812ccb5e852925c6ea30f368ed0d5bb3c65700eeb19cdbacfdb0b7bd",
+    "checks": {
+      "is_file": true
+    },
+    "pass": true
+  },
+  "execution_checks": {
+    "checks": true,
+    "records": true,
+    "passes": true,
+    "replays": true,
+    "units": true
+  },
+  "representative_checks": {
+    "figure23_complete_block:overlay": true,
+    "figure19_fabnet_block:fft2d_attention": true,
+    "figure19_fabnet_block:global_ffn1": true,
+    "figure19_fabnet_block:global_ffn2": true,
+    "figure20_llama_kernels:qkv:N256": true,
+    "figure20_llama_kernels:ffn1:N256": true,
+    "figure20_llama_kernels:attention:N256": true,
+    "figure20_llama_kernels:ffn2:N256": true,
+    "figure20_llama_kernels:qkv:N8192": true,
+    "figure20_llama_kernels:ffn1:N8192": true,
+    "figure20_llama_kernels:attention:N8192": true,
+    "figure20_llama_kernels:ffn2:N8192": true
+  },
+  "numerical_checks": {
+    "figure23": true,
+    "figure19": true,
+    "figure20": true
+  },
+  "documentation_checks": {
+    "pipeline": true,
+    "formats": true,
+    "boundary": true
+  },
+  "source_files": {
+    "protocol": {
+      "path": "experiments/h187-unified-workload-lowering/protocol.md",
+      "bytes": 2300,
+      "sha256": "80ede7160f14c3df923e674b6a0c2d1afb7d86ed0be7b3956220ac1d20952d82",
+      "checks": {
+        "is_file": true
+      },
+      "pass": true
+    },
+    "config": {
+      "path": "configs/analysis/unified_workload_lowering_v1.yaml",
+      "bytes": 4062,
+      "sha256": "423ec2735c9ea0af2c085f027fe8edd4f450d52532f59dabdacfd4af21da44de",
+      "checks": {
+        "is_file": true
+      },
+      "pass": true
+    },
+    "workload_spec": {
+      "path": "configs/workloads/mlx_fig19_20_23_v1.yaml",
+      "bytes": 2593,
+      "sha256": "f8a5fe8dccc36c27574f63209bc373ac35619f6536a82953ccb07715a6247d58",
+      "checks": {
+        "is_file": true
+      },
+      "pass": true
+    },
+    "lowerer_core": {
+      "path": "src/mlxsim/workload_lowering.py",
+      "bytes": 17969,
+      "sha256": "2e6987356b345e5cc9e31133315016446db5bdad6345cc6f2fd280784c3e8389",
+      "checks": {
+        "is_file": true
+      },
+      "pass": true
+    },
+    "lowerer_cli": {
+      "path": "scripts/lower_mlx_workload.py",
+      "bytes": 2059,
+      "sha256": "6cfbf67f8074d91611ff550936296527a1bc9555c2c05bd886f7a727c31d1393",
+      "checks": {
+        "is_file": true
+      },
+      "pass": true
+    },
+    "runner": {
+      "path": "scripts/run_lowered_mlx_workload.py",
+      "bytes": 8796,
+      "sha256": "2257ec7d624e88a1d6413232639b95697a7323cb1480cc8b9deadca8666a4de3",
+      "checks": {
+        "is_file": true
+      },
+      "pass": true
+    },
+    "auditor": {
+      "path": "scripts/audit_unified_workload_lowering.py",
+      "bytes": 15674,
+      "sha256": "f875bdc350044ff23972361bcd88d0e109008922e1f1e1269d0cd4892db52f75",
+      "checks": {
+        "is_file": true
+      },
+      "pass": true
+    },
+    "test": {
+      "path": "tests/test_unified_workload_lowering.py",
+      "bytes": 1923,
+      "sha256": "ff2a2928b16b14df431c4e6d4e7cfe1bbcd541ef1e7fc5c53296570555ca52a0",
+      "checks": {
+        "is_file": true
+      },
+      "pass": true
+    },
+    "documentation": {
+      "path": "docs/workload-lowering-toolchain.md",
+      "bytes": 1991,
+      "sha256": "42e0cb31dedfabd4fc5e3a20a14eab0db51ca1ed17825c9691a8e4d61cb6d9e0",
+      "checks": {
+        "is_file": true
+      },
+      "pass": true
+    }
+  },
+  "acceptance_gates": [
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true
+  ],
+  "summary": {
+    "graphs": 3,
+    "graph_nodes": 14,
+    "executable_units": 12,
+    "detailed_overlay_units": 4,
+    "memory_configs": 3,
+    "analytical_profiles": 8,
+    "lineage_nodes": 14,
+    "lowering_replays": 12,
+    "executions": 24,
+    "execution_replays": 12,
+    "numerically_complete_figures": 3,
+    "unified_toolchain_complete": true,
+    "author_toolchain_claimed": false,
+    "acceptance_gates_passed": 10,
+    "acceptance_gates_total": 10
+  },
+  "integrity_checks": {
+    "frozen": true,
+    "parents": true,
+    "graphs": true,
+    "lineage": true,
+    "lowering": true,
+    "detailed_schema": true,
+    "analytical_schema": true,
+    "artifact_replay": true,
+    "execution": true,
+    "representatives": true,
+    "numerical": true,
+    "documentation": true,
+    "source": true,
+    "acceptance_evaluated": true
+  }
+}

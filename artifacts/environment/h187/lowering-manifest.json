@@ -1,0 +1,837 @@
+{
+  "checks": {
+    "artifacts": true,
+    "formats": true,
+    "graphs": true,
+    "lineage": true,
+    "memory_configs": true,
+    "nodes": true,
+    "replay": true,
+    "units": true
+  },
+  "experiment_id": "H187",
+  "format_counts": {
+    "analytical_kernel_profile_json": 8,
+    "mlx_dpu_memory_json": 3,
+    "mlx_overlay_json": 1
+  },
+  "lineage": {
+    "figure19_fabnet_block": {
+      "fft2d_attention": [
+        "figure19_fabnet_block:fft2d_attention"
+      ],
+      "global_ffn1": [
+        "figure19_fabnet_block:global_ffn1"
+      ],
+      "global_ffn2": [
+        "figure19_fabnet_block:global_ffn2"
+      ]
+    },
+    "figure20_llama_kernels": {
+      "attention": [
+        "figure20_llama_kernels:attention:N256",
+        "figure20_llama_kernels:attention:N8192"
+      ],
+      "ffn1": [
+        "figure20_llama_kernels:ffn1:N256",
+        "figure20_llama_kernels:ffn1:N8192"
+      ],
+      "ffn2": [
+        "figure20_llama_kernels:ffn2:N256",
+        "figure20_llama_kernels:ffn2:N8192"
+      ],
+      "qkv": [
+        "figure20_llama_kernels:qkv:N256",
+        "figure20_llama_kernels:qkv:N8192"
+      ]
+    },
+    "figure23_complete_block": {
+      "attention": [
+        "figure23_complete_block:overlay"
+      ],
+      "ffn": [
+        "figure23_complete_block:overlay"
+      ],
+      "fft_cmp": [
+        "figure23_complete_block:overlay"
+      ],
+      "output": [
+        "figure23_complete_block:overlay"
+      ],
+      "qkv": [
+        "figure23_complete_block:overlay"
+      ],
+      "rmsnorm": [
+        "figure23_complete_block:overlay"
+      ],
+      "rope": [
+        "figure23_complete_block:overlay"
+      ]
+    }
+  },
+  "memory_configs": 3,
+  "paper_performance_targets_consumed": true,
+  "run_id": "run192",
+  "schema_version": 1,
+  "source_spec": {
+    "bytes": 2593,
+    "path": "configs/workloads/mlx_fig19_20_23_v1.yaml",
+    "sha256": "f8a5fe8dccc36c27574f63209bc373ac35619f6536a82953ccb07715a6247d58"
+  },
+  "suite_id": "mlx-fig19-20-23-unified-v1",
+  "topological_orders": {
+    "figure19_fabnet_block": [
+      "fft2d_attention",
+      "global_ffn1",
+      "global_ffn2"
+    ],
+    "figure20_llama_kernels": [
+      "qkv",
+      "ffn1",
+      "attention",
+      "ffn2"
+    ],
+    "figure23_complete_block": [
+      "rmsnorm",
+      "rope",
+      "qkv",
+      "fft_cmp",
+      "attention",
+      "output",
+      "ffn"
+    ]
+  },
+  "units": [
+    {
+      "artifacts": {
+        "overlay": {
+          "identical": true,
+          "primary": {
+            "bytes": 3914919,
+            "path": "artifacts/environment/h187/lowered/figure23_complete_block/overlay.json",
+            "sha256": "fe0fc181cc5b965e0755fba88b46f339163a9394b863b7695253fc5aae244e4f"
+          },
+          "replay": {
+            "bytes": 3914919,
+            "path": "artifacts/environment/h187/replay/figure23_complete_block/overlay.json",
+            "sha256": "fe0fc181cc5b965e0755fba88b46f339163a9394b863b7695253fc5aae244e4f"
+          }
+        }
+      },
+      "execution_format": "mlx_overlay_json",
+      "graph_id": "figure23_complete_block",
+      "metadata": {
+        "active_window": 4,
+        "baseline_repeat": 16,
+        "batch": 8,
+        "block_count": 3648,
+        "compiler": "mlxsim.fig23_complete_block.compile_complete_block_scaling",
+        "conserved_lane_work": 2048,
+        "event_checks": {
+          "adjacent_tags": true,
+          "all_waits_resolved": true,
+          "unique_emitters": true
+        },
+        "experiment_id": "H187",
+        "final_event_count": 64,
+        "final_events": [
+          "full_block_done_s0",
+          "full_block_done_s1",
+          "full_block_done_s2",
+          "full_block_done_s3",
+          "full_block_done_s4",
+          "full_block_done_s5",
+          "full_block_done_s6",
+          "full_block_done_s7",
+          "full_block_done_s8",
+          "full_block_done_s9",
+          "full_block_done_s10",
+          "full_block_done_s11",
+          "full_block_done_s12",
+          "full_block_done_s13",
+          "full_block_done_s14",
+          "full_block_done_s15",
+          "full_block_done_s16",
+          "full_block_done_s17",
+          "full_block_done_s18",
+          "full_block_done_s19",
+          "full_block_done_s20",
+          "full_block_done_s21",
+          "full_block_done_s22",
+          "full_block_done_s23",
+          "full_block_done_s24",
+          "full_block_done_s25",
+          "full_block_done_s26",
+          "full_block_done_s27",
+          "full_block_done_s28",
+          "full_block_done_s29",
+          "full_block_done_s30",
+          "full_block_done_s31",
+          "full_block_done_s32",
+          "full_block_done_s33",
+          "full_block_done_s34",
+          "full_block_done_s35",
+          "full_block_done_s36",
+          "full_block_done_s37",
+          "full_block_done_s38",
+          "full_block_done_s39",
+          "full_block_done_s40",
+          "full_block_done_s41",
+          "full_block_done_s42",
+          "full_block_done_s43",
+          "full_block_done_s44",
+          "full_block_done_s45",
+          "full_block_done_s46",
+          "full_block_done_s47",
+          "full_block_done_s48",
+          "full_block_done_s49",
+          "full_block_done_s50",
+          "full_block_done_s51",
+          "full_block_done_s52",
+          "full_block_done_s53",
+          "full_block_done_s54",
+          "full_block_done_s55",
+          "full_block_done_s56",
+          "full_block_done_s57",
+          "full_block_done_s58",
+          "full_block_done_s59",
+          "full_block_done_s60",
+          "full_block_done_s61",
+          "full_block_done_s62",
+          "full_block_done_s63"
+        ],
+        "hardware_name": "simd32_8x8",
+        "hidden_dimension": 512,
+        "latency_correction": {
+          "congestion_cycles": 0,
+          "post_knee_trace_growth": 0.0,
+          "startup_credit_cycles": 163,
+          "underfill_feature": 0.75
+        },
+        "mesh": [
+          8,
+          8
+        ],
+        "operation_classes": [
+          "add",
+          "fdiv",
+          "fexp",
+          "fma",
+          "fmax",
+          "frsqrt",
+          "mul",
+          "shuffle"
+        ],
+        "operator_order": [
+          "rmsnorm",
+          "rope",
+          "qkv",
+          "fft_cmp",
+          "attention",
+          "output",
+          "ffn"
+        ],
+        "paper_performance_targets_consumed": false,
+        "sequence_length": 512,
+        "simd_width": 32,
+        "spatial_shards": 64,
+        "stage_count": 28,
+        "stage_groups": [
+          "pre_attention_rmsnorm",
+          "qkv_bsmm_0",
+          "qkv_bsmm_1",
+          "qkv_bsmm_2",
+          "rope",
+          "fft_0",
+          "fft_1",
+          "fft_2",
+          "truncate_shuffle",
+          "ifft_0",
+          "ifft_1",
+          "ifft_2",
+          "qk_score",
+          "row_max",
+          "exp_norm_stats",
+          "sv_normalize",
+          "output_bsmm_0",
+          "output_bsmm_1",
+          "output_bsmm_2",
+          "attention_residual_rmsnorm",
+          "ffn1_bsmm_0",
+          "ffn1_bsmm_1",
+          "ffn1_bsmm_2",
+          "silu_gate",
+          "ffn2_bsmm_0",
+          "ffn2_bsmm_1",
+          "ffn2_bsmm_2",
+          "final_residual_store"
+        ],
+        "surrogate_identity": "H48_complete_structured_transformer_block",
+        "trip_count_per_shard": 1,
+        "work": {
+          "boundary_events": 3840,
+          "instruction_instances": 10816,
+          "operation_instances": {
+            "add": 2880,
+            "fdiv": 128,
+            "fexp": 128,
+            "fma": 2752,
+            "fmax": 64,
+            "frsqrt": 128,
+            "load": 192,
+            "mul": 320,
+            "shuffle": 320,
+            "store": 128,
+            "xfer": 3776
+          },
+          "pipeline_instances": {
+            "compute": 6720,
+            "load": 192,
+            "store": 128,
+            "xfer": 3776
+          },
+          "scalarized_boundary_event_work": 122880,
+          "scalarized_instruction_work": 346112,
+          "scalarized_operation_work": {
+            "add": 92160,
+            "fdiv": 4096,
+            "fexp": 4096,
+            "fma": 88064,
+            "fmax": 2048,
+            "frsqrt": 4096,
+            "load": 6144,
+            "mul": 10240,
+            "shuffle": 10240,
+            "store": 4096,
+            "xfer": 120832
+          },
+          "scalarized_pipeline_work": {
+            "compute": 215040,
+            "load": 6144,
+            "store": 4096,
+            "xfer": 120832
+          }
+        },
+        "workload_graph": "figure23_complete_block"
+      },
+      "node_ids": [
+        "rmsnorm",
+        "rope",
+        "qkv",
+        "fft_cmp",
+        "attention",
+        "output",
+        "ffn"
+      ],
+      "unit_id": "figure23_complete_block:overlay"
+    },
+    {
+      "artifacts": {
+        "memory": {
+          "identical": true,
+          "primary": {
+            "bytes": 806,
+            "path": "artifacts/environment/h187/lowered/figure19_fabnet_block/fft2d_attention-memory.json",
+            "sha256": "660de16967dbf5b90538fc25d84e2159f6b2bfb9ae780337012f6732b53bd9c0"
+          },
+          "replay": {
+            "bytes": 806,
+            "path": "artifacts/environment/h187/replay/figure19_fabnet_block/fft2d_attention-memory.json",
+            "sha256": "660de16967dbf5b90538fc25d84e2159f6b2bfb9ae780337012f6732b53bd9c0"
+          }
+        },
+        "overlay": {
+          "identical": true,
+          "primary": {
+            "bytes": 286096,
+            "path": "artifacts/environment/h187/lowered/figure19_fabnet_block/fft2d_attention-overlay.json",
+            "sha256": "de9425042e1194932c8e8bbd8b9e4e36c5ba92b4d6b078c6b6361a36ae999e01"
+          },
+          "replay": {
+            "bytes": 286096,
+            "path": "artifacts/environment/h187/replay/figure19_fabnet_block/fft2d_attention-overlay.json",
+            "sha256": "de9425042e1194932c8e8bbd8b9e4e36c5ba92b4d6b078c6b6361a36ae999e01"
+          }
+        }
+      },
+      "execution_format": "mlx_dpu_memory_json",
+      "graph_id": "figure19_fabnet_block",
+      "metadata": {
+        "analytical_operations_full": 49807360,
+        "checks": {
+          "addresses": true,
+          "alignment": true,
+          "capacity": true,
+          "input_sum": true,
+          "instruction_capacity": true,
+          "load_sum": true,
+          "output_sum": true,
+          "partition": true,
+          "store_sum": true,
+          "target_free": true
+        },
+        "coupled_block_count": 76,
+        "coupled_dynamic_event_count": 2304,
+        "coupled_tag_count": 19,
+        "family": "fft2d",
+        "full_scale": 2048,
+        "input_bytes": 4096,
+        "input_bytes_by_tile": [
+          4096
+        ],
+        "load_counts_by_tile": [
+          64
+        ],
+        "max_active_instruction_footprint_per_pe": 16,
+        "memory_requests": 128,
+        "operation_counts": {
+          "add": 3648,
+          "fma": 2432
+        },
+        "output_bytes": 4096,
+        "output_bytes_by_tile": [
+          4096
+        ],
+        "paper_performance_targets_consumed": false,
+        "path_key": "N512-fft2d",
+        "pipeline_counts": {
+          "compute": 6080,
+          "load": 64,
+          "store": 64,
+          "xfer": 2304
+        },
+        "run_key": "N512-fft2d-q8",
+        "scale": 8,
+        "source_block_count": 76,
+        "source_dynamic_event_count": 2304,
+        "source_tag_count": 19,
+        "store_counts_by_tile": [
+          64
+        ],
+        "tile_count": 1
+      },
+      "node_ids": [
+        "fft2d_attention"
+      ],
+      "unit_id": "figure19_fabnet_block:fft2d_attention"
+    },
+    {
+      "artifacts": {
+        "memory": {
+          "identical": true,
+          "primary": {
+            "bytes": 816,
+            "path": "artifacts/environment/h187/lowered/figure19_fabnet_block/global_ffn1-memory.json",
+            "sha256": "2ecce7edc51b2073e41ac46941006eabfdf7d1384073df711fd6fa3234eabf94"
+          },
+          "replay": {
+            "bytes": 816,
+            "path": "artifacts/environment/h187/replay/figure19_fabnet_block/global_ffn1-memory.json",
+            "sha256": "2ecce7edc51b2073e41ac46941006eabfdf7d1384073df711fd6fa3234eabf94"
+          }
+        },
+        "overlay": {
+          "identical": true,
+          "primary": {
+            "bytes": 138769,
+            "path": "artifacts/environment/h187/lowered/figure19_fabnet_block/global_ffn1-overlay.json",
+            "sha256": "d21ba3cf5c3162b1a53e407830c6f0e8806afd1701aff11d055a2af431791294"
+          },
+          "replay": {
+            "bytes": 138769,
+            "path": "artifacts/environment/h187/replay/figure19_fabnet_block/global_ffn1-overlay.json",
+            "sha256": "d21ba3cf5c3162b1a53e407830c6f0e8806afd1701aff11d055a2af431791294"
+          }
+        }
+      },
+      "execution_format": "mlx_dpu_memory_json",
+      "graph_id": "figure19_fabnet_block",
+      "metadata": {
+        "analytical_operations_full": null,
+        "checks": {
+          "addresses": true,
+          "alignment": true,
+          "capacity": true,
+          "input_sum": true,
+          "instruction_capacity": true,
+          "load_sum": true,
+          "output_sum": true,
+          "partition": true,
+          "store_sum": true,
+          "target_free": true
+        },
+        "coupled_block_count": 48,
+        "coupled_dynamic_event_count": 48,
+        "coupled_tag_count": 12,
+        "family": "global_ffn",
+        "full_scale": 128,
+        "input_bytes": 75776,
+        "input_bytes_by_tile": [
+          75776
+        ],
+        "load_counts_by_tile": [
+          1184
+        ],
+        "max_active_instruction_footprint_per_pe": 1,
+        "memory_requests": 5280,
+        "operation_counts": {
+          "fma": 81920
+        },
+        "output_bytes": 262144,
+        "output_bytes_by_tile": [
+          262144
+        ],
+        "paper_performance_targets_consumed": false,
+        "path_key": "N512-global_ffn1",
+        "pipeline_counts": {
+          "compute": 81920,
+          "load": 1184,
+          "store": 4096,
+          "xfer": 0
+        },
+        "run_key": "N512-global_ffn1-q8",
+        "scale": 8,
+        "source_block_count": 48,
+        "source_dynamic_event_count": 48,
+        "source_tag_count": 12,
+        "store_counts_by_tile": [
+          4096
+        ],
+        "tile_count": 1
+      },
+      "node_ids": [
+        "global_ffn1"
+      ],
+      "unit_id": "figure19_fabnet_block:global_ffn1"
+    },
+    {
+      "artifacts": {
+        "memory": {
+          "identical": true,
+          "primary": {
+            "bytes": 818,
+            "path": "artifacts/environment/h187/lowered/figure19_fabnet_block/global_ffn2-memory.json",
+            "sha256": "5fc92b982cc7fcf53b5f5356b096a07a9b4f38430b054eafece1f9a06217266c"
+          },
+          "replay": {
+            "bytes": 818,
+            "path": "artifacts/environment/h187/replay/figure19_fabnet_block/global_ffn2-memory.json",
+            "sha256": "5fc92b982cc7fcf53b5f5356b096a07a9b4f38430b054eafece1f9a06217266c"
+          }
+        },
+        "overlay": {
+          "identical": true,
+          "primary": {
+            "bytes": 242801,
+            "path": "artifacts/environment/h187/lowered/figure19_fabnet_block/global_ffn2-overlay.json",
+            "sha256": "5deb853afc991bc9af2674378e6773ffc83268539ed75bf131d4796194585b55"
+          },
+          "replay": {
+            "bytes": 242801,
+            "path": "artifacts/environment/h187/replay/figure19_fabnet_block/global_ffn2-overlay.json",
+            "sha256": "5deb853afc991bc9af2674378e6773ffc83268539ed75bf131d4796194585b55"
+          }
+        }
+      },
+      "execution_format": "mlx_dpu_memory_json",
+      "graph_id": "figure19_fabnet_block",
+      "metadata": {
+        "analytical_operations_full": null,
+        "checks": {
+          "addresses": true,
+          "alignment": true,
+          "capacity": true,
+          "input_sum": true,
+          "instruction_capacity": true,
+          "load_sum": true,
+          "output_sum": true,
+          "partition": true,
+          "store_sum": true,
+          "target_free": true
+        },
+        "coupled_block_count": 56,
+        "coupled_dynamic_event_count": 56,
+        "coupled_tag_count": 14,
+        "family": "global_ffn",
+        "full_scale": 64,
+        "input_bytes": 530432,
+        "input_bytes_by_tile": [
+          530432
+        ],
+        "load_counts_by_tile": [
+          8288
+        ],
+        "max_active_instruction_footprint_per_pe": 1,
+        "memory_requests": 10336,
+        "operation_counts": {
+          "fma": 49152
+        },
+        "output_bytes": 131072,
+        "output_bytes_by_tile": [
+          131072
+        ],
+        "paper_performance_targets_consumed": false,
+        "path_key": "N512-global_ffn2",
+        "pipeline_counts": {
+          "compute": 49152,
+          "load": 8288,
+          "store": 2048,
+          "xfer": 0
+        },
+        "run_key": "N512-global_ffn2-q8",
+        "scale": 8,
+        "source_block_count": 56,
+        "source_dynamic_event_count": 56,
+        "source_tag_count": 14,
+        "store_counts_by_tile": [
+          2048
+        ],
+        "tile_count": 1
+      },
+      "node_ids": [
+        "global_ffn2"
+      ],
+      "unit_id": "figure19_fabnet_block:global_ffn2"
+    },
+    {
+      "artifacts": {
+        "profile": {
+          "identical": true,
+          "primary": {
+            "bytes": 2244,
+            "path": "artifacts/environment/h187/lowered/figure20_llama_kernels/qkv-N256.json",
+            "sha256": "935ff3078e55688a861f70eafdc4780e15ad28fac658188122ea7239ab9b58f1"
+          },
+          "replay": {
+            "bytes": 2244,
+            "path": "artifacts/environment/h187/replay/figure20_llama_kernels/qkv-N256.json",
+            "sha256": "935ff3078e55688a861f70eafdc4780e15ad28fac658188122ea7239ab9b58f1"
+          }
+        }
+      },
+      "execution_format": "analytical_kernel_profile_json",
+      "graph_id": "figure20_llama_kernels",
+      "metadata": {
+        "offchip_bytes": 39845888.0,
+        "operations": 8053063680.0,
+        "output_elements": 3145728,
+        "sequence_length": 256,
+        "stage_count": 5
+      },
+      "node_ids": [
+        "qkv"
+      ],
+      "unit_id": "figure20_llama_kernels:qkv:N256"
+    },
+    {
+      "artifacts": {
+        "profile": {
+          "identical": true,
+          "primary": {
+            "bytes": 2247,
+            "path": "artifacts/environment/h187/lowered/figure20_llama_kernels/ffn1-N256.json",
+            "sha256": "4e266a54fac0564594165a3ba03155e8f2a23cdd023d3ab68ea5507491d871af"
+          },
+          "replay": {
+            "bytes": 2247,
+            "path": "artifacts/environment/h187/replay/figure20_llama_kernels/ffn1-N256.json",
+            "sha256": "4e266a54fac0564594165a3ba03155e8f2a23cdd023d3ab68ea5507491d871af"
+          }
+        }
+      },
+      "execution_format": "analytical_kernel_profile_json",
+      "graph_id": "figure20_llama_kernels",
+      "metadata": {
+        "offchip_bytes": 35913728.0,
+        "operations": 7214202880.0,
+        "output_elements": 2818048,
+        "sequence_length": 256,
+        "stage_count": 5
+      },
+      "node_ids": [
+        "ffn1"
+      ],
+      "unit_id": "figure20_llama_kernels:ffn1:N256"
+    },
+    {
+      "artifacts": {
+        "profile": {
+          "identical": true,
+          "primary": {
+            "bytes": 5255,
+            "path": "artifacts/environment/h187/lowered/figure20_llama_kernels/attention-N256.json",
+            "sha256": "1e92b57dfe91e0539dcd2f24fe855185a4a1fa328e57039332faa43be54302ae"
+          },
+          "replay": {
+            "bytes": 5255,
+            "path": "artifacts/environment/h187/replay/figure20_llama_kernels/attention-N256.json",
+            "sha256": "1e92b57dfe91e0539dcd2f24fe855185a4a1fa328e57039332faa43be54302ae"
+          }
+        }
+      },
+      "execution_format": "analytical_kernel_profile_json",
+      "graph_id": "figure20_llama_kernels",
+      "metadata": {
+        "offchip_bytes": 3145728.0,
+        "operations": 60293120.0,
+        "output_elements": 524288.0,
+        "sequence_length": 256,
+        "stage_count": 15
+      },
+      "node_ids": [
+        "attention"
+      ],
+      "unit_id": "figure20_llama_kernels:attention:N256"
+    },
+    {
+      "artifacts": {
+        "profile": {
+          "identical": true,
+          "primary": {
+            "bytes": 2248,
+            "path": "artifacts/environment/h187/lowered/figure20_llama_kernels/ffn2-N256.json",
+            "sha256": "6d239d8b35fcf17515e4da16e3a52deb433d536bf88685549122dc6536c1e05d"
+          },
+          "replay": {
+            "bytes": 2248,
+            "path": "artifacts/environment/h187/replay/figure20_llama_kernels/ffn2-N256.json",
+            "sha256": "6d239d8b35fcf17515e4da16e3a52deb433d536bf88685549122dc6536c1e05d"
+          }
+        }
+      },
+      "execution_format": "analytical_kernel_profile_json",
+      "graph_id": "figure20_llama_kernels",
+      "metadata": {
+        "offchip_bytes": 35913728.0,
+        "operations": 7214202880.0,
+        "output_elements": 1048576,
+        "sequence_length": 256,
+        "stage_count": 5
+      },
+      "node_ids": [
+        "ffn2"
+      ],
+      "unit_id": "figure20_llama_kernels:ffn2:N256"
+    },
+    {
+      "artifacts": {
+        "profile": {
+          "identical": true,
+          "primary": {
+            "bytes": 2267,
+            "path": "artifacts/environment/h187/lowered/figure20_llama_kernels/qkv-N8192.json",
+            "sha256": "745d3361e8632f45a9d2d779792a7723f93eb738c78d8cd55b1b3cc485fb7e34"
+          },
+          "replay": {
+            "bytes": 2267,
+            "path": "artifacts/environment/h187/replay/figure20_llama_kernels/qkv-N8192.json",
+            "sha256": "745d3361e8632f45a9d2d779792a7723f93eb738c78d8cd55b1b3cc485fb7e34"
+          }
+        }
+      },
+      "execution_format": "analytical_kernel_profile_json",
+      "graph_id": "figure20_llama_kernels",
+      "metadata": {
+        "offchip_bytes": 299892736.0,
+        "operations": 257698037760.0,
+        "output_elements": 100663296,
+        "sequence_length": 8192,
+        "stage_count": 5
+      },
+      "node_ids": [
+        "qkv"
+      ],
+      "unit_id": "figure20_llama_kernels:qkv:N8192"
+    },
+    {
+      "artifacts": {
+        "profile": {
+          "identical": true,
+          "primary": {
+            "bytes": 2269,
+            "path": "artifacts/environment/h187/lowered/figure20_llama_kernels/ffn1-N8192.json",
+            "sha256": "ef9e6e9b9e6cab7ba11bd2beb474d41c7a5a9ff6ee3ff770a852c5ef33a8f91c"
+          },
+          "replay": {
+            "bytes": 2269,
+            "path": "artifacts/environment/h187/replay/figure20_llama_kernels/ffn1-N8192.json",
+            "sha256": "ef9e6e9b9e6cab7ba11bd2beb474d41c7a5a9ff6ee3ff770a852c5ef33a8f91c"
+          }
+        }
+      },
+      "execution_format": "analytical_kernel_profile_json",
+      "graph_id": "figure20_llama_kernels",
+      "metadata": {
+        "offchip_bytes": 275644416.0,
+        "operations": 230854492160.0,
+        "output_elements": 90177536,
+        "sequence_length": 8192,
+        "stage_count": 5
+      },
+      "node_ids": [
+        "ffn1"
+      ],
+      "unit_id": "figure20_llama_kernels:ffn1:N8192"
+    },
+    {
+      "artifacts": {
+        "profile": {
+          "identical": true,
+          "primary": {
+            "bytes": 5918,
+            "path": "artifacts/environment/h187/lowered/figure20_llama_kernels/attention-N8192.json",
+            "sha256": "02b9e4c3843e2761debb08d903f096c52ea3d6cf77850463c9205d101a5ff2ee"
+          },
+          "replay": {
+            "bytes": 5918,
+            "path": "artifacts/environment/h187/replay/figure20_llama_kernels/attention-N8192.json",
+            "sha256": "02b9e4c3843e2761debb08d903f096c52ea3d6cf77850463c9205d101a5ff2ee"
+          }
+        }
+      },
+      "execution_format": "analytical_kernel_profile_json",
+      "graph_id": "figure20_llama_kernels",
+      "metadata": {
+        "offchip_bytes": 100663296.0,
+        "operations": 2181038080.0,
+        "output_elements": 16777216.0,
+        "sequence_length": 8192,
+        "stage_count": 17
+      },
+      "node_ids": [
+        "attention"
+      ],
+      "unit_id": "figure20_llama_kernels:attention:N8192"
+    },
+    {
+      "artifacts": {
+        "profile": {
+          "identical": true,
+          "primary": {
+            "bytes": 2265,
+            "path": "artifacts/environment/h187/lowered/figure20_llama_kernels/ffn2-N8192.json",
+            "sha256": "99f949f92f6f1e920589de98afa21dd767986abc51f1e41670bc7a86bd7ecabf"
+          },
+          "replay": {
+            "bytes": 2265,
+            "path": "artifacts/environment/h187/replay/figure20_llama_kernels/ffn2-N8192.json",
+            "sha256": "99f949f92f6f1e920589de98afa21dd767986abc51f1e41670bc7a86bd7ecabf"
+          }
+        }
+      },
+      "execution_format": "analytical_kernel_profile_json",
+      "graph_id": "figure20_llama_kernels",
+      "metadata": {
+        "offchip_bytes": 275644416.0,
+        "operations": 230854492160.0,
+        "output_elements": 33554432,
+        "sequence_length": 8192,
+        "stage_count": 5
+      },
+      "node_ids": [
+        "ffn2"
+      ],
+      "unit_id": "figure20_llama_kernels:ffn2:N8192"
+    }
+  ]
+}

@@ -924,3 +924,15 @@ are within 15%, at 2.84% MAPE and 6.90% maximum error. All baseline directions,
 sixteen legacy MLX execution ledgers and sixteen RTX4090 trace features match.
 Figures23/19/20 now meet the numerical threshold; the remaining required work
 is a unified, replayable workload-lowering path and a joint final audit.
+
+Run192 closes the workload-ingestion gap. The new high-level YAML schema holds
+three model graphs and fourteen graph-qualified operator nodes. A DAG validator
+then dispatches to three adapters: complete-block overlay JSON, coupled
+DPU-memory overlay JSON, and analytical KernelProfile JSON. Lowering emits one
+Figure23 overlay, three Figure19 overlay/memory pairs and eight Figure20
+profiles—twelve executable units—with byte-identical replays and lineage for
+all fourteen nodes. Native runners execute every unit twice (24/24 pass; 12/12
+summary identities). The documentation now explains each representation and
+command boundary. This is a working repository toolchain assembled from the
+available simulators, not a claim to the authors' unpublished LLVM/spatial
+assembler.
