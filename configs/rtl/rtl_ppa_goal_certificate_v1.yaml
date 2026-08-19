@@ -1,0 +1,67 @@
+name: rtl-ppa-goal-certificate-v1
+experiment_id: H204
+run_id: run209
+classification: final_calibrated_open_pdk_rtl_ppa_certificate
+validation_eligible: false
+
+frozen_inputs:
+  toolchain:
+    path: artifacts/results/rtl-ppa-toolchain-run202.json
+    bytes: 7224
+    sha256: d1a6aa2cdeb4466d8e8e6fd72f7ad5604987a80bd1c9c753335381afd1f5c3af
+    experiment_id: H197
+    run_id: run202
+    required_status: supported
+    required_integrity: true
+  critical_rtl:
+    path: artifacts/results/mlx-critical-rtl-run203.json
+    bytes: 26541
+    sha256: f5485621410347652115b8d784371f3f400830f88d2bfb1bcfc0d5bffde86bc5
+    experiment_id: H198
+    run_id: run203
+    required_status: supported
+    required_integrity: true
+  calibrated_ppa:
+    path: artifacts/results/mlx-rtl-ppa-activity-calibrated-run208.json
+    bytes: 15265
+    sha256: b84f453ff0df05b5e12297507cf530ef9ac6f78b388c3ecbea4609d5246203f7
+    experiment_id: H203
+    run_id: run208
+    required_status: supported
+    required_integrity: true
+
+completion_contract:
+  critical_modules: 7
+  programs: 3
+  instructions: 18
+  functional_runs: 8
+  functional_synthesis_tops: 10
+  ppa_synthesis_records: 12
+  ppa_power_records: 24
+  area_values: 9
+  power_values: 9
+  maximum_relative_error: 0.15
+  activity_parameters: 6
+  validation_eligible: false
+
+rtl_sources: [rtl/mlx/mlx_fp16.sv, rtl/mlx/mlx_config_network.sv, rtl/mlx/mlx_data_network.sv, rtl/mlx/mlx_tag_buffer.sv, rtl/mlx/mlx_control_logic.sv, rtl/mlx/mlx_register_file.sv, rtl/mlx/mlx_fu.sv, rtl/mlx/mlx_pe_top.sv, rtl/mlx/tb_mlx_pe.sv, rtl/mlx/sim_mlx_pe.cpp]
+workload_sources: [configs/rtl/workloads/bsmm.yaml, configs/rtl/workloads/fft_cmp.yaml, configs/rtl/workloads/swa.yaml]
+
+verification:
+  ruff_command: [.venv/bin/ruff, check, scripts, src, tests]
+  pytest_command: [.venv/bin/pytest, -q]
+  expected_pytest_passed: 498
+  expected_pytest_failed: 0
+  expected_pytest_warnings: 17
+
+source_layout:
+  protocol: experiments/h204-rtl-ppa-goal-certificate/protocol.md
+  config: configs/rtl/rtl_ppa_goal_certificate_v1.yaml
+  runner: scripts/run_rtl_ppa_goal_verification.py
+  auditor: scripts/audit_rtl_ppa_goal.py
+  test: tests/test_rtl_ppa_goal.py
+  handoff: docs/rtl-ppa-reproduction.md
+
+output_root: artifacts/environment/h204
+verification_manifest: artifacts/environment/h204/verification-manifest.json
+result_path: artifacts/results/rtl-ppa-goal-run209.json
