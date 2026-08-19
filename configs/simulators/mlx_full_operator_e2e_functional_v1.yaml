@@ -1,0 +1,92 @@
+name: mlx-full-operator-e2e-functional-v1
+experiment_id: H175
+run_id: run180
+classification: target_free_MLX_full_operator_end_to_end_functional
+validation_eligible: true
+
+frozen_inputs:
+  h171:
+    path: artifacts/results/data-ready-complete-block-run176.json
+    bytes: 16048
+    sha256: 1724e4863ec0e7184675fbc3a83df330347d1d088ee2a4bfb9db3010cb78dcb8
+    required_status: supported
+    required_integrity: true
+  h171_config:
+    path: configs/simulators/data_ready_complete_block_v1.yaml
+    bytes: 3445
+    sha256: 70050954ce373d2f129fcf4fc8f22d96d703ec2368628d302c5922069449580f
+  h171_compiler:
+    path: scripts/compile_data_ready_complete_block.py
+    bytes: 10571
+    sha256: 9fa72f99f3cf95387e19646c3e0b66684bc50ced495f913d7bcb29a5d8af099d
+  xavier_functional:
+    path: artifacts/results/xavier-e2e-functional-run178.json
+    bytes: 7715
+    sha256: 9b870a1fbb674521817172372daaebfa508c14cef4137f3f189509636d1c4f00
+    required_status: supported
+    required_integrity: true
+  performance_estimate:
+    path: artifacts/results/paper-aligned-e2e-estimate-run179.json
+    bytes: 12867
+    sha256: 6a54b7f32fa2214b6cf201028d29f4f803a7010e4766f58c14d2c1e784cf56dd
+    required_status: supported
+    required_integrity: true
+
+preprocess:
+  family: rmsnorm_rope
+  batches: 2
+  width: 4
+  tags: [1, 2]
+  raw_input_base: 45056
+  normalized_base: 49152
+  epsilon: 1.0e-5
+  rope_angle_scale: 0.075
+  added_blocks: 4
+  added_functional_operations: 74
+  added_memory_requests: 32
+  added_memory_bytes: 256
+
+composition:
+  operator_groups:
+    - rmsnorm
+    - rope
+    - hierarchical_bsmm
+    - fft_cmp
+    - attention
+    - causal_swa
+    - residual_scale_silu
+  original_tags: 13
+  tag_shift: 2
+  expected_tags: 15
+  original_blocks: 54
+  expected_blocks: 58
+  original_operations: 466
+  expected_operations: 540
+  original_memory_requests: 162
+  expected_memory_requests: 194
+  original_memory_bytes: 1296
+  expected_memory_bytes: 1552
+  expected_boundary_events: 97
+  expected_route_hops: 139
+  expected_outputs: 8
+  active_window: 15
+  mesh: [24, 8]
+
+execution:
+  functional_modes: [enabled, disabled]
+  builds: [debug, opt, sanitize]
+  expected_configs: 2
+  expected_runs: 6
+  maximum_absolute_error: 1.0e-12
+  paper_performance_targets_consumed: false
+
+source_layout:
+  protocol: experiments/h175-mlx-full-operator-functional/protocol.md
+  config: configs/simulators/mlx_full_operator_e2e_functional_v1.yaml
+  compiler: scripts/compile_mlx_full_operator_e2e.py
+  runner: scripts/run_mlx_full_operator_e2e.py
+  auditor: scripts/audit_mlx_full_operator_e2e.py
+  test: tests/test_mlx_full_operator_e2e.py
+
+output_root: artifacts/environment/h175
+result_path: artifacts/results/mlx-full-operator-e2e-functional-run180.json
