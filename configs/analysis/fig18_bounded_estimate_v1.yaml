@@ -1,0 +1,73 @@
+name: fig18-bounded-estimate-v1
+experiment_id: H180
+run_id: run185
+classification: paper_informed_bounded_Figure18_performance_exploration
+validation_eligible: false
+
+frozen_inputs:
+  identity_gap:
+    path: artifacts/results/fig18-workload-identity-run136.json
+    bytes: 9634
+    sha256: ae0b793ab3815968d085d559292b3169c2d8d810084e8a531f91dab6ec72fffa
+    required_status: supported
+    required_integrity: true
+  complete_block_scaling:
+    path: artifacts/results/fig23-complete-block-run146.json
+    bytes: 12663
+    sha256: 7aad546c0b750086c78b3ec04427143c46da74a9f7ea96ad47b9017ce0d60c69
+    required_status: supported
+    required_integrity: true
+  data_ready_mechanism:
+    path: artifacts/results/one-baseline-goal-certificate-run177.json
+    bytes: 6402
+    sha256: 2e41fe53490daf98450b00b2ccb24661d276276024b0af02a627070f2330c044
+    required_status: supported
+    required_integrity: true
+  figure18_reference:
+    path: artifacts/results/fig18-run008.json
+    bytes: 1378
+    sha256: 210f7e5e91d203df3288a7fd3f971851180c1883df1c03b6ad53a8ac6e2c45bd
+
+representative_workload:
+  sequence_length: 1024
+  hidden_dimension: 512
+  batch: 8
+  unit: single_complete_transformer_block
+  block_size_B: 32
+  fft_chunk_length_L: 512
+  ffn_dimension: 2048
+  attention_heads: 8
+  structured_component_graph: H141_complete_28_stage_surrogate
+  structured_vs_dense_layer_mix: one_structured_block
+  per_component_compression: uniform_s
+  elementwise_components: H141_registered
+  memory_residency: H175_data_ready_boundaries
+  measurement_interval: complete_block_cycles
+  precision: FP16_work_with_cycle_surrogate
+  disclosure: cross_figure_inference_not_Figure18_author_manifest
+
+estimate:
+  settings: [0.75, 0.5]
+  spatten_flop_saving: 3.0
+  mlx_flop_savings: [4.1, 6.1]
+  lower_affinity_source: H172_complete_block_data_ready_speedup
+  upper_affinity_source: mean_H141_N1024_SIMD32_speedup_windows2_4
+  point_affinity: arithmetic_midpoint
+
+acceptance:
+  required_external_rows: 5
+  required_mlx_rows: 2
+  maximum_point_latency_relative_error: 0.20
+  require_paper_latency_inside_bounds: true
+  require_paper_affinity_inside_bounds: true
+  require_positive_MLX_improvement: true
+  energy_series_role: reported_reference_only
+  independent_validation_claimed: false
+
+source_layout:
+  protocol: experiments/h180-fig18-bounded-estimate/protocol.md
+  config: configs/analysis/fig18_bounded_estimate_v1.yaml
+  estimator: scripts/estimate_fig18_bounded.py
+  test: tests/test_fig18_bounded_estimate.py
+
+result_path: artifacts/results/fig18-bounded-estimate-run185.json
