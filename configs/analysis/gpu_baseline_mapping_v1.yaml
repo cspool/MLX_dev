@@ -1,0 +1,99 @@
+name: gpu-baseline-mapping-v1
+experiment_id: H168
+run_id: run173
+classification: target_free_open_gpu_simulator_mapping_and_gap_audit
+validation_eligible: true
+
+frozen_inputs:
+  source_note:
+    path: literature/mlx-gpu-baseline-mapping-2026-08-19.md
+    bytes: 7421
+    sha256: 9e19c86fc80276b5483c6bf939640338e37275d56a30abef8cd3c68a9088ab90
+  xavier_proxy:
+    path: artifacts/results/gpgpusim-xavier-proxy-run062.json
+    bytes: 7595
+    sha256: 443843b96d3f01cf27fee02413ae8d8cdc519233aca514cdaeb2d34d0373fe14
+    required_status: supported
+    required_integrity: true
+  orin_proxy:
+    path: artifacts/results/gpgpusim-orin-proxy-run060.json
+    bytes: 7608
+    sha256: 62eae2e80adb5c21b13d11b622ea1238818320e6db8e9b924472e8035193e193
+    required_status: supported
+    required_integrity: true
+  rtx3090_proxy:
+    path: artifacts/results/gpgpusim-rtx3090-proxy-run057.json
+    bytes: 9156
+    sha256: 4b654a898455057240ac9fd0c3e6efbb382b8eec394c609f0dd1e0629a1bf358
+    required_status: supported
+    required_integrity: true
+  orin_schedule:
+    path: artifacts/results/fig24-gpu-schedule-ambiguity-run128.json
+    bytes: 8196
+    sha256: 5eaa70307f1e07283f12073dbfb71bf283d36f13df768d3bfb092682c08cbcfa
+    required_status: supported
+    required_integrity: true
+  xavier_coverage:
+    path: artifacts/results/fig21-xavier-coverage-run148.json
+    bytes: 19293
+    sha256: 0115c705b2274fa6f1c6c8671161073717a36c6550d7fa33876bf8b69084aefd
+    required_status: supported
+    required_integrity: true
+  h100_cross_figure:
+    path: artifacts/results/fig17-cross-figure-run021.json
+    bytes: 8131
+    sha256: 4953bcf9ee6f6483c9a9ca29d32a6fb1dd78c8ba6df3dde45f286f7ba87b91a8
+    required_summary_pass: false
+
+open_source_pins:
+  project_accelsim: c5296df152c99a28dd64e5d9560bd58a8fd2e774
+  project_gpgpusim: 68e1cd30efaecbd71b496822f9d88a5803b33841
+  refreshed_accelsim_release: aa95f49359984cb278b2bb339b202e86934b692b
+  refreshed_gpgpusim_dev: 03c1fe443b1a46de695381662830bb4b9a4b3a00
+  flashgpusim: f3d4bba7174213c06330e5c88d71b42b2aa66a72
+
+devices:
+  xavier:
+    paper_figures: [20, 21]
+    hardware_isa: SM72
+    local_simulator: Accel-Sim/GPGPU-Sim
+    local_timing_template: SM70_TITANV
+    preferred_next_path: native_Xavier_tuner_plus_SASS
+  orin:
+    paper_figures: [2, 24, 25]
+    hardware_isa: SM87
+    local_simulator: Accel-Sim/GPGPU-Sim
+    local_timing_template: SM86_RTX3070
+    preferred_next_path: native_Orin_tuner_plus_SASS
+  rtx3090:
+    paper_figures: [24, 25]
+    hardware_isa: SM86
+    local_simulator: Accel-Sim/GPGPU-Sim
+    local_timing_template: SM86_RTX3070
+    preferred_next_path: native_RTX3090_tuner_plus_SASS
+  h100:
+    paper_figures: [3, 17]
+    hardware_isa: SM90
+    local_simulator: none
+    local_timing_template: none
+    preferred_next_path: FlashGPU-Sim_SM90_plus_native_H100_correlation
+
+acceptance:
+  required_devices: 4
+  required_vendor_identity_coverage: 4
+  required_open_candidate_coverage: 4
+  required_local_executable_proxies: 3
+  required_native_tuned_configs: 0
+  required_native_application_traces: 0
+  required_validation_eligible_devices: 0
+  require_proxy_labels: true
+  require_no_paper_performance_targets: true
+
+source_layout:
+  protocol: experiments/h168-gpu-baseline-mapping/protocol.md
+  config: configs/analysis/gpu_baseline_mapping_v1.yaml
+  source_note: literature/mlx-gpu-baseline-mapping-2026-08-19.md
+  auditor: scripts/audit_gpu_baseline_mapping.py
+  test: tests/test_gpu_baseline_mapping.py
+
+result_path: artifacts/results/gpu-baseline-mapping-run173.json
