@@ -1365,7 +1365,11 @@ rtl_ppa_reproduction:
     tag_metadata_bits: 32
     reduced_fu: structurally_excludes_div_exp_shuffle
     activity_repetitions: 128
-  next_step: reduced_topology_and_utilization_normalized_power
+  h201_registered_profiles:
+    full: {config_words: 20, links: 6, link_depth: 18, tags: 16, control_bits_per_tag: 64, rf_depth: 5, simd: 32, fp32_sidecar_lanes: 8}
+    reduced: {config_words: 2, links: 2, link_depth: 2, tags: 4, control_bits_per_tag: 64, rf_depth: 2, simd: 8, fp32_sidecar_lanes: 0}
+    activity: {repetitions: 128, approximate_compute_utilization: 0.90, active_network_paths: 2}
+  next_step: implement_profiled_full_reduced_and_remeasure
 
 functional_completion:
   status: complete
