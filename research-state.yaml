@@ -1266,6 +1266,33 @@ fig20_n4096_attention_repair:
     pytest_warnings: 17
   handoff: docs/fig20-attention-holdout-repair.md
 
+rtl_ppa_reproduction:
+  status: active
+  paper_contract:
+    rtl_language: Verilog
+    technology_nm: 12
+    frequency_ghz: 1.0
+    synthesis_tool: Synopsys_DC
+    full_power_source: post_silicon_measurement
+    reduced_power_source: post_synthesis_report
+  availability:
+    synopsys_dc: unavailable
+    synopsys_vcs: unavailable
+    private_12nm_library: unavailable
+    open_equivalent:
+      simulation: [iverilog_11.0, verilator_4.038]
+      synthesis: yosys_0.9_abc
+      timing_power: openroad_2.0-17598
+      library: nangate45_nonfabricable_reference
+  objective:
+    maximum_relative_error: 0.15
+    require_synthesizable_rtl: true
+    require_activity_based_power: true
+    require_functional_tests: true
+    require_explicit_tool_method_scope: true
+  current_hypothesis: H197
+  next_step: qualify_open_rtl_ppa_toolchain
+
 functional_completion:
   status: complete
   priority: integrated_same_input_numeric_and_cycle_execution
