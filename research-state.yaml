@@ -1326,7 +1326,13 @@ rtl_ppa_reproduction:
     data_packet_bits: 64
     reconstructed_assumptions: {registers_per_lane: 16, read_ports: 2, write_ports: 1}
     workloads: [bsmm, fft_cmp, swa]
-  next_step: activity_power_and_component_ratio_baseline
+  h199_transfer_policy:
+    runner_target_access: false
+    area_parameters: 1
+    power_parameters: 1
+    calibration_anchor: full_pe_aggregate
+    evaluated_holdouts: [six_component_areas, six_component_powers, reduced_area, reduced_power]
+  next_step: measure_activity_power_and_test_global_transfer
 
 functional_completion:
   status: complete
