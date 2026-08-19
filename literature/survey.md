@@ -147,6 +147,17 @@
 - Official sources: <https://developer.nvidia.com/blog/nvidia-jetson-agx-xavier-32-teraops-ai-robotics/> and <https://www.nvidia.com/en-us/autonomous-machines/embedded-systems/jetson-xavier-series/>.
 - The target paper fixes its evaluated operating point at 15 W and reports 1.7-TFLOP/s CUDA and 6-TFLOP/s Tensor peaks; those paper-specific values take precedence in H6.
 
+## GPU baseline mapping refresh (2026-08-19)
+
+The source-qualified mapping and proxy limitations for Xavier, Orin, RTX3090
+and H100 are consolidated in
+[mlx-gpu-baseline-mapping-2026-08-19.md](mlx-gpu-baseline-mapping-2026-08-19.md).
+The refresh adds FlashGPU-Sim pin `f3d4bba` as the preferred open SM90/H100
+candidate. Accel-Sim remains the Volta/Ampere basis, but its documented tuner
+requires target-device microbenchmarks and its SASS path requires matching
+traces; existing resource-edited TitanV/RTX3070 proxies are not vendor-validated
+Xavier/Orin/RTX3090 configurations.
+
 ## Evidence labels used by this project
 
 - `reported`: numeric text/table value stated by the paper.
