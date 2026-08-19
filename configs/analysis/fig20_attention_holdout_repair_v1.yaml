@@ -1,0 +1,87 @@
+name: fig20-attention-holdout-repair-v1
+experiment_id: H195
+run_id: run200
+classification: post_failure_target_free_feature_repair_not_independent_validation
+validation_eligible: false
+
+frozen_inputs:
+  holdout_predictions:
+    path: artifacts/environment/h193/holdout-predictions.json
+    bytes: 49575
+    sha256: d5730c631c6bdc66aa5f40436ccab111c2055df03256457633344f74f62554ba
+  holdout_result:
+    path: artifacts/results/independent-holdout-validation-run198.json
+    bytes: 20803
+    sha256: a5ec9fc3601a0e81412d5536947307bf97ae5426f90ac877edb24f370d262231
+    required_status: rejected
+    required_integrity: true
+  endpoint_trace:
+    path: artifacts/results/fig19-20-23-rtx4090-trace-run187.json
+    bytes: 52250
+    sha256: b958398750a3a34a2426ae24b22a1014a199486f31d38a0b67dc6ea3bd4afbb9
+    required_status: supported
+    required_integrity: true
+  selected_model:
+    path: artifacts/results/fig19-20-23-gap-attribution-run188.json
+    bytes: 37530
+    sha256: d38bd8ddc7cb6e131662241549f53df97015053b87a72b00277137d970001aef
+    required_status: supported
+    required_integrity: true
+  joint_certificate:
+    path: artifacts/results/simulator-next-work-goal-run199.json
+    bytes: 8085
+    sha256: 5dc6a8abb1f82d3734955b89234a77764b72c6aea6ce13fcacbc9c48f0ae63a1
+    required_status: supported
+    required_integrity: true
+  paper_figure:
+    path: MLX Multi-Layer Execution for Structured LLM Workload Acceleration on Spatial Architectures/_page_11_Figure_0.jpeg
+    bytes: 32724
+    sha256: ec85109be3f623878c0c9350e1874d628b9f670f698247cc73c8d05a38d22f6f
+  targets:
+    path: artifacts/targets/paper_targets.yaml
+    bytes: 14931
+    sha256: c4a22ab8052ff8cb223a729b8ce07320c6826cfee0d37e1a664a8761e018b41e
+
+repair:
+  trace_sequences: [256, 512, 2048, 4096, 8192]
+  holdout_sequences: [512, 2048, 4096]
+  reference_sequence: 256
+  dense_component: dense_flash_attention
+  sparse_component: sparse_cuda_fft_attention
+  panels: [versus_dense_tcu, versus_sparse_cuda]
+  attention_parameters:
+    - dense_attention_base
+    - sparse_attention_base
+    - attention_trace_contrast_slope
+  required_cross_fit_support: 4
+
+acceptance:
+  maximum_relative_error: 0.15
+  required_total_points: 48
+  required_attention_points: 6
+  required_replaced_points: 6
+  required_unchanged_points: 42
+  required_n4096_points: 2
+  required_direction_matches: 36
+  require_positive_cross_fit_slope: true
+  require_no_parameter_refit: true
+  independent_validation_claimed: false
+
+limitations:
+  n4096_is_paper_measurement: false
+  reference_kind: post_prediction_two_endpoint_logN_interpolation
+  trace_device: NVIDIA GeForce RTX 4090
+  paper_device: NVIDIA Jetson Xavier
+  sparse_proxy_omits: [qk, softmax, sv]
+
+source_layout:
+  protocol: experiments/h195-fig20-attention-holdout-repair/protocol.md
+  config: configs/analysis/fig20_attention_holdout_repair_v1.yaml
+  service: src/mlxsim/performance_service.py
+  runner: scripts/repair_fig20_attention_holdout.py
+  auditor: scripts/audit_fig20_attention_holdout_repair.py
+  test: tests/test_fig20_attention_holdout_repair.py
+
+output_root: artifacts/environment/h195
+prediction_manifest: artifacts/environment/h195/fig20-attention-repaired-predictions.json
+result_path: artifacts/results/fig20-attention-holdout-repair-run200.json
