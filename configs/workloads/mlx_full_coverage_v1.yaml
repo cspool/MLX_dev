@@ -1,0 +1,61 @@
+schema_version: 1
+suite_id: mlx-full-coverage-v1
+
+graphs:
+  figure23_scalability_grid:
+    figure: 23
+    model:
+      family: structured_transformer
+      sequence_lengths: [512, 1024, 2048, 4096, 8192]
+      hidden_dimension: 512
+      batch: 8
+    operators: [rmsnorm, rope, qkv, fft_cmp, attention, output, ffn]
+    lowering:
+      adapter: physical_fig23_grid
+      active_windows: [2, 4]
+      configurations: [baseline, simd32_4x4, simd8_8x8, simd32_8x8]
+      execution_format: mlx_overlay_json
+
+  figure19_component_grid:
+    figure: 19
+    model:
+      family: fabnet_large
+      sequence_lengths: [128, 256, 512, 1024]
+      hidden_dimension: 1024
+      ffn_dimension: 4096
+      batch: 1
+    operators: [fft2d_attention, global_ffn1, global_ffn2]
+    lowering:
+      adapter: fig19_coupled_grid
+      scale: 8
+      execution_format: mlx_dpu_memory_json
+
+  figure20_kernel_grid:
+    figure: 20
+    model:
+      family: llama2_7b_structured_block
+      sequence_lengths: [256, 8192]
+      hidden_dimension: 4096
+      ffn_dimension: 11008
+      batch: 1
+      block_size: 32
+      compression_ratio: 0.5
+      chunk_length: 512
+    operators: [qkv, attention, ffn1, ffn2]
+    lowering:
+      adapter: analytical_profile_grid
+      execution_format: analytical_kernel_profile_json
+
+compositions:
+  llama2_32_layer:
+    source_graph: figure20_kernel_grid
+    total_layers: 32
+    structured_layers: 24
+    dense_layers: 8
+    sequence_lengths: [256, 8192]
+    execution_format: multi_layer_composition_json
+  fabnet_24_layer:
+    source_graph: figure19_component_grid
+    total_layers: 24
+    sequence_lengths: [128, 256, 512, 1024]
+    execution_format: multi_layer_composition_json

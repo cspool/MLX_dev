@@ -1,0 +1,87 @@
+name: full-workload-coverage-v1
+experiment_id: H192
+run_id: run197
+classification: unified_full_shape_and_multilayer_coverage
+validation_eligible: true
+
+frozen_inputs:
+  coverage_spec:
+    path: configs/workloads/mlx_full_coverage_v1.yaml
+    bytes: 1693
+    sha256: 92e39ae4f8946d311ef9f0089b48b9e5c19d70522a54d084b50c3305441235fe
+  physical_parent:
+    path: artifacts/results/cycle-level-physicalization-run196.json
+    bytes: 17084
+    sha256: cdfb20edab4208c1b53b3e9ad3464d66b29d78d802ebe6b8f18c9e84888723e0
+    required_status: supported
+    required_integrity: true
+  physical_compile:
+    path: artifacts/environment/h191/physical-fig23-compile-manifest.json
+    bytes: 206819
+    sha256: cd16589cc88799cf328f8767ff0a8963aa1b34b41f9d84e52623062b2d6f7c23
+  source_manifest:
+    path: artifacts/environment/h98/fig19-source-paths-compile-manifest.json
+    bytes: 101749
+    sha256: 6d83653478cda02a9857aed146f5d67dff436929ca0eec7b7c85381d3636389f
+  source_config:
+    path: configs/simulators/fig19_source_paths_v1.yaml
+    bytes: 1977
+    sha256: ef275e7838b35e6e8936ace9096da2fcbaf54707f67c0084635222baf94ea3d8
+  coupled_config:
+    path: configs/simulators/fig19_coupled_paths_v1.yaml
+    bytes: 2447
+    sha256: 89d22f4b2e700e25a892ce6cc3f2fd9f681cc95703ef25c80ace99e318c80126
+  frontend_parent:
+    path: artifacts/results/automatic-model-frontend-run195.json
+    bytes: 6258
+    sha256: 1945ba3760343999f30d6eb91e06871528c7e027d0b72ac2d83056cc1668d3e3
+    required_status: supported
+    required_integrity: true
+  same_input_parent:
+    path: artifacts/results/same-input-numerical-equivalence-run194.json
+    bytes: 12365
+    sha256: 7d3eab1c853eb474dc5d13c8e7ea6c7068788ae28427b832964f212de07596f9
+    required_status: supported
+    required_integrity: true
+  mlx_full_hardware:
+    path: configs/hardware/mlx_full.yaml
+    bytes: 532
+    sha256: 97f8ed084c2f62eef41eb86de0b06ba43bf9947d301ac3b24d894d2f83d6053c
+
+coverage_contract:
+  graphs: 3
+  operator_nodes: 14
+  figure23_units: 40
+  figure19_units: 12
+  figure20_units: 8
+  composition_units: 2
+  executable_units: 62
+  replay_executions: 124
+  figure23_sequence_lengths: [512, 1024, 2048, 4096, 8192]
+  figure19_sequence_lengths: [128, 256, 512, 1024]
+  figure20_sequence_lengths: [256, 8192]
+  llama_layers: 32
+  fabnet_layers: 24
+  require_single_entrypoint: true
+  require_no_figure_specific_manual_step: true
+  require_replay_identity: true
+  require_functional_parent: true
+
+execution:
+  max_cycles: 100000000
+  replays: 2
+
+source_layout:
+  protocol: experiments/h192-full-workload-coverage/protocol.md
+  config: configs/analysis/full_workload_coverage_v1.yaml
+  coverage_spec: configs/workloads/mlx_full_coverage_v1.yaml
+  expander: src/mlxsim/workload_coverage.py
+  cli: scripts/lower_full_workload_coverage.py
+  runner: scripts/run_full_workload_coverage.py
+  auditor: scripts/audit_full_workload_coverage.py
+  test: tests/test_full_workload_coverage.py
+
+output_root: artifacts/environment/h192
+coverage_manifest: artifacts/environment/h192/full-coverage-lowering-manifest.json
+execution_manifest: artifacts/environment/h192/full-coverage-execution-manifest.json
+result_path: artifacts/results/full-workload-coverage-run197.json
