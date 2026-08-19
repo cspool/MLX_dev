@@ -966,3 +966,13 @@ bank-rotating registers and aligned two-buffer SPM/DMA ranges. Twelve generated
 KernelProfiles execute twice (24 runs; 12 replay identities). This proves an
 automatic model frontend exists, while intentionally stopping short of claiming
 the paper authors' compiler.
+
+Run196 removes the result-side latency correction. Figure23 pre-ROI credit now
+advances real overlay scheduler state before resetting a measurement origin;
+long-sequence congestion advances the clock through deterministic no-issue
+stall steps, allowing FU/route readiness to evolve naturally. This reveals why
+scheduler-progress cycles legitimately shrink during stalls, while instruction
+and event work remains exact. Figure19/20 services are materialized as 44
+integer cycle timelines with 92 positive launch/work/SPM/congestion phases.
+All 68 performance values and 50 directions remain valid (3.05% MAPE, 12.42%
+maximum) with latency postprocessing disabled.
