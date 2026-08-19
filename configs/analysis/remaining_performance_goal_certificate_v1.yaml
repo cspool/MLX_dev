@@ -1,0 +1,99 @@
+name: remaining-performance-goal-certificate-v1
+experiment_id: H181
+run_id: run186
+classification: final_requested_performance_exploration_certificate
+validation_eligible: true
+
+frozen_inputs:
+  priority_certificate:
+    path: artifacts/results/priority-performance-certificate-run184.json
+    bytes: 5149
+    sha256: 7cfd874f9bcc820ef0b70f3d1e1ef5887e83b59a6e084c5954ebe5444033513b
+    required_status: supported
+    required_integrity: true
+  fig24_native4090:
+    path: artifacts/results/fig24-rtx4090-postcache-run183.json
+    bytes: 28039
+    sha256: 9492cd13f5e348a2a56f8fbc3d144711fb167ce2a1ee8a3dc4041d9d9226535c
+    required_status: supported
+    required_integrity: true
+  fig23:
+    path: artifacts/results/fig23-complete-block-trend-run147.json
+    bytes: 17251
+    sha256: f2526f1f4aca39a9c90005ae11a6176d680ce5dbfd9c721ef007916a7724ac8a
+    required_status: supported
+    required_integrity: true
+  fig19:
+    path: artifacts/results/fig19-trend-completion-run143.json
+    bytes: 6305
+    sha256: f610342a6b852dc617a0aca444ff545469ac0d2be61d27a68d0a9656e247086e
+    required_status: supported
+    required_integrity: true
+  fig20:
+    path: artifacts/results/fig20-attention-completion-run141.json
+    bytes: 8165
+    sha256: 2fd983a8a1424ecfbcf8487d7852517b9f22a3e0957e476c0a6fe981d1c7f01f
+    required_status: supported
+    required_integrity: true
+  fig18:
+    path: artifacts/results/fig18-bounded-estimate-run185.json
+    bytes: 13721
+    sha256: 8e55674951f008315d7e4de3eef003673a8307f45d99aacf4e1d14b209bc896b
+    required_status: supported
+    required_integrity: true
+  fig22_reference:
+    path: artifacts/results/fig22-resource-schema-transfer-run172.json
+    bytes: 268174
+    sha256: e8b4b1de721e2831fafda508237b44a715d7d064db1a88b738731cf47551ccd7
+    required_status: rejected
+    required_integrity: true
+  fig25_reference:
+    path: artifacts/results/fig25-trend-completion-run145.json
+    bytes: 6741
+    sha256: 2b4ab79018b5dfaf93a8e5dcbf32106d7ac0c0b2bf61364aec7f837112e62919
+    required_status: rejected
+    required_integrity: true
+  mechanism_certificate:
+    path: artifacts/results/one-baseline-goal-certificate-run177.json
+    bytes: 6402
+    sha256: 2e41fe53490daf98450b00b2ccb24661d276276024b0af02a627070f2330c044
+    required_status: supported
+    required_integrity: true
+
+completion_contract:
+  priority_order: [24, 23, 19, 20, 18]
+  reference_only_figures: [22, 25]
+  fig24_policy: native_RTX4090_replacement_not_original_Orin_RTX3090_reproduction
+  fig24_rows: 42
+  fig24_services: 10
+  fig23_trend_cells: 30
+  fig19_curves: 3
+  fig19_comparisons: 4
+  fig20_trend_cells: 8
+  fig18_mlx_rows: 2
+  maximum_fig18_point_latency_relative_error: 0.20
+  minimum_clear_speedup: 1.20
+  strict_full_figure_reproduction_required: false
+  independent_figure18_reproduction_claimed: false
+  original_gpu_baseline_reproduction_required: false
+  rtl_power_area_required: false
+
+verification:
+  ruff_command: [.venv/bin/ruff, check, scripts, src, tests]
+  pytest_command: [.venv/bin/pytest, -q]
+  expected_pytest_passed: 453
+  expected_pytest_failed: 0
+  expected_pytest_warnings: 17
+
+source_layout:
+  goal: docs/remaining-performance-goal.md
+  protocol: experiments/h181-remaining-performance-goal-certificate/protocol.md
+  config: configs/analysis/remaining_performance_goal_certificate_v1.yaml
+  runner: scripts/run_remaining_performance_goal_verification.py
+  auditor: scripts/audit_remaining_performance_goal_certificate.py
+  test: tests/test_remaining_performance_goal_certificate.py
+  handoff: docs/remaining-performance-goal-complete.md
+
+output_root: artifacts/environment/h181
+verification_manifest: artifacts/environment/h181/verification-manifest.json
+result_path: artifacts/results/remaining-performance-goal-certificate-run186.json
