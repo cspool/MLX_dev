@@ -817,3 +817,11 @@ MAPE and 5.85% maximum error. MLX/Xavier functional maxima are 1.11e-16 and
 to paper targets, leave-one-out maximum error is 20.77%, Xavier is an SM70-to-
 SM72 resource proxy, and long-context rows are projections. Fresh verification
 is 446 passed, zero failed.
+
+Run182 is the first complete local-4090 Figure-24 measurement pass. GPU0 is
+verified as RTX4090/SM89; ten topology services execute ten CPU/GPU correctness
+smokes and 30 native CUDA-event timings. Nine affine service models predict the
+262K holdout within 10%. SWA-W256 alone misses by 19.86%, indicating a larger-
+scale/cache regime rather than a general failure. All 42 exact-work projections
+are materialized and favor RTX4090 over the 1-GHz MLX surrogate; the failed
+SWA-W256 curve prevents promotion until a post-regime extension is tested.
