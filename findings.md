@@ -878,3 +878,18 @@ than FlashAttention at N=256 to 2.55x faster at N=8192. Figure23 traces also
 show a launch-dominated plateau through N=1024 followed by strong FFT/BSMM
 growth. Subsequent mappings should therefore use operator- and scale-specific
 trace features with shared parameters, not a single 2.02x projection ratio.
+
+Run188 shows that the three numerical gaps are jointly explainable without
+pointwise coefficients. Four Figure23 startup/congestion parameters bring all
+30 cells within 7.01%, including the registered N=1K/4K holdouts. Seven
+Figure19 trace-launch/work/SPM parameters bring Attention, FFN, MLX total,
+FABNet total and derived speedup (20 reported values) within 12.42%. Eleven
+Figure20 parameters split projection scale-regime behavior from the H182
+Attention trace crossover and bring 16 bars plus two derived geometric means
+within 6.90%. All relative-baseline directions match; the worst diagnostic
+leave-out error is 22.16%. Because run188 consumes paper targets to select the
+parameters, it is an implementation blueprint rather than independent
+validation. The next experiments must put these mechanisms into the actual
+cycle/composition execution paths. A new user requirement also makes the
+previously fragmented per-figure compilers insufficient: the final system must
+expose one audited model/operator-graph to MLX simulator JSON lowering path.
