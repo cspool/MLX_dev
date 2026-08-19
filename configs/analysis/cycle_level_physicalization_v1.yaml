@@ -1,0 +1,99 @@
+name: cycle-level-physicalization-v1
+experiment_id: H191
+run_id: run196
+classification: target_informed_cycle_state_physicalization
+validation_eligible: false
+
+frozen_inputs:
+  figure23_parent:
+    path: artifacts/results/fig23-trace-corrected-run189.json
+    bytes: 22333
+    sha256: 2c6ef6aeda12781399f82f6f22900d3560e702a2c85cfa0e774c13c736800059
+    required_status: supported
+    required_integrity: true
+  figure23_compile:
+    path: artifacts/environment/h184/fig23-trace-corrected-compile-manifest.json
+    bytes: 211716
+    sha256: 96851be9ce72586c303cd89ec05c23cf46db767e49375243f19e072128870348
+  figure19_parent:
+    path: artifacts/results/fig19-trace-corrected-run190.json
+    bytes: 10845
+    sha256: 8b302da5def7e675614353a67eb2d5f83929d1c97827d8c13ab2daaccd30ff4f
+    required_status: supported
+    required_integrity: true
+  figure20_parent:
+    path: artifacts/results/fig20-trace-corrected-run191.json
+    bytes: 12434
+    sha256: 16c3a14061c19135a92e2cea9f5cc3b856f268bdab0ca93a72f2fd9e4abb3f08
+    required_status: supported
+    required_integrity: true
+  selected_model:
+    path: artifacts/results/fig19-20-23-gap-attribution-run188.json
+    bytes: 37530
+    sha256: d38bd8ddc7cb6e131662241549f53df97015053b87a72b00277137d970001aef
+    required_status: supported
+    required_integrity: true
+  rtx4090_trace:
+    path: artifacts/results/fig19-20-23-rtx4090-trace-run187.json
+    bytes: 52250
+    sha256: b958398750a3a34a2426ae24b22a1014a199486f31d38a0b67dc6ea3bd4afbb9
+    required_status: supported
+    required_integrity: true
+  automatic_frontend:
+    path: artifacts/results/automatic-model-frontend-run195.json
+    bytes: 6258
+    sha256: 1945ba3760343999f30d6eb91e06871528c7e027d0b72ac2d83056cc1668d3e3
+    required_status: supported
+    required_integrity: true
+  latency_patch:
+    path: patches/dsagen/dsa-gem5-mlx-latency-service-v1.patch
+    bytes: 4202
+    sha256: dd74dbebfd0b5e2b242e6027a939a070a5ed914449db815850719a506425f949
+
+physical_timing:
+  schema_version: 1
+  pre_roi_policy: advance_scheduler_state_then_reset_measurement_origin
+  congestion_policy: deterministic_evenly_distributed_issue_stalls
+  raw_cycle_policy: scheduler_progress_cycles_excluding_injected_stalls
+  reported_cycle_policy: measured_cycles_after_pre_roi_plus_injected_stalls
+  timeline_clock_hz: 1000000000
+  post_processing_latency_service_enabled: false
+
+execution:
+  figure23_configs: 40
+  figure23_replays: 2
+  figure23_executions: 80
+  figure19_timelines: 12
+  figure20_timelines: 32
+  required_timeline_phases: 92
+  max_cycles: 100000000
+
+acceptance:
+  maximum_relative_error: 0.15
+  figure23_required_points: 30
+  figure19_required_points: 20
+  figure20_required_points: 18
+  required_total_points: 68
+  required_direction_matches: 50
+  require_no_latency_postprocessing: true
+  require_raw_work_identity: true
+  require_physical_stall_accounting: true
+  require_timeline_sum_identity: true
+  independent_validation_claimed: false
+
+source_layout:
+  protocol: experiments/h191-cycle-level-physicalization/protocol.md
+  config: configs/analysis/cycle_level_physicalization_v1.yaml
+  performance_service: src/mlxsim/performance_service.py
+  physicalizer: scripts/physicalize_fig19_20_cycles.py
+  compiler: scripts/compile_cycle_physicalized_fig23.py
+  runner: scripts/run_cycle_physicalized.py
+  auditor: scripts/audit_cycle_level_physicalization.py
+  test: tests/test_cycle_level_physicalization.py
+  core_patch: patches/dsagen/dsa-gem5-mlx-physical-timing-v1.patch
+
+output_root: artifacts/environment/h191
+compile_manifest: artifacts/environment/h191/physical-fig23-compile-manifest.json
+run_manifest: artifacts/environment/h191/physical-cycle-run-manifest.json
+timeline_manifest: artifacts/environment/h191/fig19-20-cycle-timelines.json
+result_path: artifacts/results/cycle-level-physicalization-run196.json
