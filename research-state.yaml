@@ -886,6 +886,20 @@ single_baseline_completion:
     pytest_failed: 0
     pytest_warnings: 17
   handoff: docs/one-baseline-complete-experiment.md
+
+paper_aligned_e2e_completion:
+  status: active
+  main_baseline: Jetson_Xavier_class_proxy
+  paper_figure: 21
+  sequence_lengths: [128, 256, 512, 1024, 2048]
+  requirements:
+    - MLX_end_to_end_functional
+    - Xavier_end_to_end_functional
+    - full_32_layer_performance_estimates
+    - decreasing_speedup_curve_matching_paper_conclusion
+    - transparent_paper_informed_parameter_inference
+    - no_claim_of_exact_hardware_reproduction
+  current_hypothesis: H173
   target_policy: source_derived_candidates_then_paper_held_out
   open_simulator_pins:
     dam_rs: 8771934ce6074bea0d8d901cf787aae8983ae42e

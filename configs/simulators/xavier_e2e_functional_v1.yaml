@@ -1,0 +1,73 @@
+name: xavier-e2e-functional-v1
+experiment_id: H173
+run_id: run178
+classification: target_free_xavier_class_dense_transformer_e2e_functional
+validation_eligible: true
+
+frozen_inputs:
+  h56:
+    path: artifacts/results/gpgpusim-xavier-proxy-run062.json
+    bytes: 7595
+    sha256: 443843b96d3f01cf27fee02413ae8d8cdc519233aca514cdaeb2d34d0373fe14
+    required_status: supported
+    required_integrity: true
+  xavier_config:
+    path: artifacts/environment/h56/config/gpgpusim.config
+    bytes: 7651
+    sha256: ec429eead39af0872a2a8e4020ddc3e47baf8edbf525fd5acf260ed00609c887
+  xavier_interconnect:
+    path: artifacts/environment/h56/config/config_volta_islip.icnt
+    bytes: 1351
+    sha256: e65e6a9d89db91fa90a20d9905cf15c61f2cd59e0d1babdbf8c29f0b86482fb0
+  mlx_e2e:
+    path: artifacts/results/data-ready-complete-block-run176.json
+    bytes: 16048
+    sha256: 1724e4863ec0e7184675fbc3a83df330347d1d088ee2a4bfb9db3010cb78dcb8
+    required_status: supported
+    required_integrity: true
+
+model:
+  token_counts: [4, 8, 16]
+  hidden_dimension: 8
+  ffn_dimension: 16
+  layers: 2
+  heads: 1
+  causal_attention: true
+  precision: FP32_proxy_for_FP16_paper_path
+
+operator_inventory:
+  - rmsnorm_1
+  - dense_qkv_projection
+  - rope
+  - causal_qk_softmax_sv
+  - dense_output_projection
+  - residual_1
+  - rmsnorm_2
+  - dense_ffn_up_gate
+  - silu_gate
+  - dense_ffn_down
+  - residual_2
+
+execution:
+  simulator: GPGPU-Sim_detailed_PTX
+  timing_template: SM70_TITANV_resource_edited_to_Xavier
+  actual_device_isa: SM72
+  simulated_isa: SM70
+  cuda: 11.8
+  block_threads: 128
+  kernels_per_layer: 14
+  expected_kernel_launches_per_run: 28
+  expected_runs: 3
+  maximum_absolute_error: 1.0e-5
+  paper_performance_targets_consumed: false
+
+source_layout:
+  protocol: experiments/h173-xavier-e2e-functional/protocol.md
+  config: configs/simulators/xavier_e2e_functional_v1.yaml
+  cuda_source: simulator_ext/accelsim/xavier_e2e_proxy.cu
+  runner: scripts/run_xavier_e2e_functional.py
+  auditor: scripts/audit_xavier_e2e_functional.py
+  test: tests/test_xavier_e2e_functional.py
+
+output_root: artifacts/environment/h173
+result_path: artifacts/results/xavier-e2e-functional-run178.json
