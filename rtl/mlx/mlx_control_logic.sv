@@ -4,17 +4,39 @@ module mlx_control_logic #(
     parameter TAGS = 16,
     parameter TAG_BITS = 4
 ) (
+    input  wire                  clk,
+    input  wire                  rst_n,
     input  wire [TAGS-1:0]       active_i,
     input  wire [TAGS-1:0]       ready_i,
     input  wire [2*TAGS-1:0]     pipeline_class_i,
     input  wire [3:0]            pipeline_ready_i,
     output reg  [3:0]            issue_valid_o,
-    output reg  [4*TAG_BITS-1:0] issue_tag_o
+    output reg  [4*TAG_BITS-1:0] issue_tag_o,
+    output reg  [15:0]           state_checksum_o
 );
   integer tag_index;
   integer pipeline_index;
   reg selected;
   reg [1:0] tag_pipeline;
+  reg [7:0] issue_age_q [0:TAGS-1];
+  integer age_index;
+
+  always @(posedge clk or negedge rst_n) begin
+    if (!rst_n) begin
+      state_checksum_o <= 16'd0;
+      for (age_index = 0; age_index < TAGS; age_index = age_index + 1)
+        issue_age_q[age_index] <= 8'd0;
+    end else begin
+      state_checksum_o <= 16'd0;
+      for (age_index = 0; age_index < TAGS; age_index = age_index + 1) begin
+        if (active_i[age_index] && ready_i[age_index])
+          issue_age_q[age_index] <= issue_age_q[age_index] + 1'b1;
+        state_checksum_o <= state_checksum_o
+            ^ {8'd0, issue_age_q[age_index]}
+            ^ {12'd0, pipeline_class_i[2*age_index +: 2], 2'd0};
+      end
+    end
+  end
 
   always @* begin
     issue_valid_o = 4'b0000;

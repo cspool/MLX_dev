@@ -63,6 +63,8 @@ module tb_mlx_pe #(
   integer instruction_index;
   integer lane;
   integer operation_count;
+  integer repetitions;
+  integer repeat_index;
   reg [31:0] checksum;
   reg [3:0] opcode;
   reg signed [4:0] encoded_dx;
@@ -142,6 +144,7 @@ module tb_mlx_pe #(
     if (!$value$plusargs("COUNT=%d", instruction_count)) $fatal(1, "missing COUNT");
     if (!$value$plusargs("WORKLOAD=%s", workload_name)) $fatal(1, "missing WORKLOAD");
     if (!$value$plusargs("VCD=%s", vcd_path)) $fatal(1, "missing VCD");
+    if (!$value$plusargs("REPEAT=%d", repetitions)) repetitions = 1;
     $dumpfile(vcd_path);
     $dumpvars(0, tb_mlx_pe);
     $readmemh(program_path, program_mem);
@@ -220,26 +223,28 @@ module tb_mlx_pe #(
     @(negedge clk);
     network_valid = 1'b0;
 
-    for (instruction_index = 0; instruction_index < instruction_count;
-         instruction_index = instruction_index + 1) begin
-      opcode = program_mem[instruction_index][63:60];
-      encoded_dx = program_mem[instruction_index][37:33];
-      encoded_dy = program_mem[instruction_index][32:28];
-      operation_count = operation_count + 1;
-      if ((opcode >= 2) && (opcode <= 7))
-        drive_fu(opcode);
-      else if (opcode == 9)
-        drive_fu(opcode);
-      else if (opcode == 8) begin
-        @(negedge clk);
-        network_valid = 1'b1;
-        network_dx = encoded_dx;
-        network_dy = encoded_dy;
-        @(posedge clk);
-        #0.01;
-        if (!network_valid_o) $fatal(1, "program xfer did not issue");
-        @(negedge clk);
-        network_valid = 1'b0;
+    for (repeat_index = 0; repeat_index < repetitions; repeat_index = repeat_index + 1) begin
+      for (instruction_index = 0; instruction_index < instruction_count;
+           instruction_index = instruction_index + 1) begin
+        opcode = program_mem[instruction_index][63:60];
+        encoded_dx = program_mem[instruction_index][37:33];
+        encoded_dy = program_mem[instruction_index][32:28];
+        operation_count = operation_count + 1;
+        if ((opcode >= 2) && (opcode <= 7))
+          drive_fu(opcode);
+        else if (opcode == 9)
+          drive_fu(opcode);
+        else if (opcode == 8) begin
+          @(negedge clk);
+          network_valid = 1'b1;
+          network_dx = encoded_dx;
+          network_dy = encoded_dy;
+          @(posedge clk);
+          #0.01;
+          if (!network_valid_o) $fatal(1, "program xfer did not issue");
+          @(negedge clk);
+          network_valid = 1'b0;
+        end
       end
     end
     if (!FULL_FEATURES) drive_fu(4'd6);

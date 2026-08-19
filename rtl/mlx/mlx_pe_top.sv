@@ -66,8 +66,11 @@ module mlx_pe_top #(
   wire query_active_unused;
   wire query_ready_unused;
   wire query_done_unused;
+  wire [31:0] query_metadata_unused;
   wire [3:0] network_destination_register_unused;
   wire [3:0] network_tag_unused;
+  wire [63:0] network_buffer_observe_unused;
+  wire [15:0] control_state_checksum_unused;
 
   mlx_config_network config_network (
       .clk(clk),
@@ -89,6 +92,7 @@ module mlx_pe_top #(
       .configure_trip_count_i(tag_trip_count_i),
       .configure_frontier_i(tag_frontier_i),
       .configure_ready_i(tag_ready_i),
+      .configure_metadata_i(cfg_word_i[39:8]),
       .issue_i(tag_issue_i),
       .issue_tag_i(tag_issue_id_i),
       .complete_i(tag_complete_i),
@@ -99,18 +103,22 @@ module mlx_pe_top #(
       .query_done_o(query_done_unused),
       .query_trip_count_o(tag_query_trip_count_o),
       .query_frontier_o(tag_query_frontier_o),
+      .query_metadata_o(query_metadata_unused),
       .active_vector_o(tag_active_vector_o),
       .ready_vector_o(tag_ready_vector_o),
       .done_vector_o(tag_done_vector_o)
   );
 
   mlx_control_logic control_logic (
+      .clk(clk),
+      .rst_n(rst_n),
       .active_i(tag_active_vector_o),
       .ready_i(tag_ready_vector_o),
       .pipeline_class_i(pipeline_class_i),
       .pipeline_ready_i(pipeline_ready_i),
       .issue_valid_o(issue_valid_o),
-      .issue_tag_o(issue_tag_o)
+      .issue_tag_o(issue_tag_o),
+      .state_checksum_o(control_state_checksum_unused)
   );
 
   mlx_register_file #(.SIMD_WIDTH(SIMD_WIDTH)) register_file (
@@ -134,6 +142,8 @@ module mlx_pe_top #(
       .destination_register_i(network_destination_register_i),
       .tag_i(network_tag_i),
       .payload_i(network_payload_i),
+      .auxiliary_valid_i({5{network_valid_i}}),
+      .auxiliary_payload_i({5{network_payload_i}}),
       .ready_o(),
       .valid_o(network_valid_o),
       .dx_o(network_dx_o),
@@ -143,7 +153,8 @@ module mlx_pe_top #(
       .payload_o(network_payload_o),
       .route_o(network_route_o),
       .consumed_hops_o(network_consumed_hops_o),
-      .delivered_o(network_delivered_o)
+      .delivered_o(network_delivered_o),
+      .buffer_observe_o(network_buffer_observe_unused)
   );
 
   mlx_fu #(

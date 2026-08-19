@@ -1,7 +1,10 @@
 `timescale 1ns/1ps
 
 module mlx_data_network #(
-    parameter PAYLOAD_BITS = 64
+    parameter PAYLOAD_BITS = 64,
+    parameter LINKS = 6,
+    parameter BUFFER_DEPTH = 8,
+    parameter POINTER_BITS = 3
 ) (
     input  wire                    clk,
     input  wire                    rst_n,
@@ -11,6 +14,8 @@ module mlx_data_network #(
     input  wire [3:0]              destination_register_i,
     input  wire [3:0]              tag_i,
     input  wire [PAYLOAD_BITS-1:0] payload_i,
+    input  wire [LINKS-2:0]         auxiliary_valid_i,
+    input  wire [(LINKS-1)*PAYLOAD_BITS-1:0] auxiliary_payload_i,
     output wire                    ready_o,
     output reg                     valid_o,
     output reg signed [4:0]        dx_o,
@@ -20,7 +25,8 @@ module mlx_data_network #(
     output reg [PAYLOAD_BITS-1:0]  payload_o,
     output reg [2:0]               route_o,
     output reg [1:0]               consumed_hops_o,
-    output reg                     delivered_o
+    output reg                     delivered_o,
+    output reg [PAYLOAD_BITS-1:0]  buffer_observe_o
 );
   localparam ROUTE_LOCAL = 3'd0;
   localparam ROUTE_EAST = 3'd1;
@@ -33,8 +39,22 @@ module mlx_data_network #(
   reg [2:0] next_route;
   reg [1:0] next_hops;
   reg next_delivered;
+  reg [PAYLOAD_BITS-1:0] ingress_buffer [0:LINKS*BUFFER_DEPTH-1];
+  reg [POINTER_BITS-1:0] write_pointer [0:LINKS-1];
+  integer link_index;
+  integer observe_index;
 
   assign ready_o = 1'b1;
+
+  always @* begin
+    buffer_observe_o = {PAYLOAD_BITS{1'b0}};
+    for (observe_index = 0; observe_index < LINKS; observe_index = observe_index + 1)
+      buffer_observe_o = buffer_observe_o
+          ^ ingress_buffer[
+              observe_index*BUFFER_DEPTH
+              + {{(32-POINTER_BITS){1'b0}}, write_pointer[observe_index]}
+          ];
+  end
 
   always @* begin
     next_dx = dx_i;
@@ -76,6 +96,8 @@ module mlx_data_network #(
       route_o <= ROUTE_LOCAL;
       consumed_hops_o <= 2'd0;
       delivered_o <= 1'b0;
+      for (link_index = 0; link_index < LINKS; link_index = link_index + 1)
+        write_pointer[link_index] <= {POINTER_BITS{1'b0}};
     end else begin
       valid_o <= valid_i;
       if (valid_i) begin
@@ -87,6 +109,20 @@ module mlx_data_network #(
         route_o <= next_route;
         consumed_hops_o <= next_hops;
         delivered_o <= next_delivered;
+      end
+      if (valid_i) begin
+        ingress_buffer[{{(32-POINTER_BITS){1'b0}}, write_pointer[0]}] <= payload_i;
+        write_pointer[0] <= write_pointer[0] + 1'b1;
+      end
+      for (link_index = 1; link_index < LINKS; link_index = link_index + 1) begin
+        if (auxiliary_valid_i[link_index-1]) begin
+          ingress_buffer[
+              link_index*BUFFER_DEPTH
+              + {{(32-POINTER_BITS){1'b0}}, write_pointer[link_index]}
+          ]
+              <= auxiliary_payload_i[(link_index-1)*PAYLOAD_BITS +: PAYLOAD_BITS];
+          write_pointer[link_index] <= write_pointer[link_index] + 1'b1;
+        end
       end
     end
   end

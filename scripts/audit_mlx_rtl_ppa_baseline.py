@@ -50,12 +50,18 @@ def build_audit(config: dict[str, Any]) -> dict[str, Any]:
     full_vcd_specs = config["variants"]["full"]["vcds"]
     reduced_vcd_specs = config["variants"]["reduced"]["vcds"]
     h198_files = h198["generated_files"]
+    expected_vcd_files = h198_files
+    if "activity_manifest" in config:
+        activity_document = json.loads(
+            (PROJECT_ROOT / config["activity_manifest"]).read_text()
+        )
+        expected_vcd_files = activity_document["generated_files"]
     vcd_checks = {}
     for variant, specs in (("full", full_vcd_specs), ("reduced", reduced_vcd_specs)):
         for item in specs:
             key = f"vcd_{variant}_{item['workload']}"
             vcd_checks[key] = qualify(
-                PROJECT_ROOT / item["path"], h198_files[key]
+                PROJECT_ROOT / item["path"], expected_vcd_files[key]
             )["pass"]
 
     source_files = {

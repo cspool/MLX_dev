@@ -1,0 +1,119 @@
+name: mlx-rtl-ppa-structural-correction-v1
+experiment_id: H200
+run_id: run205
+classification: target_informed_structural_rtl_ppa_correction
+validation_eligible: false
+
+frozen_inputs:
+  rtl_result:
+    path: artifacts/results/mlx-critical-rtl-run203.json
+    bytes: 26541
+    sha256: f5485621410347652115b8d784371f3f400830f88d2bfb1bcfc0d5bffde86bc5
+    required_status: supported
+    required_integrity: true
+  rtl_manifest:
+    path: artifacts/environment/h198/rtl-run-manifest.json
+    bytes: 22189
+    sha256: d874ac23582e437f0faf9669a51d8a6131bcddccd96dfbf209ab007e2145ef42
+  baseline_result:
+    path: artifacts/results/mlx-rtl-ppa-baseline-run204.json
+    bytes: 13495
+    sha256: 937b93972ada17f358927c4e0122cbf1497fcf17710868d069daa604a84b7acf
+    required_status: rejected
+    required_integrity: true
+  toolchain_result:
+    path: artifacts/results/rtl-ppa-toolchain-run202.json
+    bytes: 7224
+    sha256: d1a6aa2cdeb4466d8e8e6fd72f7ad5604987a80bd1c9c753335381afd1f5c3af
+    required_status: supported
+    required_integrity: true
+  targets:
+    path: artifacts/targets/paper_targets.yaml
+    bytes: 14931
+    sha256: c4a22ab8052ff8cb223a729b8ce07320c6826cfee0d37e1a664a8761e018b41e
+  liberty:
+    path: /opt/OpenROAD-flow-scripts/flow/platforms/nangate45/lib/NangateOpenCellLibrary_typical.lib
+    bytes: 6692032
+    sha256: 8d540a4d4cf6d09d27c87ad067857a9c0c2eeb023ab7a56e058cd3113db4e9b1
+  tech_lef:
+    path: /opt/OpenROAD-flow-scripts/flow/platforms/nangate45/lef/NangateOpenCellLibrary.tech.lef
+    bytes: 19485
+    sha256: 834a79295054cd4209178d1bade67c353863c47bb4b3c22ee38b862b7cec37f2
+  macro_lef:
+    path: /opt/OpenROAD-flow-scripts/flow/platforms/nangate45/lef/NangateOpenCellLibrary.macro.lef
+    bytes: 349950
+    sha256: 840b01e500826096d1edcc752350834da647fdbf360798f243f8122b52b357c3
+
+rtl_sources:
+  - rtl/mlx/mlx_fp16.sv
+  - rtl/mlx/mlx_config_network.sv
+  - rtl/mlx/mlx_data_network.sv
+  - rtl/mlx/mlx_tag_buffer.sv
+  - rtl/mlx/mlx_control_logic.sv
+  - rtl/mlx/mlx_register_file.sv
+  - rtl/mlx/mlx_fu.sv
+  - rtl/mlx/mlx_pe_top.sv
+
+components:
+  config_network: {top: mlx_config_network, scope: config_network, has_clock: true}
+  data_network: {top: mlx_data_network, scope: data_network, has_clock: true}
+  control_logic: {top: mlx_control_logic, scope: control_logic, has_clock: true}
+  tag_buffer: {top: mlx_tag_buffer, scope: tag_buffer, has_clock: true}
+  register_file: {top: mlx_register_file, scope: register_file, has_clock: true}
+  fu_simd32: {top: mlx_fu, scope: functional_unit, has_clock: true}
+
+variants:
+  full:
+    parameters:
+      register_file: {SIMD_WIDTH: 32, DEPTH: 4}
+      fu_simd32: {SIMD_WIDTH: 32, FULL_FEATURES: 1}
+    vcds:
+      - {workload: bsmm, path: artifacts/environment/h200/activity/full-bsmm.vcd}
+      - {workload: fft_cmp, path: artifacts/environment/h200/activity/full-fft_cmp.vcd}
+      - {workload: swa, path: artifacts/environment/h200/activity/full-swa.vcd}
+  reduced:
+    parameters:
+      register_file: {SIMD_WIDTH: 8, DEPTH: 4}
+      fu_simd32: {SIMD_WIDTH: 8, FULL_FEATURES: 0}
+    vcds:
+      - {workload: bsmm, path: artifacts/environment/h200/activity/reduced-bsmm.vcd}
+    power_components: [register_file, fu_simd32]
+    reuse_full_average_power: [config_network, data_network, control_logic, tag_buffer]
+
+measurement:
+  clock_period_ns: 1.0
+  full_power_average: arithmetic_mean_of_128x_bsmm_fft_cmp_swa
+  reduced_power: reused_full_noncompute_plus_128x_reduced_bsmm_rf_fu
+  area_source: yosys_abc_nangate45_liberty_cell_sum
+  power_source: openroad_opensta_port_vcd_activity
+
+activity:
+  repetitions: 128
+  testbench: rtl/mlx/tb_mlx_pe.sv
+  workloads:
+    full: [bsmm, fft_cmp, swa]
+    reduced: [bsmm]
+
+transfer:
+  target_section: table2_area_power
+  calibration_area: pe.area_mm2 / sum_full_component_raw_area
+  calibration_power: pe.power_mw / sum_full_component_raw_power
+  array_pes: 16
+  maximum_relative_error: 0.15
+  prohibited_per_component_coefficients: true
+
+source_layout:
+  protocol: experiments/h200-mlx-rtl-ppa-structural-correction/protocol.md
+  config: configs/rtl/mlx_rtl_ppa_structural_correction_v1.yaml
+  power_tcl: rtl/ppa/openroad_component_power.tcl
+  vcd_extractor: scripts/extract_vcd_scope.py
+  driver: scripts/run_mlx_rtl_ppa_structural_correction.py
+  runner: scripts/run_mlx_rtl_ppa_baseline.py
+  measurement_runner: scripts/run_mlx_rtl_ppa_baseline.py
+  auditor: scripts/audit_mlx_rtl_ppa_structural_correction.py
+  test: tests/test_mlx_rtl_ppa_structural_correction.py
+
+output_root: artifacts/environment/h200
+measurement_manifest: artifacts/environment/h200/ppa-measurement-manifest.json
+activity_manifest: artifacts/environment/h200/activity-manifest.json
+result_path: artifacts/results/mlx-rtl-ppa-structural-correction-run205.json

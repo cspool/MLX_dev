@@ -190,14 +190,112 @@ module mlx_fp16_reduced_lane (
     input  wire [15:0] a_i,
     input  wire [15:0] b_i,
     input  wire [15:0] c_i,
-    output wire [15:0] result_o
+    output reg  [15:0] result_o
 );
-  wire [3:0] safe_op = ((op_i == 4'd5) || (op_i == 4'd6)) ? 4'd0 : op_i;
-  mlx_fp16_alu_lane lane (
-      .op_i(safe_op),
-      .a_i(a_i),
-      .b_i(b_i),
-      .c_i(c_i),
-      .result_o(result_o)
-  );
+  function [15:0] reduced_mul;
+    input [15:0] lhs;
+    input [15:0] rhs;
+    reg sign;
+    reg [21:0] product;
+    reg [9:0] fraction;
+    integer exponent;
+    begin
+      if ((lhs[14:0] == 0) || (rhs[14:0] == 0)) begin
+        reduced_mul = 16'd0;
+      end else begin
+        sign = lhs[15] ^ rhs[15];
+        product = {1'b1, lhs[9:0]} * {1'b1, rhs[9:0]};
+        exponent = {27'd0, lhs[14:10]} + {27'd0, rhs[14:10]} - 15;
+        if (product[21]) begin
+          exponent = exponent + 1;
+          fraction = product[20:11];
+        end else begin
+          fraction = product[19:10];
+        end
+        if (exponent <= 0)
+          reduced_mul = 16'd0;
+        else if (exponent >= 31)
+          reduced_mul = {sign, 5'h1f, 10'd0};
+        else
+          reduced_mul = {sign, exponent[4:0], fraction};
+      end
+    end
+  endfunction
+
+  function [15:0] reduced_add;
+    input [15:0] lhs;
+    input [15:0] rhs;
+    reg [15:0] large_value;
+    reg [15:0] small_value;
+    reg [14:0] large_mant;
+    reg [14:0] small_mant;
+    reg [14:0] magnitude;
+    reg sign;
+    integer exponent;
+    integer shift;
+    integer index;
+    begin
+      if (lhs[14:0] == 0) begin
+        reduced_add = rhs;
+      end else if (rhs[14:0] == 0) begin
+        reduced_add = lhs;
+      end else begin
+        if (lhs[14:0] >= rhs[14:0]) begin
+          large_value = lhs;
+          small_value = rhs;
+        end else begin
+          large_value = rhs;
+          small_value = lhs;
+        end
+        exponent = {27'd0, large_value[14:10]};
+        shift = {27'd0, large_value[14:10]} - {27'd0, small_value[14:10]};
+        large_mant = {1'b0, 1'b1, large_value[9:0], 3'b000};
+        small_mant = {1'b0, 1'b1, small_value[9:0], 3'b000};
+        small_mant = (shift > 13) ? 15'd0 : (small_mant >> shift);
+        sign = large_value[15];
+        magnitude = (large_value[15] == small_value[15])
+            ? large_mant + small_mant : large_mant - small_mant;
+        if (magnitude[14]) begin
+          magnitude = magnitude >> 1;
+          exponent = exponent + 1;
+        end else begin
+          for (index = 0; index < 11; index = index + 1) begin
+            if ((magnitude[13] == 0) && (magnitude != 0)) begin
+              magnitude = magnitude << 1;
+              exponent = exponent - 1;
+            end
+          end
+        end
+        if ((magnitude == 0) || (exponent <= 0))
+          reduced_add = 16'd0;
+        else if (exponent >= 31)
+          reduced_add = {sign, 5'h1f, 10'd0};
+        else
+          reduced_add = {sign, exponent[4:0], magnitude[12:3]};
+      end
+    end
+  endfunction
+
+  function [15:0] reduced_max;
+    input [15:0] lhs;
+    input [15:0] rhs;
+    begin
+      if (lhs[15] != rhs[15])
+        reduced_max = lhs[15] ? rhs : lhs;
+      else if (!lhs[15])
+        reduced_max = (lhs[14:0] >= rhs[14:0]) ? lhs : rhs;
+      else
+        reduced_max = (lhs[14:0] <= rhs[14:0]) ? lhs : rhs;
+    end
+  endfunction
+
+  always @* begin
+    case (op_i)
+      4'd2: result_o = reduced_add(reduced_mul(a_i, b_i), c_i);
+      4'd3: result_o = reduced_add(a_i, b_i);
+      4'd4: result_o = reduced_max(a_i, b_i);
+      4'd9: result_o = reduced_mul(a_i, b_i);
+      default: result_o = a_i;
+    endcase
+  end
 endmodule

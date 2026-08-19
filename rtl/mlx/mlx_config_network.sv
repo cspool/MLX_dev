@@ -16,16 +16,12 @@ module mlx_config_network #(
     output reg                  configured_o
 );
   reg [WORD_BITS-1:0] instruction_mem [0:INST_DEPTH-1];
-  integer index;
-
   assign cfg_ready_o = 1'b1;
   assign fetch_word_o = instruction_mem[fetch_addr_i];
 
   always @(posedge clk or negedge rst_n) begin
     if (!rst_n) begin
       configured_o <= 1'b0;
-      for (index = 0; index < INST_DEPTH; index = index + 1)
-        instruction_mem[index] <= {WORD_BITS{1'b0}};
     end else if (cfg_valid_i) begin
       instruction_mem[cfg_addr_i] <= cfg_word_i;
       configured_o <= 1'b1;
