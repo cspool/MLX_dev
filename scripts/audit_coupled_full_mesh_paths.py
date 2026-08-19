@@ -256,6 +256,10 @@ def capacity_patch_audit(config: dict[str, Any]) -> dict[str, Any]:
         PROJECT_ROOT
         / "patches/dsagen/dsa-gem5-mlx-latency-service-v1.patch"
     )
+    physical_patch = (
+        PROJECT_ROOT
+        / "patches/dsagen/dsa-gem5-mlx-physical-timing-v1.patch"
+    )
     current_header = PROJECT_ROOT / config["source_layout"]["overlay_header"]
     current_source = PROJECT_ROOT / config["source_layout"]["overlay_source"]
     report = {
@@ -264,6 +268,8 @@ def capacity_patch_audit(config: dict[str, Any]) -> dict[str, Any]:
         "resident_patch": qualify(resident_patch),
         "functional_patch": qualify(functional_patch),
         "latency_patch": qualify(latency_patch),
+        "physical_patch": qualify(physical_patch),
+        "physical_reverse_check": False,
         "latency_reverse_check": False,
         "functional_reverse_check": False,
         "resident_reverse_check": False,
@@ -276,6 +282,7 @@ def capacity_patch_audit(config: dict[str, Any]) -> dict[str, Any]:
         "resident_forward_check": False,
         "functional_forward_check": False,
         "latency_forward_check": False,
+        "physical_forward_check": False,
         "round_trip_exact": False,
     }
     if not patch.is_file():
@@ -289,6 +296,22 @@ def capacity_patch_audit(config: dict[str, Any]) -> dict[str, Any]:
         source = target / "mlx_overlay.cc"
         shutil.copy2(current_header, header)
         shutil.copy2(current_source, source)
+        physical_reverse = subprocess.run(
+            ["git", "apply", "-R", "--check", str(physical_patch)],
+            cwd=root,
+            capture_output=True,
+            text=True,
+            check=False,
+        )
+        report["physical_reverse_check"] = physical_reverse.returncode == 0
+        if physical_reverse.returncode != 0:
+            report["pass"] = False
+            return report
+        subprocess.run(
+            ["git", "apply", "-R", str(physical_patch)],
+            cwd=root,
+            check=True,
+        )
         latency_reverse = subprocess.run(
             ["git", "apply", "-R", "--check", str(latency_patch)],
             cwd=root,
@@ -454,14 +477,31 @@ def capacity_patch_audit(config: dict[str, Any]) -> dict[str, Any]:
                                     cwd=root,
                                     check=True,
                                 )
-                                report["round_trip_exact"] = (
-                                    header.read_bytes() == current_header.read_bytes()
-                                    and source.read_bytes() == current_source.read_bytes()
+                                physical_forward = subprocess.run(
+                                    ["git", "apply", "--check", str(physical_patch)],
+                                    cwd=root,
+                                    capture_output=True,
+                                    text=True,
+                                    check=False,
                                 )
+                                report["physical_forward_check"] = (
+                                    physical_forward.returncode == 0
+                                )
+                                if physical_forward.returncode == 0:
+                                    subprocess.run(
+                                        ["git", "apply", str(physical_patch)],
+                                        cwd=root,
+                                        check=True,
+                                    )
+                                    report["round_trip_exact"] = (
+                                        header.read_bytes() == current_header.read_bytes()
+                                        and source.read_bytes() == current_source.read_bytes()
+                                    )
     report["pass"] = all(
         report[key]
         for key in (
             "reverse_check",
+            "physical_reverse_check",
             "latency_reverse_check",
             "functional_reverse_check",
             "resident_reverse_check",
@@ -473,6 +513,7 @@ def capacity_patch_audit(config: dict[str, Any]) -> dict[str, Any]:
             "resident_forward_check",
             "functional_forward_check",
             "latency_forward_check",
+            "physical_forward_check",
             "round_trip_exact",
         )
     )

@@ -83,6 +83,7 @@ def reverse_patch_check(spec: dict[str, Any]) -> dict[str, Any]:
             == "dsa-gem5-active-window-instruction-capacity-v1.patch"
         ):
             descendants = [
+                "patches/dsagen/dsa-gem5-mlx-physical-timing-v1.patch",
                 "patches/dsagen/dsa-gem5-mlx-latency-service-v1.patch",
                 "patches/dsagen/dsa-gem5-functional-payload-v1.patch"
             ]

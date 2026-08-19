@@ -81,6 +81,62 @@ class LogLinearFeatureService:
         }
 
 
+@dataclass(frozen=True)
+class CyclePhase:
+    """One positive integer interval in a physicalized cycle timeline."""
+
+    name: str
+    cycles: int
+    kind: str
+    provenance: str
+
+    def __post_init__(self) -> None:
+        if not self.name or not self.kind or not self.provenance:
+            raise ValueError("cycle phases require name, kind and provenance")
+        if self.cycles <= 0:
+            raise ValueError("cycle phases must contain positive integer cycles")
+
+
+@dataclass(frozen=True)
+class CycleTimeline:
+    """An explicit phase sequence whose sum is the only reported latency."""
+
+    name: str
+    clock_hz: int
+    phases: tuple[CyclePhase, ...]
+    target_informed: bool
+
+    def __post_init__(self) -> None:
+        if not self.name or self.clock_hz <= 0 or not self.phases:
+            raise ValueError("cycle timelines require a name, clock and phases")
+
+    @property
+    def total_cycles(self) -> int:
+        return sum(phase.cycles for phase in self.phases)
+
+    @property
+    def latency_ms(self) -> float:
+        return self.total_cycles / self.clock_hz * 1000.0
+
+    def to_dict(self) -> dict[str, object]:
+        return {
+            "name": self.name,
+            "clock_hz": self.clock_hz,
+            "target_informed": self.target_informed,
+            "phases": [
+                {
+                    "name": phase.name,
+                    "cycles": phase.cycles,
+                    "kind": phase.kind,
+                    "provenance": phase.provenance,
+                }
+                for phase in self.phases
+            ],
+            "total_cycles": self.total_cycles,
+            "latency_ms": self.latency_ms,
+        }
+
+
 def median_normalized(values: Mapping[int, float]) -> dict[int, float]:
     """Normalize positive finite trace values by their cross-shape median."""
     if not values:
@@ -92,4 +148,10 @@ def median_normalized(values: Mapping[int, float]) -> dict[int, float]:
     return {key: value / center for key, value in converted.items()}
 
 
-__all__ = ["LinearFeatureService", "LogLinearFeatureService", "median_normalized"]
+__all__ = [
+    "CyclePhase",
+    "CycleTimeline",
+    "LinearFeatureService",
+    "LogLinearFeatureService",
+    "median_normalized",
+]

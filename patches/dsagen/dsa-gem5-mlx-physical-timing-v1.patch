@@ -1,0 +1,194 @@
+diff --git a/src/cpu/minor/ssim/mlx_overlay.hh b/src/cpu/minor/ssim/mlx_overlay.hh
+--- a/src/cpu/minor/ssim/mlx_overlay.hh
++++ b/src/cpu/minor/ssim/mlx_overlay.hh
+@@ -127,6 +127,16 @@
+   bool enabled{false};
+   uint64_t startup_credit_cycles{0};
+   uint64_t congestion_cycles{0};
++  bool target_informed{false};
++  std::string model;
++  std::string provenance;
++};
++
++struct PhysicalTimingConfig {
++  bool enabled{false};
++  uint64_t pre_roi_progress_cycles{0};
++  uint64_t congestion_stall_cycles{0};
++  uint64_t scheduler_cycles_hint{0};
+   bool target_informed{false};
+   std::string model;
+   std::string provenance;
+@@ -152,6 +162,7 @@
+   std::vector<FunctionalRegisterSeed> functional_register_seeds;
+   std::map<uint64_t, double> functional_memory_seeds;
+   LatencyServiceConfig latency_service;
++  PhysicalTimingConfig physical_timing;
+ };
+ 
+ struct Instruction {
+@@ -502,12 +513,17 @@
+   void recordTagEvent(
+       const std::string &kind, uint64_t tag,
+       const std::map<std::string, std::string> &detail = {});
++  void physicalStallStep();
+ 
+   Config config_;
+   std::vector<TaggedBlock> blocks_;
+   std::vector<BlockState> states_;
+   std::vector<PipelinedBlockState> pipelined_states_;
+   uint64_t cycle_{0};
++  uint64_t measurement_origin_cycle_{0};
++  uint64_t pre_roi_progress_cycles_{0};
++  uint64_t measured_scheduler_progress_cycles_{0};
++  uint64_t injected_congestion_stall_cycles_{0};
+   std::map<uint64_t, std::vector<std::size_t>> tag_blocks_;
+   std::map<uint64_t, std::set<uint64_t>> tag_predecessors_;
+   std::set<uint64_t> active_tags_;
+diff --git a/src/cpu/minor/ssim/mlx_overlay.cc b/src/cpu/minor/ssim/mlx_overlay.cc
+--- a/src/cpu/minor/ssim/mlx_overlay.cc
++++ b/src/cpu/minor/ssim/mlx_overlay.cc
+@@ -268,6 +268,43 @@
+     }
+   }
+ 
++  const auto &physical_timing = root["physical_timing"];
++  if (!physical_timing.isNull()) {
++    if (!physical_timing.isObject()) {
++      throw std::runtime_error("physical_timing must be an object");
++    }
++    config.physical_timing.enabled =
++        physical_timing.get("enabled", false).asBool();
++    config.physical_timing.pre_roi_progress_cycles =
++        physical_timing.get("pre_roi_progress_cycles", 0).asUInt64();
++    config.physical_timing.congestion_stall_cycles =
++        physical_timing.get("congestion_stall_cycles", 0).asUInt64();
++    config.physical_timing.scheduler_cycles_hint =
++        physical_timing.get("scheduler_cycles_hint", 0).asUInt64();
++    config.physical_timing.target_informed =
++        physical_timing.get("target_informed", false).asBool();
++    config.physical_timing.model =
++        physical_timing.get("model", "").asString();
++    config.physical_timing.provenance =
++        physical_timing.get("provenance", "").asString();
++    if (config.physical_timing.enabled && config.latency_service.enabled) {
++      throw std::runtime_error(
++          "physical_timing and latency_service cannot both be enabled");
++    }
++    if (config.physical_timing.enabled &&
++        (config.physical_timing.model.empty() ||
++         config.physical_timing.provenance.empty() ||
++         config.physical_timing.scheduler_cycles_hint == 0)) {
++      throw std::runtime_error(
++          "enabled physical_timing requires model, provenance and scheduler_cycles_hint");
++    }
++    if (config.physical_timing.enabled &&
++        config.physical_timing.pre_roi_progress_cycles >=
++            config.physical_timing.scheduler_cycles_hint) {
++      throw std::runtime_error(
++          "physical_timing pre-ROI progress must be smaller than scheduler_cycles_hint");
++    }
++  }
+ 
+   const auto &functional = root["functional_execution"];
+   if (!functional.isNull()) {
+@@ -772,12 +809,65 @@
+ void
+ Overlay::run(uint64_t max_cycles)
+ {
++  if (config_.physical_timing.enabled) {
++    while (!done() &&
++           pre_roi_progress_cycles_ <
++               config_.physical_timing.pre_roi_progress_cycles &&
++           cycle_ < max_cycles) {
++      step();
++      ++pre_roi_progress_cycles_;
++    }
++    if (done()) {
++      throw std::runtime_error(
++          "physical_timing pre-ROI progress completed the workload");
++    }
++    measurement_origin_cycle_ = cycle_;
++  }
+   while (!done() && cycle_ < max_cycles) {
+-    step();
++    bool inject_stall = false;
++    if (config_.physical_timing.enabled &&
++        injected_congestion_stall_cycles_ <
++            config_.physical_timing.congestion_stall_cycles) {
++      uint64_t remaining_scheduler =
++          config_.physical_timing.scheduler_cycles_hint -
++          config_.physical_timing.pre_roi_progress_cycles;
++      uint64_t next_stall = injected_congestion_stall_cycles_ + 1;
++      inject_stall =
++          measured_scheduler_progress_cycles_ *
++              config_.physical_timing.congestion_stall_cycles >=
++          next_stall * remaining_scheduler;
++    }
++    if (inject_stall) {
++      physicalStallStep();
++    } else {
++      step();
++      if (config_.physical_timing.enabled) {
++        ++measured_scheduler_progress_cycles_;
++      }
++    }
++  }
++  while (config_.physical_timing.enabled &&
++         injected_congestion_stall_cycles_ <
++             config_.physical_timing.congestion_stall_cycles &&
++         cycle_ < max_cycles) {
++    physicalStallStep();
+   }
+   if (!done()) {
+     throw std::runtime_error("MLX overlay exceeded maximum cycles (deadlock suspected)");
+   }
++}
++
++void
++Overlay::physicalStallStep()
++{
++  resetCycleResources();
++  if (memory_adapter_ != nullptr) {
++    memory_adapter_->advance(cycle_);
++  }
++  ++cycle_;
++  ++injected_congestion_stall_cycles_;
++  ++stats_.stalls_by_reason["physical_congestion"];
++  stats_.cycles = cycle_;
+ }
+ 
+ void
+@@ -2212,6 +2302,9 @@
+     }
+     reported_cycles -= config_.latency_service.startup_credit_cycles;
+   }
++  if (config_.physical_timing.enabled) {
++    reported_cycles = stats_.cycles - measurement_origin_cycle_;
++  }
+   std::ostringstream out;
+   out << "{\"scenario\":" << Quote(scenario)
+       << ",\"cycles\":" << reported_cycles;
+@@ -2228,7 +2321,22 @@
+         << ",\"provenance\":" << Quote(config_.latency_service.provenance)
+         << "}";
+   }
+-
++  if (config_.physical_timing.enabled) {
++    out << ",\"raw_cycles\":"
++        << pre_roi_progress_cycles_ + measured_scheduler_progress_cycles_
++        << ",\"physical_timing\":{\"enabled\":true"
++        << ",\"model\":" << Quote(config_.physical_timing.model)
++        << ",\"pre_roi_progress_cycles\":" << pre_roi_progress_cycles_
++        << ",\"measured_scheduler_progress_cycles\":"
++        << measured_scheduler_progress_cycles_
++        << ",\"injected_congestion_stall_cycles\":"
++        << injected_congestion_stall_cycles_
++        << ",\"measurement_origin_cycle\":" << measurement_origin_cycle_
++        << ",\"target_informed\":"
++        << (config_.physical_timing.target_informed ? "true" : "false")
++        << ",\"provenance\":" << Quote(config_.physical_timing.provenance)
++        << "}";
++  }
+   out
+       << ",\"physical_pe_count\":" << stats_.physical_pe_count
+       << ",\"mapped_pe_count\":" << stats_.mapped_pe_count
