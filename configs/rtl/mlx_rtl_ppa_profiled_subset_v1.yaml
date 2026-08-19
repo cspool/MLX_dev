@@ -1,0 +1,67 @@
+name: mlx-rtl-ppa-profiled-subset-v1
+experiment_id: H201
+run_id: run206
+classification: target_informed_profiled_full_reduced_rtl_ppa
+validation_eligible: false
+
+frozen_inputs:
+  rtl_result: {path: artifacts/results/mlx-critical-rtl-run203.json, bytes: 26541, sha256: f5485621410347652115b8d784371f3f400830f88d2bfb1bcfc0d5bffde86bc5, required_status: supported, required_integrity: true}
+  rtl_manifest: {path: artifacts/environment/h198/rtl-run-manifest.json, bytes: 22189, sha256: d874ac23582e437f0faf9669a51d8a6131bcddccd96dfbf209ab007e2145ef42}
+  baseline_result: {path: artifacts/results/mlx-rtl-ppa-baseline-run204.json, bytes: 13495, sha256: 937b93972ada17f358927c4e0122cbf1497fcf17710868d069daa604a84b7acf, required_status: rejected, required_integrity: true}
+  structural_result: {path: artifacts/results/mlx-rtl-ppa-structural-correction-run205.json, bytes: 11348, sha256: d2619943eb65dcb60f132120f9899ee33bd2f06c175c0ff1c6de32178136900b, required_status: rejected, required_integrity: true}
+  structural_activity: {path: artifacts/environment/h200/activity-manifest.json, bytes: 5831, sha256: 376e9c2f0effc29966cb9944e5db8dd9590a1643aa56f3f5737ac1f7a2bc50e8}
+  targets: {path: artifacts/targets/paper_targets.yaml, bytes: 14931, sha256: c4a22ab8052ff8cb223a729b8ce07320c6826cfee0d37e1a664a8761e018b41e}
+  liberty: {path: /opt/OpenROAD-flow-scripts/flow/platforms/nangate45/lib/NangateOpenCellLibrary_typical.lib, bytes: 6692032, sha256: 8d540a4d4cf6d09d27c87ad067857a9c0c2eeb023ab7a56e058cd3113db4e9b1}
+  tech_lef: {path: /opt/OpenROAD-flow-scripts/flow/platforms/nangate45/lef/NangateOpenCellLibrary.tech.lef, bytes: 19485, sha256: 834a79295054cd4209178d1bade67c353863c47bb4b3c22ee38b862b7cec37f2}
+  macro_lef: {path: /opt/OpenROAD-flow-scripts/flow/platforms/nangate45/lef/NangateOpenCellLibrary.macro.lef, bytes: 349950, sha256: 840b01e500826096d1edcc752350834da647fdbf360798f243f8122b52b357c3}
+
+rtl_sources: [rtl/mlx/mlx_fp16.sv, rtl/mlx/mlx_config_network.sv, rtl/mlx/mlx_data_network.sv, rtl/mlx/mlx_tag_buffer.sv, rtl/mlx/mlx_control_logic.sv, rtl/mlx/mlx_register_file.sv, rtl/mlx/mlx_fu.sv, rtl/mlx/mlx_pe_top.sv]
+
+components:
+  config_network: {top: mlx_config_network, scope: config_network, has_clock: true}
+  data_network: {top: mlx_data_network, scope: data_network, has_clock: true}
+  control_logic: {top: mlx_control_logic, scope: control_logic, has_clock: true}
+  tag_buffer: {top: mlx_tag_buffer, scope: tag_buffer, has_clock: true}
+  register_file: {top: mlx_register_file, scope: register_file, has_clock: true}
+  fu_simd32: {top: mlx_fu, scope: functional_unit, has_clock: true}
+
+variants:
+  full:
+    parameters:
+      config_network: {INST_DEPTH: 20}
+      data_network: {LINKS: 6, BUFFER_DEPTH: 18, POINTER_BITS: 5}
+      control_logic: {TAGS: 16, STATE_BITS: 64}
+      tag_buffer: {TAGS: 16, METADATA_BITS: 64}
+      register_file: {SIMD_WIDTH: 32, DEPTH: 5}
+      fu_simd32: {SIMD_WIDTH: 32, FULL_FEATURES: 1, HP_LANES: 8}
+    vcds: [{workload: bsmm, path: artifacts/environment/h201/activity/full-bsmm.vcd}, {workload: fft_cmp, path: artifacts/environment/h201/activity/full-fft_cmp.vcd}, {workload: swa, path: artifacts/environment/h201/activity/full-swa.vcd}]
+  reduced:
+    parameters:
+      config_network: {INST_DEPTH: 2}
+      data_network: {LINKS: 2, BUFFER_DEPTH: 2, POINTER_BITS: 1}
+      control_logic: {TAGS: 4, STATE_BITS: 64}
+      tag_buffer: {TAGS: 4, METADATA_BITS: 64}
+      register_file: {SIMD_WIDTH: 8, DEPTH: 2}
+      fu_simd32: {SIMD_WIDTH: 8, FULL_FEATURES: 0, HP_LANES: 8}
+    vcds: [{workload: bsmm, path: artifacts/environment/h201/activity/reduced-bsmm.vcd}]
+    power_components: [config_network, data_network, control_logic, tag_buffer, register_file, fu_simd32]
+    reuse_full_average_power: []
+
+measurement: {clock_period_ns: 1.0, full_power_average: arithmetic_mean_of_profiled_128x_workloads, reduced_power: independently_profiled_reduced_bsmm, area_source: yosys_abc_nangate45, power_source: openroad_port_vcd}
+activity: {repetitions: 128, randomize_operands: true, testbench: rtl/mlx/tb_mlx_pe.sv, workloads: {full: [bsmm, fft_cmp, swa], reduced: [bsmm]}}
+transfer: {target_section: table2_area_power, calibration_area: pe.area_mm2 / sum_full_component_raw_area, calibration_power: pe.power_mw / sum_full_component_raw_power, array_pes: 16, maximum_relative_error: 0.15, prohibited_per_component_coefficients: true}
+
+source_layout:
+  protocol: experiments/h201-mlx-rtl-ppa-profiled-subset/protocol.md
+  config: configs/rtl/mlx_rtl_ppa_profiled_subset_v1.yaml
+  power_tcl: rtl/ppa/openroad_component_power.tcl
+  vcd_extractor: scripts/extract_vcd_scope.py
+  driver: scripts/run_mlx_rtl_ppa_structural_correction.py
+  runner: scripts/run_mlx_rtl_ppa_baseline.py
+  auditor: scripts/audit_mlx_rtl_ppa_profiled_subset.py
+  test: tests/test_mlx_rtl_ppa_profiled_subset.py
+
+output_root: artifacts/environment/h201
+measurement_manifest: artifacts/environment/h201/ppa-measurement-manifest.json
+activity_manifest: artifacts/environment/h201/activity-manifest.json
+result_path: artifacts/results/mlx-rtl-ppa-profiled-subset-run206.json

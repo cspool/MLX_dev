@@ -4,7 +4,8 @@ module mlx_fu #(
     parameter SIMD_WIDTH = 32,
     parameter DATA_BITS = 16,
     parameter FULL_FEATURES = 1,
-    parameter TRANS_LANES = (SIMD_WIDTH / 4)
+    parameter TRANS_LANES = (SIMD_WIDTH / 4),
+    parameter HP_LANES = 8
 ) (
     input  wire                            clk,
     input  wire                            rst_n,
@@ -15,14 +16,41 @@ module mlx_fu #(
     input  wire [SIMD_WIDTH*DATA_BITS-1:0] vector_c_i,
     output reg                             valid_o,
     output reg  [SIMD_WIDTH*DATA_BITS-1:0] vector_result_o,
-    output reg                             illegal_o
+    output reg                             illegal_o,
+    output wire [HP_LANES*32-1:0]         high_precision_result_o
 );
   localparam OP_EXP = 4'd5;
   localparam OP_DIV = 4'd6;
   localparam OP_SHUFFLE = 4'd7;
   wire [SIMD_WIDTH*DATA_BITS-1:0] lane_result;
   wire removed_operation = (op_i == OP_DIV) || (op_i == OP_SHUFFLE);
+  reg [31:0] high_precision_q [0:HP_LANES-1];
   genvar lane;
+  genvar hp_lane;
+
+  generate
+    for (hp_lane = 0; hp_lane < HP_LANES; hp_lane = hp_lane + 1) begin : GENERATE_HP
+      assign high_precision_result_o[hp_lane*32 +: 32] = high_precision_q[hp_lane];
+      if (FULL_FEATURES != 0) begin : GENERATE_HP_FULL
+        wire [31:0] hp_a = {
+            vector_a_i[(2*hp_lane+1)*DATA_BITS +: DATA_BITS],
+            vector_a_i[(2*hp_lane)*DATA_BITS +: DATA_BITS]
+        };
+        wire [31:0] hp_b = {
+            vector_b_i[(2*hp_lane+1)*DATA_BITS +: DATA_BITS],
+            vector_b_i[(2*hp_lane)*DATA_BITS +: DATA_BITS]
+        };
+        always @(posedge clk or negedge rst_n) begin
+          if (!rst_n)
+            high_precision_q[hp_lane] <= 32'd0;
+          else if (valid_i)
+            high_precision_q[hp_lane] <= hp_a * hp_b + {16'd0, hp_a[15:0]};
+        end
+      end else begin : GENERATE_HP_REMOVED
+        always @* high_precision_q[hp_lane] = 32'd0;
+      end
+    end
+  endgenerate
 
   generate
     for (lane = 0; lane < SIMD_WIDTH; lane = lane + 1) begin : GENERATE_LANES

@@ -133,6 +133,11 @@ def build_audit(config: dict[str, Any]) -> dict[str, Any]:
     }
 
     power_records = manifest["power_records"]
+    expected_power_records = (
+        len(config["components"]) * len(config["variants"]["full"]["vcds"])
+        + len(config["variants"]["reduced"]["power_components"])
+        * len(config["variants"]["reduced"]["vcds"])
+    )
     power_fields = (
         "internal_power_w",
         "switching_power_w",
@@ -140,7 +145,7 @@ def build_audit(config: dict[str, Any]) -> dict[str, Any]:
         "total_power_w",
     )
     power_checks = {
-        "count": len(power_records) == 20,
+        "count": len(power_records) == expected_power_records,
         "returncodes": all(item["returncode"] == 0 for item in power_records),
         "activity": all(int(item["annotated_pin_activities"]) > 0 for item in power_records),
         "finite": all(

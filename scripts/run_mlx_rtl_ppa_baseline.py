@@ -251,6 +251,11 @@ def main() -> int:
         "leakage_power_w",
         "total_power_w",
     )
+    expected_power_records = (
+        len(config["components"]) * len(config["variants"]["full"]["vcds"])
+        + len(config["variants"]["reduced"]["power_components"])
+        * len(config["variants"]["reduced"]["vcds"])
+    )
     checks = {
         "synthesis_count": len(synthesis_records) == 12,
         "synthesis": all(
@@ -260,7 +265,7 @@ def main() -> int:
             and float(item["liberty_area_um2"] or 0.0) > 0
             for item in synthesis_records
         ),
-        "power_count": len(power_records) == 20,
+        "power_count": len(power_records) == expected_power_records,
         "power": all(
             item["returncode"] == 0
             and int(item["annotated_pin_activities"] or 0) > 0

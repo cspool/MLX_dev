@@ -65,6 +65,8 @@ module tb_mlx_pe #(
   integer operation_count;
   integer repetitions;
   integer repeat_index;
+  integer activity_mode;
+  integer activity_counter;
   reg [31:0] checksum;
   reg [3:0] opcode;
   reg signed [4:0] encoded_dx;
@@ -111,6 +113,14 @@ module tb_mlx_pe #(
     input [3:0] selected_opcode;
     begin
       @(negedge clk);
+      if (activity_mode != 0) begin
+        for (lane = 0; lane < SIMD_WIDTH; lane = lane + 1) begin
+          vector_a[lane*16 +: 16] = 16'h3c00 | ((activity_counter + lane) & 1023);
+          vector_b[lane*16 +: 16] = 16'h3c00 | ((3*activity_counter + lane) & 1023);
+          vector_c[lane*16 +: 16] = 16'h3c00 | ((7*activity_counter + lane) & 1023);
+        end
+        activity_counter = activity_counter + 1;
+      end
       fu_op = selected_opcode;
       fu_valid = 1'b1;
       @(posedge clk);
@@ -119,7 +129,7 @@ module tb_mlx_pe #(
       if (!fu_valid_o) $fatal(1, "FU result missing");
       if (!FULL_FEATURES && ((selected_opcode == 6) || (selected_opcode == 7))) begin
         if (!fu_illegal) $fatal(1, "reduced operation not rejected");
-      end else begin
+      end else if (activity_mode == 0) begin
         if (fu_illegal) $fatal(1, "legal FU operation rejected");
         case (selected_opcode)
           2: expected_lane0 = 16'h4500;
@@ -135,6 +145,9 @@ module tb_mlx_pe #(
           $fatal(1, "FP16 lane0 mismatch op=%0d got=%h expected=%h",
                  selected_opcode, vector_result[15:0], expected_lane0);
         checksum = checksum ^ {16'd0, vector_result[15:0]};
+      end else begin
+        if (fu_illegal) $fatal(1, "activity FU operation rejected");
+        checksum = checksum ^ {16'd0, vector_result[15:0]};
       end
     end
   endtask
@@ -145,11 +158,13 @@ module tb_mlx_pe #(
     if (!$value$plusargs("WORKLOAD=%s", workload_name)) $fatal(1, "missing WORKLOAD");
     if (!$value$plusargs("VCD=%s", vcd_path)) $fatal(1, "missing VCD");
     if (!$value$plusargs("REPEAT=%d", repetitions)) repetitions = 1;
+    if (!$value$plusargs("ACTIVITY=%d", activity_mode)) activity_mode = 0;
     $dumpfile(vcd_path);
     $dumpvars(0, tb_mlx_pe);
     $readmemh(program_path, program_mem);
     checksum = 32'd0;
     operation_count = 0;
+    activity_counter = 1;
     for (lane = 0; lane < SIMD_WIDTH; lane = lane + 1) begin
       vector_a[lane*16 +: 16] = (lane == 1) ? 16'h4000 : 16'h3c00;
       vector_b[lane*16 +: 16] = 16'h4000;
@@ -245,6 +260,8 @@ module tb_mlx_pe #(
           @(negedge clk);
           network_valid = 1'b0;
         end
+        if ((activity_mode != 0) && ((opcode == 0) || (opcode == 1)))
+          drive_fu(4'd2);
       end
     end
     if (!FULL_FEATURES) drive_fu(4'd6);

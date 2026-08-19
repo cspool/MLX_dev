@@ -130,8 +130,7 @@ def main() -> int:
         for workload in specification["workloads"]:
             program = program_map[workload]
             vcd = activity_root / f"{variant}-{workload}.vcd"
-            result = execute(
-                [
+            run_command = [
                     "vvp",
                     str(binary),
                     f"+PROGRAM={PROJECT_ROOT / program['hex_path']}",
@@ -140,7 +139,9 @@ def main() -> int:
                     f"+VCD={vcd}",
                     f"+REPEAT={repetitions}",
                 ]
-            )
+            if config["activity"].get("randomize_operands", False):
+                run_command.append("+ACTIVITY=1")
+            result = execute(run_command)
             log = activity_root / f"run-{variant}-{workload}.log"
             log.write_text(result.stdout + result.stderr)
             generated_files[f"run_{variant}_{workload}"] = digest(log)

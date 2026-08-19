@@ -2,7 +2,8 @@
 
 module mlx_tag_buffer #(
     parameter TAGS = 16,
-    parameter TAG_BITS = 4
+    parameter TAG_BITS = 4,
+    parameter METADATA_BITS = 64
 ) (
     input  wire                clk,
     input  wire                rst_n,
@@ -11,7 +12,7 @@ module mlx_tag_buffer #(
     input  wire [7:0]          configure_trip_count_i,
     input  wire [5:0]          configure_frontier_i,
     input  wire                configure_ready_i,
-    input  wire [31:0]         configure_metadata_i,
+    input  wire [METADATA_BITS-1:0] configure_metadata_i,
     input  wire                issue_i,
     input  wire [TAG_BITS-1:0] issue_tag_i,
     input  wire                complete_i,
@@ -22,7 +23,7 @@ module mlx_tag_buffer #(
     output wire                query_done_o,
     output wire [7:0]          query_trip_count_o,
     output wire [5:0]          query_frontier_o,
-    output wire [31:0]         query_metadata_o,
+    output wire [METADATA_BITS-1:0] query_metadata_o,
     output wire [TAGS-1:0]     active_vector_o,
     output wire [TAGS-1:0]     ready_vector_o,
     output wire [TAGS-1:0]     done_vector_o
@@ -32,7 +33,7 @@ module mlx_tag_buffer #(
   reg [TAGS-1:0] done_q;
   reg [7:0] trip_count_q [0:TAGS-1];
   reg [5:0] frontier_q [0:TAGS-1];
-  reg [31:0] metadata_q [0:TAGS-1];
+  reg [METADATA_BITS-1:0] metadata_q [0:TAGS-1];
   integer index;
 
   assign query_active_o = active_q[query_tag_i];
@@ -53,7 +54,7 @@ module mlx_tag_buffer #(
       for (index = 0; index < TAGS; index = index + 1) begin
         trip_count_q[index] <= 8'd0;
         frontier_q[index] <= 6'd0;
-        metadata_q[index] <= 32'd0;
+        metadata_q[index] <= {METADATA_BITS{1'b0}};
       end
     end else begin
       if (configure_i) begin

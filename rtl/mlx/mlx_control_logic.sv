@@ -2,7 +2,8 @@
 
 module mlx_control_logic #(
     parameter TAGS = 16,
-    parameter TAG_BITS = 4
+    parameter TAG_BITS = 4,
+    parameter STATE_BITS = 64
 ) (
     input  wire                  clk,
     input  wire                  rst_n,
@@ -12,25 +13,45 @@ module mlx_control_logic #(
     input  wire [3:0]            pipeline_ready_i,
     output reg  [3:0]            issue_valid_o,
     output reg  [4*TAG_BITS-1:0] issue_tag_o,
-    output reg  [15:0]           state_checksum_o
+    output reg  [15:0]           state_checksum_o,
+    output wire [TAGS*STATE_BITS-1:0] schedule_state_o
 );
   integer tag_index;
   integer pipeline_index;
   reg selected;
   reg [1:0] tag_pipeline;
   reg [7:0] issue_age_q [0:TAGS-1];
+  reg [STATE_BITS-1:0] schedule_state_q [0:TAGS-1];
   integer age_index;
+  genvar state_index;
+
+  generate
+    for (state_index = 0; state_index < TAGS; state_index = state_index + 1) begin
+      assign schedule_state_o[state_index*STATE_BITS +: STATE_BITS]
+          = schedule_state_q[state_index];
+    end
+  endgenerate
 
   always @(posedge clk or negedge rst_n) begin
     if (!rst_n) begin
       state_checksum_o <= 16'd0;
       for (age_index = 0; age_index < TAGS; age_index = age_index + 1)
         issue_age_q[age_index] <= 8'd0;
+      for (age_index = 0; age_index < TAGS; age_index = age_index + 1)
+        schedule_state_q[age_index] <= {STATE_BITS{1'b0}};
     end else begin
       state_checksum_o <= 16'd0;
       for (age_index = 0; age_index < TAGS; age_index = age_index + 1) begin
         if (active_i[age_index] && ready_i[age_index])
           issue_age_q[age_index] <= issue_age_q[age_index] + 1'b1;
+        if (active_i[age_index]) begin
+          schedule_state_q[age_index] <= {
+              schedule_state_q[age_index][STATE_BITS-6:0],
+              ready_i[age_index],
+              pipeline_class_i[2*age_index +: 2],
+              issue_age_q[age_index][1:0]
+          };
+        end
         state_checksum_o <= state_checksum_o
             ^ {8'd0, issue_age_q[age_index]}
             ^ {12'd0, pipeline_class_i[2*age_index +: 2], 2'd0};

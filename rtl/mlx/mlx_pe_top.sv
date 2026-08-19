@@ -66,11 +66,13 @@ module mlx_pe_top #(
   wire query_active_unused;
   wire query_ready_unused;
   wire query_done_unused;
-  wire [31:0] query_metadata_unused;
+  wire [63:0] query_metadata_unused;
   wire [3:0] network_destination_register_unused;
   wire [3:0] network_tag_unused;
   wire [63:0] network_buffer_observe_unused;
   wire [15:0] control_state_checksum_unused;
+  wire [1023:0] control_schedule_state_unused;
+  wire [255:0] high_precision_result_unused;
 
   mlx_config_network config_network (
       .clk(clk),
@@ -92,7 +94,7 @@ module mlx_pe_top #(
       .configure_trip_count_i(tag_trip_count_i),
       .configure_frontier_i(tag_frontier_i),
       .configure_ready_i(tag_ready_i),
-      .configure_metadata_i(cfg_word_i[39:8]),
+      .configure_metadata_i({32'd0, cfg_word_i[39:8]}),
       .issue_i(tag_issue_i),
       .issue_tag_i(tag_issue_id_i),
       .complete_i(tag_complete_i),
@@ -118,7 +120,8 @@ module mlx_pe_top #(
       .pipeline_ready_i(pipeline_ready_i),
       .issue_valid_o(issue_valid_o),
       .issue_tag_o(issue_tag_o),
-      .state_checksum_o(control_state_checksum_unused)
+      .state_checksum_o(control_state_checksum_unused),
+      .schedule_state_o(control_schedule_state_unused)
   );
 
   mlx_register_file #(.SIMD_WIDTH(SIMD_WIDTH)) register_file (
@@ -142,7 +145,7 @@ module mlx_pe_top #(
       .destination_register_i(network_destination_register_i),
       .tag_i(network_tag_i),
       .payload_i(network_payload_i),
-      .auxiliary_valid_i({5{network_valid_i}}),
+      .auxiliary_valid_i({4'b0000, network_valid_i}),
       .auxiliary_payload_i({5{network_payload_i}}),
       .ready_o(),
       .valid_o(network_valid_o),
@@ -170,7 +173,8 @@ module mlx_pe_top #(
       .vector_c_i(fu_vector_c_i),
       .valid_o(fu_valid_o),
       .vector_result_o(fu_vector_result_o),
-      .illegal_o(fu_illegal_o)
+      .illegal_o(fu_illegal_o),
+      .high_precision_result_o(high_precision_result_unused)
   );
 endmodule
 
