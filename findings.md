@@ -749,3 +749,13 @@ kernels but is currently over-fused. Its corrected timing is withheld because
 the split boundary, tile shape, intermediate traffic domain and second launch
 cost are undisclosed. This closes the source-refresh phase with an actionable
 simulator defect rather than a fitted penalty.
+
+Run175 is the first true one-baseline closure attempt. The same complete
+BSMM->FFT-CMP->Attention->SWA->elementwise chain runs functionally on a
+one-active-tag spatial baseline and 13-tag MLX across 48 builds/runs. Inputs,
+466 operations, 162 memory requests, 73 events and 139 hops are identical; both
+architectures match all component boundaries within 2.78e-17. MLX is faster at
+every depth, but the curve falls from 1.381x to 1.167x and the complete block
+misses the 1.20x gate. The cause is not work or correctness: H161 inserts a
+whole-component predecessor barrier at all four dynamic links. H171 will retain
+those barriers only for the baseline and use store-ready data events for MLX.

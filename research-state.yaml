@@ -839,6 +839,26 @@ strict_numeric_refresh:
     pytest_warnings: 17
     verified_at: "2026-08-19"
   handoff: docs/simulator-source-refresh-2026-08-19.md
+
+single_baseline_completion:
+  status: active
+  objective: complete_same_input_MLX_vs_one_single_layer_spatial_baseline
+  baseline: single_layer_serial_spatial_baseline
+  mlx: multi_layer_execution
+  minimum_clear_speedup: 1.20
+  completed_hypotheses:
+    - experiment_id: H170
+      run_id: run175
+      path: artifacts/results/single-baseline-complete-block-run175.json
+      sha256: 1e857627b92c75d8397a59b4f9b36c950b8da364c9b9c8e2e12a6bff9f117385
+      status: rejected
+      audit_integrity: true
+      both_functionally_correct: true
+      same_input_and_work: true
+      complete_block_speedup: 1.167123287671233
+      failed_gate: minimum_clear_speedup_1.20
+  current_hypothesis: H171
+  next_change: replace_MLX_coarse_component_barriers_with_store_ready_events
   target_policy: source_derived_candidates_then_paper_held_out
   open_simulator_pins:
     dam_rs: 8771934ce6074bea0d8d901cf787aae8983ae42e
