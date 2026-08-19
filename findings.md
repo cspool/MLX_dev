@@ -1027,3 +1027,11 @@ H195 retains 48/48 points and 36/36 directions, and a fresh 482-test suite plus
 Ruff passes. The final goal certificate keeps `validation_eligible=false`, so
 the 2.39%/1.22% N4096 errors describe the registered interpolated-reference
 benchmark rather than a new paper or Xavier measurement.
+
+Run202 establishes the first executable RTL-to-PPA path in the project.
+Icarus and Verilator agree on a sequential arithmetic self-test, Yosys/ABC
+produces a 1,939-cell Nangate45 netlist, and OpenROAD consumes 132 VCD activity
+annotations to report internal, switching and leakage power. The smoke design's
+-0.415 ns slack at a 1-ns period is an important negative check: later MLX
+arithmetic must be explicitly pipelined. The flow is an open-method substitute,
+not the paper's unavailable Synopsys/12-nm/post-silicon environment.

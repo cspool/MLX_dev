@@ -1,0 +1,140 @@
+{
+  "checks": {
+    "activity": true,
+    "area": true,
+    "iverilog_compile": true,
+    "iverilog_run": true,
+    "mapped": true,
+    "openroad": true,
+    "orfs": true,
+    "power": true,
+    "tools_found": true,
+    "vcd": true,
+    "verilator_compile": true,
+    "verilator_run": true,
+    "versions": true,
+    "yosys": true
+  },
+  "commands": {
+    "iverilog": [
+      "/usr/bin/iverilog",
+      "-g2012",
+      "-s",
+      "tb_ppa_smoke",
+      "-o",
+      "/workspace/MLX_dev/artifacts/environment/h197/ppa-smoke-iverilog",
+      "/workspace/MLX_dev/rtl/ppa/smoke/ppa_smoke.sv",
+      "/workspace/MLX_dev/rtl/ppa/smoke/tb_ppa_smoke.sv"
+    ],
+    "openroad": [
+      "/usr/bin/openroad",
+      "-no_init",
+      "-exit",
+      "-log",
+      "/workspace/MLX_dev/artifacts/environment/h197/openroad-smoke.log",
+      "/workspace/MLX_dev/rtl/ppa/smoke/openroad_power.tcl"
+    ],
+    "verilator": [
+      "/usr/bin/verilator",
+      "--cc",
+      "--exe",
+      "--build",
+      "--trace",
+      "--top-module",
+      "ppa_smoke",
+      "--Mdir",
+      "/workspace/MLX_dev/artifacts/environment/h197/verilator-smoke",
+      "/workspace/MLX_dev/rtl/ppa/smoke/ppa_smoke.sv",
+      "/workspace/MLX_dev/rtl/ppa/smoke/sim_main.cpp",
+      "-CFLAGS",
+      "-std=c++17"
+    ],
+    "yosys": [
+      "/usr/bin/yosys",
+      "-l",
+      "/workspace/MLX_dev/artifacts/environment/h197/yosys-smoke.log",
+      "-p",
+      "read_verilog -sv /workspace/MLX_dev/rtl/ppa/smoke/ppa_smoke.sv; hierarchy -check -top ppa_smoke; synth -top ppa_smoke; dfflibmap -liberty /opt/OpenROAD-flow-scripts/flow/platforms/nangate45/lib/NangateOpenCellLibrary_typical.lib; abc -liberty /opt/OpenROAD-flow-scripts/flow/platforms/nangate45/lib/NangateOpenCellLibrary_typical.lib; clean; stat -liberty /opt/OpenROAD-flow-scripts/flow/platforms/nangate45/lib/NangateOpenCellLibrary_typical.lib; write_verilog -noattr -noexpr -nodec /workspace/MLX_dev/artifacts/environment/h197/ppa-smoke-mapped.v"
+    ]
+  },
+  "experiment_id": "H197",
+  "generated_at": "2026-08-19T18:25:08.972615+00:00",
+  "generated_files": {
+    "iverilog_log": {
+      "bytes": 110,
+      "path": "artifacts/environment/h197/iverilog-smoke.log",
+      "sha256": "81c43e0ab8b956b65c5879240c52267f0ed4fed26f18167c39ddd1166936e963"
+    },
+    "mapped_netlist": {
+      "bytes": 189383,
+      "path": "artifacts/environment/h197/ppa-smoke-mapped.v",
+      "sha256": "4e3cf822fd16975aef9da6d0e972b87003bf1aa169744e5123cbd407f5dcd192"
+    },
+    "openroad_log": {
+      "bytes": 7638,
+      "path": "artifacts/environment/h197/openroad-smoke.log",
+      "sha256": "0d85a7b0b7ccf96d7f9180c855674c79a45a0d22a756393700425bef5e9529d7"
+    },
+    "vcd": {
+      "bytes": 1723,
+      "path": "artifacts/environment/h197/ppa-smoke.vcd",
+      "sha256": "39a15e48a02fce28b3e429cb6a3e64cb0b2c15e8ded057eb6f2799c7aa24a1fd"
+    },
+    "verilator_log": {
+      "bytes": 1318,
+      "path": "artifacts/environment/h197/verilator-smoke.log",
+      "sha256": "95fe4cd96ac69561a7da0dd1523311160ed7596f8b73101125d7f8e0a3868f63"
+    },
+    "yosys_log": {
+      "bytes": 36730,
+      "path": "artifacts/environment/h197/yosys-smoke.log",
+      "sha256": "61e1fe7bc7817647f952a9c5b6569dfab390b348ee4c67837389f0712ac09f47"
+    }
+  },
+  "limitations": {
+    "full_design_post_silicon_measurement_available": false,
+    "method_equivalent_to_paper": false,
+    "open_reference_library": "Nangate45_nonfabricable",
+    "paper_12nm_library_available": false,
+    "paper_synthesis_tool_available": false
+  },
+  "orfs_commit": "6101364b2d7909dd797e1e3e7f80695401cfa4e4",
+  "paper_performance_targets_consumed": false,
+  "run_id": "run202",
+  "schema_version": 1,
+  "simulations": {
+    "iverilog_returncode": 0,
+    "iverilog_stdout": "VCD info: dumpfile artifacts/environment/h197/ppa-smoke.vcd opened for output.\nPPA_SMOKE_PASS checksum=260885\n",
+    "verilator_returncode": 0,
+    "verilator_stdout": "PPA_SMOKE_PASS checksum=260885\n"
+  },
+  "synthesis": {
+    "cell_count": 1939,
+    "liberty_area_um2": 2738.47,
+    "top": "ppa_smoke"
+  },
+  "timing_power": {
+    "annotated_pin_activities": 132,
+    "clock_period_ns": 1.0,
+    "internal_power_w": 0.00155,
+    "leakage_power_w": 5.5e-05,
+    "switching_power_w": 0.000205,
+    "total_power_w": 0.00181,
+    "worst_slack_ns": -0.415216
+  },
+  "tools": {
+    "abc": "/usr/bin/berkeley-abc",
+    "iverilog": "/usr/bin/iverilog",
+    "openroad": "/usr/bin/openroad",
+    "verilator": "/usr/bin/verilator",
+    "vvp": "/usr/bin/vvp",
+    "yosys": "/usr/bin/yosys"
+  },
+  "versions": {
+    "abc": "UC Berkeley, ABC 1.01 (compiled Jan 29 2022 01:26:07)\n",
+    "iverilog": "Icarus Verilog version 11.0 (stable) ()\n\nCopyright 1998-2020 Stephen Williams\n\n  This program is free software; you can redistribute it and/or modify\n  it under the terms of the GNU General Public License as published by\n  the Free Software Foundation; either version 2 of the License, or\n  (at your option) any later version.\n\n  This program is distributed in the hope that it will be useful,\n  but WITHOUT ANY WARRANTY; without even the implied warranty of\n  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the\n  GNU General Public License for more details.\n\n  You should have received a copy of the GNU General Public License along\n  with this program; if not, write to the Free Software Foundation, Inc.,\n  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.\n\nIcarus Verilog Preprocessor version 11.0 (stable) ()\n\nCopyright (c) 1999-2020 Stephen Williams (steve@icarus.com)\n  This program is free software; you can redistribute it and/or modify\n  it under the terms of the GNU General Public License as published by\n  the Free Software Foundation; either version 2 of the License, or\n  (at your option) any later version.\n\n  This program is distributed in the hope that it will be useful,\n  but WITHOUT ANY WARRANTY; without even the implied warranty of\n  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the\n  GNU General Public License for more details.\n\n  You should have received a copy of the GNU General Public License along\n  with this program; if not, write to the Free Software Foundation, Inc.,\n  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.\n\nIcarus Verilog Parser/Elaborator version 11.0 (stable) ()\n\nCopyright (c) 1998-2020 Stephen Williams (steve@icarus.com)\n\n  This program is free software; you can redistribute it and/or modify\n  it under the terms of the GNU General Public License as published by\n  the Free Software Foundation; either version 2 of the License, or\n  (at your option) any later version.\n\n  This program is distributed in the hope that it will be useful,\n  but WITHOUT ANY WARRANTY; without even the implied warranty of\n  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the\n  GNU General Public License for more details.\n\n  You should have received a copy of the GNU General Public License along\n  with this program; if not, write to the Free Software Foundation, Inc.,\n  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.\n\n FLAGS DLL vvp.tgt\nvvp.tgt: Icarus Verilog VVP Code Generator 11.0 (stable) ()\n\nCopyright (c) 2001-2020 Stephen Williams (steve@icarus.com)\n\n  This program is free software; you can redistribute it and/or modify\n  it under the terms of the GNU General Public License as published by\n  the Free Software Foundation; either version 2 of the License, or\n  (at your option) any later version.\n\n  This program is distributed in the hope that it will be useful,\n  but WITHOUT ANY WARRANTY; without even the implied warranty of\n  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the\n  GNU General Public License for more details.\n\n  You should have received a copy of the GNU General Public License along\n  with this program; if not, write to the Free Software Foundation, Inc.,\n  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.\n\n",
+    "openroad": "v2.0-17598-ga008522d8 \n",
+    "verilator": "Verilator 4.038 2020-07-11 rev v4.036-114-g0cd4a57ad\n",
+    "yosys": "Yosys 0.9 (git sha1 1979e0b)\n"
+  }
+}

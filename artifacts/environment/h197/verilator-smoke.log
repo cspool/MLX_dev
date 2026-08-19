@@ -1,0 +1,9 @@
+make: Entering directory '/workspace/MLX_dev/artifacts/environment/h197/verilator-smoke'
+g++  -I.  -MMD -I/usr/share/verilator/include -I/usr/share/verilator/include/vltstd -DVM_COVERAGE=0 -DVM_SC=0 -DVM_TRACE=1 -faligned-new -fcf-protection=none -Wno-bool-operation -Wno-sign-compare -Wno-uninitialized -Wno-unused-but-set-variable -Wno-unused-parameter -Wno-unused-variable -Wno-shadow     -std=c++17  -Os -c -o sim_main.o /workspace/MLX_dev/rtl/ppa/smoke/sim_main.cpp
+/usr/bin/perl /usr/share/verilator/bin/verilator_includer -DVL_INCLUDE_OPT=include Vppa_smoke.cpp Vppa_smoke__Trace.cpp Vppa_smoke__Slow.cpp Vppa_smoke__Syms.cpp Vppa_smoke__Trace__Slow.cpp > Vppa_smoke__ALL.cpp
+g++  -I.  -MMD -I/usr/share/verilator/include -I/usr/share/verilator/include/vltstd -DVM_COVERAGE=0 -DVM_SC=0 -DVM_TRACE=1 -faligned-new -fcf-protection=none -Wno-bool-operation -Wno-sign-compare -Wno-uninitialized -Wno-unused-but-set-variable -Wno-unused-parameter -Wno-unused-variable -Wno-shadow     -std=c++17  -Os -c -o Vppa_smoke__ALL.o Vppa_smoke__ALL.cpp
+ar -cr Vppa_smoke__ALL.a Vppa_smoke__ALL.o
+ranlib Vppa_smoke__ALL.a
+g++    sim_main.o verilated.o verilated_vcd_c.o Vppa_smoke__ALL.a      -o Vppa_smoke
+make: Leaving directory '/workspace/MLX_dev/artifacts/environment/h197/verilator-smoke'
+PPA_SMOKE_PASS checksum=260885
