@@ -832,3 +832,10 @@ services and 35 rows remain unchanged. All ten topology services now have
 passing native holdouts and all 42 exact-work rows are populated. RTX4090 is
 faster than the current MLX surrogate in every row, which is retained as the
 new-device conclusion rather than forced to resemble the original Orin ratios.
+
+Run184 freezes the next priority tier without rewriting its meaning. Figure23
+passes 30/30 qualitative cells, Figure19 passes three curves plus four
+comparisons, and Figure20 passes 8/8 trend cells; their strict failures remain
+visible. Together with run183's 42-row native4090 replacement, the requested
+24/23/19/20 exploration tier is complete. Figures22/25 remain reference-only;
+Figure18 is the sole remaining item.
