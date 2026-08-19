@@ -1,0 +1,101 @@
+name: independent-holdout-validation-v1
+experiment_id: H193
+run_id: run198
+classification: frozen_parameter_new_shape_holdout_validation
+validation_eligible: true
+
+frozen_inputs:
+  selected_model:
+    path: artifacts/results/fig19-20-23-gap-attribution-run188.json
+    bytes: 37530
+    sha256: d38bd8ddc7cb6e131662241549f53df97015053b87a72b00277137d970001aef
+    required_status: supported
+    required_integrity: true
+  physical_parent:
+    path: artifacts/results/cycle-level-physicalization-run196.json
+    bytes: 17084
+    sha256: cdfb20edab4208c1b53b3e9ad3464d66b29d78d802ebe6b8f18c9e84888723e0
+    required_status: supported
+    required_integrity: true
+  coverage_parent:
+    path: artifacts/results/full-workload-coverage-run197.json
+    bytes: 13043
+    sha256: 0564b42acd733960b46967cb5e3b2f899810e039effcefd7e6e3288c02052fd5
+    required_status: supported
+    required_integrity: true
+  figure19_raw:
+    path: artifacts/results/fig19-coupled-steady-state-run134.json
+    bytes: 12881
+    sha256: d456e7cbf21d9a651615c1cd1d137650e11d3d6e6c2ce84c6540c58945aa7866
+    required_status: supported
+    required_integrity: true
+  figure20_raw:
+    path: artifacts/results/fig20-run006.json
+    bytes: 41754
+    sha256: 1a349e197759607657a5ae3ff03ffa05a9af06f0c7ffbd4ec267db14c4d5976d
+  figure19_composition:
+    path: artifacts/environment/h185/fig19-trace-corrected-composition.json
+    bytes: 7071
+    sha256: ddd521f906c27929d6f771f46f592c15aa13c17135484e64ad7fa9b7c1bf2045
+  figure20_composition:
+    path: artifacts/environment/h186/fig20-trace-corrected-composition.json
+    bytes: 14406
+    sha256: 241ae3b6876e66ad42f94ab4f086661d7ff1ceac35aacbef73a9d88c48e7cb7c
+  base_overlay:
+    path: artifacts/environment/h48/mlx-full-block-fixed.json
+    bytes: 283959
+    sha256: 66f44eb4b1f0092ae88e93c7a14285254e3295d281315ea7e7f61788d2bc0e03
+  targets:
+    path: artifacts/targets/paper_targets.yaml
+    bytes: 14931
+    sha256: c4a22ab8052ff8cb223a729b8ce07320c6826cfee0d37e1a664a8761e018b41e
+
+holdouts:
+  figure23:
+    sequence_lengths: [1536, 3072, 6144]
+    reference_anchor_lengths: [512, 1024, 2048, 4096, 8192]
+    active_window: 4
+    series: [simd32_4x4, simd8_8x8, simd32_8x8]
+  figure19:
+    sequence_lengths: [192, 384, 768]
+    reference_anchor_lengths: [128, 256, 512, 1024]
+    series: [attention_latency_ms, ffn_latency_ms, fabnet_total_latency_ms, mlx_total_latency_ms, speedup]
+  figure20:
+    sequence_lengths: [512, 2048, 4096]
+    reference_anchor_lengths: [256, 8192]
+    panels: [versus_dense_tcu, versus_sparse_cuda]
+    operators: [qkv, attention, ffn1, ffn2]
+
+native_trace:
+  gpu_index: 0
+  expected_name: NVIDIA GeForce RTX 4090
+  expected_uuid: GPU-316b42a1-49a5-f647-aa0c-05b853d289a8
+  warmup_iterations: 2
+  timed_iterations: 5
+  required_cases: 39
+  required_samples: 195
+  deterministic_seed: 193
+
+acceptance:
+  maximum_relative_error: 0.15
+  required_figure23_points: 9
+  required_figure19_points: 15
+  required_figure20_points: 24
+  required_total_points: 48
+  required_direction_matches: 36
+  require_frozen_parameter_hash: true
+  require_no_refit: true
+  require_prediction_before_reference_access: true
+  require_new_shapes_disjoint_from_fit: true
+  require_native_trace: true
+
+source_layout:
+  protocol: experiments/h193-independent-holdout-validation/protocol.md
+  config: configs/analysis/independent_holdout_validation_v1.yaml
+  predictor: scripts/run_independent_holdout_predictions.py
+  auditor: scripts/audit_independent_holdout_validation.py
+  test: tests/test_independent_holdout_validation.py
+
+output_root: artifacts/environment/h193
+prediction_manifest: artifacts/environment/h193/holdout-predictions.json
+result_path: artifacts/results/independent-holdout-validation-run198.json
