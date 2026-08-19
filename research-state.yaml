@@ -1398,7 +1398,19 @@ rtl_ppa_reproduction:
     full: {config_words: 22, links: 6, link_depth: 14, control_bits_per_tag: 48, tag_metadata_bits: 48, rf_depth: 5, hp_lanes: 16}
     reduced: {config_words: 2, links: 2, link_depth: 1, control_tags: 1, control_bits_per_tag: 16, tag_slots: 1, tag_metadata_bits: 16, rf_depth: 2, hp_lanes: 0}
     gated_domains: [config_write, data_valid, tag_update, rf_write]
-  next_step: final_config_area_and_activity_calibration
+  h203_registered_calibration:
+    full_config_words: 20
+    activity_multipliers:
+      config_network: 9.094566191074717
+      data_network: 0.22123808437323556
+      control_logic: 0.19556189784796965
+      tag_buffer: 12.54481897944316
+      register_file: 1.2917914762592815
+      fu_simd32: 2.7127162975864505
+    scaled_power_terms: [internal, switching]
+    preserved_power_terms: [leakage]
+    independent_validation: false
+  next_step: run_final_activity_calibrated_ppa
 
 functional_completion:
   status: complete
