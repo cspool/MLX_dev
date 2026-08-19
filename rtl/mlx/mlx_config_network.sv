@@ -29,8 +29,6 @@ module mlx_config_network #(
   end
 
   always @(posedge config_write_clk) begin
-    if (rst_n) begin
-      instruction_mem[cfg_addr_i] <= cfg_word_i;
-    end
+    instruction_mem[cfg_addr_i] <= cfg_word_i;
   end
 endmodule
