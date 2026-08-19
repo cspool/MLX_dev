@@ -1,0 +1,50 @@
+OpenROAD v2.0-17598-ga008522d8 
+Features included (+) or not (-): +Charts +GPU +GUI +Python : None
+This program is licensed under the BSD-3 license. See the LICENSE file for details.
+Components of this program may be licensed under more restrictive licenses which must be honored.
+[INFO ODB-0227] LEF file: /opt/OpenROAD-flow-scripts/flow/platforms/nangate45/lef/NangateOpenCellLibrary.tech.lef, created 22 layers, 27 vias
+[INFO ODB-0227] LEF file: /opt/OpenROAD-flow-scripts/flow/platforms/nangate45/lef/NangateOpenCellLibrary.macro.lef, created 134 library cells
+Annotated 399 pin activities.
+PPA_TIMING_BEGIN
+Startpoint: _0777_ (rising edge-triggered flip-flop clocked by clk)
+Endpoint: _0777_ (rising edge-triggered flip-flop clocked by clk)
+Path Group: clk
+Path Type: max
+
+        Cap        Slew       Delay        Time   Description
+---------------------------------------------------------------------------------------
+               0.000000    0.000000    0.000000   clock clk (rise edge)
+                           0.000000    0.000000   clock network delay (ideal)
+               0.000000    0.000000    0.000000 ^ _0777_/CK (DFFR_X1)
+   2.699106    0.007837    0.086260    0.086260 v _0777_/Q (DFFR_X1)
+   1.052731    0.023507    0.055686    0.141946 v _0647_/Z (MUX2_X1)
+               0.023507    0.000000    0.141946 v _0777_/D (DFFR_X1)
+                                       0.141946   data arrival time
+
+               0.000000    1.000000    1.000000   clock clk (rise edge)
+                           0.000000    1.000000   clock network delay (ideal)
+                           0.000000    1.000000   clock reconvergence pessimism
+                                       1.000000 ^ _0777_/CK (DFFR_X1)
+                          -0.046535    0.953465   library setup time
+                                       0.953465   data required time
+---------------------------------------------------------------------------------------
+                                       0.953465   data required time
+                                      -0.141946   data arrival time
+---------------------------------------------------------------------------------------
+                                       0.811520   slack (MET)
+
+
+PPA_TIMING_END
+PPA_POWER_BEGIN
+Group                  Internal  Switching    Leakage      Total
+                          Power      Power      Power      Power (Watts)
+----------------------------------------------------------------
+Sequential             3.05e-04   4.66e-05   2.17e-05   3.73e-04  66.0%
+Combinational          1.55e-04   1.89e-05   1.80e-05   1.91e-04  33.9%
+Clock                  1.05e-08   5.70e-07   2.56e-08   6.07e-07   0.1%
+Macro                  0.00e+00   0.00e+00   0.00e+00   0.00e+00   0.0%
+Pad                    0.00e+00   0.00e+00   0.00e+00   0.00e+00   0.0%
+----------------------------------------------------------------
+Total                  4.60e-04   6.60e-05   3.97e-05   5.65e-04 100.0%
+                          81.3%      11.7%       7.0%
+PPA_POWER_END

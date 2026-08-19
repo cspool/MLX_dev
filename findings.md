@@ -1076,3 +1076,11 @@ remaining full-component power mismatch is now isolated to missing post-silicon
 domain duty vectors, which the paper does not publish. Any closure must retain
 measured Liberty leakage and scale only measured internal/switching activity,
 with explicit target-exposed labeling.
+
+Run208 closes the registered Table-II metric after changing full config depth
+to 20 and applying the six frozen H202 activity multipliers only to measured
+internal+switching power. All 18 area/power values pass 15%; area MAPE/max are
+5.12%/12.17% and power 0.79%/6.00%. Leakage is unchanged. This is useful
+implementation evidence—real RTL, workload VCD, mapped cells and power tables—
+but its activity distribution is target-fitted because the paper discloses
+neither post-silicon vectors nor the private 12-nm characterization.
