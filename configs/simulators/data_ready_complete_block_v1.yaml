@@ -1,0 +1,91 @@
+name: data-ready-complete-block-v1
+experiment_id: H171
+run_id: run176
+classification: target_free_data_ready_MLX_vs_serial_baseline_complete_pair
+validation_eligible: true
+
+frozen_inputs:
+  h170:
+    path: artifacts/results/single-baseline-complete-block-run175.json
+    bytes: 13055
+    sha256: 1e857627b92c75d8397a59b4f9b36c950b8da364c9b9c8e2e12a6bff9f117385
+    required_status: rejected
+    required_integrity: true
+  h170_config:
+    path: configs/simulators/single_baseline_complete_block_v1.yaml
+    bytes: 3133
+    sha256: d98b47df09ef23d842b5ebfb18b69f2011d0e9f340aa8c8bc2c2e4d38b146bf0
+  h170_compiler:
+    path: scripts/compile_single_baseline_complete_block.py
+    bytes: 6759
+    sha256: f34799b300ac5c2acd5b2a9cd32c8f9cc76a2e070fa32b80b8e42d1be911b537
+  h170_auditor:
+    path: scripts/audit_single_baseline_complete_block.py
+    bytes: 18875
+    sha256: 7ea5ffd7e766a9b2f1366c3184bfd1370140f90030ea987238540950e1b30229
+  h161:
+    path: artifacts/results/complete-block-functional-run166.json
+    bytes: 10323
+    sha256: 9288d1169c173a6ba5ddc668bc2543e4a1dc00e4ceecd7cba8ef07022d7b7feb
+    required_status: supported
+    required_integrity: true
+
+baseline:
+  id: single_layer_serial_spatial_baseline
+  active_window: 1
+  retain_coarse_component_predecessors: true
+
+mlx:
+  id: multi_layer_execution_data_ready
+  active_window: 13
+  retain_coarse_component_predecessors: false
+  boundary_admission: address_matched_store_completion_events
+
+boundary_contract:
+  dynamic_links: 4
+  linked_addresses: 24
+  store_event_definitions: 18
+  store_event_emissions: 24
+  original_boundary_events: 73
+  expected_boundary_events: 97
+  mlx_removed_coarse_predecessors: 21
+  baseline_removed_coarse_predecessors: 0
+  event_ready_before_producer_tag_completion_required: true
+
+prefixes:
+  bsmm_fft: {final_component: fft_cmp, expected_outputs: 4, required_components: [bsmm, fft_cmp]}
+  attention: {final_component: attention, expected_outputs: 4, required_components: [bsmm, fft_cmp, attention]}
+  swa: {final_component: swa, expected_outputs: 8, required_components: [bsmm, fft_cmp, attention, swa]}
+  complete: {final_component: elementwise, expected_outputs: 8, required_components: [bsmm, fft_cmp, attention, swa, elementwise]}
+
+execution:
+  architectures: [single_layer_serial_spatial_baseline, multi_layer_execution_data_ready]
+  functional_modes: [enabled, disabled]
+  builds: [debug, opt, sanitize]
+  expected_configs: 16
+  expected_runs: 48
+  workers: 12
+  paper_performance_targets_consumed: false
+
+acceptance:
+  absolute_error_limit: 1.0e-12
+  minimum_clear_speedup: 1.20
+  require_all_prefixes_mlx_non_regression: true
+  require_complete_block_clear_speedup: true
+  require_same_instruction_memory_route_work: true
+  require_same_boundary_event_work: true
+  require_both_architectures_functionally_correct: true
+  require_enabled_disabled_timing_identity: true
+  require_all_builds_deterministic_and_sanitizer_clean: true
+  require_no_paper_performance_targets: true
+
+source_layout:
+  protocol: experiments/h171-data-ready-complete-block/protocol.md
+  config: configs/simulators/data_ready_complete_block_v1.yaml
+  compiler: scripts/compile_data_ready_complete_block.py
+  runner: scripts/run_data_ready_complete_block.py
+  auditor: scripts/audit_data_ready_complete_block.py
+  test: tests/test_data_ready_complete_block.py
+
+output_root: artifacts/environment/h171
+result_path: artifacts/results/data-ready-complete-block-run176.json
