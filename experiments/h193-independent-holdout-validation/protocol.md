@@ -23,7 +23,7 @@ file and constructs log-N interpolation references.
 
 ## Acceptance gates
 
-1. All eleven frozen inputs qualify and required parents retain status/integrity.
+1. All twelve frozen inputs qualify and required parents retain status/integrity.
 2. Holdout shapes are disjoint from every registered fit/anchor shape.
 3. The exact H183 parameter object/hash is copied without mutation or refit.
 4. GPU0 identity matches the registered RTX4090 before and after collection.
