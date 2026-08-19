@@ -1345,7 +1345,14 @@ rtl_ppa_reproduction:
     power_parameters: 1
     calibration_anchor: full_pe_aggregate
     evaluated_holdouts: [six_component_areas, six_component_powers, reduced_area, reduced_power]
-  next_step: correct_component_structures_and_remeasure
+  h200_registered_changes:
+    register_depth: 4
+    data_network: {ingress_links: 6, buffer_depth: 8, payload_bits: 64}
+    control: registered_tag_pipeline_age
+    tag_metadata_bits: 32
+    reduced_fu: structurally_excludes_div_exp_shuffle
+    activity_repetitions: 128
+  next_step: implement_structural_correction_and_steady_state_activity
 
 functional_completion:
   status: complete
