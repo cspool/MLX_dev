@@ -11,7 +11,8 @@ changing the already validated BSMM/FFT/Attention/SWA/elementwise semantics.
 For each of H171's two width-4 input vectors:
 
 1. load four raw values;
-2. compute sum of squares, add epsilon and execute `frsqrt`;
+2. copy each value to a distinct RF bank, then compute sum of squares, add
+   epsilon and execute `frsqrt`;
 3. normalize all four values;
 4. store the normalized vector;
 5. reload it and apply two real-valued RoPE pair rotations using mul/FMA;
@@ -23,8 +24,8 @@ instructions, routes and numerical payloads otherwise remain unchanged.
 
 ## Exact contract
 
-The preprocess adds four blocks, 74 operations, 32 memory requests and 256
-bytes. The completed MLX graph has 15 tags, 58 blocks, 540 operations, 194
+The preprocess adds four blocks, 82 operations, 32 memory requests and 256
+bytes. The completed MLX graph has 15 tags, 58 blocks, 548 operations, 194
 memory requests/1552 bytes, 97 events and 139 route hops.
 
 ## Acceptance gates
@@ -41,10 +42,16 @@ memory requests/1552 bytes, 97 events and 139 route hops.
    sanitizers.
 7. RMSNorm, RoPE, all five original component boundaries and eight final values
    match an independent from-origin NumPy recomputation within 1e-12.
-8. All 540 operations are finite and error-free.
+8. All 548 operations are finite and error-free.
 9. H173 Xavier and H175 MLX together cover the Figure-21 end-to-end operator
    inventory in actual simulation.
 10. No paper performance target or fitted timing parameter is consumed.
+
+Before any accepted execution, the first launch was rejected by the simulator's
+same-bank double-read validator because a scalar square read the same register
+twice. The registered schedule therefore includes one explicit `shuffle` copy
+per input and multiplies the original/copy from distinct banks. This adds eight
+operations globally and changes no mathematical value.
 
 The immutable result will be
 `artifacts/results/mlx-full-operator-e2e-functional-run180.json`.
