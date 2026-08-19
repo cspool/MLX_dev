@@ -770,3 +770,14 @@ requests, 97 events and 139 hops and match every cumulative golden within
 one versus MLX's thirteen, with 41 MLX issues unlocked before the producer tag
 globally completes. This is the first single-baseline experiment with both
 complete functional correctness and clear same-work performance evidence.
+
+Run177 is the final narrowed-goal certificate. It admits exactly one main
+baseline—the same spatial array with one active logical layer—and one MLX
+implementation with address-ready multi-layer scheduling. Both cover six
+functional payload claims and match every boundary within 2.78e-17. All four
+cumulative workloads exceed 1.20x; the complete block is 426 versus 341 cycles
+(1.249x) with identical 466 operations, 162 memory requests, 97 events and 139
+hops. Baseline/MLX active-tag maxima are 1/13 and MLX has 41 early data-ready
+issues. Fresh verification is 439 passed, zero failed. This completes the
+requested phenomenon/conclusion without claiming exact paper numbers or all
+paper experiments.
