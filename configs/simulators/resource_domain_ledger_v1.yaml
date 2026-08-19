@@ -1,0 +1,96 @@
+name: resource-domain-ledger-v1
+experiment_id: H166
+run_id: run171
+classification: target_free_component_and_bandwidth_capacity_ledger
+validation_eligible: true
+
+frozen_inputs:
+  h120:
+    path: artifacts/results/fig22-coupled-multiport-run125.json
+    bytes: 26566
+    sha256: fc294f7b7707b4bb7a8407bccbb5b68cdf9036e9bbde2095df02c330e0ce5454
+    required_status: supported
+    required_integrity: true
+  h120_compile:
+    path: artifacts/environment/h120/fig22-coupled-multiport-compile-manifest.json
+    bytes: 36148
+    sha256: 0499e2f5bd81e7e163eb86a00c19fd54bfc8a24e85781d5f88251cf426af8ef0
+  h120_run:
+    path: artifacts/environment/h120/fig22-coupled-multiport-run-manifest.json
+    bytes: 330141
+    sha256: 3ab38af325a417546129c21f1d149c1f27bd601367ecfbcc4b7e4776b9ff1a73
+  h163:
+    path: artifacts/results/utilization-ledger-run168.json
+    bytes: 78488
+    sha256: 4d0122d55c59ce3e59ba2f8dd3e2e81b33ca68e89fff95894703df157f02ddee
+    required_status: supported
+    required_integrity: true
+  mlx_paper_text:
+    path: MLX Multi-Layer Execution for Structured LLM Workload Acceleration on Spatial Architectures/MLX Multi-Layer Execution for Structured LLM Workload Acceleration on Spatial Architectures.md
+    bytes: 85855
+    sha256: 5785eb81b28741a3806ca42749d7b556bbcd2404e1622ae644a32bae2ade7745
+  source_refresh:
+    path: literature/mlx-open-simulator-refresh-2026-08-19.md
+    bytes: 7209
+    sha256: 6fd523736bc138e047a491f6bbfe672f3ea4e3fb514fc89987fd62998106ec63
+
+workloads:
+  operators: [bsmm, fft]
+  sizes: [64, 128, 256, 512, 1024, 2048, 4096, 8192]
+  required_paths: 16
+  selected_mode: optimized
+  selected_replay: 1
+
+capacity_domains:
+  physical_pes: 16
+  clock_hz: 1000000000
+  vector_bytes: 16
+  dma_bytes_per_cycle: 64
+  dma_bandwidth_bytes_per_second: 64000000000
+  spad_ports: 4
+  banks_per_port: 8
+  total_banks: 32
+  bank_width_bytes: 32
+  issue_width_per_port: 8
+  total_issue_width: 32
+  spad_operation_capacity_per_cycle: 32
+  spad_wire_byte_capacity_per_cycle: 1024
+  spad_payload_byte_capacity_per_cycle: 512
+
+registered_metrics:
+  compute_physical_capacity: productive_pe_compute / (end_to_end_cycles * physical_pes)
+  compute_global_end_busy: productive_global_compute / end_to_end_cycles
+  compute_global_overlay_busy: productive_global_compute / overlay_cycles
+  compute_issue_end: compute_issue_cycles / end_to_end_cycles
+  external_load_pe_service: external_read_requests / (end_to_end_cycles * physical_pes)
+  external_store_pe_service: external_write_requests / (end_to_end_cycles * physical_pes)
+  xfer_issue_pe_service: issued_xfers / (end_to_end_cycles * physical_pes)
+  xfer_hop_pe_service: route_hops / (end_to_end_cycles * physical_pes)
+  dma_byte_capacity: offchip_bytes / (end_to_end_cycles * dma_bytes_per_cycle)
+  spad_operation_capacity: spad_requests / (end_to_end_cycles * total_issue_width)
+  spad_wire_byte_capacity: spad_payload_bytes / (end_to_end_cycles * total_banks * bank_width_bytes)
+  spad_payload_byte_capacity: spad_payload_bytes / (end_to_end_cycles * total_issue_width * vector_bytes)
+  launch_fraction: (end_to_end_cycles - overlay_cycles) / end_to_end_cycles
+
+acceptance:
+  require_exact_external_internal_load_partition: true
+  require_exact_request_byte_hop_conservation: true
+  require_all_registered_metrics_finite: true
+  require_bounded_fraction_metrics: true
+  require_no_metric_or_schema_selection: true
+  require_no_paper_performance_targets: true
+
+target_exclusion:
+  forbidden_paths:
+    - artifacts/results/fig22-resource-targets-run065.json
+    - artifacts/results/fig22-counter-identity-heldout-run169.json
+    - artifacts/targets/fig22_resource_breakdown_pixels.yaml
+    - artifacts/targets/paper_targets.yaml
+
+source_layout:
+  protocol: experiments/h166-resource-domain-ledger/protocol.md
+  config: configs/simulators/resource_domain_ledger_v1.yaml
+  auditor: scripts/audit_resource_domain_ledger.py
+  test: tests/test_resource_domain_ledger.py
+
+result_path: artifacts/results/resource-domain-ledger-run171.json

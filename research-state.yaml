@@ -755,8 +755,8 @@ experiments:
 
 outer_loop:
   cycle: 125
-  last_direction: "Rebuild the per-block compute budget from the paper's 8x8 SIMD-aligned PE tile and structured intra-block reuse, without Figure-22 targets. Preserve load/xfer graphs and expose the resulting candidate only after work and execution are frozen."
-  last_reflection: "H165 rejects a uniform maximum active window: window5 has only modest 0.977x-1.102x effects and two regressions. The current proxy's near-one compute/load instruction ratio conflicts with the paper's explicit 8x8 tile reuse, making block compute budget a stronger causal gap than further window tuning."
+  last_direction: "Build H166's target-free resource-domain ledger, separating external SPM service, local loads, transfer issues/hops, DMA bytes and SRAM bank capacities. Then test only complete pre-registered schemas against Figure 22."
+  last_reflection: "The 8x8 tile cited after H165 belongs to dense MM, so it cannot justify a BSMM/FFT compute multiplier. The valid next distinction comes from Figure 22's unified data-supply text and open-simulator component accounting, not synthetic work inflation."
 
 strict_numeric_refresh:
   status: active
@@ -797,7 +797,7 @@ strict_numeric_refresh:
   ranked_directions:
     - counter_identity_ledger
     - active_window_coverage_sweep
-    - intra_block_tile_compute_budget
+    - resource_domain_and_bandwidth_ledger
     - spm_capacity_attention_fusion
     - native_or_explicit_proxy_gpu_mapping
 
