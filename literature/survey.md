@@ -46,6 +46,20 @@
 - MLX cites it at the sentence describing the tuned 256-GOp/s simulator configuration.
 - H34 source status: Crossref/OpenAlex/Semantic metadata and official ISLPED program/proceedings records establish identity and framework scope. The publisher full text and source code remain unavailable in run039; MLX supports only a citation-level relationship, not code reuse.
 
+### 2026-08-19 refresh
+
+- Current official pages add M2-DFU, TOSCA, UniNL and AHASD to the same
+  ICT/Ricore publication program but still expose no MLX/SimICT/DFU code.
+- Public DFGC slides reveal timestamp-prioritized NoC packets plus explicit
+  DFG/block/instance/act/ack state; this is a NoC precedent, not permission to
+  override MLX's reported lower-tag compute arbitration.
+- ROMA/PANDA support separate explicit prefetch/postback and local scheduling;
+  the Attention patent CN119940434B supplies a one-/two-kernel fusion threshold
+  based on SPM capacity.
+- Source-pinned DAM-RS, NPUsim and STONNE audits motivate separate component,
+  spatial, per-port and elapsed-time counter identities. See
+  `mlx-open-simulator-refresh-2026-08-19.md`.
+
 ## DSAGEN
 
 - Weng et al., *DSAGEN: Synthesizing Programmable Spatial Accelerators*, ISCA 2020.
