@@ -1305,7 +1305,14 @@ rtl_ppa_reproduction:
       method_equivalent_to_paper: false
       mlx_rtl_ppa_claimed: false
   current_hypothesis: H198
-  next_step: implement_and_validate_mlx_critical_rtl
+  h198_registered_architecture:
+    full: {mesh: 4x4, simd: 32, fp: 16, instructions_per_pe: 32, tags: 16}
+    reduced: {mesh: 4x4, simd: 8, removed: [shuffle, divide, high_precision_fp]}
+    pipelines: [load, store, compute, xfer]
+    data_packet_bits: 64
+    reconstructed_assumptions: {registers_per_lane: 16, read_ports: 2, write_ports: 1}
+    workloads: [bsmm, fft_cmp, swa]
+  next_step: implement_compile_and_functionally_validate_mlx_rtl
 
 functional_completion:
   status: complete
