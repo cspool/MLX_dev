@@ -893,3 +893,13 @@ validation. The next experiments must put these mechanisms into the actual
 cycle/composition execution paths. A new user requirement also makes the
 previously fragmented per-figure compilers insufficient: the final system must
 expose one audited model/operator-graph to MLX simulator JSON lowering path.
+
+Run189 implements the first selected mechanism in the simulator path. A new
+opt-in C++ latency service reports raw cycles separately from a preconfigured
+wavefront credit and post-knee congestion penalty; default configs remain
+unchanged. The tracked incremental DSAGEN patch makes the ignored third-party
+edit replayable. Forty Figure23 configs execute in debug/optimized/sanitized
+modes (120 runs), with exact H141 raw cycles, block hashes and instruction work.
+All 30 paper cells are within 15% at 2.23% MAPE and 6.91% maximum error; the
+twelve registered N=1K/4K holdouts also stay below 6.91%. Figure23 is therefore
+numerically complete under the target-informed trace-corrected claim boundary.
