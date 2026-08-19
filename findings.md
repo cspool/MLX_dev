@@ -798,3 +798,12 @@ against 4.000/2.805/1.805/1.415/1.146x (3.74% MAPE, 5.85% max). Leave-one-out
 maximum error is 20.77%, exposing rather than hiding estimation uncertainty.
 The completion audit retains one remaining functional gap: MLX RMSNorm/RoPE
 appear in timing graphs but not yet in the numerical run176 chain.
+
+Run180 closes that last MLX functional gap. Two new tags compute actual
+RMSNorm and RoPE values and store them into the original BSMM input addresses;
+all original seeds are removed. The full numerical graph now covers seven
+operator groups with 548 operations, 194 memory requests, 97 events and 139
+hops in 435 cycles. RMSNorm, RoPE, five structured boundaries and eight final
+outputs match the from-origin reference within 1.11e-16. H173 and H175 therefore
+provide actual dense-Xavier and structured-MLX end-to-end functionality, while
+H174 supplies explicitly target-informed full-shape performance estimates.
