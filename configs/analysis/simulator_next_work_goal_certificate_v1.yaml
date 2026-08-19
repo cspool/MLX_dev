@@ -1,0 +1,120 @@
+name: simulator-next-work-goal-certificate-v1
+experiment_id: H194
+run_id: run199
+classification: five_objective_simulator_completion_with_scoped_holdout_limit
+validation_eligible: true
+
+frozen_inputs:
+  same_input_equivalence:
+    path: artifacts/results/same-input-numerical-equivalence-run194.json
+    bytes: 12365
+    sha256: 7d3eab1c853eb474dc5d13c8e7ea6c7068788ae28427b832964f212de07596f9
+    experiment_id: H189
+    run_id: run194
+    required_status: supported
+    required_integrity: true
+  automatic_frontend:
+    path: artifacts/results/automatic-model-frontend-run195.json
+    bytes: 6258
+    sha256: 1945ba3760343999f30d6eb91e06871528c7e027d0b72ac2d83056cc1668d3e3
+    experiment_id: H190
+    run_id: run195
+    required_status: supported
+    required_integrity: true
+  cycle_physicalization:
+    path: artifacts/results/cycle-level-physicalization-run196.json
+    bytes: 17084
+    sha256: cdfb20edab4208c1b53b3e9ad3464d66b29d78d802ebe6b8f18c9e84888723e0
+    experiment_id: H191
+    run_id: run196
+    required_status: supported
+    required_integrity: true
+  workload_coverage:
+    path: artifacts/results/full-workload-coverage-run197.json
+    bytes: 13043
+    sha256: 0564b42acd733960b46967cb5e3b2f899810e039effcefd7e6e3288c02052fd5
+    experiment_id: H192
+    run_id: run197
+    required_status: supported
+    required_integrity: true
+  independent_holdout:
+    path: artifacts/results/independent-holdout-validation-run198.json
+    bytes: 20803
+    sha256: a5ec9fc3601a0e81412d5536947307bf97ae5426f90ac877edb24f370d262231
+    experiment_id: H193
+    run_id: run198
+    required_status: rejected
+    required_integrity: true
+
+completion_contract:
+  objective_order:
+    - same_input_equivalence
+    - automatic_frontend
+    - cycle_physicalization
+    - workload_coverage
+    - independent_holdout
+  same_input:
+    graphs: 3
+    nodes: 14
+    boundary_comparisons: 336
+    final_comparisons: 72
+    mapping_invariance_checks: 54
+    maximum_absolute_error: 0.001
+  automatic_frontend:
+    frontends: 2
+    nodes_per_frontend: 6
+    canonical_matches: 6
+    profiles: 12
+    executions: 24
+    execution_replays: 12
+  cycle_physicalization:
+    figure23_executions: 80
+    timelines: 44
+    phases: 92
+    reported_points: 68
+    direction_matches: 50
+    maximum_relative_error: 0.15
+  workload_coverage:
+    executable_units: 62
+    lowering_replays: 62
+    executions: 124
+    execution_replays: 62
+    llama_layers: 32
+    fabnet_layers: 24
+  independent_holdout:
+    trace_cases: 39
+    trace_samples: 195
+    total_points: 48
+    passing_points: 46
+    failing_points: 2
+    direction_matches: 36
+    parameters_refit: false
+    required_failure_figure: 20
+    required_failure_sequence_length: 4096
+    required_failure_series:
+      - "versus_dense_tcu:attention"
+      - "versus_sparse_cuda:attention"
+    scope_diagnosis: Figure20_N4096_attention_crossover_differs_from_two_endpoint_logN_reference
+    independent_all_points_within_15pct_claimed: false
+  rtl_required: false
+  power_area_required: false
+
+verification:
+  ruff_command: [.venv/bin/ruff, check, scripts, src, tests]
+  pytest_command: [.venv/bin/pytest, -q]
+  expected_pytest_passed: 478
+  expected_pytest_failed: 0
+  expected_pytest_warnings: 17
+
+source_layout:
+  goal: docs/simulator-next-work.md
+  handoff: docs/simulator-next-work-complete.md
+  protocol: experiments/h194-simulator-next-work-certificate/protocol.md
+  config: configs/analysis/simulator_next_work_goal_certificate_v1.yaml
+  verifier: scripts/run_simulator_next_work_verification.py
+  auditor: scripts/audit_simulator_next_work_goal.py
+  test: tests/test_simulator_next_work_goal.py
+
+output_root: artifacts/environment/h194
+verification_manifest: artifacts/environment/h194/verification-manifest.json
+result_path: artifacts/results/simulator-next-work-goal-run199.json
