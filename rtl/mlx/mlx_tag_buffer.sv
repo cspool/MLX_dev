@@ -35,6 +35,7 @@ module mlx_tag_buffer #(
   reg [5:0] frontier_q [0:TAGS-1];
   reg [METADATA_BITS-1:0] metadata_q [0:TAGS-1];
   integer index;
+  wire tag_state_clk = clk & (configure_i | issue_i | complete_i);
 
   assign query_active_o = active_q[query_tag_i];
   assign query_ready_o = ready_q[query_tag_i];
@@ -46,7 +47,7 @@ module mlx_tag_buffer #(
   assign ready_vector_o = ready_q;
   assign done_vector_o = done_q;
 
-  always @(posedge clk or negedge rst_n) begin
+  always @(posedge tag_state_clk or negedge rst_n) begin
     if (!rst_n) begin
       active_q <= {TAGS{1'b0}};
       ready_q <= {TAGS{1'b0}};

@@ -43,6 +43,7 @@ module mlx_data_network #(
   reg [POINTER_BITS-1:0] write_pointer [0:LINKS-1];
   integer link_index;
   integer observe_index;
+  wire network_state_clk = clk & (valid_i | (|auxiliary_valid_i));
 
   assign ready_o = 1'b1;
 
@@ -85,7 +86,7 @@ module mlx_data_network #(
     end
   end
 
-  always @(posedge clk or negedge rst_n) begin
+  always @(posedge network_state_clk or negedge rst_n) begin
     if (!rst_n) begin
       valid_o <= 1'b0;
       dx_o <= 5'sd0;
@@ -112,7 +113,10 @@ module mlx_data_network #(
       end
       if (valid_i) begin
         ingress_buffer[{{(32-POINTER_BITS){1'b0}}, write_pointer[0]}] <= payload_i;
-        write_pointer[0] <= write_pointer[0] + 1'b1;
+        if (BUFFER_DEPTH > 1)
+          write_pointer[0] <= write_pointer[0] + 1'b1;
+        else
+          write_pointer[0] <= {POINTER_BITS{1'b0}};
       end
       for (link_index = 1; link_index < LINKS; link_index = link_index + 1) begin
         if (auxiliary_valid_i[link_index-1]) begin
@@ -121,7 +125,10 @@ module mlx_data_network #(
               + {{(32-POINTER_BITS){1'b0}}, write_pointer[link_index]}
           ]
               <= auxiliary_payload_i[(link_index-1)*PAYLOAD_BITS +: PAYLOAD_BITS];
-          write_pointer[link_index] <= write_pointer[link_index] + 1'b1;
+          if (BUFFER_DEPTH > 1)
+            write_pointer[link_index] <= write_pointer[link_index] + 1'b1;
+          else
+            write_pointer[link_index] <= {POINTER_BITS{1'b0}};
         end
       end
     end

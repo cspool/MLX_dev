@@ -209,6 +209,15 @@ module tb_mlx_pe #(
     if ((issue_tag[3:0] != 0) || (issue_tag[7:4] != 1)
         || (issue_tag[11:8] != 2) || (issue_tag[15:12] != 3))
       $fatal(1, "lower-tag arbitration mismatch");
+    for (instruction_index = 0; instruction_index < 4;
+         instruction_index = instruction_index + 1) begin
+      @(negedge clk);
+      tag_complete = 1'b1;
+      tag_complete_id = instruction_index[3:0];
+      @(posedge clk);
+    end
+    @(negedge clk);
+    tag_complete = 1'b0;
 
     @(negedge clk);
     rf_write_enable = 1'b1;

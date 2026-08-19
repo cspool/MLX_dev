@@ -19,11 +19,12 @@ module mlx_register_file #(
   localparam INDEX_BITS = $clog2(DEPTH);
   reg [SIMD_WIDTH*DATA_BITS-1:0] storage [0:DEPTH-1];
   integer index;
+  wire write_clk = clk & write_enable_i;
 
   assign read_data_a_o = storage[read_addr_a_i[INDEX_BITS-1:0]];
   assign read_data_b_o = storage[read_addr_b_i[INDEX_BITS-1:0]];
 
-  always @(posedge clk or negedge rst_n) begin
+  always @(posedge write_clk or negedge rst_n) begin
     if (!rst_n) begin
       for (index = 0; index < DEPTH; index = index + 1)
         storage[index] <= {(SIMD_WIDTH*DATA_BITS){1'b0}};
