@@ -976,3 +976,12 @@ and event work remains exact. Figure19/20 services are materialized as 44
 integer cycle timelines with 92 positive launch/work/SPM/congestion phases.
 All 68 performance values and 50 directions remain valid (3.05% MAPE, 12.42%
 maximum) with latency postprocessing disabled.
+
+Run197 expands the unified path from representative examples to the complete
+experimental grid. One suite/CLI covers forty Figure23 physical overlays,
+twelve Figure19 DPU-memory components, eight Figure20 analytical profiles and
+two multi-layer plans. All sixty-two lowering artifacts and all sixty-two
+execution summaries replay identically across 124 executions. The Llama2 plan
+composes 32 layers and the FABNet plan 24 layers with explicit per-layer-to-total
+cycle/work conservation. No figure-specific compiler command is required
+between the suite spec and execution manifest.
