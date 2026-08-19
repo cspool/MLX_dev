@@ -8,7 +8,8 @@ sequence lengths that were absent from fitting and prior RTX4090 traces.
 
 ## Separation
 
-The prediction runner may read frozen parameters, raw simulator ledgers and new
+The prediction runner may read frozen parameters, the separately frozen raw
+Figure23/19/20 simulator ledgers and new
 native RTX4090 timings, but it must not read the paper-target file. It writes an
 immutable prediction manifest first. Only the auditor reads the frozen target
 file and constructs log-N interpolation references.
@@ -22,7 +23,7 @@ file and constructs log-N interpolation references.
 
 ## Acceptance gates
 
-1. All nine frozen inputs qualify and required parents retain status/integrity.
+1. All ten frozen inputs qualify and required parents retain status/integrity.
 2. Holdout shapes are disjoint from every registered fit/anchor shape.
 3. The exact H183 parameter object/hash is copied without mutation or refit.
 4. GPU0 identity matches the registered RTX4090 before and after collection.
