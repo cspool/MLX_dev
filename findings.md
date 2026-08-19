@@ -740,3 +740,12 @@ template are SM86, although cache/timing still come from RTX3070. FlashGPU-Sim
 `f3d4bba` is the preferred SM90/H100 candidate. Xavier remains an SM70-to-SM72
 proxy, Orin an SM86-to-SM87 proxy with a measured 6.149% CTA-shape ambiguity,
 and Figure 21 still has no captured dense-Xavier end-to-end denominator.
+
+Run174 applies the same-team Attention patent only as a capacity contract. The
+five FP16 N-by-4096 footprints are 1/2/4/8/16 MiB against an 8-MiB SPM. H93 and
+H94 already use one combined graph, so N128-N1024 correctly retain their frozen
+one-kernel timing and receive no extra speedup. N2048 must use two streamed
+kernels but is currently over-fused. Its corrected timing is withheld because
+the split boundary, tile shape, intermediate traffic domain and second launch
+cost are undisclosed. This closes the source-refresh phase with an actionable
+simulator defect rather than a fitted penalty.

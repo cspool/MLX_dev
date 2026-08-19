@@ -754,12 +754,12 @@ experiments:
       timestamp: "2026-08-17"
 
 outer_loop:
-  cycle: 128
-  last_direction: "Implement the same-team CN119940434B SPM-capacity Attention rule target-free: one fused kernel when the resident footprint fits and two streamed kernels otherwise. Preserve exact work and compare against the current serialized composition before any Figure-21 target join."
-  last_reflection: "H168 completes the GPU mapping rather than overstating it: all four devices have open candidates, but none has the native tuned config plus exact trace and correlation needed for validation. FlashGPU-Sim is the new H100 path; RTX3090 is the closest existing Ampere proxy."
+  cycle: 129
+  last_direction: "Pause after the source-refresh phase. Resume only with native GPU tuner/traces, a source-qualified N2048 two-kernel boundary, or a new independent simulator mechanism; do not reopen Figure-22 denominator tuning."
+  last_reflection: "H169 confirms that current Attention timing is already fused for four resident shapes and over-fused only at N2048. The missing boundary/tile/traffic/launch data cannot be safely inferred from paper targets. Together with H163-H168, all requested inference classes now have explicit evidence and stopping conditions."
 
 strict_numeric_refresh:
-  status: active
+  status: phase_complete_paused
   started: "2026-08-19"
   completed_hypotheses:
     - experiment_id: H163
@@ -820,7 +820,18 @@ strict_numeric_refresh:
       native_tuned_and_traced: 0/4
       strict_validation_eligible: 0/4
       preferred_h100_candidate: FlashGPU-Sim_SM90_H100
-  current_hypothesis: H169
+    - experiment_id: H169
+      run_id: run174
+      path: artifacts/results/spm-attention-fusion-contract-run174.json
+      sha256: 7e71f33cbef92545a9fc90fa6d53ab35b6501c3207f08051b267d56a19bb683c
+      status: supported
+      audit_integrity: true
+      one_kernel_shapes: 4/5
+      two_kernel_shapes: 1/5
+      timing_blocked_shape: N2048
+      performance_improvement_claimed: false
+  current_hypothesis: null
+  pause_reason: source_refresh_exhausted_without_target_fitting
   target_policy: source_derived_candidates_then_paper_held_out
   open_simulator_pins:
     dam_rs: 8771934ce6074bea0d8d901cf787aae8983ae42e
