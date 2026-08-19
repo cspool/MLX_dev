@@ -40,7 +40,7 @@ values.
 5. Both paper MLX affinity values fall inside the envelope.
 6. Both paper MLX latency speedups fall inside the derived envelope.
 7. Two midpoint latency estimates are within 20% of the paper values.
-8. Both settings predict clear improvement over SpAtten.
+8. Both settings predict at least 1.20x clear improvement over SpAtten.
 9. Five external rows and energy values are copied as reference-only.
 10. Result consumes paper values openly and claims bounded exploration only.
 
