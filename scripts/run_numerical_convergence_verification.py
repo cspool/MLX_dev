@@ -72,20 +72,20 @@ def main() -> int:
     pytest_stdout.write_text(pytest.stdout)
     pytest_stderr.write_text(pytest.stderr)
     combined = f"{pytest.stdout}\n{pytest.stderr}"
-    passed_match = re.search(r"(?P<count>\d+) passed", combined)
-    failed_match = re.search(r"(?P<count>\d+) failed", combined)
-    warnings_match = re.search(r"(?P<count>\d+) warnings", combined)
+    passed_matches = re.findall(r"(?P<count>\d+) passed", combined)
+    failed_matches = re.findall(r"(?P<count>\d+) failed", combined)
+    warnings_matches = re.findall(r"(?P<count>\d+) warnings", combined)
     counts = {
-        "passed": int(passed_match.group("count")) if passed_match else None,
-        "failed": int(failed_match.group("count")) if failed_match else 0,
-        "warnings": int(warnings_match.group("count")) if warnings_match else 0,
+        "passed": int(passed_matches[-1]) if passed_matches else None,
+        "failed": int(failed_matches[-1]) if failed_matches else 0,
+        "warnings": int(warnings_matches[-1]) if warnings_matches else 0,
     }
     expected = config["verification"]
     checks = {
         "ruff_returncode": ruff.returncode == 0,
         "ruff_message": "All checks passed" in ruff.stdout,
         "pytest_returncode": pytest.returncode == 0,
-        "pytest_summary_parsed": passed_match is not None,
+        "pytest_summary_parsed": bool(passed_matches),
         "pytest_passed": counts["passed"] == int(expected["expected_pytest_passed"]),
         "pytest_failed": counts["failed"] == int(expected["expected_pytest_failed"]),
         "pytest_warnings": counts["warnings"]
