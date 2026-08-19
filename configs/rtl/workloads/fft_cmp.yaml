@@ -1,0 +1,10 @@
+name: fft_cmp
+paper_operator: chunk_fft_compression
+reduced_eligible: false
+instructions:
+  - {op: load, tag: 3, dst: 0, immediate: 4}
+  - {op: fma, tag: 3, dst: 1, src0: 0, src1: 2, src2: 1}
+  - {op: add, tag: 3, dst: 2, src0: 1, src1: 3}
+  - {op: shuffle, tag: 4, dst: 2, src0: 2}
+  - {op: xfer, tag: 4, dst: 2, dx: -3, dy: 2}
+  - {op: store, tag: 4, src0: 2, immediate: 4}

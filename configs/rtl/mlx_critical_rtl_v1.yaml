@@ -1,0 +1,110 @@
+name: mlx-critical-rtl-v1
+experiment_id: H198
+run_id: run203
+classification: reconstructed_synthesizable_mlx_critical_modules
+validation_eligible: true
+
+frozen_inputs:
+  toolchain_result:
+    path: artifacts/results/rtl-ppa-toolchain-run202.json
+    bytes: 7224
+    sha256: d1a6aa2cdeb4466d8e8e6fd72f7ad5604987a80bd1c9c753335381afd1f5c3af
+    required_status: supported
+    required_integrity: true
+  toolchain_manifest:
+    path: artifacts/environment/h197/rtl-ppa-toolchain-manifest.json
+    bytes: 8152
+    sha256: 51f2942d135a1fb10f76b7f9940129798828628b058fd8b0783cfcb6969c1c4d
+  pe_contract:
+    path: docs/mlx-pe-paper-contract.md
+    bytes: 1503
+    sha256: dd669c9791bb68706b51e27add45aba4fc8b0550ee6f70acafe846d592862ab6
+  complete_block:
+    path: artifacts/results/complete-block-functional-run166.json
+    bytes: 10323
+    sha256: 9288d1169c173a6ba5ddc668bc2543e4a1dc00e4ceecd7cba8ef07022d7b7feb
+    required_status: supported
+    required_integrity: true
+  complete_block_config:
+    path: configs/simulators/complete_block_functional_v1.yaml
+    bytes: 2829
+    sha256: c7a1edf04399378b78d1185db8b53b56cc150a00c7dc4576dffb20d70f3f9849
+  liberty:
+    path: /opt/OpenROAD-flow-scripts/flow/platforms/nangate45/lib/NangateOpenCellLibrary_typical.lib
+    bytes: 6692032
+    sha256: 8d540a4d4cf6d09d27c87ad067857a9c0c2eeb023ab7a56e058cd3113db4e9b1
+
+architecture:
+  full: {mesh: [4, 4], simd_width: 32, full_features: 1}
+  reduced: {mesh: [4, 4], simd_width: 8, full_features: 0}
+  data_bits: 16
+  instructions_per_pe: 32
+  tags: 16
+  registers_per_lane: 16
+  register_read_ports: 2
+  register_write_ports: 1
+  data_packet_bits: 64
+  pipelines: [load, store, compute, xfer]
+  full_operations: [load, store, fma, add, max, exp, div, shuffle, xfer, mul]
+  reduced_operations: [load, store, fma, add, max, xfer, mul]
+  unsupported_fp16: [nan, infinity_arithmetic, subnormal, fused_single_rounding]
+
+workloads:
+  - configs/rtl/workloads/bsmm.yaml
+  - configs/rtl/workloads/fft_cmp.yaml
+  - configs/rtl/workloads/swa.yaml
+
+rtl_sources:
+  - rtl/mlx/mlx_fp16.sv
+  - rtl/mlx/mlx_config_network.sv
+  - rtl/mlx/mlx_data_network.sv
+  - rtl/mlx/mlx_tag_buffer.sv
+  - rtl/mlx/mlx_control_logic.sv
+  - rtl/mlx/mlx_register_file.sv
+  - rtl/mlx/mlx_fu.sv
+  - rtl/mlx/mlx_pe_top.sv
+
+synthesis_tops:
+  config_network: {top: mlx_config_network}
+  data_network: {top: mlx_data_network}
+  control_logic: {top: mlx_control_logic}
+  tag_buffer: {top: mlx_tag_buffer}
+  register_file_full: {top: mlx_register_file, parameters: {SIMD_WIDTH: 32}}
+  fu_full: {top: mlx_fu, parameters: {SIMD_WIDTH: 32, FULL_FEATURES: 1}}
+  pe_full: {top: mlx_pe_full}
+  register_file_reduced: {top: mlx_register_file, parameters: {SIMD_WIDTH: 8}}
+  fu_reduced: {top: mlx_fu, parameters: {SIMD_WIDTH: 8, FULL_FEATURES: 0}}
+  pe_reduced: {top: mlx_pe_reduced}
+
+simulation:
+  testbench: rtl/mlx/tb_mlx_pe.sv
+  verilator_harness: rtl/mlx/sim_mlx_pe.cpp
+  full_workloads: [bsmm, fft_cmp, swa]
+  reduced_workloads: [bsmm]
+  required_runs_per_simulator: 4
+  pass_token: MLX_RTL_PASS
+  clock_period_ns: 1.0
+
+acceptance:
+  required_programs: 3
+  required_source_instructions: 18
+  required_rtl_modules: 7
+  required_synthesis_tops: 10
+  required_simulation_runs: 8
+  require_dual_simulator_identity: true
+  require_no_table2_targets: true
+
+source_layout:
+  protocol: experiments/h198-mlx-critical-rtl/protocol.md
+  config: configs/rtl/mlx_critical_rtl_v1.yaml
+  assembler: scripts/assemble_mlx_rtl_workloads.py
+  runner: scripts/run_mlx_critical_rtl.py
+  auditor: scripts/audit_mlx_critical_rtl.py
+  test: tests/test_mlx_critical_rtl.py
+  testbench: rtl/mlx/tb_mlx_pe.sv
+  verilator_harness: rtl/mlx/sim_mlx_pe.cpp
+
+output_root: artifacts/environment/h198
+program_manifest: artifacts/environment/h198/program-manifest.json
+run_manifest: artifacts/environment/h198/rtl-run-manifest.json
+result_path: artifacts/results/mlx-critical-rtl-run203.json
