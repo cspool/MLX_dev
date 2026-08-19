@@ -16,6 +16,8 @@ from typing import Any
 
 import yaml
 
+from scripts.extract_vcd_scope import extract_scope
+
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
 DEFAULT_CONFIG = PROJECT_ROOT / "configs/rtl/mlx_rtl_ppa_baseline_v1.yaml"
 
@@ -92,8 +94,10 @@ def main() -> int:
     output = PROJECT_ROOT / config["output_root"]
     netlist_root = output / "netlists"
     log_root = output / "logs"
+    scoped_vcd_root = output / "scoped-vcd"
     netlist_root.mkdir(parents=True, exist_ok=True)
     log_root.mkdir(parents=True, exist_ok=True)
+    scoped_vcd_root.mkdir(parents=True, exist_ok=True)
     frozen = config["frozen_inputs"]
     liberty = Path(frozen["liberty"]["path"])
     read_sources = " ".join(str(PROJECT_ROOT / path) for path in config["rtl_sources"])
@@ -158,7 +162,14 @@ def main() -> int:
     for variant, component, vcd_spec in jobs:
         component_spec = config["components"][component]
         workload = vcd_spec["workload"]
-        vcd = PROJECT_ROOT / vcd_spec["path"]
+        source_vcd = PROJECT_ROOT / vcd_spec["path"]
+        vcd = scoped_vcd_root / f"{variant}-{component}-{workload}.vcd"
+        extraction = extract_scope(
+            source_vcd,
+            vcd,
+            f"tb_mlx_pe.dut.{component_spec['scope']}",
+        )
+        generated_files[f"scoped_vcd_{variant}_{component}_{workload}"] = digest(vcd)
         log = log_root / f"power-{variant}-{component}-{workload}.log"
         environment = os.environ.copy()
         environment.update(
@@ -170,7 +181,7 @@ def main() -> int:
                 "PPA_TOP": component_spec["top"],
                 "PPA_HAS_CLOCK": "1" if component_spec["has_clock"] else "0",
                 "PPA_CLOCK_PERIOD_NS": str(config["measurement"]["clock_period_ns"]),
-                "PPA_VCD_SCOPE": f"tb_mlx_pe.dut.{component_spec['scope']}",
+                "PPA_VCD_SCOPE": "component_activity",
                 "PPA_VCD": str(vcd),
             }
         )
@@ -194,7 +205,9 @@ def main() -> int:
                 "component": component,
                 "workload": workload,
                 "returncode": result.returncode,
+                "source_vcd": digest(source_vcd),
                 "vcd": digest(vcd),
+                "vcd_extraction": extraction,
                 "log": digest(log),
                 **metrics,
             }
