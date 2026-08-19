@@ -30,7 +30,7 @@ reproducibly.
 7. PE coordinates, registers/banks and aligned SPM/DMA ranges are legal.
 8. Twelve KernelProfiles contain positive operations/bytes/stages.
 9. Twenty-four executions finish with finite metrics and replay-identical
-   summaries.
+   summaries on the frozen full-MLX analytical hardware configuration.
 10. Source/config/tests qualify and the generated canonical graph requires no
     manually authored operator-node YAML.
 
