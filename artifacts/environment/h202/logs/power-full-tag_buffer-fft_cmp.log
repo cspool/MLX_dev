@@ -1,0 +1,57 @@
+OpenROAD v2.0-17598-ga008522d8 
+Features included (+) or not (-): +Charts +GPU +GUI +Python : None
+This program is licensed under the BSD-3 license. See the LICENSE file for details.
+Components of this program may be licensed under more restrictive licenses which must be honored.
+[INFO ODB-0227] LEF file: /opt/OpenROAD-flow-scripts/flow/platforms/nangate45/lef/NangateOpenCellLibrary.tech.lef, created 22 layers, 27 vias
+[INFO ODB-0227] LEF file: /opt/OpenROAD-flow-scripts/flow/platforms/nangate45/lef/NangateOpenCellLibrary.macro.lef, created 134 library cells
+Annotated 197 pin activities.
+PPA_TIMING_BEGIN
+Startpoint: _5883_ (rising edge-triggered flip-flop clocked by clk)
+Endpoint: _5877_ (rising edge-triggered flip-flop clocked by clk)
+Path Group: clk
+Path Type: max
+
+        Cap        Slew       Delay        Time   Description
+---------------------------------------------------------------------------------------
+               0.000000    0.000000    0.000000   clock clk (rise edge)
+                           0.000000    0.000000   clock network delay (ideal)
+               0.000000    0.000000    0.000000 ^ _5883_/CK (DFFR_X1)
+   2.449062    0.007597    0.085812    0.085812 v _5883_/Q (DFFR_X1)
+   1.615611    0.006711    0.011689    0.097501 ^ _2518_/ZN (INV_X1)
+   1.554231    0.019630    0.019790    0.117290 v _3819_/ZN (OAI22_X1)
+   1.584010    0.041262    0.080853    0.198144 ^ _3820_/ZN (NOR4_X1)
+   3.858479    0.021376    0.035387    0.233531 v _3827_/ZN (AOI22_X1)
+   7.091101    0.093719    0.136604    0.370135 ^ _3840_/ZN (NOR4_X1)
+  25.236364    0.094578    0.140332    0.510466 v _3856_/ZN (NAND4_X1)
+  15.023606    0.083613    0.133966    0.644432 ^ _4876_/ZN (OAI21_X1)
+   1.052731    0.009421    0.062303    0.706735 v _4886_/Z (MUX2_X1)
+               0.009421    0.000000    0.706735 v _5877_/D (DFFR_X1)
+                                       0.706735   data arrival time
+
+               0.000000    1.000000    1.000000   clock clk (rise edge)
+                           0.000000    1.000000   clock network delay (ideal)
+                           0.000000    1.000000   clock reconvergence pessimism
+                                       1.000000 ^ _5877_/CK (DFFR_X1)
+                          -0.040866    0.959134   library setup time
+                                       0.959134   data required time
+---------------------------------------------------------------------------------------
+                                       0.959134   data required time
+                                      -0.706735   data arrival time
+---------------------------------------------------------------------------------------
+                                       0.252399   slack (MET)
+
+
+PPA_TIMING_END
+PPA_POWER_BEGIN
+Group                  Internal  Switching    Leakage      Total
+                          Power      Power      Power      Power (Watts)
+----------------------------------------------------------------
+Sequential             8.04e-05   1.71e-06   8.77e-05   1.70e-04  61.4%
+Combinational          4.47e-06   1.66e-06   8.46e-05   9.07e-05  32.8%
+Clock                  1.90e-06   1.40e-05   3.73e-08   1.60e-05   5.8%
+Macro                  0.00e+00   0.00e+00   0.00e+00   0.00e+00   0.0%
+Pad                    0.00e+00   0.00e+00   0.00e+00   0.00e+00   0.0%
+----------------------------------------------------------------
+Total                  8.68e-05   1.74e-05   1.72e-04   2.76e-04 100.0%
+                          31.4%       6.3%      62.3%
+PPA_POWER_END

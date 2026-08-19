@@ -1069,3 +1069,10 @@ reduced non-compute synthesis cuts its error from 364% to 33%. Power exposes a
 clock-architecture problem: sequential memories/networks pay clock internal
 power on every cycle, whereas the large combinational FU only switches on data
 changes. Domain clock gating is required before activity ratios are meaningful.
+
+Run207 validates clock gating: data/control/tag/RF/FU and reduced area all enter
+15%, reduced power reaches 9.5%, and only config area remains at 22.4%. The
+remaining full-component power mismatch is now isolated to missing post-silicon
+domain duty vectors, which the paper does not publish. Any closure must retain
+measured Liberty leakage and scale only measured internal/switching activity,
+with explicit target-exposed labeling.
