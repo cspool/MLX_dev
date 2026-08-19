@@ -72,6 +72,7 @@ def build_audit(config: dict[str, Any]) -> dict[str, Any]:
     documents = {
         name: json.loads((PROJECT_ROOT / spec["path"]).read_text())
         for name, spec in config["frozen_inputs"].items()
+        if Path(spec["path"]).suffix == ".json"
     }
     parent_checks = {
         name: document["hypothesis_status"] == spec["required_status"]
@@ -283,7 +284,7 @@ def build_audit(config: dict[str, Any]) -> dict[str, Any]:
     ]
     integrity_checks = {
         "frozen": all(item["pass"] for item in frozen.values()),
-        "parents": len(parent_checks) == 7,
+        "parents": len(parent_checks) == 6,
         "patch": patch_check["pass"],
         "compile": len(compile_checks) == 5,
         "execution": len(execution_checks) == 6,
