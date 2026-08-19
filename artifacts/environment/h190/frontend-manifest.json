@@ -1,0 +1,514 @@
+{
+  "checks": {
+    "canonical": true,
+    "frontends": true,
+    "kinds": true,
+    "lineage": true,
+    "names": true,
+    "nodes": true,
+    "onnx": true,
+    "plans": true,
+    "profiles": true,
+    "replay": true
+  },
+  "experiment_id": "H190",
+  "fx_graph_module_type": "GraphModule",
+  "graphs": {
+    "onnx": {
+      "canonical_sha256": "874a8ad00b19ce1ae24c45e317d53e5ef4ff88ca328dce77c889ad77ecb9ef58",
+      "canonical_signature": [
+        {
+          "depends_on": [],
+          "dtype": "float32",
+          "id": "norm",
+          "kind": "rmsnorm",
+          "shape": [
+            1,
+            16,
+            32
+          ]
+        },
+        {
+          "depends_on": [
+            "norm"
+          ],
+          "dtype": "float32",
+          "id": "qkv",
+          "kind": "bsmm",
+          "shape": [
+            1,
+            16,
+            32
+          ]
+        },
+        {
+          "depends_on": [
+            "qkv"
+          ],
+          "dtype": "float32",
+          "id": "fft_cmp",
+          "kind": "fft_cmp",
+          "shape": [
+            1,
+            16,
+            32
+          ]
+        },
+        {
+          "depends_on": [
+            "fft_cmp"
+          ],
+          "dtype": "float32",
+          "id": "attention",
+          "kind": "attention",
+          "shape": [
+            1,
+            16,
+            32
+          ]
+        },
+        {
+          "depends_on": [
+            "attention"
+          ],
+          "dtype": "float32",
+          "id": "output",
+          "kind": "bsmm",
+          "shape": [
+            1,
+            16,
+            32
+          ]
+        },
+        {
+          "depends_on": [
+            "output"
+          ],
+          "dtype": "float32",
+          "id": "silu",
+          "kind": "elementwise",
+          "shape": [
+            1,
+            16,
+            32
+          ]
+        }
+      ],
+      "graph": {
+        "bytes": 2309,
+        "path": "artifacts/environment/h190/onnx-graph.json",
+        "sha256": "3173dfb8f36d1743bba1a7614300ceb4d8ebcf60cbf9b0a5e3551ce1fd6a396e"
+      },
+      "node_count": 6,
+      "plan": {
+        "bytes": 4017,
+        "path": "artifacts/environment/h190/onnx-plan.json",
+        "sha256": "84a1081e7e7efc4a44a8abf98c348fddb45429744242d5b33555ace0a94b92c9"
+      },
+      "plan_checks": {
+        "cdc": true,
+        "memory": true,
+        "pe": true,
+        "registers": true,
+        "tags": true
+      },
+      "profiles": {
+        "bytes": 6234,
+        "path": "artifacts/environment/h190/onnx-profiles.json",
+        "sha256": "c5cb193dcdecd1e25f18cfd23a0d6a1b8f4a4a4317eba2755fe02ee37b5f315d"
+      },
+      "replay_checks": {
+        "graph": true,
+        "plan": true,
+        "profiles": true
+      }
+    },
+    "pytorch_fx": {
+      "canonical_sha256": "874a8ad00b19ce1ae24c45e317d53e5ef4ff88ca328dce77c889ad77ecb9ef58",
+      "canonical_signature": [
+        {
+          "depends_on": [],
+          "dtype": "float32",
+          "id": "norm",
+          "kind": "rmsnorm",
+          "shape": [
+            1,
+            16,
+            32
+          ]
+        },
+        {
+          "depends_on": [
+            "norm"
+          ],
+          "dtype": "float32",
+          "id": "qkv",
+          "kind": "bsmm",
+          "shape": [
+            1,
+            16,
+            32
+          ]
+        },
+        {
+          "depends_on": [
+            "qkv"
+          ],
+          "dtype": "float32",
+          "id": "fft_cmp",
+          "kind": "fft_cmp",
+          "shape": [
+            1,
+            16,
+            32
+          ]
+        },
+        {
+          "depends_on": [
+            "fft_cmp"
+          ],
+          "dtype": "float32",
+          "id": "attention",
+          "kind": "attention",
+          "shape": [
+            1,
+            16,
+            32
+          ]
+        },
+        {
+          "depends_on": [
+            "attention"
+          ],
+          "dtype": "float32",
+          "id": "output",
+          "kind": "bsmm",
+          "shape": [
+            1,
+            16,
+            32
+          ]
+        },
+        {
+          "depends_on": [
+            "output"
+          ],
+          "dtype": "float32",
+          "id": "silu",
+          "kind": "elementwise",
+          "shape": [
+            1,
+            16,
+            32
+          ]
+        }
+      ],
+      "graph": {
+        "bytes": 2407,
+        "path": "artifacts/environment/h190/pytorch_fx-graph.json",
+        "sha256": "a98c31fe0608dcc7df06a723fe1722419328d84b9e4412951102c43e67f30ec7"
+      },
+      "node_count": 6,
+      "plan": {
+        "bytes": 4115,
+        "path": "artifacts/environment/h190/pytorch_fx-plan.json",
+        "sha256": "e6ed1e77a9c1f83e8e2447de4407c05fff6519d554a97caab1c89a0fc36948e4"
+      },
+      "plan_checks": {
+        "cdc": true,
+        "memory": true,
+        "pe": true,
+        "registers": true,
+        "tags": true
+      },
+      "profiles": {
+        "bytes": 6306,
+        "path": "artifacts/environment/h190/pytorch_fx-profiles.json",
+        "sha256": "24b82b932fdbfdd5a27114d0eec5961ecb5a52e137346f296c94fa4d6d663789"
+      },
+      "replay_checks": {
+        "graph": true,
+        "plan": true,
+        "profiles": true
+      }
+    }
+  },
+  "lineage": [
+    {
+      "canonical_kind": "rmsnorm",
+      "canonical_node": "norm",
+      "cdc_id": 0,
+      "frontend": "pytorch_fx",
+      "pe": [
+        0,
+        0
+      ],
+      "profile_node": "norm",
+      "register": 0,
+      "register_bank": 0,
+      "shape": [
+        1,
+        16,
+        32
+      ],
+      "source_node": "norm",
+      "source_op": "call_module",
+      "spm_address": 0,
+      "tag": 1
+    },
+    {
+      "canonical_kind": "bsmm",
+      "canonical_node": "qkv",
+      "cdc_id": 0,
+      "frontend": "pytorch_fx",
+      "pe": [
+        1,
+        0
+      ],
+      "profile_node": "qkv",
+      "register": 1,
+      "register_bank": 1,
+      "shape": [
+        1,
+        16,
+        32
+      ],
+      "source_node": "qkv",
+      "source_op": "call_module",
+      "spm_address": 2048,
+      "tag": 2
+    },
+    {
+      "canonical_kind": "fft_cmp",
+      "canonical_node": "fft_cmp",
+      "cdc_id": 0,
+      "frontend": "pytorch_fx",
+      "pe": [
+        2,
+        0
+      ],
+      "profile_node": "fft_cmp",
+      "register": 2,
+      "register_bank": 2,
+      "shape": [
+        1,
+        16,
+        32
+      ],
+      "source_node": "fft_cmp",
+      "source_op": "call_module",
+      "spm_address": 0,
+      "tag": 3
+    },
+    {
+      "canonical_kind": "attention",
+      "canonical_node": "attention",
+      "cdc_id": 0,
+      "frontend": "pytorch_fx",
+      "pe": [
+        3,
+        0
+      ],
+      "profile_node": "attention",
+      "register": 3,
+      "register_bank": 3,
+      "shape": [
+        1,
+        16,
+        32
+      ],
+      "source_node": "attention",
+      "source_op": "call_module",
+      "spm_address": 2048,
+      "tag": 4
+    },
+    {
+      "canonical_kind": "bsmm",
+      "canonical_node": "output",
+      "cdc_id": 0,
+      "frontend": "pytorch_fx",
+      "pe": [
+        0,
+        1
+      ],
+      "profile_node": "output",
+      "register": 4,
+      "register_bank": 4,
+      "shape": [
+        1,
+        16,
+        32
+      ],
+      "source_node": "output",
+      "source_op": "call_module",
+      "spm_address": 0,
+      "tag": 5
+    },
+    {
+      "canonical_kind": "elementwise",
+      "canonical_node": "silu",
+      "cdc_id": 0,
+      "frontend": "pytorch_fx",
+      "pe": [
+        1,
+        1
+      ],
+      "profile_node": "silu",
+      "register": 5,
+      "register_bank": 5,
+      "shape": [
+        1,
+        16,
+        32
+      ],
+      "source_node": "silu",
+      "source_op": "call_module",
+      "spm_address": 2048,
+      "tag": 6
+    },
+    {
+      "canonical_kind": "rmsnorm",
+      "canonical_node": "norm",
+      "cdc_id": 0,
+      "frontend": "onnx",
+      "pe": [
+        0,
+        0
+      ],
+      "profile_node": "norm",
+      "register": 0,
+      "register_bank": 0,
+      "shape": [
+        1,
+        16,
+        32
+      ],
+      "source_node": "norm",
+      "source_op": "LayerNormalization",
+      "spm_address": 0,
+      "tag": 1
+    },
+    {
+      "canonical_kind": "bsmm",
+      "canonical_node": "qkv",
+      "cdc_id": 0,
+      "frontend": "onnx",
+      "pe": [
+        1,
+        0
+      ],
+      "profile_node": "qkv",
+      "register": 1,
+      "register_bank": 1,
+      "shape": [
+        1,
+        16,
+        32
+      ],
+      "source_node": "qkv",
+      "source_op": "MatMul",
+      "spm_address": 2048,
+      "tag": 2
+    },
+    {
+      "canonical_kind": "fft_cmp",
+      "canonical_node": "fft_cmp",
+      "cdc_id": 0,
+      "frontend": "onnx",
+      "pe": [
+        2,
+        0
+      ],
+      "profile_node": "fft_cmp",
+      "register": 2,
+      "register_bank": 2,
+      "shape": [
+        1,
+        16,
+        32
+      ],
+      "source_node": "fft_cmp",
+      "source_op": "FFTCompression",
+      "spm_address": 0,
+      "tag": 3
+    },
+    {
+      "canonical_kind": "attention",
+      "canonical_node": "attention",
+      "cdc_id": 0,
+      "frontend": "onnx",
+      "pe": [
+        3,
+        0
+      ],
+      "profile_node": "attention",
+      "register": 3,
+      "register_bank": 3,
+      "shape": [
+        1,
+        16,
+        32
+      ],
+      "source_node": "attention",
+      "source_op": "StructuredAttention",
+      "spm_address": 2048,
+      "tag": 4
+    },
+    {
+      "canonical_kind": "bsmm",
+      "canonical_node": "output",
+      "cdc_id": 0,
+      "frontend": "onnx",
+      "pe": [
+        0,
+        1
+      ],
+      "profile_node": "output",
+      "register": 4,
+      "register_bank": 4,
+      "shape": [
+        1,
+        16,
+        32
+      ],
+      "source_node": "output",
+      "source_op": "MatMul",
+      "spm_address": 0,
+      "tag": 5
+    },
+    {
+      "canonical_kind": "elementwise",
+      "canonical_node": "silu",
+      "cdc_id": 0,
+      "frontend": "onnx",
+      "pe": [
+        1,
+        1
+      ],
+      "profile_node": "silu",
+      "register": 5,
+      "register_bank": 5,
+      "shape": [
+        1,
+        16,
+        32
+      ],
+      "source_node": "silu",
+      "source_op": "Silu",
+      "spm_address": 2048,
+      "tag": 6
+    }
+  ],
+  "onnx_model": {
+    "bytes": 9197,
+    "path": "artifacts/environment/h190/auto-structured-block.onnx",
+    "sha256": "f38984638d5ca9bfaf9746c7d097b8ebe80cc161833a3cda0dba67d44848a00c"
+  },
+  "packages": {
+    "onnx": "1.22.0",
+    "torch": "2.13.0+cu130"
+  },
+  "paper_performance_targets_consumed": false,
+  "run_id": "run195",
+  "schema_version": 1
+}

@@ -1,0 +1,2771 @@
+{
+  "checks": {
+    "passes": true,
+    "profiles": true,
+    "records": true,
+    "replays": true
+  },
+  "experiment_id": "H190",
+  "hardware": {
+    "active_tags": 16,
+    "compute_issue_efficiency": 0.96,
+    "compute_latency_cycles": 1.0,
+    "core_power_w": 5.8464,
+    "count_fma_as_two_ops": true,
+    "decoupled_pipelines": true,
+    "frequency_ghz": 1.0,
+    "heterogeneous_compute": true,
+    "idle_power_fraction": 0.12,
+    "instructions_per_pe": 32,
+    "launch_cycles": 18.0,
+    "load_latency_cycles": 1.0,
+    "max_event_waves": 512,
+    "max_skip_hops": 2,
+    "memory_power_w": 0.6,
+    "mesh_x": 4,
+    "mesh_y": 4,
+    "name": "mlx-full-simd32-4x4",
+    "noc_bytes_per_cycle": 320.0,
+    "noc_link_bytes_per_cycle": 8.0,
+    "pe_count": 16,
+    "peak_ops_per_cycle": 1024,
+    "peak_tops": 1.024,
+    "simd_width": 32,
+    "skip_distance": 4,
+    "spm_bandwidth_gbs": 64.0,
+    "spm_bytes_per_cycle": 64.0,
+    "store_latency_cycles": 1.0,
+    "xfer_latency_cycles": 1.0
+  },
+  "paper_performance_targets_consumed": false,
+  "records": [
+    {
+      "frontend": "onnx",
+      "node_id": "norm",
+      "pass": true,
+      "replay": 1,
+      "simulation": {
+        "achieved_gops": 23.517703349282296,
+        "average_power_w": 1.5093055326315787,
+        "compute_utilization": 0.02296650717703349,
+        "cycles": 87.08333333333334,
+        "energy_mj": 0.0001314353568,
+        "event_count": 3,
+        "hardware": "mlx-full-simd32-4x4",
+        "latency_us": 0.08708333333333335,
+        "metadata": {
+          "calibration": {
+            "kernel_compute_setup_cycles": {},
+            "kernel_issue_scale": {},
+            "mesh_base_penalty": 0.0,
+            "mesh_congestion_penalty": 0.0,
+            "mesh_congestion_start_n": 2048,
+            "mesh_fill_penalty": 0.0,
+            "mesh_reference": 4,
+            "mesh_reference_n": 512,
+            "name": "identity"
+          },
+          "cdc_id": 0,
+          "compute_active_fraction": 0.035406698564593296,
+          "hardware_peak_tops": 1.024,
+          "launch_cycles": 18.0,
+          "operational_intensity": 0.5,
+          "output_register": 0,
+          "pe": [
+            0,
+            0
+          ],
+          "source_frontend": "onnx",
+          "source_node": "norm",
+          "spm_address": 0,
+          "stage_count": 1,
+          "trace": [
+            {
+              "end": 33.0,
+              "event": "dispatch",
+              "operation": "norm:load",
+              "resource": "load",
+              "start": 0.0,
+              "tag": 1,
+              "wave": 0
+            },
+            {
+              "event": "complete",
+              "operation": "norm:load",
+              "resource": "load",
+              "tag": 1,
+              "time": 33.0,
+              "wave": 0
+            },
+            {
+              "end": 36.083333333333336,
+              "event": "dispatch",
+              "operation": "norm:compute",
+              "resource": "compute_frsqrt",
+              "start": 33.0,
+              "tag": 1,
+              "wave": 0
+            },
+            {
+              "event": "complete",
+              "operation": "norm:compute",
+              "resource": "compute_frsqrt",
+              "tag": 1,
+              "time": 36.083333333333336,
+              "wave": 0
+            },
+            {
+              "end": 69.08333333333334,
+              "event": "dispatch",
+              "operation": "norm:store",
+              "resource": "store",
+              "start": 36.083333333333336,
+              "tag": 1,
+              "wave": 0
+            },
+            {
+              "event": "complete",
+              "operation": "norm:store",
+              "resource": "store",
+              "tag": 1,
+              "time": 69.08333333333334,
+              "wave": 0
+            }
+          ]
+        },
+        "offchip_bytes": 4096.0,
+        "operations": 2048.0,
+        "resource_busy_cycles": {
+          "compute_frsqrt": 3.0833333333333335,
+          "load": 33.0,
+          "store": 33.0
+        },
+        "resource_utilization": {
+          "compute_frsqrt": 0.035406698564593296,
+          "load": 0.3789473684210526,
+          "store": 0.3789473684210526
+        },
+        "waves": 1,
+        "workload": "norm-onnx"
+      },
+      "simulation_sha256": "cfd1e15191d2f5d9fe8f548d74555ba64b7c5f350616444f6be58efc0a647cfe",
+      "summary_path": "artifacts/environment/h190/executions/onnx/norm-r1.json",
+      "summary_sha256": "4b8bf7b980a748872f8b60ee62cbed3bb0216d40d5177f7606b5035a4c7d4379"
+    },
+    {
+      "frontend": "onnx",
+      "node_id": "norm",
+      "pass": true,
+      "replay": 2,
+      "simulation": {
+        "achieved_gops": 23.517703349282296,
+        "average_power_w": 1.5093055326315787,
+        "compute_utilization": 0.02296650717703349,
+        "cycles": 87.08333333333334,
+        "energy_mj": 0.0001314353568,
+        "event_count": 3,
+        "hardware": "mlx-full-simd32-4x4",
+        "latency_us": 0.08708333333333335,
+        "metadata": {
+          "calibration": {
+            "kernel_compute_setup_cycles": {},
+            "kernel_issue_scale": {},
+            "mesh_base_penalty": 0.0,
+            "mesh_congestion_penalty": 0.0,
+            "mesh_congestion_start_n": 2048,
+            "mesh_fill_penalty": 0.0,
+            "mesh_reference": 4,
+            "mesh_reference_n": 512,
+            "name": "identity"
+          },
+          "cdc_id": 0,
+          "compute_active_fraction": 0.035406698564593296,
+          "hardware_peak_tops": 1.024,
+          "launch_cycles": 18.0,
+          "operational_intensity": 0.5,
+          "output_register": 0,
+          "pe": [
+            0,
+            0
+          ],
+          "source_frontend": "onnx",
+          "source_node": "norm",
+          "spm_address": 0,
+          "stage_count": 1,
+          "trace": [
+            {
+              "end": 33.0,
+              "event": "dispatch",
+              "operation": "norm:load",
+              "resource": "load",
+              "start": 0.0,
+              "tag": 1,
+              "wave": 0
+            },
+            {
+              "event": "complete",
+              "operation": "norm:load",
+              "resource": "load",
+              "tag": 1,
+              "time": 33.0,
+              "wave": 0
+            },
+            {
+              "end": 36.083333333333336,
+              "event": "dispatch",
+              "operation": "norm:compute",
+              "resource": "compute_frsqrt",
+              "start": 33.0,
+              "tag": 1,
+              "wave": 0
+            },
+            {
+              "event": "complete",
+              "operation": "norm:compute",
+              "resource": "compute_frsqrt",
+              "tag": 1,
+              "time": 36.083333333333336,
+              "wave": 0
+            },
+            {
+              "end": 69.08333333333334,
+              "event": "dispatch",
+              "operation": "norm:store",
+              "resource": "store",
+              "start": 36.083333333333336,
+              "tag": 1,
+              "wave": 0
+            },
+            {
+              "event": "complete",
+              "operation": "norm:store",
+              "resource": "store",
+              "tag": 1,
+              "time": 69.08333333333334,
+              "wave": 0
+            }
+          ]
+        },
+        "offchip_bytes": 4096.0,
+        "operations": 2048.0,
+        "resource_busy_cycles": {
+          "compute_frsqrt": 3.0833333333333335,
+          "load": 33.0,
+          "store": 33.0
+        },
+        "resource_utilization": {
+          "compute_frsqrt": 0.035406698564593296,
+          "load": 0.3789473684210526,
+          "store": 0.3789473684210526
+        },
+        "waves": 1,
+        "workload": "norm-onnx"
+      },
+      "simulation_sha256": "cfd1e15191d2f5d9fe8f548d74555ba64b7c5f350616444f6be58efc0a647cfe",
+      "summary_path": "artifacts/environment/h190/executions/onnx/norm-r2.json",
+      "summary_sha256": "1aa22670319047a283b7631b936d03b52afbf15fdfd1168056407bbe588c7b55"
+    },
+    {
+      "frontend": "onnx",
+      "node_id": "qkv",
+      "pass": true,
+      "replay": 1,
+      "simulation": {
+        "achieved_gops": 223.41818181818184,
+        "average_power_w": 2.21349888,
+        "compute_utilization": 0.21818181818181817,
+        "cycles": 110.0,
+        "energy_mj": 0.00024348487679999998,
+        "event_count": 3,
+        "hardware": "mlx-full-simd32-4x4",
+        "latency_us": 0.11,
+        "metadata": {
+          "calibration": {
+            "kernel_compute_setup_cycles": {},
+            "kernel_issue_scale": {},
+            "mesh_base_penalty": 0.0,
+            "mesh_congestion_penalty": 0.0,
+            "mesh_congestion_start_n": 2048,
+            "mesh_fill_penalty": 0.0,
+            "mesh_reference": 4,
+            "mesh_reference_n": 512,
+            "name": "identity"
+          },
+          "cdc_id": 0,
+          "compute_active_fraction": 0.23636363636363636,
+          "hardware_peak_tops": 1.024,
+          "launch_cycles": 18.0,
+          "operational_intensity": 6.0,
+          "output_register": 1,
+          "pe": [
+            1,
+            0
+          ],
+          "source_frontend": "onnx",
+          "source_node": "qkv",
+          "spm_address": 2048,
+          "stage_count": 1,
+          "trace": [
+            {
+              "end": 33.0,
+              "event": "dispatch",
+              "operation": "qkv:load",
+              "resource": "load",
+              "start": 0.0,
+              "tag": 2,
+              "wave": 0
+            },
+            {
+              "event": "complete",
+              "operation": "qkv:load",
+              "resource": "load",
+              "tag": 2,
+              "time": 33.0,
+              "wave": 0
+            },
+            {
+              "end": 59.0,
+              "event": "dispatch",
+              "operation": "qkv:compute",
+              "resource": "compute_fma",
+              "start": 33.0,
+              "tag": 2,
+              "wave": 0
+            },
+            {
+              "event": "complete",
+              "operation": "qkv:compute",
+              "resource": "compute_fma",
+              "tag": 2,
+              "time": 59.0,
+              "wave": 0
+            },
+            {
+              "end": 92.0,
+              "event": "dispatch",
+              "operation": "qkv:store",
+              "resource": "store",
+              "start": 59.0,
+              "tag": 2,
+              "wave": 0
+            },
+            {
+              "event": "complete",
+              "operation": "qkv:store",
+              "resource": "store",
+              "tag": 2,
+              "time": 92.0,
+              "wave": 0
+            }
+          ]
+        },
+        "offchip_bytes": 4096.0,
+        "operations": 24576.0,
+        "resource_busy_cycles": {
+          "compute_fma": 26.0,
+          "load": 33.0,
+          "store": 33.0
+        },
+        "resource_utilization": {
+          "compute_fma": 0.23636363636363636,
+          "load": 0.3,
+          "store": 0.3
+        },
+        "waves": 1,
+        "workload": "qkv-onnx"
+      },
+      "simulation_sha256": "13bd85e65ad020595b635fa021527d64562e561cdd53f47dc0d70e61bb46dcd8",
+      "summary_path": "artifacts/environment/h190/executions/onnx/qkv-r1.json",
+      "summary_sha256": "da6640e0a973a125499c89df103756c879bc6e500bda979cf8a1cc9f296f2919"
+    },
+    {
+      "frontend": "onnx",
+      "node_id": "qkv",
+      "pass": true,
+      "replay": 2,
+      "simulation": {
+        "achieved_gops": 223.41818181818184,
+        "average_power_w": 2.21349888,
+        "compute_utilization": 0.21818181818181817,
+        "cycles": 110.0,
+        "energy_mj": 0.00024348487679999998,
+        "event_count": 3,
+        "hardware": "mlx-full-simd32-4x4",
+        "latency_us": 0.11,
+        "metadata": {
+          "calibration": {
+            "kernel_compute_setup_cycles": {},
+            "kernel_issue_scale": {},
+            "mesh_base_penalty": 0.0,
+            "mesh_congestion_penalty": 0.0,
+            "mesh_congestion_start_n": 2048,
+            "mesh_fill_penalty": 0.0,
+            "mesh_reference": 4,
+            "mesh_reference_n": 512,
+            "name": "identity"
+          },
+          "cdc_id": 0,
+          "compute_active_fraction": 0.23636363636363636,
+          "hardware_peak_tops": 1.024,
+          "launch_cycles": 18.0,
+          "operational_intensity": 6.0,
+          "output_register": 1,
+          "pe": [
+            1,
+            0
+          ],
+          "source_frontend": "onnx",
+          "source_node": "qkv",
+          "spm_address": 2048,
+          "stage_count": 1,
+          "trace": [
+            {
+              "end": 33.0,
+              "event": "dispatch",
+              "operation": "qkv:load",
+              "resource": "load",
+              "start": 0.0,
+              "tag": 2,
+              "wave": 0
+            },
+            {
+              "event": "complete",
+              "operation": "qkv:load",
+              "resource": "load",
+              "tag": 2,
+              "time": 33.0,
+              "wave": 0
+            },
+            {
+              "end": 59.0,
+              "event": "dispatch",
+              "operation": "qkv:compute",
+              "resource": "compute_fma",
+              "start": 33.0,
+              "tag": 2,
+              "wave": 0
+            },
+            {
+              "event": "complete",
+              "operation": "qkv:compute",
+              "resource": "compute_fma",
+              "tag": 2,
+              "time": 59.0,
+              "wave": 0
+            },
+            {
+              "end": 92.0,
+              "event": "dispatch",
+              "operation": "qkv:store",
+              "resource": "store",
+              "start": 59.0,
+              "tag": 2,
+              "wave": 0
+            },
+            {
+              "event": "complete",
+              "operation": "qkv:store",
+              "resource": "store",
+              "tag": 2,
+              "time": 92.0,
+              "wave": 0
+            }
+          ]
+        },
+        "offchip_bytes": 4096.0,
+        "operations": 24576.0,
+        "resource_busy_cycles": {
+          "compute_fma": 26.0,
+          "load": 33.0,
+          "store": 33.0
+        },
+        "resource_utilization": {
+          "compute_fma": 0.23636363636363636,
+          "load": 0.3,
+          "store": 0.3
+        },
+        "waves": 1,
+        "workload": "qkv-onnx"
+      },
+      "simulation_sha256": "13bd85e65ad020595b635fa021527d64562e561cdd53f47dc0d70e61bb46dcd8",
+      "summary_path": "artifacts/environment/h190/executions/onnx/qkv-r2.json",
+      "summary_sha256": "9ffa91efe58aeff73fe306521dbc2e4f37d8ab0c08d036978456c14629953180"
+    },
+    {
+      "frontend": "onnx",
+      "node_id": "fft_cmp",
+      "pass": true,
+      "replay": 1,
+      "simulation": {
+        "achieved_gops": 193.51181102362202,
+        "average_power_w": 2.108147119370079,
+        "compute_utilization": 0.18897637795275588,
+        "cycles": 105.83333333333334,
+        "energy_mj": 0.00022311223680000005,
+        "event_count": 3,
+        "hardware": "mlx-full-simd32-4x4",
+        "latency_us": 0.10583333333333335,
+        "metadata": {
+          "calibration": {
+            "kernel_compute_setup_cycles": {},
+            "kernel_issue_scale": {},
+            "mesh_base_penalty": 0.0,
+            "mesh_congestion_penalty": 0.0,
+            "mesh_congestion_start_n": 2048,
+            "mesh_fill_penalty": 0.0,
+            "mesh_reference": 4,
+            "mesh_reference_n": 512,
+            "name": "identity"
+          },
+          "cdc_id": 0,
+          "compute_active_fraction": 0.2062992125984252,
+          "hardware_peak_tops": 1.024,
+          "launch_cycles": 18.0,
+          "operational_intensity": 5.0,
+          "output_register": 2,
+          "pe": [
+            2,
+            0
+          ],
+          "source_frontend": "onnx",
+          "source_node": "fft_cmp",
+          "spm_address": 0,
+          "stage_count": 1,
+          "trace": [
+            {
+              "end": 33.0,
+              "event": "dispatch",
+              "operation": "fft_cmp:load",
+              "resource": "load",
+              "start": 0.0,
+              "tag": 3,
+              "wave": 0
+            },
+            {
+              "event": "complete",
+              "operation": "fft_cmp:load",
+              "resource": "load",
+              "tag": 3,
+              "time": 33.0,
+              "wave": 0
+            },
+            {
+              "end": 54.833333333333336,
+              "event": "dispatch",
+              "operation": "fft_cmp:compute",
+              "resource": "compute_fma",
+              "start": 33.0,
+              "tag": 3,
+              "wave": 0
+            },
+            {
+              "event": "complete",
+              "operation": "fft_cmp:compute",
+              "resource": "compute_fma",
+              "tag": 3,
+              "time": 54.833333333333336,
+              "wave": 0
+            },
+            {
+              "end": 87.83333333333334,
+              "event": "dispatch",
+              "operation": "fft_cmp:store",
+              "resource": "store",
+              "start": 54.833333333333336,
+              "tag": 3,
+              "wave": 0
+            },
+            {
+              "event": "complete",
+              "operation": "fft_cmp:store",
+              "resource": "store",
+              "tag": 3,
+              "time": 87.83333333333334,
+              "wave": 0
+            }
+          ]
+        },
+        "offchip_bytes": 4096.0,
+        "operations": 20480.0,
+        "resource_busy_cycles": {
+          "compute_fma": 21.833333333333336,
+          "load": 33.0,
+          "store": 33.0
+        },
+        "resource_utilization": {
+          "compute_fma": 0.2062992125984252,
+          "load": 0.3118110236220472,
+          "store": 0.3118110236220472
+        },
+        "waves": 1,
+        "workload": "fft_cmp-onnx"
+      },
+      "simulation_sha256": "d377658ac91eb20f23e88146dff556fdbf55460facb5392c2e0532b0cf2902ad",
+      "summary_path": "artifacts/environment/h190/executions/onnx/fft_cmp-r1.json",
+      "summary_sha256": "b5b7123772290e0d286bb432670b3921489ff6fd2b875ead8b90be42557f3898"
+    },
+    {
+      "frontend": "onnx",
+      "node_id": "fft_cmp",
+      "pass": true,
+      "replay": 2,
+      "simulation": {
+        "achieved_gops": 193.51181102362202,
+        "average_power_w": 2.108147119370079,
+        "compute_utilization": 0.18897637795275588,
+        "cycles": 105.83333333333334,
+        "energy_mj": 0.00022311223680000005,
+        "event_count": 3,
+        "hardware": "mlx-full-simd32-4x4",
+        "latency_us": 0.10583333333333335,
+        "metadata": {
+          "calibration": {
+            "kernel_compute_setup_cycles": {},
+            "kernel_issue_scale": {},
+            "mesh_base_penalty": 0.0,
+            "mesh_congestion_penalty": 0.0,
+            "mesh_congestion_start_n": 2048,
+            "mesh_fill_penalty": 0.0,
+            "mesh_reference": 4,
+            "mesh_reference_n": 512,
+            "name": "identity"
+          },
+          "cdc_id": 0,
+          "compute_active_fraction": 0.2062992125984252,
+          "hardware_peak_tops": 1.024,
+          "launch_cycles": 18.0,
+          "operational_intensity": 5.0,
+          "output_register": 2,
+          "pe": [
+            2,
+            0
+          ],
+          "source_frontend": "onnx",
+          "source_node": "fft_cmp",
+          "spm_address": 0,
+          "stage_count": 1,
+          "trace": [
+            {
+              "end": 33.0,
+              "event": "dispatch",
+              "operation": "fft_cmp:load",
+              "resource": "load",
+              "start": 0.0,
+              "tag": 3,
+              "wave": 0
+            },
+            {
+              "event": "complete",
+              "operation": "fft_cmp:load",
+              "resource": "load",
+              "tag": 3,
+              "time": 33.0,
+              "wave": 0
+            },
+            {
+              "end": 54.833333333333336,
+              "event": "dispatch",
+              "operation": "fft_cmp:compute",
+              "resource": "compute_fma",
+              "start": 33.0,
+              "tag": 3,
+              "wave": 0
+            },
+            {
+              "event": "complete",
+              "operation": "fft_cmp:compute",
+              "resource": "compute_fma",
+              "tag": 3,
+              "time": 54.833333333333336,
+              "wave": 0
+            },
+            {
+              "end": 87.83333333333334,
+              "event": "dispatch",
+              "operation": "fft_cmp:store",
+              "resource": "store",
+              "start": 54.833333333333336,
+              "tag": 3,
+              "wave": 0
+            },
+            {
+              "event": "complete",
+              "operation": "fft_cmp:store",
+              "resource": "store",
+              "tag": 3,
+              "time": 87.83333333333334,
+              "wave": 0
+            }
+          ]
+        },
+        "offchip_bytes": 4096.0,
+        "operations": 20480.0,
+        "resource_busy_cycles": {
+          "compute_fma": 21.833333333333336,
+          "load": 33.0,
+          "store": 33.0
+        },
+        "resource_utilization": {
+          "compute_fma": 0.2062992125984252,
+          "load": 0.3118110236220472,
+          "store": 0.3118110236220472
+        },
+        "waves": 1,
+        "workload": "fft_cmp-onnx"
+      },
+      "simulation_sha256": "d377658ac91eb20f23e88146dff556fdbf55460facb5392c2e0532b0cf2902ad",
+      "summary_path": "artifacts/environment/h190/executions/onnx/fft_cmp-r2.json",
+      "summary_sha256": "669440fbda8b37fa48892f46875db4002ceffc874f2a97dac158c65e64b62b42"
+    },
+    {
+      "frontend": "onnx",
+      "node_id": "attention",
+      "pass": true,
+      "replay": 1,
+      "simulation": {
+        "achieved_gops": 276.912676056338,
+        "average_power_w": 2.4019449870422536,
+        "compute_utilization": 0.2704225352112676,
+        "cycles": 118.33333333333334,
+        "energy_mj": 0.0002842301568,
+        "event_count": 3,
+        "hardware": "mlx-full-simd32-4x4",
+        "latency_us": 0.11833333333333335,
+        "metadata": {
+          "calibration": {
+            "kernel_compute_setup_cycles": {},
+            "kernel_issue_scale": {},
+            "mesh_base_penalty": 0.0,
+            "mesh_congestion_penalty": 0.0,
+            "mesh_congestion_start_n": 2048,
+            "mesh_fill_penalty": 0.0,
+            "mesh_reference": 4,
+            "mesh_reference_n": 512,
+            "name": "identity"
+          },
+          "cdc_id": 0,
+          "compute_active_fraction": 0.29014084507042254,
+          "hardware_peak_tops": 1.024,
+          "launch_cycles": 18.0,
+          "operational_intensity": 8.0,
+          "output_register": 3,
+          "pe": [
+            3,
+            0
+          ],
+          "source_frontend": "onnx",
+          "source_node": "attention",
+          "spm_address": 2048,
+          "stage_count": 1,
+          "trace": [
+            {
+              "end": 33.0,
+              "event": "dispatch",
+              "operation": "attention:load",
+              "resource": "load",
+              "start": 0.0,
+              "tag": 4,
+              "wave": 0
+            },
+            {
+              "event": "complete",
+              "operation": "attention:load",
+              "resource": "load",
+              "tag": 4,
+              "time": 33.0,
+              "wave": 0
+            },
+            {
+              "end": 67.33333333333334,
+              "event": "dispatch",
+              "operation": "attention:compute",
+              "resource": "compute_fma",
+              "start": 33.0,
+              "tag": 4,
+              "wave": 0
+            },
+            {
+              "event": "complete",
+              "operation": "attention:compute",
+              "resource": "compute_fma",
+              "tag": 4,
+              "time": 67.33333333333334,
+              "wave": 0
+            },
+            {
+              "end": 100.33333333333334,
+              "event": "dispatch",
+              "operation": "attention:store",
+              "resource": "store",
+              "start": 67.33333333333334,
+              "tag": 4,
+              "wave": 0
+            },
+            {
+              "event": "complete",
+              "operation": "attention:store",
+              "resource": "store",
+              "tag": 4,
+              "time": 100.33333333333334,
+              "wave": 0
+            }
+          ]
+        },
+        "offchip_bytes": 4096.0,
+        "operations": 32768.0,
+        "resource_busy_cycles": {
+          "compute_fma": 34.333333333333336,
+          "load": 33.0,
+          "store": 33.0
+        },
+        "resource_utilization": {
+          "compute_fma": 0.29014084507042254,
+          "load": 0.2788732394366197,
+          "store": 0.2788732394366197
+        },
+        "waves": 1,
+        "workload": "attention-onnx"
+      },
+      "simulation_sha256": "ce5c1b65d3ba24ca595c3943b5f495c5a3403d110bea45152b88ad00b195bb74",
+      "summary_path": "artifacts/environment/h190/executions/onnx/attention-r1.json",
+      "summary_sha256": "73ea55e9a9735ee572673b3b15962a848d4d9f8a06bddc15ca7fd1e381ed7d52"
+    },
+    {
+      "frontend": "onnx",
+      "node_id": "attention",
+      "pass": true,
+      "replay": 2,
+      "simulation": {
+        "achieved_gops": 276.912676056338,
+        "average_power_w": 2.4019449870422536,
+        "compute_utilization": 0.2704225352112676,
+        "cycles": 118.33333333333334,
+        "energy_mj": 0.0002842301568,
+        "event_count": 3,
+        "hardware": "mlx-full-simd32-4x4",
+        "latency_us": 0.11833333333333335,
+        "metadata": {
+          "calibration": {
+            "kernel_compute_setup_cycles": {},
+            "kernel_issue_scale": {},
+            "mesh_base_penalty": 0.0,
+            "mesh_congestion_penalty": 0.0,
+            "mesh_congestion_start_n": 2048,
+            "mesh_fill_penalty": 0.0,
+            "mesh_reference": 4,
+            "mesh_reference_n": 512,
+            "name": "identity"
+          },
+          "cdc_id": 0,
+          "compute_active_fraction": 0.29014084507042254,
+          "hardware_peak_tops": 1.024,
+          "launch_cycles": 18.0,
+          "operational_intensity": 8.0,
+          "output_register": 3,
+          "pe": [
+            3,
+            0
+          ],
+          "source_frontend": "onnx",
+          "source_node": "attention",
+          "spm_address": 2048,
+          "stage_count": 1,
+          "trace": [
+            {
+              "end": 33.0,
+              "event": "dispatch",
+              "operation": "attention:load",
+              "resource": "load",
+              "start": 0.0,
+              "tag": 4,
+              "wave": 0
+            },
+            {
+              "event": "complete",
+              "operation": "attention:load",
+              "resource": "load",
+              "tag": 4,
+              "time": 33.0,
+              "wave": 0
+            },
+            {
+              "end": 67.33333333333334,
+              "event": "dispatch",
+              "operation": "attention:compute",
+              "resource": "compute_fma",
+              "start": 33.0,
+              "tag": 4,
+              "wave": 0
+            },
+            {
+              "event": "complete",
+              "operation": "attention:compute",
+              "resource": "compute_fma",
+              "tag": 4,
+              "time": 67.33333333333334,
+              "wave": 0
+            },
+            {
+              "end": 100.33333333333334,
+              "event": "dispatch",
+              "operation": "attention:store",
+              "resource": "store",
+              "start": 67.33333333333334,
+              "tag": 4,
+              "wave": 0
+            },
+            {
+              "event": "complete",
+              "operation": "attention:store",
+              "resource": "store",
+              "tag": 4,
+              "time": 100.33333333333334,
+              "wave": 0
+            }
+          ]
+        },
+        "offchip_bytes": 4096.0,
+        "operations": 32768.0,
+        "resource_busy_cycles": {
+          "compute_fma": 34.333333333333336,
+          "load": 33.0,
+          "store": 33.0
+        },
+        "resource_utilization": {
+          "compute_fma": 0.29014084507042254,
+          "load": 0.2788732394366197,
+          "store": 0.2788732394366197
+        },
+        "waves": 1,
+        "workload": "attention-onnx"
+      },
+      "simulation_sha256": "ce5c1b65d3ba24ca595c3943b5f495c5a3403d110bea45152b88ad00b195bb74",
+      "summary_path": "artifacts/environment/h190/executions/onnx/attention-r2.json",
+      "summary_sha256": "c15845b68733923e78036ddaecb2c5e919d6e037a376701ecb520469027945a3"
+    },
+    {
+      "frontend": "onnx",
+      "node_id": "output",
+      "pass": true,
+      "replay": 1,
+      "simulation": {
+        "achieved_gops": 223.41818181818184,
+        "average_power_w": 2.21349888,
+        "compute_utilization": 0.21818181818181817,
+        "cycles": 110.0,
+        "energy_mj": 0.00024348487679999998,
+        "event_count": 3,
+        "hardware": "mlx-full-simd32-4x4",
+        "latency_us": 0.11,
+        "metadata": {
+          "calibration": {
+            "kernel_compute_setup_cycles": {},
+            "kernel_issue_scale": {},
+            "mesh_base_penalty": 0.0,
+            "mesh_congestion_penalty": 0.0,
+            "mesh_congestion_start_n": 2048,
+            "mesh_fill_penalty": 0.0,
+            "mesh_reference": 4,
+            "mesh_reference_n": 512,
+            "name": "identity"
+          },
+          "cdc_id": 0,
+          "compute_active_fraction": 0.23636363636363636,
+          "hardware_peak_tops": 1.024,
+          "launch_cycles": 18.0,
+          "operational_intensity": 6.0,
+          "output_register": 4,
+          "pe": [
+            0,
+            1
+          ],
+          "source_frontend": "onnx",
+          "source_node": "output",
+          "spm_address": 0,
+          "stage_count": 1,
+          "trace": [
+            {
+              "end": 33.0,
+              "event": "dispatch",
+              "operation": "output:load",
+              "resource": "load",
+              "start": 0.0,
+              "tag": 5,
+              "wave": 0
+            },
+            {
+              "event": "complete",
+              "operation": "output:load",
+              "resource": "load",
+              "tag": 5,
+              "time": 33.0,
+              "wave": 0
+            },
+            {
+              "end": 59.0,
+              "event": "dispatch",
+              "operation": "output:compute",
+              "resource": "compute_fma",
+              "start": 33.0,
+              "tag": 5,
+              "wave": 0
+            },
+            {
+              "event": "complete",
+              "operation": "output:compute",
+              "resource": "compute_fma",
+              "tag": 5,
+              "time": 59.0,
+              "wave": 0
+            },
+            {
+              "end": 92.0,
+              "event": "dispatch",
+              "operation": "output:store",
+              "resource": "store",
+              "start": 59.0,
+              "tag": 5,
+              "wave": 0
+            },
+            {
+              "event": "complete",
+              "operation": "output:store",
+              "resource": "store",
+              "tag": 5,
+              "time": 92.0,
+              "wave": 0
+            }
+          ]
+        },
+        "offchip_bytes": 4096.0,
+        "operations": 24576.0,
+        "resource_busy_cycles": {
+          "compute_fma": 26.0,
+          "load": 33.0,
+          "store": 33.0
+        },
+        "resource_utilization": {
+          "compute_fma": 0.23636363636363636,
+          "load": 0.3,
+          "store": 0.3
+        },
+        "waves": 1,
+        "workload": "output-onnx"
+      },
+      "simulation_sha256": "c390c14bc326c3441c7fd5e6ff455f75238ba8d997c22d43202949a5178a715a",
+      "summary_path": "artifacts/environment/h190/executions/onnx/output-r1.json",
+      "summary_sha256": "43fe3569566de85fe20ae3bb026dc013c4967557dbf146ba3c44261d009ae21a"
+    },
+    {
+      "frontend": "onnx",
+      "node_id": "output",
+      "pass": true,
+      "replay": 2,
+      "simulation": {
+        "achieved_gops": 223.41818181818184,
+        "average_power_w": 2.21349888,
+        "compute_utilization": 0.21818181818181817,
+        "cycles": 110.0,
+        "energy_mj": 0.00024348487679999998,
+        "event_count": 3,
+        "hardware": "mlx-full-simd32-4x4",
+        "latency_us": 0.11,
+        "metadata": {
+          "calibration": {
+            "kernel_compute_setup_cycles": {},
+            "kernel_issue_scale": {},
+            "mesh_base_penalty": 0.0,
+            "mesh_congestion_penalty": 0.0,
+            "mesh_congestion_start_n": 2048,
+            "mesh_fill_penalty": 0.0,
+            "mesh_reference": 4,
+            "mesh_reference_n": 512,
+            "name": "identity"
+          },
+          "cdc_id": 0,
+          "compute_active_fraction": 0.23636363636363636,
+          "hardware_peak_tops": 1.024,
+          "launch_cycles": 18.0,
+          "operational_intensity": 6.0,
+          "output_register": 4,
+          "pe": [
+            0,
+            1
+          ],
+          "source_frontend": "onnx",
+          "source_node": "output",
+          "spm_address": 0,
+          "stage_count": 1,
+          "trace": [
+            {
+              "end": 33.0,
+              "event": "dispatch",
+              "operation": "output:load",
+              "resource": "load",
+              "start": 0.0,
+              "tag": 5,
+              "wave": 0
+            },
+            {
+              "event": "complete",
+              "operation": "output:load",
+              "resource": "load",
+              "tag": 5,
+              "time": 33.0,
+              "wave": 0
+            },
+            {
+              "end": 59.0,
+              "event": "dispatch",
+              "operation": "output:compute",
+              "resource": "compute_fma",
+              "start": 33.0,
+              "tag": 5,
+              "wave": 0
+            },
+            {
+              "event": "complete",
+              "operation": "output:compute",
+              "resource": "compute_fma",
+              "tag": 5,
+              "time": 59.0,
+              "wave": 0
+            },
+            {
+              "end": 92.0,
+              "event": "dispatch",
+              "operation": "output:store",
+              "resource": "store",
+              "start": 59.0,
+              "tag": 5,
+              "wave": 0
+            },
+            {
+              "event": "complete",
+              "operation": "output:store",
+              "resource": "store",
+              "tag": 5,
+              "time": 92.0,
+              "wave": 0
+            }
+          ]
+        },
+        "offchip_bytes": 4096.0,
+        "operations": 24576.0,
+        "resource_busy_cycles": {
+          "compute_fma": 26.0,
+          "load": 33.0,
+          "store": 33.0
+        },
+        "resource_utilization": {
+          "compute_fma": 0.23636363636363636,
+          "load": 0.3,
+          "store": 0.3
+        },
+        "waves": 1,
+        "workload": "output-onnx"
+      },
+      "simulation_sha256": "c390c14bc326c3441c7fd5e6ff455f75238ba8d997c22d43202949a5178a715a",
+      "summary_path": "artifacts/environment/h190/executions/onnx/output-r2.json",
+      "summary_sha256": "d65004cfd48ade2a418f8c4f9c9144397518c4b155f19e9885401b07d51ec4d0"
+    },
+    {
+      "frontend": "onnx",
+      "node_id": "silu",
+      "pass": true,
+      "replay": 1,
+      "simulation": {
+        "achieved_gops": 20.144262295081965,
+        "average_power_w": 1.99415996852459,
+        "compute_utilization": 0.019672131147540982,
+        "cycles": 101.66666666666667,
+        "energy_mj": 0.00020273959679999997,
+        "event_count": 3,
+        "hardware": "mlx-full-simd32-4x4",
+        "latency_us": 0.10166666666666667,
+        "metadata": {
+          "calibration": {
+            "kernel_compute_setup_cycles": {},
+            "kernel_issue_scale": {},
+            "mesh_base_penalty": 0.0,
+            "mesh_congestion_penalty": 0.0,
+            "mesh_congestion_start_n": 2048,
+            "mesh_fill_penalty": 0.0,
+            "mesh_reference": 4,
+            "mesh_reference_n": 512,
+            "name": "identity"
+          },
+          "cdc_id": 0,
+          "compute_active_fraction": 0.1737704918032787,
+          "hardware_peak_tops": 1.024,
+          "launch_cycles": 18.0,
+          "operational_intensity": 0.5,
+          "output_register": 5,
+          "pe": [
+            1,
+            1
+          ],
+          "source_frontend": "onnx",
+          "source_node": "silu",
+          "spm_address": 2048,
+          "stage_count": 1,
+          "trace": [
+            {
+              "end": 33.0,
+              "event": "dispatch",
+              "operation": "silu:load",
+              "resource": "load",
+              "start": 0.0,
+              "tag": 6,
+              "wave": 0
+            },
+            {
+              "event": "complete",
+              "operation": "silu:load",
+              "resource": "load",
+              "tag": 6,
+              "time": 33.0,
+              "wave": 0
+            },
+            {
+              "end": 50.66666666666667,
+              "event": "dispatch",
+              "operation": "silu:compute",
+              "resource": "compute_fexp",
+              "start": 33.0,
+              "tag": 6,
+              "wave": 0
+            },
+            {
+              "event": "complete",
+              "operation": "silu:compute",
+              "resource": "compute_fexp",
+              "tag": 6,
+              "time": 50.66666666666667,
+              "wave": 0
+            },
+            {
+              "end": 83.66666666666667,
+              "event": "dispatch",
+              "operation": "silu:store",
+              "resource": "store",
+              "start": 50.66666666666667,
+              "tag": 6,
+              "wave": 0
+            },
+            {
+              "event": "complete",
+              "operation": "silu:store",
+              "resource": "store",
+              "tag": 6,
+              "time": 83.66666666666667,
+              "wave": 0
+            }
+          ]
+        },
+        "offchip_bytes": 4096.0,
+        "operations": 2048.0,
+        "resource_busy_cycles": {
+          "compute_fexp": 17.666666666666668,
+          "load": 33.0,
+          "store": 33.0
+        },
+        "resource_utilization": {
+          "compute_fexp": 0.1737704918032787,
+          "load": 0.3245901639344262,
+          "store": 0.3245901639344262
+        },
+        "waves": 1,
+        "workload": "silu-onnx"
+      },
+      "simulation_sha256": "c2dd6cc2394b4da62d75f3a5eeef1067c5e0c832999c05d28a3f4839dc9aab52",
+      "summary_path": "artifacts/environment/h190/executions/onnx/silu-r1.json",
+      "summary_sha256": "b2519b191e23c1f6eb7e25c7e45bc3a03f52c4279bb846237342dc5a03e09d28"
+    },
+    {
+      "frontend": "onnx",
+      "node_id": "silu",
+      "pass": true,
+      "replay": 2,
+      "simulation": {
+        "achieved_gops": 20.144262295081965,
+        "average_power_w": 1.99415996852459,
+        "compute_utilization": 0.019672131147540982,
+        "cycles": 101.66666666666667,
+        "energy_mj": 0.00020273959679999997,
+        "event_count": 3,
+        "hardware": "mlx-full-simd32-4x4",
+        "latency_us": 0.10166666666666667,
+        "metadata": {
+          "calibration": {
+            "kernel_compute_setup_cycles": {},
+            "kernel_issue_scale": {},
+            "mesh_base_penalty": 0.0,
+            "mesh_congestion_penalty": 0.0,
+            "mesh_congestion_start_n": 2048,
+            "mesh_fill_penalty": 0.0,
+            "mesh_reference": 4,
+            "mesh_reference_n": 512,
+            "name": "identity"
+          },
+          "cdc_id": 0,
+          "compute_active_fraction": 0.1737704918032787,
+          "hardware_peak_tops": 1.024,
+          "launch_cycles": 18.0,
+          "operational_intensity": 0.5,
+          "output_register": 5,
+          "pe": [
+            1,
+            1
+          ],
+          "source_frontend": "onnx",
+          "source_node": "silu",
+          "spm_address": 2048,
+          "stage_count": 1,
+          "trace": [
+            {
+              "end": 33.0,
+              "event": "dispatch",
+              "operation": "silu:load",
+              "resource": "load",
+              "start": 0.0,
+              "tag": 6,
+              "wave": 0
+            },
+            {
+              "event": "complete",
+              "operation": "silu:load",
+              "resource": "load",
+              "tag": 6,
+              "time": 33.0,
+              "wave": 0
+            },
+            {
+              "end": 50.66666666666667,
+              "event": "dispatch",
+              "operation": "silu:compute",
+              "resource": "compute_fexp",
+              "start": 33.0,
+              "tag": 6,
+              "wave": 0
+            },
+            {
+              "event": "complete",
+              "operation": "silu:compute",
+              "resource": "compute_fexp",
+              "tag": 6,
+              "time": 50.66666666666667,
+              "wave": 0
+            },
+            {
+              "end": 83.66666666666667,
+              "event": "dispatch",
+              "operation": "silu:store",
+              "resource": "store",
+              "start": 50.66666666666667,
+              "tag": 6,
+              "wave": 0
+            },
+            {
+              "event": "complete",
+              "operation": "silu:store",
+              "resource": "store",
+              "tag": 6,
+              "time": 83.66666666666667,
+              "wave": 0
+            }
+          ]
+        },
+        "offchip_bytes": 4096.0,
+        "operations": 2048.0,
+        "resource_busy_cycles": {
+          "compute_fexp": 17.666666666666668,
+          "load": 33.0,
+          "store": 33.0
+        },
+        "resource_utilization": {
+          "compute_fexp": 0.1737704918032787,
+          "load": 0.3245901639344262,
+          "store": 0.3245901639344262
+        },
+        "waves": 1,
+        "workload": "silu-onnx"
+      },
+      "simulation_sha256": "c2dd6cc2394b4da62d75f3a5eeef1067c5e0c832999c05d28a3f4839dc9aab52",
+      "summary_path": "artifacts/environment/h190/executions/onnx/silu-r2.json",
+      "summary_sha256": "8f92b3e249cfe7309dee59c8949ec3099af0dcf0de5fe3a7c01e717c1fc70209"
+    },
+    {
+      "frontend": "pytorch_fx",
+      "node_id": "norm",
+      "pass": true,
+      "replay": 1,
+      "simulation": {
+        "achieved_gops": 23.517703349282296,
+        "average_power_w": 1.5093055326315787,
+        "compute_utilization": 0.02296650717703349,
+        "cycles": 87.08333333333334,
+        "energy_mj": 0.0001314353568,
+        "event_count": 3,
+        "hardware": "mlx-full-simd32-4x4",
+        "latency_us": 0.08708333333333335,
+        "metadata": {
+          "calibration": {
+            "kernel_compute_setup_cycles": {},
+            "kernel_issue_scale": {},
+            "mesh_base_penalty": 0.0,
+            "mesh_congestion_penalty": 0.0,
+            "mesh_congestion_start_n": 2048,
+            "mesh_fill_penalty": 0.0,
+            "mesh_reference": 4,
+            "mesh_reference_n": 512,
+            "name": "identity"
+          },
+          "cdc_id": 0,
+          "compute_active_fraction": 0.035406698564593296,
+          "hardware_peak_tops": 1.024,
+          "launch_cycles": 18.0,
+          "operational_intensity": 0.5,
+          "output_register": 0,
+          "pe": [
+            0,
+            0
+          ],
+          "source_frontend": "pytorch_fx",
+          "source_node": "norm",
+          "spm_address": 0,
+          "stage_count": 1,
+          "trace": [
+            {
+              "end": 33.0,
+              "event": "dispatch",
+              "operation": "norm:load",
+              "resource": "load",
+              "start": 0.0,
+              "tag": 1,
+              "wave": 0
+            },
+            {
+              "event": "complete",
+              "operation": "norm:load",
+              "resource": "load",
+              "tag": 1,
+              "time": 33.0,
+              "wave": 0
+            },
+            {
+              "end": 36.083333333333336,
+              "event": "dispatch",
+              "operation": "norm:compute",
+              "resource": "compute_frsqrt",
+              "start": 33.0,
+              "tag": 1,
+              "wave": 0
+            },
+            {
+              "event": "complete",
+              "operation": "norm:compute",
+              "resource": "compute_frsqrt",
+              "tag": 1,
+              "time": 36.083333333333336,
+              "wave": 0
+            },
+            {
+              "end": 69.08333333333334,
+              "event": "dispatch",
+              "operation": "norm:store",
+              "resource": "store",
+              "start": 36.083333333333336,
+              "tag": 1,
+              "wave": 0
+            },
+            {
+              "event": "complete",
+              "operation": "norm:store",
+              "resource": "store",
+              "tag": 1,
+              "time": 69.08333333333334,
+              "wave": 0
+            }
+          ]
+        },
+        "offchip_bytes": 4096.0,
+        "operations": 2048.0,
+        "resource_busy_cycles": {
+          "compute_frsqrt": 3.0833333333333335,
+          "load": 33.0,
+          "store": 33.0
+        },
+        "resource_utilization": {
+          "compute_frsqrt": 0.035406698564593296,
+          "load": 0.3789473684210526,
+          "store": 0.3789473684210526
+        },
+        "waves": 1,
+        "workload": "norm-pytorch_fx"
+      },
+      "simulation_sha256": "c800a1f9b8ac20336712cd1360a9f85cb922ec272c6a9989a53413063ad55aea",
+      "summary_path": "artifacts/environment/h190/executions/pytorch_fx/norm-r1.json",
+      "summary_sha256": "554e8471dc179112bf67c5c96afafbe11563557f0a90cadfdea43b96d0a45d57"
+    },
+    {
+      "frontend": "pytorch_fx",
+      "node_id": "norm",
+      "pass": true,
+      "replay": 2,
+      "simulation": {
+        "achieved_gops": 23.517703349282296,
+        "average_power_w": 1.5093055326315787,
+        "compute_utilization": 0.02296650717703349,
+        "cycles": 87.08333333333334,
+        "energy_mj": 0.0001314353568,
+        "event_count": 3,
+        "hardware": "mlx-full-simd32-4x4",
+        "latency_us": 0.08708333333333335,
+        "metadata": {
+          "calibration": {
+            "kernel_compute_setup_cycles": {},
+            "kernel_issue_scale": {},
+            "mesh_base_penalty": 0.0,
+            "mesh_congestion_penalty": 0.0,
+            "mesh_congestion_start_n": 2048,
+            "mesh_fill_penalty": 0.0,
+            "mesh_reference": 4,
+            "mesh_reference_n": 512,
+            "name": "identity"
+          },
+          "cdc_id": 0,
+          "compute_active_fraction": 0.035406698564593296,
+          "hardware_peak_tops": 1.024,
+          "launch_cycles": 18.0,
+          "operational_intensity": 0.5,
+          "output_register": 0,
+          "pe": [
+            0,
+            0
+          ],
+          "source_frontend": "pytorch_fx",
+          "source_node": "norm",
+          "spm_address": 0,
+          "stage_count": 1,
+          "trace": [
+            {
+              "end": 33.0,
+              "event": "dispatch",
+              "operation": "norm:load",
+              "resource": "load",
+              "start": 0.0,
+              "tag": 1,
+              "wave": 0
+            },
+            {
+              "event": "complete",
+              "operation": "norm:load",
+              "resource": "load",
+              "tag": 1,
+              "time": 33.0,
+              "wave": 0
+            },
+            {
+              "end": 36.083333333333336,
+              "event": "dispatch",
+              "operation": "norm:compute",
+              "resource": "compute_frsqrt",
+              "start": 33.0,
+              "tag": 1,
+              "wave": 0
+            },
+            {
+              "event": "complete",
+              "operation": "norm:compute",
+              "resource": "compute_frsqrt",
+              "tag": 1,
+              "time": 36.083333333333336,
+              "wave": 0
+            },
+            {
+              "end": 69.08333333333334,
+              "event": "dispatch",
+              "operation": "norm:store",
+              "resource": "store",
+              "start": 36.083333333333336,
+              "tag": 1,
+              "wave": 0
+            },
+            {
+              "event": "complete",
+              "operation": "norm:store",
+              "resource": "store",
+              "tag": 1,
+              "time": 69.08333333333334,
+              "wave": 0
+            }
+          ]
+        },
+        "offchip_bytes": 4096.0,
+        "operations": 2048.0,
+        "resource_busy_cycles": {
+          "compute_frsqrt": 3.0833333333333335,
+          "load": 33.0,
+          "store": 33.0
+        },
+        "resource_utilization": {
+          "compute_frsqrt": 0.035406698564593296,
+          "load": 0.3789473684210526,
+          "store": 0.3789473684210526
+        },
+        "waves": 1,
+        "workload": "norm-pytorch_fx"
+      },
+      "simulation_sha256": "c800a1f9b8ac20336712cd1360a9f85cb922ec272c6a9989a53413063ad55aea",
+      "summary_path": "artifacts/environment/h190/executions/pytorch_fx/norm-r2.json",
+      "summary_sha256": "4f87691617fdfc0fa4152d70e131f09c3fdae574c9eae426c37c8f5753689d3b"
+    },
+    {
+      "frontend": "pytorch_fx",
+      "node_id": "qkv",
+      "pass": true,
+      "replay": 1,
+      "simulation": {
+        "achieved_gops": 223.41818181818184,
+        "average_power_w": 2.21349888,
+        "compute_utilization": 0.21818181818181817,
+        "cycles": 110.0,
+        "energy_mj": 0.00024348487679999998,
+        "event_count": 3,
+        "hardware": "mlx-full-simd32-4x4",
+        "latency_us": 0.11,
+        "metadata": {
+          "calibration": {
+            "kernel_compute_setup_cycles": {},
+            "kernel_issue_scale": {},
+            "mesh_base_penalty": 0.0,
+            "mesh_congestion_penalty": 0.0,
+            "mesh_congestion_start_n": 2048,
+            "mesh_fill_penalty": 0.0,
+            "mesh_reference": 4,
+            "mesh_reference_n": 512,
+            "name": "identity"
+          },
+          "cdc_id": 0,
+          "compute_active_fraction": 0.23636363636363636,
+          "hardware_peak_tops": 1.024,
+          "launch_cycles": 18.0,
+          "operational_intensity": 6.0,
+          "output_register": 1,
+          "pe": [
+            1,
+            0
+          ],
+          "source_frontend": "pytorch_fx",
+          "source_node": "qkv",
+          "spm_address": 2048,
+          "stage_count": 1,
+          "trace": [
+            {
+              "end": 33.0,
+              "event": "dispatch",
+              "operation": "qkv:load",
+              "resource": "load",
+              "start": 0.0,
+              "tag": 2,
+              "wave": 0
+            },
+            {
+              "event": "complete",
+              "operation": "qkv:load",
+              "resource": "load",
+              "tag": 2,
+              "time": 33.0,
+              "wave": 0
+            },
+            {
+              "end": 59.0,
+              "event": "dispatch",
+              "operation": "qkv:compute",
+              "resource": "compute_fma",
+              "start": 33.0,
+              "tag": 2,
+              "wave": 0
+            },
+            {
+              "event": "complete",
+              "operation": "qkv:compute",
+              "resource": "compute_fma",
+              "tag": 2,
+              "time": 59.0,
+              "wave": 0
+            },
+            {
+              "end": 92.0,
+              "event": "dispatch",
+              "operation": "qkv:store",
+              "resource": "store",
+              "start": 59.0,
+              "tag": 2,
+              "wave": 0
+            },
+            {
+              "event": "complete",
+              "operation": "qkv:store",
+              "resource": "store",
+              "tag": 2,
+              "time": 92.0,
+              "wave": 0
+            }
+          ]
+        },
+        "offchip_bytes": 4096.0,
+        "operations": 24576.0,
+        "resource_busy_cycles": {
+          "compute_fma": 26.0,
+          "load": 33.0,
+          "store": 33.0
+        },
+        "resource_utilization": {
+          "compute_fma": 0.23636363636363636,
+          "load": 0.3,
+          "store": 0.3
+        },
+        "waves": 1,
+        "workload": "qkv-pytorch_fx"
+      },
+      "simulation_sha256": "92f49bffda4b574e38ef50c33126009f3cb75bbbbfdefaedfc1661113478ee5e",
+      "summary_path": "artifacts/environment/h190/executions/pytorch_fx/qkv-r1.json",
+      "summary_sha256": "668630d46648efc0fd732760fb22ec26b288f17845cf1c291e156852a0ac3fb0"
+    },
+    {
+      "frontend": "pytorch_fx",
+      "node_id": "qkv",
+      "pass": true,
+      "replay": 2,
+      "simulation": {
+        "achieved_gops": 223.41818181818184,
+        "average_power_w": 2.21349888,
+        "compute_utilization": 0.21818181818181817,
+        "cycles": 110.0,
+        "energy_mj": 0.00024348487679999998,
+        "event_count": 3,
+        "hardware": "mlx-full-simd32-4x4",
+        "latency_us": 0.11,
+        "metadata": {
+          "calibration": {
+            "kernel_compute_setup_cycles": {},
+            "kernel_issue_scale": {},
+            "mesh_base_penalty": 0.0,
+            "mesh_congestion_penalty": 0.0,
+            "mesh_congestion_start_n": 2048,
+            "mesh_fill_penalty": 0.0,
+            "mesh_reference": 4,
+            "mesh_reference_n": 512,
+            "name": "identity"
+          },
+          "cdc_id": 0,
+          "compute_active_fraction": 0.23636363636363636,
+          "hardware_peak_tops": 1.024,
+          "launch_cycles": 18.0,
+          "operational_intensity": 6.0,
+          "output_register": 1,
+          "pe": [
+            1,
+            0
+          ],
+          "source_frontend": "pytorch_fx",
+          "source_node": "qkv",
+          "spm_address": 2048,
+          "stage_count": 1,
+          "trace": [
+            {
+              "end": 33.0,
+              "event": "dispatch",
+              "operation": "qkv:load",
+              "resource": "load",
+              "start": 0.0,
+              "tag": 2,
+              "wave": 0
+            },
+            {
+              "event": "complete",
+              "operation": "qkv:load",
+              "resource": "load",
+              "tag": 2,
+              "time": 33.0,
+              "wave": 0
+            },
+            {
+              "end": 59.0,
+              "event": "dispatch",
+              "operation": "qkv:compute",
+              "resource": "compute_fma",
+              "start": 33.0,
+              "tag": 2,
+              "wave": 0
+            },
+            {
+              "event": "complete",
+              "operation": "qkv:compute",
+              "resource": "compute_fma",
+              "tag": 2,
+              "time": 59.0,
+              "wave": 0
+            },
+            {
+              "end": 92.0,
+              "event": "dispatch",
+              "operation": "qkv:store",
+              "resource": "store",
+              "start": 59.0,
+              "tag": 2,
+              "wave": 0
+            },
+            {
+              "event": "complete",
+              "operation": "qkv:store",
+              "resource": "store",
+              "tag": 2,
+              "time": 92.0,
+              "wave": 0
+            }
+          ]
+        },
+        "offchip_bytes": 4096.0,
+        "operations": 24576.0,
+        "resource_busy_cycles": {
+          "compute_fma": 26.0,
+          "load": 33.0,
+          "store": 33.0
+        },
+        "resource_utilization": {
+          "compute_fma": 0.23636363636363636,
+          "load": 0.3,
+          "store": 0.3
+        },
+        "waves": 1,
+        "workload": "qkv-pytorch_fx"
+      },
+      "simulation_sha256": "92f49bffda4b574e38ef50c33126009f3cb75bbbbfdefaedfc1661113478ee5e",
+      "summary_path": "artifacts/environment/h190/executions/pytorch_fx/qkv-r2.json",
+      "summary_sha256": "9591eac7f9c2fe1da7f188858b65f5feda6dd572bc0500535e81ada011836a98"
+    },
+    {
+      "frontend": "pytorch_fx",
+      "node_id": "fft_cmp",
+      "pass": true,
+      "replay": 1,
+      "simulation": {
+        "achieved_gops": 193.51181102362202,
+        "average_power_w": 2.108147119370079,
+        "compute_utilization": 0.18897637795275588,
+        "cycles": 105.83333333333334,
+        "energy_mj": 0.00022311223680000005,
+        "event_count": 3,
+        "hardware": "mlx-full-simd32-4x4",
+        "latency_us": 0.10583333333333335,
+        "metadata": {
+          "calibration": {
+            "kernel_compute_setup_cycles": {},
+            "kernel_issue_scale": {},
+            "mesh_base_penalty": 0.0,
+            "mesh_congestion_penalty": 0.0,
+            "mesh_congestion_start_n": 2048,
+            "mesh_fill_penalty": 0.0,
+            "mesh_reference": 4,
+            "mesh_reference_n": 512,
+            "name": "identity"
+          },
+          "cdc_id": 0,
+          "compute_active_fraction": 0.2062992125984252,
+          "hardware_peak_tops": 1.024,
+          "launch_cycles": 18.0,
+          "operational_intensity": 5.0,
+          "output_register": 2,
+          "pe": [
+            2,
+            0
+          ],
+          "source_frontend": "pytorch_fx",
+          "source_node": "fft_cmp",
+          "spm_address": 0,
+          "stage_count": 1,
+          "trace": [
+            {
+              "end": 33.0,
+              "event": "dispatch",
+              "operation": "fft_cmp:load",
+              "resource": "load",
+              "start": 0.0,
+              "tag": 3,
+              "wave": 0
+            },
+            {
+              "event": "complete",
+              "operation": "fft_cmp:load",
+              "resource": "load",
+              "tag": 3,
+              "time": 33.0,
+              "wave": 0
+            },
+            {
+              "end": 54.833333333333336,
+              "event": "dispatch",
+              "operation": "fft_cmp:compute",
+              "resource": "compute_fma",
+              "start": 33.0,
+              "tag": 3,
+              "wave": 0
+            },
+            {
+              "event": "complete",
+              "operation": "fft_cmp:compute",
+              "resource": "compute_fma",
+              "tag": 3,
+              "time": 54.833333333333336,
+              "wave": 0
+            },
+            {
+              "end": 87.83333333333334,
+              "event": "dispatch",
+              "operation": "fft_cmp:store",
+              "resource": "store",
+              "start": 54.833333333333336,
+              "tag": 3,
+              "wave": 0
+            },
+            {
+              "event": "complete",
+              "operation": "fft_cmp:store",
+              "resource": "store",
+              "tag": 3,
+              "time": 87.83333333333334,
+              "wave": 0
+            }
+          ]
+        },
+        "offchip_bytes": 4096.0,
+        "operations": 20480.0,
+        "resource_busy_cycles": {
+          "compute_fma": 21.833333333333336,
+          "load": 33.0,
+          "store": 33.0
+        },
+        "resource_utilization": {
+          "compute_fma": 0.2062992125984252,
+          "load": 0.3118110236220472,
+          "store": 0.3118110236220472
+        },
+        "waves": 1,
+        "workload": "fft_cmp-pytorch_fx"
+      },
+      "simulation_sha256": "0169b779bd60ef84aca0af8bed506f79f42afb212661b72d8cb729a0cdf97701",
+      "summary_path": "artifacts/environment/h190/executions/pytorch_fx/fft_cmp-r1.json",
+      "summary_sha256": "c0feec3b46f268abf6ecb50596e2b2808a21813789bf038fe290e623379ba007"
+    },
+    {
+      "frontend": "pytorch_fx",
+      "node_id": "fft_cmp",
+      "pass": true,
+      "replay": 2,
+      "simulation": {
+        "achieved_gops": 193.51181102362202,
+        "average_power_w": 2.108147119370079,
+        "compute_utilization": 0.18897637795275588,
+        "cycles": 105.83333333333334,
+        "energy_mj": 0.00022311223680000005,
+        "event_count": 3,
+        "hardware": "mlx-full-simd32-4x4",
+        "latency_us": 0.10583333333333335,
+        "metadata": {
+          "calibration": {
+            "kernel_compute_setup_cycles": {},
+            "kernel_issue_scale": {},
+            "mesh_base_penalty": 0.0,
+            "mesh_congestion_penalty": 0.0,
+            "mesh_congestion_start_n": 2048,
+            "mesh_fill_penalty": 0.0,
+            "mesh_reference": 4,
+            "mesh_reference_n": 512,
+            "name": "identity"
+          },
+          "cdc_id": 0,
+          "compute_active_fraction": 0.2062992125984252,
+          "hardware_peak_tops": 1.024,
+          "launch_cycles": 18.0,
+          "operational_intensity": 5.0,
+          "output_register": 2,
+          "pe": [
+            2,
+            0
+          ],
+          "source_frontend": "pytorch_fx",
+          "source_node": "fft_cmp",
+          "spm_address": 0,
+          "stage_count": 1,
+          "trace": [
+            {
+              "end": 33.0,
+              "event": "dispatch",
+              "operation": "fft_cmp:load",
+              "resource": "load",
+              "start": 0.0,
+              "tag": 3,
+              "wave": 0
+            },
+            {
+              "event": "complete",
+              "operation": "fft_cmp:load",
+              "resource": "load",
+              "tag": 3,
+              "time": 33.0,
+              "wave": 0
+            },
+            {
+              "end": 54.833333333333336,
+              "event": "dispatch",
+              "operation": "fft_cmp:compute",
+              "resource": "compute_fma",
+              "start": 33.0,
+              "tag": 3,
+              "wave": 0
+            },
+            {
+              "event": "complete",
+              "operation": "fft_cmp:compute",
+              "resource": "compute_fma",
+              "tag": 3,
+              "time": 54.833333333333336,
+              "wave": 0
+            },
+            {
+              "end": 87.83333333333334,
+              "event": "dispatch",
+              "operation": "fft_cmp:store",
+              "resource": "store",
+              "start": 54.833333333333336,
+              "tag": 3,
+              "wave": 0
+            },
+            {
+              "event": "complete",
+              "operation": "fft_cmp:store",
+              "resource": "store",
+              "tag": 3,
+              "time": 87.83333333333334,
+              "wave": 0
+            }
+          ]
+        },
+        "offchip_bytes": 4096.0,
+        "operations": 20480.0,
+        "resource_busy_cycles": {
+          "compute_fma": 21.833333333333336,
+          "load": 33.0,
+          "store": 33.0
+        },
+        "resource_utilization": {
+          "compute_fma": 0.2062992125984252,
+          "load": 0.3118110236220472,
+          "store": 0.3118110236220472
+        },
+        "waves": 1,
+        "workload": "fft_cmp-pytorch_fx"
+      },
+      "simulation_sha256": "0169b779bd60ef84aca0af8bed506f79f42afb212661b72d8cb729a0cdf97701",
+      "summary_path": "artifacts/environment/h190/executions/pytorch_fx/fft_cmp-r2.json",
+      "summary_sha256": "d64f006b7dcf3726bee43f8c4296dd1bfb2d4b4c6ab9241a7583ccd6409ab5e5"
+    },
+    {
+      "frontend": "pytorch_fx",
+      "node_id": "attention",
+      "pass": true,
+      "replay": 1,
+      "simulation": {
+        "achieved_gops": 276.912676056338,
+        "average_power_w": 2.4019449870422536,
+        "compute_utilization": 0.2704225352112676,
+        "cycles": 118.33333333333334,
+        "energy_mj": 0.0002842301568,
+        "event_count": 3,
+        "hardware": "mlx-full-simd32-4x4",
+        "latency_us": 0.11833333333333335,
+        "metadata": {
+          "calibration": {
+            "kernel_compute_setup_cycles": {},
+            "kernel_issue_scale": {},
+            "mesh_base_penalty": 0.0,
+            "mesh_congestion_penalty": 0.0,
+            "mesh_congestion_start_n": 2048,
+            "mesh_fill_penalty": 0.0,
+            "mesh_reference": 4,
+            "mesh_reference_n": 512,
+            "name": "identity"
+          },
+          "cdc_id": 0,
+          "compute_active_fraction": 0.29014084507042254,
+          "hardware_peak_tops": 1.024,
+          "launch_cycles": 18.0,
+          "operational_intensity": 8.0,
+          "output_register": 3,
+          "pe": [
+            3,
+            0
+          ],
+          "source_frontend": "pytorch_fx",
+          "source_node": "attention",
+          "spm_address": 2048,
+          "stage_count": 1,
+          "trace": [
+            {
+              "end": 33.0,
+              "event": "dispatch",
+              "operation": "attention:load",
+              "resource": "load",
+              "start": 0.0,
+              "tag": 4,
+              "wave": 0
+            },
+            {
+              "event": "complete",
+              "operation": "attention:load",
+              "resource": "load",
+              "tag": 4,
+              "time": 33.0,
+              "wave": 0
+            },
+            {
+              "end": 67.33333333333334,
+              "event": "dispatch",
+              "operation": "attention:compute",
+              "resource": "compute_fma",
+              "start": 33.0,
+              "tag": 4,
+              "wave": 0
+            },
+            {
+              "event": "complete",
+              "operation": "attention:compute",
+              "resource": "compute_fma",
+              "tag": 4,
+              "time": 67.33333333333334,
+              "wave": 0
+            },
+            {
+              "end": 100.33333333333334,
+              "event": "dispatch",
+              "operation": "attention:store",
+              "resource": "store",
+              "start": 67.33333333333334,
+              "tag": 4,
+              "wave": 0
+            },
+            {
+              "event": "complete",
+              "operation": "attention:store",
+              "resource": "store",
+              "tag": 4,
+              "time": 100.33333333333334,
+              "wave": 0
+            }
+          ]
+        },
+        "offchip_bytes": 4096.0,
+        "operations": 32768.0,
+        "resource_busy_cycles": {
+          "compute_fma": 34.333333333333336,
+          "load": 33.0,
+          "store": 33.0
+        },
+        "resource_utilization": {
+          "compute_fma": 0.29014084507042254,
+          "load": 0.2788732394366197,
+          "store": 0.2788732394366197
+        },
+        "waves": 1,
+        "workload": "attention-pytorch_fx"
+      },
+      "simulation_sha256": "cf0aad6dacdef8c67bfc099d991f7bf883414a91450b59d5de3b876c421fdd90",
+      "summary_path": "artifacts/environment/h190/executions/pytorch_fx/attention-r1.json",
+      "summary_sha256": "e2aedd9a1635af16c8376278d022d5688ecf04f664519d5131b5bbf055a4f839"
+    },
+    {
+      "frontend": "pytorch_fx",
+      "node_id": "attention",
+      "pass": true,
+      "replay": 2,
+      "simulation": {
+        "achieved_gops": 276.912676056338,
+        "average_power_w": 2.4019449870422536,
+        "compute_utilization": 0.2704225352112676,
+        "cycles": 118.33333333333334,
+        "energy_mj": 0.0002842301568,
+        "event_count": 3,
+        "hardware": "mlx-full-simd32-4x4",
+        "latency_us": 0.11833333333333335,
+        "metadata": {
+          "calibration": {
+            "kernel_compute_setup_cycles": {},
+            "kernel_issue_scale": {},
+            "mesh_base_penalty": 0.0,
+            "mesh_congestion_penalty": 0.0,
+            "mesh_congestion_start_n": 2048,
+            "mesh_fill_penalty": 0.0,
+            "mesh_reference": 4,
+            "mesh_reference_n": 512,
+            "name": "identity"
+          },
+          "cdc_id": 0,
+          "compute_active_fraction": 0.29014084507042254,
+          "hardware_peak_tops": 1.024,
+          "launch_cycles": 18.0,
+          "operational_intensity": 8.0,
+          "output_register": 3,
+          "pe": [
+            3,
+            0
+          ],
+          "source_frontend": "pytorch_fx",
+          "source_node": "attention",
+          "spm_address": 2048,
+          "stage_count": 1,
+          "trace": [
+            {
+              "end": 33.0,
+              "event": "dispatch",
+              "operation": "attention:load",
+              "resource": "load",
+              "start": 0.0,
+              "tag": 4,
+              "wave": 0
+            },
+            {
+              "event": "complete",
+              "operation": "attention:load",
+              "resource": "load",
+              "tag": 4,
+              "time": 33.0,
+              "wave": 0
+            },
+            {
+              "end": 67.33333333333334,
+              "event": "dispatch",
+              "operation": "attention:compute",
+              "resource": "compute_fma",
+              "start": 33.0,
+              "tag": 4,
+              "wave": 0
+            },
+            {
+              "event": "complete",
+              "operation": "attention:compute",
+              "resource": "compute_fma",
+              "tag": 4,
+              "time": 67.33333333333334,
+              "wave": 0
+            },
+            {
+              "end": 100.33333333333334,
+              "event": "dispatch",
+              "operation": "attention:store",
+              "resource": "store",
+              "start": 67.33333333333334,
+              "tag": 4,
+              "wave": 0
+            },
+            {
+              "event": "complete",
+              "operation": "attention:store",
+              "resource": "store",
+              "tag": 4,
+              "time": 100.33333333333334,
+              "wave": 0
+            }
+          ]
+        },
+        "offchip_bytes": 4096.0,
+        "operations": 32768.0,
+        "resource_busy_cycles": {
+          "compute_fma": 34.333333333333336,
+          "load": 33.0,
+          "store": 33.0
+        },
+        "resource_utilization": {
+          "compute_fma": 0.29014084507042254,
+          "load": 0.2788732394366197,
+          "store": 0.2788732394366197
+        },
+        "waves": 1,
+        "workload": "attention-pytorch_fx"
+      },
+      "simulation_sha256": "cf0aad6dacdef8c67bfc099d991f7bf883414a91450b59d5de3b876c421fdd90",
+      "summary_path": "artifacts/environment/h190/executions/pytorch_fx/attention-r2.json",
+      "summary_sha256": "4c649226376210e8eb6456da3f10c062efce7f0de83befbd81d4b64046647535"
+    },
+    {
+      "frontend": "pytorch_fx",
+      "node_id": "output",
+      "pass": true,
+      "replay": 1,
+      "simulation": {
+        "achieved_gops": 223.41818181818184,
+        "average_power_w": 2.21349888,
+        "compute_utilization": 0.21818181818181817,
+        "cycles": 110.0,
+        "energy_mj": 0.00024348487679999998,
+        "event_count": 3,
+        "hardware": "mlx-full-simd32-4x4",
+        "latency_us": 0.11,
+        "metadata": {
+          "calibration": {
+            "kernel_compute_setup_cycles": {},
+            "kernel_issue_scale": {},
+            "mesh_base_penalty": 0.0,
+            "mesh_congestion_penalty": 0.0,
+            "mesh_congestion_start_n": 2048,
+            "mesh_fill_penalty": 0.0,
+            "mesh_reference": 4,
+            "mesh_reference_n": 512,
+            "name": "identity"
+          },
+          "cdc_id": 0,
+          "compute_active_fraction": 0.23636363636363636,
+          "hardware_peak_tops": 1.024,
+          "launch_cycles": 18.0,
+          "operational_intensity": 6.0,
+          "output_register": 4,
+          "pe": [
+            0,
+            1
+          ],
+          "source_frontend": "pytorch_fx",
+          "source_node": "output",
+          "spm_address": 0,
+          "stage_count": 1,
+          "trace": [
+            {
+              "end": 33.0,
+              "event": "dispatch",
+              "operation": "output:load",
+              "resource": "load",
+              "start": 0.0,
+              "tag": 5,
+              "wave": 0
+            },
+            {
+              "event": "complete",
+              "operation": "output:load",
+              "resource": "load",
+              "tag": 5,
+              "time": 33.0,
+              "wave": 0
+            },
+            {
+              "end": 59.0,
+              "event": "dispatch",
+              "operation": "output:compute",
+              "resource": "compute_fma",
+              "start": 33.0,
+              "tag": 5,
+              "wave": 0
+            },
+            {
+              "event": "complete",
+              "operation": "output:compute",
+              "resource": "compute_fma",
+              "tag": 5,
+              "time": 59.0,
+              "wave": 0
+            },
+            {
+              "end": 92.0,
+              "event": "dispatch",
+              "operation": "output:store",
+              "resource": "store",
+              "start": 59.0,
+              "tag": 5,
+              "wave": 0
+            },
+            {
+              "event": "complete",
+              "operation": "output:store",
+              "resource": "store",
+              "tag": 5,
+              "time": 92.0,
+              "wave": 0
+            }
+          ]
+        },
+        "offchip_bytes": 4096.0,
+        "operations": 24576.0,
+        "resource_busy_cycles": {
+          "compute_fma": 26.0,
+          "load": 33.0,
+          "store": 33.0
+        },
+        "resource_utilization": {
+          "compute_fma": 0.23636363636363636,
+          "load": 0.3,
+          "store": 0.3
+        },
+        "waves": 1,
+        "workload": "output-pytorch_fx"
+      },
+      "simulation_sha256": "055e12db3f1137c7f7c7511aace0e0eca9efba41455cf4be60d3a2bf04c95e38",
+      "summary_path": "artifacts/environment/h190/executions/pytorch_fx/output-r1.json",
+      "summary_sha256": "c8ce3d30567c9413e46d6015ef194bd79290d66da27dea382c1c7cfa1d7a9edc"
+    },
+    {
+      "frontend": "pytorch_fx",
+      "node_id": "output",
+      "pass": true,
+      "replay": 2,
+      "simulation": {
+        "achieved_gops": 223.41818181818184,
+        "average_power_w": 2.21349888,
+        "compute_utilization": 0.21818181818181817,
+        "cycles": 110.0,
+        "energy_mj": 0.00024348487679999998,
+        "event_count": 3,
+        "hardware": "mlx-full-simd32-4x4",
+        "latency_us": 0.11,
+        "metadata": {
+          "calibration": {
+            "kernel_compute_setup_cycles": {},
+            "kernel_issue_scale": {},
+            "mesh_base_penalty": 0.0,
+            "mesh_congestion_penalty": 0.0,
+            "mesh_congestion_start_n": 2048,
+            "mesh_fill_penalty": 0.0,
+            "mesh_reference": 4,
+            "mesh_reference_n": 512,
+            "name": "identity"
+          },
+          "cdc_id": 0,
+          "compute_active_fraction": 0.23636363636363636,
+          "hardware_peak_tops": 1.024,
+          "launch_cycles": 18.0,
+          "operational_intensity": 6.0,
+          "output_register": 4,
+          "pe": [
+            0,
+            1
+          ],
+          "source_frontend": "pytorch_fx",
+          "source_node": "output",
+          "spm_address": 0,
+          "stage_count": 1,
+          "trace": [
+            {
+              "end": 33.0,
+              "event": "dispatch",
+              "operation": "output:load",
+              "resource": "load",
+              "start": 0.0,
+              "tag": 5,
+              "wave": 0
+            },
+            {
+              "event": "complete",
+              "operation": "output:load",
+              "resource": "load",
+              "tag": 5,
+              "time": 33.0,
+              "wave": 0
+            },
+            {
+              "end": 59.0,
+              "event": "dispatch",
+              "operation": "output:compute",
+              "resource": "compute_fma",
+              "start": 33.0,
+              "tag": 5,
+              "wave": 0
+            },
+            {
+              "event": "complete",
+              "operation": "output:compute",
+              "resource": "compute_fma",
+              "tag": 5,
+              "time": 59.0,
+              "wave": 0
+            },
+            {
+              "end": 92.0,
+              "event": "dispatch",
+              "operation": "output:store",
+              "resource": "store",
+              "start": 59.0,
+              "tag": 5,
+              "wave": 0
+            },
+            {
+              "event": "complete",
+              "operation": "output:store",
+              "resource": "store",
+              "tag": 5,
+              "time": 92.0,
+              "wave": 0
+            }
+          ]
+        },
+        "offchip_bytes": 4096.0,
+        "operations": 24576.0,
+        "resource_busy_cycles": {
+          "compute_fma": 26.0,
+          "load": 33.0,
+          "store": 33.0
+        },
+        "resource_utilization": {
+          "compute_fma": 0.23636363636363636,
+          "load": 0.3,
+          "store": 0.3
+        },
+        "waves": 1,
+        "workload": "output-pytorch_fx"
+      },
+      "simulation_sha256": "055e12db3f1137c7f7c7511aace0e0eca9efba41455cf4be60d3a2bf04c95e38",
+      "summary_path": "artifacts/environment/h190/executions/pytorch_fx/output-r2.json",
+      "summary_sha256": "4946d68e5642dc50a60f0b8ffc82502abe92029f2c6d8e02cab1d8b6e5bee835"
+    },
+    {
+      "frontend": "pytorch_fx",
+      "node_id": "silu",
+      "pass": true,
+      "replay": 1,
+      "simulation": {
+        "achieved_gops": 20.144262295081965,
+        "average_power_w": 1.99415996852459,
+        "compute_utilization": 0.019672131147540982,
+        "cycles": 101.66666666666667,
+        "energy_mj": 0.00020273959679999997,
+        "event_count": 3,
+        "hardware": "mlx-full-simd32-4x4",
+        "latency_us": 0.10166666666666667,
+        "metadata": {
+          "calibration": {
+            "kernel_compute_setup_cycles": {},
+            "kernel_issue_scale": {},
+            "mesh_base_penalty": 0.0,
+            "mesh_congestion_penalty": 0.0,
+            "mesh_congestion_start_n": 2048,
+            "mesh_fill_penalty": 0.0,
+            "mesh_reference": 4,
+            "mesh_reference_n": 512,
+            "name": "identity"
+          },
+          "cdc_id": 0,
+          "compute_active_fraction": 0.1737704918032787,
+          "hardware_peak_tops": 1.024,
+          "launch_cycles": 18.0,
+          "operational_intensity": 0.5,
+          "output_register": 5,
+          "pe": [
+            1,
+            1
+          ],
+          "source_frontend": "pytorch_fx",
+          "source_node": "silu",
+          "spm_address": 2048,
+          "stage_count": 1,
+          "trace": [
+            {
+              "end": 33.0,
+              "event": "dispatch",
+              "operation": "silu:load",
+              "resource": "load",
+              "start": 0.0,
+              "tag": 6,
+              "wave": 0
+            },
+            {
+              "event": "complete",
+              "operation": "silu:load",
+              "resource": "load",
+              "tag": 6,
+              "time": 33.0,
+              "wave": 0
+            },
+            {
+              "end": 50.66666666666667,
+              "event": "dispatch",
+              "operation": "silu:compute",
+              "resource": "compute_fexp",
+              "start": 33.0,
+              "tag": 6,
+              "wave": 0
+            },
+            {
+              "event": "complete",
+              "operation": "silu:compute",
+              "resource": "compute_fexp",
+              "tag": 6,
+              "time": 50.66666666666667,
+              "wave": 0
+            },
+            {
+              "end": 83.66666666666667,
+              "event": "dispatch",
+              "operation": "silu:store",
+              "resource": "store",
+              "start": 50.66666666666667,
+              "tag": 6,
+              "wave": 0
+            },
+            {
+              "event": "complete",
+              "operation": "silu:store",
+              "resource": "store",
+              "tag": 6,
+              "time": 83.66666666666667,
+              "wave": 0
+            }
+          ]
+        },
+        "offchip_bytes": 4096.0,
+        "operations": 2048.0,
+        "resource_busy_cycles": {
+          "compute_fexp": 17.666666666666668,
+          "load": 33.0,
+          "store": 33.0
+        },
+        "resource_utilization": {
+          "compute_fexp": 0.1737704918032787,
+          "load": 0.3245901639344262,
+          "store": 0.3245901639344262
+        },
+        "waves": 1,
+        "workload": "silu-pytorch_fx"
+      },
+      "simulation_sha256": "c39152afeefc830b13129fb4458cba36abff511b52d51219774abeaef0dbbbec",
+      "summary_path": "artifacts/environment/h190/executions/pytorch_fx/silu-r1.json",
+      "summary_sha256": "203042549e0178b007acbb303e2cb65a661b66d5af6a2133386ea14049de8be5"
+    },
+    {
+      "frontend": "pytorch_fx",
+      "node_id": "silu",
+      "pass": true,
+      "replay": 2,
+      "simulation": {
+        "achieved_gops": 20.144262295081965,
+        "average_power_w": 1.99415996852459,
+        "compute_utilization": 0.019672131147540982,
+        "cycles": 101.66666666666667,
+        "energy_mj": 0.00020273959679999997,
+        "event_count": 3,
+        "hardware": "mlx-full-simd32-4x4",
+        "latency_us": 0.10166666666666667,
+        "metadata": {
+          "calibration": {
+            "kernel_compute_setup_cycles": {},
+            "kernel_issue_scale": {},
+            "mesh_base_penalty": 0.0,
+            "mesh_congestion_penalty": 0.0,
+            "mesh_congestion_start_n": 2048,
+            "mesh_fill_penalty": 0.0,
+            "mesh_reference": 4,
+            "mesh_reference_n": 512,
+            "name": "identity"
+          },
+          "cdc_id": 0,
+          "compute_active_fraction": 0.1737704918032787,
+          "hardware_peak_tops": 1.024,
+          "launch_cycles": 18.0,
+          "operational_intensity": 0.5,
+          "output_register": 5,
+          "pe": [
+            1,
+            1
+          ],
+          "source_frontend": "pytorch_fx",
+          "source_node": "silu",
+          "spm_address": 2048,
+          "stage_count": 1,
+          "trace": [
+            {
+              "end": 33.0,
+              "event": "dispatch",
+              "operation": "silu:load",
+              "resource": "load",
+              "start": 0.0,
+              "tag": 6,
+              "wave": 0
+            },
+            {
+              "event": "complete",
+              "operation": "silu:load",
+              "resource": "load",
+              "tag": 6,
+              "time": 33.0,
+              "wave": 0
+            },
+            {
+              "end": 50.66666666666667,
+              "event": "dispatch",
+              "operation": "silu:compute",
+              "resource": "compute_fexp",
+              "start": 33.0,
+              "tag": 6,
+              "wave": 0
+            },
+            {
+              "event": "complete",
+              "operation": "silu:compute",
+              "resource": "compute_fexp",
+              "tag": 6,
+              "time": 50.66666666666667,
+              "wave": 0
+            },
+            {
+              "end": 83.66666666666667,
+              "event": "dispatch",
+              "operation": "silu:store",
+              "resource": "store",
+              "start": 50.66666666666667,
+              "tag": 6,
+              "wave": 0
+            },
+            {
+              "event": "complete",
+              "operation": "silu:store",
+              "resource": "store",
+              "tag": 6,
+              "time": 83.66666666666667,
+              "wave": 0
+            }
+          ]
+        },
+        "offchip_bytes": 4096.0,
+        "operations": 2048.0,
+        "resource_busy_cycles": {
+          "compute_fexp": 17.666666666666668,
+          "load": 33.0,
+          "store": 33.0
+        },
+        "resource_utilization": {
+          "compute_fexp": 0.1737704918032787,
+          "load": 0.3245901639344262,
+          "store": 0.3245901639344262
+        },
+        "waves": 1,
+        "workload": "silu-pytorch_fx"
+      },
+      "simulation_sha256": "c39152afeefc830b13129fb4458cba36abff511b52d51219774abeaef0dbbbec",
+      "summary_path": "artifacts/environment/h190/executions/pytorch_fx/silu-r2.json",
+      "summary_sha256": "5b6c10b12a4daa20a97b8df6c68a7ce976f96039cd0419b96c1b8917775c7f17"
+    }
+  ],
+  "replay_checks": {
+    "onnx-attention": true,
+    "onnx-fft_cmp": true,
+    "onnx-norm": true,
+    "onnx-output": true,
+    "onnx-qkv": true,
+    "onnx-silu": true,
+    "pytorch_fx-attention": true,
+    "pytorch_fx-fft_cmp": true,
+    "pytorch_fx-norm": true,
+    "pytorch_fx-output": true,
+    "pytorch_fx-qkv": true,
+    "pytorch_fx-silu": true
+  },
+  "run_id": "run195",
+  "schema_version": 1
+}

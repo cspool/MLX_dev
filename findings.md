@@ -956,3 +956,13 @@ final outputs, 72 event/work identities and 54 mapping comparisons pass; the
 maximum absolute error is 1.22e-4 (the larger relative maximum occurs only near
 zero). Performance claims can now be gated on graph-level functional and work
 equivalence rather than execution completion alone.
+
+Run195 replaces manual operator-node YAML for a real structured subgraph. A
+custom FX leaf registry plus ShapeProp and an actual ONNX 1.22 ModelProto both
+import the same six-node RMSNorm/BSMM/FFT-CMP/Attention/BSMM/SiLU chain. Their
+canonical names, kinds, shapes and dependencies match 6/6. The planner forms a
+maximal CDC and automatically assigns topological tags, round-robin PEs,
+bank-rotating registers and aligned two-buffer SPM/DMA ranges. Twelve generated
+KernelProfiles execute twice (24 runs; 12 replay identities). This proves an
+automatic model frontend exists, while intentionally stopping short of claiming
+the paper authors' compiler.

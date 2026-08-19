@@ -1,0 +1,284 @@
+[
+  {
+    "node_id": "norm",
+    "profile": {
+      "metadata": {
+        "cdc_id": 0,
+        "output_register": 0,
+        "pe": [
+          0,
+          0
+        ],
+        "source_frontend": "pytorch_fx",
+        "source_node": "norm",
+        "spm_address": 0,
+        "stage_count": 1
+      },
+      "offchip_bytes": 4096.0,
+      "operations": 2048.0,
+      "output_elements": 512.0,
+      "stages": [
+        {
+          "compute_resource": "compute_frsqrt",
+          "kernel_class": "rmsnorm",
+          "load_bytes": 2048.0,
+          "name": "norm",
+          "operations": 2048.0,
+          "route_distance": 1,
+          "store_bytes": 2048.0,
+          "tag": 1,
+          "transfer_bytes": 0.0
+        }
+      ]
+    },
+    "workload": {
+      "batch": 1,
+      "block_size": 8,
+      "chunk_length": 64,
+      "compression_ratio": 0.5,
+      "d": 32,
+      "kernel": "bsmm",
+      "n": 16,
+      "name": "norm-pytorch_fx",
+      "output_dim": null,
+      "projections": 1,
+      "query_block": 32,
+      "window": 128
+    }
+  },
+  {
+    "node_id": "qkv",
+    "profile": {
+      "metadata": {
+        "cdc_id": 0,
+        "output_register": 1,
+        "pe": [
+          1,
+          0
+        ],
+        "source_frontend": "pytorch_fx",
+        "source_node": "qkv",
+        "spm_address": 2048,
+        "stage_count": 1
+      },
+      "offchip_bytes": 4096.0,
+      "operations": 24576.0,
+      "output_elements": 512.0,
+      "stages": [
+        {
+          "compute_resource": "compute_fma",
+          "kernel_class": "bsmm",
+          "load_bytes": 2048.0,
+          "name": "qkv",
+          "operations": 24576.0,
+          "route_distance": 1,
+          "store_bytes": 2048.0,
+          "tag": 2,
+          "transfer_bytes": 0.0
+        }
+      ]
+    },
+    "workload": {
+      "batch": 1,
+      "block_size": 8,
+      "chunk_length": 64,
+      "compression_ratio": 0.5,
+      "d": 32,
+      "kernel": "bsmm",
+      "n": 16,
+      "name": "qkv-pytorch_fx",
+      "output_dim": null,
+      "projections": 1,
+      "query_block": 32,
+      "window": 128
+    }
+  },
+  {
+    "node_id": "fft_cmp",
+    "profile": {
+      "metadata": {
+        "cdc_id": 0,
+        "output_register": 2,
+        "pe": [
+          2,
+          0
+        ],
+        "source_frontend": "pytorch_fx",
+        "source_node": "fft_cmp",
+        "spm_address": 0,
+        "stage_count": 1
+      },
+      "offchip_bytes": 4096.0,
+      "operations": 20480.0,
+      "output_elements": 512.0,
+      "stages": [
+        {
+          "compute_resource": "compute_fma",
+          "kernel_class": "fft_cmp",
+          "load_bytes": 2048.0,
+          "name": "fft_cmp",
+          "operations": 20480.0,
+          "route_distance": 1,
+          "store_bytes": 2048.0,
+          "tag": 3,
+          "transfer_bytes": 0.0
+        }
+      ]
+    },
+    "workload": {
+      "batch": 1,
+      "block_size": 8,
+      "chunk_length": 64,
+      "compression_ratio": 0.5,
+      "d": 32,
+      "kernel": "bsmm",
+      "n": 16,
+      "name": "fft_cmp-pytorch_fx",
+      "output_dim": null,
+      "projections": 1,
+      "query_block": 32,
+      "window": 128
+    }
+  },
+  {
+    "node_id": "attention",
+    "profile": {
+      "metadata": {
+        "cdc_id": 0,
+        "output_register": 3,
+        "pe": [
+          3,
+          0
+        ],
+        "source_frontend": "pytorch_fx",
+        "source_node": "attention",
+        "spm_address": 2048,
+        "stage_count": 1
+      },
+      "offchip_bytes": 4096.0,
+      "operations": 32768.0,
+      "output_elements": 512.0,
+      "stages": [
+        {
+          "compute_resource": "compute_fma",
+          "kernel_class": "attention",
+          "load_bytes": 2048.0,
+          "name": "attention",
+          "operations": 32768.0,
+          "route_distance": 1,
+          "store_bytes": 2048.0,
+          "tag": 4,
+          "transfer_bytes": 0.0
+        }
+      ]
+    },
+    "workload": {
+      "batch": 1,
+      "block_size": 8,
+      "chunk_length": 64,
+      "compression_ratio": 0.5,
+      "d": 32,
+      "kernel": "bsmm",
+      "n": 16,
+      "name": "attention-pytorch_fx",
+      "output_dim": null,
+      "projections": 1,
+      "query_block": 32,
+      "window": 128
+    }
+  },
+  {
+    "node_id": "output",
+    "profile": {
+      "metadata": {
+        "cdc_id": 0,
+        "output_register": 4,
+        "pe": [
+          0,
+          1
+        ],
+        "source_frontend": "pytorch_fx",
+        "source_node": "output",
+        "spm_address": 0,
+        "stage_count": 1
+      },
+      "offchip_bytes": 4096.0,
+      "operations": 24576.0,
+      "output_elements": 512.0,
+      "stages": [
+        {
+          "compute_resource": "compute_fma",
+          "kernel_class": "bsmm",
+          "load_bytes": 2048.0,
+          "name": "output",
+          "operations": 24576.0,
+          "route_distance": 1,
+          "store_bytes": 2048.0,
+          "tag": 5,
+          "transfer_bytes": 0.0
+        }
+      ]
+    },
+    "workload": {
+      "batch": 1,
+      "block_size": 8,
+      "chunk_length": 64,
+      "compression_ratio": 0.5,
+      "d": 32,
+      "kernel": "bsmm",
+      "n": 16,
+      "name": "output-pytorch_fx",
+      "output_dim": null,
+      "projections": 1,
+      "query_block": 32,
+      "window": 128
+    }
+  },
+  {
+    "node_id": "silu",
+    "profile": {
+      "metadata": {
+        "cdc_id": 0,
+        "output_register": 5,
+        "pe": [
+          1,
+          1
+        ],
+        "source_frontend": "pytorch_fx",
+        "source_node": "silu",
+        "spm_address": 2048,
+        "stage_count": 1
+      },
+      "offchip_bytes": 4096.0,
+      "operations": 2048.0,
+      "output_elements": 512.0,
+      "stages": [
+        {
+          "compute_resource": "compute_fexp",
+          "kernel_class": "elementwise",
+          "load_bytes": 2048.0,
+          "name": "silu",
+          "operations": 2048.0,
+          "route_distance": 1,
+          "store_bytes": 2048.0,
+          "tag": 6,
+          "transfer_bytes": 0.0
+        }
+      ]
+    },
+    "workload": {
+      "batch": 1,
+      "block_size": 8,
+      "chunk_length": 64,
+      "compression_ratio": 0.5,
+      "d": 32,
+      "kernel": "bsmm",
+      "n": 16,
+      "name": "silu-pytorch_fx",
+      "output_dim": null,
+      "projections": 1,
+      "query_block": 32,
+      "window": 128
+    }
+  }
+]

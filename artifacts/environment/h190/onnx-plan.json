@@ -1,0 +1,228 @@
+{
+  "aligned_tensor_bytes": 2048,
+  "cdcs": [
+    {
+      "id": 0,
+      "nodes": [
+        "norm",
+        "qkv",
+        "fft_cmp",
+        "attention",
+        "output",
+        "silu"
+      ]
+    }
+  ],
+  "frontend": "onnx",
+  "mesh": [
+    4,
+    4
+  ],
+  "nodes": [
+    {
+      "cdc_id": 0,
+      "depends_on": [],
+      "dma_bytes": 2048,
+      "dtype": "float32",
+      "id": "norm",
+      "kind": "rmsnorm",
+      "memory_live_interval": [
+        0,
+        1
+      ],
+      "output_register": 0,
+      "pe": [
+        0,
+        0
+      ],
+      "register_bank": 0,
+      "shape": [
+        1,
+        16,
+        32
+      ],
+      "source": {
+        "domain": "",
+        "frontend": "onnx",
+        "node_name": "norm",
+        "node_op": "LayerNormalization",
+        "output_name": "norm_out"
+      },
+      "spm_address": 0,
+      "tag": 1
+    },
+    {
+      "cdc_id": 0,
+      "depends_on": [
+        "norm"
+      ],
+      "dma_bytes": 2048,
+      "dtype": "float32",
+      "id": "qkv",
+      "kind": "bsmm",
+      "memory_live_interval": [
+        1,
+        2
+      ],
+      "output_register": 1,
+      "pe": [
+        1,
+        0
+      ],
+      "register_bank": 1,
+      "shape": [
+        1,
+        16,
+        32
+      ],
+      "source": {
+        "domain": "",
+        "frontend": "onnx",
+        "node_name": "qkv",
+        "node_op": "MatMul",
+        "output_name": "qkv_out"
+      },
+      "spm_address": 2048,
+      "tag": 2
+    },
+    {
+      "cdc_id": 0,
+      "depends_on": [
+        "qkv"
+      ],
+      "dma_bytes": 2048,
+      "dtype": "float32",
+      "id": "fft_cmp",
+      "kind": "fft_cmp",
+      "memory_live_interval": [
+        2,
+        3
+      ],
+      "output_register": 2,
+      "pe": [
+        2,
+        0
+      ],
+      "register_bank": 2,
+      "shape": [
+        1,
+        16,
+        32
+      ],
+      "source": {
+        "domain": "mlx",
+        "frontend": "onnx",
+        "node_name": "fft_cmp",
+        "node_op": "FFTCompression",
+        "output_name": "fft_out"
+      },
+      "spm_address": 0,
+      "tag": 3
+    },
+    {
+      "cdc_id": 0,
+      "depends_on": [
+        "fft_cmp"
+      ],
+      "dma_bytes": 2048,
+      "dtype": "float32",
+      "id": "attention",
+      "kind": "attention",
+      "memory_live_interval": [
+        3,
+        4
+      ],
+      "output_register": 3,
+      "pe": [
+        3,
+        0
+      ],
+      "register_bank": 3,
+      "shape": [
+        1,
+        16,
+        32
+      ],
+      "source": {
+        "domain": "mlx",
+        "frontend": "onnx",
+        "node_name": "attention",
+        "node_op": "StructuredAttention",
+        "output_name": "attention_out"
+      },
+      "spm_address": 2048,
+      "tag": 4
+    },
+    {
+      "cdc_id": 0,
+      "depends_on": [
+        "attention"
+      ],
+      "dma_bytes": 2048,
+      "dtype": "float32",
+      "id": "output",
+      "kind": "bsmm",
+      "memory_live_interval": [
+        4,
+        5
+      ],
+      "output_register": 4,
+      "pe": [
+        0,
+        1
+      ],
+      "register_bank": 4,
+      "shape": [
+        1,
+        16,
+        32
+      ],
+      "source": {
+        "domain": "",
+        "frontend": "onnx",
+        "node_name": "output",
+        "node_op": "MatMul",
+        "output_name": "output_out"
+      },
+      "spm_address": 0,
+      "tag": 5
+    },
+    {
+      "cdc_id": 0,
+      "depends_on": [
+        "output"
+      ],
+      "dma_bytes": 2048,
+      "dtype": "float32",
+      "id": "silu",
+      "kind": "elementwise",
+      "memory_live_interval": [
+        5,
+        6
+      ],
+      "output_register": 5,
+      "pe": [
+        1,
+        1
+      ],
+      "register_bank": 5,
+      "shape": [
+        1,
+        16,
+        32
+      ],
+      "source": {
+        "domain": "mlx",
+        "frontend": "onnx",
+        "node_name": "silu",
+        "node_op": "Silu",
+        "output_name": "silu_out"
+      },
+      "spm_address": 2048,
+      "tag": 6
+    }
+  ],
+  "peak_spm_bytes": 4096,
+  "simd_width": 8,
+  "spm_bytes": 8388608
+}
