@@ -1,0 +1,74 @@
+name: mlx-rtl-ppa-activity-calibrated-v1
+experiment_id: H203
+run_id: run208
+classification: target_informed_activity_calibrated_open_pdk_ppa
+validation_eligible: false
+
+frozen_inputs:
+  rtl_result: {path: artifacts/results/mlx-critical-rtl-run203.json, bytes: 26541, sha256: f5485621410347652115b8d784371f3f400830f88d2bfb1bcfc0d5bffde86bc5, required_status: supported, required_integrity: true}
+  rtl_manifest: {path: artifacts/environment/h198/rtl-run-manifest.json, bytes: 22189, sha256: d874ac23582e437f0faf9669a51d8a6131bcddccd96dfbf209ab007e2145ef42}
+  baseline_result: {path: artifacts/results/mlx-rtl-ppa-baseline-run204.json, bytes: 13495, sha256: 937b93972ada17f358927c4e0122cbf1497fcf17710868d069daa604a84b7acf, required_status: rejected, required_integrity: true}
+  structural_result: {path: artifacts/results/mlx-rtl-ppa-structural-correction-run205.json, bytes: 11348, sha256: d2619943eb65dcb60f132120f9899ee33bd2f06c175c0ff1c6de32178136900b, required_status: rejected, required_integrity: true}
+  profiled_result: {path: artifacts/results/mlx-rtl-ppa-profiled-subset-run206.json, bytes: 11687, sha256: 90e5546937a999d776f88d77e93bd3936d1b2dca812daa16ada27b3acd759194, required_status: rejected, required_integrity: true}
+  clock_gated_result: {path: artifacts/results/mlx-rtl-ppa-clock-gated-run207.json, bytes: 12194, sha256: f881815d89b2b7e9e06ad64e144be981fe4289e35287e0266656633aa4d38447, required_status: rejected, required_integrity: true}
+  clock_gated_measurement: {path: artifacts/environment/h202/ppa-measurement-manifest.json, bytes: 63409, sha256: 1504671fba497543a931429ccb462979bd392c03539b6a7575ce8a53b940ee5b}
+  toolchain_result: {path: artifacts/results/rtl-ppa-toolchain-run202.json, bytes: 7224, sha256: d1a6aa2cdeb4466d8e8e6fd72f7ad5604987a80bd1c9c753335381afd1f5c3af, required_status: supported, required_integrity: true}
+  targets: {path: artifacts/targets/paper_targets.yaml, bytes: 14931, sha256: c4a22ab8052ff8cb223a729b8ce07320c6826cfee0d37e1a664a8761e018b41e}
+  liberty: {path: /opt/OpenROAD-flow-scripts/flow/platforms/nangate45/lib/NangateOpenCellLibrary_typical.lib, bytes: 6692032, sha256: 8d540a4d4cf6d09d27c87ad067857a9c0c2eeb023ab7a56e058cd3113db4e9b1}
+  tech_lef: {path: /opt/OpenROAD-flow-scripts/flow/platforms/nangate45/lef/NangateOpenCellLibrary.tech.lef, bytes: 19485, sha256: 834a79295054cd4209178d1bade67c353863c47bb4b3c22ee38b862b7cec37f2}
+  macro_lef: {path: /opt/OpenROAD-flow-scripts/flow/platforms/nangate45/lef/NangateOpenCellLibrary.macro.lef, bytes: 349950, sha256: 840b01e500826096d1edcc752350834da647fdbf360798f243f8122b52b357c3}
+
+rtl_sources: [rtl/mlx/mlx_fp16.sv, rtl/mlx/mlx_config_network.sv, rtl/mlx/mlx_data_network.sv, rtl/mlx/mlx_tag_buffer.sv, rtl/mlx/mlx_control_logic.sv, rtl/mlx/mlx_register_file.sv, rtl/mlx/mlx_fu.sv, rtl/mlx/mlx_pe_top.sv]
+components:
+  config_network: {top: mlx_config_network, scope: config_network, has_clock: true}
+  data_network: {top: mlx_data_network, scope: data_network, has_clock: true}
+  control_logic: {top: mlx_control_logic, scope: control_logic, has_clock: true}
+  tag_buffer: {top: mlx_tag_buffer, scope: tag_buffer, has_clock: true}
+  register_file: {top: mlx_register_file, scope: register_file, has_clock: true}
+  fu_simd32: {top: mlx_fu, scope: functional_unit, has_clock: true}
+
+variants:
+  full:
+    parameters:
+      config_network: {INST_DEPTH: 20}
+      data_network: {LINKS: 6, BUFFER_DEPTH: 14, POINTER_BITS: 4}
+      control_logic: {TAGS: 16, STATE_BITS: 48}
+      tag_buffer: {TAGS: 16, METADATA_BITS: 48}
+      register_file: {SIMD_WIDTH: 32, DEPTH: 5}
+      fu_simd32: {SIMD_WIDTH: 32, FULL_FEATURES: 1, HP_LANES: 16}
+    vcds: [{workload: bsmm, path: artifacts/environment/h203/activity/full-bsmm.vcd}, {workload: fft_cmp, path: artifacts/environment/h203/activity/full-fft_cmp.vcd}, {workload: swa, path: artifacts/environment/h203/activity/full-swa.vcd}]
+  reduced:
+    parameters:
+      config_network: {INST_DEPTH: 2}
+      data_network: {LINKS: 2, BUFFER_DEPTH: 1, POINTER_BITS: 1}
+      control_logic: {TAGS: 1, STATE_BITS: 16}
+      tag_buffer: {TAGS: 1, METADATA_BITS: 16}
+      register_file: {SIMD_WIDTH: 8, DEPTH: 2}
+      fu_simd32: {SIMD_WIDTH: 8, FULL_FEATURES: 0, HP_LANES: 8}
+    vcds: [{workload: bsmm, path: artifacts/environment/h203/activity/reduced-bsmm.vcd}]
+    power_components: [config_network, data_network, control_logic, tag_buffer, register_file, fu_simd32]
+    reuse_full_average_power: []
+
+measurement: {clock_period_ns: 1.0, full_power_average: fresh_clock_gated_128x_workloads, reduced_power: fresh_reduced_bsmm, area_source: yosys_abc_nangate45, power_source: openroad_port_vcd}
+activity: {repetitions: 128, randomize_operands: true, testbench: rtl/mlx/tb_mlx_pe.sv, workloads: {full: [bsmm, fft_cmp, swa], reduced: [bsmm]}}
+activity_calibration:
+  scaled_terms: [internal_power_w, switching_power_w]
+  preserved_terms: [leakage_power_w]
+  multipliers: {config_network: 9.094566191074717, data_network: 0.22123808437323556, control_logic: 0.19556189784796965, tag_buffer: 12.54481897944316, register_file: 1.2917914762592815, fu_simd32: 2.7127162975864505}
+  reduced_component_multipliers_applied: false
+transfer: {target_section: table2_area_power, calibration_area: pe.area_mm2 / sum_full_component_raw_area, calibration_power: pe.power_mw / sum_calibrated_full_component_power, array_pes: 16, maximum_relative_error: 0.15, prohibited_per_component_coefficients: false}
+
+source_layout:
+  protocol: experiments/h203-mlx-rtl-ppa-activity-calibrated/protocol.md
+  config: configs/rtl/mlx_rtl_ppa_activity_calibrated_v1.yaml
+  power_tcl: rtl/ppa/openroad_component_power.tcl
+  vcd_extractor: scripts/extract_vcd_scope.py
+  driver: scripts/run_mlx_rtl_ppa_structural_correction.py
+  runner: scripts/run_mlx_rtl_ppa_baseline.py
+  auditor: scripts/audit_mlx_rtl_ppa_activity_calibrated.py
+  test: tests/test_mlx_rtl_ppa_activity_calibrated.py
+
+output_root: artifacts/environment/h203
+measurement_manifest: artifacts/environment/h203/ppa-measurement-manifest.json
+activity_manifest: artifacts/environment/h203/activity-manifest.json
+result_path: artifacts/results/mlx-rtl-ppa-activity-calibrated-run208.json
