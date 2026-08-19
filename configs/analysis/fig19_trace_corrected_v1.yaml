@@ -1,0 +1,73 @@
+name: fig19-trace-corrected-v1
+experiment_id: H185
+run_id: run190
+classification: target_informed_trace_corrected_Figure19_composition
+validation_eligible: false
+
+frozen_inputs:
+  selected_model:
+    path: artifacts/results/fig19-20-23-gap-attribution-run188.json
+    bytes: 37530
+    sha256: d38bd8ddc7cb6e131662241549f53df97015053b87a72b00277137d970001aef
+    required_status: supported
+    required_integrity: true
+  rtx4090_trace:
+    path: artifacts/results/fig19-20-23-rtx4090-trace-run187.json
+    bytes: 52250
+    sha256: b958398750a3a34a2426ae24b22a1014a199486f31d38a0b67dc6ea3bd4afbb9
+    required_status: supported
+    required_integrity: true
+  mlx_simulator:
+    path: artifacts/results/fig19-coupled-steady-state-run134.json
+    bytes: 12881
+    sha256: d456e7cbf21d9a651615c1cd1d137650e11d3d6e6c2ce84c6540c58945aa7866
+    required_status: supported
+    required_integrity: true
+  current_audit:
+    path: artifacts/results/fig19-trend-completion-run143.json
+    bytes: 6305
+    sha256: f610342a6b852dc617a0aca444ff545469ac0d2be61d27a68d0a9656e247086e
+    required_status: supported
+    required_integrity: true
+  fabnet_simulator:
+    path: artifacts/results/fig19-fabnet-run016.json
+    bytes: 6536
+    sha256: fb00ed1c7546b8beedd3fe722f9e365fa5eec37984f7d5ee3f20eae0d46451b0
+
+composition:
+  sequence_lengths: [128, 256, 512, 1024]
+  layers: 24
+  clock_hz: 1000000000
+  attention_path: N{n}-fft2d
+  ffn_paths: [N{n}-global_ffn1, N{n}-global_ffn2]
+  trace_attention: fig19-N{n}-fft2d
+  trace_ffn: [fig19-N{n}-bsmm_ffn1, fig19-N{n}-bsmm_ffn2]
+  transition_after_sequence: 512
+  selected_parameter_path: figure19.parameters
+  target_informed: true
+
+acceptance:
+  maximum_relative_error: 0.15
+  required_component_points: 8
+  required_fabnet_points: 4
+  required_total_points: 4
+  required_speedup_points: 4
+  required_reported_points: 20
+  required_passing_points: 20
+  required_direction_matches: 4
+  require_raw_cycle_identity: true
+  require_trace_feature_identity: true
+  require_parameter_count: 7
+  independent_validation_claimed: false
+
+source_layout:
+  protocol: experiments/h185-fig19-trace-corrected/protocol.md
+  config: configs/analysis/fig19_trace_corrected_v1.yaml
+  service: src/mlxsim/performance_service.py
+  composer: scripts/compose_fig19_trace_corrected.py
+  auditor: scripts/audit_fig19_trace_corrected.py
+  test: tests/test_fig19_trace_corrected.py
+
+output_root: artifacts/environment/h185
+composition_manifest: artifacts/environment/h185/fig19-trace-corrected-composition.json
+result_path: artifacts/results/fig19-trace-corrected-run190.json
