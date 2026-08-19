@@ -1084,3 +1084,9 @@ internal+switching power. All 18 area/power values pass 15%; area MAPE/max are
 implementation evidence—real RTL, workload VCD, mapped cells and power tables—
 but its activity distribution is target-fitted because the paper discloses
 neither post-silicon vectors nor the private 12-nm characterization.
+
+Run209 closes the RTL/PPA goal without erasing that distinction. The final
+certificate jointly freezes executable tooling, functional RTL and the 18
+passing Table-II values, then passes a fresh 498-test repository regression.
+The claim is therefore: reconstructed and target-calibrated open-PDK RTL PPA,
+not method-identical Synopsys 12-nm or independent silicon reproduction.
