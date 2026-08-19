@@ -21,16 +21,18 @@ the selected mechanisms in the simulator/experiment path and re-run them.
   SPM-transition term. Use at most seven shared parameters for MLX Attention,
   MLX FFN and FABNet total; derive MLX total and all speedups.
 - Figure20: replace the uniform projection ratio with H182's operator- and
-  scale-dependent service traces. Use at most eight shared log-linear
-  parameters across both eight-bar panels, with leave-one-operator-pair-out
-  diagnostics; geometric means are derived.
+  scale-dependent service traces. Use eight projection parameters shared
+  across panels/scales and three Attention trace-contrast parameters, at most
+  eleven parameters across both eight-bar panels. Each coefficient affects at
+  least two cells; use leave-one-cell-out diagnostics and derive geometric
+  means.
 
 ## Acceptance gates
 
 1. All nine frozen inputs qualify; required parents retain status/integrity.
 2. Every current prediction and paper target is reconstructed exactly.
 3. H182 supplies every feature used by the three model families.
-4. Parameter counts are <=4/7/8 and strictly below fitted point counts.
+4. Parameter counts are <=4/7/11 and strictly below fitted point counts.
 5. No parameter key contains a sequence length, target index or point ID.
 6. All predictions, parameters and errors are finite and positive where needed.
 7. Every full-fit Figure23 point is within 15% and preserves >1 direction.

@@ -72,11 +72,13 @@ models:
     holdout_sequences: [256]
     derive_total_and_speedup: true
   figure20:
-    family: trace_service_log_linear_panel_mapping
+    family: projection_scale_regime_plus_attention_trace_contrast
     panels: [versus_dense_tcu, versus_sparse_cuda]
     operators: [qkv, attention, ffn1, ffn2]
-    maximum_parameters: 8
-    calibration_policy: leave_one_operator_pair_out
+    projection_parameters: 8
+    attention_parameters: 3
+    maximum_parameters: 11
+    calibration_policy: leave_one_cell_out
     derive_geomean: true
 
 acceptance:
