@@ -252,6 +252,10 @@ def capacity_patch_audit(config: dict[str, Any]) -> dict[str, Any]:
         PROJECT_ROOT
         / "patches/dsagen/dsa-gem5-active-window-instruction-capacity-v1.patch"
     )
+    latency_patch = (
+        PROJECT_ROOT
+        / "patches/dsagen/dsa-gem5-mlx-latency-service-v1.patch"
+    )
     current_header = PROJECT_ROOT / config["source_layout"]["overlay_header"]
     current_source = PROJECT_ROOT / config["source_layout"]["overlay_source"]
     report = {
@@ -259,6 +263,8 @@ def capacity_patch_audit(config: dict[str, Any]) -> dict[str, Any]:
         "active_patch": qualify(active_patch),
         "resident_patch": qualify(resident_patch),
         "functional_patch": qualify(functional_patch),
+        "latency_patch": qualify(latency_patch),
+        "latency_reverse_check": False,
         "functional_reverse_check": False,
         "resident_reverse_check": False,
         "active_reverse_check": False,
@@ -269,6 +275,7 @@ def capacity_patch_audit(config: dict[str, Any]) -> dict[str, Any]:
         "active_forward_check": False,
         "resident_forward_check": False,
         "functional_forward_check": False,
+        "latency_forward_check": False,
         "round_trip_exact": False,
     }
     if not patch.is_file():
@@ -282,6 +289,22 @@ def capacity_patch_audit(config: dict[str, Any]) -> dict[str, Any]:
         source = target / "mlx_overlay.cc"
         shutil.copy2(current_header, header)
         shutil.copy2(current_source, source)
+        latency_reverse = subprocess.run(
+            ["git", "apply", "-R", "--check", str(latency_patch)],
+            cwd=root,
+            capture_output=True,
+            text=True,
+            check=False,
+        )
+        report["latency_reverse_check"] = latency_reverse.returncode == 0
+        if latency_reverse.returncode != 0:
+            report["pass"] = False
+            return report
+        subprocess.run(
+            ["git", "apply", "-R", str(latency_patch)],
+            cwd=root,
+            check=True,
+        )
         functional_reverse = subprocess.run(
             ["git", "apply", "-R", "--check", str(functional_patch)],
             cwd=root,
@@ -415,14 +438,31 @@ def capacity_patch_audit(config: dict[str, Any]) -> dict[str, Any]:
                                 cwd=root,
                                 check=True,
                             )
-                            report["round_trip_exact"] = (
-                                header.read_bytes() == current_header.read_bytes()
-                                and source.read_bytes() == current_source.read_bytes()
+                            latency_forward = subprocess.run(
+                                ["git", "apply", "--check", str(latency_patch)],
+                                cwd=root,
+                                capture_output=True,
+                                text=True,
+                                check=False,
                             )
+                            report["latency_forward_check"] = (
+                                latency_forward.returncode == 0
+                            )
+                            if latency_forward.returncode == 0:
+                                subprocess.run(
+                                    ["git", "apply", str(latency_patch)],
+                                    cwd=root,
+                                    check=True,
+                                )
+                                report["round_trip_exact"] = (
+                                    header.read_bytes() == current_header.read_bytes()
+                                    and source.read_bytes() == current_source.read_bytes()
+                                )
     report["pass"] = all(
         report[key]
         for key in (
             "reverse_check",
+            "latency_reverse_check",
             "functional_reverse_check",
             "resident_reverse_check",
             "active_reverse_check",
@@ -432,6 +472,7 @@ def capacity_patch_audit(config: dict[str, Any]) -> dict[str, Any]:
             "active_forward_check",
             "resident_forward_check",
             "functional_forward_check",
+            "latency_forward_check",
             "round_trip_exact",
         )
     )
