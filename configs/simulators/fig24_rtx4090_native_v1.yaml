@@ -1,0 +1,67 @@
+name: fig24-rtx4090-native-v1
+experiment_id: H177
+run_id: run182
+classification: native_RTX4090_replacement_Figure24_exploration
+validation_eligible: true
+
+frozen_inputs:
+  work_identity:
+    path: artifacts/results/fig24-25-work-identity-run105.json
+    bytes: 67314
+    sha256: a947545c62cec6fc79621f5c5a838f8845480c414d75bd37f9285d0cdfd6493d
+    required_status: supported
+    required_integrity: true
+  mlx_full_work:
+    path: artifacts/results/fig24-25-full-mesh-paths-run107.json
+    bytes: 2848348
+    sha256: 0107a9a0bd25404d49f90ac073d8c0bd04346f95cab13f8e259a1c6e81ae4a7d
+    required_status: supported
+    required_integrity: true
+
+gpu:
+  index: 0
+  expected_name: NVIDIA GeForce RTX 4090
+  expected_compute_capability: "8.9"
+  expected_memory_mib: 24564
+  cuda: "13.2"
+  clock_locking: false
+
+service_grid:
+  fft_stage_counts: [18, 20, 22, 24, 26]
+  bsmm_stage_counts: [4, 5, 6]
+  swa_windows: [128, 256]
+  fit_counts: [65536, 131072]
+  holdout_counts: [262144]
+  correctness_count: 1024
+  work_repeats: {fft: 64, bsmm: 128, swa: 1}
+  warmup_iterations: 5
+  timed_iterations: 20
+
+figure24:
+  cases: [BERT_512, BERT_8K, Llama2_512, Llama2_1K, Llama2_4K, InternLM2_2K, InternLM2_8K]
+  operators: [fft_cmp, qkv_bsmm, qkv_bsmm_b32, qkv_bsmm_b64, swa_w128_q32, swa_w256_q64]
+  required_rows: 42
+  mlx_clock_hz: 1000000000
+  ratio: rtx4090_estimated_seconds_div_mlx_simulated_seconds
+
+acceptance:
+  required_service_configs: 10
+  required_timing_runs: 30
+  required_correctness_runs: 10
+  maximum_correctness_absolute_error: 1.0e-5
+  maximum_holdout_relative_error: 0.10
+  require_all_42_rows: true
+  require_native_gpu_identity: true
+  require_positive_finite_estimates: true
+  paper_targets_consumed: false
+
+source_layout:
+  protocol: experiments/h177-fig24-rtx4090-native/protocol.md
+  config: configs/simulators/fig24_rtx4090_native_v1.yaml
+  cuda_source: simulator_ext/native/fig24_rtx4090_bench.cu
+  runner: scripts/run_fig24_rtx4090_native.py
+  auditor: scripts/audit_fig24_rtx4090_native.py
+  test: tests/test_fig24_rtx4090_native.py
+
+output_root: artifacts/environment/h177
+result_path: artifacts/results/fig24-rtx4090-native-run182.json
