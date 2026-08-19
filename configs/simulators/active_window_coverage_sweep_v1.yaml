@@ -1,0 +1,97 @@
+name: active-window-coverage-sweep-v1
+experiment_id: H165
+run_id: run170
+classification: target_free_paper_capacity_derived_active_window_sweep
+validation_eligible: true
+
+frozen_inputs:
+  h120:
+    path: artifacts/results/fig22-coupled-multiport-run125.json
+    bytes: 26566
+    sha256: fc294f7b7707b4bb7a8407bccbb5b68cdf9036e9bbde2095df02c330e0ce5454
+    required_status: supported
+    required_integrity: true
+  h120_run:
+    path: artifacts/environment/h120/fig22-coupled-multiport-run-manifest.json
+    bytes: 330141
+    sha256: 3ab38af325a417546129c21f1d149c1f27bd601367ecfbcc4b7e4776b9ff1a73
+  h120_config:
+    path: configs/simulators/fig22_coupled_multiport_v1.yaml
+    bytes: 3156
+    sha256: 4098d52d975c7b897dbcce02ad9782285d0271839eb09b5bc518230e47a8f031
+  h118_config:
+    path: configs/simulators/fig22_coupled_workloads_v1.yaml
+    bytes: 5918
+    sha256: 61ec4d1368410a0e8a5c7656e96315af4fc14151f18044e95096d083e6c088b7
+  mlx_paper_text:
+    path: MLX Multi-Layer Execution for Structured LLM Workload Acceleration on Spatial Architectures/MLX Multi-Layer Execution for Structured LLM Workload Acceleration on Spatial Architectures.md
+    bytes: 85855
+    sha256: 5785eb81b28741a3806ca42749d7b556bbcd2404e1622ae644a32bae2ade7745
+  source_refresh:
+    path: literature/mlx-open-simulator-refresh-2026-08-19.md
+    bytes: 7209
+    sha256: 6fd523736bc138e047a491f6bbfe672f3ea4e3fb514fc89987fd62998106ec63
+
+workloads:
+  operators: [bsmm, fft]
+  sizes: [64, 128, 256, 512, 1024, 2048, 4096, 8192]
+  paths_per_window: 16
+
+window_sweep:
+  compiled_windows: [1, 2, 3, 4, 5, 6, 7, 8]
+  globally_feasible_windows: [1, 2, 3, 4, 5]
+  globally_infeasible_windows: [6, 7, 8]
+  expected_max_footprint_by_window: {1: 6, 2: 12, 3: 18, 4: 24, 5: 30, 6: 36, 7: 42, 8: 48}
+  instruction_slots_per_pe: 32
+  active_blocks_per_pe: 8
+  current_window: 3
+  selected_candidate_window: 5
+  selection_rule: maximum_window_fitting_32_instruction_slots_for_every_path
+  paper_coverage_condition: B_T_times_C_gte_T_load_plus_T_xfer
+
+hardware_invariants:
+  mesh: [4, 4]
+  simd_width: 8
+  spad_ports: 4
+  spad_total_banks: 32
+  spad_total_issue_width: 32
+  dma_bytes_per_cycle: 64
+  dma_setup_cycles: 0
+
+execution:
+  optimized_replays_per_feasible_path: 2
+  sanitizer_window: 5
+  sanitizer_modes: [asan, ubsan]
+  required_optimized_executions: 160
+  required_sanitizer_executions: 32
+  required_executions: 192
+  max_cycles: 50000000
+  workers: 16
+  paper_performance_targets_consumed: false
+
+acceptance:
+  require_all_work_event_route_memory_conservation: true
+  require_window3_exact_h120_replay: true
+  require_candidate_no_cycle_regressions_vs_window3: true
+  require_candidate_at_least_one_strict_cycle_improvement: true
+  require_candidate_all_counter_finite: true
+  require_no_paper_performance_targets: true
+
+target_exclusion:
+  forbidden_paths:
+    - artifacts/results/fig22-resource-targets-run065.json
+    - artifacts/results/fig22-counter-identity-heldout-run169.json
+    - artifacts/targets/fig22_resource_breakdown_pixels.yaml
+    - artifacts/targets/paper_targets.yaml
+
+source_layout:
+  protocol: experiments/h165-active-window-coverage/protocol.md
+  config: configs/simulators/active_window_coverage_sweep_v1.yaml
+  compiler_core: src/mlxsim/active_window_coverage.py
+  compiler: scripts/compile_active_window_coverage.py
+  runner: scripts/run_active_window_coverage.py
+  auditor: scripts/audit_active_window_coverage.py
+  test: tests/test_active_window_coverage.py
+
+output_root: artifacts/environment/h165
+result_path: artifacts/results/active-window-coverage-run170.json
