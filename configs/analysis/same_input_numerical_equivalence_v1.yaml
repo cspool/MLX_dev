@@ -1,0 +1,81 @@
+name: same-input-numerical-equivalence-v1
+experiment_id: H189
+run_id: run194
+classification: target_free_same_input_lowered_graph_numerical_equivalence
+validation_eligible: true
+
+frozen_inputs:
+  workload_spec:
+    path: configs/workloads/mlx_fig19_20_23_v1.yaml
+    bytes: 2593
+    sha256: f8a5fe8dccc36c27574f63209bc373ac35619f6536a82953ccb07715a6247d58
+  lowering_toolchain:
+    path: artifacts/results/unified-workload-lowering-run192.json
+    bytes: 11155
+    sha256: 7ecfafd918f47163a2a5f97e9643a31531f3775550050fba84d6d91757c335b2
+    required_status: supported
+    required_integrity: true
+  full_operator_parent:
+    path: artifacts/results/mlx-full-operator-e2e-functional-run180.json
+    bytes: 7277
+    sha256: a1f2fe3e5f893aae67e6d3960cc51e653c974365d4454c574cc6a46c9f40261d
+    required_status: supported
+    required_integrity: true
+  scalar_payload_parent:
+    path: artifacts/results/functional-payload-run160.json
+    bytes: 5897
+    sha256: 7009f7aac5c7a77960653578f85ae5193edffd92a1d20405bc974ae30c78f28b
+    required_status: supported
+    required_integrity: true
+
+test_contract:
+  graphs:
+    figure23_complete_block:
+      sequence_length: 16
+      hidden_dimension: 32
+      ffn_dimension: 64
+      block_size: 8
+    figure19_fabnet_block:
+      sequence_length: 16
+      hidden_dimension: 32
+      ffn_dimension: 64
+      block_size: 8
+    figure20_llama_kernels:
+      sequence_length: 16
+      hidden_dimension: 32
+      ffn_dimension: 64
+      block_size: 8
+  seeds: [189, 190, 191]
+  precisions:
+    fp32: {dtype: float32, absolute_tolerance: 1.0e-5, relative_tolerance: 1.0e-5}
+    fp16: {dtype: float16, absolute_tolerance: 5.0e-3, relative_tolerance: 5.0e-3}
+  mappings:
+    - {name: simd8_4x4, simd_width: 8, mesh: [4, 4]}
+    - {name: simd32_4x4, simd_width: 32, mesh: [4, 4]}
+    - {name: simd8_8x8, simd_width: 8, mesh: [8, 8]}
+    - {name: simd32_8x8, simd_width: 32, mesh: [8, 8]}
+
+acceptance:
+  required_graphs: 3
+  required_nodes: 14
+  required_runs: 72
+  required_boundary_comparisons: 336
+  required_final_comparisons: 72
+  required_mapping_invariance_checks: 54
+  require_all_boundaries_within_tolerance: true
+  require_all_final_outputs_within_tolerance: true
+  require_event_order_identity: true
+  require_work_identity: true
+  paper_targets_consumed: false
+
+source_layout:
+  protocol: experiments/h189-same-input-numerical-equivalence/protocol.md
+  config: configs/analysis/same_input_numerical_equivalence_v1.yaml
+  engine: src/mlxsim/numerical_equivalence.py
+  runner: scripts/run_same_input_numerical_equivalence.py
+  auditor: scripts/audit_same_input_numerical_equivalence.py
+  test: tests/test_same_input_numerical_equivalence.py
+
+output_root: artifacts/environment/h189
+execution_manifest: artifacts/environment/h189/same-input-equivalence-manifest.json
+result_path: artifacts/results/same-input-numerical-equivalence-run194.json
