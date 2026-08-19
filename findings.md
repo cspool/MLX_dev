@@ -1020,3 +1020,10 @@ the H183 parameter vector. The two errors fall from 27.89%/20.91% to
 2.39%/1.22%; all 48 points and 36 directions pass. This closes the registered
 interpolation benchmark, but it is post-failure repair rather than new Xavier
 or author-hardware evidence.
+
+Run201 verifies that the repair does not trade local metric closure for a
+repository regression. The H194 five-objective certificate remains intact,
+H195 retains 48/48 points and 36/36 directions, and a fresh 482-test suite plus
+Ruff passes. The final goal certificate keeps `validation_eligible=false`, so
+the 2.39%/1.22% N4096 errors describe the registered interpolated-reference
+benchmark rather than a new paper or Xavier measurement.

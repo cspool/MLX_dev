@@ -1210,7 +1210,7 @@ simulator_next_work_execution:
   handoff: docs/simulator-next-work-complete.md
 
 fig20_n4096_attention_repair:
-  status: repair_complete_final_regression_pending
+  status: complete
   source_failure:
     experiment_id: H193
     run_id: run198
@@ -1237,8 +1237,34 @@ fig20_n4096_attention_repair:
       direction_matches: 36/36
       parameters_refit: false
       independent_validation_claimed: false
-  current_hypothesis: H196
-  next_step: fresh_full_regression_and_repaired_joint_certificate
+    - experiment_id: H196
+      run_id: run201
+      path: artifacts/results/fig20-attention-repair-goal-run201.json
+      sha256: f06d2d8b29542ec0e11cfba4addc355bc1aa540e4fbc6449f4d215c2fff88279
+      status: supported
+      audit_integrity: true
+      acceptance_gates: 9/9
+      pytest_passed: 482
+      pytest_failed: 0
+  current_hypothesis: null
+  final_certificate:
+    experiment_id: H196
+    run_id: run201
+    path: artifacts/results/fig20-attention-repair-goal-run201.json
+    status: supported
+    dense_tcu_n4096_error: 0.02393709215891343
+    sparse_cuda_n4096_error: 0.012186453214418887
+    passing_points: 48/48
+    direction_matches: 36/36
+    parameters_refit: false
+    independent_validation_claimed: false
+  final_verification:
+    commit: c502d0f062d111c751af8c9cf28d9f7eb74c8ebe
+    ruff: passed
+    pytest_passed: 482
+    pytest_failed: 0
+    pytest_warnings: 17
+  handoff: docs/fig20-attention-holdout-repair.md
 
 functional_completion:
   status: complete
