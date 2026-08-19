@@ -1,0 +1,58 @@
+name: fig22-counter-identity-heldout-v1
+experiment_id: H164
+run_id: run169
+classification: target_exposed_pre_registered_counter_identity_transfer
+validation_eligible: true
+
+frozen_inputs:
+  h163:
+    path: artifacts/results/utilization-ledger-run168.json
+    bytes: 78488
+    sha256: 4d0122d55c59ce3e59ba2f8dd3e2e81b33ca68e89fff95894703df157f02ddee
+    required_status: supported
+    required_integrity: true
+    required_selected_metric: null
+    required_targets_consumed: false
+  h60:
+    path: artifacts/results/fig22-resource-targets-run065.json
+    bytes: 28112
+    sha256: c404f2d1a20b50dcc39937a982565d3ef542db54bebb85045a32d4527bcd1cf6
+    required_verdict: supported
+    required_summary_pass: true
+
+mapping:
+  operators: [bsmm, fft]
+  target_panels: {bsmm: bsmm, fft: chunk_fft}
+  sizes: [64, 128, 256, 512, 1024, 2048, 4096, 8192]
+  resources: [compute, load, store, xfer]
+  identities:
+    - physical_capacity_fraction
+    - overlay_capacity_fraction
+    - temporal_busy_fraction
+    - temporal_issue_fraction
+    - active_spatial_fraction
+    - resident_productive_fraction
+    - issued_capacity_fraction
+  required_points_per_identity: 64
+  required_total_points: 448
+
+acceptance:
+  minimum_spearman: 0.70
+  endpoint_direction_required: true
+  required_curves_per_identity: 8
+  required_trend_curves_per_complete_identity: 8
+  strict_relative_error_limit: 0.10
+  required_strict_points_per_complete_identity: 64
+  require_at_least_one_global_trend_identity: true
+  strict_completion_is_diagnostic: true
+  per_operator_resource_or_size_identity_selection: forbidden
+  prediction_scaling_offset_or_fit: forbidden
+  counter_mixing_or_normalization: forbidden
+
+source_layout:
+  protocol: experiments/h164-fig22-counter-heldout/protocol.md
+  config: configs/analysis/fig22_counter_identity_heldout_v1.yaml
+  auditor: scripts/audit_fig22_counter_identity_heldout.py
+  test: tests/test_fig22_counter_identity_heldout.py
+
+result_path: artifacts/results/fig22-counter-identity-heldout-run169.json
