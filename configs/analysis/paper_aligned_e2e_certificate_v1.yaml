@@ -1,0 +1,70 @@
+name: paper-aligned-e2e-certificate-v1
+experiment_id: H176
+run_id: run181
+classification: final_paper_aligned_MLX_Xavier_e2e_estimate_certificate
+validation_eligible: false
+
+frozen_inputs:
+  xavier_functional:
+    path: artifacts/results/xavier-e2e-functional-run178.json
+    bytes: 7715
+    sha256: 9b870a1fbb674521817172372daaebfa508c14cef4137f3f189509636d1c4f00
+    required_status: supported
+    required_integrity: true
+  performance_estimate:
+    path: artifacts/results/paper-aligned-e2e-estimate-run179.json
+    bytes: 12867
+    sha256: 6a54b7f32fa2214b6cf201028d29f4f803a7010e4766f58c14d2c1e784cf56dd
+    required_status: supported
+    required_integrity: true
+  mlx_functional:
+    path: artifacts/results/mlx-full-operator-e2e-functional-run180.json
+    bytes: 7277
+    sha256: a1f2fe3e5f893aae67e6d3960cc51e653c974365d4454c574cc6a46c9f40261d
+    required_status: supported
+    required_integrity: true
+  mechanism_certificate:
+    path: artifacts/results/one-baseline-goal-certificate-run177.json
+    bytes: 6402
+    sha256: 2e41fe53490daf98450b00b2ccb24661d276276024b0af02a627070f2330c044
+    required_status: supported
+    required_integrity: true
+
+completion_contract:
+  main_baseline: Jetson_Xavier_class_proxy
+  systems: 2
+  performance_rows: 5
+  sequence_lengths: [128, 256, 512, 1024, 2048]
+  layers: 32
+  structured_layers: 24
+  dense_layers: 8
+  maximum_fit_mape: 0.05
+  maximum_fit_relative_error: 0.10
+  maximum_leave_one_out_relative_error: 0.25
+  require_decreasing_speedup: true
+  require_mlx_faster_all_rows: true
+  require_both_functional_systems: true
+  require_actual_rmsnorm_rope_execution: true
+  exact_paper_numbers_required: false
+  independent_validation_claimed: false
+  full_paper_required: false
+  rtl_power_area_required: false
+
+verification:
+  ruff_command: [.venv/bin/ruff, check, scripts, src, tests]
+  pytest_command: [.venv/bin/pytest, -q]
+  expected_pytest_passed: 446
+  expected_pytest_failed: 0
+  expected_pytest_warnings: 17
+
+source_layout:
+  goal: docs/paper-aligned-e2e-goal.md
+  protocol: experiments/h176-paper-aligned-e2e-certificate/protocol.md
+  config: configs/analysis/paper_aligned_e2e_certificate_v1.yaml
+  runner: scripts/run_paper_aligned_e2e_verification.py
+  auditor: scripts/audit_paper_aligned_e2e_certificate.py
+  test: tests/test_paper_aligned_e2e_certificate.py
+
+output_root: artifacts/environment/h176
+verification_manifest: artifacts/environment/h176/paper-aligned-e2e-verification-manifest.json
+result_path: artifacts/results/paper-aligned-e2e-certificate-run181.json
