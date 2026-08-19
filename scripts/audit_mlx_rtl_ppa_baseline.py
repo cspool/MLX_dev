@@ -147,6 +147,9 @@ def build_audit(config: dict[str, Any]) -> dict[str, Any]:
             for item in power_records
         ),
         "positive": all(float(item["total_power_w"]) > 0 for item in power_records),
+        "physical_sanity": all(
+            float(item["total_power_w"]) < 10.0 for item in power_records
+        ),
         "timing": all(
             (not config["components"][item["component"]]["has_clock"])
             or (
@@ -304,7 +307,7 @@ def build_audit(config: dict[str, Any]) -> dict[str, Any]:
         "vcd": len(vcd_checks) == 4,
         "separation": len(separation_checks) == 4,
         "synthesis": len(synthesis_checks) == 6,
-        "power": len(power_checks) == 6,
+        "power": len(power_checks) == 7,
         "measurement": len(measurement_checks) == 6,
         "scales": len(scale_checks) == 5,
         "rows": len(rows) == 6 and len(aggregate_rows) == 3,

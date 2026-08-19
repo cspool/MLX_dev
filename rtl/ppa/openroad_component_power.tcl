@@ -6,6 +6,8 @@ link_design $::env(PPA_TOP)
 
 if {$::env(PPA_HAS_CLOCK) == "1"} {
   create_clock -name clk -period $::env(PPA_CLOCK_PERIOD_NS) [get_ports clk]
+} else {
+  create_clock -name virtual_clk -period $::env(PPA_CLOCK_PERIOD_NS)
 }
 set_input_transition 0.05 [all_inputs]
 set_load 0.01 [all_outputs]

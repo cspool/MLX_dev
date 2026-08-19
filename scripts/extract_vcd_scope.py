@@ -8,7 +8,9 @@ from pathlib import Path
 from typing import Any
 
 
-def extract_scope(source: Path, destination: Path, scope: str) -> dict[str, Any]:
+def extract_scope(
+    source: Path, destination: Path, scope: str, *, ports_only: bool = False
+) -> dict[str, Any]:
     lines = source.read_text(errors="strict").splitlines()
     requested = scope.split(".")
     stack: list[str] = []
@@ -34,6 +36,12 @@ def extract_scope(source: Path, destination: Path, scope: str) -> dict[str, Any]
                 collecting_timescale = False
         elif stripped.startswith("$var ") and stack == requested:
             tokens = stripped.split()
+            reference = tokens[4]
+            if ports_only and not (
+                reference.endswith(("_i", "_o"))
+                or reference in {"clk", "rst_n"}
+            ):
+                continue
             variables.append(line)
             codes.add(tokens[3])
         elif stripped.startswith("$enddefinitions"):
@@ -90,6 +98,7 @@ def extract_scope(source: Path, destination: Path, scope: str) -> dict[str, Any]
         "unique_codes": len(codes),
         "timestamps": timestamps,
         "transitions": transitions,
+        "ports_only": ports_only,
     }
 
 
@@ -98,8 +107,11 @@ def main() -> int:
     parser.add_argument("source", type=Path)
     parser.add_argument("destination", type=Path)
     parser.add_argument("scope")
+    parser.add_argument("--ports-only", action="store_true")
     args = parser.parse_args()
-    result = extract_scope(args.source, args.destination, args.scope)
+    result = extract_scope(
+        args.source, args.destination, args.scope, ports_only=args.ports_only
+    )
     print(result)
     return 0
 

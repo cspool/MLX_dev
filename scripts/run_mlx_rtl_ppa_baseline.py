@@ -168,6 +168,7 @@ def main() -> int:
             source_vcd,
             vcd,
             f"tb_mlx_pe.dut.{component_spec['scope']}",
+            ports_only=True,
         )
         generated_files[f"scoped_vcd_{variant}_{component}_{workload}"] = digest(vcd)
         log = log_root / f"power-{variant}-{component}-{workload}.log"
@@ -270,6 +271,7 @@ def main() -> int:
                 for field in finite_power_fields
             )
             and float(item["total_power_w"] or 0.0) > 0
+            and float(item["total_power_w"] or 0.0) < 10.0
             for item in power_records
         ),
         "timing": all(
