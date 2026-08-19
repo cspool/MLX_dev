@@ -685,3 +685,13 @@ stress evidence and a fresh `416 passed, 0 failed` repository suite. The
 minimum primary gain is 1.215x and maximum is 15.018x. Completion deliberately
 does not promote the old full-figure or strict-10% diagnostics and excludes
 RTL, power and area, matching the final goal document.
+
+Run168 separates utilization definitions before another target comparison.
+Across all 16 optimized BSMM/FFT paths, seven pipeline identities preserve the
+same raw schedule while distinguishing elapsed physical capacity, overlay-only
+capacity, temporal busy/issue fractions, active spatial occupancy, resident
+efficiency and issued capacity. Three FU classes and all four SRAM ports are
+also conserved. The exact identity `physical capacity = temporal busy x active
+spatial` holds everywhere. No Figure 22 target is read and no definition is
+selected, so this result is an auditable counter ledger rather than a numerical
+reproduction claim.
