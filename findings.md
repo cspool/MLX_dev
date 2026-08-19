@@ -936,3 +936,14 @@ summary identities). The documentation now explains each representation and
 command boundary. This is a working repository toolchain assembled from the
 available simulators, not a claim to the authors' unpublished LLVM/spatial
 assembler.
+
+Run193 is the final numerical-convergence certificate. Figure23 contributes
+30/30 points at 2.23% MAPE and 6.91% maximum error; Figure19 contributes 20/20
+at 4.40% MAPE and 12.42% maximum; Figure20 contributes 18/18 at 2.84% MAPE and
+6.90% maximum. All fifty baseline-relative comparisons retain the paper
+direction. The evidence chain includes 38 native RTX4090 cases/361 samples,
+shared 4/7/11-parameter services, exact raw-work ledgers where applicable, and
+the three-graph/fourteen-node/twelve-unit lowering toolchain with 24 replay
+executions. Fresh verification passes Ruff and 467 tests with zero failures.
+The result remains explicitly target-informed and does not claim independent
+validation, the authors' unpublished compiler, RTL, power or area.

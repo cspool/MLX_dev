@@ -1021,7 +1021,7 @@ remaining_performance_exploration:
     - native_or_explicit_proxy_gpu_mapping
 
 numerical_convergence_fig19_20_23:
-  status: active
+  status: complete
   figures: [23, 19, 20]
   maximum_relative_error: 0.15
   require_baseline_trend_match: true
@@ -1088,13 +1088,29 @@ numerical_convergence_fig19_20_23:
       executable_units: 12
       executions: 24
       lineage_nodes: 14
-  current_hypothesis: H188
+    - experiment_id: H188
+      run_id: run193
+      path: artifacts/results/numerical-convergence-goal-run193.json
+      sha256: 91cae1fcfa4d1c1714930ce94a68bdef6f9df700eef7c0507419e3697d078786
+      status: supported
+      audit_integrity: true
+      points_within_15pct: 68/68
+      direction_matches: 50/50
+      acceptance_gates: 12/12
+      goal_complete: true
+  current_hypothesis: null
   workload_lowering_toolchain:
     required: true
     status: complete
     contract: model_or_operator_graph_to_mlx_blocks_tags_events_pe_memory_json_execute_audit
     spec: configs/workloads/mlx_fig19_20_23_v1.yaml
     documentation: docs/workload-lowering-toolchain.md
+  final_verification:
+    ruff: passed
+    pytest_passed: 467
+    pytest_failed: 0
+    pytest_warnings: 17
+  handoff: docs/numerical-convergence-goal-complete.md
 
 functional_completion:
   status: complete
