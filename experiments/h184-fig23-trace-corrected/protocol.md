@@ -21,6 +21,11 @@ The service rejects negative/overflowed latency, exposes both correction terms
 and marks target-informed provenance in the summary. Configurations without the
 object remain byte-for-byte behavior compatible.
 
+Because the third-party DSAGEN checkout is intentionally ignored by the main
+repository, the core change must also be stored as the replayable incremental
+patch `patches/dsagen/dsa-gem5-mlx-latency-service-v1.patch` and qualified by
+the audit.
+
 The H184 compiler derives integer credits/penalties only from H183 parameters
 and H182 trace features. No sequence-specific coefficient or target value is
 stored in an execution JSON.
