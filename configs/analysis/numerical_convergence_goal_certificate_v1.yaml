@@ -1,0 +1,81 @@
+name: numerical-convergence-goal-certificate-v1
+experiment_id: H188
+run_id: run193
+classification: final_Figure19_20_23_numerical_and_toolchain_certificate
+validation_eligible: true
+
+frozen_inputs:
+  rtx4090_trace:
+    path: artifacts/results/fig19-20-23-rtx4090-trace-run187.json
+    bytes: 52250
+    sha256: b958398750a3a34a2426ae24b22a1014a199486f31d38a0b67dc6ea3bd4afbb9
+    required_status: supported
+    required_integrity: true
+  selected_model:
+    path: artifacts/results/fig19-20-23-gap-attribution-run188.json
+    bytes: 37530
+    sha256: d38bd8ddc7cb6e131662241549f53df97015053b87a72b00277137d970001aef
+    required_status: supported
+    required_integrity: true
+  figure23:
+    path: artifacts/results/fig23-trace-corrected-run189.json
+    bytes: 22333
+    sha256: 2c6ef6aeda12781399f82f6f22900d3560e702a2c85cfa0e774c13c736800059
+    required_status: supported
+    required_integrity: true
+  figure19:
+    path: artifacts/results/fig19-trace-corrected-run190.json
+    bytes: 10845
+    sha256: 8b302da5def7e675614353a67eb2d5f83929d1c97827d8c13ab2daaccd30ff4f
+    required_status: supported
+    required_integrity: true
+  figure20:
+    path: artifacts/results/fig20-trace-corrected-run191.json
+    bytes: 12434
+    sha256: 16c3a14061c19135a92e2cea9f5cc3b856f268bdab0ca93a72f2fd9e4abb3f08
+    required_status: supported
+    required_integrity: true
+  lowering_toolchain:
+    path: artifacts/results/unified-workload-lowering-run192.json
+    bytes: 11155
+    sha256: 7ecfafd918f47163a2a5f97e9643a31531f3775550050fba84d6d91757c335b2
+    required_status: supported
+    required_integrity: true
+
+completion_contract:
+  figures: [23, 19, 20]
+  maximum_relative_error: 0.15
+  require_all_points_within_limit: true
+  require_all_baseline_directions: true
+  require_native_rtx4090_trace: true
+  prohibit_point_keyed_parameters: true
+  figure23_points: 30
+  figure19_points: 20
+  figure20_points: 18
+  workload_graphs: 3
+  workload_nodes: 14
+  lowering_units: 12
+  lowering_executions: 24
+  independent_validation_claimed: false
+  author_toolchain_claimed: false
+  rtl_power_area_required: false
+
+verification:
+  ruff_command: [.venv/bin/ruff, check, scripts, src, tests]
+  pytest_command: [.venv/bin/pytest, -q]
+  expected_pytest_passed: 467
+  expected_pytest_failed: 0
+  expected_pytest_warnings: 17
+
+source_layout:
+  goal: docs/numerical-convergence-goal.md
+  protocol: experiments/h188-numerical-convergence-certificate/protocol.md
+  config: configs/analysis/numerical_convergence_goal_certificate_v1.yaml
+  runner: scripts/run_numerical_convergence_verification.py
+  auditor: scripts/audit_numerical_convergence_goal.py
+  test: tests/test_numerical_convergence_goal.py
+  handoff: docs/numerical-convergence-goal-complete.md
+
+output_root: artifacts/environment/h188
+verification_manifest: artifacts/environment/h188/verification-manifest.json
+result_path: artifacts/results/numerical-convergence-goal-run193.json
