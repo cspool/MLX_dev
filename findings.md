@@ -825,3 +825,10 @@ smokes and 30 native CUDA-event timings. Nine affine service models predict the
 scale/cache regime rather than a general failure. All 42 exact-work projections
 are materialized and favor RTX4090 over the 1-GHz MLX surrogate; the failed
 SWA-W256 curve prevents promotion until a post-regime extension is tested.
+
+Run183 completes the local-4090 Figure-24 replacement. Three larger W256 runs
+fit the post-262K regime and predict the 1M holdout within 4.48%; the other nine
+services and 35 rows remain unchanged. All ten topology services now have
+passing native holdouts and all 42 exact-work rows are populated. RTX4090 is
+faster than the current MLX surrogate in every row, which is retained as the
+new-device conclusion rather than forced to resemble the original Orin ratios.
