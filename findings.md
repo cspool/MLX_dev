@@ -852,3 +852,17 @@ mechanism-derived interval. The external accelerators and all seven energy
 values remain reported references, with no power or energy estimate. This is
 a bounded, paper-informed completion of exploration, not independent Figure18
 reproduction.
+
+Run186 closes the requested remaining-performance objective. Direct frozen
+evidence certifies the native RTX4090 Figure24 replacement at 10/10 services
+and 42/42 rows; Figure23 at 30/30 trend cells; Figure19 at three curves and four
+comparisons; Figure20 at 8/8 trend cells; and Figure18 at two bounded MLX rows
+with 14.32% maximum midpoint latency error. The final ordering is run183
+native4090, run184 priority tier and run185 Figure18-last. Figures22/25 remain
+rejected reference-only results, and the strict numerical failures of
+Figures23/19/20 are retained. The same-work simulator mechanism remains
+functionally exact with 1.249x complete-block gain. Fresh repository
+verification passes Ruff and 453 tests with zero failures. Thus the
+trend-level exploration is complete without claiming original GPU replication,
+independent Figure18 validation, strict full-paper reproduction, RTL, power or
+area.
