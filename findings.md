@@ -985,3 +985,13 @@ execution summaries replay identically across 124 executions. The Llama2 plan
 composes 32 layers and the FABNet plan 24 layers with explicit per-layer-to-total
 cycle/work conservation. No figure-specific compiler command is required
 between the suite spec and execution manifest.
+
+Run198 performs the first genuinely new-shape test after freezing every
+parameter. Thirty-nine fresh RTX4090 cases provide 195 samples before reference
+access. Figure23 passes 9/9 and Figure19 15/15; Figure20 passes 22/24. All 36
+baseline directions match, overall MAPE is 4.60%, and no parameter is refit.
+The two failures are both N=4096 Attention: dense-TCU is 27.89% and sparse-CUDA
+20.91% from a reference interpolated between only N=256 and N=8192. The result
+therefore scopes the model honestly: projection and Fig19/23 generalize, while
+mid-scale Attention crossover needs a real third anchor rather than assuming a
+two-endpoint log-linear curve.

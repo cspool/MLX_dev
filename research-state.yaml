@@ -1126,7 +1126,13 @@ simulator_next_work_execution:
     automatic_model_frontend: {status: complete, hypothesis: H190, run: run195}
     cycle_level_physicalization: {status: complete, hypothesis: H191, run: run196}
     full_workload_coverage: {status: complete, hypothesis: H192, run: run197}
-    independent_holdout_validation: {status: active, hypothesis: H193}
+    independent_holdout_validation:
+      status: complete_with_scope_limit
+      hypothesis: H193
+      run: run198
+      passing_points: 46/48
+      direction_matches: 36/36
+      limitation: Figure20_N4096_attention_crossover
   completed_hypotheses:
     - experiment_id: H189
       run_id: run194
@@ -1168,7 +1174,17 @@ simulator_next_work_execution:
       executions: 124
       llama_layers: 32
       fabnet_layers: 24
-  current_hypothesis: H193
+    - experiment_id: H193
+      run_id: run198
+      path: artifacts/results/independent-holdout-validation-run198.json
+      sha256: a5ec9fc3601a0e81412d5536947307bf97ae5426f90ac877edb24f370d262231
+      status: rejected
+      audit_integrity: true
+      passing_points: 46/48
+      direction_matches: 36/36
+      parameters_refit: false
+      scope_diagnosis: Figure20_N4096_attention_crossover
+  current_hypothesis: H194
 
 functional_completion:
   status: complete

@@ -1,0 +1,1723 @@
+{
+  "checks": {
+    "cases": true,
+    "finite_predictions": true,
+    "gpu": true,
+    "outputs": true,
+    "positive": true,
+    "prediction_counts": true,
+    "samples": true
+  },
+  "experiment_id": "H193",
+  "generated_without_reference_access": true,
+  "gpu_after": {
+    "clocks.current.graphics": "2715",
+    "clocks.max.graphics": "3120",
+    "compute_cap": "8.9",
+    "driver_version": "595.84",
+    "index": "0",
+    "memory.total": "24564",
+    "name": "NVIDIA GeForce RTX 4090",
+    "power.draw": "177.37",
+    "power.limit": "450.00",
+    "pstate": "P2",
+    "temperature.gpu": "44",
+    "uuid": "GPU-316b42a1-49a5-f647-aa0c-05b853d289a8"
+  },
+  "gpu_before": {
+    "clocks.current.graphics": "750",
+    "clocks.max.graphics": "3120",
+    "compute_cap": "8.9",
+    "driver_version": "595.84",
+    "index": "0",
+    "memory.total": "24564",
+    "name": "NVIDIA GeForce RTX 4090",
+    "power.draw": "38.30",
+    "power.limit": "450.00",
+    "pstate": "P5",
+    "temperature.gpu": "38",
+    "uuid": "GPU-316b42a1-49a5-f647-aa0c-05b853d289a8"
+  },
+  "paper_performance_targets_consumed": false,
+  "parameter_object": {
+    "figure19": {
+      "attention_trace_launch_ms": 0.20462031083480825,
+      "fabnet_open_simulator_scale": 0.26832230651205813,
+      "fabnet_spm_transition_ms": 2.559412710091505,
+      "fabnet_trace_launch_ms": 0.3759224868818548,
+      "ffn_trace_launch_ms": 0.44013773973676545,
+      "shared_simulated_work_scale": 0.2744922660265366,
+      "spm_transition_ms": 1.279623762833902
+    },
+    "figure20": {
+      "attention_trace_contrast_slope": -1.6264909176885287,
+      "dense_attention_base": 0.7719772979523464,
+      "dense_bulk_scale_slope": -0.02886755984348838,
+      "dense_projection_base": 1.591187846882668,
+      "ffn1_bulk_scale_delta": -0.02658276207254788,
+      "ffn1_projection_offset": -0.054751726353668755,
+      "ffn2_bulk_scale_delta": 0.05208292861027426,
+      "ffn2_projection_offset": -0.25347857349403413,
+      "sparse_attention_base": 0.37841443757136295,
+      "sparse_bulk_scale_slope": -0.02888468634694497,
+      "sparse_projection_base": 1.4768650882509506
+    },
+    "figure23": {
+      "joint_post_knee_congestion_cycles_per_trace_ratio": 132.51223511629885,
+      "joint_w2_underfill_startup_credit_cycles": 168.22695035460993,
+      "joint_w4_underfill_startup_credit_cycles": 216.75650118203305,
+      "mesh_post_knee_congestion_cycles_per_trace_ratio": 454.50004962952954
+    }
+  },
+  "parameter_sha256": "54e8210b50f6c3c3524c264b5a1ca036e193107e49798d6d01e06a39f62d760a",
+  "predictions": {
+    "figure19": [
+      {
+        "prediction": 0.7965883777313143,
+        "sequence_length": 192,
+        "series": "attention_latency_ms"
+      },
+      {
+        "prediction": 2.057096722875688,
+        "sequence_length": 192,
+        "series": "ffn_latency_ms"
+      },
+      {
+        "prediction": 3.642226666748553,
+        "sequence_length": 192,
+        "series": "fabnet_total_latency_ms"
+      },
+      {
+        "prediction": 2.8536851006070023,
+        "sequence_length": 192,
+        "series": "mlx_total_latency_ms"
+      },
+      {
+        "prediction": 1.2763239594914735,
+        "sequence_length": 192,
+        "series": "speedup"
+      },
+      {
+        "prediction": 1.4543262255068634,
+        "sequence_length": 384,
+        "series": "attention_latency_ms"
+      },
+      {
+        "prediction": 3.646973990375261,
+        "sequence_length": 384,
+        "series": "ffn_latency_ms"
+      },
+      {
+        "prediction": 6.464217874082418,
+        "sequence_length": 384,
+        "series": "fabnet_total_latency_ms"
+      },
+      {
+        "prediction": 5.101300215882125,
+        "sequence_length": 384,
+        "series": "mlx_total_latency_ms"
+      },
+      {
+        "prediction": 1.2671706428798397,
+        "sequence_length": 384,
+        "series": "speedup"
+      },
+      {
+        "prediction": 3.727924142341708,
+        "sequence_length": 768,
+        "series": "attention_latency_ms"
+      },
+      {
+        "prediction": 8.577392875219635,
+        "sequence_length": 768,
+        "series": "ffn_latency_ms"
+      },
+      {
+        "prediction": 14.892948127584114,
+        "sequence_length": 768,
+        "series": "fabnet_total_latency_ms"
+      },
+      {
+        "prediction": 12.305317017561343,
+        "sequence_length": 768,
+        "series": "mlx_total_latency_ms"
+      },
+      {
+        "prediction": 1.2102856111979783,
+        "sequence_length": 768,
+        "series": "speedup"
+      }
+    ],
+    "figure20": [
+      {
+        "operator": "qkv",
+        "panel": "versus_dense_tcu",
+        "prediction": 4.812315586385156,
+        "sequence_length": 512,
+        "trace_key": "fig20-N512-dense_tcu_qkv"
+      },
+      {
+        "operator": "attention",
+        "panel": "versus_dense_tcu",
+        "prediction": 2.1988264889874314,
+        "sequence_length": 512,
+        "trace_key": "fig20-N512-dense_flash_attention"
+      },
+      {
+        "operator": "ffn1",
+        "panel": "versus_dense_tcu",
+        "prediction": 4.472738613484175,
+        "sequence_length": 512,
+        "trace_key": "fig20-N512-dense_tcu_ffn1"
+      },
+      {
+        "operator": "ffn2",
+        "panel": "versus_dense_tcu",
+        "prediction": 3.8721152765018787,
+        "sequence_length": 512,
+        "trace_key": "fig20-N512-dense_tcu_ffn2"
+      },
+      {
+        "operator": "qkv",
+        "panel": "versus_sparse_cuda",
+        "prediction": 4.292390266038429,
+        "sequence_length": 512,
+        "trace_key": "fig20-N512-sparse_cuda_qkv"
+      },
+      {
+        "operator": "attention",
+        "panel": "versus_sparse_cuda",
+        "prediction": 1.4368711420484839,
+        "sequence_length": 512,
+        "trace_key": "fig20-N512-sparse_cuda_fft_attention"
+      },
+      {
+        "operator": "ffn1",
+        "panel": "versus_sparse_cuda",
+        "prediction": 3.9895013829454844,
+        "sequence_length": 512,
+        "trace_key": "fig20-N512-sparse_cuda_ffn1"
+      },
+      {
+        "operator": "ffn2",
+        "panel": "versus_sparse_cuda",
+        "prediction": 3.4537697338175195,
+        "sequence_length": 512,
+        "trace_key": "fig20-N512-sparse_cuda_ffn2"
+      },
+      {
+        "operator": "qkv",
+        "panel": "versus_dense_tcu",
+        "prediction": 4.623534443823799,
+        "sequence_length": 2048,
+        "trace_key": "fig20-N2048-dense_tcu_qkv"
+      },
+      {
+        "operator": "attention",
+        "panel": "versus_dense_tcu",
+        "prediction": 1.4188565429419888,
+        "sequence_length": 2048,
+        "trace_key": "fig20-N2048-dense_flash_attention"
+      },
+      {
+        "operator": "ffn1",
+        "panel": "versus_dense_tcu",
+        "prediction": 4.141799758458206,
+        "sequence_length": 2048,
+        "trace_key": "fig20-N2048-dense_tcu_ffn1"
+      },
+      {
+        "operator": "ffn2",
+        "panel": "versus_dense_tcu",
+        "prediction": 3.9987598502374317,
+        "sequence_length": 2048,
+        "trace_key": "fig20-N2048-dense_tcu_ffn2"
+      },
+      {
+        "operator": "qkv",
+        "panel": "versus_sparse_cuda",
+        "prediction": 4.123907233263522,
+        "sequence_length": 2048,
+        "trace_key": "fig20-N2048-sparse_cuda_qkv"
+      },
+      {
+        "operator": "attention",
+        "panel": "versus_sparse_cuda",
+        "prediction": 2.2267440243442596,
+        "sequence_length": 2048,
+        "trace_key": "fig20-N2048-sparse_cuda_fft_attention"
+      },
+      {
+        "operator": "ffn1",
+        "panel": "versus_sparse_cuda",
+        "prediction": 3.6942296397188548,
+        "sequence_length": 2048,
+        "trace_key": "fig20-N2048-sparse_cuda_ffn1"
+      },
+      {
+        "operator": "ffn2",
+        "panel": "versus_sparse_cuda",
+        "prediction": 3.5666468739096837,
+        "sequence_length": 2048,
+        "trace_key": "fig20-N2048-sparse_cuda_ffn2"
+      },
+      {
+        "operator": "qkv",
+        "panel": "versus_dense_tcu",
+        "prediction": 4.531939420509504,
+        "sequence_length": 4096,
+        "trace_key": "fig20-N4096-dense_tcu_qkv"
+      },
+      {
+        "operator": "attention",
+        "panel": "versus_dense_tcu",
+        "prediction": 1.5106936125438435,
+        "sequence_length": 4096,
+        "trace_key": "fig20-N4096-dense_flash_attention"
+      },
+      {
+        "operator": "ffn1",
+        "panel": "versus_dense_tcu",
+        "prediction": 3.985629165987201,
+        "sequence_length": 4096,
+        "trace_key": "fig20-N4096-dense_tcu_ffn1"
+      },
+      {
+        "operator": "ffn2",
+        "panel": "versus_dense_tcu",
+        "prediction": 4.063627074958165,
+        "sequence_length": 4096,
+        "trace_key": "fig20-N4096-dense_tcu_ffn2"
+      },
+      {
+        "operator": "qkv",
+        "panel": "versus_sparse_cuda",
+        "prediction": 4.042162142659898,
+        "sequence_length": 4096,
+        "trace_key": "fig20-N4096-sparse_cuda_qkv"
+      },
+      {
+        "operator": "attention",
+        "panel": "versus_sparse_cuda",
+        "prediction": 2.0913772999130464,
+        "sequence_length": 4096,
+        "trace_key": "fig20-N4096-sparse_cuda_fft_attention"
+      },
+      {
+        "operator": "ffn1",
+        "panel": "versus_sparse_cuda",
+        "prediction": 3.5548929132912757,
+        "sequence_length": 4096,
+        "trace_key": "fig20-N4096-sparse_cuda_ffn1"
+      },
+      {
+        "operator": "ffn2",
+        "panel": "versus_sparse_cuda",
+        "prediction": 3.6244614060699414,
+        "sequence_length": 4096,
+        "trace_key": "fig20-N4096-sparse_cuda_ffn2"
+      }
+    ],
+    "figure23": [
+      {
+        "corrected_series_cycles": 2232.393693136258,
+        "prediction": 3.9231881489153744,
+        "raw_baseline_cycles": 8758.100480625593,
+        "raw_series_cycles": 2232.393693136258,
+        "sequence_length": 1536,
+        "series": "simd32_4x4",
+        "trace_growth_feature": 0.0,
+        "underfill_feature": 0.25
+      },
+      {
+        "corrected_series_cycles": 2338.374189533185,
+        "prediction": 3.745380238897519,
+        "raw_baseline_cycles": 8758.100480625593,
+        "raw_series_cycles": 2338.374189533185,
+        "sequence_length": 1536,
+        "series": "simd8_8x8",
+        "trace_growth_feature": 0.0,
+        "underfill_feature": 0.25
+      },
+      {
+        "corrected_series_cycles": 603.8083568066861,
+        "prediction": 14.504768577473609,
+        "raw_baseline_cycles": 8758.100480625593,
+        "raw_series_cycles": 657.9974821021943,
+        "sequence_length": 1536,
+        "series": "simd32_8x8",
+        "trace_growth_feature": 0.0,
+        "underfill_feature": 0.25
+      },
+      {
+        "corrected_series_cycles": 4402.239691850832,
+        "prediction": 3.97249698637191,
+        "raw_baseline_cycles": 17487.883909164237,
+        "raw_series_cycles": 4402.239691850832,
+        "sequence_length": 3072,
+        "series": "simd32_4x4",
+        "trace_growth_feature": 0.5593878860726649,
+        "underfill_feature": 0.0
+      },
+      {
+        "corrected_series_cycles": 4876.6271195578365,
+        "prediction": 3.5860613248506605,
+        "raw_baseline_cycles": 17487.883909164237,
+        "raw_series_cycles": 4622.385297575653,
+        "sequence_length": 3072,
+        "series": "simd8_8x8",
+        "trace_growth_feature": 0.5593878860726649,
+        "underfill_feature": 0.0
+      },
+      {
+        "corrected_series_cycles": 1272.652643278894,
+        "prediction": 13.741285967951175,
+        "raw_baseline_cycles": 17487.883909164237,
+        "raw_series_cycles": 1198.5269041984236,
+        "sequence_length": 3072,
+        "series": "simd32_8x8",
+        "trace_growth_feature": 0.5593878860726649,
+        "underfill_feature": 0.0
+      },
+      {
+        "corrected_series_cycles": 8758.100480625593,
+        "prediction": 3.986954239889626,
+        "raw_baseline_cycles": 34918.14584460958,
+        "raw_series_cycles": 8758.100480625593,
+        "sequence_length": 6144,
+        "series": "simd32_4x4",
+        "trace_growth_feature": 3.278575641952486,
+        "underfill_feature": 0.0
+      },
+      {
+        "corrected_series_cycles": 10695.724831548629,
+        "prediction": 3.264682515168427,
+        "raw_baseline_cycles": 34918.14584460958,
+        "raw_series_cycles": 9205.612039567057,
+        "sequence_length": 6144,
+        "series": "simd8_8x8",
+        "trace_growth_feature": 3.278575641952486,
+        "underfill_feature": 0.0
+      },
+      {
+        "corrected_series_cycles": 2772.8255758461632,
+        "prediction": 12.59298318249025,
+        "raw_baseline_cycles": 34918.14584460958,
+        "raw_series_cycles": 2338.374189533185,
+        "sequence_length": 6144,
+        "series": "simd32_8x8",
+        "trace_growth_feature": 3.278575641952486,
+        "underfill_feature": 0.0
+      }
+    ]
+  },
+  "run_id": "run198",
+  "schema_version": 1,
+  "trace_cases": [
+    {
+      "component": "fft2d",
+      "figure": 19,
+      "key": "fig19-N192-fft2d",
+      "metadata": {
+        "batch": 1,
+        "dtype": "float32",
+        "head_dimension": 32,
+        "heads": 32,
+        "sequence_length": 192,
+        "service_class": "structured_cuda_core",
+        "transform": "rfft2+irfft2"
+      },
+      "output_finite": true,
+      "sampled_checksum": 2.8105199337005615,
+      "sequence_length": 192,
+      "timing": {
+        "maximum_ms": 0.13209599256515503,
+        "mean_ms": 0.11924479901790619,
+        "median_ms": 0.11776000261306763,
+        "minimum_ms": 0.11072000116109848,
+        "p25_ms": 0.11379200220108032,
+        "p75_ms": 0.12185599654912949
+      },
+      "timing_samples_ms": [
+        0.13209599256515503,
+        0.12185599654912949,
+        0.11776000261306763,
+        0.11379200220108032,
+        0.11072000116109848
+      ]
+    },
+    {
+      "component": "bsmm_ffn1",
+      "figure": 19,
+      "key": "fig19-N192-bsmm_ffn1",
+      "metadata": {
+        "active_width": 1024,
+        "block_size": 32,
+        "blocks": 32,
+        "compression_ratio": 1.0,
+        "copies": 4,
+        "dtype": "float32",
+        "logical_flops": 251658240,
+        "service_class": "structured_cuda_core",
+        "stages": 5,
+        "tokens": 192,
+        "width": 1024
+      },
+      "output_finite": true,
+      "sampled_checksum": 9.537558243177813e-12,
+      "sequence_length": 192,
+      "timing": {
+        "maximum_ms": 2.3664638996124268,
+        "mean_ms": 2.264678382873535,
+        "median_ms": 2.210815906524658,
+        "minimum_ms": 2.203648090362549,
+        "p25_ms": 2.203648090362549,
+        "p75_ms": 2.338815927505493
+      },
+      "timing_samples_ms": [
+        2.3664638996124268,
+        2.338815927505493,
+        2.203648090362549,
+        2.203648090362549,
+        2.210815906524658
+      ]
+    },
+    {
+      "component": "bsmm_ffn2",
+      "figure": 19,
+      "key": "fig19-N192-bsmm_ffn2",
+      "metadata": {
+        "active_width": 4096,
+        "block_size": 32,
+        "blocks": 128,
+        "compression_ratio": 1.0,
+        "copies": 1,
+        "dtype": "float32",
+        "logical_flops": 251658240,
+        "service_class": "structured_cuda_core",
+        "stages": 5,
+        "tokens": 192,
+        "width": 4096
+      },
+      "output_finite": true,
+      "sampled_checksum": 4.118553154769389e-12,
+      "sequence_length": 192,
+      "timing": {
+        "maximum_ms": 0.6256639957427979,
+        "mean_ms": 0.6215936064720153,
+        "median_ms": 0.6215680241584778,
+        "minimum_ms": 0.6155520081520081,
+        "p25_ms": 0.6205440163612366,
+        "p75_ms": 0.6246399879455566
+      },
+      "timing_samples_ms": [
+        0.6215680241584778,
+        0.6256639957427979,
+        0.6155520081520081,
+        0.6246399879455566,
+        0.6205440163612366
+      ]
+    },
+    {
+      "component": "fft2d",
+      "figure": 19,
+      "key": "fig19-N384-fft2d",
+      "metadata": {
+        "batch": 1,
+        "dtype": "float32",
+        "head_dimension": 32,
+        "heads": 32,
+        "sequence_length": 384,
+        "service_class": "structured_cuda_core",
+        "transform": "rfft2+irfft2"
+      },
+      "output_finite": true,
+      "sampled_checksum": -1.8853957653045654,
+      "sequence_length": 384,
+      "timing": {
+        "maximum_ms": 0.1515520066022873,
+        "mean_ms": 0.13374720364809037,
+        "median_ms": 0.12902399897575378,
+        "minimum_ms": 0.11878400295972824,
+        "p25_ms": 0.12601600587368011,
+        "p75_ms": 0.14336000382900238
+      },
+      "timing_samples_ms": [
+        0.1515520066022873,
+        0.12601600587368011,
+        0.14336000382900238,
+        0.12902399897575378,
+        0.11878400295972824
+      ]
+    },
+    {
+      "component": "bsmm_ffn1",
+      "figure": 19,
+      "key": "fig19-N384-bsmm_ffn1",
+      "metadata": {
+        "active_width": 1024,
+        "block_size": 32,
+        "blocks": 32,
+        "compression_ratio": 1.0,
+        "copies": 4,
+        "dtype": "float32",
+        "logical_flops": 503316480,
+        "service_class": "structured_cuda_core",
+        "stages": 5,
+        "tokens": 384,
+        "width": 1024
+      },
+      "output_finite": true,
+      "sampled_checksum": -5.575921668832251e-12,
+      "sequence_length": 384,
+      "timing": {
+        "maximum_ms": 2.653183937072754,
+        "mean_ms": 2.4497983932495115,
+        "median_ms": 2.342911958694458,
+        "minimum_ms": 2.3306241035461426,
+        "p25_ms": 2.338815927505493,
+        "p75_ms": 2.583456039428711
+      },
+      "timing_samples_ms": [
+        2.583456039428711,
+        2.653183937072754,
+        2.342911958694458,
+        2.338815927505493,
+        2.3306241035461426
+      ]
+    },
+    {
+      "component": "bsmm_ffn2",
+      "figure": 19,
+      "key": "fig19-N384-bsmm_ffn2",
+      "metadata": {
+        "active_width": 4096,
+        "block_size": 32,
+        "blocks": 128,
+        "compression_ratio": 1.0,
+        "copies": 1,
+        "dtype": "float32",
+        "logical_flops": 503316480,
+        "service_class": "structured_cuda_core",
+        "stages": 5,
+        "tokens": 384,
+        "width": 4096
+      },
+      "output_finite": true,
+      "sampled_checksum": -1.001706270015168e-11,
+      "sequence_length": 384,
+      "timing": {
+        "maximum_ms": 0.7004160284996033,
+        "mean_ms": 0.6768640041351318,
+        "median_ms": 0.6799359917640686,
+        "minimum_ms": 0.652288019657135,
+        "p25_ms": 0.6635519862174988,
+        "p75_ms": 0.6881279945373535
+      },
+      "timing_samples_ms": [
+        0.7004160284996033,
+        0.652288019657135,
+        0.6881279945373535,
+        0.6799359917640686,
+        0.6635519862174988
+      ]
+    },
+    {
+      "component": "fft2d",
+      "figure": 19,
+      "key": "fig19-N768-fft2d",
+      "metadata": {
+        "batch": 1,
+        "dtype": "float32",
+        "head_dimension": 32,
+        "heads": 32,
+        "sequence_length": 768,
+        "service_class": "structured_cuda_core",
+        "transform": "rfft2+irfft2"
+      },
+      "output_finite": true,
+      "sampled_checksum": 2.92002010345459,
+      "sequence_length": 768,
+      "timing": {
+        "maximum_ms": 0.22220799326896667,
+        "mean_ms": 0.15788799822330474,
+        "median_ms": 0.131071999669075,
+        "minimum_ms": 0.1207680031657219,
+        "p25_ms": 0.12185599654912949,
+        "p75_ms": 0.19353599846363068
+      },
+      "timing_samples_ms": [
+        0.22220799326896667,
+        0.131071999669075,
+        0.12185599654912949,
+        0.1207680031657219,
+        0.19353599846363068
+      ]
+    },
+    {
+      "component": "bsmm_ffn1",
+      "figure": 19,
+      "key": "fig19-N768-bsmm_ffn1",
+      "metadata": {
+        "active_width": 1024,
+        "block_size": 32,
+        "blocks": 32,
+        "compression_ratio": 1.0,
+        "copies": 4,
+        "dtype": "float32",
+        "logical_flops": 1006632960,
+        "service_class": "structured_cuda_core",
+        "stages": 5,
+        "tokens": 768,
+        "width": 1024
+      },
+      "output_finite": true,
+      "sampled_checksum": 1.1984207029525074e-11,
+      "sequence_length": 768,
+      "timing": {
+        "maximum_ms": 2.470911979675293,
+        "mean_ms": 2.3906432151794434,
+        "median_ms": 2.3859200477600098,
+        "minimum_ms": 2.3050880432128906,
+        "p25_ms": 2.3664638996124268,
+        "p75_ms": 2.4248321056365967
+      },
+      "timing_samples_ms": [
+        2.4248321056365967,
+        2.470911979675293,
+        2.3050880432128906,
+        2.3664638996124268,
+        2.3859200477600098
+      ]
+    },
+    {
+      "component": "bsmm_ffn2",
+      "figure": 19,
+      "key": "fig19-N768-bsmm_ffn2",
+      "metadata": {
+        "active_width": 4096,
+        "block_size": 32,
+        "blocks": 128,
+        "compression_ratio": 1.0,
+        "copies": 1,
+        "dtype": "float32",
+        "logical_flops": 1006632960,
+        "service_class": "structured_cuda_core",
+        "stages": 5,
+        "tokens": 768,
+        "width": 4096
+      },
+      "output_finite": true,
+      "sampled_checksum": 1.9928716663009105e-11,
+      "sequence_length": 768,
+      "timing": {
+        "maximum_ms": 0.7884799838066101,
+        "mean_ms": 0.7143679976463317,
+        "median_ms": 0.7045120000839233,
+        "minimum_ms": 0.6441919803619385,
+        "p25_ms": 0.6871359944343567,
+        "p75_ms": 0.7475200295448303
+      },
+      "timing_samples_ms": [
+        0.6871359944343567,
+        0.6441919803619385,
+        0.7884799838066101,
+        0.7475200295448303,
+        0.7045120000839233
+      ]
+    },
+    {
+      "component": "dense_tcu_qkv",
+      "figure": 20,
+      "key": "fig20-N512-dense_tcu_qkv",
+      "metadata": {
+        "dtype": "float16",
+        "input_dimension": 4096,
+        "logical_flops": 51539607552,
+        "output_dimension": 12288,
+        "service_class": "dense_tcu",
+        "tokens": 512
+      },
+      "output_finite": true,
+      "sampled_checksum": -2.874687671661377,
+      "sequence_length": 512,
+      "timing": {
+        "maximum_ms": 0.36953601241111755,
+        "mean_ms": 0.3524160087108612,
+        "median_ms": 0.35123199224472046,
+        "minimum_ms": 0.33792001008987427,
+        "p25_ms": 0.35120001435279846,
+        "p75_ms": 0.3521920144557953
+      },
+      "timing_samples_ms": [
+        0.36953601241111755,
+        0.33792001008987427,
+        0.3521920144557953,
+        0.35123199224472046,
+        0.35120001435279846
+      ]
+    },
+    {
+      "component": "sparse_cuda_qkv",
+      "figure": 20,
+      "key": "fig20-N512-sparse_cuda_qkv",
+      "metadata": {
+        "active_width": 2048,
+        "block_size": 32,
+        "blocks": 64,
+        "compression_ratio": 0.5,
+        "copies": 3,
+        "dtype": "float32",
+        "logical_flops": 1006632960,
+        "service_class": "structured_cuda_core",
+        "stages": 5,
+        "tokens": 512,
+        "width": 4096
+      },
+      "output_finite": true,
+      "sampled_checksum": 9.334260794857663e-12,
+      "sequence_length": 512,
+      "timing": {
+        "maximum_ms": 2.0838398933410645,
+        "mean_ms": 1.8438143730163574,
+        "median_ms": 1.789952039718628,
+        "minimum_ms": 1.7172479629516602,
+        "p25_ms": 1.7623039484024048,
+        "p75_ms": 1.8657280206680298
+      },
+      "timing_samples_ms": [
+        2.0838398933410645,
+        1.7172479629516602,
+        1.789952039718628,
+        1.8657280206680298,
+        1.7623039484024048
+      ]
+    },
+    {
+      "component": "dense_flash_attention",
+      "figure": 20,
+      "key": "fig20-N512-dense_flash_attention",
+      "metadata": {
+        "batch": 1,
+        "dtype": "float16",
+        "head_dimension": 128,
+        "heads": 32,
+        "logical_flops": 4294967296,
+        "sequence_length": 512,
+        "service_class": "dense_flash_attention"
+      },
+      "output_finite": true,
+      "sampled_checksum": 3.1843111515045166,
+      "sequence_length": 512,
+      "timing": {
+        "maximum_ms": 0.11875200271606445,
+        "mean_ms": 0.0925632007420063,
+        "median_ms": 0.10342399775981903,
+        "minimum_ms": 0.035840000957250595,
+        "p25_ms": 0.09113600105047226,
+        "p75_ms": 0.11366400122642517
+      },
+      "timing_samples_ms": [
+        0.11875200271606445,
+        0.10342399775981903,
+        0.11366400122642517,
+        0.09113600105047226,
+        0.035840000957250595
+      ]
+    },
+    {
+      "component": "sparse_cuda_fft_attention",
+      "figure": 20,
+      "key": "fig20-N512-sparse_cuda_fft_attention",
+      "metadata": {
+        "batch": 1,
+        "dimension": 4096,
+        "dtype": "float32",
+        "sequence_length": 512,
+        "service_class": "structured_cuda_core",
+        "transform": "rfft+irfft"
+      },
+      "output_finite": true,
+      "sampled_checksum": 1.0235657691955566,
+      "sequence_length": 512,
+      "timing": {
+        "maximum_ms": 0.28569599986076355,
+        "mean_ms": 0.1519615978002548,
+        "median_ms": 0.10547199845314026,
+        "minimum_ms": 0.10035199671983719,
+        "p25_ms": 0.10035199671983719,
+        "p75_ms": 0.16793599724769592
+      },
+      "timing_samples_ms": [
+        0.16793599724769592,
+        0.28569599986076355,
+        0.10547199845314026,
+        0.10035199671983719,
+        0.10035199671983719
+      ]
+    },
+    {
+      "component": "dense_tcu_ffn1",
+      "figure": 20,
+      "key": "fig20-N512-dense_tcu_ffn1",
+      "metadata": {
+        "dtype": "float16",
+        "input_dimension": 4096,
+        "logical_flops": 46170898432,
+        "output_dimension": 11008,
+        "service_class": "dense_tcu",
+        "tokens": 512
+      },
+      "output_finite": true,
+      "sampled_checksum": 5.106254577636719,
+      "sequence_length": 512,
+      "timing": {
+        "maximum_ms": 0.36454400420188904,
+        "mean_ms": 0.3536384105682373,
+        "median_ms": 0.35020801424980164,
+        "minimum_ms": 0.3500800132751465,
+        "p25_ms": 0.35020801424980164,
+        "p75_ms": 0.35315200686454773
+      },
+      "timing_samples_ms": [
+        0.36454400420188904,
+        0.35315200686454773,
+        0.35020801424980164,
+        0.35020801424980164,
+        0.3500800132751465
+      ]
+    },
+    {
+      "component": "sparse_cuda_ffn1",
+      "figure": 20,
+      "key": "fig20-N512-sparse_cuda_ffn1",
+      "metadata": {
+        "active_width": 2048,
+        "block_size": 32,
+        "blocks": 64,
+        "compression_ratio": 0.5,
+        "copies": 3,
+        "dtype": "float32",
+        "logical_flops": 1006632960,
+        "service_class": "structured_cuda_core",
+        "stages": 5,
+        "tokens": 512,
+        "width": 4096
+      },
+      "output_finite": true,
+      "sampled_checksum": 3.284502878009299e-12,
+      "sequence_length": 512,
+      "timing": {
+        "maximum_ms": 1.840127944946289,
+        "mean_ms": 1.7543039798736573,
+        "median_ms": 1.7346559762954712,
+        "minimum_ms": 1.713055968284607,
+        "p25_ms": 1.7285120487213135,
+        "p75_ms": 1.7551679611206055
+      },
+      "timing_samples_ms": [
+        1.7551679611206055,
+        1.840127944946289,
+        1.7346559762954712,
+        1.713055968284607,
+        1.7285120487213135
+      ]
+    },
+    {
+      "component": "dense_tcu_ffn2",
+      "figure": 20,
+      "key": "fig20-N512-dense_tcu_ffn2",
+      "metadata": {
+        "dtype": "float16",
+        "input_dimension": 11008,
+        "logical_flops": 46170898432,
+        "output_dimension": 4096,
+        "service_class": "dense_tcu",
+        "tokens": 512
+      },
+      "output_finite": true,
+      "sampled_checksum": -5.6285881996154785,
+      "sequence_length": 512,
+      "timing": {
+        "maximum_ms": 0.3328000009059906,
+        "mean_ms": 0.3166208028793335,
+        "median_ms": 0.3184640109539032,
+        "minimum_ms": 0.3041279911994934,
+        "p25_ms": 0.3051519989967346,
+        "p75_ms": 0.32256001234054565
+      },
+      "timing_samples_ms": [
+        0.3328000009059906,
+        0.3041279911994934,
+        0.3051519989967346,
+        0.32256001234054565,
+        0.3184640109539032
+      ]
+    },
+    {
+      "component": "sparse_cuda_ffn2",
+      "figure": 20,
+      "key": "fig20-N512-sparse_cuda_ffn2",
+      "metadata": {
+        "active_width": 5504,
+        "block_size": 32,
+        "blocks": 172,
+        "compression_ratio": 0.5,
+        "copies": 1,
+        "dtype": "float32",
+        "logical_flops": 901775360,
+        "service_class": "structured_cuda_core",
+        "stages": 5,
+        "tokens": 512,
+        "width": 11008
+      },
+      "output_finite": true,
+      "sampled_checksum": 3.6721681251350446e-11,
+      "sequence_length": 512,
+      "timing": {
+        "maximum_ms": 0.7997440099716187,
+        "mean_ms": 0.6842368006706238,
+        "median_ms": 0.6604800224304199,
+        "minimum_ms": 0.6307839751243591,
+        "p25_ms": 0.6594560146331787,
+        "p75_ms": 0.6707199811935425
+      },
+      "timing_samples_ms": [
+        0.7997440099716187,
+        0.6707199811935425,
+        0.6604800224304199,
+        0.6307839751243591,
+        0.6594560146331787
+      ]
+    },
+    {
+      "component": "dense_tcu_qkv",
+      "figure": 20,
+      "key": "fig20-N2048-dense_tcu_qkv",
+      "metadata": {
+        "dtype": "float16",
+        "input_dimension": 4096,
+        "logical_flops": 206158430208,
+        "output_dimension": 12288,
+        "service_class": "dense_tcu",
+        "tokens": 2048
+      },
+      "output_finite": true,
+      "sampled_checksum": -9.218053817749023,
+      "sequence_length": 2048,
+      "timing": {
+        "maximum_ms": 1.3148159980773926,
+        "mean_ms": 1.2881919860839843,
+        "median_ms": 1.282047986984253,
+        "minimum_ms": 1.2810239791870117,
+        "p25_ms": 1.2810239791870117,
+        "p75_ms": 1.282047986984253
+      },
+      "timing_samples_ms": [
+        1.3148159980773926,
+        1.282047986984253,
+        1.2810239791870117,
+        1.282047986984253,
+        1.2810239791870117
+      ]
+    },
+    {
+      "component": "sparse_cuda_qkv",
+      "figure": 20,
+      "key": "fig20-N2048-sparse_cuda_qkv",
+      "metadata": {
+        "active_width": 2048,
+        "block_size": 32,
+        "blocks": 64,
+        "compression_ratio": 0.5,
+        "copies": 3,
+        "dtype": "float32",
+        "logical_flops": 4026531840,
+        "service_class": "structured_cuda_core",
+        "stages": 5,
+        "tokens": 2048,
+        "width": 4096
+      },
+      "output_finite": true,
+      "sampled_checksum": 9.208052723086446e-12,
+      "sequence_length": 2048,
+      "timing": {
+        "maximum_ms": 1.8452479839324951,
+        "mean_ms": 1.7483968019485474,
+        "median_ms": 1.7408000230789185,
+        "minimum_ms": 1.6845760345458984,
+        "p25_ms": 1.7203199863433838,
+        "p75_ms": 1.751039981842041
+      },
+      "timing_samples_ms": [
+        1.7408000230789185,
+        1.751039981842041,
+        1.8452479839324951,
+        1.7203199863433838,
+        1.6845760345458984
+      ]
+    },
+    {
+      "component": "dense_flash_attention",
+      "figure": 20,
+      "key": "fig20-N2048-dense_flash_attention",
+      "metadata": {
+        "batch": 1,
+        "dtype": "float16",
+        "head_dimension": 128,
+        "heads": 32,
+        "logical_flops": 68719476736,
+        "sequence_length": 2048,
+        "service_class": "dense_flash_attention"
+      },
+      "output_finite": true,
+      "sampled_checksum": -0.17697876691818237,
+      "sequence_length": 2048,
+      "timing": {
+        "maximum_ms": 0.40959998965263367,
+        "mean_ms": 0.3324479997158051,
+        "median_ms": 0.31334400177001953,
+        "minimum_ms": 0.295199990272522,
+        "p25_ms": 0.3031040132045746,
+        "p75_ms": 0.3409920036792755
+      },
+      "timing_samples_ms": [
+        0.40959998965263367,
+        0.3409920036792755,
+        0.295199990272522,
+        0.3031040132045746,
+        0.31334400177001953
+      ]
+    },
+    {
+      "component": "sparse_cuda_fft_attention",
+      "figure": 20,
+      "key": "fig20-N2048-sparse_cuda_fft_attention",
+      "metadata": {
+        "batch": 1,
+        "dimension": 4096,
+        "dtype": "float32",
+        "sequence_length": 2048,
+        "service_class": "structured_cuda_core",
+        "transform": "rfft+irfft"
+      },
+      "output_finite": true,
+      "sampled_checksum": -0.13012397289276123,
+      "sequence_length": 2048,
+      "timing": {
+        "maximum_ms": 0.20070399343967438,
+        "mean_ms": 0.18986879885196686,
+        "median_ms": 0.18646399676799774,
+        "minimum_ms": 0.18534399569034576,
+        "p25_ms": 0.18636800348758698,
+        "p75_ms": 0.19046400487422943
+      },
+      "timing_samples_ms": [
+        0.20070399343967438,
+        0.19046400487422943,
+        0.18534399569034576,
+        0.18636800348758698,
+        0.18646399676799774
+      ]
+    },
+    {
+      "component": "dense_tcu_ffn1",
+      "figure": 20,
+      "key": "fig20-N2048-dense_tcu_ffn1",
+      "metadata": {
+        "dtype": "float16",
+        "input_dimension": 4096,
+        "logical_flops": 184683593728,
+        "output_dimension": 11008,
+        "service_class": "dense_tcu",
+        "tokens": 2048
+      },
+      "output_finite": true,
+      "sampled_checksum": -3.547851085662842,
+      "sequence_length": 2048,
+      "timing": {
+        "maximum_ms": 1.2687360048294067,
+        "mean_ms": 1.2541951894760133,
+        "median_ms": 1.2513279914855957,
+        "minimum_ms": 1.248255968093872,
+        "p25_ms": 1.2503039836883545,
+        "p75_ms": 1.252351999282837
+      },
+      "timing_samples_ms": [
+        1.252351999282837,
+        1.2687360048294067,
+        1.2513279914855957,
+        1.248255968093872,
+        1.2503039836883545
+      ]
+    },
+    {
+      "component": "sparse_cuda_ffn1",
+      "figure": 20,
+      "key": "fig20-N2048-sparse_cuda_ffn1",
+      "metadata": {
+        "active_width": 2048,
+        "block_size": 32,
+        "blocks": 64,
+        "compression_ratio": 0.5,
+        "copies": 3,
+        "dtype": "float32",
+        "logical_flops": 4026531840,
+        "service_class": "structured_cuda_core",
+        "stages": 5,
+        "tokens": 2048,
+        "width": 4096
+      },
+      "output_finite": true,
+      "sampled_checksum": -1.2588438971783411e-11,
+      "sequence_length": 2048,
+      "timing": {
+        "maximum_ms": 1.8688000440597534,
+        "mean_ms": 1.7879552125930787,
+        "median_ms": 1.7756160497665405,
+        "minimum_ms": 1.7172479629516602,
+        "p25_ms": 1.7397760152816772,
+        "p75_ms": 1.8383359909057617
+      },
+      "timing_samples_ms": [
+        1.8688000440597534,
+        1.8383359909057617,
+        1.7756160497665405,
+        1.7397760152816772,
+        1.7172479629516602
+      ]
+    },
+    {
+      "component": "dense_tcu_ffn2",
+      "figure": 20,
+      "key": "fig20-N2048-dense_tcu_ffn2",
+      "metadata": {
+        "dtype": "float16",
+        "input_dimension": 11008,
+        "logical_flops": 184683593728,
+        "output_dimension": 4096,
+        "service_class": "dense_tcu",
+        "tokens": 2048
+      },
+      "output_finite": true,
+      "sampled_checksum": -6.530458927154541,
+      "sequence_length": 2048,
+      "timing": {
+        "maximum_ms": 1.1806720495224,
+        "mean_ms": 1.161241602897644,
+        "median_ms": 1.1571199893951416,
+        "minimum_ms": 1.1550719738006592,
+        "p25_ms": 1.1560959815979004,
+        "p75_ms": 1.1572480201721191
+      },
+      "timing_samples_ms": [
+        1.1572480201721191,
+        1.1571199893951416,
+        1.1560959815979004,
+        1.1806720495224,
+        1.1550719738006592
+      ]
+    },
+    {
+      "component": "sparse_cuda_ffn2",
+      "figure": 20,
+      "key": "fig20-N2048-sparse_cuda_ffn2",
+      "metadata": {
+        "active_width": 5504,
+        "block_size": 32,
+        "blocks": 172,
+        "compression_ratio": 0.5,
+        "copies": 1,
+        "dtype": "float32",
+        "logical_flops": 3607101440,
+        "service_class": "structured_cuda_core",
+        "stages": 5,
+        "tokens": 2048,
+        "width": 11008
+      },
+      "output_finite": true,
+      "sampled_checksum": 1.7215994255193046e-12,
+      "sequence_length": 2048,
+      "timing": {
+        "maximum_ms": 1.3015040159225464,
+        "mean_ms": 1.2388352155685425,
+        "median_ms": 1.2113920450210571,
+        "minimum_ms": 1.1898880004882812,
+        "p25_ms": 1.1970560550689697,
+        "p75_ms": 1.294335961341858
+      },
+      "timing_samples_ms": [
+        1.2113920450210571,
+        1.1970560550689697,
+        1.1898880004882812,
+        1.3015040159225464,
+        1.294335961341858
+      ]
+    },
+    {
+      "component": "dense_tcu_qkv",
+      "figure": 20,
+      "key": "fig20-N4096-dense_tcu_qkv",
+      "metadata": {
+        "dtype": "float16",
+        "input_dimension": 4096,
+        "logical_flops": 412316860416,
+        "output_dimension": 12288,
+        "service_class": "dense_tcu",
+        "tokens": 4096
+      },
+      "output_finite": true,
+      "sampled_checksum": -3.6483302116394043,
+      "sequence_length": 4096,
+      "timing": {
+        "maximum_ms": 3.9925758838653564,
+        "mean_ms": 3.360985612869263,
+        "median_ms": 3.2071681022644043,
+        "minimum_ms": 3.176448106765747,
+        "p25_ms": 3.205120086669922,
+        "p75_ms": 3.223615884780884
+      },
+      "timing_samples_ms": [
+        3.2071681022644043,
+        3.176448106765747,
+        3.205120086669922,
+        3.9925758838653564,
+        3.223615884780884
+      ]
+    },
+    {
+      "component": "sparse_cuda_qkv",
+      "figure": 20,
+      "key": "fig20-N4096-sparse_cuda_qkv",
+      "metadata": {
+        "active_width": 2048,
+        "block_size": 32,
+        "blocks": 64,
+        "compression_ratio": 0.5,
+        "copies": 3,
+        "dtype": "float32",
+        "logical_flops": 8053063680,
+        "service_class": "structured_cuda_core",
+        "stages": 5,
+        "tokens": 4096,
+        "width": 4096
+      },
+      "output_finite": true,
+      "sampled_checksum": 1.698551715945129e-11,
+      "sequence_length": 4096,
+      "timing": {
+        "maximum_ms": 3.485599994659424,
+        "mean_ms": 2.990073585510254,
+        "median_ms": 2.9768319129943848,
+        "minimum_ms": 2.599936008453369,
+        "p25_ms": 2.880511999130249,
+        "p75_ms": 3.0074880123138428
+      },
+      "timing_samples_ms": [
+        2.599936008453369,
+        3.0074880123138428,
+        3.485599994659424,
+        2.880511999130249,
+        2.9768319129943848
+      ]
+    },
+    {
+      "component": "dense_flash_attention",
+      "figure": 20,
+      "key": "fig20-N4096-dense_flash_attention",
+      "metadata": {
+        "batch": 1,
+        "dtype": "float16",
+        "head_dimension": 128,
+        "heads": 32,
+        "logical_flops": 274877906944,
+        "sequence_length": 4096,
+        "service_class": "dense_flash_attention"
+      },
+      "output_finite": true,
+      "sampled_checksum": -0.8514155149459839,
+      "sequence_length": 4096,
+      "timing": {
+        "maximum_ms": 1.043455958366394,
+        "mean_ms": 1.0301440000534057,
+        "median_ms": 1.0291199684143066,
+        "minimum_ms": 1.0158079862594604,
+        "p25_ms": 1.022976040840149,
+        "p75_ms": 1.0393600463867188
+      },
+      "timing_samples_ms": [
+        1.022976040840149,
+        1.0393600463867188,
+        1.043455958366394,
+        1.0158079862594604,
+        1.0291199684143066
+      ]
+    },
+    {
+      "component": "sparse_cuda_fft_attention",
+      "figure": 20,
+      "key": "fig20-N4096-sparse_cuda_fft_attention",
+      "metadata": {
+        "batch": 1,
+        "dimension": 4096,
+        "dtype": "float32",
+        "sequence_length": 4096,
+        "service_class": "structured_cuda_core",
+        "transform": "rfft+irfft"
+      },
+      "output_finite": true,
+      "sampled_checksum": -0.02863287925720215,
+      "sequence_length": 4096,
+      "timing": {
+        "maximum_ms": 0.7045120000839233,
+        "mean_ms": 0.6672639966011047,
+        "median_ms": 0.6615039706230164,
+        "minimum_ms": 0.6338559985160828,
+        "p25_ms": 0.6606079936027527,
+        "p75_ms": 0.6758400201797485
+      },
+      "timing_samples_ms": [
+        0.6758400201797485,
+        0.6615039706230164,
+        0.6338559985160828,
+        0.6606079936027527,
+        0.7045120000839233
+      ]
+    },
+    {
+      "component": "dense_tcu_ffn1",
+      "figure": 20,
+      "key": "fig20-N4096-dense_tcu_ffn1",
+      "metadata": {
+        "dtype": "float16",
+        "input_dimension": 4096,
+        "logical_flops": 369367187456,
+        "output_dimension": 11008,
+        "service_class": "dense_tcu",
+        "tokens": 4096
+      },
+      "output_finite": true,
+      "sampled_checksum": 5.757044792175293,
+      "sequence_length": 4096,
+      "timing": {
+        "maximum_ms": 3.5174400806427,
+        "mean_ms": 2.832140827178955,
+        "median_ms": 2.8037118911743164,
+        "minimum_ms": 2.3438720703125,
+        "p25_ms": 2.6767361164093018,
+        "p75_ms": 2.818943977355957
+      },
+      "timing_samples_ms": [
+        2.6767361164093018,
+        3.5174400806427,
+        2.818943977355957,
+        2.8037118911743164,
+        2.3438720703125
+      ]
+    },
+    {
+      "component": "sparse_cuda_ffn1",
+      "figure": 20,
+      "key": "fig20-N4096-sparse_cuda_ffn1",
+      "metadata": {
+        "active_width": 2048,
+        "block_size": 32,
+        "blocks": 64,
+        "compression_ratio": 0.5,
+        "copies": 3,
+        "dtype": "float32",
+        "logical_flops": 8053063680,
+        "service_class": "structured_cuda_core",
+        "stages": 5,
+        "tokens": 4096,
+        "width": 4096
+      },
+      "output_finite": true,
+      "sampled_checksum": 4.6689158615664805e-12,
+      "sequence_length": 4096,
+      "timing": {
+        "maximum_ms": 3.152895927429199,
+        "mean_ms": 2.872524785995483,
+        "median_ms": 2.895872116088867,
+        "minimum_ms": 2.5477120876312256,
+        "p25_ms": 2.8037118911743164,
+        "p75_ms": 2.9624319076538086
+      },
+      "timing_samples_ms": [
+        2.895872116088867,
+        3.152895927429199,
+        2.9624319076538086,
+        2.8037118911743164,
+        2.5477120876312256
+      ]
+    },
+    {
+      "component": "dense_tcu_ffn2",
+      "figure": 20,
+      "key": "fig20-N4096-dense_tcu_ffn2",
+      "metadata": {
+        "dtype": "float16",
+        "input_dimension": 11008,
+        "logical_flops": 369367187456,
+        "output_dimension": 4096,
+        "service_class": "dense_tcu",
+        "tokens": 4096
+      },
+      "output_finite": true,
+      "sampled_checksum": -0.7937498092651367,
+      "sequence_length": 4096,
+      "timing": {
+        "maximum_ms": 2.9112319946289062,
+        "mean_ms": 2.6701824188232424,
+        "median_ms": 2.637824058532715,
+        "minimum_ms": 2.4944639205932617,
+        "p25_ms": 2.63372802734375,
+        "p75_ms": 2.673664093017578
+      },
+      "timing_samples_ms": [
+        2.63372802734375,
+        2.673664093017578,
+        2.637824058532715,
+        2.4944639205932617,
+        2.9112319946289062
+      ]
+    },
+    {
+      "component": "sparse_cuda_ffn2",
+      "figure": 20,
+      "key": "fig20-N4096-sparse_cuda_ffn2",
+      "metadata": {
+        "active_width": 5504,
+        "block_size": 32,
+        "blocks": 172,
+        "compression_ratio": 0.5,
+        "copies": 1,
+        "dtype": "float32",
+        "logical_flops": 7214202880,
+        "service_class": "structured_cuda_core",
+        "stages": 5,
+        "tokens": 4096,
+        "width": 11008
+      },
+      "output_finite": true,
+      "sampled_checksum": 1.4593955384445412e-12,
+      "sequence_length": 4096,
+      "timing": {
+        "maximum_ms": 4.0366082191467285,
+        "mean_ms": 3.501081657409668,
+        "median_ms": 3.490816116333008,
+        "minimum_ms": 3.0504961013793945,
+        "p25_ms": 3.0577919483184814,
+        "p75_ms": 3.8696959018707275
+      },
+      "timing_samples_ms": [
+        4.0366082191467285,
+        3.0504961013793945,
+        3.8696959018707275,
+        3.490816116333008,
+        3.0577919483184814
+      ]
+    },
+    {
+      "component": "fft_cmp",
+      "figure": 23,
+      "key": "fig23-N1536-fft_cmp",
+      "metadata": {
+        "batch": 8,
+        "dimension": 512,
+        "dtype": "float32",
+        "sequence_length": 1536,
+        "service_class": "structured_cuda_core",
+        "transform": "rfft+irfft"
+      },
+      "output_finite": true,
+      "sampled_checksum": 3.898862838745117,
+      "sequence_length": 1536,
+      "timing": {
+        "maximum_ms": 0.1984959989786148,
+        "mean_ms": 0.18469760119915007,
+        "median_ms": 0.18227200210094452,
+        "minimum_ms": 0.1802240014076233,
+        "p25_ms": 0.1802240014076233,
+        "p75_ms": 0.18227200210094452
+      },
+      "timing_samples_ms": [
+        0.1984959989786148,
+        0.18227200210094452,
+        0.18227200210094452,
+        0.1802240014076233,
+        0.1802240014076233
+      ]
+    },
+    {
+      "component": "bsmm",
+      "figure": 23,
+      "key": "fig23-N1536-bsmm",
+      "metadata": {
+        "active_width": 512,
+        "block_size": 32,
+        "blocks": 16,
+        "compression_ratio": 1.0,
+        "copies": 4,
+        "dtype": "float32",
+        "logical_flops": 8053063680,
+        "service_class": "structured_cuda_core",
+        "stages": 5,
+        "tokens": 12288,
+        "width": 512
+      },
+      "output_finite": true,
+      "sampled_checksum": 4.054572649847543e-12,
+      "sequence_length": 1536,
+      "timing": {
+        "maximum_ms": 2.430272102355957,
+        "mean_ms": 2.165619230270386,
+        "median_ms": 2.1227519512176514,
+        "minimum_ms": 2.011136054992676,
+        "p25_ms": 2.1084160804748535,
+        "p75_ms": 2.155519962310791
+      },
+      "timing_samples_ms": [
+        2.155519962310791,
+        2.1084160804748535,
+        2.1227519512176514,
+        2.430272102355957,
+        2.011136054992676
+      ]
+    },
+    {
+      "component": "fft_cmp",
+      "figure": 23,
+      "key": "fig23-N3072-fft_cmp",
+      "metadata": {
+        "batch": 8,
+        "dimension": 512,
+        "dtype": "float32",
+        "sequence_length": 3072,
+        "service_class": "structured_cuda_core",
+        "transform": "rfft+irfft"
+      },
+      "output_finite": true,
+      "sampled_checksum": -3.274980306625366,
+      "sequence_length": 3072,
+      "timing": {
+        "maximum_ms": 0.3891200125217438,
+        "mean_ms": 0.36536319851875304,
+        "median_ms": 0.3635199964046478,
+        "minimum_ms": 0.34406399726867676,
+        "p25_ms": 0.3624959886074066,
+        "p75_ms": 0.3676159977912903
+      },
+      "timing_samples_ms": [
+        0.3891200125217438,
+        0.3676159977912903,
+        0.3624959886074066,
+        0.34406399726867676,
+        0.3635199964046478
+      ]
+    },
+    {
+      "component": "bsmm",
+      "figure": 23,
+      "key": "fig23-N3072-bsmm",
+      "metadata": {
+        "active_width": 512,
+        "block_size": 32,
+        "blocks": 16,
+        "compression_ratio": 1.0,
+        "copies": 4,
+        "dtype": "float32",
+        "logical_flops": 16106127360,
+        "service_class": "structured_cuda_core",
+        "stages": 5,
+        "tokens": 24576,
+        "width": 512
+      },
+      "output_finite": true,
+      "sampled_checksum": 4.462299453555918e-12,
+      "sequence_length": 3072,
+      "timing": {
+        "maximum_ms": 5.98956823348999,
+        "mean_ms": 5.790348815917969,
+        "median_ms": 5.793791770935059,
+        "minimum_ms": 5.576704025268555,
+        "p25_ms": 5.679103851318359,
+        "p75_ms": 5.912576198577881
+      },
+      "timing_samples_ms": [
+        5.679103851318359,
+        5.98956823348999,
+        5.576704025268555,
+        5.912576198577881,
+        5.793791770935059
+      ]
+    },
+    {
+      "component": "fft_cmp",
+      "figure": 23,
+      "key": "fig23-N6144-fft_cmp",
+      "metadata": {
+        "batch": 8,
+        "dimension": 512,
+        "dtype": "float32",
+        "sequence_length": 6144,
+        "service_class": "structured_cuda_core",
+        "transform": "rfft+irfft"
+      },
+      "output_finite": true,
+      "sampled_checksum": 1.6017943620681763,
+      "sequence_length": 6144,
+      "timing": {
+        "maximum_ms": 1.56876802444458,
+        "mean_ms": 1.5369152069091796,
+        "median_ms": 1.522879958152771,
+        "minimum_ms": 1.5158079862594604,
+        "p25_ms": 1.5206400156021118,
+        "p75_ms": 1.556480050086975
+      },
+      "timing_samples_ms": [
+        1.56876802444458,
+        1.5206400156021118,
+        1.522879958152771,
+        1.5158079862594604,
+        1.556480050086975
+      ]
+    },
+    {
+      "component": "bsmm",
+      "figure": 23,
+      "key": "fig23-N6144-bsmm",
+      "metadata": {
+        "active_width": 512,
+        "block_size": 32,
+        "blocks": 16,
+        "compression_ratio": 1.0,
+        "copies": 4,
+        "dtype": "float32",
+        "logical_flops": 32212254720,
+        "service_class": "structured_cuda_core",
+        "stages": 5,
+        "tokens": 49152,
+        "width": 512
+      },
+      "output_finite": true,
+      "sampled_checksum": -6.300342192400166e-14,
+      "sequence_length": 6144,
+      "timing": {
+        "maximum_ms": 15.671296119689941,
+        "mean_ms": 15.303840065002442,
+        "median_ms": 15.371264457702637,
+        "minimum_ms": 14.98806381225586,
+        "p25_ms": 15.104000091552734,
+        "p75_ms": 15.384575843811035
+      },
+      "timing_samples_ms": [
+        15.371264457702637,
+        15.671296119689941,
+        14.98806381225586,
+        15.384575843811035,
+        15.104000091552734
+      ]
+    }
+  ]
+}
