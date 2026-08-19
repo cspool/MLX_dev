@@ -995,3 +995,16 @@ The two failures are both N=4096 Attention: dense-TCU is 27.89% and sparse-CUDA
 therefore scopes the model honestly: projection and Fig19/23 generalize, while
 mid-scale Attention crossover needs a real third anchor rather than assuming a
 two-endpoint log-linear curve.
+
+Run199 jointly certifies the five follow-on objectives without weakening their
+individual evidence. Same-input execution retains 336 boundary and 72 final
+comparisons; both automatic frontends retain 24 executions; cycle timing keeps
+68/68 original paper points within 15% with result postprocessing disabled;
+the unified entrypoint retains 62 units and 124 executions. The first full
+verification exposed five historical patch-stack replay failures caused by two
+separator lines at the latency/physical boundary. A temporary-tree-only
+normalizer now collapses those boundaries during reverse replay and restores
+them during forward replay, preserving every patch and simulator source byte.
+The final fresh suite passes 478 tests with 17 warnings. The completion claim
+does not convert H193 into a positive result: it explicitly retains 46/48
+holdout points, all 36 directions, and the two N=4096 Attention failures.
