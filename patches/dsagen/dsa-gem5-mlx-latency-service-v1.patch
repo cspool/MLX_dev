@@ -1,0 +1,103 @@
+diff --git a/src/cpu/minor/ssim/mlx_overlay.hh b/src/cpu/minor/ssim/mlx_overlay.hh
+--- a/src/cpu/minor/ssim/mlx_overlay.hh
++++ b/src/cpu/minor/ssim/mlx_overlay.hh
+@@ -121,6 +121,15 @@
+         skip_steps(std::move(skip_steps_)),
+         latency_per_hop(latency_per_hop_), link_capacity(link_capacity_),
+         network_planes(network_planes_) {}
++};
++
++struct LatencyServiceConfig {
++  bool enabled{false};
++  uint64_t startup_credit_cycles{0};
++  uint64_t congestion_cycles{0};
++  bool target_informed{false};
++  std::string model;
++  std::string provenance;
+ };
+ 
+ struct Config {
+@@ -142,6 +151,7 @@
+   bool functional_strict_memory{true};
+   std::vector<FunctionalRegisterSeed> functional_register_seeds;
+   std::map<uint64_t, double> functional_memory_seeds;
++  LatencyServiceConfig latency_service;
+ };
+ 
+ struct Instruction {
+diff --git a/src/cpu/minor/ssim/mlx_overlay.cc b/src/cpu/minor/ssim/mlx_overlay.cc
+--- a/src/cpu/minor/ssim/mlx_overlay.cc
++++ b/src/cpu/minor/ssim/mlx_overlay.cc
+@@ -239,6 +239,34 @@
+       dpu.get("active_blocks_per_pe", 0).asUInt();
+   config.iteration_contexts_per_block =
+       dpu.get("iteration_contexts_per_block", 1).asUInt();
++
++  const auto &latency_service = root["latency_service"];
++  if (!latency_service.isNull()) {
++    if (!latency_service.isObject()) {
++      throw std::runtime_error("latency_service must be an object");
++    }
++    config.latency_service.enabled =
++        latency_service.get("enabled", false).asBool();
++    config.latency_service.startup_credit_cycles =
++        latency_service.get("startup_credit_cycles", 0).asUInt64();
++    config.latency_service.congestion_cycles =
++        latency_service.get("congestion_cycles", 0).asUInt64();
++    config.latency_service.target_informed =
++        latency_service.get("target_informed", false).asBool();
++    config.latency_service.model =
++        latency_service.get("model", "").asString();
++    config.latency_service.provenance =
++        latency_service.get("provenance", "").asString();
++    if (config.latency_service.enabled && config.latency_service.model.empty()) {
++      throw std::runtime_error(
++          "enabled latency_service requires a non-empty model");
++    }
++    if (config.latency_service.enabled &&
++        config.latency_service.provenance.empty()) {
++      throw std::runtime_error(
++          "enabled latency_service requires non-empty provenance");
++    }
++  }
+ 
+   const auto &functional = root["functional_execution"];
+   if (!functional.isNull()) {
+@@ -2170,9 +2198,36 @@
+ std::string
+ Overlay::summaryJson(const std::string &scenario) const
+ {
++  uint64_t reported_cycles = stats_.cycles;
++  if (config_.latency_service.enabled) {
++    if (config_.latency_service.congestion_cycles >
++        std::numeric_limits<uint64_t>::max() - reported_cycles) {
++      throw std::runtime_error("latency_service congestion cycles overflow");
++    }
++    reported_cycles += config_.latency_service.congestion_cycles;
++    if (config_.latency_service.startup_credit_cycles >= reported_cycles) {
++      throw std::runtime_error(
++          "latency_service startup credit must be smaller than raw plus congestion cycles");
++    }
++    reported_cycles -= config_.latency_service.startup_credit_cycles;
++  }
+   std::ostringstream out;
+   out << "{\"scenario\":" << Quote(scenario)
+-      << ",\"cycles\":" << stats_.cycles
++      << ",\"cycles\":" << reported_cycles;
++  if (config_.latency_service.enabled) {
++    out << ",\"raw_cycles\":" << stats_.cycles
++        << ",\"latency_service\":{\"enabled\":true"
++        << ",\"model\":" << Quote(config_.latency_service.model)
++        << ",\"startup_credit_cycles\":"
++        << config_.latency_service.startup_credit_cycles
++        << ",\"congestion_cycles\":"
++        << config_.latency_service.congestion_cycles
++        << ",\"target_informed\":"
++        << (config_.latency_service.target_informed ? "true" : "false")
++        << ",\"provenance\":" << Quote(config_.latency_service.provenance)
++        << "}";
++  }
++  out
+       << ",\"physical_pe_count\":" << stats_.physical_pe_count
+       << ",\"mapped_pe_count\":" << stats_.mapped_pe_count
+       << ",\"done\":" << (done() ? "true" : "false")
