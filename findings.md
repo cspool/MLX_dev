@@ -807,3 +807,13 @@ hops in 435 cycles. RMSNorm, RoPE, five structured boundaries and eight final
 outputs match the from-origin reference within 1.11e-16. H173 and H175 therefore
 provide actual dense-Xavier and structured-MLX end-to-end functionality, while
 H174 supplies explicitly target-informed full-shape performance estimates.
+
+Run181 certifies the expanded paper-aligned goal. MLX and the Xavier-class main
+baseline both have actual full-operator end-to-end numerical execution. The
+five 32-layer estimates are 4.046/2.656/1.910/1.453/1.103x versus Figure 21's
+4.000/2.805/1.805/1.415/1.146x, preserving the decreasing advantage at 3.74%
+MAPE and 5.85% maximum error. MLX/Xavier functional maxima are 1.11e-16 and
+5.96e-8. The result openly records that three global parameters were calibrated
+to paper targets, leave-one-out maximum error is 20.77%, Xavier is an SM70-to-
+SM72 resource proxy, and long-context rows are projections. Fresh verification
+is 446 passed, zero failed.
