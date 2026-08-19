@@ -1,0 +1,77 @@
+schema_version: 1
+suite_id: mlx-fig19-20-23-unified-v1
+description: Unified high-level workload graphs for detailed and analytical MLX simulators
+
+graphs:
+  figure23_complete_block:
+    figure: 23
+    model:
+      family: structured_transformer
+      sequence_length: 512
+      hidden_dimension: 512
+      ffn_dimension: 2048
+      batch: 8
+      precision: fp16
+    operators:
+      - {id: rmsnorm, kind: elementwise, depends_on: []}
+      - {id: rope, kind: elementwise, depends_on: [rmsnorm]}
+      - {id: qkv, kind: bsmm, depends_on: [rope]}
+      - {id: fft_cmp, kind: fft_cmp, depends_on: [qkv]}
+      - {id: attention, kind: attention, depends_on: [fft_cmp]}
+      - {id: output, kind: bsmm, depends_on: [attention]}
+      - {id: ffn, kind: bsmm, depends_on: [output]}
+    lowering:
+      adapter: fig23_complete_block
+      execution_format: mlx_overlay_json
+      source_ref: fig23_base_overlay
+      active_window: 4
+      baseline_repeat: 16
+      hardware_name: simd32_8x8
+      simd_width: 32
+      mesh: [8, 8]
+      latency_service_ref: selected_model
+      trace_ref: rtx4090_trace
+
+  figure19_fabnet_block:
+    figure: 19
+    model:
+      family: fabnet_large
+      sequence_length: 512
+      hidden_dimension: 1024
+      ffn_dimension: 4096
+      batch: 1
+      precision: fp16
+    operators:
+      - {id: fft2d_attention, kind: fft2d, depends_on: []}
+      - {id: global_ffn1, kind: bsmm, depends_on: []}
+      - {id: global_ffn2, kind: bsmm, depends_on: [global_ffn1]}
+    lowering:
+      adapter: fig19_coupled_paths
+      execution_format: mlx_dpu_memory_json
+      source_manifest_ref: fig19_source_manifest
+      source_config_ref: fig19_source_config
+      hardware_config_ref: fig19_coupled_config
+      scale: 8
+
+  figure20_llama_kernels:
+    figure: 20
+    model:
+      family: llama2_7b_structured_block
+      sequence_lengths: [256, 8192]
+      hidden_dimension: 4096
+      ffn_dimension: 11008
+      batch: 1
+      block_size: 32
+      compression_ratio: 0.5
+      chunk_length: 512
+      precision: fp16
+    operators:
+      - {id: qkv, kind: bsmm, output: hidden, projections: 3, depends_on: []}
+      - {id: attention, kind: fft_cmp, output: hidden, projections: 1, depends_on: [qkv]}
+      - {id: ffn1, kind: bsmm, output: ffn, projections: 1, depends_on: []}
+      - {id: ffn2, kind: bsmm, input: ffn, output: hidden, projections: 1, depends_on: [ffn1]}
+    lowering:
+      adapter: analytical_kernel_profiles
+      execution_format: analytical_kernel_profile_json
+      hardware_config_ref: mlx_full_hardware
+      performance_service_ref: figure20_result

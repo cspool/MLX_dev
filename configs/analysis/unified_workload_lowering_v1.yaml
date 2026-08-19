@@ -1,0 +1,110 @@
+name: unified-workload-lowering-v1
+experiment_id: H187
+run_id: run192
+classification: unified_model_graph_to_mlx_simulator_toolchain
+validation_eligible: true
+
+frozen_inputs:
+  workload_spec:
+    path: configs/workloads/mlx_fig19_20_23_v1.yaml
+    bytes: 2593
+    sha256: f8a5fe8dccc36c27574f63209bc373ac35619f6536a82953ccb07715a6247d58
+  figure23_result:
+    path: artifacts/results/fig23-trace-corrected-run189.json
+    bytes: 22333
+    sha256: 2c6ef6aeda12781399f82f6f22900d3560e702a2c85cfa0e774c13c736800059
+    required_status: supported
+    required_integrity: true
+  figure19_result:
+    path: artifacts/results/fig19-trace-corrected-run190.json
+    bytes: 10845
+    sha256: 8b302da5def7e675614353a67eb2d5f83929d1c97827d8c13ab2daaccd30ff4f
+    required_status: supported
+    required_integrity: true
+  figure20_result:
+    path: artifacts/results/fig20-trace-corrected-run191.json
+    bytes: 12434
+    sha256: 16c3a14061c19135a92e2cea9f5cc3b856f268bdab0ca93a72f2fd9e4abb3f08
+    required_status: supported
+    required_integrity: true
+  selected_model:
+    path: artifacts/results/fig19-20-23-gap-attribution-run188.json
+    bytes: 37530
+    sha256: d38bd8ddc7cb6e131662241549f53df97015053b87a72b00277137d970001aef
+    required_status: supported
+    required_integrity: true
+  rtx4090_trace:
+    path: artifacts/results/fig19-20-23-rtx4090-trace-run187.json
+    bytes: 52250
+    sha256: b958398750a3a34a2426ae24b22a1014a199486f31d38a0b67dc6ea3bd4afbb9
+    required_status: supported
+    required_integrity: true
+  fig23_base_overlay:
+    path: artifacts/environment/h48/mlx-full-block-fixed.json
+    bytes: 283959
+    sha256: 66f44eb4b1f0092ae88e93c7a14285254e3295d281315ea7e7f61788d2bc0e03
+  fig19_source_manifest:
+    path: artifacts/environment/h98/fig19-source-paths-compile-manifest.json
+    bytes: 101749
+    sha256: 6d83653478cda02a9857aed146f5d67dff436929ca0eec7b7c85381d3636389f
+  fig19_source_config:
+    path: configs/simulators/fig19_source_paths_v1.yaml
+    bytes: 1977
+    sha256: ef275e7838b35e6e8936ace9096da2fcbaf54707f67c0084635222baf94ea3d8
+  fig19_coupled_config:
+    path: configs/simulators/fig19_coupled_paths_v1.yaml
+    bytes: 2447
+    sha256: 89d22f4b2e700e25a892ce6cc3f2fd9f681cc95703ef25c80ace99e318c80126
+  mlx_full_hardware:
+    path: configs/hardware/mlx_full.yaml
+    bytes: 532
+    sha256: 97f8ed084c2f62eef41eb86de0b06ba43bf9947d301ac3b24d894d2f83d6053c
+
+context_refs:
+  selected_model: selected_model
+  rtx4090_trace: rtx4090_trace
+  fig23_base_overlay: fig23_base_overlay
+  fig19_source_manifest: fig19_source_manifest
+  fig19_source_config: fig19_source_config
+  fig19_coupled_config: fig19_coupled_config
+  mlx_full_hardware: mlx_full_hardware
+  figure20_result: figure20_result
+
+toolchain_contract:
+  required_graphs: 3
+  required_graph_nodes: 14
+  required_executable_units: 12
+  required_overlay_units: 4
+  required_memory_configs: 3
+  required_analytical_profiles: 8
+  required_replays_per_unit: 2
+  required_executions: 24
+  execution_formats:
+    - mlx_overlay_json
+    - mlx_dpu_memory_json
+    - analytical_kernel_profile_json
+  require_topological_graphs: true
+  require_lineage_for_every_node: true
+  require_deterministic_lowering: true
+  require_deterministic_execution: true
+
+execution:
+  detailed_max_cycles: 100000000
+  build_mode: optimized
+  workers: 4
+
+source_layout:
+  protocol: experiments/h187-unified-workload-lowering/protocol.md
+  config: configs/analysis/unified_workload_lowering_v1.yaml
+  workload_spec: configs/workloads/mlx_fig19_20_23_v1.yaml
+  lowerer_core: src/mlxsim/workload_lowering.py
+  lowerer_cli: scripts/lower_mlx_workload.py
+  runner: scripts/run_lowered_mlx_workload.py
+  auditor: scripts/audit_unified_workload_lowering.py
+  test: tests/test_unified_workload_lowering.py
+  documentation: docs/workload-lowering-toolchain.md
+
+output_root: artifacts/environment/h187
+lowering_manifest: artifacts/environment/h187/lowering-manifest.json
+execution_manifest: artifacts/environment/h187/execution-manifest.json
+result_path: artifacts/results/unified-workload-lowering-run192.json
