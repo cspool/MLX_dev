@@ -789,3 +789,12 @@ FFN. N4/8/16 require 28 kernels each and scale from 38,092 to 65,916 cycles.
 Every final element matches an independent host implementation within 5.96e-8.
 Together with run176, both the structured MLX and dense Xavier-class paths now
 have actual end-to-end functional execution; neither proxy identity is hidden.
+
+Run179 supplies the requested near-paper end-to-end estimate. It corrects the
+old Xavier HMMA work unit, adds one global framework/launch term, and models MLX
+with one linear-work and one attention-work service coefficient across all five
+rows. Three parameters for five points yield 4.046/2.656/1.910/1.453/1.103x
+against 4.000/2.805/1.805/1.415/1.146x (3.74% MAPE, 5.85% max). Leave-one-out
+maximum error is 20.77%, exposing rather than hiding estimation uncertainty.
+The completion audit retains one remaining functional gap: MLX RMSNorm/RoPE
+appear in timing graphs but not yet in the numerical run176 chain.
