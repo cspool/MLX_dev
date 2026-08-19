@@ -947,3 +947,12 @@ the three-graph/fourteen-node/twelve-unit lowering toolchain with 24 replay
 executions. Fresh verification passes Ruff and 467 tests with zero failures.
 The result remains explicitly target-informed and does not claim independent
 validation, the authors' unpublished compiler, RTL, power or area.
+
+Run194 supplies the same-input functional contract missing from H187. Three
+graph families and fourteen nodes execute through an independent vectorized
+NumPy golden path and an explicit tiled/sharded lowered path for three seeds,
+FP32/FP16 and four SIMD/mesh mappings. All 336 intermediate boundaries, 72
+final outputs, 72 event/work identities and 54 mapping comparisons pass; the
+maximum absolute error is 1.22e-4 (the larger relative maximum occurs only near
+zero). Performance claims can now be gated on graph-level functional and work
+equivalence rather than execution completion alone.
