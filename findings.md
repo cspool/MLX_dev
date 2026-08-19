@@ -781,3 +781,11 @@ hops. Baseline/MLX active-tag maxima are 1/13 and MLX has 41 early data-ready
 issues. Fresh verification is 439 passed, zero failed. This completes the
 requested phenomenon/conclusion without claiming exact paper numbers or all
 paper experiments.
+
+Run178 supplies the missing main-baseline functionality. A new CUDA program
+executes two dense Transformer layers on the detailed Xavier-class proxy with
+RMSNorm, dense QKV, RoPE, causal QK-softmax-SV, output/residual and gated SiLU
+FFN. N4/8/16 require 28 kernels each and scale from 38,092 to 65,916 cycles.
+Every final element matches an independent host implementation within 5.96e-8.
+Together with run176, both the structured MLX and dense Xavier-class paths now
+have actual end-to-end functional execution; neither proxy identity is hidden.
