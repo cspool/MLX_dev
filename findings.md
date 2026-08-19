@@ -695,3 +695,11 @@ also conserved. The exact identity `physical capacity = temporal busy x active
 spatial` holds everywhere. No Figure 22 target is read and no definition is
 selected, so this result is an auditable counter ledger rather than a numerical
 reproduction claim.
+
+Run169 exposes all seven identities to Figure 22 only after that registration.
+Each definition is applied unchanged to all 64 operator/size/resource cells,
+yielding 448 comparisons with no per-resource selection. Every identity passes
+zero of eight ordered trend curves, and none reaches 64/64 within 10%; the best
+single-point count is only 7/64. Changing the utilization denominator or
+calling spatial occupancy a pipeline utilization therefore cannot explain the
+paper. The next falsifiable gap is the execution schedule and memory timing.

@@ -754,14 +754,13 @@ experiments:
       timestamp: "2026-08-17"
 
 outer_loop:
-  cycle: 123
-  last_direction: "Expose all H163 pre-registered utilization identities to Figure 22 as held-out evidence without per-resource selection. If no single identity transfers, move to active-window coverage and separate SPM/external-memory timing rather than fitting counters."
-  last_reflection: "H163 supports the counter ledger itself: 16 paths preserve all raw cycles and satisfy temporal/spatial factorization plus four-port conservation. It intentionally selects no paper-facing definition, so the next experiment can falsify metric identity without leakage."
+  cycle: 124
+  last_direction: "Run a target-free active-window and tag-coverage sweep from the paper's B_T*C >= T_load+T_xfer condition, preserving exact work and the four-port topology. Use held-out Figure 22 only after schedule candidates are frozen."
+  last_reflection: "H164 rejects counter remapping decisively: every one of seven globally consistent identities passes 0/8 Figure-22 trend curves, with no strict-complete identity. The residual therefore lies in execution coverage or memory timing, not merely the reported utilization denominator."
 
 strict_numeric_refresh:
   status: active
   started: "2026-08-19"
-  current_hypothesis: H164
   completed_hypotheses:
     - experiment_id: H163
       run_id: run168
@@ -771,6 +770,16 @@ strict_numeric_refresh:
       acceptance_gates: 10/10
       metric_selected: false
       paper_targets_consumed: false
+    - experiment_id: H164
+      run_id: run169
+      path: artifacts/results/fig22-counter-identity-heldout-run169.json
+      sha256: 50eae12c9d26689ada56d4d333a51bee54c0997959ca52b3148f50a93d7f3b6c
+      status: rejected
+      audit_integrity: true
+      trend_complete_identities: 0/7
+      strict_complete_identities: 0/7
+      diagnosis: counter_identity_insufficient_schedule_or_memory_next
+  current_hypothesis: H165
   target_policy: source_derived_candidates_then_paper_held_out
   open_simulator_pins:
     dam_rs: 8771934ce6074bea0d8d901cf787aae8983ae42e
