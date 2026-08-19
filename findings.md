@@ -866,3 +866,15 @@ verification passes Ruff and 453 tests with zero failures. Thus the
 trend-level exploration is complete without claiming original GPU replication,
 independent Figure18 validation, strict full-paper reproduction, RTL, power or
 area.
+
+Run187 starts the stricter Figure23/19/20 numerical-convergence phase with a
+target-free local RTX4090 trace. Thirty-eight shape-matched cases yield 361
+positive CUDA-event samples and finite outputs on the registered SM89 GPU. The
+critical new observation is a scale-regime crossover hidden by the previous
+uniform Figure20 projection estimate: at N=256 the structured CUDA projection
+proxy is 7.99x/8.37x/3.24x slower than dense TCU QKV/FFN1/FFN2, but at N=8192
+the ratios narrow to 1.27x/1.34x/1.38x. FFT attention moves from 1.07x slower
+than FlashAttention at N=256 to 2.55x faster at N=8192. Figure23 traces also
+show a launch-dominated plateau through N=1024 followed by strong FFT/BSMM
+growth. Subsequent mappings should therefore use operator- and scale-specific
+trace features with shared parameters, not a single 2.02x projection ratio.
