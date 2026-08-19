@@ -25,7 +25,10 @@ data-ready boundaries. Every field is labeled cross-figure inference; H131's
   Table-IV FLOP savings relative to SpAtten's 3x.
 
 The five external accelerator rows and energy series remain reported-source
-references; they are not reimplemented.
+references; they are not reimplemented. The energy series is read from the
+separately frozen `artifacts/targets/paper_targets.yaml`, because the legacy H7
+arithmetic artifact contains latency, FLOP saving and affinity but no energy
+values.
 
 ## Acceptance gates
 
