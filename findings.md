@@ -721,3 +721,12 @@ requests, bytes, xfer issues, unit/skip hops and four SRAM ports conserve. The
 ledger records 64 GB/s historical DMA, 1024 B/cycle SRAM wire capacity and 512
 B/cycle SIMD8 payload capacity as inferred rather than disclosed values. Its 13
 metrics are target-free and no Figure-22 schema is selected.
+
+Run172 performs the held-out test on five complete resource schemas. Separating
+external service from local loads is materially better than the old physical-
+PE counter: component issue/hop MAPE falls from 168.27% to 28.15%/27.83%, with
+16/64 and 14/64 strict hits; hop-based unified data supply reaches 8/16 totals.
+Nevertheless every fixed schema passes zero of eight ordered curves. Resource
+semantics explain much of the magnitude error but not the size trend. Further
+Figure-22 counter/bandwidth tuning is stopped in favor of GPU mapping and the
+independently sourced SPM-capacity fusion mechanism.
