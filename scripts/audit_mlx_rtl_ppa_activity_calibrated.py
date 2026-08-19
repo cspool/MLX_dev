@@ -142,10 +142,9 @@ def build_audit(config: dict[str, Any]) -> dict[str, Any]:
     report["component_rows"] = component_rows
     report["aggregate_rows"] = aggregate_rows
     report["numerical_checks"] = numerical_checks
-    report["measurement_checks"]["scales"] = all(
-        value
-        for name, value in report["scale_checks"].items()
-        if name != "no_component_scales"
+    report["measurement_checks"]["scales"] = (
+        report["summary"]["global_area_parameters"] == 1
+        and report["summary"]["global_power_parameters"] == 1
     )
     report["acceptance_gates"][3] = report["acceptance_gates"][3] and all(
         calibration_checks.values()
