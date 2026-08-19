@@ -25,8 +25,16 @@ from mlxsim.repeat_folding import fit_affine, relative_error
 
 try:
     from scripts.audit_compute_dma_overlap import git_commit, qualify
+    from scripts.patch_stack_utils import (
+        collapse_physical_latency_separator,
+        restore_physical_latency_separator,
+    )
 except ModuleNotFoundError:
     from audit_compute_dma_overlap import git_commit, qualify
+    from patch_stack_utils import (
+        collapse_physical_latency_separator,
+        restore_physical_latency_separator,
+    )
 
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
 DEFAULT_CONFIG = PROJECT_ROOT / "configs/simulators/coupled_full_mesh_paths_v1.yaml"
@@ -270,6 +278,7 @@ def capacity_patch_audit(config: dict[str, Any]) -> dict[str, Any]:
         "latency_patch": qualify(latency_patch),
         "physical_patch": qualify(physical_patch),
         "physical_reverse_check": False,
+        "latency_separator_collapsed": False,
         "latency_reverse_check": False,
         "functional_reverse_check": False,
         "resident_reverse_check": False,
@@ -282,6 +291,7 @@ def capacity_patch_audit(config: dict[str, Any]) -> dict[str, Any]:
         "resident_forward_check": False,
         "functional_forward_check": False,
         "latency_forward_check": False,
+        "latency_separator_restored": False,
         "physical_forward_check": False,
         "round_trip_exact": False,
     }
@@ -312,6 +322,12 @@ def capacity_patch_audit(config: dict[str, Any]) -> dict[str, Any]:
             cwd=root,
             check=True,
         )
+        report["latency_separator_collapsed"] = (
+            collapse_physical_latency_separator(source)
+        )
+        if not report["latency_separator_collapsed"]:
+            report["pass"] = False
+            return report
         latency_reverse = subprocess.run(
             ["git", "apply", "-R", "--check", str(latency_patch)],
             cwd=root,
@@ -477,6 +493,12 @@ def capacity_patch_audit(config: dict[str, Any]) -> dict[str, Any]:
                                     cwd=root,
                                     check=True,
                                 )
+                                report["latency_separator_restored"] = (
+                                    restore_physical_latency_separator(source)
+                                )
+                                if not report["latency_separator_restored"]:
+                                    report["pass"] = False
+                                    return report
                                 physical_forward = subprocess.run(
                                     ["git", "apply", "--check", str(physical_patch)],
                                     cwd=root,
@@ -502,6 +524,7 @@ def capacity_patch_audit(config: dict[str, Any]) -> dict[str, Any]:
         for key in (
             "reverse_check",
             "physical_reverse_check",
+            "latency_separator_collapsed",
             "latency_reverse_check",
             "functional_reverse_check",
             "resident_reverse_check",
@@ -513,6 +536,7 @@ def capacity_patch_audit(config: dict[str, Any]) -> dict[str, Any]:
             "resident_forward_check",
             "functional_forward_check",
             "latency_forward_check",
+            "latency_separator_restored",
             "physical_forward_check",
             "round_trip_exact",
         )

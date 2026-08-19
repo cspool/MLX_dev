@@ -20,6 +20,11 @@ import yaml
 from mlxsim.dsagen_overlay import canonical_json
 from mlxsim.fig22_coupled_workloads import compile_fig22_coupled_workload
 
+try:
+    from scripts.patch_stack_utils import collapse_physical_latency_separator
+except ModuleNotFoundError:
+    from patch_stack_utils import collapse_physical_latency_separator
+
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
 DEFAULT_CONFIG = PROJECT_ROOT / "configs/simulators/fig22_coupled_workloads_v1.yaml"
 RESOURCES = ("compute", "load", "store", "xfer")
@@ -107,6 +112,12 @@ def reverse_patch_check(spec: dict[str, Any]) -> dict[str, Any]:
             )
             if descendant_result.returncode != 0:
                 break
+            if descendant_path.name == "dsa-gem5-mlx-physical-timing-v1.patch":
+                descendant_checks["physical_latency_separator"] = (
+                    collapse_physical_latency_separator(temporary_source)
+                )
+                if not descendant_checks["physical_latency_separator"]:
+                    break
         after_descendants = sha256_file(temporary_source)
         result = subprocess.run(
             ["git", "apply", "--reverse", str(patch)],

@@ -19,6 +19,17 @@ import yaml
 from mlxsim.dsagen_overlay import canonical_json
 from mlxsim.pipelined_block_contexts import scenarios
 
+try:
+    from scripts.patch_stack_utils import (
+        collapse_physical_latency_separator,
+        restore_physical_latency_separator,
+    )
+except ModuleNotFoundError:
+    from patch_stack_utils import (
+        collapse_physical_latency_separator,
+        restore_physical_latency_separator,
+    )
+
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
 DEFAULT_CONFIG = (
     PROJECT_ROOT / "configs/simulators/pipelined_block_contexts_v1.yaml"
@@ -153,6 +164,14 @@ def patch_audit(config: dict[str, Any]) -> dict[str, Any]:
                 check=True,
             )
             applied_newer.append(newer)
+            if newer.name == "dsa-gem5-mlx-physical-timing-v1.patch":
+                normalized = collapse_physical_latency_separator(source)
+                report["newer_patch_stack"]["physical_latency_separator"] = (
+                    normalized
+                )
+                if not normalized:
+                    report["pass"] = False
+                    return report
         reverse = subprocess.run(
             ["git", "apply", "-R", "--check", str(patch_path)],
             cwd=root,
@@ -186,6 +205,14 @@ def patch_audit(config: dict[str, Any]) -> dict[str, Any]:
             subprocess.run(["git", "apply", str(patch_path)], cwd=root, check=True)
             for newer in reversed(applied_newer):
                 options = ["--unidiff-zero"] if "active-pipelined" in newer.name else []
+                if newer.name == "dsa-gem5-mlx-physical-timing-v1.patch":
+                    restored = restore_physical_latency_separator(source)
+                    report["newer_patch_stack"][
+                        "physical_latency_separator_restored"
+                    ] = restored
+                    if not restored:
+                        report["pass"] = False
+                        return report
                 subprocess.run(
                     ["git", "apply", *options, "--check", str(newer)],
                     cwd=root,
