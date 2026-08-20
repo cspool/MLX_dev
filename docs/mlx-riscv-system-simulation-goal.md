@@ -1,0 +1,97 @@
+# MLX + RISC-V 系统协同仿真目标
+
+更新日期：2026-08-20
+
+## 1. 总目标
+
+构建一个无需实体芯片的流片前风格验证环境：RISC-V 在 Chipyard/Verilator
+中运行 bare-metal ELF，通过精简命令接口配置并启动 MLX，MLX 周期模型或
+4×4 PE 阵列 RTL 执行空间程序，行为级存储系统提供 DMA/SPM/DRAM 时序。
+
+目标是验证 MLX 的功能、关键指令周期和端到端性能收益趋势，并由 RTL 活动
+轨迹评估 MLX 关键模块的面积与功耗。CPU、缓存和系统内存不计入 MLX PPA。
+
+## 2. 论文证据边界
+
+论文明确公开了周期精确 MLX 模拟器、Verilog RTL、RISC-V host、空间汇编器
+和流片硬件测量，但没有公开其 CPU 型号、系统互连、缓存/DRAM 参数或完整
+系统验证平台。因此本项目是“论文约束下的 MLX + RISC-V 系统重建”，不能
+声称复刻了作者未公开的全系统实现。
+
+## 3. 目标结构
+
+```text
+模型/算子
+   -> MLX lowering 与空间汇编
+   -> C header、数据镜像与 bare-metal ELF
+   -> Chipyard RISC-V
+   -> RoCC/TileLink 命令与内存接口
+   -> MLX 系统控制器
+   -> 周期模型（完整负载）或 4×4 PE RTL（关键路径）
+   -> 行为级 DMA/SPM/DRAM
+```
+
+两个 MLX 后端共享相同的命令、程序、数据和统计格式：
+
+1. 快速周期模型用于完整工作负载、参数扫描和论文性能趋势复现。
+2. Verilator RTL 用于关键指令、小型内核、逐周期一致性和 VCD 活动采集。
+
+## 4. 实施优先级
+
+### P0：系统执行闭环
+
+1. 定义 `config / launch / wait / status` 的 RISC-V 可见接口。
+2. 在 Chipyard 中接入 MLX 周期模型，运行真实 bare-metal ELF。
+3. 实现行为级 DMA/SPM/DRAM 时序和地址空间。
+4. 打通空间二进制、C header、输入数据、输出校验和运行清单。
+
+### P1：可执行 MLX RTL
+
+1. 实现自主取指、Tag 调度、RF、FU、load/store、xfer 和完成反馈闭环。
+2. 实现真实 4×4 PE 阵列、坐标、邻接/skip-hop 网络、流控和阵列控制器。
+3. 将 RTL 后端接入与周期模型相同的 Chipyard 接口。
+
+### P2：功能与性能实验
+
+1. 运行 BSMM、FFT-CMP、SWA 以及至少一个组合 Transformer block。
+2. 对齐软件参考、周期模型和 RTL 的输出。
+3. 测量 host、配置、DMA、load/store、compute、xfer、同步和总周期。
+4. 测量 FMA、ADD、MUL、MAX、EXP、DIV、SHUFFLE、XFER、LOAD、STORE 的
+   latency、initiation interval、依赖停顿和资源冲突。
+5. 复现论文关键架构创新相对 baseline 的明显同向收益；数值接近是次级目标。
+
+### P3：RTL PPA
+
+1. 对真实 4×4 MLX 顶层综合、STA 和布局布线，而不是单 PE 乘以 16。
+2. 使用系统/RTL 工作负载生成的 VCD 估算动态功耗。
+3. 分别报告未经目标拟合的原始结果和任何显式校准结果。
+4. 报告 1 GHz slack；若无法闭合，则报告实际 Fmax 并按频率解释性能。
+
+## 5. 完成条件
+
+- RISC-V ELF 能配置、启动、等待 MLX，并正确读回结果。
+- BSMM、FFT-CMP、SWA 在周期模型后端通过端到端功能验证。
+- 关键指令和小型内核在 RTL 后端通过功能及逐周期验证。
+- 周期模型与 RTL 对相同小型负载的指令数、事件顺序和周期差异有明确解释。
+- 系统总周期包含 host/config/DMA/同步开销，且与加速器内核周期分开报告。
+- 论文核心 MLX 性能实验呈现相同的收益趋势。
+- 真实 4×4 阵列获得面积、功耗、时序和关键路径报告。
+- 所有结果标明来源：测量、RTL、系统仿真、架构模拟、推断或目标校准。
+
+## 6. 非目标
+
+- 不实现或流片完整 SoC。
+- 不要求运行 Linux；bare-metal 系统验证足够。
+- 不要求复刻作者未公开的 RISC-V 核、私有 12 nm 库或 Synopsys 流程。
+- 不把 CPU、缓存、DRAM PHY 或行为级内存模型计入 MLX 面积与功耗。
+- 不以训练、模型质量或 GPU 原生实验阻塞 MLX 系统和架构验证。
+
+## 7. 当前起点与主要缺口
+
+- 已有架构周期模拟器、FX/ONNX lowering、空间汇编器和单 PE 关键 RTL。
+- 已有 DSAGEN/gem5 RISC-V 系统 smoke，但它没有连接 MLX SystemVerilog RTL。
+- 已有 Chipyard checkout：`third_party/dsa-framework/chipyard`，commit
+  `174875463458c22f90cec1be0b62f2bc8633791c`。
+- 尚缺 Chipyard MLX wrapper、bare-metal runtime、系统内存接口、自主执行的
+  4×4 RTL，以及系统级端到端实验。
+- 当前 PE-array PPA 是单 PE 外推且功耗包含目标校准，不作为最终阵列 PPA。
