@@ -1,0 +1,3824 @@
+{
+  "checks": {
+    "count": true,
+    "deterministic": true,
+    "full_boundary_events": true,
+    "full_event_definitions": true,
+    "full_event_emissions": true,
+    "removed_predecessors": true,
+    "target_free": true
+  },
+  "experiment_id": "H171",
+  "outputs": {
+    "attention--multi_layer_execution_data_ready--disabled": {
+      "artifact": {
+        "bytes": 63885,
+        "path": "artifacts/environment/h171/configs/attention--multi_layer_execution_data_ready--disabled.json",
+        "sha256": "0ad90cb44aa819f2ba1fdf0e3cf1a3cc1bbbb4ca9b2e472a13a2205f9b1b154f"
+      },
+      "deterministic": true,
+      "input_memory_sha256": "99431860bb7c2ce2935629e34bbd5ae9775e18209f4676acf986d86bc3d22867",
+      "metadata": {
+        "active_window": 13,
+        "architecture": "multi_layer_execution_data_ready",
+        "boundary_mode": "address_matched_store_ready",
+        "components": [
+          {
+            "config": "configs/simulators/bsmm_functional_v1.yaml",
+            "linked_address_map": {},
+            "linked_seed_count": 0,
+            "name": "bsmm",
+            "source_schedule_counts": {
+              "boundary_events": 8,
+              "functional_operations": 88,
+              "memory_bytes": 384,
+              "memory_requests": 48,
+              "operations": {
+                "fma": 16,
+                "load": 40,
+                "mul": 16,
+                "store": 8,
+                "xfer": 8
+              },
+              "pipelines": {
+                "compute": 32,
+                "load": 40,
+                "store": 8,
+                "xfer": 8
+              },
+              "route_hops": 12,
+              "scalar_adds": 16,
+              "scalar_multiplies": 32,
+              "skip_hops": 0,
+              "unit_hops": 12
+            },
+            "tag_range": [
+              1,
+              2
+            ],
+            "x_offset": 0
+          },
+          {
+            "config": "configs/simulators/fft_cmp_functional_v1.yaml",
+            "linked_address_map": {
+              "20480": 16384,
+              "20488": 16392,
+              "20496": 16400,
+              "20504": 16408,
+              "20736": 16640,
+              "20744": 16648,
+              "20752": 16656,
+              "20760": 16664
+            },
+            "linked_seed_count": 8,
+            "name": "fft_cmp",
+            "source_schedule_counts": {
+              "boundary_events": 24,
+              "functional_operations": 80,
+              "memory_bytes": 96,
+              "memory_requests": 12,
+              "operations": {
+                "add": 14,
+                "fma": 14,
+                "load": 8,
+                "mul": 16,
+                "store": 4,
+                "xfer": 24
+              },
+              "pipelines": {
+                "compute": 44,
+                "load": 8,
+                "store": 4,
+                "xfer": 24
+              },
+              "route_hops": 40,
+              "scalar_adds": 28,
+              "scalar_multiplies": 30,
+              "skip_hops": 24,
+              "unit_hops": 16
+            },
+            "tag_range": [
+              3,
+              5
+            ],
+            "x_offset": 2
+          },
+          {
+            "config": "configs/simulators/attention_functional_v1.yaml",
+            "linked_address_map": {
+              "28672": 24576,
+              "28680": 24584,
+              "28704": 24832,
+              "28712": 24840
+            },
+            "linked_seed_count": 4,
+            "name": "attention",
+            "source_schedule_counts": {
+              "boundary_events": 12,
+              "functional_operations": 76,
+              "memory_bytes": 224,
+              "memory_requests": 28,
+              "operations": {
+                "add": 2,
+                "fdiv": 4,
+                "fexp": 4,
+                "fma": 12,
+                "fmax": 2,
+                "load": 24,
+                "mul": 12,
+                "store": 4,
+                "xfer": 12
+              },
+              "pipelines": {
+                "compute": 36,
+                "load": 24,
+                "store": 4,
+                "xfer": 12
+              },
+              "route_hops": 26,
+              "scalar_adds": 14,
+              "scalar_multiplies": 24,
+              "skip_hops": 12,
+              "unit_hops": 14
+            },
+            "tag_range": [
+              6,
+              8
+            ],
+            "x_offset": 6
+          }
+        ],
+        "data_ready": {
+          "coarse_predecessors_removed": 6,
+          "event_definitions": 6,
+          "event_emissions": 12,
+          "linked_addresses": 12,
+          "subscriptions": 12
+        },
+        "dynamic_link_count": 2,
+        "experiment_id": "H171",
+        "functional_enabled": false,
+        "operator_family": "complete_transformer_block",
+        "output_addresses": [
+          29440,
+          29448,
+          29472,
+          29480
+        ],
+        "paper_performance_targets_consumed": false,
+        "prefix": "attention",
+        "schedule_counts": {
+          "boundary_events": 56,
+          "functional_operations": 244,
+          "memory_bytes": 704,
+          "memory_requests": 88,
+          "operations": {
+            "add": 16,
+            "fdiv": 4,
+            "fexp": 4,
+            "fma": 42,
+            "fmax": 2,
+            "load": 72,
+            "mul": 44,
+            "store": 16,
+            "xfer": 44
+          },
+          "pipelines": {
+            "compute": 112,
+            "load": 72,
+            "store": 16,
+            "xfer": 44
+          },
+          "route_hops": 78,
+          "scalar_adds": 58,
+          "scalar_multiplies": 86,
+          "skip_hops": 36,
+          "unit_hops": 42
+        }
+      },
+      "schedule_counts": {
+        "boundary_events": 56,
+        "functional_operations": 244,
+        "memory_bytes": 704,
+        "memory_requests": 88,
+        "operations": {
+          "add": 16,
+          "fdiv": 4,
+          "fexp": 4,
+          "fma": 42,
+          "fmax": 2,
+          "load": 72,
+          "mul": 44,
+          "store": 16,
+          "xfer": 44
+        },
+        "pipelines": {
+          "compute": 112,
+          "load": 72,
+          "store": 16,
+          "xfer": 44
+        },
+        "route_hops": 78,
+        "scalar_adds": 58,
+        "scalar_multiplies": 86,
+        "skip_hops": 36,
+        "unit_hops": 42
+      }
+    },
+    "attention--multi_layer_execution_data_ready--enabled": {
+      "artifact": {
+        "bytes": 63883,
+        "path": "artifacts/environment/h171/configs/attention--multi_layer_execution_data_ready--enabled.json",
+        "sha256": "f1e97f46dff1b73745c9c57debad42924b7a98d3d1437ee42f9fee2ee6421fee"
+      },
+      "deterministic": true,
+      "input_memory_sha256": "99431860bb7c2ce2935629e34bbd5ae9775e18209f4676acf986d86bc3d22867",
+      "metadata": {
+        "active_window": 13,
+        "architecture": "multi_layer_execution_data_ready",
+        "boundary_mode": "address_matched_store_ready",
+        "components": [
+          {
+            "config": "configs/simulators/bsmm_functional_v1.yaml",
+            "linked_address_map": {},
+            "linked_seed_count": 0,
+            "name": "bsmm",
+            "source_schedule_counts": {
+              "boundary_events": 8,
+              "functional_operations": 88,
+              "memory_bytes": 384,
+              "memory_requests": 48,
+              "operations": {
+                "fma": 16,
+                "load": 40,
+                "mul": 16,
+                "store": 8,
+                "xfer": 8
+              },
+              "pipelines": {
+                "compute": 32,
+                "load": 40,
+                "store": 8,
+                "xfer": 8
+              },
+              "route_hops": 12,
+              "scalar_adds": 16,
+              "scalar_multiplies": 32,
+              "skip_hops": 0,
+              "unit_hops": 12
+            },
+            "tag_range": [
+              1,
+              2
+            ],
+            "x_offset": 0
+          },
+          {
+            "config": "configs/simulators/fft_cmp_functional_v1.yaml",
+            "linked_address_map": {
+              "20480": 16384,
+              "20488": 16392,
+              "20496": 16400,
+              "20504": 16408,
+              "20736": 16640,
+              "20744": 16648,
+              "20752": 16656,
+              "20760": 16664
+            },
+            "linked_seed_count": 8,
+            "name": "fft_cmp",
+            "source_schedule_counts": {
+              "boundary_events": 24,
+              "functional_operations": 80,
+              "memory_bytes": 96,
+              "memory_requests": 12,
+              "operations": {
+                "add": 14,
+                "fma": 14,
+                "load": 8,
+                "mul": 16,
+                "store": 4,
+                "xfer": 24
+              },
+              "pipelines": {
+                "compute": 44,
+                "load": 8,
+                "store": 4,
+                "xfer": 24
+              },
+              "route_hops": 40,
+              "scalar_adds": 28,
+              "scalar_multiplies": 30,
+              "skip_hops": 24,
+              "unit_hops": 16
+            },
+            "tag_range": [
+              3,
+              5
+            ],
+            "x_offset": 2
+          },
+          {
+            "config": "configs/simulators/attention_functional_v1.yaml",
+            "linked_address_map": {
+              "28672": 24576,
+              "28680": 24584,
+              "28704": 24832,
+              "28712": 24840
+            },
+            "linked_seed_count": 4,
+            "name": "attention",
+            "source_schedule_counts": {
+              "boundary_events": 12,
+              "functional_operations": 76,
+              "memory_bytes": 224,
+              "memory_requests": 28,
+              "operations": {
+                "add": 2,
+                "fdiv": 4,
+                "fexp": 4,
+                "fma": 12,
+                "fmax": 2,
+                "load": 24,
+                "mul": 12,
+                "store": 4,
+                "xfer": 12
+              },
+              "pipelines": {
+                "compute": 36,
+                "load": 24,
+                "store": 4,
+                "xfer": 12
+              },
+              "route_hops": 26,
+              "scalar_adds": 14,
+              "scalar_multiplies": 24,
+              "skip_hops": 12,
+              "unit_hops": 14
+            },
+            "tag_range": [
+              6,
+              8
+            ],
+            "x_offset": 6
+          }
+        ],
+        "data_ready": {
+          "coarse_predecessors_removed": 6,
+          "event_definitions": 6,
+          "event_emissions": 12,
+          "linked_addresses": 12,
+          "subscriptions": 12
+        },
+        "dynamic_link_count": 2,
+        "experiment_id": "H171",
+        "functional_enabled": true,
+        "operator_family": "complete_transformer_block",
+        "output_addresses": [
+          29440,
+          29448,
+          29472,
+          29480
+        ],
+        "paper_performance_targets_consumed": false,
+        "prefix": "attention",
+        "schedule_counts": {
+          "boundary_events": 56,
+          "functional_operations": 244,
+          "memory_bytes": 704,
+          "memory_requests": 88,
+          "operations": {
+            "add": 16,
+            "fdiv": 4,
+            "fexp": 4,
+            "fma": 42,
+            "fmax": 2,
+            "load": 72,
+            "mul": 44,
+            "store": 16,
+            "xfer": 44
+          },
+          "pipelines": {
+            "compute": 112,
+            "load": 72,
+            "store": 16,
+            "xfer": 44
+          },
+          "route_hops": 78,
+          "scalar_adds": 58,
+          "scalar_multiplies": 86,
+          "skip_hops": 36,
+          "unit_hops": 42
+        }
+      },
+      "schedule_counts": {
+        "boundary_events": 56,
+        "functional_operations": 244,
+        "memory_bytes": 704,
+        "memory_requests": 88,
+        "operations": {
+          "add": 16,
+          "fdiv": 4,
+          "fexp": 4,
+          "fma": 42,
+          "fmax": 2,
+          "load": 72,
+          "mul": 44,
+          "store": 16,
+          "xfer": 44
+        },
+        "pipelines": {
+          "compute": 112,
+          "load": 72,
+          "store": 16,
+          "xfer": 44
+        },
+        "route_hops": 78,
+        "scalar_adds": 58,
+        "scalar_multiplies": 86,
+        "skip_hops": 36,
+        "unit_hops": 42
+      }
+    },
+    "attention--single_layer_serial_spatial_baseline--disabled": {
+      "artifact": {
+        "bytes": 64006,
+        "path": "artifacts/environment/h171/configs/attention--single_layer_serial_spatial_baseline--disabled.json",
+        "sha256": "c950a60f9aecfa08a3052ab2a43842b8818315813eecaf6f6a8fed1caccea4ad"
+      },
+      "deterministic": true,
+      "input_memory_sha256": "99431860bb7c2ce2935629e34bbd5ae9775e18209f4676acf986d86bc3d22867",
+      "metadata": {
+        "active_window": 1,
+        "architecture": "single_layer_serial_spatial_baseline",
+        "boundary_mode": "coarse_predecessor_plus_redundant_data_ready",
+        "components": [
+          {
+            "config": "configs/simulators/bsmm_functional_v1.yaml",
+            "linked_address_map": {},
+            "linked_seed_count": 0,
+            "name": "bsmm",
+            "source_schedule_counts": {
+              "boundary_events": 8,
+              "functional_operations": 88,
+              "memory_bytes": 384,
+              "memory_requests": 48,
+              "operations": {
+                "fma": 16,
+                "load": 40,
+                "mul": 16,
+                "store": 8,
+                "xfer": 8
+              },
+              "pipelines": {
+                "compute": 32,
+                "load": 40,
+                "store": 8,
+                "xfer": 8
+              },
+              "route_hops": 12,
+              "scalar_adds": 16,
+              "scalar_multiplies": 32,
+              "skip_hops": 0,
+              "unit_hops": 12
+            },
+            "tag_range": [
+              1,
+              2
+            ],
+            "x_offset": 0
+          },
+          {
+            "config": "configs/simulators/fft_cmp_functional_v1.yaml",
+            "linked_address_map": {
+              "20480": 16384,
+              "20488": 16392,
+              "20496": 16400,
+              "20504": 16408,
+              "20736": 16640,
+              "20744": 16648,
+              "20752": 16656,
+              "20760": 16664
+            },
+            "linked_seed_count": 8,
+            "name": "fft_cmp",
+            "source_schedule_counts": {
+              "boundary_events": 24,
+              "functional_operations": 80,
+              "memory_bytes": 96,
+              "memory_requests": 12,
+              "operations": {
+                "add": 14,
+                "fma": 14,
+                "load": 8,
+                "mul": 16,
+                "store": 4,
+                "xfer": 24
+              },
+              "pipelines": {
+                "compute": 44,
+                "load": 8,
+                "store": 4,
+                "xfer": 24
+              },
+              "route_hops": 40,
+              "scalar_adds": 28,
+              "scalar_multiplies": 30,
+              "skip_hops": 24,
+              "unit_hops": 16
+            },
+            "tag_range": [
+              3,
+              5
+            ],
+            "x_offset": 2
+          },
+          {
+            "config": "configs/simulators/attention_functional_v1.yaml",
+            "linked_address_map": {
+              "28672": 24576,
+              "28680": 24584,
+              "28704": 24832,
+              "28712": 24840
+            },
+            "linked_seed_count": 4,
+            "name": "attention",
+            "source_schedule_counts": {
+              "boundary_events": 12,
+              "functional_operations": 76,
+              "memory_bytes": 224,
+              "memory_requests": 28,
+              "operations": {
+                "add": 2,
+                "fdiv": 4,
+                "fexp": 4,
+                "fma": 12,
+                "fmax": 2,
+                "load": 24,
+                "mul": 12,
+                "store": 4,
+                "xfer": 12
+              },
+              "pipelines": {
+                "compute": 36,
+                "load": 24,
+                "store": 4,
+                "xfer": 12
+              },
+              "route_hops": 26,
+              "scalar_adds": 14,
+              "scalar_multiplies": 24,
+              "skip_hops": 12,
+              "unit_hops": 14
+            },
+            "tag_range": [
+              6,
+              8
+            ],
+            "x_offset": 6
+          }
+        ],
+        "data_ready": {
+          "coarse_predecessors_removed": 0,
+          "event_definitions": 6,
+          "event_emissions": 12,
+          "linked_addresses": 12,
+          "subscriptions": 12
+        },
+        "dynamic_link_count": 2,
+        "experiment_id": "H171",
+        "functional_enabled": false,
+        "operator_family": "complete_transformer_block",
+        "output_addresses": [
+          29440,
+          29448,
+          29472,
+          29480
+        ],
+        "paper_performance_targets_consumed": false,
+        "prefix": "attention",
+        "schedule_counts": {
+          "boundary_events": 56,
+          "functional_operations": 244,
+          "memory_bytes": 704,
+          "memory_requests": 88,
+          "operations": {
+            "add": 16,
+            "fdiv": 4,
+            "fexp": 4,
+            "fma": 42,
+            "fmax": 2,
+            "load": 72,
+            "mul": 44,
+            "store": 16,
+            "xfer": 44
+          },
+          "pipelines": {
+            "compute": 112,
+            "load": 72,
+            "store": 16,
+            "xfer": 44
+          },
+          "route_hops": 78,
+          "scalar_adds": 58,
+          "scalar_multiplies": 86,
+          "skip_hops": 36,
+          "unit_hops": 42
+        }
+      },
+      "schedule_counts": {
+        "boundary_events": 56,
+        "functional_operations": 244,
+        "memory_bytes": 704,
+        "memory_requests": 88,
+        "operations": {
+          "add": 16,
+          "fdiv": 4,
+          "fexp": 4,
+          "fma": 42,
+          "fmax": 2,
+          "load": 72,
+          "mul": 44,
+          "store": 16,
+          "xfer": 44
+        },
+        "pipelines": {
+          "compute": 112,
+          "load": 72,
+          "store": 16,
+          "xfer": 44
+        },
+        "route_hops": 78,
+        "scalar_adds": 58,
+        "scalar_multiplies": 86,
+        "skip_hops": 36,
+        "unit_hops": 42
+      }
+    },
+    "attention--single_layer_serial_spatial_baseline--enabled": {
+      "artifact": {
+        "bytes": 64004,
+        "path": "artifacts/environment/h171/configs/attention--single_layer_serial_spatial_baseline--enabled.json",
+        "sha256": "ad876a1545478d5d2060161b77840459a6f029291d9b6795ed1e3e367744cb54"
+      },
+      "deterministic": true,
+      "input_memory_sha256": "99431860bb7c2ce2935629e34bbd5ae9775e18209f4676acf986d86bc3d22867",
+      "metadata": {
+        "active_window": 1,
+        "architecture": "single_layer_serial_spatial_baseline",
+        "boundary_mode": "coarse_predecessor_plus_redundant_data_ready",
+        "components": [
+          {
+            "config": "configs/simulators/bsmm_functional_v1.yaml",
+            "linked_address_map": {},
+            "linked_seed_count": 0,
+            "name": "bsmm",
+            "source_schedule_counts": {
+              "boundary_events": 8,
+              "functional_operations": 88,
+              "memory_bytes": 384,
+              "memory_requests": 48,
+              "operations": {
+                "fma": 16,
+                "load": 40,
+                "mul": 16,
+                "store": 8,
+                "xfer": 8
+              },
+              "pipelines": {
+                "compute": 32,
+                "load": 40,
+                "store": 8,
+                "xfer": 8
+              },
+              "route_hops": 12,
+              "scalar_adds": 16,
+              "scalar_multiplies": 32,
+              "skip_hops": 0,
+              "unit_hops": 12
+            },
+            "tag_range": [
+              1,
+              2
+            ],
+            "x_offset": 0
+          },
+          {
+            "config": "configs/simulators/fft_cmp_functional_v1.yaml",
+            "linked_address_map": {
+              "20480": 16384,
+              "20488": 16392,
+              "20496": 16400,
+              "20504": 16408,
+              "20736": 16640,
+              "20744": 16648,
+              "20752": 16656,
+              "20760": 16664
+            },
+            "linked_seed_count": 8,
+            "name": "fft_cmp",
+            "source_schedule_counts": {
+              "boundary_events": 24,
+              "functional_operations": 80,
+              "memory_bytes": 96,
+              "memory_requests": 12,
+              "operations": {
+                "add": 14,
+                "fma": 14,
+                "load": 8,
+                "mul": 16,
+                "store": 4,
+                "xfer": 24
+              },
+              "pipelines": {
+                "compute": 44,
+                "load": 8,
+                "store": 4,
+                "xfer": 24
+              },
+              "route_hops": 40,
+              "scalar_adds": 28,
+              "scalar_multiplies": 30,
+              "skip_hops": 24,
+              "unit_hops": 16
+            },
+            "tag_range": [
+              3,
+              5
+            ],
+            "x_offset": 2
+          },
+          {
+            "config": "configs/simulators/attention_functional_v1.yaml",
+            "linked_address_map": {
+              "28672": 24576,
+              "28680": 24584,
+              "28704": 24832,
+              "28712": 24840
+            },
+            "linked_seed_count": 4,
+            "name": "attention",
+            "source_schedule_counts": {
+              "boundary_events": 12,
+              "functional_operations": 76,
+              "memory_bytes": 224,
+              "memory_requests": 28,
+              "operations": {
+                "add": 2,
+                "fdiv": 4,
+                "fexp": 4,
+                "fma": 12,
+                "fmax": 2,
+                "load": 24,
+                "mul": 12,
+                "store": 4,
+                "xfer": 12
+              },
+              "pipelines": {
+                "compute": 36,
+                "load": 24,
+                "store": 4,
+                "xfer": 12
+              },
+              "route_hops": 26,
+              "scalar_adds": 14,
+              "scalar_multiplies": 24,
+              "skip_hops": 12,
+              "unit_hops": 14
+            },
+            "tag_range": [
+              6,
+              8
+            ],
+            "x_offset": 6
+          }
+        ],
+        "data_ready": {
+          "coarse_predecessors_removed": 0,
+          "event_definitions": 6,
+          "event_emissions": 12,
+          "linked_addresses": 12,
+          "subscriptions": 12
+        },
+        "dynamic_link_count": 2,
+        "experiment_id": "H171",
+        "functional_enabled": true,
+        "operator_family": "complete_transformer_block",
+        "output_addresses": [
+          29440,
+          29448,
+          29472,
+          29480
+        ],
+        "paper_performance_targets_consumed": false,
+        "prefix": "attention",
+        "schedule_counts": {
+          "boundary_events": 56,
+          "functional_operations": 244,
+          "memory_bytes": 704,
+          "memory_requests": 88,
+          "operations": {
+            "add": 16,
+            "fdiv": 4,
+            "fexp": 4,
+            "fma": 42,
+            "fmax": 2,
+            "load": 72,
+            "mul": 44,
+            "store": 16,
+            "xfer": 44
+          },
+          "pipelines": {
+            "compute": 112,
+            "load": 72,
+            "store": 16,
+            "xfer": 44
+          },
+          "route_hops": 78,
+          "scalar_adds": 58,
+          "scalar_multiplies": 86,
+          "skip_hops": 36,
+          "unit_hops": 42
+        }
+      },
+      "schedule_counts": {
+        "boundary_events": 56,
+        "functional_operations": 244,
+        "memory_bytes": 704,
+        "memory_requests": 88,
+        "operations": {
+          "add": 16,
+          "fdiv": 4,
+          "fexp": 4,
+          "fma": 42,
+          "fmax": 2,
+          "load": 72,
+          "mul": 44,
+          "store": 16,
+          "xfer": 44
+        },
+        "pipelines": {
+          "compute": 112,
+          "load": 72,
+          "store": 16,
+          "xfer": 44
+        },
+        "route_hops": 78,
+        "scalar_adds": 58,
+        "scalar_multiplies": 86,
+        "skip_hops": 36,
+        "unit_hops": 42
+      }
+    },
+    "bsmm_fft--multi_layer_execution_data_ready--disabled": {
+      "artifact": {
+        "bytes": 38292,
+        "path": "artifacts/environment/h171/configs/bsmm_fft--multi_layer_execution_data_ready--disabled.json",
+        "sha256": "c750b97c5f4841db353d445482cb16caebe752ba50d1a167eb2442e7c9811bea"
+      },
+      "deterministic": true,
+      "input_memory_sha256": "99431860bb7c2ce2935629e34bbd5ae9775e18209f4676acf986d86bc3d22867",
+      "metadata": {
+        "active_window": 13,
+        "architecture": "multi_layer_execution_data_ready",
+        "boundary_mode": "address_matched_store_ready",
+        "components": [
+          {
+            "config": "configs/simulators/bsmm_functional_v1.yaml",
+            "linked_address_map": {},
+            "linked_seed_count": 0,
+            "name": "bsmm",
+            "source_schedule_counts": {
+              "boundary_events": 8,
+              "functional_operations": 88,
+              "memory_bytes": 384,
+              "memory_requests": 48,
+              "operations": {
+                "fma": 16,
+                "load": 40,
+                "mul": 16,
+                "store": 8,
+                "xfer": 8
+              },
+              "pipelines": {
+                "compute": 32,
+                "load": 40,
+                "store": 8,
+                "xfer": 8
+              },
+              "route_hops": 12,
+              "scalar_adds": 16,
+              "scalar_multiplies": 32,
+              "skip_hops": 0,
+              "unit_hops": 12
+            },
+            "tag_range": [
+              1,
+              2
+            ],
+            "x_offset": 0
+          },
+          {
+            "config": "configs/simulators/fft_cmp_functional_v1.yaml",
+            "linked_address_map": {
+              "20480": 16384,
+              "20488": 16392,
+              "20496": 16400,
+              "20504": 16408,
+              "20736": 16640,
+              "20744": 16648,
+              "20752": 16656,
+              "20760": 16664
+            },
+            "linked_seed_count": 8,
+            "name": "fft_cmp",
+            "source_schedule_counts": {
+              "boundary_events": 24,
+              "functional_operations": 80,
+              "memory_bytes": 96,
+              "memory_requests": 12,
+              "operations": {
+                "add": 14,
+                "fma": 14,
+                "load": 8,
+                "mul": 16,
+                "store": 4,
+                "xfer": 24
+              },
+              "pipelines": {
+                "compute": 44,
+                "load": 8,
+                "store": 4,
+                "xfer": 24
+              },
+              "route_hops": 40,
+              "scalar_adds": 28,
+              "scalar_multiplies": 30,
+              "skip_hops": 24,
+              "unit_hops": 16
+            },
+            "tag_range": [
+              3,
+              5
+            ],
+            "x_offset": 2
+          }
+        ],
+        "data_ready": {
+          "coarse_predecessors_removed": 2,
+          "event_definitions": 4,
+          "event_emissions": 8,
+          "linked_addresses": 8,
+          "subscriptions": 4
+        },
+        "dynamic_link_count": 1,
+        "experiment_id": "H171",
+        "functional_enabled": false,
+        "operator_family": "complete_transformer_block",
+        "output_addresses": [
+          24576,
+          24584,
+          24832,
+          24840
+        ],
+        "paper_performance_targets_consumed": false,
+        "prefix": "bsmm_fft",
+        "schedule_counts": {
+          "boundary_events": 40,
+          "functional_operations": 168,
+          "memory_bytes": 480,
+          "memory_requests": 60,
+          "operations": {
+            "add": 14,
+            "fma": 30,
+            "load": 48,
+            "mul": 32,
+            "store": 12,
+            "xfer": 32
+          },
+          "pipelines": {
+            "compute": 76,
+            "load": 48,
+            "store": 12,
+            "xfer": 32
+          },
+          "route_hops": 52,
+          "scalar_adds": 44,
+          "scalar_multiplies": 62,
+          "skip_hops": 24,
+          "unit_hops": 28
+        }
+      },
+      "schedule_counts": {
+        "boundary_events": 40,
+        "functional_operations": 168,
+        "memory_bytes": 480,
+        "memory_requests": 60,
+        "operations": {
+          "add": 14,
+          "fma": 30,
+          "load": 48,
+          "mul": 32,
+          "store": 12,
+          "xfer": 32
+        },
+        "pipelines": {
+          "compute": 76,
+          "load": 48,
+          "store": 12,
+          "xfer": 32
+        },
+        "route_hops": 52,
+        "scalar_adds": 44,
+        "scalar_multiplies": 62,
+        "skip_hops": 24,
+        "unit_hops": 28
+      }
+    },
+    "bsmm_fft--multi_layer_execution_data_ready--enabled": {
+      "artifact": {
+        "bytes": 38290,
+        "path": "artifacts/environment/h171/configs/bsmm_fft--multi_layer_execution_data_ready--enabled.json",
+        "sha256": "6d5924cb7ad20637119bf1c5accf0dddb60737d3cd505f809bcd4db710b013fb"
+      },
+      "deterministic": true,
+      "input_memory_sha256": "99431860bb7c2ce2935629e34bbd5ae9775e18209f4676acf986d86bc3d22867",
+      "metadata": {
+        "active_window": 13,
+        "architecture": "multi_layer_execution_data_ready",
+        "boundary_mode": "address_matched_store_ready",
+        "components": [
+          {
+            "config": "configs/simulators/bsmm_functional_v1.yaml",
+            "linked_address_map": {},
+            "linked_seed_count": 0,
+            "name": "bsmm",
+            "source_schedule_counts": {
+              "boundary_events": 8,
+              "functional_operations": 88,
+              "memory_bytes": 384,
+              "memory_requests": 48,
+              "operations": {
+                "fma": 16,
+                "load": 40,
+                "mul": 16,
+                "store": 8,
+                "xfer": 8
+              },
+              "pipelines": {
+                "compute": 32,
+                "load": 40,
+                "store": 8,
+                "xfer": 8
+              },
+              "route_hops": 12,
+              "scalar_adds": 16,
+              "scalar_multiplies": 32,
+              "skip_hops": 0,
+              "unit_hops": 12
+            },
+            "tag_range": [
+              1,
+              2
+            ],
+            "x_offset": 0
+          },
+          {
+            "config": "configs/simulators/fft_cmp_functional_v1.yaml",
+            "linked_address_map": {
+              "20480": 16384,
+              "20488": 16392,
+              "20496": 16400,
+              "20504": 16408,
+              "20736": 16640,
+              "20744": 16648,
+              "20752": 16656,
+              "20760": 16664
+            },
+            "linked_seed_count": 8,
+            "name": "fft_cmp",
+            "source_schedule_counts": {
+              "boundary_events": 24,
+              "functional_operations": 80,
+              "memory_bytes": 96,
+              "memory_requests": 12,
+              "operations": {
+                "add": 14,
+                "fma": 14,
+                "load": 8,
+                "mul": 16,
+                "store": 4,
+                "xfer": 24
+              },
+              "pipelines": {
+                "compute": 44,
+                "load": 8,
+                "store": 4,
+                "xfer": 24
+              },
+              "route_hops": 40,
+              "scalar_adds": 28,
+              "scalar_multiplies": 30,
+              "skip_hops": 24,
+              "unit_hops": 16
+            },
+            "tag_range": [
+              3,
+              5
+            ],
+            "x_offset": 2
+          }
+        ],
+        "data_ready": {
+          "coarse_predecessors_removed": 2,
+          "event_definitions": 4,
+          "event_emissions": 8,
+          "linked_addresses": 8,
+          "subscriptions": 4
+        },
+        "dynamic_link_count": 1,
+        "experiment_id": "H171",
+        "functional_enabled": true,
+        "operator_family": "complete_transformer_block",
+        "output_addresses": [
+          24576,
+          24584,
+          24832,
+          24840
+        ],
+        "paper_performance_targets_consumed": false,
+        "prefix": "bsmm_fft",
+        "schedule_counts": {
+          "boundary_events": 40,
+          "functional_operations": 168,
+          "memory_bytes": 480,
+          "memory_requests": 60,
+          "operations": {
+            "add": 14,
+            "fma": 30,
+            "load": 48,
+            "mul": 32,
+            "store": 12,
+            "xfer": 32
+          },
+          "pipelines": {
+            "compute": 76,
+            "load": 48,
+            "store": 12,
+            "xfer": 32
+          },
+          "route_hops": 52,
+          "scalar_adds": 44,
+          "scalar_multiplies": 62,
+          "skip_hops": 24,
+          "unit_hops": 28
+        }
+      },
+      "schedule_counts": {
+        "boundary_events": 40,
+        "functional_operations": 168,
+        "memory_bytes": 480,
+        "memory_requests": 60,
+        "operations": {
+          "add": 14,
+          "fma": 30,
+          "load": 48,
+          "mul": 32,
+          "store": 12,
+          "xfer": 32
+        },
+        "pipelines": {
+          "compute": 76,
+          "load": 48,
+          "store": 12,
+          "xfer": 32
+        },
+        "route_hops": 52,
+        "scalar_adds": 44,
+        "scalar_multiplies": 62,
+        "skip_hops": 24,
+        "unit_hops": 28
+      }
+    },
+    "bsmm_fft--single_layer_serial_spatial_baseline--disabled": {
+      "artifact": {
+        "bytes": 38345,
+        "path": "artifacts/environment/h171/configs/bsmm_fft--single_layer_serial_spatial_baseline--disabled.json",
+        "sha256": "487514fae0a1051795a33d62fa104eb5a50c99c57c30eb922c19ca8572dd8afc"
+      },
+      "deterministic": true,
+      "input_memory_sha256": "99431860bb7c2ce2935629e34bbd5ae9775e18209f4676acf986d86bc3d22867",
+      "metadata": {
+        "active_window": 1,
+        "architecture": "single_layer_serial_spatial_baseline",
+        "boundary_mode": "coarse_predecessor_plus_redundant_data_ready",
+        "components": [
+          {
+            "config": "configs/simulators/bsmm_functional_v1.yaml",
+            "linked_address_map": {},
+            "linked_seed_count": 0,
+            "name": "bsmm",
+            "source_schedule_counts": {
+              "boundary_events": 8,
+              "functional_operations": 88,
+              "memory_bytes": 384,
+              "memory_requests": 48,
+              "operations": {
+                "fma": 16,
+                "load": 40,
+                "mul": 16,
+                "store": 8,
+                "xfer": 8
+              },
+              "pipelines": {
+                "compute": 32,
+                "load": 40,
+                "store": 8,
+                "xfer": 8
+              },
+              "route_hops": 12,
+              "scalar_adds": 16,
+              "scalar_multiplies": 32,
+              "skip_hops": 0,
+              "unit_hops": 12
+            },
+            "tag_range": [
+              1,
+              2
+            ],
+            "x_offset": 0
+          },
+          {
+            "config": "configs/simulators/fft_cmp_functional_v1.yaml",
+            "linked_address_map": {
+              "20480": 16384,
+              "20488": 16392,
+              "20496": 16400,
+              "20504": 16408,
+              "20736": 16640,
+              "20744": 16648,
+              "20752": 16656,
+              "20760": 16664
+            },
+            "linked_seed_count": 8,
+            "name": "fft_cmp",
+            "source_schedule_counts": {
+              "boundary_events": 24,
+              "functional_operations": 80,
+              "memory_bytes": 96,
+              "memory_requests": 12,
+              "operations": {
+                "add": 14,
+                "fma": 14,
+                "load": 8,
+                "mul": 16,
+                "store": 4,
+                "xfer": 24
+              },
+              "pipelines": {
+                "compute": 44,
+                "load": 8,
+                "store": 4,
+                "xfer": 24
+              },
+              "route_hops": 40,
+              "scalar_adds": 28,
+              "scalar_multiplies": 30,
+              "skip_hops": 24,
+              "unit_hops": 16
+            },
+            "tag_range": [
+              3,
+              5
+            ],
+            "x_offset": 2
+          }
+        ],
+        "data_ready": {
+          "coarse_predecessors_removed": 0,
+          "event_definitions": 4,
+          "event_emissions": 8,
+          "linked_addresses": 8,
+          "subscriptions": 4
+        },
+        "dynamic_link_count": 1,
+        "experiment_id": "H171",
+        "functional_enabled": false,
+        "operator_family": "complete_transformer_block",
+        "output_addresses": [
+          24576,
+          24584,
+          24832,
+          24840
+        ],
+        "paper_performance_targets_consumed": false,
+        "prefix": "bsmm_fft",
+        "schedule_counts": {
+          "boundary_events": 40,
+          "functional_operations": 168,
+          "memory_bytes": 480,
+          "memory_requests": 60,
+          "operations": {
+            "add": 14,
+            "fma": 30,
+            "load": 48,
+            "mul": 32,
+            "store": 12,
+            "xfer": 32
+          },
+          "pipelines": {
+            "compute": 76,
+            "load": 48,
+            "store": 12,
+            "xfer": 32
+          },
+          "route_hops": 52,
+          "scalar_adds": 44,
+          "scalar_multiplies": 62,
+          "skip_hops": 24,
+          "unit_hops": 28
+        }
+      },
+      "schedule_counts": {
+        "boundary_events": 40,
+        "functional_operations": 168,
+        "memory_bytes": 480,
+        "memory_requests": 60,
+        "operations": {
+          "add": 14,
+          "fma": 30,
+          "load": 48,
+          "mul": 32,
+          "store": 12,
+          "xfer": 32
+        },
+        "pipelines": {
+          "compute": 76,
+          "load": 48,
+          "store": 12,
+          "xfer": 32
+        },
+        "route_hops": 52,
+        "scalar_adds": 44,
+        "scalar_multiplies": 62,
+        "skip_hops": 24,
+        "unit_hops": 28
+      }
+    },
+    "bsmm_fft--single_layer_serial_spatial_baseline--enabled": {
+      "artifact": {
+        "bytes": 38343,
+        "path": "artifacts/environment/h171/configs/bsmm_fft--single_layer_serial_spatial_baseline--enabled.json",
+        "sha256": "717fb760e904fc3e6387bdaef06b923e17bd5a581e5ead743d07b9719c2f6e7a"
+      },
+      "deterministic": true,
+      "input_memory_sha256": "99431860bb7c2ce2935629e34bbd5ae9775e18209f4676acf986d86bc3d22867",
+      "metadata": {
+        "active_window": 1,
+        "architecture": "single_layer_serial_spatial_baseline",
+        "boundary_mode": "coarse_predecessor_plus_redundant_data_ready",
+        "components": [
+          {
+            "config": "configs/simulators/bsmm_functional_v1.yaml",
+            "linked_address_map": {},
+            "linked_seed_count": 0,
+            "name": "bsmm",
+            "source_schedule_counts": {
+              "boundary_events": 8,
+              "functional_operations": 88,
+              "memory_bytes": 384,
+              "memory_requests": 48,
+              "operations": {
+                "fma": 16,
+                "load": 40,
+                "mul": 16,
+                "store": 8,
+                "xfer": 8
+              },
+              "pipelines": {
+                "compute": 32,
+                "load": 40,
+                "store": 8,
+                "xfer": 8
+              },
+              "route_hops": 12,
+              "scalar_adds": 16,
+              "scalar_multiplies": 32,
+              "skip_hops": 0,
+              "unit_hops": 12
+            },
+            "tag_range": [
+              1,
+              2
+            ],
+            "x_offset": 0
+          },
+          {
+            "config": "configs/simulators/fft_cmp_functional_v1.yaml",
+            "linked_address_map": {
+              "20480": 16384,
+              "20488": 16392,
+              "20496": 16400,
+              "20504": 16408,
+              "20736": 16640,
+              "20744": 16648,
+              "20752": 16656,
+              "20760": 16664
+            },
+            "linked_seed_count": 8,
+            "name": "fft_cmp",
+            "source_schedule_counts": {
+              "boundary_events": 24,
+              "functional_operations": 80,
+              "memory_bytes": 96,
+              "memory_requests": 12,
+              "operations": {
+                "add": 14,
+                "fma": 14,
+                "load": 8,
+                "mul": 16,
+                "store": 4,
+                "xfer": 24
+              },
+              "pipelines": {
+                "compute": 44,
+                "load": 8,
+                "store": 4,
+                "xfer": 24
+              },
+              "route_hops": 40,
+              "scalar_adds": 28,
+              "scalar_multiplies": 30,
+              "skip_hops": 24,
+              "unit_hops": 16
+            },
+            "tag_range": [
+              3,
+              5
+            ],
+            "x_offset": 2
+          }
+        ],
+        "data_ready": {
+          "coarse_predecessors_removed": 0,
+          "event_definitions": 4,
+          "event_emissions": 8,
+          "linked_addresses": 8,
+          "subscriptions": 4
+        },
+        "dynamic_link_count": 1,
+        "experiment_id": "H171",
+        "functional_enabled": true,
+        "operator_family": "complete_transformer_block",
+        "output_addresses": [
+          24576,
+          24584,
+          24832,
+          24840
+        ],
+        "paper_performance_targets_consumed": false,
+        "prefix": "bsmm_fft",
+        "schedule_counts": {
+          "boundary_events": 40,
+          "functional_operations": 168,
+          "memory_bytes": 480,
+          "memory_requests": 60,
+          "operations": {
+            "add": 14,
+            "fma": 30,
+            "load": 48,
+            "mul": 32,
+            "store": 12,
+            "xfer": 32
+          },
+          "pipelines": {
+            "compute": 76,
+            "load": 48,
+            "store": 12,
+            "xfer": 32
+          },
+          "route_hops": 52,
+          "scalar_adds": 44,
+          "scalar_multiplies": 62,
+          "skip_hops": 24,
+          "unit_hops": 28
+        }
+      },
+      "schedule_counts": {
+        "boundary_events": 40,
+        "functional_operations": 168,
+        "memory_bytes": 480,
+        "memory_requests": 60,
+        "operations": {
+          "add": 14,
+          "fma": 30,
+          "load": 48,
+          "mul": 32,
+          "store": 12,
+          "xfer": 32
+        },
+        "pipelines": {
+          "compute": 76,
+          "load": 48,
+          "store": 12,
+          "xfer": 32
+        },
+        "route_hops": 52,
+        "scalar_adds": 44,
+        "scalar_multiplies": 62,
+        "skip_hops": 24,
+        "unit_hops": 28
+      }
+    },
+    "complete--multi_layer_execution_data_ready--disabled": {
+      "artifact": {
+        "bytes": 140954,
+        "path": "artifacts/environment/h171/configs/complete--multi_layer_execution_data_ready--disabled.json",
+        "sha256": "07e661974e3f8483a52ec6009ab74ab76ea6b26e8e2c86af90c601d72b0a3d20"
+      },
+      "deterministic": true,
+      "input_memory_sha256": "99431860bb7c2ce2935629e34bbd5ae9775e18209f4676acf986d86bc3d22867",
+      "metadata": {
+        "active_window": 13,
+        "architecture": "multi_layer_execution_data_ready",
+        "boundary_mode": "address_matched_store_ready",
+        "components": [
+          {
+            "config": "configs/simulators/bsmm_functional_v1.yaml",
+            "linked_address_map": {},
+            "linked_seed_count": 0,
+            "name": "bsmm",
+            "source_schedule_counts": {
+              "boundary_events": 8,
+              "functional_operations": 88,
+              "memory_bytes": 384,
+              "memory_requests": 48,
+              "operations": {
+                "fma": 16,
+                "load": 40,
+                "mul": 16,
+                "store": 8,
+                "xfer": 8
+              },
+              "pipelines": {
+                "compute": 32,
+                "load": 40,
+                "store": 8,
+                "xfer": 8
+              },
+              "route_hops": 12,
+              "scalar_adds": 16,
+              "scalar_multiplies": 32,
+              "skip_hops": 0,
+              "unit_hops": 12
+            },
+            "tag_range": [
+              1,
+              2
+            ],
+            "x_offset": 0
+          },
+          {
+            "config": "configs/simulators/fft_cmp_functional_v1.yaml",
+            "linked_address_map": {
+              "20480": 16384,
+              "20488": 16392,
+              "20496": 16400,
+              "20504": 16408,
+              "20736": 16640,
+              "20744": 16648,
+              "20752": 16656,
+              "20760": 16664
+            },
+            "linked_seed_count": 8,
+            "name": "fft_cmp",
+            "source_schedule_counts": {
+              "boundary_events": 24,
+              "functional_operations": 80,
+              "memory_bytes": 96,
+              "memory_requests": 12,
+              "operations": {
+                "add": 14,
+                "fma": 14,
+                "load": 8,
+                "mul": 16,
+                "store": 4,
+                "xfer": 24
+              },
+              "pipelines": {
+                "compute": 44,
+                "load": 8,
+                "store": 4,
+                "xfer": 24
+              },
+              "route_hops": 40,
+              "scalar_adds": 28,
+              "scalar_multiplies": 30,
+              "skip_hops": 24,
+              "unit_hops": 16
+            },
+            "tag_range": [
+              3,
+              5
+            ],
+            "x_offset": 2
+          },
+          {
+            "config": "configs/simulators/attention_functional_v1.yaml",
+            "linked_address_map": {
+              "28672": 24576,
+              "28680": 24584,
+              "28704": 24832,
+              "28712": 24840
+            },
+            "linked_seed_count": 4,
+            "name": "attention",
+            "source_schedule_counts": {
+              "boundary_events": 12,
+              "functional_operations": 76,
+              "memory_bytes": 224,
+              "memory_requests": 28,
+              "operations": {
+                "add": 2,
+                "fdiv": 4,
+                "fexp": 4,
+                "fma": 12,
+                "fmax": 2,
+                "load": 24,
+                "mul": 12,
+                "store": 4,
+                "xfer": 12
+              },
+              "pipelines": {
+                "compute": 36,
+                "load": 24,
+                "store": 4,
+                "xfer": 12
+              },
+              "route_hops": 26,
+              "scalar_adds": 14,
+              "scalar_multiplies": 24,
+              "skip_hops": 12,
+              "unit_hops": 14
+            },
+            "tag_range": [
+              6,
+              8
+            ],
+            "x_offset": 6
+          },
+          {
+            "config": "configs/simulators/swa_functional_v1.yaml",
+            "linked_address_map": {
+              "32768": 29440,
+              "32776": 29448,
+              "32800": 29472,
+              "32808": 29480
+            },
+            "linked_seed_count": 4,
+            "name": "swa",
+            "source_schedule_counts": {
+              "boundary_events": 21,
+              "functional_operations": 134,
+              "memory_bytes": 400,
+              "memory_requests": 50,
+              "operations": {
+                "add": 4,
+                "fdiv": 7,
+                "fexp": 7,
+                "fma": 19,
+                "fmax": 3,
+                "load": 42,
+                "mul": 23,
+                "store": 8,
+                "xfer": 21
+              },
+              "pipelines": {
+                "compute": 63,
+                "load": 42,
+                "store": 8,
+                "xfer": 21
+              },
+              "route_hops": 45,
+              "scalar_adds": 23,
+              "scalar_multiplies": 42,
+              "skip_hops": 21,
+              "unit_hops": 24
+            },
+            "tag_range": [
+              9,
+              11
+            ],
+            "x_offset": 12
+          },
+          {
+            "config": "configs/simulators/elementwise_functional_v1.yaml",
+            "linked_address_map": {
+              "36864": 33536,
+              "36872": 33544,
+              "36880": 33568,
+              "36888": 33576,
+              "36896": 33600,
+              "36904": 33608,
+              "36912": 33632,
+              "36920": 33640
+            },
+            "linked_seed_count": 8,
+            "name": "elementwise",
+            "source_schedule_counts": {
+              "boundary_events": 8,
+              "functional_operations": 88,
+              "memory_bytes": 192,
+              "memory_requests": 24,
+              "operations": {
+                "add": 16,
+                "fdiv": 8,
+                "fexp": 8,
+                "load": 16,
+                "mul": 24,
+                "store": 8,
+                "xfer": 8
+              },
+              "pipelines": {
+                "compute": 56,
+                "load": 16,
+                "store": 8,
+                "xfer": 8
+              },
+              "route_hops": 16,
+              "scalar_adds": 16,
+              "scalar_multiplies": 24,
+              "skip_hops": 8,
+              "unit_hops": 8
+            },
+            "tag_range": [
+              12,
+              13
+            ],
+            "x_offset": 18
+          }
+        ],
+        "data_ready": {
+          "coarse_predecessors_removed": 21,
+          "event_definitions": 18,
+          "event_emissions": 24,
+          "linked_addresses": 24,
+          "subscriptions": 26
+        },
+        "dynamic_link_count": 4,
+        "experiment_id": "H171",
+        "functional_enabled": false,
+        "operator_family": "complete_transformer_block",
+        "output_addresses": [
+          37376,
+          37384,
+          37392,
+          37400,
+          37408,
+          37416,
+          37424,
+          37432
+        ],
+        "paper_performance_targets_consumed": false,
+        "prefix": "complete",
+        "schedule_counts": {
+          "boundary_events": 97,
+          "functional_operations": 466,
+          "memory_bytes": 1296,
+          "memory_requests": 162,
+          "operations": {
+            "add": 36,
+            "fdiv": 19,
+            "fexp": 19,
+            "fma": 61,
+            "fmax": 5,
+            "load": 130,
+            "mul": 91,
+            "store": 32,
+            "xfer": 73
+          },
+          "pipelines": {
+            "compute": 231,
+            "load": 130,
+            "store": 32,
+            "xfer": 73
+          },
+          "route_hops": 139,
+          "scalar_adds": 97,
+          "scalar_multiplies": 152,
+          "skip_hops": 65,
+          "unit_hops": 74
+        }
+      },
+      "schedule_counts": {
+        "boundary_events": 97,
+        "functional_operations": 466,
+        "memory_bytes": 1296,
+        "memory_requests": 162,
+        "operations": {
+          "add": 36,
+          "fdiv": 19,
+          "fexp": 19,
+          "fma": 61,
+          "fmax": 5,
+          "load": 130,
+          "mul": 91,
+          "store": 32,
+          "xfer": 73
+        },
+        "pipelines": {
+          "compute": 231,
+          "load": 130,
+          "store": 32,
+          "xfer": 73
+        },
+        "route_hops": 139,
+        "scalar_adds": 97,
+        "scalar_multiplies": 152,
+        "skip_hops": 65,
+        "unit_hops": 74
+      }
+    },
+    "complete--multi_layer_execution_data_ready--enabled": {
+      "artifact": {
+        "bytes": 140952,
+        "path": "artifacts/environment/h171/configs/complete--multi_layer_execution_data_ready--enabled.json",
+        "sha256": "1e80c58d251bf7c9181f117f6f568421eb3803cf749d34483f2f4355f8552175"
+      },
+      "deterministic": true,
+      "input_memory_sha256": "99431860bb7c2ce2935629e34bbd5ae9775e18209f4676acf986d86bc3d22867",
+      "metadata": {
+        "active_window": 13,
+        "architecture": "multi_layer_execution_data_ready",
+        "boundary_mode": "address_matched_store_ready",
+        "components": [
+          {
+            "config": "configs/simulators/bsmm_functional_v1.yaml",
+            "linked_address_map": {},
+            "linked_seed_count": 0,
+            "name": "bsmm",
+            "source_schedule_counts": {
+              "boundary_events": 8,
+              "functional_operations": 88,
+              "memory_bytes": 384,
+              "memory_requests": 48,
+              "operations": {
+                "fma": 16,
+                "load": 40,
+                "mul": 16,
+                "store": 8,
+                "xfer": 8
+              },
+              "pipelines": {
+                "compute": 32,
+                "load": 40,
+                "store": 8,
+                "xfer": 8
+              },
+              "route_hops": 12,
+              "scalar_adds": 16,
+              "scalar_multiplies": 32,
+              "skip_hops": 0,
+              "unit_hops": 12
+            },
+            "tag_range": [
+              1,
+              2
+            ],
+            "x_offset": 0
+          },
+          {
+            "config": "configs/simulators/fft_cmp_functional_v1.yaml",
+            "linked_address_map": {
+              "20480": 16384,
+              "20488": 16392,
+              "20496": 16400,
+              "20504": 16408,
+              "20736": 16640,
+              "20744": 16648,
+              "20752": 16656,
+              "20760": 16664
+            },
+            "linked_seed_count": 8,
+            "name": "fft_cmp",
+            "source_schedule_counts": {
+              "boundary_events": 24,
+              "functional_operations": 80,
+              "memory_bytes": 96,
+              "memory_requests": 12,
+              "operations": {
+                "add": 14,
+                "fma": 14,
+                "load": 8,
+                "mul": 16,
+                "store": 4,
+                "xfer": 24
+              },
+              "pipelines": {
+                "compute": 44,
+                "load": 8,
+                "store": 4,
+                "xfer": 24
+              },
+              "route_hops": 40,
+              "scalar_adds": 28,
+              "scalar_multiplies": 30,
+              "skip_hops": 24,
+              "unit_hops": 16
+            },
+            "tag_range": [
+              3,
+              5
+            ],
+            "x_offset": 2
+          },
+          {
+            "config": "configs/simulators/attention_functional_v1.yaml",
+            "linked_address_map": {
+              "28672": 24576,
+              "28680": 24584,
+              "28704": 24832,
+              "28712": 24840
+            },
+            "linked_seed_count": 4,
+            "name": "attention",
+            "source_schedule_counts": {
+              "boundary_events": 12,
+              "functional_operations": 76,
+              "memory_bytes": 224,
+              "memory_requests": 28,
+              "operations": {
+                "add": 2,
+                "fdiv": 4,
+                "fexp": 4,
+                "fma": 12,
+                "fmax": 2,
+                "load": 24,
+                "mul": 12,
+                "store": 4,
+                "xfer": 12
+              },
+              "pipelines": {
+                "compute": 36,
+                "load": 24,
+                "store": 4,
+                "xfer": 12
+              },
+              "route_hops": 26,
+              "scalar_adds": 14,
+              "scalar_multiplies": 24,
+              "skip_hops": 12,
+              "unit_hops": 14
+            },
+            "tag_range": [
+              6,
+              8
+            ],
+            "x_offset": 6
+          },
+          {
+            "config": "configs/simulators/swa_functional_v1.yaml",
+            "linked_address_map": {
+              "32768": 29440,
+              "32776": 29448,
+              "32800": 29472,
+              "32808": 29480
+            },
+            "linked_seed_count": 4,
+            "name": "swa",
+            "source_schedule_counts": {
+              "boundary_events": 21,
+              "functional_operations": 134,
+              "memory_bytes": 400,
+              "memory_requests": 50,
+              "operations": {
+                "add": 4,
+                "fdiv": 7,
+                "fexp": 7,
+                "fma": 19,
+                "fmax": 3,
+                "load": 42,
+                "mul": 23,
+                "store": 8,
+                "xfer": 21
+              },
+              "pipelines": {
+                "compute": 63,
+                "load": 42,
+                "store": 8,
+                "xfer": 21
+              },
+              "route_hops": 45,
+              "scalar_adds": 23,
+              "scalar_multiplies": 42,
+              "skip_hops": 21,
+              "unit_hops": 24
+            },
+            "tag_range": [
+              9,
+              11
+            ],
+            "x_offset": 12
+          },
+          {
+            "config": "configs/simulators/elementwise_functional_v1.yaml",
+            "linked_address_map": {
+              "36864": 33536,
+              "36872": 33544,
+              "36880": 33568,
+              "36888": 33576,
+              "36896": 33600,
+              "36904": 33608,
+              "36912": 33632,
+              "36920": 33640
+            },
+            "linked_seed_count": 8,
+            "name": "elementwise",
+            "source_schedule_counts": {
+              "boundary_events": 8,
+              "functional_operations": 88,
+              "memory_bytes": 192,
+              "memory_requests": 24,
+              "operations": {
+                "add": 16,
+                "fdiv": 8,
+                "fexp": 8,
+                "load": 16,
+                "mul": 24,
+                "store": 8,
+                "xfer": 8
+              },
+              "pipelines": {
+                "compute": 56,
+                "load": 16,
+                "store": 8,
+                "xfer": 8
+              },
+              "route_hops": 16,
+              "scalar_adds": 16,
+              "scalar_multiplies": 24,
+              "skip_hops": 8,
+              "unit_hops": 8
+            },
+            "tag_range": [
+              12,
+              13
+            ],
+            "x_offset": 18
+          }
+        ],
+        "data_ready": {
+          "coarse_predecessors_removed": 21,
+          "event_definitions": 18,
+          "event_emissions": 24,
+          "linked_addresses": 24,
+          "subscriptions": 26
+        },
+        "dynamic_link_count": 4,
+        "experiment_id": "H171",
+        "functional_enabled": true,
+        "operator_family": "complete_transformer_block",
+        "output_addresses": [
+          37376,
+          37384,
+          37392,
+          37400,
+          37408,
+          37416,
+          37424,
+          37432
+        ],
+        "paper_performance_targets_consumed": false,
+        "prefix": "complete",
+        "schedule_counts": {
+          "boundary_events": 97,
+          "functional_operations": 466,
+          "memory_bytes": 1296,
+          "memory_requests": 162,
+          "operations": {
+            "add": 36,
+            "fdiv": 19,
+            "fexp": 19,
+            "fma": 61,
+            "fmax": 5,
+            "load": 130,
+            "mul": 91,
+            "store": 32,
+            "xfer": 73
+          },
+          "pipelines": {
+            "compute": 231,
+            "load": 130,
+            "store": 32,
+            "xfer": 73
+          },
+          "route_hops": 139,
+          "scalar_adds": 97,
+          "scalar_multiplies": 152,
+          "skip_hops": 65,
+          "unit_hops": 74
+        }
+      },
+      "schedule_counts": {
+        "boundary_events": 97,
+        "functional_operations": 466,
+        "memory_bytes": 1296,
+        "memory_requests": 162,
+        "operations": {
+          "add": 36,
+          "fdiv": 19,
+          "fexp": 19,
+          "fma": 61,
+          "fmax": 5,
+          "load": 130,
+          "mul": 91,
+          "store": 32,
+          "xfer": 73
+        },
+        "pipelines": {
+          "compute": 231,
+          "load": 130,
+          "store": 32,
+          "xfer": 73
+        },
+        "route_hops": 139,
+        "scalar_adds": 97,
+        "scalar_multiplies": 152,
+        "skip_hops": 65,
+        "unit_hops": 74
+      }
+    },
+    "complete--single_layer_serial_spatial_baseline--disabled": {
+      "artifact": {
+        "bytes": 141337,
+        "path": "artifacts/environment/h171/configs/complete--single_layer_serial_spatial_baseline--disabled.json",
+        "sha256": "5cc105f72836d40f56d6b7e05548737b16cc1eb407ee9d6582426ff3e5b2393d"
+      },
+      "deterministic": true,
+      "input_memory_sha256": "99431860bb7c2ce2935629e34bbd5ae9775e18209f4676acf986d86bc3d22867",
+      "metadata": {
+        "active_window": 1,
+        "architecture": "single_layer_serial_spatial_baseline",
+        "boundary_mode": "coarse_predecessor_plus_redundant_data_ready",
+        "components": [
+          {
+            "config": "configs/simulators/bsmm_functional_v1.yaml",
+            "linked_address_map": {},
+            "linked_seed_count": 0,
+            "name": "bsmm",
+            "source_schedule_counts": {
+              "boundary_events": 8,
+              "functional_operations": 88,
+              "memory_bytes": 384,
+              "memory_requests": 48,
+              "operations": {
+                "fma": 16,
+                "load": 40,
+                "mul": 16,
+                "store": 8,
+                "xfer": 8
+              },
+              "pipelines": {
+                "compute": 32,
+                "load": 40,
+                "store": 8,
+                "xfer": 8
+              },
+              "route_hops": 12,
+              "scalar_adds": 16,
+              "scalar_multiplies": 32,
+              "skip_hops": 0,
+              "unit_hops": 12
+            },
+            "tag_range": [
+              1,
+              2
+            ],
+            "x_offset": 0
+          },
+          {
+            "config": "configs/simulators/fft_cmp_functional_v1.yaml",
+            "linked_address_map": {
+              "20480": 16384,
+              "20488": 16392,
+              "20496": 16400,
+              "20504": 16408,
+              "20736": 16640,
+              "20744": 16648,
+              "20752": 16656,
+              "20760": 16664
+            },
+            "linked_seed_count": 8,
+            "name": "fft_cmp",
+            "source_schedule_counts": {
+              "boundary_events": 24,
+              "functional_operations": 80,
+              "memory_bytes": 96,
+              "memory_requests": 12,
+              "operations": {
+                "add": 14,
+                "fma": 14,
+                "load": 8,
+                "mul": 16,
+                "store": 4,
+                "xfer": 24
+              },
+              "pipelines": {
+                "compute": 44,
+                "load": 8,
+                "store": 4,
+                "xfer": 24
+              },
+              "route_hops": 40,
+              "scalar_adds": 28,
+              "scalar_multiplies": 30,
+              "skip_hops": 24,
+              "unit_hops": 16
+            },
+            "tag_range": [
+              3,
+              5
+            ],
+            "x_offset": 2
+          },
+          {
+            "config": "configs/simulators/attention_functional_v1.yaml",
+            "linked_address_map": {
+              "28672": 24576,
+              "28680": 24584,
+              "28704": 24832,
+              "28712": 24840
+            },
+            "linked_seed_count": 4,
+            "name": "attention",
+            "source_schedule_counts": {
+              "boundary_events": 12,
+              "functional_operations": 76,
+              "memory_bytes": 224,
+              "memory_requests": 28,
+              "operations": {
+                "add": 2,
+                "fdiv": 4,
+                "fexp": 4,
+                "fma": 12,
+                "fmax": 2,
+                "load": 24,
+                "mul": 12,
+                "store": 4,
+                "xfer": 12
+              },
+              "pipelines": {
+                "compute": 36,
+                "load": 24,
+                "store": 4,
+                "xfer": 12
+              },
+              "route_hops": 26,
+              "scalar_adds": 14,
+              "scalar_multiplies": 24,
+              "skip_hops": 12,
+              "unit_hops": 14
+            },
+            "tag_range": [
+              6,
+              8
+            ],
+            "x_offset": 6
+          },
+          {
+            "config": "configs/simulators/swa_functional_v1.yaml",
+            "linked_address_map": {
+              "32768": 29440,
+              "32776": 29448,
+              "32800": 29472,
+              "32808": 29480
+            },
+            "linked_seed_count": 4,
+            "name": "swa",
+            "source_schedule_counts": {
+              "boundary_events": 21,
+              "functional_operations": 134,
+              "memory_bytes": 400,
+              "memory_requests": 50,
+              "operations": {
+                "add": 4,
+                "fdiv": 7,
+                "fexp": 7,
+                "fma": 19,
+                "fmax": 3,
+                "load": 42,
+                "mul": 23,
+                "store": 8,
+                "xfer": 21
+              },
+              "pipelines": {
+                "compute": 63,
+                "load": 42,
+                "store": 8,
+                "xfer": 21
+              },
+              "route_hops": 45,
+              "scalar_adds": 23,
+              "scalar_multiplies": 42,
+              "skip_hops": 21,
+              "unit_hops": 24
+            },
+            "tag_range": [
+              9,
+              11
+            ],
+            "x_offset": 12
+          },
+          {
+            "config": "configs/simulators/elementwise_functional_v1.yaml",
+            "linked_address_map": {
+              "36864": 33536,
+              "36872": 33544,
+              "36880": 33568,
+              "36888": 33576,
+              "36896": 33600,
+              "36904": 33608,
+              "36912": 33632,
+              "36920": 33640
+            },
+            "linked_seed_count": 8,
+            "name": "elementwise",
+            "source_schedule_counts": {
+              "boundary_events": 8,
+              "functional_operations": 88,
+              "memory_bytes": 192,
+              "memory_requests": 24,
+              "operations": {
+                "add": 16,
+                "fdiv": 8,
+                "fexp": 8,
+                "load": 16,
+                "mul": 24,
+                "store": 8,
+                "xfer": 8
+              },
+              "pipelines": {
+                "compute": 56,
+                "load": 16,
+                "store": 8,
+                "xfer": 8
+              },
+              "route_hops": 16,
+              "scalar_adds": 16,
+              "scalar_multiplies": 24,
+              "skip_hops": 8,
+              "unit_hops": 8
+            },
+            "tag_range": [
+              12,
+              13
+            ],
+            "x_offset": 18
+          }
+        ],
+        "data_ready": {
+          "coarse_predecessors_removed": 0,
+          "event_definitions": 18,
+          "event_emissions": 24,
+          "linked_addresses": 24,
+          "subscriptions": 26
+        },
+        "dynamic_link_count": 4,
+        "experiment_id": "H171",
+        "functional_enabled": false,
+        "operator_family": "complete_transformer_block",
+        "output_addresses": [
+          37376,
+          37384,
+          37392,
+          37400,
+          37408,
+          37416,
+          37424,
+          37432
+        ],
+        "paper_performance_targets_consumed": false,
+        "prefix": "complete",
+        "schedule_counts": {
+          "boundary_events": 97,
+          "functional_operations": 466,
+          "memory_bytes": 1296,
+          "memory_requests": 162,
+          "operations": {
+            "add": 36,
+            "fdiv": 19,
+            "fexp": 19,
+            "fma": 61,
+            "fmax": 5,
+            "load": 130,
+            "mul": 91,
+            "store": 32,
+            "xfer": 73
+          },
+          "pipelines": {
+            "compute": 231,
+            "load": 130,
+            "store": 32,
+            "xfer": 73
+          },
+          "route_hops": 139,
+          "scalar_adds": 97,
+          "scalar_multiplies": 152,
+          "skip_hops": 65,
+          "unit_hops": 74
+        }
+      },
+      "schedule_counts": {
+        "boundary_events": 97,
+        "functional_operations": 466,
+        "memory_bytes": 1296,
+        "memory_requests": 162,
+        "operations": {
+          "add": 36,
+          "fdiv": 19,
+          "fexp": 19,
+          "fma": 61,
+          "fmax": 5,
+          "load": 130,
+          "mul": 91,
+          "store": 32,
+          "xfer": 73
+        },
+        "pipelines": {
+          "compute": 231,
+          "load": 130,
+          "store": 32,
+          "xfer": 73
+        },
+        "route_hops": 139,
+        "scalar_adds": 97,
+        "scalar_multiplies": 152,
+        "skip_hops": 65,
+        "unit_hops": 74
+      }
+    },
+    "complete--single_layer_serial_spatial_baseline--enabled": {
+      "artifact": {
+        "bytes": 141335,
+        "path": "artifacts/environment/h171/configs/complete--single_layer_serial_spatial_baseline--enabled.json",
+        "sha256": "2a39651aa98bc9eb00dcda5735abb10fdfdd7ce1affed756e45f221ad94d9351"
+      },
+      "deterministic": true,
+      "input_memory_sha256": "99431860bb7c2ce2935629e34bbd5ae9775e18209f4676acf986d86bc3d22867",
+      "metadata": {
+        "active_window": 1,
+        "architecture": "single_layer_serial_spatial_baseline",
+        "boundary_mode": "coarse_predecessor_plus_redundant_data_ready",
+        "components": [
+          {
+            "config": "configs/simulators/bsmm_functional_v1.yaml",
+            "linked_address_map": {},
+            "linked_seed_count": 0,
+            "name": "bsmm",
+            "source_schedule_counts": {
+              "boundary_events": 8,
+              "functional_operations": 88,
+              "memory_bytes": 384,
+              "memory_requests": 48,
+              "operations": {
+                "fma": 16,
+                "load": 40,
+                "mul": 16,
+                "store": 8,
+                "xfer": 8
+              },
+              "pipelines": {
+                "compute": 32,
+                "load": 40,
+                "store": 8,
+                "xfer": 8
+              },
+              "route_hops": 12,
+              "scalar_adds": 16,
+              "scalar_multiplies": 32,
+              "skip_hops": 0,
+              "unit_hops": 12
+            },
+            "tag_range": [
+              1,
+              2
+            ],
+            "x_offset": 0
+          },
+          {
+            "config": "configs/simulators/fft_cmp_functional_v1.yaml",
+            "linked_address_map": {
+              "20480": 16384,
+              "20488": 16392,
+              "20496": 16400,
+              "20504": 16408,
+              "20736": 16640,
+              "20744": 16648,
+              "20752": 16656,
+              "20760": 16664
+            },
+            "linked_seed_count": 8,
+            "name": "fft_cmp",
+            "source_schedule_counts": {
+              "boundary_events": 24,
+              "functional_operations": 80,
+              "memory_bytes": 96,
+              "memory_requests": 12,
+              "operations": {
+                "add": 14,
+                "fma": 14,
+                "load": 8,
+                "mul": 16,
+                "store": 4,
+                "xfer": 24
+              },
+              "pipelines": {
+                "compute": 44,
+                "load": 8,
+                "store": 4,
+                "xfer": 24
+              },
+              "route_hops": 40,
+              "scalar_adds": 28,
+              "scalar_multiplies": 30,
+              "skip_hops": 24,
+              "unit_hops": 16
+            },
+            "tag_range": [
+              3,
+              5
+            ],
+            "x_offset": 2
+          },
+          {
+            "config": "configs/simulators/attention_functional_v1.yaml",
+            "linked_address_map": {
+              "28672": 24576,
+              "28680": 24584,
+              "28704": 24832,
+              "28712": 24840
+            },
+            "linked_seed_count": 4,
+            "name": "attention",
+            "source_schedule_counts": {
+              "boundary_events": 12,
+              "functional_operations": 76,
+              "memory_bytes": 224,
+              "memory_requests": 28,
+              "operations": {
+                "add": 2,
+                "fdiv": 4,
+                "fexp": 4,
+                "fma": 12,
+                "fmax": 2,
+                "load": 24,
+                "mul": 12,
+                "store": 4,
+                "xfer": 12
+              },
+              "pipelines": {
+                "compute": 36,
+                "load": 24,
+                "store": 4,
+                "xfer": 12
+              },
+              "route_hops": 26,
+              "scalar_adds": 14,
+              "scalar_multiplies": 24,
+              "skip_hops": 12,
+              "unit_hops": 14
+            },
+            "tag_range": [
+              6,
+              8
+            ],
+            "x_offset": 6
+          },
+          {
+            "config": "configs/simulators/swa_functional_v1.yaml",
+            "linked_address_map": {
+              "32768": 29440,
+              "32776": 29448,
+              "32800": 29472,
+              "32808": 29480
+            },
+            "linked_seed_count": 4,
+            "name": "swa",
+            "source_schedule_counts": {
+              "boundary_events": 21,
+              "functional_operations": 134,
+              "memory_bytes": 400,
+              "memory_requests": 50,
+              "operations": {
+                "add": 4,
+                "fdiv": 7,
+                "fexp": 7,
+                "fma": 19,
+                "fmax": 3,
+                "load": 42,
+                "mul": 23,
+                "store": 8,
+                "xfer": 21
+              },
+              "pipelines": {
+                "compute": 63,
+                "load": 42,
+                "store": 8,
+                "xfer": 21
+              },
+              "route_hops": 45,
+              "scalar_adds": 23,
+              "scalar_multiplies": 42,
+              "skip_hops": 21,
+              "unit_hops": 24
+            },
+            "tag_range": [
+              9,
+              11
+            ],
+            "x_offset": 12
+          },
+          {
+            "config": "configs/simulators/elementwise_functional_v1.yaml",
+            "linked_address_map": {
+              "36864": 33536,
+              "36872": 33544,
+              "36880": 33568,
+              "36888": 33576,
+              "36896": 33600,
+              "36904": 33608,
+              "36912": 33632,
+              "36920": 33640
+            },
+            "linked_seed_count": 8,
+            "name": "elementwise",
+            "source_schedule_counts": {
+              "boundary_events": 8,
+              "functional_operations": 88,
+              "memory_bytes": 192,
+              "memory_requests": 24,
+              "operations": {
+                "add": 16,
+                "fdiv": 8,
+                "fexp": 8,
+                "load": 16,
+                "mul": 24,
+                "store": 8,
+                "xfer": 8
+              },
+              "pipelines": {
+                "compute": 56,
+                "load": 16,
+                "store": 8,
+                "xfer": 8
+              },
+              "route_hops": 16,
+              "scalar_adds": 16,
+              "scalar_multiplies": 24,
+              "skip_hops": 8,
+              "unit_hops": 8
+            },
+            "tag_range": [
+              12,
+              13
+            ],
+            "x_offset": 18
+          }
+        ],
+        "data_ready": {
+          "coarse_predecessors_removed": 0,
+          "event_definitions": 18,
+          "event_emissions": 24,
+          "linked_addresses": 24,
+          "subscriptions": 26
+        },
+        "dynamic_link_count": 4,
+        "experiment_id": "H171",
+        "functional_enabled": true,
+        "operator_family": "complete_transformer_block",
+        "output_addresses": [
+          37376,
+          37384,
+          37392,
+          37400,
+          37408,
+          37416,
+          37424,
+          37432
+        ],
+        "paper_performance_targets_consumed": false,
+        "prefix": "complete",
+        "schedule_counts": {
+          "boundary_events": 97,
+          "functional_operations": 466,
+          "memory_bytes": 1296,
+          "memory_requests": 162,
+          "operations": {
+            "add": 36,
+            "fdiv": 19,
+            "fexp": 19,
+            "fma": 61,
+            "fmax": 5,
+            "load": 130,
+            "mul": 91,
+            "store": 32,
+            "xfer": 73
+          },
+          "pipelines": {
+            "compute": 231,
+            "load": 130,
+            "store": 32,
+            "xfer": 73
+          },
+          "route_hops": 139,
+          "scalar_adds": 97,
+          "scalar_multiplies": 152,
+          "skip_hops": 65,
+          "unit_hops": 74
+        }
+      },
+      "schedule_counts": {
+        "boundary_events": 97,
+        "functional_operations": 466,
+        "memory_bytes": 1296,
+        "memory_requests": 162,
+        "operations": {
+          "add": 36,
+          "fdiv": 19,
+          "fexp": 19,
+          "fma": 61,
+          "fmax": 5,
+          "load": 130,
+          "mul": 91,
+          "store": 32,
+          "xfer": 73
+        },
+        "pipelines": {
+          "compute": 231,
+          "load": 130,
+          "store": 32,
+          "xfer": 73
+        },
+        "route_hops": 139,
+        "scalar_adds": 97,
+        "scalar_multiplies": 152,
+        "skip_hops": 65,
+        "unit_hops": 74
+      }
+    },
+    "swa--multi_layer_execution_data_ready--disabled": {
+      "artifact": {
+        "bytes": 109643,
+        "path": "artifacts/environment/h171/configs/swa--multi_layer_execution_data_ready--disabled.json",
+        "sha256": "d16fec8538d805b21de22892a4e58b90387ba5ff4a8f8862dbcd308543a62f26"
+      },
+      "deterministic": true,
+      "input_memory_sha256": "99431860bb7c2ce2935629e34bbd5ae9775e18209f4676acf986d86bc3d22867",
+      "metadata": {
+        "active_window": 13,
+        "architecture": "multi_layer_execution_data_ready",
+        "boundary_mode": "address_matched_store_ready",
+        "components": [
+          {
+            "config": "configs/simulators/bsmm_functional_v1.yaml",
+            "linked_address_map": {},
+            "linked_seed_count": 0,
+            "name": "bsmm",
+            "source_schedule_counts": {
+              "boundary_events": 8,
+              "functional_operations": 88,
+              "memory_bytes": 384,
+              "memory_requests": 48,
+              "operations": {
+                "fma": 16,
+                "load": 40,
+                "mul": 16,
+                "store": 8,
+                "xfer": 8
+              },
+              "pipelines": {
+                "compute": 32,
+                "load": 40,
+                "store": 8,
+                "xfer": 8
+              },
+              "route_hops": 12,
+              "scalar_adds": 16,
+              "scalar_multiplies": 32,
+              "skip_hops": 0,
+              "unit_hops": 12
+            },
+            "tag_range": [
+              1,
+              2
+            ],
+            "x_offset": 0
+          },
+          {
+            "config": "configs/simulators/fft_cmp_functional_v1.yaml",
+            "linked_address_map": {
+              "20480": 16384,
+              "20488": 16392,
+              "20496": 16400,
+              "20504": 16408,
+              "20736": 16640,
+              "20744": 16648,
+              "20752": 16656,
+              "20760": 16664
+            },
+            "linked_seed_count": 8,
+            "name": "fft_cmp",
+            "source_schedule_counts": {
+              "boundary_events": 24,
+              "functional_operations": 80,
+              "memory_bytes": 96,
+              "memory_requests": 12,
+              "operations": {
+                "add": 14,
+                "fma": 14,
+                "load": 8,
+                "mul": 16,
+                "store": 4,
+                "xfer": 24
+              },
+              "pipelines": {
+                "compute": 44,
+                "load": 8,
+                "store": 4,
+                "xfer": 24
+              },
+              "route_hops": 40,
+              "scalar_adds": 28,
+              "scalar_multiplies": 30,
+              "skip_hops": 24,
+              "unit_hops": 16
+            },
+            "tag_range": [
+              3,
+              5
+            ],
+            "x_offset": 2
+          },
+          {
+            "config": "configs/simulators/attention_functional_v1.yaml",
+            "linked_address_map": {
+              "28672": 24576,
+              "28680": 24584,
+              "28704": 24832,
+              "28712": 24840
+            },
+            "linked_seed_count": 4,
+            "name": "attention",
+            "source_schedule_counts": {
+              "boundary_events": 12,
+              "functional_operations": 76,
+              "memory_bytes": 224,
+              "memory_requests": 28,
+              "operations": {
+                "add": 2,
+                "fdiv": 4,
+                "fexp": 4,
+                "fma": 12,
+                "fmax": 2,
+                "load": 24,
+                "mul": 12,
+                "store": 4,
+                "xfer": 12
+              },
+              "pipelines": {
+                "compute": 36,
+                "load": 24,
+                "store": 4,
+                "xfer": 12
+              },
+              "route_hops": 26,
+              "scalar_adds": 14,
+              "scalar_multiplies": 24,
+              "skip_hops": 12,
+              "unit_hops": 14
+            },
+            "tag_range": [
+              6,
+              8
+            ],
+            "x_offset": 6
+          },
+          {
+            "config": "configs/simulators/swa_functional_v1.yaml",
+            "linked_address_map": {
+              "32768": 29440,
+              "32776": 29448,
+              "32800": 29472,
+              "32808": 29480
+            },
+            "linked_seed_count": 4,
+            "name": "swa",
+            "source_schedule_counts": {
+              "boundary_events": 21,
+              "functional_operations": 134,
+              "memory_bytes": 400,
+              "memory_requests": 50,
+              "operations": {
+                "add": 4,
+                "fdiv": 7,
+                "fexp": 7,
+                "fma": 19,
+                "fmax": 3,
+                "load": 42,
+                "mul": 23,
+                "store": 8,
+                "xfer": 21
+              },
+              "pipelines": {
+                "compute": 63,
+                "load": 42,
+                "store": 8,
+                "xfer": 21
+              },
+              "route_hops": 45,
+              "scalar_adds": 23,
+              "scalar_multiplies": 42,
+              "skip_hops": 21,
+              "unit_hops": 24
+            },
+            "tag_range": [
+              9,
+              11
+            ],
+            "x_offset": 12
+          }
+        ],
+        "data_ready": {
+          "coarse_predecessors_removed": 13,
+          "event_definitions": 10,
+          "event_emissions": 16,
+          "linked_addresses": 16,
+          "subscriptions": 18
+        },
+        "dynamic_link_count": 3,
+        "experiment_id": "H171",
+        "functional_enabled": false,
+        "operator_family": "complete_transformer_block",
+        "output_addresses": [
+          33536,
+          33544,
+          33568,
+          33576,
+          33600,
+          33608,
+          33632,
+          33640
+        ],
+        "paper_performance_targets_consumed": false,
+        "prefix": "swa",
+        "schedule_counts": {
+          "boundary_events": 81,
+          "functional_operations": 378,
+          "memory_bytes": 1104,
+          "memory_requests": 138,
+          "operations": {
+            "add": 20,
+            "fdiv": 11,
+            "fexp": 11,
+            "fma": 61,
+            "fmax": 5,
+            "load": 114,
+            "mul": 67,
+            "store": 24,
+            "xfer": 65
+          },
+          "pipelines": {
+            "compute": 175,
+            "load": 114,
+            "store": 24,
+            "xfer": 65
+          },
+          "route_hops": 123,
+          "scalar_adds": 81,
+          "scalar_multiplies": 128,
+          "skip_hops": 57,
+          "unit_hops": 66
+        }
+      },
+      "schedule_counts": {
+        "boundary_events": 81,
+        "functional_operations": 378,
+        "memory_bytes": 1104,
+        "memory_requests": 138,
+        "operations": {
+          "add": 20,
+          "fdiv": 11,
+          "fexp": 11,
+          "fma": 61,
+          "fmax": 5,
+          "load": 114,
+          "mul": 67,
+          "store": 24,
+          "xfer": 65
+        },
+        "pipelines": {
+          "compute": 175,
+          "load": 114,
+          "store": 24,
+          "xfer": 65
+        },
+        "route_hops": 123,
+        "scalar_adds": 81,
+        "scalar_multiplies": 128,
+        "skip_hops": 57,
+        "unit_hops": 66
+      }
+    },
+    "swa--multi_layer_execution_data_ready--enabled": {
+      "artifact": {
+        "bytes": 109641,
+        "path": "artifacts/environment/h171/configs/swa--multi_layer_execution_data_ready--enabled.json",
+        "sha256": "32754d45c4adf4aed28e6e0a4280f994454cb51d699bc700960e5edc761887ba"
+      },
+      "deterministic": true,
+      "input_memory_sha256": "99431860bb7c2ce2935629e34bbd5ae9775e18209f4676acf986d86bc3d22867",
+      "metadata": {
+        "active_window": 13,
+        "architecture": "multi_layer_execution_data_ready",
+        "boundary_mode": "address_matched_store_ready",
+        "components": [
+          {
+            "config": "configs/simulators/bsmm_functional_v1.yaml",
+            "linked_address_map": {},
+            "linked_seed_count": 0,
+            "name": "bsmm",
+            "source_schedule_counts": {
+              "boundary_events": 8,
+              "functional_operations": 88,
+              "memory_bytes": 384,
+              "memory_requests": 48,
+              "operations": {
+                "fma": 16,
+                "load": 40,
+                "mul": 16,
+                "store": 8,
+                "xfer": 8
+              },
+              "pipelines": {
+                "compute": 32,
+                "load": 40,
+                "store": 8,
+                "xfer": 8
+              },
+              "route_hops": 12,
+              "scalar_adds": 16,
+              "scalar_multiplies": 32,
+              "skip_hops": 0,
+              "unit_hops": 12
+            },
+            "tag_range": [
+              1,
+              2
+            ],
+            "x_offset": 0
+          },
+          {
+            "config": "configs/simulators/fft_cmp_functional_v1.yaml",
+            "linked_address_map": {
+              "20480": 16384,
+              "20488": 16392,
+              "20496": 16400,
+              "20504": 16408,
+              "20736": 16640,
+              "20744": 16648,
+              "20752": 16656,
+              "20760": 16664
+            },
+            "linked_seed_count": 8,
+            "name": "fft_cmp",
+            "source_schedule_counts": {
+              "boundary_events": 24,
+              "functional_operations": 80,
+              "memory_bytes": 96,
+              "memory_requests": 12,
+              "operations": {
+                "add": 14,
+                "fma": 14,
+                "load": 8,
+                "mul": 16,
+                "store": 4,
+                "xfer": 24
+              },
+              "pipelines": {
+                "compute": 44,
+                "load": 8,
+                "store": 4,
+                "xfer": 24
+              },
+              "route_hops": 40,
+              "scalar_adds": 28,
+              "scalar_multiplies": 30,
+              "skip_hops": 24,
+              "unit_hops": 16
+            },
+            "tag_range": [
+              3,
+              5
+            ],
+            "x_offset": 2
+          },
+          {
+            "config": "configs/simulators/attention_functional_v1.yaml",
+            "linked_address_map": {
+              "28672": 24576,
+              "28680": 24584,
+              "28704": 24832,
+              "28712": 24840
+            },
+            "linked_seed_count": 4,
+            "name": "attention",
+            "source_schedule_counts": {
+              "boundary_events": 12,
+              "functional_operations": 76,
+              "memory_bytes": 224,
+              "memory_requests": 28,
+              "operations": {
+                "add": 2,
+                "fdiv": 4,
+                "fexp": 4,
+                "fma": 12,
+                "fmax": 2,
+                "load": 24,
+                "mul": 12,
+                "store": 4,
+                "xfer": 12
+              },
+              "pipelines": {
+                "compute": 36,
+                "load": 24,
+                "store": 4,
+                "xfer": 12
+              },
+              "route_hops": 26,
+              "scalar_adds": 14,
+              "scalar_multiplies": 24,
+              "skip_hops": 12,
+              "unit_hops": 14
+            },
+            "tag_range": [
+              6,
+              8
+            ],
+            "x_offset": 6
+          },
+          {
+            "config": "configs/simulators/swa_functional_v1.yaml",
+            "linked_address_map": {
+              "32768": 29440,
+              "32776": 29448,
+              "32800": 29472,
+              "32808": 29480
+            },
+            "linked_seed_count": 4,
+            "name": "swa",
+            "source_schedule_counts": {
+              "boundary_events": 21,
+              "functional_operations": 134,
+              "memory_bytes": 400,
+              "memory_requests": 50,
+              "operations": {
+                "add": 4,
+                "fdiv": 7,
+                "fexp": 7,
+                "fma": 19,
+                "fmax": 3,
+                "load": 42,
+                "mul": 23,
+                "store": 8,
+                "xfer": 21
+              },
+              "pipelines": {
+                "compute": 63,
+                "load": 42,
+                "store": 8,
+                "xfer": 21
+              },
+              "route_hops": 45,
+              "scalar_adds": 23,
+              "scalar_multiplies": 42,
+              "skip_hops": 21,
+              "unit_hops": 24
+            },
+            "tag_range": [
+              9,
+              11
+            ],
+            "x_offset": 12
+          }
+        ],
+        "data_ready": {
+          "coarse_predecessors_removed": 13,
+          "event_definitions": 10,
+          "event_emissions": 16,
+          "linked_addresses": 16,
+          "subscriptions": 18
+        },
+        "dynamic_link_count": 3,
+        "experiment_id": "H171",
+        "functional_enabled": true,
+        "operator_family": "complete_transformer_block",
+        "output_addresses": [
+          33536,
+          33544,
+          33568,
+          33576,
+          33600,
+          33608,
+          33632,
+          33640
+        ],
+        "paper_performance_targets_consumed": false,
+        "prefix": "swa",
+        "schedule_counts": {
+          "boundary_events": 81,
+          "functional_operations": 378,
+          "memory_bytes": 1104,
+          "memory_requests": 138,
+          "operations": {
+            "add": 20,
+            "fdiv": 11,
+            "fexp": 11,
+            "fma": 61,
+            "fmax": 5,
+            "load": 114,
+            "mul": 67,
+            "store": 24,
+            "xfer": 65
+          },
+          "pipelines": {
+            "compute": 175,
+            "load": 114,
+            "store": 24,
+            "xfer": 65
+          },
+          "route_hops": 123,
+          "scalar_adds": 81,
+          "scalar_multiplies": 128,
+          "skip_hops": 57,
+          "unit_hops": 66
+        }
+      },
+      "schedule_counts": {
+        "boundary_events": 81,
+        "functional_operations": 378,
+        "memory_bytes": 1104,
+        "memory_requests": 138,
+        "operations": {
+          "add": 20,
+          "fdiv": 11,
+          "fexp": 11,
+          "fma": 61,
+          "fmax": 5,
+          "load": 114,
+          "mul": 67,
+          "store": 24,
+          "xfer": 65
+        },
+        "pipelines": {
+          "compute": 175,
+          "load": 114,
+          "store": 24,
+          "xfer": 65
+        },
+        "route_hops": 123,
+        "scalar_adds": 81,
+        "scalar_multiplies": 128,
+        "skip_hops": 57,
+        "unit_hops": 66
+      }
+    },
+    "swa--single_layer_serial_spatial_baseline--disabled": {
+      "artifact": {
+        "bytes": 109882,
+        "path": "artifacts/environment/h171/configs/swa--single_layer_serial_spatial_baseline--disabled.json",
+        "sha256": "c0842c2cb615cf17fa6b9711fdd77df6b93131036f394dda72b1690dcc4de3d1"
+      },
+      "deterministic": true,
+      "input_memory_sha256": "99431860bb7c2ce2935629e34bbd5ae9775e18209f4676acf986d86bc3d22867",
+      "metadata": {
+        "active_window": 1,
+        "architecture": "single_layer_serial_spatial_baseline",
+        "boundary_mode": "coarse_predecessor_plus_redundant_data_ready",
+        "components": [
+          {
+            "config": "configs/simulators/bsmm_functional_v1.yaml",
+            "linked_address_map": {},
+            "linked_seed_count": 0,
+            "name": "bsmm",
+            "source_schedule_counts": {
+              "boundary_events": 8,
+              "functional_operations": 88,
+              "memory_bytes": 384,
+              "memory_requests": 48,
+              "operations": {
+                "fma": 16,
+                "load": 40,
+                "mul": 16,
+                "store": 8,
+                "xfer": 8
+              },
+              "pipelines": {
+                "compute": 32,
+                "load": 40,
+                "store": 8,
+                "xfer": 8
+              },
+              "route_hops": 12,
+              "scalar_adds": 16,
+              "scalar_multiplies": 32,
+              "skip_hops": 0,
+              "unit_hops": 12
+            },
+            "tag_range": [
+              1,
+              2
+            ],
+            "x_offset": 0
+          },
+          {
+            "config": "configs/simulators/fft_cmp_functional_v1.yaml",
+            "linked_address_map": {
+              "20480": 16384,
+              "20488": 16392,
+              "20496": 16400,
+              "20504": 16408,
+              "20736": 16640,
+              "20744": 16648,
+              "20752": 16656,
+              "20760": 16664
+            },
+            "linked_seed_count": 8,
+            "name": "fft_cmp",
+            "source_schedule_counts": {
+              "boundary_events": 24,
+              "functional_operations": 80,
+              "memory_bytes": 96,
+              "memory_requests": 12,
+              "operations": {
+                "add": 14,
+                "fma": 14,
+                "load": 8,
+                "mul": 16,
+                "store": 4,
+                "xfer": 24
+              },
+              "pipelines": {
+                "compute": 44,
+                "load": 8,
+                "store": 4,
+                "xfer": 24
+              },
+              "route_hops": 40,
+              "scalar_adds": 28,
+              "scalar_multiplies": 30,
+              "skip_hops": 24,
+              "unit_hops": 16
+            },
+            "tag_range": [
+              3,
+              5
+            ],
+            "x_offset": 2
+          },
+          {
+            "config": "configs/simulators/attention_functional_v1.yaml",
+            "linked_address_map": {
+              "28672": 24576,
+              "28680": 24584,
+              "28704": 24832,
+              "28712": 24840
+            },
+            "linked_seed_count": 4,
+            "name": "attention",
+            "source_schedule_counts": {
+              "boundary_events": 12,
+              "functional_operations": 76,
+              "memory_bytes": 224,
+              "memory_requests": 28,
+              "operations": {
+                "add": 2,
+                "fdiv": 4,
+                "fexp": 4,
+                "fma": 12,
+                "fmax": 2,
+                "load": 24,
+                "mul": 12,
+                "store": 4,
+                "xfer": 12
+              },
+              "pipelines": {
+                "compute": 36,
+                "load": 24,
+                "store": 4,
+                "xfer": 12
+              },
+              "route_hops": 26,
+              "scalar_adds": 14,
+              "scalar_multiplies": 24,
+              "skip_hops": 12,
+              "unit_hops": 14
+            },
+            "tag_range": [
+              6,
+              8
+            ],
+            "x_offset": 6
+          },
+          {
+            "config": "configs/simulators/swa_functional_v1.yaml",
+            "linked_address_map": {
+              "32768": 29440,
+              "32776": 29448,
+              "32800": 29472,
+              "32808": 29480
+            },
+            "linked_seed_count": 4,
+            "name": "swa",
+            "source_schedule_counts": {
+              "boundary_events": 21,
+              "functional_operations": 134,
+              "memory_bytes": 400,
+              "memory_requests": 50,
+              "operations": {
+                "add": 4,
+                "fdiv": 7,
+                "fexp": 7,
+                "fma": 19,
+                "fmax": 3,
+                "load": 42,
+                "mul": 23,
+                "store": 8,
+                "xfer": 21
+              },
+              "pipelines": {
+                "compute": 63,
+                "load": 42,
+                "store": 8,
+                "xfer": 21
+              },
+              "route_hops": 45,
+              "scalar_adds": 23,
+              "scalar_multiplies": 42,
+              "skip_hops": 21,
+              "unit_hops": 24
+            },
+            "tag_range": [
+              9,
+              11
+            ],
+            "x_offset": 12
+          }
+        ],
+        "data_ready": {
+          "coarse_predecessors_removed": 0,
+          "event_definitions": 10,
+          "event_emissions": 16,
+          "linked_addresses": 16,
+          "subscriptions": 18
+        },
+        "dynamic_link_count": 3,
+        "experiment_id": "H171",
+        "functional_enabled": false,
+        "operator_family": "complete_transformer_block",
+        "output_addresses": [
+          33536,
+          33544,
+          33568,
+          33576,
+          33600,
+          33608,
+          33632,
+          33640
+        ],
+        "paper_performance_targets_consumed": false,
+        "prefix": "swa",
+        "schedule_counts": {
+          "boundary_events": 81,
+          "functional_operations": 378,
+          "memory_bytes": 1104,
+          "memory_requests": 138,
+          "operations": {
+            "add": 20,
+            "fdiv": 11,
+            "fexp": 11,
+            "fma": 61,
+            "fmax": 5,
+            "load": 114,
+            "mul": 67,
+            "store": 24,
+            "xfer": 65
+          },
+          "pipelines": {
+            "compute": 175,
+            "load": 114,
+            "store": 24,
+            "xfer": 65
+          },
+          "route_hops": 123,
+          "scalar_adds": 81,
+          "scalar_multiplies": 128,
+          "skip_hops": 57,
+          "unit_hops": 66
+        }
+      },
+      "schedule_counts": {
+        "boundary_events": 81,
+        "functional_operations": 378,
+        "memory_bytes": 1104,
+        "memory_requests": 138,
+        "operations": {
+          "add": 20,
+          "fdiv": 11,
+          "fexp": 11,
+          "fma": 61,
+          "fmax": 5,
+          "load": 114,
+          "mul": 67,
+          "store": 24,
+          "xfer": 65
+        },
+        "pipelines": {
+          "compute": 175,
+          "load": 114,
+          "store": 24,
+          "xfer": 65
+        },
+        "route_hops": 123,
+        "scalar_adds": 81,
+        "scalar_multiplies": 128,
+        "skip_hops": 57,
+        "unit_hops": 66
+      }
+    },
+    "swa--single_layer_serial_spatial_baseline--enabled": {
+      "artifact": {
+        "bytes": 109880,
+        "path": "artifacts/environment/h171/configs/swa--single_layer_serial_spatial_baseline--enabled.json",
+        "sha256": "3bc2f7c5c8cbab88a452d99fe8891f0bb9893d3d3657e14ce785e3ba8127075d"
+      },
+      "deterministic": true,
+      "input_memory_sha256": "99431860bb7c2ce2935629e34bbd5ae9775e18209f4676acf986d86bc3d22867",
+      "metadata": {
+        "active_window": 1,
+        "architecture": "single_layer_serial_spatial_baseline",
+        "boundary_mode": "coarse_predecessor_plus_redundant_data_ready",
+        "components": [
+          {
+            "config": "configs/simulators/bsmm_functional_v1.yaml",
+            "linked_address_map": {},
+            "linked_seed_count": 0,
+            "name": "bsmm",
+            "source_schedule_counts": {
+              "boundary_events": 8,
+              "functional_operations": 88,
+              "memory_bytes": 384,
+              "memory_requests": 48,
+              "operations": {
+                "fma": 16,
+                "load": 40,
+                "mul": 16,
+                "store": 8,
+                "xfer": 8
+              },
+              "pipelines": {
+                "compute": 32,
+                "load": 40,
+                "store": 8,
+                "xfer": 8
+              },
+              "route_hops": 12,
+              "scalar_adds": 16,
+              "scalar_multiplies": 32,
+              "skip_hops": 0,
+              "unit_hops": 12
+            },
+            "tag_range": [
+              1,
+              2
+            ],
+            "x_offset": 0
+          },
+          {
+            "config": "configs/simulators/fft_cmp_functional_v1.yaml",
+            "linked_address_map": {
+              "20480": 16384,
+              "20488": 16392,
+              "20496": 16400,
+              "20504": 16408,
+              "20736": 16640,
+              "20744": 16648,
+              "20752": 16656,
+              "20760": 16664
+            },
+            "linked_seed_count": 8,
+            "name": "fft_cmp",
+            "source_schedule_counts": {
+              "boundary_events": 24,
+              "functional_operations": 80,
+              "memory_bytes": 96,
+              "memory_requests": 12,
+              "operations": {
+                "add": 14,
+                "fma": 14,
+                "load": 8,
+                "mul": 16,
+                "store": 4,
+                "xfer": 24
+              },
+              "pipelines": {
+                "compute": 44,
+                "load": 8,
+                "store": 4,
+                "xfer": 24
+              },
+              "route_hops": 40,
+              "scalar_adds": 28,
+              "scalar_multiplies": 30,
+              "skip_hops": 24,
+              "unit_hops": 16
+            },
+            "tag_range": [
+              3,
+              5
+            ],
+            "x_offset": 2
+          },
+          {
+            "config": "configs/simulators/attention_functional_v1.yaml",
+            "linked_address_map": {
+              "28672": 24576,
+              "28680": 24584,
+              "28704": 24832,
+              "28712": 24840
+            },
+            "linked_seed_count": 4,
+            "name": "attention",
+            "source_schedule_counts": {
+              "boundary_events": 12,
+              "functional_operations": 76,
+              "memory_bytes": 224,
+              "memory_requests": 28,
+              "operations": {
+                "add": 2,
+                "fdiv": 4,
+                "fexp": 4,
+                "fma": 12,
+                "fmax": 2,
+                "load": 24,
+                "mul": 12,
+                "store": 4,
+                "xfer": 12
+              },
+              "pipelines": {
+                "compute": 36,
+                "load": 24,
+                "store": 4,
+                "xfer": 12
+              },
+              "route_hops": 26,
+              "scalar_adds": 14,
+              "scalar_multiplies": 24,
+              "skip_hops": 12,
+              "unit_hops": 14
+            },
+            "tag_range": [
+              6,
+              8
+            ],
+            "x_offset": 6
+          },
+          {
+            "config": "configs/simulators/swa_functional_v1.yaml",
+            "linked_address_map": {
+              "32768": 29440,
+              "32776": 29448,
+              "32800": 29472,
+              "32808": 29480
+            },
+            "linked_seed_count": 4,
+            "name": "swa",
+            "source_schedule_counts": {
+              "boundary_events": 21,
+              "functional_operations": 134,
+              "memory_bytes": 400,
+              "memory_requests": 50,
+              "operations": {
+                "add": 4,
+                "fdiv": 7,
+                "fexp": 7,
+                "fma": 19,
+                "fmax": 3,
+                "load": 42,
+                "mul": 23,
+                "store": 8,
+                "xfer": 21
+              },
+              "pipelines": {
+                "compute": 63,
+                "load": 42,
+                "store": 8,
+                "xfer": 21
+              },
+              "route_hops": 45,
+              "scalar_adds": 23,
+              "scalar_multiplies": 42,
+              "skip_hops": 21,
+              "unit_hops": 24
+            },
+            "tag_range": [
+              9,
+              11
+            ],
+            "x_offset": 12
+          }
+        ],
+        "data_ready": {
+          "coarse_predecessors_removed": 0,
+          "event_definitions": 10,
+          "event_emissions": 16,
+          "linked_addresses": 16,
+          "subscriptions": 18
+        },
+        "dynamic_link_count": 3,
+        "experiment_id": "H171",
+        "functional_enabled": true,
+        "operator_family": "complete_transformer_block",
+        "output_addresses": [
+          33536,
+          33544,
+          33568,
+          33576,
+          33600,
+          33608,
+          33632,
+          33640
+        ],
+        "paper_performance_targets_consumed": false,
+        "prefix": "swa",
+        "schedule_counts": {
+          "boundary_events": 81,
+          "functional_operations": 378,
+          "memory_bytes": 1104,
+          "memory_requests": 138,
+          "operations": {
+            "add": 20,
+            "fdiv": 11,
+            "fexp": 11,
+            "fma": 61,
+            "fmax": 5,
+            "load": 114,
+            "mul": 67,
+            "store": 24,
+            "xfer": 65
+          },
+          "pipelines": {
+            "compute": 175,
+            "load": 114,
+            "store": 24,
+            "xfer": 65
+          },
+          "route_hops": 123,
+          "scalar_adds": 81,
+          "scalar_multiplies": 128,
+          "skip_hops": 57,
+          "unit_hops": 66
+        }
+      },
+      "schedule_counts": {
+        "boundary_events": 81,
+        "functional_operations": 378,
+        "memory_bytes": 1104,
+        "memory_requests": 138,
+        "operations": {
+          "add": 20,
+          "fdiv": 11,
+          "fexp": 11,
+          "fma": 61,
+          "fmax": 5,
+          "load": 114,
+          "mul": 67,
+          "store": 24,
+          "xfer": 65
+        },
+        "pipelines": {
+          "compute": 175,
+          "load": 114,
+          "store": 24,
+          "xfer": 65
+        },
+        "route_hops": 123,
+        "scalar_adds": 81,
+        "scalar_multiplies": 128,
+        "skip_hops": 57,
+        "unit_hops": 66
+      }
+    }
+  },
+  "paper_performance_targets_consumed": false,
+  "schema_version": 1
+}
