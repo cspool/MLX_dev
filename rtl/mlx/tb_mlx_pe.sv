@@ -33,8 +33,10 @@ module tb_mlx_pe #(
   wire [15:0] issue_tag;
   reg [3:0] rf_read_addr_a = 4'd0;
   reg [3:0] rf_read_addr_b = 4'd0;
+  reg [3:0] rf_read_addr_c = 4'd0;
   wire [VECTOR_BITS-1:0] rf_read_data_a;
   wire [VECTOR_BITS-1:0] rf_read_data_b;
+  wire [VECTOR_BITS-1:0] rf_read_data_c;
   reg rf_write_enable = 1'b0;
   reg [3:0] rf_write_addr = 4'd0;
   reg [VECTOR_BITS-1:0] rf_write_data = {VECTOR_BITS{1'b0}};
@@ -91,7 +93,9 @@ module tb_mlx_pe #(
       .pipeline_class_i(pipeline_class), .pipeline_ready_i(pipeline_ready),
       .issue_valid_o(issue_valid), .issue_tag_o(issue_tag),
       .rf_read_addr_a_i(rf_read_addr_a), .rf_read_addr_b_i(rf_read_addr_b),
+      .rf_read_addr_c_i(rf_read_addr_c),
       .rf_read_data_a_o(rf_read_data_a), .rf_read_data_b_o(rf_read_data_b),
+      .rf_read_data_c_o(rf_read_data_c),
       .rf_write_enable_i(rf_write_enable), .rf_write_addr_i(rf_write_addr),
       .rf_write_data_i(rf_write_data),
       .network_valid_i(network_valid), .network_dx_i(network_dx),

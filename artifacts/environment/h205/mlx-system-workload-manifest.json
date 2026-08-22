@@ -1,0 +1,3550 @@
+{
+  "array": {
+    "columns": 4,
+    "dma_beat_bits": 64,
+    "instructions_per_pe": 32,
+    "registers_per_pe": 16,
+    "rows": 4,
+    "spm_vectors": 128,
+    "transcendental_lanes": 8,
+    "vector_bits": 512
+  },
+  "checks": {
+    "all_instructions_lineaged": true,
+    "all_key_operations": true,
+    "capacity": true,
+    "four_workloads": true,
+    "real_mesh_activity": true,
+    "required_names": true,
+    "routes_present": true,
+    "skip_hops_present": true
+  },
+  "chipyard": {
+    "commit": "b5d013190d637e634113cb5179f8c8885df1945a",
+    "configs": {
+      "cycle": "MLXCycleRocketConfig",
+      "rtl": "MLXRTLRocketConfig"
+    },
+    "custom_opcode": 0,
+    "root": "/root/chipyard"
+  },
+  "encoding": {
+    "destination": [
+      53,
+      50
+    ],
+    "dx": [
+      37,
+      33
+    ],
+    "dy": [
+      32,
+      28
+    ],
+    "opcode": [
+      63,
+      60
+    ],
+    "pipeline": [
+      55,
+      54
+    ],
+    "sources": [
+      [
+        49,
+        46
+      ],
+      [
+        45,
+        42
+      ],
+      [
+        41,
+        38
+      ]
+    ],
+    "spm_vector": [
+      27,
+      20
+    ],
+    "tag": [
+      59,
+      56
+    ],
+    "word_bits": 64
+  },
+  "experiment_id": "H205",
+  "interface": {
+    "config_funct": 0,
+    "launch_funct": 1,
+    "status_funct": 3,
+    "wait_funct": 2
+  },
+  "opcodes": {
+    "add": 3,
+    "div": 6,
+    "exp": 5,
+    "fma": 2,
+    "load": 0,
+    "max": 4,
+    "mul": 9,
+    "shuffle": 7,
+    "store": 1,
+    "xfer": 8
+  },
+  "paper_performance_targets_consumed": false,
+  "pipelines": {
+    "add": 2,
+    "div": 2,
+    "exp": 2,
+    "fma": 2,
+    "load": 0,
+    "max": 2,
+    "mul": 2,
+    "shuffle": 2,
+    "store": 1,
+    "xfer": 3
+  },
+  "run_id": "run210",
+  "schema_version": 1,
+  "source_config": "configs/system/mlx_riscv_system_v1.yaml",
+  "source_config_sha256": "3ae394efa72563997bf4b43915ed720f6ea7f323ded2edc982918bb3c6e2243b",
+  "workloads": [
+    {
+      "active_pes": 8,
+      "golden_hex": "system_sim/generated/bsmm.golden.hex",
+      "golden_hex_sha256": "6ae295a3ef79e31962478cc253feb213b6ee56b6369744fcecb00adb6b8dcf97",
+      "header": "system_sim/generated/bsmm.h",
+      "header_sha256": "bf82d6a211b5a77df92c73edc57154c8173c1522bdd954b2fc21fc6b89a5e121",
+      "input_hex": "system_sim/generated/bsmm.input.hex",
+      "input_hex_sha256": "8f5cfbfef2004fd4f8c38727caa1a875222a1893cd5ebb5b31399cf50231fa92",
+      "input_vectors": 7,
+      "instruction_count": 44,
+      "instruction_counts_per_pe": [
+        6,
+        7,
+        6,
+        7,
+        5,
+        5,
+        0,
+        0,
+        4,
+        4,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "lineage": [
+        {
+          "index": 0,
+          "normalized": {
+            "dst": 0,
+            "dx": 0,
+            "dy": 0,
+            "immediate": 0,
+            "op": "load",
+            "src0": 0,
+            "src1": 0,
+            "src2": 0,
+            "tag": 0
+          },
+          "pe": 0,
+          "source": {
+            "dst": 0,
+            "op": "load",
+            "spm": "x0"
+          },
+          "word": "0000000000000000"
+        },
+        {
+          "index": 1,
+          "normalized": {
+            "dst": 1,
+            "dx": 0,
+            "dy": 0,
+            "immediate": 1,
+            "op": "load",
+            "src0": 0,
+            "src1": 0,
+            "src2": 0,
+            "tag": 0
+          },
+          "pe": 0,
+          "source": {
+            "dst": 1,
+            "op": "load",
+            "spm": "x1"
+          },
+          "word": "0004000000100000"
+        },
+        {
+          "index": 2,
+          "normalized": {
+            "dst": 2,
+            "dx": 0,
+            "dy": 0,
+            "immediate": 4,
+            "op": "load",
+            "src0": 0,
+            "src1": 0,
+            "src2": 0,
+            "tag": 0
+          },
+          "pe": 0,
+          "source": {
+            "dst": 2,
+            "op": "load",
+            "spm": "one"
+          },
+          "word": "0008000000400000"
+        },
+        {
+          "index": 3,
+          "normalized": {
+            "dst": 4,
+            "dx": 0,
+            "dy": 0,
+            "immediate": 0,
+            "op": "mul",
+            "src0": 0,
+            "src1": 2,
+            "src2": 0,
+            "tag": 0
+          },
+          "pe": 0,
+          "source": {
+            "dst": 4,
+            "op": "mul",
+            "src0": 0,
+            "src1": 2
+          },
+          "word": "9090080000000000"
+        },
+        {
+          "index": 4,
+          "normalized": {
+            "dst": 5,
+            "dx": 0,
+            "dy": 0,
+            "immediate": 0,
+            "op": "fma",
+            "src0": 1,
+            "src1": 2,
+            "src2": 4,
+            "tag": 0
+          },
+          "pe": 0,
+          "source": {
+            "dst": 5,
+            "op": "fma",
+            "src0": 1,
+            "src1": 2,
+            "src2": 4
+          },
+          "word": "2094490000000000"
+        },
+        {
+          "index": 5,
+          "normalized": {
+            "dst": 0,
+            "dx": 0,
+            "dy": 1,
+            "immediate": 0,
+            "op": "xfer",
+            "src0": 5,
+            "src1": 0,
+            "src2": 0,
+            "tag": 0,
+            "target_pe": 4
+          },
+          "pe": 0,
+          "source": {
+            "dst": 0,
+            "op": "xfer",
+            "src0": 5,
+            "target_pe": 4
+          },
+          "word": "80c1400010000000"
+        },
+        {
+          "index": 0,
+          "normalized": {
+            "dst": 0,
+            "dx": 0,
+            "dy": 0,
+            "immediate": 0,
+            "op": "load",
+            "src0": 0,
+            "src1": 0,
+            "src2": 0,
+            "tag": 1
+          },
+          "pe": 1,
+          "source": {
+            "dst": 0,
+            "op": "load",
+            "spm": "x0"
+          },
+          "word": "0100000000000000"
+        },
+        {
+          "index": 1,
+          "normalized": {
+            "dst": 1,
+            "dx": 0,
+            "dy": 0,
+            "immediate": 1,
+            "op": "load",
+            "src0": 0,
+            "src1": 0,
+            "src2": 0,
+            "tag": 1
+          },
+          "pe": 1,
+          "source": {
+            "dst": 1,
+            "op": "load",
+            "spm": "x1"
+          },
+          "word": "0104000000100000"
+        },
+        {
+          "index": 2,
+          "normalized": {
+            "dst": 2,
+            "dx": 0,
+            "dy": 0,
+            "immediate": 5,
+            "op": "load",
+            "src0": 0,
+            "src1": 0,
+            "src2": 0,
+            "tag": 1
+          },
+          "pe": 1,
+          "source": {
+            "dst": 2,
+            "op": "load",
+            "spm": "two"
+          },
+          "word": "0108000000500000"
+        },
+        {
+          "index": 3,
+          "normalized": {
+            "dst": 3,
+            "dx": 0,
+            "dy": 0,
+            "immediate": 4,
+            "op": "load",
+            "src0": 0,
+            "src1": 0,
+            "src2": 0,
+            "tag": 1
+          },
+          "pe": 1,
+          "source": {
+            "dst": 3,
+            "op": "load",
+            "spm": "one"
+          },
+          "word": "010c000000400000"
+        },
+        {
+          "index": 4,
+          "normalized": {
+            "dst": 4,
+            "dx": 0,
+            "dy": 0,
+            "immediate": 0,
+            "op": "mul",
+            "src0": 0,
+            "src1": 2,
+            "src2": 0,
+            "tag": 1
+          },
+          "pe": 1,
+          "source": {
+            "dst": 4,
+            "op": "mul",
+            "src0": 0,
+            "src1": 2
+          },
+          "word": "9190080000000000"
+        },
+        {
+          "index": 5,
+          "normalized": {
+            "dst": 5,
+            "dx": 0,
+            "dy": 0,
+            "immediate": 0,
+            "op": "fma",
+            "src0": 1,
+            "src1": 3,
+            "src2": 4,
+            "tag": 1
+          },
+          "pe": 1,
+          "source": {
+            "dst": 5,
+            "op": "fma",
+            "src0": 1,
+            "src1": 3,
+            "src2": 4
+          },
+          "word": "21944d0000000000"
+        },
+        {
+          "index": 6,
+          "normalized": {
+            "dst": 1,
+            "dx": -1,
+            "dy": 1,
+            "immediate": 0,
+            "op": "xfer",
+            "src0": 5,
+            "src1": 0,
+            "src2": 0,
+            "tag": 1,
+            "target_pe": 4
+          },
+          "pe": 1,
+          "source": {
+            "dst": 1,
+            "op": "xfer",
+            "src0": 5,
+            "target_pe": 4
+          },
+          "word": "81c5403e10000000"
+        },
+        {
+          "index": 0,
+          "normalized": {
+            "dst": 0,
+            "dx": 0,
+            "dy": 0,
+            "immediate": 2,
+            "op": "load",
+            "src0": 0,
+            "src1": 0,
+            "src2": 0,
+            "tag": 2
+          },
+          "pe": 2,
+          "source": {
+            "dst": 0,
+            "op": "load",
+            "spm": "x2"
+          },
+          "word": "0200000000200000"
+        },
+        {
+          "index": 1,
+          "normalized": {
+            "dst": 1,
+            "dx": 0,
+            "dy": 0,
+            "immediate": 3,
+            "op": "load",
+            "src0": 0,
+            "src1": 0,
+            "src2": 0,
+            "tag": 2
+          },
+          "pe": 2,
+          "source": {
+            "dst": 1,
+            "op": "load",
+            "spm": "x3"
+          },
+          "word": "0204000000300000"
+        },
+        {
+          "index": 2,
+          "normalized": {
+            "dst": 2,
+            "dx": 0,
+            "dy": 0,
+            "immediate": 4,
+            "op": "load",
+            "src0": 0,
+            "src1": 0,
+            "src2": 0,
+            "tag": 2
+          },
+          "pe": 2,
+          "source": {
+            "dst": 2,
+            "op": "load",
+            "spm": "one"
+          },
+          "word": "0208000000400000"
+        },
+        {
+          "index": 3,
+          "normalized": {
+            "dst": 4,
+            "dx": 0,
+            "dy": 0,
+            "immediate": 0,
+            "op": "mul",
+            "src0": 0,
+            "src1": 2,
+            "src2": 0,
+            "tag": 2
+          },
+          "pe": 2,
+          "source": {
+            "dst": 4,
+            "op": "mul",
+            "src0": 0,
+            "src1": 2
+          },
+          "word": "9290080000000000"
+        },
+        {
+          "index": 4,
+          "normalized": {
+            "dst": 5,
+            "dx": 0,
+            "dy": 0,
+            "immediate": 0,
+            "op": "fma",
+            "src0": 1,
+            "src1": 2,
+            "src2": 4,
+            "tag": 2
+          },
+          "pe": 2,
+          "source": {
+            "dst": 5,
+            "op": "fma",
+            "src0": 1,
+            "src1": 2,
+            "src2": 4
+          },
+          "word": "2294490000000000"
+        },
+        {
+          "index": 5,
+          "normalized": {
+            "dst": 0,
+            "dx": -1,
+            "dy": 1,
+            "immediate": 0,
+            "op": "xfer",
+            "src0": 5,
+            "src1": 0,
+            "src2": 0,
+            "tag": 2,
+            "target_pe": 5
+          },
+          "pe": 2,
+          "source": {
+            "dst": 0,
+            "op": "xfer",
+            "src0": 5,
+            "target_pe": 5
+          },
+          "word": "82c1403e10000000"
+        },
+        {
+          "index": 0,
+          "normalized": {
+            "dst": 0,
+            "dx": 0,
+            "dy": 0,
+            "immediate": 2,
+            "op": "load",
+            "src0": 0,
+            "src1": 0,
+            "src2": 0,
+            "tag": 3
+          },
+          "pe": 3,
+          "source": {
+            "dst": 0,
+            "op": "load",
+            "spm": "x2"
+          },
+          "word": "0300000000200000"
+        },
+        {
+          "index": 1,
+          "normalized": {
+            "dst": 1,
+            "dx": 0,
+            "dy": 0,
+            "immediate": 3,
+            "op": "load",
+            "src0": 0,
+            "src1": 0,
+            "src2": 0,
+            "tag": 3
+          },
+          "pe": 3,
+          "source": {
+            "dst": 1,
+            "op": "load",
+            "spm": "x3"
+          },
+          "word": "0304000000300000"
+        },
+        {
+          "index": 2,
+          "normalized": {
+            "dst": 2,
+            "dx": 0,
+            "dy": 0,
+            "immediate": 5,
+            "op": "load",
+            "src0": 0,
+            "src1": 0,
+            "src2": 0,
+            "tag": 3
+          },
+          "pe": 3,
+          "source": {
+            "dst": 2,
+            "op": "load",
+            "spm": "two"
+          },
+          "word": "0308000000500000"
+        },
+        {
+          "index": 3,
+          "normalized": {
+            "dst": 3,
+            "dx": 0,
+            "dy": 0,
+            "immediate": 4,
+            "op": "load",
+            "src0": 0,
+            "src1": 0,
+            "src2": 0,
+            "tag": 3
+          },
+          "pe": 3,
+          "source": {
+            "dst": 3,
+            "op": "load",
+            "spm": "one"
+          },
+          "word": "030c000000400000"
+        },
+        {
+          "index": 4,
+          "normalized": {
+            "dst": 4,
+            "dx": 0,
+            "dy": 0,
+            "immediate": 0,
+            "op": "mul",
+            "src0": 0,
+            "src1": 2,
+            "src2": 0,
+            "tag": 3
+          },
+          "pe": 3,
+          "source": {
+            "dst": 4,
+            "op": "mul",
+            "src0": 0,
+            "src1": 2
+          },
+          "word": "9390080000000000"
+        },
+        {
+          "index": 5,
+          "normalized": {
+            "dst": 5,
+            "dx": 0,
+            "dy": 0,
+            "immediate": 0,
+            "op": "fma",
+            "src0": 1,
+            "src1": 3,
+            "src2": 4,
+            "tag": 3
+          },
+          "pe": 3,
+          "source": {
+            "dst": 5,
+            "op": "fma",
+            "src0": 1,
+            "src1": 3,
+            "src2": 4
+          },
+          "word": "23944d0000000000"
+        },
+        {
+          "index": 6,
+          "normalized": {
+            "dst": 1,
+            "dx": -2,
+            "dy": 1,
+            "immediate": 0,
+            "op": "xfer",
+            "src0": 5,
+            "src1": 0,
+            "src2": 0,
+            "tag": 3,
+            "target_pe": 5
+          },
+          "pe": 3,
+          "source": {
+            "dst": 1,
+            "op": "xfer",
+            "src0": 5,
+            "target_pe": 5
+          },
+          "word": "83c5403c10000000"
+        },
+        {
+          "index": 0,
+          "normalized": {
+            "dst": 2,
+            "dx": 0,
+            "dy": 0,
+            "immediate": 6,
+            "op": "load",
+            "src0": 0,
+            "src1": 0,
+            "src2": 0,
+            "tag": 4
+          },
+          "pe": 4,
+          "source": {
+            "dst": 2,
+            "op": "load",
+            "spm": "half"
+          },
+          "word": "0408000000600000"
+        },
+        {
+          "index": 1,
+          "normalized": {
+            "dst": 3,
+            "dx": 0,
+            "dy": 0,
+            "immediate": 0,
+            "op": "add",
+            "src0": 0,
+            "src1": 1,
+            "src2": 0,
+            "tag": 4
+          },
+          "pe": 4,
+          "source": {
+            "dst": 3,
+            "op": "add",
+            "src0": 0,
+            "src1": 1
+          },
+          "word": "348c040000000000"
+        },
+        {
+          "index": 2,
+          "normalized": {
+            "dst": 4,
+            "dx": 0,
+            "dy": 0,
+            "immediate": 0,
+            "op": "mul",
+            "src0": 3,
+            "src1": 2,
+            "src2": 0,
+            "tag": 4
+          },
+          "pe": 4,
+          "source": {
+            "dst": 4,
+            "op": "mul",
+            "src0": 3,
+            "src1": 2
+          },
+          "word": "9490c80000000000"
+        },
+        {
+          "index": 3,
+          "normalized": {
+            "dst": 0,
+            "dx": 0,
+            "dy": 1,
+            "immediate": 0,
+            "op": "xfer",
+            "src0": 4,
+            "src1": 0,
+            "src2": 0,
+            "tag": 4,
+            "target_pe": 8
+          },
+          "pe": 4,
+          "source": {
+            "dst": 0,
+            "op": "xfer",
+            "src0": 4,
+            "target_pe": 8
+          },
+          "word": "84c1000010000000"
+        },
+        {
+          "index": 4,
+          "normalized": {
+            "dst": 0,
+            "dx": 1,
+            "dy": 1,
+            "immediate": 0,
+            "op": "xfer",
+            "src0": 4,
+            "src1": 0,
+            "src2": 0,
+            "tag": 4,
+            "target_pe": 9
+          },
+          "pe": 4,
+          "source": {
+            "dst": 0,
+            "op": "xfer",
+            "src0": 4,
+            "target_pe": 9
+          },
+          "word": "84c1000210000000"
+        },
+        {
+          "index": 0,
+          "normalized": {
+            "dst": 2,
+            "dx": 0,
+            "dy": 0,
+            "immediate": 6,
+            "op": "load",
+            "src0": 0,
+            "src1": 0,
+            "src2": 0,
+            "tag": 5
+          },
+          "pe": 5,
+          "source": {
+            "dst": 2,
+            "op": "load",
+            "spm": "half"
+          },
+          "word": "0508000000600000"
+        },
+        {
+          "index": 1,
+          "normalized": {
+            "dst": 3,
+            "dx": 0,
+            "dy": 0,
+            "immediate": 0,
+            "op": "add",
+            "src0": 0,
+            "src1": 1,
+            "src2": 0,
+            "tag": 5
+          },
+          "pe": 5,
+          "source": {
+            "dst": 3,
+            "op": "add",
+            "src0": 0,
+            "src1": 1
+          },
+          "word": "358c040000000000"
+        },
+        {
+          "index": 2,
+          "normalized": {
+            "dst": 4,
+            "dx": 0,
+            "dy": 0,
+            "immediate": 0,
+            "op": "mul",
+            "src0": 3,
+            "src1": 2,
+            "src2": 0,
+            "tag": 5
+          },
+          "pe": 5,
+          "source": {
+            "dst": 4,
+            "op": "mul",
+            "src0": 3,
+            "src1": 2
+          },
+          "word": "9590c80000000000"
+        },
+        {
+          "index": 3,
+          "normalized": {
+            "dst": 1,
+            "dx": -1,
+            "dy": 1,
+            "immediate": 0,
+            "op": "xfer",
+            "src0": 4,
+            "src1": 0,
+            "src2": 0,
+            "tag": 5,
+            "target_pe": 8
+          },
+          "pe": 5,
+          "source": {
+            "dst": 1,
+            "op": "xfer",
+            "src0": 4,
+            "target_pe": 8
+          },
+          "word": "85c5003e10000000"
+        },
+        {
+          "index": 4,
+          "normalized": {
+            "dst": 1,
+            "dx": 0,
+            "dy": 1,
+            "immediate": 0,
+            "op": "xfer",
+            "src0": 4,
+            "src1": 0,
+            "src2": 0,
+            "tag": 5,
+            "target_pe": 9
+          },
+          "pe": 5,
+          "source": {
+            "dst": 1,
+            "op": "xfer",
+            "src0": 4,
+            "target_pe": 9
+          },
+          "word": "85c5000010000000"
+        },
+        {
+          "index": 0,
+          "normalized": {
+            "dst": 2,
+            "dx": 0,
+            "dy": 0,
+            "immediate": 6,
+            "op": "load",
+            "src0": 0,
+            "src1": 0,
+            "src2": 0,
+            "tag": 8
+          },
+          "pe": 8,
+          "source": {
+            "dst": 2,
+            "op": "load",
+            "spm": "half"
+          },
+          "word": "0808000000600000"
+        },
+        {
+          "index": 1,
+          "normalized": {
+            "dst": 3,
+            "dx": 0,
+            "dy": 0,
+            "immediate": 0,
+            "op": "add",
+            "src0": 0,
+            "src1": 1,
+            "src2": 0,
+            "tag": 8
+          },
+          "pe": 8,
+          "source": {
+            "dst": 3,
+            "op": "add",
+            "src0": 0,
+            "src1": 1
+          },
+          "word": "388c040000000000"
+        },
+        {
+          "index": 2,
+          "normalized": {
+            "dst": 4,
+            "dx": 0,
+            "dy": 0,
+            "immediate": 0,
+            "op": "mul",
+            "src0": 3,
+            "src1": 2,
+            "src2": 0,
+            "tag": 8
+          },
+          "pe": 8,
+          "source": {
+            "dst": 4,
+            "op": "mul",
+            "src0": 3,
+            "src1": 2
+          },
+          "word": "9890c80000000000"
+        },
+        {
+          "index": 3,
+          "normalized": {
+            "dst": 0,
+            "dx": 0,
+            "dy": 0,
+            "immediate": 64,
+            "op": "store",
+            "src0": 4,
+            "src1": 0,
+            "src2": 0,
+            "tag": 8
+          },
+          "pe": 8,
+          "source": {
+            "op": "store",
+            "spm": 64,
+            "src0": 4
+          },
+          "word": "1841000004000000"
+        },
+        {
+          "index": 0,
+          "normalized": {
+            "dst": 2,
+            "dx": 0,
+            "dy": 0,
+            "immediate": 5,
+            "op": "load",
+            "src0": 0,
+            "src1": 0,
+            "src2": 0,
+            "tag": 9
+          },
+          "pe": 9,
+          "source": {
+            "dst": 2,
+            "op": "load",
+            "spm": "two"
+          },
+          "word": "0908000000500000"
+        },
+        {
+          "index": 1,
+          "normalized": {
+            "dst": 3,
+            "dx": 0,
+            "dy": 0,
+            "immediate": 0,
+            "op": "mul",
+            "src0": 0,
+            "src1": 2,
+            "src2": 0,
+            "tag": 9
+          },
+          "pe": 9,
+          "source": {
+            "dst": 3,
+            "op": "mul",
+            "src0": 0,
+            "src1": 2
+          },
+          "word": "998c080000000000"
+        },
+        {
+          "index": 2,
+          "normalized": {
+            "dst": 4,
+            "dx": 0,
+            "dy": 0,
+            "immediate": 0,
+            "op": "add",
+            "src0": 3,
+            "src1": 1,
+            "src2": 0,
+            "tag": 9
+          },
+          "pe": 9,
+          "source": {
+            "dst": 4,
+            "op": "add",
+            "src0": 3,
+            "src1": 1
+          },
+          "word": "3990c40000000000"
+        },
+        {
+          "index": 3,
+          "normalized": {
+            "dst": 0,
+            "dx": 0,
+            "dy": 0,
+            "immediate": 65,
+            "op": "store",
+            "src0": 4,
+            "src1": 0,
+            "src2": 0,
+            "tag": 9
+          },
+          "pe": 9,
+          "source": {
+            "op": "store",
+            "spm": 65,
+            "src0": 4
+          },
+          "word": "1941000004100000"
+        }
+      ],
+      "name": "bsmm",
+      "operation_coverage": [
+        "add",
+        "fma",
+        "load",
+        "mul",
+        "store",
+        "xfer"
+      ],
+      "operator": "hierarchical butterfly sparse matrix multiply",
+      "output_spm_base": 64,
+      "output_vectors": 2,
+      "program": "system_sim/generated/bsmm.program",
+      "program_sha256": "d11f1d7c063fdb43bf829ccdb37d4c70b8ac295b9535cdf9e73155f695d949f0",
+      "reference": "system_sim/generated/bsmm.reference.json",
+      "reference_sha256": "948d00283bf4bd46a9fd46cc52805b015b9135c56409f2135e5e37202f029cde",
+      "route_manhattan_hops": 14,
+      "route_skip_opportunities": 1,
+      "source": "system_sim/workloads/bsmm.yaml",
+      "source_sha256": "71f6305763b342493941c91f7d0d767e0fb3729e723cfdbe988a289c87e38e27"
+    },
+    {
+      "active_pes": 8,
+      "golden_hex": "system_sim/generated/fft_cmp.golden.hex",
+      "golden_hex_sha256": "ab81974456a811b96b25c5d621d568c512c6976e731ff644e547c31ed59f9052",
+      "header": "system_sim/generated/fft_cmp.h",
+      "header_sha256": "abdc87166083ad9070b992f637c40b6c9e8d31b42573681f97a5c4b8a94e067a",
+      "input_hex": "system_sim/generated/fft_cmp.input.hex",
+      "input_hex_sha256": "3f2232bd81d0af87cd8b3f5027e7d9f0145ff3392a3c456bc7ebf8c204cc282c",
+      "input_vectors": 6,
+      "instruction_count": 34,
+      "instruction_counts_per_pe": [
+        4,
+        5,
+        4,
+        5,
+        4,
+        5,
+        0,
+        0,
+        4,
+        3,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "lineage": [
+        {
+          "index": 0,
+          "normalized": {
+            "dst": 0,
+            "dx": 0,
+            "dy": 0,
+            "immediate": 0,
+            "op": "load",
+            "src0": 0,
+            "src1": 0,
+            "src2": 0,
+            "tag": 0
+          },
+          "pe": 0,
+          "source": {
+            "dst": 0,
+            "op": "load",
+            "spm": "a"
+          },
+          "word": "0000000000000000"
+        },
+        {
+          "index": 1,
+          "normalized": {
+            "dst": 1,
+            "dx": 0,
+            "dy": 0,
+            "immediate": 1,
+            "op": "load",
+            "src0": 0,
+            "src1": 0,
+            "src2": 0,
+            "tag": 0
+          },
+          "pe": 0,
+          "source": {
+            "dst": 1,
+            "op": "load",
+            "spm": "b"
+          },
+          "word": "0004000000100000"
+        },
+        {
+          "index": 2,
+          "normalized": {
+            "dst": 2,
+            "dx": 0,
+            "dy": 0,
+            "immediate": 0,
+            "op": "add",
+            "src0": 0,
+            "src1": 1,
+            "src2": 0,
+            "tag": 0
+          },
+          "pe": 0,
+          "source": {
+            "dst": 2,
+            "op": "add",
+            "src0": 0,
+            "src1": 1
+          },
+          "word": "3088040000000000"
+        },
+        {
+          "index": 3,
+          "normalized": {
+            "dst": 0,
+            "dx": 0,
+            "dy": 1,
+            "immediate": 0,
+            "op": "xfer",
+            "src0": 2,
+            "src1": 0,
+            "src2": 0,
+            "tag": 0,
+            "target_pe": 4
+          },
+          "pe": 0,
+          "source": {
+            "dst": 0,
+            "op": "xfer",
+            "src0": 2,
+            "target_pe": 4
+          },
+          "word": "80c0800010000000"
+        },
+        {
+          "index": 0,
+          "normalized": {
+            "dst": 0,
+            "dx": 0,
+            "dy": 0,
+            "immediate": 0,
+            "op": "load",
+            "src0": 0,
+            "src1": 0,
+            "src2": 0,
+            "tag": 1
+          },
+          "pe": 1,
+          "source": {
+            "dst": 0,
+            "op": "load",
+            "spm": "a"
+          },
+          "word": "0100000000000000"
+        },
+        {
+          "index": 1,
+          "normalized": {
+            "dst": 1,
+            "dx": 0,
+            "dy": 0,
+            "immediate": 1,
+            "op": "load",
+            "src0": 0,
+            "src1": 0,
+            "src2": 0,
+            "tag": 1
+          },
+          "pe": 1,
+          "source": {
+            "dst": 1,
+            "op": "load",
+            "spm": "b"
+          },
+          "word": "0104000000100000"
+        },
+        {
+          "index": 2,
+          "normalized": {
+            "dst": 2,
+            "dx": 0,
+            "dy": 0,
+            "immediate": 5,
+            "op": "load",
+            "src0": 0,
+            "src1": 0,
+            "src2": 0,
+            "tag": 1
+          },
+          "pe": 1,
+          "source": {
+            "dst": 2,
+            "op": "load",
+            "spm": "neg_one"
+          },
+          "word": "0108000000500000"
+        },
+        {
+          "index": 3,
+          "normalized": {
+            "dst": 3,
+            "dx": 0,
+            "dy": 0,
+            "immediate": 0,
+            "op": "fma",
+            "src0": 1,
+            "src1": 2,
+            "src2": 0,
+            "tag": 1
+          },
+          "pe": 1,
+          "source": {
+            "dst": 3,
+            "op": "fma",
+            "src0": 1,
+            "src1": 2,
+            "src2": 0
+          },
+          "word": "218c480000000000"
+        },
+        {
+          "index": 4,
+          "normalized": {
+            "dst": 1,
+            "dx": -1,
+            "dy": 1,
+            "immediate": 0,
+            "op": "xfer",
+            "src0": 3,
+            "src1": 0,
+            "src2": 0,
+            "tag": 1,
+            "target_pe": 4
+          },
+          "pe": 1,
+          "source": {
+            "dst": 1,
+            "op": "xfer",
+            "src0": 3,
+            "target_pe": 4
+          },
+          "word": "81c4c03e10000000"
+        },
+        {
+          "index": 0,
+          "normalized": {
+            "dst": 0,
+            "dx": 0,
+            "dy": 0,
+            "immediate": 2,
+            "op": "load",
+            "src0": 0,
+            "src1": 0,
+            "src2": 0,
+            "tag": 2
+          },
+          "pe": 2,
+          "source": {
+            "dst": 0,
+            "op": "load",
+            "spm": "c"
+          },
+          "word": "0200000000200000"
+        },
+        {
+          "index": 1,
+          "normalized": {
+            "dst": 1,
+            "dx": 0,
+            "dy": 0,
+            "immediate": 3,
+            "op": "load",
+            "src0": 0,
+            "src1": 0,
+            "src2": 0,
+            "tag": 2
+          },
+          "pe": 2,
+          "source": {
+            "dst": 1,
+            "op": "load",
+            "spm": "d"
+          },
+          "word": "0204000000300000"
+        },
+        {
+          "index": 2,
+          "normalized": {
+            "dst": 2,
+            "dx": 0,
+            "dy": 0,
+            "immediate": 0,
+            "op": "add",
+            "src0": 0,
+            "src1": 1,
+            "src2": 0,
+            "tag": 2
+          },
+          "pe": 2,
+          "source": {
+            "dst": 2,
+            "op": "add",
+            "src0": 0,
+            "src1": 1
+          },
+          "word": "3288040000000000"
+        },
+        {
+          "index": 3,
+          "normalized": {
+            "dst": 0,
+            "dx": -1,
+            "dy": 1,
+            "immediate": 0,
+            "op": "xfer",
+            "src0": 2,
+            "src1": 0,
+            "src2": 0,
+            "tag": 2,
+            "target_pe": 5
+          },
+          "pe": 2,
+          "source": {
+            "dst": 0,
+            "op": "xfer",
+            "src0": 2,
+            "target_pe": 5
+          },
+          "word": "82c0803e10000000"
+        },
+        {
+          "index": 0,
+          "normalized": {
+            "dst": 0,
+            "dx": 0,
+            "dy": 0,
+            "immediate": 2,
+            "op": "load",
+            "src0": 0,
+            "src1": 0,
+            "src2": 0,
+            "tag": 3
+          },
+          "pe": 3,
+          "source": {
+            "dst": 0,
+            "op": "load",
+            "spm": "c"
+          },
+          "word": "0300000000200000"
+        },
+        {
+          "index": 1,
+          "normalized": {
+            "dst": 1,
+            "dx": 0,
+            "dy": 0,
+            "immediate": 3,
+            "op": "load",
+            "src0": 0,
+            "src1": 0,
+            "src2": 0,
+            "tag": 3
+          },
+          "pe": 3,
+          "source": {
+            "dst": 1,
+            "op": "load",
+            "spm": "d"
+          },
+          "word": "0304000000300000"
+        },
+        {
+          "index": 2,
+          "normalized": {
+            "dst": 2,
+            "dx": 0,
+            "dy": 0,
+            "immediate": 5,
+            "op": "load",
+            "src0": 0,
+            "src1": 0,
+            "src2": 0,
+            "tag": 3
+          },
+          "pe": 3,
+          "source": {
+            "dst": 2,
+            "op": "load",
+            "spm": "neg_one"
+          },
+          "word": "0308000000500000"
+        },
+        {
+          "index": 3,
+          "normalized": {
+            "dst": 3,
+            "dx": 0,
+            "dy": 0,
+            "immediate": 0,
+            "op": "fma",
+            "src0": 1,
+            "src1": 2,
+            "src2": 0,
+            "tag": 3
+          },
+          "pe": 3,
+          "source": {
+            "dst": 3,
+            "op": "fma",
+            "src0": 1,
+            "src1": 2,
+            "src2": 0
+          },
+          "word": "238c480000000000"
+        },
+        {
+          "index": 4,
+          "normalized": {
+            "dst": 1,
+            "dx": -2,
+            "dy": 1,
+            "immediate": 0,
+            "op": "xfer",
+            "src0": 3,
+            "src1": 0,
+            "src2": 0,
+            "tag": 3,
+            "target_pe": 5
+          },
+          "pe": 3,
+          "source": {
+            "dst": 1,
+            "op": "xfer",
+            "src0": 3,
+            "target_pe": 5
+          },
+          "word": "83c4c03c10000000"
+        },
+        {
+          "index": 0,
+          "normalized": {
+            "dst": 2,
+            "dx": 0,
+            "dy": 0,
+            "immediate": 0,
+            "op": "shuffle",
+            "src0": 1,
+            "src1": 0,
+            "src2": 0,
+            "tag": 4
+          },
+          "pe": 4,
+          "source": {
+            "dst": 2,
+            "op": "shuffle",
+            "src0": 1
+          },
+          "word": "7488400000000000"
+        },
+        {
+          "index": 1,
+          "normalized": {
+            "dst": 3,
+            "dx": 0,
+            "dy": 0,
+            "immediate": 0,
+            "op": "add",
+            "src0": 0,
+            "src1": 2,
+            "src2": 0,
+            "tag": 4
+          },
+          "pe": 4,
+          "source": {
+            "dst": 3,
+            "op": "add",
+            "src0": 0,
+            "src1": 2
+          },
+          "word": "348c080000000000"
+        },
+        {
+          "index": 2,
+          "normalized": {
+            "dst": 0,
+            "dx": 0,
+            "dy": 1,
+            "immediate": 0,
+            "op": "xfer",
+            "src0": 3,
+            "src1": 0,
+            "src2": 0,
+            "tag": 4,
+            "target_pe": 8
+          },
+          "pe": 4,
+          "source": {
+            "dst": 0,
+            "op": "xfer",
+            "src0": 3,
+            "target_pe": 8
+          },
+          "word": "84c0c00010000000"
+        },
+        {
+          "index": 3,
+          "normalized": {
+            "dst": 0,
+            "dx": 1,
+            "dy": 1,
+            "immediate": 0,
+            "op": "xfer",
+            "src0": 3,
+            "src1": 0,
+            "src2": 0,
+            "tag": 4,
+            "target_pe": 9
+          },
+          "pe": 4,
+          "source": {
+            "dst": 0,
+            "op": "xfer",
+            "src0": 3,
+            "target_pe": 9
+          },
+          "word": "84c0c00210000000"
+        },
+        {
+          "index": 0,
+          "normalized": {
+            "dst": 2,
+            "dx": 0,
+            "dy": 0,
+            "immediate": 4,
+            "op": "load",
+            "src0": 0,
+            "src1": 0,
+            "src2": 0,
+            "tag": 5
+          },
+          "pe": 5,
+          "source": {
+            "dst": 2,
+            "op": "load",
+            "spm": "half"
+          },
+          "word": "0508000000400000"
+        },
+        {
+          "index": 1,
+          "normalized": {
+            "dst": 3,
+            "dx": 0,
+            "dy": 0,
+            "immediate": 0,
+            "op": "mul",
+            "src0": 1,
+            "src1": 2,
+            "src2": 0,
+            "tag": 5
+          },
+          "pe": 5,
+          "source": {
+            "dst": 3,
+            "op": "mul",
+            "src0": 1,
+            "src1": 2
+          },
+          "word": "958c480000000000"
+        },
+        {
+          "index": 2,
+          "normalized": {
+            "dst": 4,
+            "dx": 0,
+            "dy": 0,
+            "immediate": 0,
+            "op": "add",
+            "src0": 0,
+            "src1": 3,
+            "src2": 0,
+            "tag": 5
+          },
+          "pe": 5,
+          "source": {
+            "dst": 4,
+            "op": "add",
+            "src0": 0,
+            "src1": 3
+          },
+          "word": "35900c0000000000"
+        },
+        {
+          "index": 3,
+          "normalized": {
+            "dst": 1,
+            "dx": -1,
+            "dy": 1,
+            "immediate": 0,
+            "op": "xfer",
+            "src0": 4,
+            "src1": 0,
+            "src2": 0,
+            "tag": 5,
+            "target_pe": 8
+          },
+          "pe": 5,
+          "source": {
+            "dst": 1,
+            "op": "xfer",
+            "src0": 4,
+            "target_pe": 8
+          },
+          "word": "85c5003e10000000"
+        },
+        {
+          "index": 4,
+          "normalized": {
+            "dst": 1,
+            "dx": 0,
+            "dy": 1,
+            "immediate": 0,
+            "op": "xfer",
+            "src0": 4,
+            "src1": 0,
+            "src2": 0,
+            "tag": 5,
+            "target_pe": 9
+          },
+          "pe": 5,
+          "source": {
+            "dst": 1,
+            "op": "xfer",
+            "src0": 4,
+            "target_pe": 9
+          },
+          "word": "85c5000010000000"
+        },
+        {
+          "index": 0,
+          "normalized": {
+            "dst": 2,
+            "dx": 0,
+            "dy": 0,
+            "immediate": 4,
+            "op": "load",
+            "src0": 0,
+            "src1": 0,
+            "src2": 0,
+            "tag": 8
+          },
+          "pe": 8,
+          "source": {
+            "dst": 2,
+            "op": "load",
+            "spm": "half"
+          },
+          "word": "0808000000400000"
+        },
+        {
+          "index": 1,
+          "normalized": {
+            "dst": 3,
+            "dx": 0,
+            "dy": 0,
+            "immediate": 0,
+            "op": "add",
+            "src0": 0,
+            "src1": 1,
+            "src2": 0,
+            "tag": 8
+          },
+          "pe": 8,
+          "source": {
+            "dst": 3,
+            "op": "add",
+            "src0": 0,
+            "src1": 1
+          },
+          "word": "388c040000000000"
+        },
+        {
+          "index": 2,
+          "normalized": {
+            "dst": 4,
+            "dx": 0,
+            "dy": 0,
+            "immediate": 0,
+            "op": "mul",
+            "src0": 3,
+            "src1": 2,
+            "src2": 0,
+            "tag": 8
+          },
+          "pe": 8,
+          "source": {
+            "dst": 4,
+            "op": "mul",
+            "src0": 3,
+            "src1": 2
+          },
+          "word": "9890c80000000000"
+        },
+        {
+          "index": 3,
+          "normalized": {
+            "dst": 0,
+            "dx": 0,
+            "dy": 0,
+            "immediate": 64,
+            "op": "store",
+            "src0": 4,
+            "src1": 0,
+            "src2": 0,
+            "tag": 8
+          },
+          "pe": 8,
+          "source": {
+            "op": "store",
+            "spm": 64,
+            "src0": 4
+          },
+          "word": "1841000004000000"
+        },
+        {
+          "index": 0,
+          "normalized": {
+            "dst": 2,
+            "dx": 0,
+            "dy": 0,
+            "immediate": 5,
+            "op": "load",
+            "src0": 0,
+            "src1": 0,
+            "src2": 0,
+            "tag": 9
+          },
+          "pe": 9,
+          "source": {
+            "dst": 2,
+            "op": "load",
+            "spm": "neg_one"
+          },
+          "word": "0908000000500000"
+        },
+        {
+          "index": 1,
+          "normalized": {
+            "dst": 3,
+            "dx": 0,
+            "dy": 0,
+            "immediate": 0,
+            "op": "fma",
+            "src0": 1,
+            "src1": 2,
+            "src2": 0,
+            "tag": 9
+          },
+          "pe": 9,
+          "source": {
+            "dst": 3,
+            "op": "fma",
+            "src0": 1,
+            "src1": 2,
+            "src2": 0
+          },
+          "word": "298c480000000000"
+        },
+        {
+          "index": 2,
+          "normalized": {
+            "dst": 0,
+            "dx": 0,
+            "dy": 0,
+            "immediate": 65,
+            "op": "store",
+            "src0": 3,
+            "src1": 0,
+            "src2": 0,
+            "tag": 9
+          },
+          "pe": 9,
+          "source": {
+            "op": "store",
+            "spm": 65,
+            "src0": 3
+          },
+          "word": "1940c00004100000"
+        }
+      ],
+      "name": "fft_cmp",
+      "operation_coverage": [
+        "add",
+        "fma",
+        "load",
+        "mul",
+        "shuffle",
+        "store",
+        "xfer"
+      ],
+      "operator": "radix-2 FFT compression microkernel",
+      "output_spm_base": 64,
+      "output_vectors": 2,
+      "program": "system_sim/generated/fft_cmp.program",
+      "program_sha256": "16e1afda6b62d2c04ab7b195ec5dcaa5de924b0b8d2ccf0339e7d8026e23a28f",
+      "reference": "system_sim/generated/fft_cmp.reference.json",
+      "reference_sha256": "aced4fb6d9b5567d9184199d4580d8943623f29f343be3a82b6393555185c678",
+      "route_manhattan_hops": 14,
+      "route_skip_opportunities": 1,
+      "source": "system_sim/workloads/fft_cmp.yaml",
+      "source_sha256": "3c6b854b747ecdaf1a1cb11d558e72a908c13893832163cdc207b58297eb0903"
+    },
+    {
+      "active_pes": 6,
+      "golden_hex": "system_sim/generated/swa.golden.hex",
+      "golden_hex_sha256": "446e283ff84cc5ba9c44792ef4cb3a73fe3cba9155d352fdb059d383ce2c76a0",
+      "header": "system_sim/generated/swa.h",
+      "header_sha256": "74f206aa1d80a14ca8b2ba09199366e148c50d345ecc1b9b955ac7c1ef220ce6",
+      "input_hex": "system_sim/generated/swa.input.hex",
+      "input_hex_sha256": "9e206abcce2f94c2da53fb884f8270c6342632804b8fa8fbac862149e8bd5630",
+      "input_vectors": 5,
+      "instruction_count": 25,
+      "instruction_counts_per_pe": [
+        4,
+        4,
+        2,
+        2,
+        8,
+        5,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "lineage": [
+        {
+          "index": 0,
+          "normalized": {
+            "dst": 0,
+            "dx": 0,
+            "dy": 0,
+            "immediate": 0,
+            "op": "load",
+            "src0": 0,
+            "src1": 0,
+            "src2": 0,
+            "tag": 0
+          },
+          "pe": 0,
+          "source": {
+            "dst": 0,
+            "op": "load",
+            "spm": "q"
+          },
+          "word": "0000000000000000"
+        },
+        {
+          "index": 1,
+          "normalized": {
+            "dst": 1,
+            "dx": 0,
+            "dy": 0,
+            "immediate": 1,
+            "op": "load",
+            "src0": 0,
+            "src1": 0,
+            "src2": 0,
+            "tag": 0
+          },
+          "pe": 0,
+          "source": {
+            "dst": 1,
+            "op": "load",
+            "spm": "k0"
+          },
+          "word": "0004000000100000"
+        },
+        {
+          "index": 2,
+          "normalized": {
+            "dst": 2,
+            "dx": 0,
+            "dy": 0,
+            "immediate": 0,
+            "op": "mul",
+            "src0": 0,
+            "src1": 1,
+            "src2": 0,
+            "tag": 0
+          },
+          "pe": 0,
+          "source": {
+            "dst": 2,
+            "op": "mul",
+            "src0": 0,
+            "src1": 1
+          },
+          "word": "9088040000000000"
+        },
+        {
+          "index": 3,
+          "normalized": {
+            "dst": 0,
+            "dx": 0,
+            "dy": 1,
+            "immediate": 0,
+            "op": "xfer",
+            "src0": 2,
+            "src1": 0,
+            "src2": 0,
+            "tag": 0,
+            "target_pe": 4
+          },
+          "pe": 0,
+          "source": {
+            "dst": 0,
+            "op": "xfer",
+            "src0": 2,
+            "target_pe": 4
+          },
+          "word": "80c0800010000000"
+        },
+        {
+          "index": 0,
+          "normalized": {
+            "dst": 0,
+            "dx": 0,
+            "dy": 0,
+            "immediate": 0,
+            "op": "load",
+            "src0": 0,
+            "src1": 0,
+            "src2": 0,
+            "tag": 1
+          },
+          "pe": 1,
+          "source": {
+            "dst": 0,
+            "op": "load",
+            "spm": "q"
+          },
+          "word": "0100000000000000"
+        },
+        {
+          "index": 1,
+          "normalized": {
+            "dst": 1,
+            "dx": 0,
+            "dy": 0,
+            "immediate": 2,
+            "op": "load",
+            "src0": 0,
+            "src1": 0,
+            "src2": 0,
+            "tag": 1
+          },
+          "pe": 1,
+          "source": {
+            "dst": 1,
+            "op": "load",
+            "spm": "k1"
+          },
+          "word": "0104000000200000"
+        },
+        {
+          "index": 2,
+          "normalized": {
+            "dst": 2,
+            "dx": 0,
+            "dy": 0,
+            "immediate": 0,
+            "op": "mul",
+            "src0": 0,
+            "src1": 1,
+            "src2": 0,
+            "tag": 1
+          },
+          "pe": 1,
+          "source": {
+            "dst": 2,
+            "op": "mul",
+            "src0": 0,
+            "src1": 1
+          },
+          "word": "9188040000000000"
+        },
+        {
+          "index": 3,
+          "normalized": {
+            "dst": 1,
+            "dx": -1,
+            "dy": 1,
+            "immediate": 0,
+            "op": "xfer",
+            "src0": 2,
+            "src1": 0,
+            "src2": 0,
+            "tag": 1,
+            "target_pe": 4
+          },
+          "pe": 1,
+          "source": {
+            "dst": 1,
+            "op": "xfer",
+            "src0": 2,
+            "target_pe": 4
+          },
+          "word": "81c4803e10000000"
+        },
+        {
+          "index": 0,
+          "normalized": {
+            "dst": 0,
+            "dx": 0,
+            "dy": 0,
+            "immediate": 3,
+            "op": "load",
+            "src0": 0,
+            "src1": 0,
+            "src2": 0,
+            "tag": 2
+          },
+          "pe": 2,
+          "source": {
+            "dst": 0,
+            "op": "load",
+            "spm": "v0"
+          },
+          "word": "0200000000300000"
+        },
+        {
+          "index": 1,
+          "normalized": {
+            "dst": 0,
+            "dx": -1,
+            "dy": 1,
+            "immediate": 0,
+            "op": "xfer",
+            "src0": 0,
+            "src1": 0,
+            "src2": 0,
+            "tag": 2,
+            "target_pe": 5
+          },
+          "pe": 2,
+          "source": {
+            "dst": 0,
+            "op": "xfer",
+            "src0": 0,
+            "target_pe": 5
+          },
+          "word": "82c0003e10000000"
+        },
+        {
+          "index": 0,
+          "normalized": {
+            "dst": 0,
+            "dx": 0,
+            "dy": 0,
+            "immediate": 4,
+            "op": "load",
+            "src0": 0,
+            "src1": 0,
+            "src2": 0,
+            "tag": 3
+          },
+          "pe": 3,
+          "source": {
+            "dst": 0,
+            "op": "load",
+            "spm": "v1"
+          },
+          "word": "0300000000400000"
+        },
+        {
+          "index": 1,
+          "normalized": {
+            "dst": 1,
+            "dx": -2,
+            "dy": 1,
+            "immediate": 0,
+            "op": "xfer",
+            "src0": 0,
+            "src1": 0,
+            "src2": 0,
+            "tag": 3,
+            "target_pe": 5
+          },
+          "pe": 3,
+          "source": {
+            "dst": 1,
+            "op": "xfer",
+            "src0": 0,
+            "target_pe": 5
+          },
+          "word": "83c4003c10000000"
+        },
+        {
+          "index": 0,
+          "normalized": {
+            "dst": 2,
+            "dx": 0,
+            "dy": 0,
+            "immediate": 0,
+            "op": "max",
+            "src0": 0,
+            "src1": 1,
+            "src2": 0,
+            "tag": 4
+          },
+          "pe": 4,
+          "source": {
+            "dst": 2,
+            "op": "max",
+            "src0": 0,
+            "src1": 1
+          },
+          "word": "4488040000000000"
+        },
+        {
+          "index": 1,
+          "normalized": {
+            "dst": 3,
+            "dx": 0,
+            "dy": 0,
+            "immediate": 0,
+            "op": "exp",
+            "src0": 0,
+            "src1": 0,
+            "src2": 0,
+            "tag": 4
+          },
+          "pe": 4,
+          "source": {
+            "dst": 3,
+            "op": "exp",
+            "src0": 0
+          },
+          "word": "548c000000000000"
+        },
+        {
+          "index": 2,
+          "normalized": {
+            "dst": 4,
+            "dx": 0,
+            "dy": 0,
+            "immediate": 0,
+            "op": "exp",
+            "src0": 1,
+            "src1": 0,
+            "src2": 0,
+            "tag": 4
+          },
+          "pe": 4,
+          "source": {
+            "dst": 4,
+            "op": "exp",
+            "src0": 1
+          },
+          "word": "5490400000000000"
+        },
+        {
+          "index": 3,
+          "normalized": {
+            "dst": 5,
+            "dx": 0,
+            "dy": 0,
+            "immediate": 0,
+            "op": "add",
+            "src0": 3,
+            "src1": 4,
+            "src2": 0,
+            "tag": 4
+          },
+          "pe": 4,
+          "source": {
+            "dst": 5,
+            "op": "add",
+            "src0": 3,
+            "src1": 4
+          },
+          "word": "3494d00000000000"
+        },
+        {
+          "index": 4,
+          "normalized": {
+            "dst": 0,
+            "dx": 0,
+            "dy": 0,
+            "immediate": 65,
+            "op": "store",
+            "src0": 2,
+            "src1": 0,
+            "src2": 0,
+            "tag": 4
+          },
+          "pe": 4,
+          "source": {
+            "op": "store",
+            "spm": 65,
+            "src0": 2
+          },
+          "word": "1440800004100000"
+        },
+        {
+          "index": 5,
+          "normalized": {
+            "dst": 2,
+            "dx": 1,
+            "dy": 0,
+            "immediate": 0,
+            "op": "xfer",
+            "src0": 3,
+            "src1": 0,
+            "src2": 0,
+            "tag": 4,
+            "target_pe": 5
+          },
+          "pe": 4,
+          "source": {
+            "dst": 2,
+            "op": "xfer",
+            "src0": 3,
+            "target_pe": 5
+          },
+          "word": "84c8c00200000000"
+        },
+        {
+          "index": 6,
+          "normalized": {
+            "dst": 3,
+            "dx": 1,
+            "dy": 0,
+            "immediate": 0,
+            "op": "xfer",
+            "src0": 4,
+            "src1": 0,
+            "src2": 0,
+            "tag": 4,
+            "target_pe": 5
+          },
+          "pe": 4,
+          "source": {
+            "dst": 3,
+            "op": "xfer",
+            "src0": 4,
+            "target_pe": 5
+          },
+          "word": "84cd000200000000"
+        },
+        {
+          "index": 7,
+          "normalized": {
+            "dst": 4,
+            "dx": 1,
+            "dy": 0,
+            "immediate": 0,
+            "op": "xfer",
+            "src0": 5,
+            "src1": 0,
+            "src2": 0,
+            "tag": 4,
+            "target_pe": 5
+          },
+          "pe": 4,
+          "source": {
+            "dst": 4,
+            "op": "xfer",
+            "src0": 5,
+            "target_pe": 5
+          },
+          "word": "84d1400200000000"
+        },
+        {
+          "index": 0,
+          "normalized": {
+            "dst": 5,
+            "dx": 0,
+            "dy": 0,
+            "immediate": 0,
+            "op": "div",
+            "src0": 2,
+            "src1": 4,
+            "src2": 0,
+            "tag": 5
+          },
+          "pe": 5,
+          "source": {
+            "dst": 5,
+            "op": "div",
+            "src0": 2,
+            "src1": 4
+          },
+          "word": "6594900000000000"
+        },
+        {
+          "index": 1,
+          "normalized": {
+            "dst": 6,
+            "dx": 0,
+            "dy": 0,
+            "immediate": 0,
+            "op": "div",
+            "src0": 3,
+            "src1": 4,
+            "src2": 0,
+            "tag": 5
+          },
+          "pe": 5,
+          "source": {
+            "dst": 6,
+            "op": "div",
+            "src0": 3,
+            "src1": 4
+          },
+          "word": "6598d00000000000"
+        },
+        {
+          "index": 2,
+          "normalized": {
+            "dst": 7,
+            "dx": 0,
+            "dy": 0,
+            "immediate": 0,
+            "op": "mul",
+            "src0": 0,
+            "src1": 5,
+            "src2": 0,
+            "tag": 5
+          },
+          "pe": 5,
+          "source": {
+            "dst": 7,
+            "op": "mul",
+            "src0": 0,
+            "src1": 5
+          },
+          "word": "959c140000000000"
+        },
+        {
+          "index": 3,
+          "normalized": {
+            "dst": 8,
+            "dx": 0,
+            "dy": 0,
+            "immediate": 0,
+            "op": "fma",
+            "src0": 1,
+            "src1": 6,
+            "src2": 7,
+            "tag": 5
+          },
+          "pe": 5,
+          "source": {
+            "dst": 8,
+            "op": "fma",
+            "src0": 1,
+            "src1": 6,
+            "src2": 7
+          },
+          "word": "25a059c000000000"
+        },
+        {
+          "index": 4,
+          "normalized": {
+            "dst": 0,
+            "dx": 0,
+            "dy": 0,
+            "immediate": 64,
+            "op": "store",
+            "src0": 8,
+            "src1": 0,
+            "src2": 0,
+            "tag": 5
+          },
+          "pe": 5,
+          "source": {
+            "op": "store",
+            "spm": 64,
+            "src0": 8
+          },
+          "word": "1542000004000000"
+        }
+      ],
+      "name": "swa",
+      "operation_coverage": [
+        "add",
+        "div",
+        "exp",
+        "fma",
+        "load",
+        "max",
+        "mul",
+        "store",
+        "xfer"
+      ],
+      "operator": "causal sliding-window attention microkernel",
+      "output_spm_base": 64,
+      "output_vectors": 2,
+      "program": "system_sim/generated/swa.program",
+      "program_sha256": "e8006ab7950866a9fc35776666e7c5f62389c718603af6610a15576637af727c",
+      "reference": "system_sim/generated/swa.reference.json",
+      "reference_sha256": "4ec53e256875e71e35e36e9e2f1ead418d3ed9d2eeb9a893b0c64fc02955e209",
+      "route_manhattan_hops": 11,
+      "route_skip_opportunities": 1,
+      "source": "system_sim/workloads/swa.yaml",
+      "source_sha256": "422e1591f4c95f6351ff8948cac2104efce2e872443e11e4e77d72e20f164bfb"
+    },
+    {
+      "active_pes": 9,
+      "golden_hex": "system_sim/generated/transformer_block.golden.hex",
+      "golden_hex_sha256": "4863d823e37932e0348cda56eb4753431112cead2866b50ef104c27f674f0d14",
+      "header": "system_sim/generated/transformer_block.h",
+      "header_sha256": "58ac24e1b3373de9190bd73bae00d126d44d31b7b35b2539e46b0f4742b254ee",
+      "input_hex": "system_sim/generated/transformer_block.input.hex",
+      "input_hex_sha256": "f82b7d3721738b0f1a681f101ac92e0bc03b914775a3837b125e6e24761ecfce",
+      "input_vectors": 8,
+      "instruction_count": 45,
+      "instruction_counts_per_pe": [
+        5,
+        7,
+        0,
+        0,
+        5,
+        7,
+        0,
+        0,
+        3,
+        3,
+        6,
+        5,
+        4,
+        0,
+        0,
+        0
+      ],
+      "lineage": [
+        {
+          "index": 0,
+          "normalized": {
+            "dst": 0,
+            "dx": 0,
+            "dy": 0,
+            "immediate": 0,
+            "op": "load",
+            "src0": 0,
+            "src1": 0,
+            "src2": 0,
+            "tag": 0
+          },
+          "pe": 0,
+          "source": {
+            "dst": 0,
+            "op": "load",
+            "spm": "x0"
+          },
+          "word": "0000000000000000"
+        },
+        {
+          "index": 1,
+          "normalized": {
+            "dst": 1,
+            "dx": 0,
+            "dy": 0,
+            "immediate": 1,
+            "op": "load",
+            "src0": 0,
+            "src1": 0,
+            "src2": 0,
+            "tag": 0
+          },
+          "pe": 0,
+          "source": {
+            "dst": 1,
+            "op": "load",
+            "spm": "x1"
+          },
+          "word": "0004000000100000"
+        },
+        {
+          "index": 2,
+          "normalized": {
+            "dst": 2,
+            "dx": 0,
+            "dy": 0,
+            "immediate": 2,
+            "op": "load",
+            "src0": 0,
+            "src1": 0,
+            "src2": 0,
+            "tag": 0
+          },
+          "pe": 0,
+          "source": {
+            "dst": 2,
+            "op": "load",
+            "spm": "one"
+          },
+          "word": "0008000000200000"
+        },
+        {
+          "index": 3,
+          "normalized": {
+            "dst": 3,
+            "dx": 0,
+            "dy": 0,
+            "immediate": 0,
+            "op": "fma",
+            "src0": 1,
+            "src1": 2,
+            "src2": 0,
+            "tag": 0
+          },
+          "pe": 0,
+          "source": {
+            "dst": 3,
+            "op": "fma",
+            "src0": 1,
+            "src1": 2,
+            "src2": 0
+          },
+          "word": "208c480000000000"
+        },
+        {
+          "index": 4,
+          "normalized": {
+            "dst": 0,
+            "dx": 0,
+            "dy": 0,
+            "immediate": 16,
+            "op": "store",
+            "src0": 3,
+            "src1": 0,
+            "src2": 0,
+            "tag": 0
+          },
+          "pe": 0,
+          "source": {
+            "op": "store",
+            "spm": 16,
+            "src0": 3
+          },
+          "word": "1040c00001000000"
+        },
+        {
+          "index": 0,
+          "normalized": {
+            "dst": 0,
+            "dx": 0,
+            "dy": 0,
+            "immediate": 0,
+            "op": "load",
+            "src0": 0,
+            "src1": 0,
+            "src2": 0,
+            "tag": 1
+          },
+          "pe": 1,
+          "source": {
+            "dst": 0,
+            "op": "load",
+            "spm": "x0"
+          },
+          "word": "0100000000000000"
+        },
+        {
+          "index": 1,
+          "normalized": {
+            "dst": 1,
+            "dx": 0,
+            "dy": 0,
+            "immediate": 1,
+            "op": "load",
+            "src0": 0,
+            "src1": 0,
+            "src2": 0,
+            "tag": 1
+          },
+          "pe": 1,
+          "source": {
+            "dst": 1,
+            "op": "load",
+            "spm": "x1"
+          },
+          "word": "0104000000100000"
+        },
+        {
+          "index": 2,
+          "normalized": {
+            "dst": 2,
+            "dx": 0,
+            "dy": 0,
+            "immediate": 3,
+            "op": "load",
+            "src0": 0,
+            "src1": 0,
+            "src2": 0,
+            "tag": 1
+          },
+          "pe": 1,
+          "source": {
+            "dst": 2,
+            "op": "load",
+            "spm": "two"
+          },
+          "word": "0108000000300000"
+        },
+        {
+          "index": 3,
+          "normalized": {
+            "dst": 3,
+            "dx": 0,
+            "dy": 0,
+            "immediate": 2,
+            "op": "load",
+            "src0": 0,
+            "src1": 0,
+            "src2": 0,
+            "tag": 1
+          },
+          "pe": 1,
+          "source": {
+            "dst": 3,
+            "op": "load",
+            "spm": "one"
+          },
+          "word": "010c000000200000"
+        },
+        {
+          "index": 4,
+          "normalized": {
+            "dst": 4,
+            "dx": 0,
+            "dy": 0,
+            "immediate": 0,
+            "op": "mul",
+            "src0": 0,
+            "src1": 2,
+            "src2": 0,
+            "tag": 1
+          },
+          "pe": 1,
+          "source": {
+            "dst": 4,
+            "op": "mul",
+            "src0": 0,
+            "src1": 2
+          },
+          "word": "9190080000000000"
+        },
+        {
+          "index": 5,
+          "normalized": {
+            "dst": 5,
+            "dx": 0,
+            "dy": 0,
+            "immediate": 0,
+            "op": "fma",
+            "src0": 1,
+            "src1": 3,
+            "src2": 4,
+            "tag": 1
+          },
+          "pe": 1,
+          "source": {
+            "dst": 5,
+            "op": "fma",
+            "src0": 1,
+            "src1": 3,
+            "src2": 4
+          },
+          "word": "21944d0000000000"
+        },
+        {
+          "index": 6,
+          "normalized": {
+            "dst": 0,
+            "dx": 0,
+            "dy": 0,
+            "immediate": 17,
+            "op": "store",
+            "src0": 5,
+            "src1": 0,
+            "src2": 0,
+            "tag": 1
+          },
+          "pe": 1,
+          "source": {
+            "op": "store",
+            "spm": 17,
+            "src0": 5
+          },
+          "word": "1141400001100000"
+        },
+        {
+          "index": 0,
+          "normalized": {
+            "dst": 0,
+            "dx": 0,
+            "dy": 0,
+            "immediate": 16,
+            "op": "load",
+            "src0": 0,
+            "src1": 0,
+            "src2": 0,
+            "tag": 4
+          },
+          "pe": 4,
+          "source": {
+            "dst": 0,
+            "op": "load",
+            "spm": 16
+          },
+          "word": "0400000001000000"
+        },
+        {
+          "index": 1,
+          "normalized": {
+            "dst": 1,
+            "dx": 0,
+            "dy": 0,
+            "immediate": 17,
+            "op": "load",
+            "src0": 0,
+            "src1": 0,
+            "src2": 0,
+            "tag": 4
+          },
+          "pe": 4,
+          "source": {
+            "dst": 1,
+            "op": "load",
+            "spm": 17
+          },
+          "word": "0404000001100000"
+        },
+        {
+          "index": 2,
+          "normalized": {
+            "dst": 2,
+            "dx": 0,
+            "dy": 0,
+            "immediate": 0,
+            "op": "add",
+            "src0": 0,
+            "src1": 1,
+            "src2": 0,
+            "tag": 4
+          },
+          "pe": 4,
+          "source": {
+            "dst": 2,
+            "op": "add",
+            "src0": 0,
+            "src1": 1
+          },
+          "word": "3488040000000000"
+        },
+        {
+          "index": 3,
+          "normalized": {
+            "dst": 0,
+            "dx": 0,
+            "dy": 0,
+            "immediate": 20,
+            "op": "store",
+            "src0": 2,
+            "src1": 0,
+            "src2": 0,
+            "tag": 4
+          },
+          "pe": 4,
+          "source": {
+            "op": "store",
+            "spm": 20,
+            "src0": 2
+          },
+          "word": "1440800001400000"
+        },
+        {
+          "index": 4,
+          "normalized": {
+            "dst": 0,
+            "dx": 0,
+            "dy": 1,
+            "immediate": 0,
+            "op": "xfer",
+            "src0": 2,
+            "src1": 0,
+            "src2": 0,
+            "tag": 4,
+            "target_pe": 8
+          },
+          "pe": 4,
+          "source": {
+            "dst": 0,
+            "op": "xfer",
+            "src0": 2,
+            "target_pe": 8
+          },
+          "word": "84c0800010000000"
+        },
+        {
+          "index": 0,
+          "normalized": {
+            "dst": 0,
+            "dx": 0,
+            "dy": 0,
+            "immediate": 16,
+            "op": "load",
+            "src0": 0,
+            "src1": 0,
+            "src2": 0,
+            "tag": 5
+          },
+          "pe": 5,
+          "source": {
+            "dst": 0,
+            "op": "load",
+            "spm": 16
+          },
+          "word": "0500000001000000"
+        },
+        {
+          "index": 1,
+          "normalized": {
+            "dst": 1,
+            "dx": 0,
+            "dy": 0,
+            "immediate": 17,
+            "op": "load",
+            "src0": 0,
+            "src1": 0,
+            "src2": 0,
+            "tag": 5
+          },
+          "pe": 5,
+          "source": {
+            "dst": 1,
+            "op": "load",
+            "spm": 17
+          },
+          "word": "0504000001100000"
+        },
+        {
+          "index": 2,
+          "normalized": {
+            "dst": 2,
+            "dx": 0,
+            "dy": 0,
+            "immediate": 2,
+            "op": "load",
+            "src0": 0,
+            "src1": 0,
+            "src2": 0,
+            "tag": 5
+          },
+          "pe": 5,
+          "source": {
+            "dst": 2,
+            "op": "load",
+            "spm": "one"
+          },
+          "word": "0508000000200000"
+        },
+        {
+          "index": 3,
+          "normalized": {
+            "dst": 3,
+            "dx": 0,
+            "dy": 0,
+            "immediate": 0,
+            "op": "fma",
+            "src0": 1,
+            "src1": 2,
+            "src2": 0,
+            "tag": 5
+          },
+          "pe": 5,
+          "source": {
+            "dst": 3,
+            "op": "fma",
+            "src0": 1,
+            "src1": 2,
+            "src2": 0
+          },
+          "word": "258c480000000000"
+        },
+        {
+          "index": 4,
+          "normalized": {
+            "dst": 4,
+            "dx": 0,
+            "dy": 0,
+            "immediate": 0,
+            "op": "shuffle",
+            "src0": 3,
+            "src1": 0,
+            "src2": 0,
+            "tag": 5
+          },
+          "pe": 5,
+          "source": {
+            "dst": 4,
+            "op": "shuffle",
+            "src0": 3
+          },
+          "word": "7590c00000000000"
+        },
+        {
+          "index": 5,
+          "normalized": {
+            "dst": 0,
+            "dx": 0,
+            "dy": 0,
+            "immediate": 21,
+            "op": "store",
+            "src0": 4,
+            "src1": 0,
+            "src2": 0,
+            "tag": 5
+          },
+          "pe": 5,
+          "source": {
+            "op": "store",
+            "spm": 21,
+            "src0": 4
+          },
+          "word": "1541000001500000"
+        },
+        {
+          "index": 6,
+          "normalized": {
+            "dst": 0,
+            "dx": 0,
+            "dy": 1,
+            "immediate": 0,
+            "op": "xfer",
+            "src0": 4,
+            "src1": 0,
+            "src2": 0,
+            "tag": 5,
+            "target_pe": 9
+          },
+          "pe": 5,
+          "source": {
+            "dst": 0,
+            "op": "xfer",
+            "src0": 4,
+            "target_pe": 9
+          },
+          "word": "85c1000010000000"
+        },
+        {
+          "index": 0,
+          "normalized": {
+            "dst": 1,
+            "dx": 0,
+            "dy": 0,
+            "immediate": 0,
+            "op": "load",
+            "src0": 0,
+            "src1": 0,
+            "src2": 0,
+            "tag": 8
+          },
+          "pe": 8,
+          "source": {
+            "dst": 1,
+            "op": "load",
+            "spm": "x0"
+          },
+          "word": "0804000000000000"
+        },
+        {
+          "index": 1,
+          "normalized": {
+            "dst": 2,
+            "dx": 0,
+            "dy": 0,
+            "immediate": 0,
+            "op": "add",
+            "src0": 0,
+            "src1": 1,
+            "src2": 0,
+            "tag": 8
+          },
+          "pe": 8,
+          "source": {
+            "dst": 2,
+            "op": "add",
+            "src0": 0,
+            "src1": 1
+          },
+          "word": "3888040000000000"
+        },
+        {
+          "index": 2,
+          "normalized": {
+            "dst": 0,
+            "dx": 0,
+            "dy": 1,
+            "immediate": 0,
+            "op": "xfer",
+            "src0": 2,
+            "src1": 0,
+            "src2": 0,
+            "tag": 8,
+            "target_pe": 12
+          },
+          "pe": 8,
+          "source": {
+            "dst": 0,
+            "op": "xfer",
+            "src0": 2,
+            "target_pe": 12
+          },
+          "word": "88c0800010000000"
+        },
+        {
+          "index": 0,
+          "normalized": {
+            "dst": 1,
+            "dx": 0,
+            "dy": 0,
+            "immediate": 5,
+            "op": "load",
+            "src0": 0,
+            "src1": 0,
+            "src2": 0,
+            "tag": 9
+          },
+          "pe": 9,
+          "source": {
+            "dst": 1,
+            "op": "load",
+            "spm": "zero"
+          },
+          "word": "0904000000500000"
+        },
+        {
+          "index": 1,
+          "normalized": {
+            "dst": 2,
+            "dx": 0,
+            "dy": 0,
+            "immediate": 0,
+            "op": "max",
+            "src0": 0,
+            "src1": 1,
+            "src2": 0,
+            "tag": 9
+          },
+          "pe": 9,
+          "source": {
+            "dst": 2,
+            "op": "max",
+            "src0": 0,
+            "src1": 1
+          },
+          "word": "4988040000000000"
+        },
+        {
+          "index": 2,
+          "normalized": {
+            "dst": 1,
+            "dx": -1,
+            "dy": 1,
+            "immediate": 0,
+            "op": "xfer",
+            "src0": 2,
+            "src1": 0,
+            "src2": 0,
+            "tag": 9,
+            "target_pe": 12
+          },
+          "pe": 9,
+          "source": {
+            "dst": 1,
+            "op": "xfer",
+            "src0": 2,
+            "target_pe": 12
+          },
+          "word": "89c4803e10000000"
+        },
+        {
+          "index": 0,
+          "normalized": {
+            "dst": 0,
+            "dx": 0,
+            "dy": 0,
+            "immediate": 6,
+            "op": "load",
+            "src0": 0,
+            "src1": 0,
+            "src2": 0,
+            "tag": 10
+          },
+          "pe": 10,
+          "source": {
+            "dst": 0,
+            "op": "load",
+            "spm": "v0"
+          },
+          "word": "0a00000000600000"
+        },
+        {
+          "index": 1,
+          "normalized": {
+            "dst": 1,
+            "dx": 0,
+            "dy": 0,
+            "immediate": 7,
+            "op": "load",
+            "src0": 0,
+            "src1": 0,
+            "src2": 0,
+            "tag": 10
+          },
+          "pe": 10,
+          "source": {
+            "dst": 1,
+            "op": "load",
+            "spm": "v1"
+          },
+          "word": "0a04000000700000"
+        },
+        {
+          "index": 2,
+          "normalized": {
+            "dst": 2,
+            "dx": 0,
+            "dy": 0,
+            "immediate": 4,
+            "op": "load",
+            "src0": 0,
+            "src1": 0,
+            "src2": 0,
+            "tag": 10
+          },
+          "pe": 10,
+          "source": {
+            "dst": 2,
+            "op": "load",
+            "spm": "half"
+          },
+          "word": "0a08000000400000"
+        },
+        {
+          "index": 3,
+          "normalized": {
+            "dst": 3,
+            "dx": 0,
+            "dy": 0,
+            "immediate": 0,
+            "op": "add",
+            "src0": 0,
+            "src1": 1,
+            "src2": 0,
+            "tag": 10
+          },
+          "pe": 10,
+          "source": {
+            "dst": 3,
+            "op": "add",
+            "src0": 0,
+            "src1": 1
+          },
+          "word": "3a8c040000000000"
+        },
+        {
+          "index": 4,
+          "normalized": {
+            "dst": 4,
+            "dx": 0,
+            "dy": 0,
+            "immediate": 0,
+            "op": "mul",
+            "src0": 3,
+            "src1": 2,
+            "src2": 0,
+            "tag": 10
+          },
+          "pe": 10,
+          "source": {
+            "dst": 4,
+            "op": "mul",
+            "src0": 3,
+            "src1": 2
+          },
+          "word": "9a90c80000000000"
+        },
+        {
+          "index": 5,
+          "normalized": {
+            "dst": 2,
+            "dx": -2,
+            "dy": 1,
+            "immediate": 0,
+            "op": "xfer",
+            "src0": 4,
+            "src1": 0,
+            "src2": 0,
+            "tag": 10,
+            "target_pe": 12
+          },
+          "pe": 10,
+          "source": {
+            "dst": 2,
+            "op": "xfer",
+            "src0": 4,
+            "target_pe": 12
+          },
+          "word": "8ac9003c10000000"
+        },
+        {
+          "index": 0,
+          "normalized": {
+            "dst": 0,
+            "dx": 0,
+            "dy": 0,
+            "immediate": 5,
+            "op": "load",
+            "src0": 0,
+            "src1": 0,
+            "src2": 0,
+            "tag": 11
+          },
+          "pe": 11,
+          "source": {
+            "dst": 0,
+            "op": "load",
+            "spm": "zero"
+          },
+          "word": "0b00000000500000"
+        },
+        {
+          "index": 1,
+          "normalized": {
+            "dst": 1,
+            "dx": 0,
+            "dy": 0,
+            "immediate": 0,
+            "op": "exp",
+            "src0": 0,
+            "src1": 0,
+            "src2": 0,
+            "tag": 11
+          },
+          "pe": 11,
+          "source": {
+            "dst": 1,
+            "op": "exp",
+            "src0": 0
+          },
+          "word": "5b84000000000000"
+        },
+        {
+          "index": 2,
+          "normalized": {
+            "dst": 2,
+            "dx": 0,
+            "dy": 0,
+            "immediate": 3,
+            "op": "load",
+            "src0": 0,
+            "src1": 0,
+            "src2": 0,
+            "tag": 11
+          },
+          "pe": 11,
+          "source": {
+            "dst": 2,
+            "op": "load",
+            "spm": "two"
+          },
+          "word": "0b08000000300000"
+        },
+        {
+          "index": 3,
+          "normalized": {
+            "dst": 3,
+            "dx": 0,
+            "dy": 0,
+            "immediate": 0,
+            "op": "div",
+            "src0": 1,
+            "src1": 2,
+            "src2": 0,
+            "tag": 11
+          },
+          "pe": 11,
+          "source": {
+            "dst": 3,
+            "op": "div",
+            "src0": 1,
+            "src1": 2
+          },
+          "word": "6b8c480000000000"
+        },
+        {
+          "index": 4,
+          "normalized": {
+            "dst": 3,
+            "dx": -3,
+            "dy": 1,
+            "immediate": 0,
+            "op": "xfer",
+            "src0": 3,
+            "src1": 0,
+            "src2": 0,
+            "tag": 11,
+            "target_pe": 12
+          },
+          "pe": 11,
+          "source": {
+            "dst": 3,
+            "op": "xfer",
+            "src0": 3,
+            "target_pe": 12
+          },
+          "word": "8bccc03a10000000"
+        },
+        {
+          "index": 0,
+          "normalized": {
+            "dst": 4,
+            "dx": 0,
+            "dy": 0,
+            "immediate": 0,
+            "op": "add",
+            "src0": 0,
+            "src1": 1,
+            "src2": 0,
+            "tag": 12
+          },
+          "pe": 12,
+          "source": {
+            "dst": 4,
+            "op": "add",
+            "src0": 0,
+            "src1": 1
+          },
+          "word": "3c90040000000000"
+        },
+        {
+          "index": 1,
+          "normalized": {
+            "dst": 5,
+            "dx": 0,
+            "dy": 0,
+            "immediate": 0,
+            "op": "fma",
+            "src0": 2,
+            "src1": 3,
+            "src2": 4,
+            "tag": 12
+          },
+          "pe": 12,
+          "source": {
+            "dst": 5,
+            "op": "fma",
+            "src0": 2,
+            "src1": 3,
+            "src2": 4
+          },
+          "word": "2c948d0000000000"
+        },
+        {
+          "index": 2,
+          "normalized": {
+            "dst": 6,
+            "dx": 0,
+            "dy": 0,
+            "immediate": 0,
+            "op": "shuffle",
+            "src0": 5,
+            "src1": 0,
+            "src2": 0,
+            "tag": 12
+          },
+          "pe": 12,
+          "source": {
+            "dst": 6,
+            "op": "shuffle",
+            "src0": 5
+          },
+          "word": "7c99400000000000"
+        },
+        {
+          "index": 3,
+          "normalized": {
+            "dst": 0,
+            "dx": 0,
+            "dy": 0,
+            "immediate": 64,
+            "op": "store",
+            "src0": 6,
+            "src1": 0,
+            "src2": 0,
+            "tag": 12
+          },
+          "pe": 12,
+          "source": {
+            "op": "store",
+            "spm": 64,
+            "src0": 6
+          },
+          "word": "1c41800004000000"
+        }
+      ],
+      "name": "transformer_block",
+      "operation_coverage": [
+        "add",
+        "div",
+        "exp",
+        "fma",
+        "load",
+        "max",
+        "mul",
+        "shuffle",
+        "store",
+        "xfer"
+      ],
+      "operator": "combined structured Transformer block microkernel",
+      "output_spm_base": 64,
+      "output_vectors": 1,
+      "program": "system_sim/generated/transformer_block.program",
+      "program_sha256": "dbb2a93f5b9d4980e6f2471c8841576b53459c3bd181ebe38009114e80b0d30f",
+      "reference": "system_sim/generated/transformer_block.reference.json",
+      "reference_sha256": "1c047bd016db31de1323669faf57fd74bd4e8b1504dded3035d53284632c16dc",
+      "route_manhattan_hops": 12,
+      "route_skip_opportunities": 2,
+      "source": "system_sim/workloads/transformer_block.yaml",
+      "source_sha256": "6e59f8404ef4262985583106eb5d3d71b147cba0a0b33d2554bc42bb4ec070d4"
+    }
+  ]
+}

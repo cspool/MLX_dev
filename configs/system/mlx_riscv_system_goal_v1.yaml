@@ -1,0 +1,81 @@
+schema_version: 1
+name: mlx-riscv-system-goal-v1
+experiment_id: H208
+run_id: run213
+classification: final_chipyard_rtl_open_pdk_system_completion_certificate
+validation_eligible: false
+
+parents:
+  workloads: artifacts/environment/h205/mlx-system-workload-manifest.json
+  backends: artifacts/results/mlx-system-backends-run210.json
+  ppa: artifacts/results/mlx-array-ppa-run211.json
+  chipyard: artifacts/results/mlx-chipyard-system-run212.json
+  performance_trends: artifacts/results/core-architecture-claims-run159.json
+
+contract:
+  workloads: [bsmm, fft_cmp, swa, transformer_block]
+  backends: [cycle, rtl]
+  operations: [load, store, fma, add, mul, max, exp, div, shuffle, xfer]
+  physical_pes: 16
+  array_rows: 4
+  array_columns: 4
+  chipyard_runs: 8
+  standalone_runs: 8
+  performance_claims: 5
+  calibration_applied: false
+
+source_layout:
+  goal: docs/mlx-riscv-system-simulation-goal.md
+  handoff: docs/mlx-riscv-system-simulation.md
+  system_config: configs/system/mlx_riscv_system_v1.yaml
+  ppa_config: configs/system/mlx_array_ppa_v1.yaml
+  certificate_config: configs/system/mlx_riscv_system_goal_v1.yaml
+  lowering: scripts/build_mlx_system_workloads.py
+  standalone_runner: scripts/run_mlx_system_backends.py
+  chipyard_installer: scripts/install_mlx_chipyard.sh
+  chipyard_chisel_patch: patches/chipyard/chisel3-stable-deps.patch
+  chipyard_treadle_patch: patches/chipyard/treadle-stable-firrtl.patch
+  chipyard_runner: scripts/run_mlx_chipyard.py
+  flat_ppa_runner: scripts/run_mlx_array_ppa.py
+  ppa_runner: scripts/run_mlx_hierarchical_ppa.py
+  ppa_submacro_builder: scripts/build_mlx_pe_submacros.py
+  ppa_bootstrap: scripts/bootstrap_rtl_ppa_tools.sh
+  verification_runner: scripts/run_mlx_riscv_system_verification.py
+  auditor: scripts/audit_mlx_riscv_system_goal.py
+  test: tests/test_mlx_riscv_system.py
+  scala: system_sim/chipyard/MLXRoCC.scala
+  runtime: system_sim/software/mlx_runtime.h
+  bare_metal_test: system_sim/software/mlx_system_test.c
+  controller: rtl/mlx/mlx_rocc_controller.sv
+  cycle_model: rtl/mlx/mlx_cycle_model.sv
+  array: rtl/mlx/mlx_array_4x4.sv
+  flat_ppa_flow: rtl/ppa/openroad_array_flow.tcl
+  ppa_component_flow: rtl/ppa/openroad_component_macro_flow.tcl
+  ppa_component_resume: rtl/ppa/openroad_component_droute_resume.tcl
+  ppa_component_repair_reroute: rtl/ppa/openroad_component_repair_reroute.tcl
+  ppa_grid_snap: rtl/ppa/openroad_snap_bterm_grid.tcl
+  ppa_component_power: rtl/ppa/openroad_component_power.tcl
+  ppa_hierarchical_flow: rtl/ppa/openroad_hierarchical_array_flow.tcl
+  ppa_hierarchical_resume: rtl/ppa/openroad_hierarchical_array_droute_resume.tcl
+  ppa_lane_blackbox: rtl/ppa/mlx_fp16_lanes_blackbox.sv
+  ppa_rf_blackbox: rtl/ppa/mlx_register_file_blackbox.sv
+  ppa_pe_submacro_blackbox: rtl/ppa/mlx_pe_submacros_blackbox.sv
+  ppa_pe_blackbox: rtl/ppa/mlx_pe_top_blackbox.sv
+
+verification:
+  ruff_command: [/opt/mlx-miniforge/bin/ruff, check, scripts, src, tests]
+  pytest_command: [/opt/mlx-miniforge/bin/pytest, -q, tests/test_mlx_riscv_system.py]
+  repository_pytest_command: [/opt/mlx-miniforge/bin/pytest, -q]
+  diff_command: [git, diff, --check]
+  minimum_pytest_passed: 9
+  minimum_repository_pytest_passed: 499
+  allowed_repository_failures:
+    - tests/test_automatic_model_frontend.py::test_automatic_model_frontend_audit
+    - tests/test_bert_distillation_reload.py::test_h39_preflight_binds_all_h38_sources_and_checkpoints
+    - tests/test_bert_distillation_reload.py::test_h39_corrected_preflight_binds_inconclusive_run_and_canonical_keys
+    - tests/test_bert_structured_distillation.py::test_h38_preflight_binds_parent_teacher_data_and_students
+    - tests/test_simict_dpu_contract.py::test_simict_dpu_contract_audit
+
+output_root: artifacts/environment/h208
+verification_manifest: artifacts/environment/h208/verification-manifest.json
+result: artifacts/results/mlx-riscv-system-goal-run213.json

@@ -73,6 +73,7 @@ int main(int argc, char **argv) {
   dut.pipeline_ready_i = 0xf;
   dut.rf_read_addr_a_i = 0;
   dut.rf_read_addr_b_i = 0;
+  dut.rf_read_addr_c_i = 0;
   dut.rf_write_enable_i = 0;
   dut.rf_write_addr_i = 0;
   clear_wide(dut.rf_write_data_i);

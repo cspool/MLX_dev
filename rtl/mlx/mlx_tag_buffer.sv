@@ -3,7 +3,8 @@
 module mlx_tag_buffer #(
     parameter TAGS = 16,
     parameter TAG_BITS = 4,
-    parameter METADATA_BITS = 64
+    parameter METADATA_BITS = 64,
+    parameter GATED_CLOCK = 1
 ) (
     input  wire                clk,
     input  wire                rst_n,
@@ -36,6 +37,7 @@ module mlx_tag_buffer #(
   reg [METADATA_BITS-1:0] metadata_q [0:TAGS-1];
   integer index;
   wire tag_state_clk = clk & (configure_i | issue_i | complete_i);
+  wire selected_state_clk = (GATED_CLOCK != 0) ? tag_state_clk : clk;
 
   assign query_active_o = active_q[query_tag_i];
   assign query_ready_o = ready_q[query_tag_i];
@@ -47,7 +49,7 @@ module mlx_tag_buffer #(
   assign ready_vector_o = ready_q;
   assign done_vector_o = done_q;
 
-  always @(posedge tag_state_clk or negedge rst_n) begin
+  always @(posedge selected_state_clk or negedge rst_n) begin
     if (!rst_n) begin
       active_q <= {TAGS{1'b0}};
       ready_q <= {TAGS{1'b0}};

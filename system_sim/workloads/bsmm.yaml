@@ -1,0 +1,65 @@
+name: bsmm
+operator: hierarchical butterfly sparse matrix multiply
+inputs:
+  x0: {pattern: [1.0, 2.0, 1.0, 2.0]}
+  x1: {pattern: [2.0, 1.0, 2.0, 1.0]}
+  x2: {pattern: [1.0, 1.0, 2.0, 2.0]}
+  x3: {pattern: [2.0, 2.0, 1.0, 1.0]}
+  one: {fill: 1.0}
+  two: {fill: 2.0}
+  half: {fill: 0.5}
+output_slots: [64, 65]
+program:
+  0:
+    - {op: load, dst: 0, spm: x0}
+    - {op: load, dst: 1, spm: x1}
+    - {op: load, dst: 2, spm: one}
+    - {op: mul, dst: 4, src0: 0, src1: 2}
+    - {op: fma, dst: 5, src0: 1, src1: 2, src2: 4}
+    - {op: xfer, src0: 5, dst: 0, target_pe: 4}
+  1:
+    - {op: load, dst: 0, spm: x0}
+    - {op: load, dst: 1, spm: x1}
+    - {op: load, dst: 2, spm: two}
+    - {op: load, dst: 3, spm: one}
+    - {op: mul, dst: 4, src0: 0, src1: 2}
+    - {op: fma, dst: 5, src0: 1, src1: 3, src2: 4}
+    - {op: xfer, src0: 5, dst: 1, target_pe: 4}
+  2:
+    - {op: load, dst: 0, spm: x2}
+    - {op: load, dst: 1, spm: x3}
+    - {op: load, dst: 2, spm: one}
+    - {op: mul, dst: 4, src0: 0, src1: 2}
+    - {op: fma, dst: 5, src0: 1, src1: 2, src2: 4}
+    - {op: xfer, src0: 5, dst: 0, target_pe: 5}
+  3:
+    - {op: load, dst: 0, spm: x2}
+    - {op: load, dst: 1, spm: x3}
+    - {op: load, dst: 2, spm: two}
+    - {op: load, dst: 3, spm: one}
+    - {op: mul, dst: 4, src0: 0, src1: 2}
+    - {op: fma, dst: 5, src0: 1, src1: 3, src2: 4}
+    - {op: xfer, src0: 5, dst: 1, target_pe: 5}
+  4:
+    - {op: load, dst: 2, spm: half}
+    - {op: add, dst: 3, src0: 0, src1: 1}
+    - {op: mul, dst: 4, src0: 3, src1: 2}
+    - {op: xfer, src0: 4, dst: 0, target_pe: 8}
+    - {op: xfer, src0: 4, dst: 0, target_pe: 9}
+  5:
+    - {op: load, dst: 2, spm: half}
+    - {op: add, dst: 3, src0: 0, src1: 1}
+    - {op: mul, dst: 4, src0: 3, src1: 2}
+    - {op: xfer, src0: 4, dst: 1, target_pe: 8}
+    - {op: xfer, src0: 4, dst: 1, target_pe: 9}
+  8:
+    - {op: load, dst: 2, spm: half}
+    - {op: add, dst: 3, src0: 0, src1: 1}
+    - {op: mul, dst: 4, src0: 3, src1: 2}
+    - {op: store, src0: 4, spm: 64}
+  9:
+    - {op: load, dst: 2, spm: two}
+    - {op: mul, dst: 3, src0: 0, src1: 2}
+    - {op: add, dst: 4, src0: 3, src1: 1}
+    - {op: store, src0: 4, spm: 65}
+

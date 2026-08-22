@@ -4,7 +4,13 @@ module mlx_pe_top #(
     parameter SIMD_WIDTH = 32,
     parameter FULL_FEATURES = 1,
     parameter TAGS = 16,
-    parameter DATA_BITS = 16
+    parameter DATA_BITS = 16,
+    parameter TRANS_LANES = (SIMD_WIDTH / 4),
+    parameter RF_DEPTH = 4,
+    parameter CONFIG_GATED_CLOCK = 1,
+    parameter TAG_GATED_CLOCK = 1,
+    parameter RF_GATED_CLOCK = 1,
+    parameter NETWORK_GATED_CLOCK = 1
 ) (
     input  wire                            clk,
     input  wire                            rst_n,
@@ -35,8 +41,10 @@ module mlx_pe_top #(
     output wire [15:0]                     issue_tag_o,
     input  wire [3:0]                      rf_read_addr_a_i,
     input  wire [3:0]                      rf_read_addr_b_i,
+    input  wire [3:0]                      rf_read_addr_c_i,
     output wire [SIMD_WIDTH*DATA_BITS-1:0] rf_read_data_a_o,
     output wire [SIMD_WIDTH*DATA_BITS-1:0] rf_read_data_b_o,
+    output wire [SIMD_WIDTH*DATA_BITS-1:0] rf_read_data_c_o,
     input  wire                            rf_write_enable_i,
     input  wire [3:0]                      rf_write_addr_i,
     input  wire [SIMD_WIDTH*DATA_BITS-1:0] rf_write_data_i,
@@ -74,7 +82,9 @@ module mlx_pe_top #(
   wire [1023:0] control_schedule_state_unused;
   wire [255:0] high_precision_result_unused;
 
-  mlx_config_network config_network (
+  mlx_config_network #(
+      .GATED_CLOCK(CONFIG_GATED_CLOCK)
+  ) config_network (
       .clk(clk),
       .rst_n(rst_n),
       .cfg_valid_i(cfg_valid_i),
@@ -86,7 +96,9 @@ module mlx_pe_top #(
       .configured_o(configured_o)
   );
 
-  mlx_tag_buffer tag_buffer (
+  mlx_tag_buffer #(
+      .GATED_CLOCK(TAG_GATED_CLOCK)
+  ) tag_buffer (
       .clk(clk),
       .rst_n(rst_n),
       .configure_i(tag_configure_i),
@@ -124,19 +136,34 @@ module mlx_pe_top #(
       .schedule_state_o(control_schedule_state_unused)
   );
 
-  mlx_register_file #(.SIMD_WIDTH(SIMD_WIDTH)) register_file (
+`ifdef MLX_PPA_PE_SUBMACROS
+  mlx_register_file register_file (
+`elsif MLX_PPA_RF_SUBMACRO
+  mlx_register_file register_file (
+`else
+  mlx_register_file #(
+      .SIMD_WIDTH(SIMD_WIDTH),
+      .DEPTH(RF_DEPTH),
+      .ADDR_BITS(4),
+      .GATED_CLOCK(RF_GATED_CLOCK)
+  ) register_file (
+`endif
       .clk(clk),
       .rst_n(rst_n),
       .read_addr_a_i(rf_read_addr_a_i),
       .read_addr_b_i(rf_read_addr_b_i),
+      .read_addr_c_i(rf_read_addr_c_i),
       .read_data_a_o(rf_read_data_a_o),
       .read_data_b_o(rf_read_data_b_o),
+      .read_data_c_o(rf_read_data_c_o),
       .write_enable_i(rf_write_enable_i),
       .write_addr_i(rf_write_addr_i),
       .write_data_i(rf_write_data_i)
   );
 
-  mlx_data_network data_network (
+  mlx_data_network #(
+      .GATED_CLOCK(NETWORK_GATED_CLOCK)
+  ) data_network (
       .clk(clk),
       .rst_n(rst_n),
       .valid_i(network_valid_i),
@@ -160,10 +187,15 @@ module mlx_pe_top #(
       .buffer_observe_o(network_buffer_observe_unused)
   );
 
+`ifdef MLX_PPA_PE_SUBMACROS
+  mlx_fu functional_unit (
+`else
   mlx_fu #(
       .SIMD_WIDTH(SIMD_WIDTH),
-      .FULL_FEATURES(FULL_FEATURES)
+      .FULL_FEATURES(FULL_FEATURES),
+      .TRANS_LANES(TRANS_LANES)
   ) functional_unit (
+`endif
       .clk(clk),
       .rst_n(rst_n),
       .valid_i(fu_valid_i),
@@ -223,7 +255,8 @@ module mlx_pe_full (
       .pipeline_class_i(32'd0), .pipeline_ready_i(4'hf),
       .issue_valid_o(issue_valid), .issue_tag_o(issue_tag),
       .rf_read_addr_a_i(4'd0), .rf_read_addr_b_i(4'd1),
-      .rf_read_data_a_o(rf_a), .rf_read_data_b_o(rf_b),
+      .rf_read_addr_c_i(4'd2),
+      .rf_read_data_a_o(rf_a), .rf_read_data_b_o(rf_b), .rf_read_data_c_o(),
       .rf_write_enable_i(cfg_valid_i), .rf_write_addr_i(cfg_addr_i[3:0]),
       .rf_write_data_i({8{cfg_word_i}}),
       .network_valid_i(network_valid_i), .network_dx_i(network_dx_i),
@@ -268,7 +301,8 @@ module mlx_pe_reduced (
       .pipeline_class_i(32'd0), .pipeline_ready_i(4'hf),
       .issue_valid_o(), .issue_tag_o(),
       .rf_read_addr_a_i(4'd0), .rf_read_addr_b_i(4'd1),
-      .rf_read_data_a_o(), .rf_read_data_b_o(),
+      .rf_read_addr_c_i(4'd2),
+      .rf_read_data_a_o(), .rf_read_data_b_o(), .rf_read_data_c_o(),
       .rf_write_enable_i(cfg_valid_i), .rf_write_addr_i(cfg_addr_i[3:0]),
       .rf_write_data_i({2{cfg_word_i}}),
       .network_valid_i(1'b0), .network_dx_i(5'sd0), .network_dy_i(5'sd0),

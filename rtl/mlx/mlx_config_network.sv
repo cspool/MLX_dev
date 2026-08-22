@@ -3,7 +3,8 @@
 module mlx_config_network #(
     parameter WORD_BITS = 64,
     parameter INST_DEPTH = 32,
-    parameter ADDR_BITS = 5
+    parameter ADDR_BITS = 5,
+    parameter GATED_CLOCK = 1
 ) (
     input  wire                 clk,
     input  wire                 rst_n,
@@ -17,6 +18,7 @@ module mlx_config_network #(
 );
   reg [WORD_BITS-1:0] instruction_mem [0:INST_DEPTH-1];
   wire config_write_clk = clk & cfg_valid_i;
+  wire selected_write_clk = (GATED_CLOCK != 0) ? config_write_clk : clk;
   assign cfg_ready_o = 1'b1;
   assign fetch_word_o = instruction_mem[fetch_addr_i];
 
@@ -28,7 +30,8 @@ module mlx_config_network #(
     end
   end
 
-  always @(posedge config_write_clk) begin
-    instruction_mem[cfg_addr_i] <= cfg_word_i;
+  always @(posedge selected_write_clk) begin
+    if (cfg_valid_i)
+      instruction_mem[cfg_addr_i] <= cfg_word_i;
   end
 endmodule

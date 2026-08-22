@@ -169,6 +169,7 @@ def main() -> int:
             vcd,
             f"tb_mlx_pe.dut.{component_spec['scope']}",
             ports_only=True,
+            timestamp_scale=int(config.get("activity", {}).get("timestamp_scale", 1)),
         )
         generated_files[f"scoped_vcd_{variant}_{component}_{workload}"] = digest(vcd)
         log = log_root / f"power-{variant}-{component}-{workload}.log"

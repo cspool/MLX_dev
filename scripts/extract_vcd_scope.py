@@ -9,8 +9,15 @@ from typing import Any
 
 
 def extract_scope(
-    source: Path, destination: Path, scope: str, *, ports_only: bool = False
+    source: Path,
+    destination: Path,
+    scope: str,
+    *,
+    ports_only: bool = False,
+    timestamp_scale: int = 1,
 ) -> dict[str, Any]:
+    if timestamp_scale < 1:
+        raise ValueError("timestamp_scale must be a positive integer")
     lines = source.read_text(errors="strict").splitlines()
     requested = scope.split(".")
     stack: list[str] = []
@@ -79,7 +86,7 @@ def extract_scope(
             in_dump = False
             continue
         if stripped.startswith("#"):
-            output.append(line)
+            output.append(f"#{int(stripped[1:]) * timestamp_scale}")
             timestamps += 1
             continue
         if not stripped or stripped.startswith("$"):
@@ -99,6 +106,7 @@ def extract_scope(
         "timestamps": timestamps,
         "transitions": transitions,
         "ports_only": ports_only,
+        "timestamp_scale": timestamp_scale,
     }
 
 
@@ -108,9 +116,14 @@ def main() -> int:
     parser.add_argument("destination", type=Path)
     parser.add_argument("scope")
     parser.add_argument("--ports-only", action="store_true")
+    parser.add_argument("--timestamp-scale", type=int, default=1)
     args = parser.parse_args()
     result = extract_scope(
-        args.source, args.destination, args.scope, ports_only=args.ports_only
+        args.source,
+        args.destination,
+        args.scope,
+        ports_only=args.ports_only,
+        timestamp_scale=args.timestamp_scale,
     )
     print(result)
     return 0

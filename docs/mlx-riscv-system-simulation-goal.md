@@ -1,6 +1,6 @@
 # MLX + RISC-V 系统协同仿真目标
 
-更新日期：2026-08-20
+更新日期：2026-08-22
 
 ## 1. 总目标
 
@@ -86,12 +86,15 @@
 - 不把 CPU、缓存、DRAM PHY 或行为级内存模型计入 MLX 面积与功耗。
 - 不以训练、模型质量或 GPU 原生实验阻塞 MLX 系统和架构验证。
 
-## 7. 当前起点与主要缺口
+## 7. 实施状态与审计入口
 
-- 已有架构周期模拟器、FX/ONNX lowering、空间汇编器和单 PE 关键 RTL。
-- 已有 DSAGEN/gem5 RISC-V 系统 smoke，但它没有连接 MLX SystemVerilog RTL。
-- 已有 Chipyard checkout：`third_party/dsa-framework/chipyard`，commit
-  `174875463458c22f90cec1be0b62f2bc8633791c`。
-- 尚缺 Chipyard MLX wrapper、bare-metal runtime、系统内存接口、自主执行的
-  4×4 RTL，以及系统级端到端实验。
-- 当前 PE-array PPA 是单 PE 外推且功耗包含目标校准，不作为最终阵列 PPA。
+- lowering、空间汇编、周期模型及自主执行的 4×4 RTL 已实现，四个工作负载共享
+  同一套程序、输入、golden、reference 和 lineage 清单。
+- Chipyard 使用 `/root/chipyard` 固定 checkout，commit
+  `b5d013190d637e634113cb5179f8c8885df1945a`；兼容补丁与幂等安装脚本保存在本仓库。
+- cycle/RTL 两个 Rocket 配置均运行真实 bare-metal ELF，并通过相同 RoCC 命令接口
+  完成 config、launch、wait/status、行为 DMA/SPM/DRAM 和输出回读。
+- H205/run210 与 H207/run212 分别保存 standalone 后端和 Chipyard 的机器可读结果；
+  H206/run211 保存真实 4×4 分层物理实现，H208/run213 汇总最终逐项审计。
+- 早期单 PE 外推和目标校准结果不作为本目标证据；最终 PPA 使用未经目标拟合的
+  Nangate45 综合、布局布线、STA 与 workload VCD 结果，并明确报告证据边界。

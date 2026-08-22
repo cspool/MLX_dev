@@ -1,0 +1,32 @@
+schema_version: 1
+experiment_id: H205
+run_id: run210
+vector_lanes: 32
+array:
+  rows: 4
+  columns: 4
+  registers_per_pe: 16
+  instructions_per_pe: 32
+  spm_vectors: 128
+  vector_bits: 512
+  transcendental_lanes: 8
+  dma_beat_bits: 64
+chipyard:
+  root: /root/chipyard
+  commit: b5d013190d637e634113cb5179f8c8885df1945a
+  configs:
+    cycle: MLXCycleRocketConfig
+    rtl: MLXRTLRocketConfig
+  custom_opcode: 0
+interface:
+  config_funct: 0
+  launch_funct: 1
+  wait_funct: 2
+  status_funct: 3
+workloads:
+  - system_sim/workloads/bsmm.yaml
+  - system_sim/workloads/fft_cmp.yaml
+  - system_sim/workloads/swa.yaml
+  - system_sim/workloads/transformer_block.yaml
+output_root: system_sim/generated
+manifest: artifacts/environment/h205/mlx-system-workload-manifest.json

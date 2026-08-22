@@ -4,7 +4,8 @@ module mlx_data_network #(
     parameter PAYLOAD_BITS = 64,
     parameter LINKS = 6,
     parameter BUFFER_DEPTH = 8,
-    parameter POINTER_BITS = 3
+    parameter POINTER_BITS = 3,
+    parameter GATED_CLOCK = 1
 ) (
     input  wire                    clk,
     input  wire                    rst_n,
@@ -44,6 +45,7 @@ module mlx_data_network #(
   integer link_index;
   integer observe_index;
   wire network_state_clk = clk & (valid_i | (|auxiliary_valid_i));
+  wire selected_state_clk = (GATED_CLOCK != 0) ? network_state_clk : clk;
 
   assign ready_o = 1'b1;
 
@@ -86,7 +88,7 @@ module mlx_data_network #(
     end
   end
 
-  always @(posedge network_state_clk or negedge rst_n) begin
+  always @(posedge selected_state_clk or negedge rst_n) begin
     if (!rst_n) begin
       valid_o <= 1'b0;
       dx_o <= 5'sd0;

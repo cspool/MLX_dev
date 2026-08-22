@@ -1,0 +1,157 @@
+schema_version: 1
+experiment_id: H206
+run_id: run211
+classification: raw_unfitted_hierarchical_integrated_nangate45_real_4x4_array
+top: mlx_array_4x4
+clock_period_ns: 1.0
+implementation_flow: recursive_lane_rf_hard_macros_direct_pe_then_integrated_4x4
+abstract_lef_obstructions:
+  method: routed_shape_bloat_factor
+  bloat_factor: 1
+constant_net_mapping:
+  cells: [LOGIC0_X1/Z, LOGIC1_X1/Z]
+  scope: [pe_top, hierarchical_top, flat_crosscheck]
+  yosys_hilomap_singleton: true
+abc_fast_mapping: true
+abc_mapping_reason: default_quality_mapping_produced_no_output_after_60_minutes_on_401304_gate_top
+placement_utilization_percent: 35
+placement_density: 0.40
+placement_bin_grid_count: 1024
+placement_overflow_target: 0.20
+initial_place_max_iter: 10
+placement_init_density_penalty: 0.001
+placement_min_phi_coef: 0.95
+placement_max_phi_coef: 1.20
+physical_seed:
+  enabled: true
+  pe_cell_count: 460216
+  top_cell_count: 728321
+  grid_columns: 1024
+pre_cts_repair: false
+post_cts_repair: false
+threads: 16
+global_route_congestion_iterations: 15
+global_route_allow_congestion: true
+droute_end_iter: 20
+component_placement:
+  multi_layer_pin_components:
+    - register_file
+    - functional_unit
+    - pe_top
+  low_density_components:
+    - full_lane
+    - reduced_lane
+    - register_file
+  utilization_percent: 8
+  density: 0.12
+  bin_grid_count: 64
+  droute_end_iter: 20
+  macro_levels:
+    functional_unit:
+      utilization_percent: 35
+      density: 0.40
+      aspect_ratio: 1.0
+      bin_grid_count: 128
+      global_route_congestion_iterations: 3
+      droute_end_iter: 50
+      skip_initial_place: true
+    pe_top:
+      utilization_percent: 10
+      density: 0.10
+      overflow_target: 0.001
+      aspect_ratio: 1.0
+      bin_grid_count: 128
+      global_route_congestion_iterations: 1
+      repair_design: false
+      droute_end_iter: 50
+      skip_initial_place: false
+hierarchical_top_placement:
+  utilization_percent: 80
+  density: 0.05
+  aspect_ratio: 1.0
+  bin_grid_count: 512
+  overflow_target: 0.003
+  global_route_congestion_iterations: 1
+  repair_design: false
+  tapcell_distance_um: 1000
+  post_gpl_threads: 1
+  detailed_placement_full_width_rows: 300
+  detailed_placement_method: distributed_channel_row_reservation_then_opendp
+  skip_initial_place: false
+hierarchical_top_resource_attempt:
+  utilization_percent: 70
+  completed_through: global_placement
+  final_overflow: 0.000992
+  detailed_placement_peak_rss_gib: 233.1
+  host_available_memory_gib_at_stop: 1.1
+  result_consumed_as_final_ppa: false
+  evidence: artifacts/environment/h206/hierarchical_4x4/mlx-array-4x4-hierarchical-u70-dpl-resource-stop.log
+hierarchical_top_strict_overflow_attempt:
+  utilization_percent: 80
+  overflow_target: 0.001
+  completed_iterations: 1000
+  final_reported_overflow: 0.001
+  status: stopped_after_asymptotic_convergence_above_internal_target
+  result_consumed_as_final_ppa: false
+  evidence: artifacts/environment/h206/hierarchical_4x4/mlx-array-4x4-hierarchical-u80-overflow001-stop.log
+hierarchical_top_post_gpl_resource_attempt:
+  threads: 16
+  completed_through: global_placement_checkpoint
+  observed_detailed_placement_rss_gib: 212.6
+  host_available_memory_gib_at_stop: 12.3
+  result_consumed_as_final_ppa: false
+hierarchical_top_single_thread_resource_attempt:
+  threads: 1
+  allocator_arenas: 2
+  completed_through: global_placement_checkpoint
+  observed_detailed_placement_rss_gib: 208.6
+  host_available_memory_gib_at_stop: 16.7
+  result_consumed_as_final_ppa: false
+flat_physical_attempt:
+  status: stopped_at_resource_safety_boundary
+  completed_through: post_cts_detailed_placement
+  global_route_peak_rss_gib: 217.9
+  host_available_memory_gib_at_stop: 27.7
+  result_consumed_as_final_ppa: false
+  evidence:
+    manifest: artifacts/environment/h206/mlx-array-flat-attempt-ppa-manifest.json
+    result: artifacts/results/mlx-array-flat-attempt-run211-rejected.json
+    mapped_netlist: artifacts/environment/h206/mlx-array-4x4-flat-attempt-mapped.v
+    synthesis_stats: artifacts/environment/h206/mlx-array-4x4-flat-attempt-synthesis.stats
+    openroad_log: artifacts/environment/h206/mlx-array-4x4-flat-attempt-openroad.log
+rtl_sources:
+  - rtl/mlx/mlx_fp16.sv
+  - rtl/mlx/mlx_fu.sv
+  - rtl/mlx/mlx_register_file.sv
+  - rtl/mlx/mlx_tag_buffer.sv
+  - rtl/mlx/mlx_config_network.sv
+  - rtl/mlx/mlx_data_network.sv
+  - rtl/mlx/mlx_control_logic.sv
+  - rtl/mlx/mlx_pe_top.sv
+  - rtl/mlx/mlx_array_4x4.sv
+technology:
+  name: Nangate45
+  orfs_commit: 6101364b2d7909dd797e1e3e7f80695401cfa4e4
+  liberty: /opt/OpenROAD-flow-scripts/flow/platforms/nangate45/lib/NangateOpenCellLibrary_typical.lib
+  tech_lef: /opt/OpenROAD-flow-scripts/flow/platforms/nangate45/lef/NangateOpenCellLibrary.tech.lef
+  macro_lef: /opt/OpenROAD-flow-scripts/flow/platforms/nangate45/lef/NangateOpenCellLibrary.macro.mod.lef
+  rcx_rules: /opt/OpenROAD-flow-scripts/flow/platforms/nangate45/rcx_patterns.rules
+  tapcell_tcl: /opt/OpenROAD-flow-scripts/flow/platforms/nangate45/tapcell.tcl
+activity:
+  source: artifacts/environment/h205/vcd/transformer-block-rtl.vcd
+  source_scope: TOP.mlx_array_4x4
+  promoted_scope: component_activity
+  workload: transformer_block
+  provenance: measured_rtl_simulation
+  source_clock_period_ns: 0.002
+  normalized_clock_period_ns: 1.0
+  timestamp_scale: 500
+toolchain:
+  openroad_package_url: https://github.com/Precision-Innovations/OpenROAD/releases/download/2024-12-14/openroad_2.0-17598-ga008522d8_amd64-debian11.deb
+  openroad_package_sha256: a3918391a20ee817ed40f2f4d75d9c32950155e4602aafd2c03d63ab4f49279c
+output_root: artifacts/environment/h206
+manifest: artifacts/environment/h206/mlx-array-ppa-manifest.json
+result: artifacts/results/mlx-array-ppa-run211.json
+calibration:
+  applied: false
+  coefficients: null
