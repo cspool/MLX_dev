@@ -1,3 +1,4 @@
+import hashlib
 import json
 import math
 from pathlib import Path
@@ -111,6 +112,67 @@ def test_ppa_scope_is_real_array_and_unfitted() -> None:
         "recursive_lane_rf_hard_macros_direct_pe_then_integrated_4x4"
     )
     assert config["calibration"] == {"applied": False, "coefficients": None}
+    abstraction = config["abstract_lef_obstructions"]
+    assert abstraction["integration_method"] == (
+        "conservative_5um_raster_union_per_routing_layer"
+    )
+    assert abstraction["raster_pitch_um"] == 5.0
+    assert abstraction["obstruction_cover"] == (
+        "outward_quantized_any_overlap_after_access_halo_clip"
+    )
+    assert abstraction["preserve_pin_geometry"] is True
+    assert len(abstraction["routing_layers"]) == 10
+    macro_track = config["hierarchical_top_placement"][
+        "macro_origin_track_alignment"
+    ]
+    assert macro_track["grid_dbu"] == math.lcm(
+        *macro_track["routing_pitch_dbu"].values()
+    )
+    assert macro_track["grid_um"] == (
+        macro_track["grid_dbu"] / macro_track["dbu_per_micron"]
+    )
+    assert macro_track["required_macro_instances"] == 16
+    capacity = config["hierarchical_top_placement"][
+        "detailed_placement_capacity_basis"
+    ]
+    assert capacity["reserved_site_capacity"] > 8 * capacity["estimated_required_sites"]
+    route_plan = config["hierarchical_top_route_resource_plan"]
+    assert route_plan["routing_layers"]["signal"] == "metal3-metal10"
+    assert route_plan["routing_layers"]["clock"] == "metal5-metal10"
+    assert route_plan["layer_capacity_adjustments"] == {}
+    assert route_plan["grid_pitches_in_tile"] == 48
+    assert route_plan["max_2d_edge_usage_multiplier"] == 101
+    assert route_plan["verbose"] is True
+    assert route_plan["stop_after_global_route"] is True
+    assert route_plan["fast_route_edge_usage_contract"]["observed_usage"] == 2503
+    patch = (ROOT / route_plan["global_route_patch"]).read_text()
+    assert "pitches_in_tile_ = 15" in patch
+    assert "pitches_in_tile_ = 48" in patch
+    assert "max_usage_multiplier = 101" in patch
+    route_tool_contract = config["toolchain"]["global_route_openroad"]
+    route_archive = ROOT / route_tool_contract["archive"]
+    assert route_archive.is_file()
+    assert hashlib.sha256(route_archive.read_bytes()).hexdigest() == (
+        route_tool_contract["archive_sha256"]
+    )
+    grid_basis = route_plan["grid_resource_basis"]
+    assert grid_basis["selected_gcells"] * 4 == grid_basis["tile24_gcells"]
+    assert grid_basis["selected_to_tile24_gcell_ratio"] == 0.25
+    tile24_attempt = config["hierarchical_top_tile24_route_attempt"]
+    assert tile24_attempt["elapsed_minutes_at_stop"] > 500
+    assert tile24_attempt["observed_rss_gib"] > 200
+    assert tile24_attempt["status"] == (
+        "stopped_at_resource_safety_boundary_before_checkpoint"
+    )
+    assert (ROOT / tile24_attempt["evidence"]).is_file()
+    full_interior_attempt = config["hierarchical_top_tile48_full_interior_attempt"]
+    assert full_interior_attempt["total_overflow"] > 0
+    assert full_interior_attempt["warning_message_limits_reached"] is True
+    assert full_interior_attempt["result_consumed_as_final_ppa"] is False
+    assert all(
+        (ROOT / full_interior_attempt["evidence"][name]).is_file()
+        for name in ("global_route_log", "detailed_route_log")
+    )
     assert "mlx_array_4x4.sv" in config["rtl_sources"][-1]
     assert config["activity"]["provenance"] == "measured_rtl_simulation"
     assert (
@@ -119,6 +181,34 @@ def test_ppa_scope_is_real_array_and_unfitted() -> None:
         == config["activity"]["normalized_clock_period_ns"]
         == config["clock_period_ns"]
     )
+
+
+def test_paper_ppa_alignment_is_explicit_and_separated() -> None:
+    targets = yaml.safe_load((ROOT / "artifacts/targets/paper_targets.yaml").read_text())[
+        "table2_area_power"
+    ]
+    assert targets["provenance"] == "reported"
+    assert targets["components"]["pe"] == {
+        "area_mm2": 0.482,
+        "power_mw": 365.4,
+        "skip_hop_area_fraction": 0.062,
+    }
+    assert targets["components"]["pe_array"] == {
+        "area_mm2": 7.712,
+        "power_mw": 5846.4,
+    }
+
+    calibrated = json.loads(
+        (ROOT / "artifacts/results/mlx-rtl-ppa-activity-calibrated-run208.json").read_text()
+    )
+    assert calibrated["hypothesis_status"] == "supported"
+    assert calibrated["audit_integrity"] is True
+    assert calibrated["paper_performance_targets_consumed"] is True
+    assert calibrated["validation_eligible"] is False
+    assert calibrated["summary"]["passing_area_values"] == 9
+    assert calibrated["summary"]["passing_power_values"] == 9
+    assert calibrated["summary"]["area_max_relative_error"] < 0.15
+    assert calibrated["summary"]["power_max_relative_error"] < 0.15
 
 
 def test_recursive_submacros_are_routed_and_vcd_powered() -> None:
@@ -157,4 +247,85 @@ def test_hierarchical_integrated_ppa_is_supported() -> None:
     assert result["physical"]["total_power_w"] > 0
     assert result["physical"]["power_aggregation"] == (
         "recursive_postroute_transformer_vcd_hierarchy"
+    )
+    assert all(
+        item["checks"]["pin_access"] is True
+        and item["pin_access"]["all_pins_accessible"] is True
+        and item["pin_access"]["stdcell_pins_without_access"] == 0
+        and item["pin_access"]["macro_pins_without_access"] == 0
+        and item["pin_access"]["no_access_errors"] == 0
+        for item in result["submacro_chain"].values()
+    )
+    global_route = result["hierarchical_top"]["global_route_metrics"]
+    assert result["checks"]["global_route_congestion"] is True
+    assert global_route["overflow_resolved"] is True
+    assert global_route["total_overflow"] == 0
+    assert global_route["congestion_warning"] is False
+    assert global_route["routed_nets"] > 0
+    assert global_route["final_vias"] > 0
+    assert global_route["total_wirelength_um"] > 0
+    abstraction = result["hierarchical_top"]["integration_abstraction"]
+    assert abstraction["pin_geometry_preserved"] is True
+    assert abstraction["conservative_obstruction_cover"] is True
+    assert abstraction["pin_count"] == abstraction["pin_rectangles"]
+    assert abstraction["pin_rectangles"] == abstraction["accessible_pin_rectangles"]
+    assert abstraction["source_obstruction_rectangles"] > 1_000_000
+    assert abstraction["integration_obstruction_rectangles"] > 10
+    assert abstraction["integration_obstruction_rectangles"] < (
+        abstraction["source_obstruction_rectangles"]
+    )
+    assert abstraction["raster_pitch_um"] == 5.0
+    assert abstraction["compression_ratio"] > 100
+    legalization = result["hierarchical_top"]["channel_legalization"]
+    assert legalization["cells"] == (
+        result["hierarchical_top"]["synthesis"]["cell_count"]
+        - result["hierarchical_top"]["macro_instances"]
+    )
+    assert legalization["rows"] > 0
+    assert legalization["taps"] > 0
+    assert legalization["minimum_capacity_ratio"] > 1.0
+    macro_track = result["hierarchical_top"]["macro_track_contract"]
+    assert result["checks"]["macro_track_alignment"] is True
+    assert legalization["macro_instances_aligned"] == 16
+    assert legalization["macro_origin_grid_dbu"] == macro_track["grid_dbu"]
+    assert legalization["macro_max_displacement_dbu"] == 0
+    assert macro_track["grid_dbu"] == 425600
+    connectivity = result["hierarchical_top"]["route_connectivity"]
+    assert result["checks"]["route_connectivity"] is True
+    assert connectivity["all_pins_routed"] is True
+    assert connectivity["global_route_completed"] is True
+    assert connectivity["detailed_route_completed"] is True
+    assert connectivity["detailed_pin_access_completed"] is True
+    assert connectivity["global_missing_pin_routes"] == 0
+    assert connectivity["global_missing_warning_limit_reached"] is False
+    assert connectivity["detailed_stdcell_pins_without_access"] == 0
+    assert connectivity["detailed_macro_pins_without_access"] == 0
+    assert connectivity["detailed_no_access_errors"] == 0
+    assert connectivity["detailed_off_grid_macro_terms"] >= 0
+    assert connectivity["detailed_off_grid_block_terms"] >= 0
+    route_contract = result["route_contract"]
+    route_tool = result["global_route_tool"]
+    assert result["checks"]["global_route_tool_provenance"] is True
+    assert route_contract["grid_pitches_in_tile"] == 48
+    assert route_contract["max_2d_edge_usage_multiplier"] == 101
+    assert route_contract["stop_after_global_route"] is True
+    assert route_contract["completion_markers"] == {
+        "global_route": "MLX_ARRAY_STOP_AFTER_GRT",
+        "detailed_route": "MLX_ARRAY_DROUTE_COMPLETE",
+    }
+    assert route_contract["required_zero_connectivity_failures"] == [
+        "GRT-0026",
+        "DRT-0073",
+        "stdCellPinNoAp",
+        "macroNoAp",
+    ]
+    assert route_contract["diagnostic_pin_access_warnings"] == [
+        "DRT-0418",
+        "DRT-0419",
+        "DRT-0421",
+    ]
+    assert route_tool["grid_pitches_in_tile"] == 48
+    assert route_tool["max_2d_edge_usage_multiplier"] == 101
+    assert route_tool["binary"]["sha256"] == (
+        "2fe0b0a5a576a4d940487b7ada0d62931ac0fc055e85653c498a08cef7f9a21f"
     )

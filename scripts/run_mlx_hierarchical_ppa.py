@@ -14,6 +14,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 
+import numpy as np
 import yaml
 
 from scripts.extract_vcd_scope import extract_scope
@@ -34,15 +35,20 @@ PE_RTL = [
 
 
 def artifact(path: Path) -> dict[str, Any]:
-    payload = path.read_bytes()
+    digest = hashlib.sha256()
+    byte_count = 0
+    with path.open("rb") as stream:
+        while chunk := stream.read(8 * 1024 * 1024):
+            digest.update(chunk)
+            byte_count += len(chunk)
     try:
         name = str(path.relative_to(PROJECT_ROOT))
     except ValueError:
         name = str(path)
     return {
         "path": name,
-        "bytes": len(payload),
-        "sha256": hashlib.sha256(payload).hexdigest(),
+        "bytes": byte_count,
+        "sha256": digest.hexdigest(),
     }
 
 
@@ -82,6 +88,382 @@ def macro_metrics(text: str, clock_period: float) -> dict[str, Any]:
     return metrics
 
 
+def parse_channel_legalization(text: str) -> dict[str, Any]:
+    alignments = re.findall(
+        r"MLX_MACRO_TRACK_ALIGNMENT macros=(\d+) grid_dbu=(\d+) "
+        r"max_displacement_dbu=(\d+)",
+        text,
+    )
+    records = re.findall(
+        r"MLX_CHANNEL_LEGALIZER cells=(\d+) rows=(\d+) taps=(\d+) "
+        r"removed_rows=(\d+) removed_tapcells=(\d+) "
+        r"max_displacement_dbu=(\d+) min_capacity_ratio=([0-9.eE+-]+) "
+        r"checkpoint=(\S+)",
+        text,
+    )
+    if not records:
+        return {
+            "cells": None,
+            "rows": None,
+            "taps": None,
+            "removed_rows": None,
+            "removed_tapcells": None,
+            "max_displacement_dbu": None,
+            "minimum_capacity_ratio": None,
+            "checkpoint": None,
+            "macro_instances_aligned": None,
+            "macro_origin_grid_dbu": None,
+            "macro_max_displacement_dbu": None,
+        }
+    record = records[-1]
+    alignment = alignments[-1] if alignments else (None, None, None)
+    return {
+        "cells": int(record[0]),
+        "rows": int(record[1]),
+        "taps": int(record[2]),
+        "removed_rows": int(record[3]),
+        "removed_tapcells": int(record[4]),
+        "max_displacement_dbu": int(record[5]),
+        "minimum_capacity_ratio": float(record[6]),
+        "checkpoint": record[7],
+        "macro_instances_aligned": int(alignment[0]) if alignment[0] else None,
+        "macro_origin_grid_dbu": int(alignment[1]) if alignment[1] else None,
+        "macro_max_displacement_dbu": int(alignment[2]) if alignment[2] else None,
+    }
+
+
+def parse_route_connectivity(global_route_text: str, detailed_route_text: str) -> dict[str, Any]:
+    """Require completed routing and zero unresolved pin-access failures."""
+
+    global_route_completed = "MLX_ARRAY_STOP_AFTER_GRT checkpoint=" in global_route_text
+    detailed_route_completed = "MLX_ARRAY_DROUTE_COMPLETE odb=" in detailed_route_text
+    detailed_pin_access_completed = (
+        "[INFO DRT-0166] Complete pin access." in detailed_route_text
+    )
+    global_missing_pin_routes = len(
+        re.findall(r"\[WARNING GRT-0026\] Missing route to pin", global_route_text)
+    )
+    detailed_off_grid_macro_terms = len(
+        re.findall(
+            r"\[WARNING DRT-0418\] Term .* has no pins on routing grid",
+            detailed_route_text,
+        )
+    )
+    detailed_off_grid_block_terms = len(
+        re.findall(
+            r"\[WARNING DRT-0421\] Term .* has no pins on routing grid",
+            detailed_route_text,
+        )
+    )
+    stdcell_no_access = re.findall(
+        r"#stdCellPinNoAp\s*=\s*(\d+)", detailed_route_text
+    )
+    macro_no_access = re.findall(r"#macroNoAp\s*=\s*(\d+)", detailed_route_text)
+    detailed_no_access_errors = len(
+        re.findall(r"\[(?:ERROR|WARNING) DRT-0073\]", detailed_route_text)
+    )
+    global_missing_warning_limit_reached = bool(
+        re.search(r"\[WARNING GRT-0026\] message limit", global_route_text)
+    )
+    detailed_warning_limit_reached = bool(
+        re.search(
+            r"\[WARNING DRT-(?:0418|0419|0421)\] message limit",
+            detailed_route_text,
+        )
+    )
+    detailed_stdcell_pins_without_access = (
+        int(stdcell_no_access[-1]) if stdcell_no_access else None
+    )
+    detailed_macro_pins_without_access = (
+        int(macro_no_access[-1]) if macro_no_access else None
+    )
+    return {
+        "global_route_completed": global_route_completed,
+        "detailed_route_completed": detailed_route_completed,
+        "detailed_pin_access_completed": detailed_pin_access_completed,
+        "global_missing_pin_routes": global_missing_pin_routes,
+        "detailed_off_grid_macro_terms": detailed_off_grid_macro_terms,
+        "detailed_off_grid_block_terms": detailed_off_grid_block_terms,
+        "detailed_stdcell_pins_without_access": (
+            detailed_stdcell_pins_without_access
+        ),
+        "detailed_macro_pins_without_access": detailed_macro_pins_without_access,
+        "detailed_no_access_errors": detailed_no_access_errors,
+        "global_missing_warning_limit_reached": (
+            global_missing_warning_limit_reached
+        ),
+        "detailed_warning_limit_reached": detailed_warning_limit_reached,
+        "warning_limit_reached": (
+            global_missing_warning_limit_reached or detailed_warning_limit_reached
+        ),
+        "all_pins_routed": global_route_completed
+        and detailed_route_completed
+        and detailed_pin_access_completed
+        and global_missing_pin_routes == 0
+        and not global_missing_warning_limit_reached
+        and detailed_stdcell_pins_without_access == 0
+        and detailed_macro_pins_without_access == 0
+        and detailed_no_access_errors == 0,
+    }
+
+
+def parse_global_route_metrics(text: str) -> dict[str, Any]:
+    totals = re.findall(
+        r"^Total\s+(\d+)\s+(\d+)\s+([0-9.]+)%\s+"
+        r"(\d+)\s*/\s*(\d+)\s*/\s*(\d+)\s*$",
+        text,
+        flags=re.MULTILINE,
+    )
+    final_vias = re.findall(r"\[INFO GRT-0111\] Final number of vias: (\d+)", text)
+    final_usage_3d = re.findall(r"\[INFO GRT-0112\] Final usage 3D: (\d+)", text)
+    wirelength = re.findall(r"\[INFO GRT-0018\] Total wirelength: (\d+) um", text)
+    routed_nets = re.findall(r"\[INFO GRT-0014\] Routed nets: (\d+)", text)
+    total = totals[-1] if totals else (None, None, None, None, None, None)
+    congestion_warning = "[WARNING GRT-0115]" in text
+    total_overflow = int(total[5]) if total[5] is not None else None
+    return {
+        "resource": int(total[0]) if total[0] is not None else None,
+        "demand": int(total[1]) if total[1] is not None else None,
+        "usage_percent": float(total[2]) if total[2] is not None else None,
+        "max_horizontal_overflow": int(total[3]) if total[3] is not None else None,
+        "max_vertical_overflow": int(total[4]) if total[4] is not None else None,
+        "total_overflow": total_overflow,
+        "final_vias": int(final_vias[-1]) if final_vias else None,
+        "final_usage_3d": int(final_usage_3d[-1]) if final_usage_3d else None,
+        "total_wirelength_um": int(wirelength[-1]) if wirelength else None,
+        "routed_nets": int(routed_nets[-1]) if routed_nets else None,
+        "congestion_warning": congestion_warning,
+        "overflow_resolved": total_overflow == 0 and not congestion_warning,
+    }
+
+
+def build_compact_macro_lef(
+    source: Path,
+    destination: Path,
+    obstruction_config: dict[str, Any],
+) -> dict[str, Any]:
+    """Preserve routed pins and conservatively raster-union internal OBS.
+
+    OpenROAD's routed abstract contains every internal route rectangle.  That is
+    useful as detailed evidence, but expanding those shapes sixteen times in a
+    parent block exhausts memory.  The integration view retains the exact macro
+    dimensions and pin PORT section, then outward-quantizes every internal OBS
+    rectangle to a fixed raster and unions adjacent occupied bins.  Therefore it
+    never opens space covered by the source abstraction, while avoiding the
+    excessively pessimistic full-interior blockage used by the first compact
+    attempt.  A narrow edge halo remains available for routed pin access.
+    """
+
+    source = source.resolve()
+    destination = destination.resolve()
+    size_pattern = re.compile(
+        r"^\s*SIZE\s+([0-9.eE+-]+)\s+BY\s+([0-9.eE+-]+)\s*;"
+    )
+    layer_pattern = re.compile(r"^\s*LAYER\s+(\S+)\s*;")
+    rect_pattern = re.compile(
+        r"^\s*RECT\s+([0-9.eE+-]+)\s+([0-9.eE+-]+)\s+"
+        r"([0-9.eE+-]+)\s+([0-9.eE+-]+)\s*;"
+    )
+    layers = list(obstruction_config["routing_layers"])
+    inset = float(obstruction_config["integration_inset_um"])
+    raster_pitch = float(obstruction_config["raster_pitch_um"])
+    if raster_pitch <= 0:
+        raise ValueError("raster pitch must be positive")
+    temporary = destination.with_suffix(destination.suffix + ".tmp")
+    prefix_digest = hashlib.sha256()
+    macro_name: str | None = None
+    width: float | None = None
+    height: float | None = None
+    pin_count = 0
+    pin_rectangles = 0
+    accessible_pin_rectangles = 0
+    pin_layers: set[str] = set()
+    current_pin: str | None = None
+    current_layer: str | None = None
+    source_obstruction_rectangles = 0
+    found_obstructions = False
+    obstruction_layer: str | None = None
+    raster_differences: dict[str, np.ndarray] = {}
+    source_obstruction_rectangles_by_layer = {layer: 0 for layer in layers}
+
+    with source.open() as input_stream, temporary.open("w") as output_stream:
+        for line in input_stream:
+            if line.startswith("  OBS"):
+                found_obstructions = True
+                break
+            output_stream.write(line)
+            prefix_digest.update(line.encode())
+            if line.startswith("MACRO "):
+                macro_name = line.split()[1]
+            size_match = size_pattern.match(line)
+            if size_match:
+                width = float(size_match.group(1))
+                height = float(size_match.group(2))
+            if line.startswith("  PIN "):
+                current_pin = line.split()[1]
+                pin_count += 1
+                current_layer = None
+            elif current_pin and line.startswith("  END "):
+                current_pin = None
+                current_layer = None
+            elif current_pin:
+                layer_match = layer_pattern.match(line)
+                if layer_match:
+                    current_layer = layer_match.group(1)
+                rect_match = rect_pattern.match(line)
+                if rect_match:
+                    if width is None or height is None or current_layer is None:
+                        raise ValueError(f"malformed pin geometry in {source}")
+                    x_min, y_min, x_max, y_max = map(float, rect_match.groups())
+                    pin_rectangles += 1
+                    pin_layers.add(current_layer)
+                    if min(x_min, y_min, width - x_max, height - y_max) <= inset:
+                        accessible_pin_rectangles += 1
+
+        if not found_obstructions or macro_name is None or width is None or height is None:
+            raise ValueError(f"missing macro boundary or OBS section in {source}")
+        if width <= 2 * inset or height <= 2 * inset:
+            raise ValueError(f"integration inset is too large for {source}")
+        if pin_count == 0 or pin_rectangles == 0:
+            raise ValueError(f"no routed pin geometry found in {source}")
+        if accessible_pin_rectangles != pin_rectangles:
+            raise ValueError(f"compact obstruction would cover a routed pin in {source}")
+
+        raster_width = math.ceil((width - 2 * inset) / raster_pitch)
+        raster_height = math.ceil((height - 2 * inset) / raster_pitch)
+        if raster_width <= 0 or raster_height <= 0:
+            raise ValueError(f"invalid obstruction raster for {source}")
+        raster_differences = {
+            layer: np.zeros((raster_height + 1, raster_width + 1), dtype=np.int32)
+            for layer in layers
+        }
+
+        for line in input_stream:
+            layer_match = layer_pattern.match(line)
+            if layer_match:
+                obstruction_layer = layer_match.group(1)
+                continue
+            rect_match = rect_pattern.match(line)
+            if not rect_match:
+                continue
+            source_obstruction_rectangles += 1
+            if obstruction_layer not in raster_differences:
+                continue
+            source_obstruction_rectangles_by_layer[obstruction_layer] += 1
+            x_min, y_min, x_max, y_max = map(float, rect_match.groups())
+            x_min = max(x_min, inset)
+            y_min = max(y_min, inset)
+            x_max = min(x_max, width - inset)
+            y_max = min(y_max, height - inset)
+            if x_min >= x_max or y_min >= y_max:
+                continue
+            x_start = max(
+                0,
+                min(raster_width, math.floor((x_min - inset) / raster_pitch)),
+            )
+            y_start = max(
+                0,
+                min(raster_height, math.floor((y_min - inset) / raster_pitch)),
+            )
+            x_stop = max(
+                0,
+                min(raster_width, math.ceil((x_max - inset) / raster_pitch)),
+            )
+            y_stop = max(
+                0,
+                min(raster_height, math.ceil((y_max - inset) / raster_pitch)),
+            )
+            if x_start >= x_stop or y_start >= y_stop:
+                continue
+            difference = raster_differences[obstruction_layer]
+            difference[y_start, x_start] += 1
+            difference[y_stop, x_start] -= 1
+            difference[y_start, x_stop] -= 1
+            difference[y_stop, x_stop] += 1
+
+        output_stream.write("  OBS\n")
+        integration_obstruction_rectangles_by_layer: dict[str, int] = {}
+        occupied_raster_cells_by_layer: dict[str, int] = {}
+        for layer in layers:
+            output_stream.write(f"    LAYER {layer} ;\n")
+            difference = raster_differences.pop(layer)
+            occupied = np.cumsum(
+                np.cumsum(difference[:-1, :-1], axis=0, dtype=np.int32),
+                axis=1,
+                dtype=np.int32,
+            ) > 0
+            occupied_raster_cells_by_layer[layer] = int(occupied.sum())
+            active_runs: dict[tuple[int, int], int] = {}
+            emitted = 0
+
+            def emit(run: tuple[int, int], y_start: int, y_stop: int) -> None:
+                nonlocal emitted
+                x_start, x_stop = run
+                rect_x_min = inset + x_start * raster_pitch
+                rect_y_min = inset + y_start * raster_pitch
+                rect_x_max = min(width - inset, inset + x_stop * raster_pitch)
+                rect_y_max = min(height - inset, inset + y_stop * raster_pitch)
+                output_stream.write(
+                    f"      RECT {rect_x_min:g} {rect_y_min:g} "
+                    f"{rect_x_max:g} {rect_y_max:g} ;\n"
+                )
+                emitted += 1
+
+            for row_index, row in enumerate(occupied):
+                padded_row = np.concatenate((np.array([False]), row, np.array([False])))
+                transitions = np.flatnonzero(
+                    padded_row[1:] != padded_row[:-1]
+                )
+                runs = list(zip(transitions[0::2].tolist(), transitions[1::2].tolist()))
+                current_runs = set(runs)
+                for run in list(active_runs):
+                    if run not in current_runs:
+                        emit(run, active_runs.pop(run), row_index)
+                for run in runs:
+                    active_runs.setdefault(run, row_index)
+            for run, y_start in active_runs.items():
+                emit(run, y_start, raster_height)
+            integration_obstruction_rectangles_by_layer[layer] = emitted
+        output_stream.write("  END\n")
+        output_stream.write(f"END {macro_name}\n")
+        output_stream.write("END LIBRARY\n")
+
+    temporary.replace(destination)
+    return {
+        "method": obstruction_config["integration_method"],
+        "source_method": obstruction_config["source_method"],
+        "source_path": str(source.relative_to(PROJECT_ROOT)),
+        "integration_path": str(destination.relative_to(PROJECT_ROOT)),
+        "source_bytes": source.stat().st_size,
+        "integration_bytes": destination.stat().st_size,
+        "compression_ratio": source.stat().st_size / destination.stat().st_size,
+        "macro_name": macro_name,
+        "macro_width_um": width,
+        "macro_height_um": height,
+        "pin_count": pin_count,
+        "pin_rectangles": pin_rectangles,
+        "accessible_pin_rectangles": accessible_pin_rectangles,
+        "pin_layers": sorted(pin_layers),
+        "pin_prefix_sha256": prefix_digest.hexdigest(),
+        "source_obstruction_rectangles": source_obstruction_rectangles,
+        "source_obstruction_rectangles_by_layer": source_obstruction_rectangles_by_layer,
+        "integration_obstruction_rectangles": sum(
+            integration_obstruction_rectangles_by_layer.values()
+        ),
+        "integration_obstruction_rectangles_by_layer": (
+            integration_obstruction_rectangles_by_layer
+        ),
+        "integration_obstruction_layers": layers,
+        "integration_inset_um": inset,
+        "raster_pitch_um": raster_pitch,
+        "raster_width": raster_width,
+        "raster_height": raster_height,
+        "occupied_raster_cells_by_layer": occupied_raster_cells_by_layer,
+        "conservative_obstruction_cover": True,
+        "pin_geometry_preserved": bool(obstruction_config["preserve_pin_geometry"]),
+    }
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--config", type=Path, default=DEFAULT_CONFIG)
@@ -93,6 +475,65 @@ def main() -> int:
     config_path = args.config.resolve()
     config = yaml.safe_load(config_path.read_text())
     technology = config["technology"]
+    route_plan = config["hierarchical_top_route_resource_plan"]
+    global_route_openroad = Path(route_plan["global_route_openroad"])
+    if not global_route_openroad.is_absolute():
+        global_route_openroad = PROJECT_ROOT / global_route_openroad
+    detailed_route_openroad = Path(route_plan["detailed_route_openroad"])
+    if not detailed_route_openroad.is_absolute():
+        detailed_route_openroad = PROJECT_ROOT / detailed_route_openroad
+    global_route_patch = PROJECT_ROOT / route_plan["global_route_patch"]
+    route_tool_contract = config["toolchain"]["global_route_openroad"]
+    global_route_archive = PROJECT_ROOT / route_tool_contract["archive"]
+    signoff_tool_contract = config["toolchain"][
+        "detailed_route_and_signoff_openroad"
+    ]
+    global_route_tool = {
+        "binary": artifact(global_route_openroad),
+        "patch": artifact(global_route_patch),
+        "archive": artifact(global_route_archive),
+        "version": subprocess.run(
+            [str(global_route_openroad), "-version"],
+            capture_output=True,
+            text=True,
+            check=False,
+        ).stdout.strip(),
+        "base_commit": route_tool_contract["base_commit"],
+        "grid_pitches_in_tile": int(route_plan["grid_pitches_in_tile"]),
+        "max_2d_edge_usage_multiplier": int(
+            route_plan["max_2d_edge_usage_multiplier"]
+        ),
+    }
+    detailed_route_tool = artifact(detailed_route_openroad)
+    route_tool_valid = (
+        global_route_tool["binary"]["sha256"]
+        == route_tool_contract["binary_sha256"]
+        and global_route_tool["patch"]["sha256"]
+        == route_tool_contract["patch_sha256"]
+        and global_route_tool["archive"]["sha256"]
+        == route_tool_contract["archive_sha256"]
+        and route_tool_contract["base_commit"] in global_route_tool["version"]
+        and global_route_tool["grid_pitches_in_tile"]
+        == route_tool_contract["grid_pitches_in_tile"]
+        == 48
+        and global_route_tool["max_2d_edge_usage_multiplier"]
+        == route_tool_contract["max_2d_edge_usage_multiplier"]
+        == 101
+        and detailed_route_tool["sha256"]
+        == signoff_tool_contract["binary_sha256"]
+    )
+    if not route_tool_valid:
+        print(
+            json.dumps(
+                {
+                    "stage": "global_route_tool",
+                    "global_route_tool": global_route_tool,
+                    "detailed_route_tool": detailed_route_tool,
+                },
+                indent=2,
+            )
+        )
+        return 1
     liberty = Path(technology["liberty"])
     output = PROJECT_ROOT / config["output_root"]
     pe_root = output / "pe_macro"
@@ -207,6 +648,26 @@ def main() -> int:
         print(json.dumps({"stage": "pe_physical", "checks": pe_checks, **pe_physical}, indent=2))
         return 1
 
+    pe_integration_lef = pe_root / "mlx-pe-top.integration.lef"
+    pe_abstraction = build_compact_macro_lef(
+        pe_lef,
+        pe_integration_lef,
+        config["abstract_lef_obstructions"],
+    )
+    pe_abstraction_valid = (
+        pe_abstraction["pin_geometry_preserved"]
+        and pe_abstraction["conservative_obstruction_cover"]
+        and pe_abstraction["pin_count"] > 0
+        and pe_abstraction["pin_rectangles"]
+        == pe_abstraction["accessible_pin_rectangles"]
+        and pe_abstraction["source_obstruction_rectangles"]
+        > pe_abstraction["integration_obstruction_rectangles"]
+        and pe_abstraction["integration_bytes"] < pe_abstraction["source_bytes"]
+    )
+    if not pe_abstraction_valid:
+        print(json.dumps({"stage": "pe_abstraction", **pe_abstraction}, indent=2))
+        return 1
+
     # Stage B: synthesize the array controller/network around sixteen hard PE macros.
     top_netlist = top_root / "mlx-array-4x4-hierarchical-mapped.v"
     top_stats = top_root / "mlx-array-4x4-hierarchical-synthesis.stats"
@@ -248,16 +709,49 @@ def main() -> int:
         ports_only=True,
         timestamp_scale=int(config["activity"]["timestamp_scale"]),
     )
-    top_phys = physical_paths(top_root, "mlx-array-4x4-hierarchical-routed")
-    top_gpl_checkpoint = top_root / "mlx-array-4x4-global-placement.odb"
-    top_grt_checkpoint = top_root / "mlx-array-4x4-global-route.odb"
-    top_post_gpl_log = top_root / "mlx-array-4x4-post-gpl-resume.log"
-    top_droute_resume_log = top_root / "mlx-array-4x4-droute-resume.log"
     top_placement = config["hierarchical_top_placement"]
+    macro_track_contract = top_placement["macro_origin_track_alignment"]
+    routing_pitch_dbu = [
+        int(value) for value in macro_track_contract["routing_pitch_dbu"].values()
+    ]
+    derived_macro_origin_grid_dbu = math.lcm(*routing_pitch_dbu)
+    macro_track_contract_valid = (
+        int(macro_track_contract["dbu_per_micron"]) == 2000
+        and int(macro_track_contract["grid_dbu"]) == derived_macro_origin_grid_dbu
+        and math.isclose(
+            float(macro_track_contract["grid_um"]),
+            derived_macro_origin_grid_dbu / int(macro_track_contract["dbu_per_micron"]),
+        )
+        and int(macro_track_contract["required_macro_instances"]) == macro_instances == 16
+    )
+    if not macro_track_contract_valid:
+        print(
+            json.dumps(
+                {
+                    "stage": "macro_track_contract",
+                    "contract": macro_track_contract,
+                    "derived_grid_dbu": derived_macro_origin_grid_dbu,
+                },
+                indent=2,
+            )
+        )
+        return 1
+    flow_tag = re.sub(r"[^A-Za-z0-9_.-]", "-", top_placement["flow_tag"])
+    physical_stem = f"mlx-array-4x4-hierarchical-{flow_tag}-routed"
+    checkpoint_stem = f"mlx-array-4x4-hierarchical-{flow_tag}"
+    top_phys = physical_paths(top_root, physical_stem)
+    top_gpl_checkpoint = top_root / f"{checkpoint_stem}-global-placement.odb"
+    top_legal_checkpoint = top_root / f"{checkpoint_stem}-channel-legal.odb"
+    top_cts_checkpoint = top_root / f"{checkpoint_stem}-post-cts.odb"
+    top_grt_checkpoint = top_root / f"{checkpoint_stem}-global-route.odb"
+    top_channel_log = top_root / f"{checkpoint_stem}-channel-legalize.log"
+    top_cts_log = top_root / f"{checkpoint_stem}-cts.log"
+    top_route_log = top_root / f"{checkpoint_stem}-route.log"
+    top_droute_resume_log = top_root / f"{checkpoint_stem}-droute-resume.log"
     top_environment = common_environment.copy()
     top_environment.update(
         {
-            "PPA_PE_LEF": str(pe_lef),
+            "PPA_PE_LEF": str(pe_integration_lef),
             "PPA_PE_LIBERTY": str(pe_lib),
             "PPA_NETLIST": str(top_netlist),
             "PPA_UTILIZATION": str(top_placement["utilization_percent"]),
@@ -298,7 +792,35 @@ def main() -> int:
             "PPA_VCD": str(top_vcd),
             "PPA_VCD_SCOPE": config["activity"]["promoted_scope"],
             "PPA_GPL_ODB": str(top_gpl_checkpoint),
+            "PPA_LEGAL_ODB": str(top_legal_checkpoint),
+            "PPA_CTS_ODB": str(top_cts_checkpoint),
             "PPA_GRT_ODB": str(top_grt_checkpoint),
+            "PPA_POST_GPL_THREADS": str(top_placement.get("post_gpl_threads", 1)),
+            "PPA_CHANNEL_TARGET_UTILIZATION": str(
+                top_placement["channel_legalizer"]["target_row_utilization"]
+            ),
+            "PPA_PE_MACRO_MASTER": "mlx_pe_top",
+            "PPA_MACRO_INSTANCE_COUNT": str(
+                macro_track_contract["required_macro_instances"]
+            ),
+            "PPA_MACRO_ORIGIN_GRID_DBU": str(macro_track_contract["grid_dbu"]),
+            "PPA_SIGNAL_ROUTING_LAYERS": route_plan["routing_layers"]["signal"],
+            "PPA_CLOCK_ROUTING_LAYERS": route_plan["routing_layers"]["clock"],
+            "PPA_MACRO_EXTENSION_GCELLS": str(
+                route_plan["macro_extension_gcells"]
+            ),
+            "PPA_CRITICAL_NETS_PERCENTAGE": str(
+                route_plan["critical_nets_percentage"]
+            ),
+            "PPA_GRT_VERBOSE": "1" if route_plan.get("verbose") else "0",
+            "PPA_LAYER_CAPACITY_ADJUSTMENTS": " ".join(
+                f"{layer} {adjustment}"
+                for layer, adjustment in route_plan[
+                    "layer_capacity_adjustments"
+                ].items()
+            ),
+            "PPA_STOP_AFTER_GRT": "0",
+            "MALLOC_ARENA_MAX": "2",
         }
     )
     if args.reuse_top_physical and output_check(top_phys):
@@ -313,51 +835,205 @@ def main() -> int:
             and top_gpl_checkpoint.is_file()
             and top_gpl_checkpoint.stat().st_size > 0
         )
-        top_environment["PPA_RESUME_GPL"] = (
-            "1" if resume_top_post_gpl else "0"
-        )
-        if resume_top_post_gpl:
-            top_environment["PPA_THREADS"] = str(
-                top_placement.get("post_gpl_threads", 1)
+        top_physical_rc = 1
+        if resume_top_droute:
+            top_physical_rc = run_to_log(
+                [
+                    str(detailed_route_openroad),
+                    "-no_init",
+                    "-exit",
+                    str(PROJECT_ROOT / "rtl/ppa/openroad_hierarchical_array_droute_resume.tcl"),
+                ],
+                top_droute_resume_log,
+                top_environment,
             )
-            top_environment["MALLOC_ARENA_MAX"] = "2"
-        physical_log = (
-            top_droute_resume_log
-            if resume_top_droute
-            else top_post_gpl_log
-            if resume_top_post_gpl
-            else top_phys["log"]
-        )
-        top_physical_rc = run_to_log(
-            [
-                "openroad",
-                "-no_init",
-                "-exit",
-                str(
-                    PROJECT_ROOT
-                    / "rtl/ppa"
-                    / (
-                        "openroad_hierarchical_array_droute_resume.tcl"
-                        if resume_top_droute
-                        else "openroad_hierarchical_array_flow.tcl"
-                    )
-                ),
-            ],
-            physical_log,
-            top_environment,
-        )
-        if resume_top_droute or resume_top_post_gpl:
             prior_log = top_phys["log"].read_text() if top_phys["log"].is_file() else ""
-            marker = (
-                "MLX_ARRAY_DROUTE_RESUME_LOG_BEGIN"
-                if resume_top_droute
-                else "MLX_ARRAY_POST_GPL_RESUME_LOG_BEGIN"
-            )
             top_phys["log"].write_text(
                 prior_log
-                + f"\n{marker}\n"
-                + physical_log.read_text()
+                + "\nMLX_ARRAY_DROUTE_RESUME_LOG_BEGIN\n"
+                + top_droute_resume_log.read_text()
             )
+        else:
+            if not resume_top_post_gpl:
+                initial_environment = top_environment.copy()
+                initial_environment["PPA_RESUME_GPL"] = "0"
+                initial_environment["PPA_STOP_AFTER_GPL"] = "1"
+                top_physical_rc = run_to_log(
+                    [
+                        "openroad",
+                        "-no_init",
+                        "-exit",
+                        str(PROJECT_ROOT / "rtl/ppa/openroad_hierarchical_array_flow.tcl"),
+                    ],
+                    top_phys["log"],
+                    initial_environment,
+                )
+                resume_top_post_gpl = (
+                    top_physical_rc == 0
+                    and top_gpl_checkpoint.is_file()
+                    and top_gpl_checkpoint.stat().st_size > 0
+                )
+            if resume_top_post_gpl:
+                legal_ready = (
+                    top_legal_checkpoint.is_file()
+                    and top_legal_checkpoint.stat().st_size > 0
+                )
+                if not legal_ready:
+                    channel_environment = top_environment.copy()
+                    channel_environment["PPA_THREADS"] = str(
+                        top_placement.get("post_gpl_threads", 1)
+                    )
+                    channel_rc = run_to_log(
+                        [
+                            "openroad",
+                            "-no_init",
+                            "-exit",
+                            str(
+                                PROJECT_ROOT
+                                / "rtl/ppa/openroad_hierarchical_array_channel_legalize.tcl"
+                            ),
+                        ],
+                        top_channel_log,
+                        channel_environment,
+                    )
+                    legal_ready = (
+                        channel_rc == 0
+                        and top_legal_checkpoint.is_file()
+                        and top_legal_checkpoint.stat().st_size > 0
+                    )
+                    prior_log = (
+                        top_phys["log"].read_text() if top_phys["log"].is_file() else ""
+                    )
+                    top_phys["log"].write_text(
+                        prior_log
+                        + "\nMLX_ARRAY_CHANNEL_LEGALIZE_LOG_BEGIN\n"
+                        + top_channel_log.read_text()
+                    )
+                if legal_ready:
+                    cts_ready = (
+                        top_cts_checkpoint.is_file()
+                        and top_cts_checkpoint.stat().st_size > 0
+                    )
+                    if not cts_ready:
+                        cts_environment = top_environment.copy()
+                        cts_environment["PPA_THREADS"] = str(
+                            top_placement.get("post_gpl_threads", 1)
+                        )
+                        cts_environment["PPA_RESUME_CTS"] = "0"
+                        cts_environment["PPA_STOP_AFTER_CTS"] = "1"
+                        cts_rc = run_to_log(
+                            [
+                                "openroad",
+                                "-no_init",
+                                "-exit",
+                                str(
+                                    PROJECT_ROOT
+                                    / "rtl/ppa/openroad_hierarchical_array_post_legal_flow.tcl"
+                                ),
+                            ],
+                            top_cts_log,
+                            cts_environment,
+                        )
+                        cts_ready = (
+                            cts_rc == 0
+                            and top_cts_checkpoint.is_file()
+                            and top_cts_checkpoint.stat().st_size > 0
+                        )
+                        prior_log = (
+                            top_phys["log"].read_text()
+                            if top_phys["log"].is_file()
+                            else ""
+                        )
+                        top_phys["log"].write_text(
+                            prior_log
+                            + "\nMLX_ARRAY_CTS_LOG_BEGIN\n"
+                            + top_cts_log.read_text()
+                        )
+                    if cts_ready:
+                        route_environment = top_environment.copy()
+                        route_environment["PPA_THREADS"] = str(
+                            top_placement.get("post_gpl_threads", 1)
+                        )
+                        route_environment["PPA_RESUME_CTS"] = "1"
+                        route_environment["PPA_STOP_AFTER_CTS"] = "0"
+                        route_environment["PPA_STOP_AFTER_GRT"] = (
+                            "1" if route_plan["stop_after_global_route"] else "0"
+                        )
+                        top_physical_rc = run_to_log(
+                            [
+                                str(global_route_openroad),
+                                "-no_init",
+                                "-exit",
+                                str(
+                                    PROJECT_ROOT
+                                    / "rtl/ppa/openroad_hierarchical_array_post_legal_flow.tcl"
+                                ),
+                            ],
+                            top_route_log,
+                            route_environment,
+                        )
+                        prior_log = (
+                            top_phys["log"].read_text()
+                            if top_phys["log"].is_file()
+                            else ""
+                        )
+                        top_phys["log"].write_text(
+                            prior_log
+                            + "\nMLX_ARRAY_ROUTE_LOG_BEGIN\n"
+                            + top_route_log.read_text()
+                        )
+                        grt_ready = (
+                            top_physical_rc == 0
+                            and top_grt_checkpoint.is_file()
+                            and top_grt_checkpoint.stat().st_size > 0
+                        )
+                        if route_plan["stop_after_global_route"] and grt_ready:
+                            top_physical_rc = run_to_log(
+                                [
+                                    str(detailed_route_openroad),
+                                    "-no_init",
+                                    "-exit",
+                                    str(
+                                        PROJECT_ROOT
+                                        / "rtl/ppa/openroad_hierarchical_array_droute_resume.tcl"
+                                    ),
+                                ],
+                                top_droute_resume_log,
+                                top_environment,
+                            )
+                            prior_log = top_phys["log"].read_text()
+                            top_phys["log"].write_text(
+                                prior_log
+                                + "\nMLX_ARRAY_DROUTE_RESUME_LOG_BEGIN\n"
+                                + top_droute_resume_log.read_text()
+                            )
+    channel_legalization = parse_channel_legalization(
+        top_channel_log.read_text() if top_channel_log.is_file() else ""
+    )
+    channel_legalization_valid = (
+        channel_legalization["cells"]
+        == int(top_synthesis["cell_count"] or 0) - macro_instances
+        and channel_legalization["rows"]
+        == int(top_placement["detailed_placement_full_width_rows"])
+        and int(channel_legalization["taps"] or 0) > 0
+        and float(channel_legalization["minimum_capacity_ratio"] or 0.0) > 1.0
+        and channel_legalization["checkpoint"] == str(top_legal_checkpoint)
+    )
+    macro_track_alignment_valid = (
+        macro_track_contract_valid
+        and channel_legalization["macro_instances_aligned"] == macro_instances
+        and channel_legalization["macro_origin_grid_dbu"]
+        == derived_macro_origin_grid_dbu
+        and channel_legalization["macro_max_displacement_dbu"] is not None
+        and int(channel_legalization["macro_max_displacement_dbu"]) == 0
+    )
+    route_connectivity = parse_route_connectivity(
+        top_route_log.read_text() if top_route_log.is_file() else "",
+        top_droute_resume_log.read_text() if top_droute_resume_log.is_file() else "",
+    )
+    global_route_metrics = parse_global_route_metrics(
+        top_route_log.read_text() if top_route_log.is_file() else ""
+    )
     top_physical = parse_openroad(
         top_phys["log"].read_text(), float(config["clock_period_ns"])
     )
@@ -370,6 +1046,12 @@ def main() -> int:
         "timing": top_physical["fmax_ghz"] is not None,
         "vcd_power": int(top_physical["annotated_pin_activities"] or 0) > 0
         and float(top_physical["total_power_w"] or 0.0) > 0,
+        "compact_macro_abstraction": pe_abstraction_valid,
+        "channel_legalization": channel_legalization_valid,
+        "macro_track_alignment": macro_track_alignment_valid,
+        "route_connectivity": route_connectivity["all_pins_routed"],
+        "global_route_congestion": global_route_metrics["overflow_resolved"],
+        "global_route_tool_provenance": route_tool_valid,
     }
     if not all(top_checks.values()):
         print(
@@ -492,6 +1174,12 @@ def main() -> int:
         and top_physical_rc == 0,
         "recursive_submacro_evidence": set(submacro_chain) == required_submacros
         and all(all(item["checks"].values()) for item in submacro_chain.values()),
+        "compact_macro_abstraction": pe_abstraction_valid,
+        "channel_legalization": channel_legalization_valid,
+        "macro_track_alignment": macro_track_alignment_valid,
+        "route_connectivity": route_connectivity["all_pins_routed"],
+        "global_route_congestion": global_route_metrics["overflow_resolved"],
+        "global_route_tool_provenance": route_tool_valid,
     }
 
     files: dict[str, Any] = {
@@ -505,6 +1193,16 @@ def main() -> int:
         "pe_vcd": artifact(pe_vcd),
         "pe_netlist": artifact(pe_netlist),
         "pe_abstract_lef": artifact(pe_lef),
+        "pe_integration_abstract_lef": artifact(pe_integration_lef),
+        "top_channel_legalization_log": artifact(top_channel_log),
+        "top_channel_legalization_checkpoint": artifact(top_legal_checkpoint),
+        "top_cts_checkpoint": artifact(top_cts_checkpoint),
+        "top_global_route_log": artifact(top_route_log),
+        "top_detailed_route_log": artifact(top_droute_resume_log),
+        "global_route_openroad": global_route_tool["binary"],
+        "global_route_patch": global_route_tool["patch"],
+        "global_route_archive": global_route_tool["archive"],
+        "detailed_route_openroad": detailed_route_tool,
         "pe_timing_liberty": artifact(pe_lib),
         "top_netlist": artifact(top_netlist),
         "synthesis_stats": artifact(flat_stats),
@@ -553,6 +1251,7 @@ def main() -> int:
             "openroad": subprocess.run(
                 ["openroad", "-version"], capture_output=True, text=True, check=False
             ).stdout.strip(),
+            "openroad_global_route": global_route_tool,
         },
         "activity": {
             **config["activity"],
@@ -567,14 +1266,27 @@ def main() -> int:
             "checks": pe_checks,
         },
         "submacro_chain": submacro_chain,
+        "pe_integration_abstraction": pe_abstraction,
+        "channel_legalization": channel_legalization,
+        "macro_track_contract": macro_track_contract,
+        "route_connectivity": route_connectivity,
+        "global_route_metrics": global_route_metrics,
+        "route_contract": route_plan,
         "hierarchical_top": {
             "synthesis": top_synthesis,
             "physical": top_physical,
             "macro_instances": macro_instances,
+            "integration_abstraction": pe_abstraction,
+            "channel_legalization": channel_legalization,
+            "macro_track_contract": macro_track_contract,
+            "route_connectivity": route_connectivity,
+            "global_route_metrics": global_route_metrics,
+            "route_contract": route_plan,
             "checks": top_checks,
         },
         "physical": physical,
         "checks": checks,
+        "global_route_tool": global_route_tool,
         "files": files,
     }
     manifest_path = PROJECT_ROOT / config["manifest"]
@@ -600,9 +1312,17 @@ def main() -> int:
             "synthesis": top_synthesis,
             "physical": top_physical,
             "macro_instances": macro_instances,
+            "integration_abstraction": pe_abstraction,
+            "channel_legalization": channel_legalization,
+            "macro_track_contract": macro_track_contract,
+            "route_connectivity": route_connectivity,
+            "global_route_metrics": global_route_metrics,
+            "route_contract": route_plan,
         },
         "physical": physical,
         "checks": checks,
+        "global_route_tool": global_route_tool,
+        "route_contract": route_plan,
         "manifest": artifact(manifest_path),
     }
     result_path = PROJECT_ROOT / config["result"]

@@ -40,3 +40,4 @@ puts [format "MLX_PPA_DIE_UM %.6f %.6f" \
 puts [format "MLX_PPA_CORE_UM %.6f %.6f" \
   [expr {double([$core xMax] - [$core xMin]) / $dbu}] \
   [expr {double([$core yMax] - [$core yMin]) / $dbu}]]
+puts "MLX_ARRAY_DROUTE_COMPLETE odb=$::env(PPA_ODB) spef=$::env(PPA_SPEF) drc=$::env(PPA_DRC)"

@@ -24,7 +24,8 @@ if {$::env(PPA_RESUME_GPL) == 1} {
   set_wire_rc -signal -layer metal3 -clock -layer metal6
 
 proc mlx_snap_macro_coordinate {value} {
-  return [expr {int(floor((double($value) + 5.0) / 10.0)) * 10}]
+  set grid $::env(PPA_MACRO_ORIGIN_GRID_DBU)
+  return [expr {int(floor((double($value) + $grid / 2.0) / $grid)) * $grid}]
 }
 
 initialize_floorplan \
@@ -72,6 +73,7 @@ for {set pe 0} {$pe < 16} {incr pe} {
 }
 puts [format "MLX_ARRAY_MACROS width_dbu=%d height_dbu=%d x_gap_dbu=%.0f y_gap_dbu=%.0f" \
   $macro_width $macro_height $x_gap $y_gap]
+puts "MLX_ARRAY_MACRO_ORIGIN_GRID grid_dbu=$::env(PPA_MACRO_ORIGIN_GRID_DBU)"
 
 set movable {}
 foreach inst [$block getInsts] {
@@ -123,6 +125,13 @@ if {[info exists ::env(PPA_TAPCELL_DISTANCE_UM)]} {
   set gpl_checkpoint_tmp "$::env(PPA_GPL_ODB).tmp"
   write_db $gpl_checkpoint_tmp
   file rename -force $gpl_checkpoint_tmp $::env(PPA_GPL_ODB)
+  if {[info exists ::env(PPA_STOP_AFTER_GPL)] && ($::env(PPA_STOP_AFTER_GPL) == 1)} {
+    puts "MLX_ARRAY_STOP_AFTER_GPL checkpoint=$::env(PPA_GPL_ODB)"
+    exit
+  }
+}
+if {[info exists ::env(PPA_POST_GPL_THREADS)]} {
+  set_thread_count $::env(PPA_POST_GPL_THREADS)
 }
 set block [ord::get_db_block]
 if {$::env(PPA_DPL_ROW_LIMIT) > 0} {

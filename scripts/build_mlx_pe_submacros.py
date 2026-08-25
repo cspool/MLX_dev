@@ -6,6 +6,7 @@ from __future__ import annotations
 import argparse
 import json
 import os
+import re
 from dataclasses import dataclass
 from pathlib import Path
 
@@ -61,6 +62,39 @@ def synthesis_ready(paths: dict[str, Path]) -> bool:
         paths[key].is_file() and paths[key].stat().st_size > 0
         for key in ("netlist", "stats", "synth_log")
     )
+
+
+def parse_pin_access(text: str) -> dict[str, object]:
+    stdcell_no_access = re.findall(r"#stdCellPinNoAp\s*=\s*(\d+)", text)
+    macro_no_access = re.findall(r"#macroNoAp\s*=\s*(\d+)", text)
+    stdcell_pins_without_access = (
+        int(stdcell_no_access[-1]) if stdcell_no_access else None
+    )
+    macro_pins_without_access = int(macro_no_access[-1]) if macro_no_access else None
+    no_access_errors = len(re.findall(r"\[(?:ERROR|WARNING) DRT-0073\]", text))
+    pin_access_completed = "[INFO DRT-0166] Complete pin access." in text
+    return {
+        "pin_access_completed": pin_access_completed,
+        "stdcell_pins_without_access": stdcell_pins_without_access,
+        "macro_pins_without_access": macro_pins_without_access,
+        "no_access_errors": no_access_errors,
+        "off_grid_macro_term_warnings": len(
+            re.findall(r"\[WARNING DRT-0418\]", text)
+        ),
+        "non_center_macro_term_warnings": len(
+            re.findall(r"\[WARNING DRT-0419\]", text)
+        ),
+        "off_grid_block_term_warnings": len(
+            re.findall(r"\[WARNING DRT-0421\]", text)
+        ),
+        "diagnostic_warning_limit_reached": bool(
+            re.search(r"\[WARNING DRT-(?:0418|0419|0421)\] message limit", text)
+        ),
+        "all_pins_accessible": pin_access_completed
+        and stdcell_pins_without_access == 0
+        and macro_pins_without_access == 0
+        and no_access_errors == 0,
+    }
 
 
 def main() -> int:
@@ -375,6 +409,7 @@ def main() -> int:
         metrics = parse_openroad(
             paths["physical_log"].read_text(), float(config["clock_period_ns"])
         )
+        pin_access = parse_pin_access(paths["physical_log"].read_text())
         synthesis = parse_synthesis(paths["stats"].read_text())
         workload_power = None
         power_rc = None
@@ -404,16 +439,19 @@ def main() -> int:
                     "PPA_POWER_ONLY": "1",
                 }
             )
-            power_rc = run_to_log(
-                [
-                    "openroad",
-                    "-no_init",
-                    "-exit",
-                    str(PROJECT_ROOT / "rtl/ppa/openroad_component_power.tcl"),
-                ],
-                power_log,
-                power_environment,
-            )
+            if args.reuse and power_log.is_file() and power_log.stat().st_size > 0:
+                power_rc = 0
+            else:
+                power_rc = run_to_log(
+                    [
+                        "openroad",
+                        "-no_init",
+                        "-exit",
+                        str(PROJECT_ROOT / "rtl/ppa/openroad_component_power.tcl"),
+                    ],
+                    power_log,
+                    power_environment,
+                )
             workload_power = parse_openroad(
                 power_log.read_text(), float(config["clock_period_ns"])
             )
@@ -422,6 +460,7 @@ def main() -> int:
             "cells": int(synthesis["cell_count"] or 0) > 0,
             "area": float(synthesis["cell_area_um2"] or 0.0) > 0,
             "drc": metrics["drc_violations"] == 0,
+            "pin_access": pin_access["all_pins_accessible"] is True,
         }
         if not args.skip_power:
             assert workload_power is not None
@@ -437,6 +476,7 @@ def main() -> int:
         summaries[spec.name] = {
             "synthesis": synthesis,
             "physical": metrics,
+            "pin_access": pin_access,
             "activity": activity_extraction,
             "workload_power": workload_power,
             "checks": checks,

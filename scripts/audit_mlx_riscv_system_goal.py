@@ -61,6 +61,7 @@ def build_scope_audit(config: dict[str, Any]) -> dict[str, Any]:
     ppa = parents["ppa"]
     chipyard = parents["chipyard"]
     trends = parents["performance_trends"]
+    paper_calibrated_ppa = parents["paper_calibrated_ppa"]
     ppa_manifest = json.loads((PROJECT_ROOT / ppa["manifest"]["path"]).read_text())
     chipyard_manifest = json.loads(
         (PROJECT_ROOT / chipyard["manifest"]["path"]).read_text()
@@ -169,6 +170,18 @@ def build_scope_audit(config: dict[str, Any]) -> dict[str, Any]:
 
     physical = ppa["physical"]
     synthesis = ppa["synthesis"]
+    abstraction = ppa["hierarchical_top"]["integration_abstraction"]
+    legalization = ppa["hierarchical_top"]["channel_legalization"]
+    macro_track = ppa["hierarchical_top"]["macro_track_contract"]
+    route_connectivity = ppa["hierarchical_top"]["route_connectivity"]
+    global_route_metrics = ppa["hierarchical_top"]["global_route_metrics"]
+    route_tool = ppa["global_route_tool"]
+    route_contract = ppa["route_contract"]
+    paper_array = next(
+        row
+        for row in paper_calibrated_ppa["aggregate_rows"]
+        if row["name"] == "pe_array"
+    )
     p3_checks = {
         "real_4x4_top": ppa["checks"]["real_4x4_top"] is True
         and ppa["checks"]["hierarchical_integrated"] is True
@@ -177,7 +190,15 @@ def build_scope_audit(config: dict[str, Any]) -> dict[str, Any]:
         "synthesis": ppa["checks"]["synthesis"] is True
         and synthesis["cell_count"] > 0
         and synthesis["cell_area_um2"] > 0,
-        "place_route": ppa["checks"]["place_route"] is True,
+        "place_route": ppa["checks"]["place_route"] is True
+        and ppa["checks"]["global_route_congestion"] is True
+        and route_contract["require_zero_global_route_overflow"] is True
+        and global_route_metrics["overflow_resolved"] is True
+        and global_route_metrics["total_overflow"] == 0
+        and global_route_metrics["congestion_warning"] is False
+        and global_route_metrics["routed_nets"] > 0
+        and global_route_metrics["final_vias"] > 0
+        and global_route_metrics["total_wirelength_um"] > 0,
         "drc_clean": ppa["checks"]["drc_clean"] is True
         and physical["drc_violations"] == 0,
         "sta_1ghz_and_fmax": ppa["checks"]["timing"] is True
@@ -190,6 +211,79 @@ def build_scope_audit(config: dict[str, Any]) -> dict[str, Any]:
         "raw_unfitted": ppa["checks"]["raw_unfitted"] is True
         and ppa_manifest["calibration"]
         == {"applied": False, "coefficients": None},
+        "physical_macro_abstraction": ppa["checks"][
+            "compact_macro_abstraction"
+        ]
+        is True
+        and abstraction["pin_geometry_preserved"] is True
+        and abstraction["conservative_obstruction_cover"] is True
+        and abstraction["pin_count"]
+        == abstraction["pin_rectangles"]
+        == abstraction["accessible_pin_rectangles"]
+        and abstraction["source_obstruction_rectangles"] > 1_000_000
+        and len(abstraction["integration_obstruction_layers"]) == 10
+        and abstraction["integration_obstruction_rectangles"]
+        < abstraction["source_obstruction_rectangles"]
+        and abstraction["integration_obstruction_rectangles"] > 10
+        and abstraction["raster_pitch_um"] == 5.0
+        and abstraction["compression_ratio"] > 100,
+        "channel_legalization": ppa["checks"]["channel_legalization"] is True
+        and legalization["cells"]
+        == ppa["hierarchical_top"]["synthesis"]["cell_count"]
+        - ppa["hierarchical_top"]["macro_instances"]
+        and legalization["rows"] > 0
+        and legalization["taps"] > 0
+        and legalization["minimum_capacity_ratio"] > 1.0
+        and legalization["checkpoint"]
+        == str(PROJECT_ROOT / ppa_manifest["files"]["top_channel_legalization_checkpoint"]["path"]),
+        "macro_track_alignment": ppa["checks"]["macro_track_alignment"] is True
+        and legalization["macro_instances_aligned"]
+        == ppa["hierarchical_top"]["macro_instances"]
+        == macro_track["required_macro_instances"]
+        == 16
+        and legalization["macro_origin_grid_dbu"] == macro_track["grid_dbu"]
+        and legalization["macro_max_displacement_dbu"] == 0
+        and macro_track["grid_dbu"] == 425600
+        and macro_track["grid_um"] == 212.8
+        and all(
+            macro_track["grid_dbu"] % pitch == 0
+            for pitch in macro_track["routing_pitch_dbu"].values()
+        ),
+        "route_connectivity": ppa["checks"]["route_connectivity"] is True
+        and route_connectivity["all_pins_routed"] is True
+        and route_connectivity["global_route_completed"] is True
+        and route_connectivity["detailed_route_completed"] is True
+        and route_connectivity["detailed_pin_access_completed"] is True
+        and route_connectivity["global_missing_pin_routes"] == 0
+        and route_connectivity["global_missing_warning_limit_reached"] is False
+        and route_connectivity["detailed_stdcell_pins_without_access"] == 0
+        and route_connectivity["detailed_macro_pins_without_access"] == 0
+        and route_connectivity["detailed_no_access_errors"] == 0
+        and route_contract["completion_markers"]
+        == {
+            "global_route": "MLX_ARRAY_STOP_AFTER_GRT",
+            "detailed_route": "MLX_ARRAY_DROUTE_COMPLETE",
+        }
+        and route_contract["required_zero_connectivity_failures"]
+        == ["GRT-0026", "DRT-0073", "stdCellPinNoAp", "macroNoAp"]
+        and route_contract["diagnostic_pin_access_warnings"]
+        == ["DRT-0418", "DRT-0419", "DRT-0421"],
+        "global_route_tool": ppa["checks"]["global_route_tool_provenance"]
+        is True
+        and route_tool["base_commit"]
+        == "a008522d88b669ac4c985609533cf5a3d2649222"
+        and route_tool["grid_pitches_in_tile"]
+        == route_contract["grid_pitches_in_tile"]
+        == 48
+        and route_tool["max_2d_edge_usage_multiplier"]
+        == route_contract["max_2d_edge_usage_multiplier"]
+        == 101
+        and route_contract["stop_after_global_route"] is True
+        and route_contract["routing_layers"]["signal"] == "metal3-metal10"
+        and qualify(ppa_manifest["files"]["global_route_openroad"])["pass"]
+        and qualify(ppa_manifest["files"]["global_route_patch"])["pass"]
+        and qualify(ppa_manifest["files"]["global_route_archive"])["pass"]
+        and qualify(ppa_manifest["files"]["detailed_route_openroad"])["pass"],
         "post_route_outputs": all(
             name in ppa_manifest["files"]
             for name in (
@@ -203,8 +297,25 @@ def build_scope_audit(config: dict[str, Any]) -> dict[str, Any]:
                 "hierarchical_4x4_def",
                 "hierarchical_4x4_odb",
                 "hierarchical_4x4_spef",
+                "top_global_route_log",
+                "top_detailed_route_log",
             )
         ),
+        "paper_ppa_alignment": paper_calibrated_ppa["hypothesis_status"]
+        == "supported"
+        and paper_calibrated_ppa["audit_integrity"] is True
+        and paper_calibrated_ppa["paper_performance_targets_consumed"] is True
+        and paper_calibrated_ppa["validation_eligible"] is False
+        and paper_calibrated_ppa["summary"]["reported_area_values"]
+        == paper_calibrated_ppa["summary"]["reported_power_values"]
+        == int(contract["paper_ppa_values"])
+        == 9
+        and paper_calibrated_ppa["summary"]["passing_area_values"] == 9
+        and paper_calibrated_ppa["summary"]["passing_power_values"] == 9
+        and paper_calibrated_ppa["summary"]["area_max_relative_error"] < 0.15
+        and paper_calibrated_ppa["summary"]["power_max_relative_error"] < 0.15
+        and paper_array["area_target_mm2"] == 7.712
+        and paper_array["power_target_mw"] == 5846.4,
     }
 
     handoff = (PROJECT_ROOT / config["source_layout"]["handoff"]).read_text()
@@ -215,6 +326,10 @@ def build_scope_audit(config: dict[str, Any]) -> dict[str, Any]:
         "target_free_system": workloads["paper_performance_targets_consumed"] is False
         and chipyard_manifest["paper_performance_targets_consumed"] is False
         and ppa_manifest["paper_performance_targets_consumed"] is False,
+        "paper_calibration_separated": paper_calibrated_ppa["classification"]
+        == "target_informed_activity_calibrated_open_pdk_ppa"
+        and paper_calibrated_ppa["paper_reproduction_claim"]
+        == "target_informed_activity_calibrated_open_pdk_not_synopsys_12nm",
         "trend_classified": backends["performance_trends"]["source"]
         == "architecture simulation",
         "ppa_classified": ppa["sources"]
@@ -270,12 +385,12 @@ def build_scope_audit(config: dict[str, Any]) -> dict[str, Any]:
         all_true(source_checks),
     ]
     integrity_checks = {
-        "parents": len(parents) == 5,
+        "parents": len(parents) == 6,
         "p0_evaluated": len(p0_checks) == 6,
         "p1_evaluated": len(p1_checks) == 6,
         "p2_evaluated": len(p2_checks) == 8,
-        "p3_evaluated": len(p3_checks) == 8,
-        "provenance_evaluated": len(provenance_checks) == 6,
+        "p3_evaluated": len(p3_checks) == 14,
+        "provenance_evaluated": len(provenance_checks) == 7,
         "sources_evaluated": len(source_checks) == 4,
         "gates_evaluated": len(scope_gates) == 6
         and all(isinstance(value, bool) for value in scope_gates),
@@ -315,6 +430,14 @@ def build_scope_audit(config: dict[str, Any]) -> dict[str, Any]:
             "worst_slack_ns_at_1ghz": physical["worst_slack_ns_at_1ghz"],
             "fmax_ghz": physical["fmax_ghz"],
             "total_power_w": physical["total_power_w"],
+            "paper_pe_array_area_mm2": 7.712,
+            "paper_pe_array_power_w": 5.8464,
+            "paper_aligned_area_mape": paper_calibrated_ppa["summary"][
+                "area_mape"
+            ],
+            "paper_aligned_power_mape": paper_calibrated_ppa["summary"][
+                "power_mape"
+            ],
             "calibration_applied": False,
         },
     }

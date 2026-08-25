@@ -11,6 +11,7 @@ parents:
   ppa: artifacts/results/mlx-array-ppa-run211.json
   chipyard: artifacts/results/mlx-chipyard-system-run212.json
   performance_trends: artifacts/results/core-architecture-claims-run159.json
+  paper_calibrated_ppa: artifacts/results/mlx-rtl-ppa-activity-calibrated-run208.json
 
 contract:
   workloads: [bsmm, fft_cmp, swa, transformer_block]
@@ -22,6 +23,7 @@ contract:
   chipyard_runs: 8
   standalone_runs: 8
   performance_claims: 5
+  paper_ppa_values: 9
   calibration_applied: false
 
 source_layout:
@@ -56,7 +58,18 @@ source_layout:
   ppa_grid_snap: rtl/ppa/openroad_snap_bterm_grid.tcl
   ppa_component_power: rtl/ppa/openroad_component_power.tcl
   ppa_hierarchical_flow: rtl/ppa/openroad_hierarchical_array_flow.tcl
+  ppa_hierarchical_channel_legalizer: rtl/ppa/openroad_hierarchical_array_channel_legalize.tcl
+  ppa_hierarchical_post_legal_flow: rtl/ppa/openroad_hierarchical_array_post_legal_flow.tcl
   ppa_hierarchical_resume: rtl/ppa/openroad_hierarchical_array_droute_resume.tcl
+  ppa_openroad_tile16_patch: patches/openroad/grt-pitches-in-tile-16.patch
+  ppa_openroad_tile24_guard101_patch: patches/openroad/grt-tile24-guard101.patch
+  ppa_openroad_tile48_guard101_patch: patches/openroad/grt-tile48-guard101.patch
+  ppa_openroad_tile48_binary_archive: vendor/openroad/openroad-a008522d8-tile48-guard101-amd64.xz
+  ppa_openroad_tile48_binary_readme: vendor/openroad/README.md
+  ppa_openroad_tile48_binary_license: vendor/openroad/LICENSE
+  ppa_paper_targets: artifacts/targets/paper_targets.yaml
+  ppa_calibrated_config: configs/rtl/mlx_rtl_ppa_activity_calibrated_v1.yaml
+  ppa_calibrated_handoff: docs/rtl-ppa-reproduction.md
   ppa_lane_blackbox: rtl/ppa/mlx_fp16_lanes_blackbox.sv
   ppa_rf_blackbox: rtl/ppa/mlx_register_file_blackbox.sv
   ppa_pe_submacro_blackbox: rtl/ppa/mlx_pe_submacros_blackbox.sv
@@ -67,7 +80,7 @@ verification:
   pytest_command: [/opt/mlx-miniforge/bin/pytest, -q, tests/test_mlx_riscv_system.py]
   repository_pytest_command: [/opt/mlx-miniforge/bin/pytest, -q]
   diff_command: [git, diff, --check]
-  minimum_pytest_passed: 9
+  minimum_pytest_passed: 10
   minimum_repository_pytest_passed: 499
   allowed_repository_failures:
     - tests/test_automatic_model_frontend.py::test_automatic_model_frontend_audit

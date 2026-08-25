@@ -170,6 +170,32 @@ Chipyard 测量或 RTL PPA。
 PPA 数值在 H206/run211 完成后写入此处。
 <!-- MLX_PPA_RESULTS_END -->
 
+### 论文 PPA 参考与显式对齐
+
+论文 Table II 在私有 12 nm、1 GHz 条件下报告以下面积与功耗。full-design power
+来自流片后测量，reduced power 来自综合后估计；这些值用于贴近论文实现和误差
+比较，不直接替换本节后续 Nangate45 真实 4×4 raw PPA。
+
+| 论文对象 | 面积 (mm²) | 功耗 (mW) |
+|---|---:|---:|
+| Config network | 0.018 | 11.3 |
+| Data network | 0.092 | 56.2 |
+| Control logic | 0.011 | 7.5 |
+| Tag buffer | 0.019 | 9.3 |
+| Register file | 0.044 | 28.7 |
+| SIMD32 FU | 0.298 | 252.4 |
+| Full PE | 0.482 | 365.4 |
+| 16-PE array | 7.712 | 5,846.4 |
+| Reduced SIMD8 design | 0.772 | 433.8 |
+
+已有 H203/run208 将开源 Nangate45 RTL 分项通过显式全局面积传递和已登记的活动率
+校准与 Table II 对齐：9/9 面积和 9/9 功耗值均在 15% 内，面积 MAPE 5.12%、最大
+误差 12.17%，功耗 MAPE 0.79%、最大误差 6.00%。其中 full PE 和 16-PE array
+由全局标定定义为精确目标，不能当作独立预测；reduced SIMD8 的预测为
+0.8392 mm²/434.63 mW，对应面积误差 8.70%、功耗误差 0.19%。该结果明确分类为
+`target_informed_activity_calibrated_open_pdk_ppa`，而当前 H206/run211 保持
+`calibration.applied=false`，两者在最终证书中分别呈现。
+
 PPA 范围仅是 `mlx_array_4x4`：包含 16 个物理 PE、配置存储、RF/FU/tag/control
 与 packet network；排除 Rocket、cache、RoCC/DMA 控制器、行为级 SPM 存储和
 DRAM/PHY。完整扁平网表有约 809 万个映射单元；在全局路由达到 217.9 GiB RSS
@@ -178,6 +204,46 @@ DRAM/PHY。完整扁平网表有约 809 万个映射单元；在全局路由达�
 PE/FU shell 完成 PE，最后把 16 个已布线 PE 置入并布线真实 4×4 顶层。面积与
 顶层互连来自集成阵列物理数据库，不是单 PE 面积乘 16 的外推；硬宏内部功耗则
 按下述显式层级公式聚合。
+
+为使 16 宏顶层能在当前主机内存边界内完成集成，顶层使用单独生成的保守压缩 PE
+集成 LEF：`7731.275 µm × 7731.275 µm` 的宏边界和全部 4,578 个原始 pin
+rectangle 保持不变；完整 PE LEF 的 10,030,339 个内部 OBS rectangle 在预留的
+1 µm 边界 pin-access halo 之外按 5 µm 栅格向外量化，再逐层合并相邻占用格，得到
+54,172 个 OBS rectangle。该变换不会遗漏 halo 之外的源 OBS 覆盖，同时把 LEF 从
+460,491,587 bytes 压到 2,529,587 bytes（182.04×）。PE 内部的布线、DRC、STA
+和功耗仍取自完整物理数据库；压缩
+LEF 只供 4×4 顶层的宏边界、引脚接入和跨宏互连使用，不能解释为对 PE 内部几何
+重新签核。顶层全局放置后，非宏单元通过 128 行、保持 x 顺序的确定性通道合法化
+全部落位并固定；CTS 新增缓冲再由 OpenDP 合法化。run211 同时保存这些中间检查点
+和单元计数，最终审计逐项核对，而不是只检查输出文件是否存在。
+
+全局路由的资源边界同样显式留证。exact-commit OpenROAD 的 tile24/101× 方案在
+运行 529.333 分钟、RSS 212.149 GiB 后，于宿主机 `MemAvailable=21.994 GiB`
+触发安全看门狗，未生成检查点，因此不作为最终 PPA。metal3 的 0.14 µm track
+pitch 使该方案产生 `10,306 × 10,306`（106,213,636）个 GCell；后续选择
+tile48/101×，将网格降为 `5,153 × 5,153`（26,553,409）个，即原方案的 25%。
+最终 GRT 二进制以 22 MB 的 xz 归档及压缩前后 SHA-256 固定，bootstrap 会校验并
+解压到配置路径。补丁只用于 GRT 的网格资源与内部 2D edge sanity guard；最终
+DRT、DRC、寄生提取、STA 和功耗仍由固定的官方 OpenROAD 二进制执行。
+
+首个 tile48 检查点证明了内存问题可以跨过，但也揭示了完整内部矩形抽象的物理
+问题：各层资源均被削减约 79.75%，最终 overflow 为 222,119,840，且 GRT 与
+DRT 的缺失 route/非中心 pin 告警都达到 1,000 条显示上限。该次 DRT 实际记录
+`macroNoAp=0`，因此几何告警本身不作为开路结论；拒绝该结果的决定性证据是巨大
+overflow 和至少 1,000 条 `GRT-0026` 缺失路由。
+修正版一方面采用上述 halo 外不漏障碍的 5 µm 分层压缩，恢复宏上方未占用布线资源；另一
+方面把 16 个宏原点吸附到所有 Nangate45 routing pitch 的最小公倍网格
+425,600 DBU（212.8 µm），使宏内 pin track 平移后仍与顶层 track 重合。最终门禁
+除零 DRC 外，还要求 GRT 检查点与 DRT/RCX/STA/power 完成标记同时存在，并且
+最终 GRT total overflow 为零、没有 `GRT-0115` 或 `GRT-0026`，DRT pin-access
+汇总满足 `stdCellPinNoAp=0`、`macroNoAp=0` 且没有 `DRT-0073`。`DRT-0418/0419/0421`
+作为 pin 与 track 几何关系的诊断计数保留，但只要 DRT 已为全部端口生成 access
+point，就不把它们机械解释为开路。这样既不会把空日志、拥塞或真实无接入点误报
+为通过，也不会误杀 DRT 已成功处理的非中心 pin。run211 还记录最终
+resource/demand、wirelength、vias 和 routed-net 数，供结果与失败尝试直接比较。
+同一判据已向下应用到 full/reduced lane、RF、FU 和 PE 五级物理结果；现有五级
+日志均为 `stdCellPinNoAp=0`、`macroNoAp=0`、`DRT-0073=0`，并在子宏 manifest
+中逐级保存，因而递归硬宏内部的 pin access 也不是仅凭零 DRC 推断。
 
 功耗活动来自 Transformer-block RTL VCD。为适配综合后网表命名，每一级提取
 相应层级端口 transition，由 OpenSTA 在该级已布线网表中传播；最终 PE 直接由
@@ -200,6 +266,7 @@ standalone Verilator VCD 的一个语义半周期是 `1 ps` 时间戳 tick；功
 | 指令 latency/II | RTL 逐周期 trace 测量 | 否 |
 | 架构收益趋势 | 冻结的架构模拟 H154/run159 | 否 |
 | 4×4 area/timing/power | Yosys/ABC + OpenROAD/OpenSTA + RTL VCD | 否 |
+| Table II 对齐 PPA | 论文 12 nm 目标 + H203 显式校准 | 是，单独标注 |
 
 未使用论文性能数值调节系统周期、RTL 延迟、面积或功耗。Nangate45 与论文私有
 12 nm 技术不可直接数值比较；原始结果只支持本开源实现的规模、时序和活动功耗
