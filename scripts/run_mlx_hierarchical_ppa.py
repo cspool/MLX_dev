@@ -987,7 +987,30 @@ def main() -> int:
                             and top_grt_checkpoint.is_file()
                             and top_grt_checkpoint.stat().st_size > 0
                         )
-                        if route_plan["stop_after_global_route"] and grt_ready:
+                        grt_metrics = parse_global_route_metrics(
+                            top_route_log.read_text()
+                            if top_route_log.is_file()
+                            else ""
+                        )
+                        grt_connectivity = parse_route_connectivity(
+                            top_route_log.read_text()
+                            if top_route_log.is_file()
+                            else "",
+                            "",
+                        )
+                        grt_ready_for_droute = (
+                            grt_ready
+                            and grt_metrics["overflow_resolved"] is True
+                            and grt_connectivity["global_missing_pin_routes"] == 0
+                            and grt_connectivity[
+                                "global_missing_warning_limit_reached"
+                            ]
+                            is False
+                        )
+                        if (
+                            route_plan["stop_after_global_route"]
+                            and grt_ready_for_droute
+                        ):
                             top_physical_rc = run_to_log(
                                 [
                                     str(detailed_route_openroad),
@@ -1007,6 +1030,8 @@ def main() -> int:
                                 + "\nMLX_ARRAY_DROUTE_RESUME_LOG_BEGIN\n"
                                 + top_droute_resume_log.read_text()
                             )
+                        elif route_plan["stop_after_global_route"]:
+                            top_physical_rc = 1
     channel_legalization = parse_channel_legalization(
         top_channel_log.read_text() if top_channel_log.is_file() else ""
     )
@@ -1056,7 +1081,12 @@ def main() -> int:
     if not all(top_checks.values()):
         print(
             json.dumps(
-                {"stage": "hierarchical_top_physical", "checks": top_checks},
+                {
+                    "stage": "hierarchical_top_physical",
+                    "checks": top_checks,
+                    "global_route_metrics": global_route_metrics,
+                    "route_connectivity": route_connectivity,
+                },
                 indent=2,
             )
         )
