@@ -70,7 +70,8 @@ MLX_ARRAY_STOP_AFTER_CTS checkpoint=/tmp/post-cts.odb
 
 def test_global_route_metrics_use_64bit_layer_aggregation() -> None:
     metrics = parse_global_route_metrics(
-        """[INFO GRT-0111] Final number of vias: 12
+        """MLX_GRT_ROUTE_ARGS -congestion_iterations 1 -critical_nets_percentage 0
+[INFO GRT-0111] Final number of vias: 12
 [INFO GRT-0112] Final usage 3D: 34
 [INFO GRT-0096] Final congestion report:
 Layer         Resource        Demand        Usage (%)    Max H / Max V / Total Overflow
@@ -83,6 +84,7 @@ Total       -1794967296             300           -0.00%             5 /  7 /  9
 """
     )
     assert metrics["reported_total_resource"] == -1_794_967_296
+    assert metrics["congestion_iterations"] == 1
     assert metrics["resource"] == 2_500_000_000
     assert metrics["demand"] == 300
     assert metrics["total_overflow"] == 9
@@ -219,7 +221,7 @@ def test_ppa_scope_is_real_array_and_unfitted() -> None:
     ]
     assert capacity["reserved_site_capacity"] > 8 * capacity["estimated_required_sites"]
     route_plan = config["hierarchical_top_route_resource_plan"]
-    assert route_plan["routing_layers"]["signal"] == "metal3-metal10"
+    assert route_plan["routing_layers"]["signal"] == "metal2-metal10"
     assert route_plan["routing_layers"]["clock"] == "metal5-metal10"
     assert route_plan["layer_capacity_adjustments"] == {}
     assert route_plan["grid_pitches_in_tile"] == 48
@@ -346,6 +348,9 @@ def test_hierarchical_integrated_ppa_is_supported() -> None:
     assert global_route["routed_nets"] > 0
     assert global_route["final_vias"] > 0
     assert global_route["total_wirelength_um"] > 0
+    assert global_route["congestion_iterations"] == result["route_contract"][
+        "congestion_iterations"
+    ]
     abstraction = result["hierarchical_top"]["integration_abstraction"]
     assert abstraction["pin_geometry_preserved"] is True
     assert abstraction["conservative_obstruction_cover"] is True
@@ -417,6 +422,7 @@ def test_hierarchical_integrated_ppa_is_supported() -> None:
     assert result["checks"]["global_route_tool_provenance"] is True
     assert route_contract["grid_pitches_in_tile"] == 48
     assert route_contract["max_2d_edge_usage_multiplier"] == 101
+    assert route_contract["congestion_iterations"] in {0, 1}
     assert route_contract["stop_after_global_route"] is True
     assert route_contract["completion_markers"] == {
         "global_route": "MLX_ARRAY_STOP_AFTER_GRT",
@@ -433,6 +439,7 @@ def test_hierarchical_integrated_ppa_is_supported() -> None:
         "DRT-0419",
         "DRT-0421",
     ]
+    assert route_contract["routing_layers"]["signal"] == "metal2-metal10"
     assert route_tool["grid_pitches_in_tile"] == 48
     assert route_tool["max_2d_edge_usage_multiplier"] == 101
     assert route_tool["binary"]["sha256"] == (

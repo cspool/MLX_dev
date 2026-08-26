@@ -280,6 +280,16 @@ segment、互不重叠且避开 tap，全部 37,504 个 row segment 互不重叠
 顶层签核也省略会重新构造同一 site bitmap 的 filler placement；tapcell 已保留，
 该选择不改变宏边界、信号路由、DRC、RCX、STA 或 VCD 功耗的证据要求。
 
+合法化后的首个 tile48/metal3–metal10 初始路由在 28.6 分钟内完成，demand 从旧
+spread128 的 523,217,535 降至 153,116,579，overflow 从 87,592,576 降至
+13,820,879（下降 84.22%），但仍有 1,000 条 `GRT-0026`。分层结果显示 metal4
+vertical overflow 最大（6,670,371），因此下一对照只开放 metal2 vertical，不改
+CTS、放置、tile 或迭代数。metal2–metal10 初始路由净增 297,044,457 条资源，把
+overflow 再降至 6,688,668，同时 `GRT-0026=0`，证明此前 packet/route-state bus
+已全部取得全局 route；最终方案据此固定 metal2–metal10，并用一次额外 congestion
+iteration 只解决剩余 overflow。零 overflow 之前仍明确拒绝，不以“所有网已有
+route”替代拥塞签核。
+
 功耗活动来自 Transformer-block RTL VCD。为适配综合后网表命名，每一级提取
 相应层级端口 transition，由 OpenSTA 在该级已布线网表中传播；最终 PE 直接由
 combined PE/FU shell、一个 RF、8 个 full lane 和 24 个 reduced lane 组成，功耗按

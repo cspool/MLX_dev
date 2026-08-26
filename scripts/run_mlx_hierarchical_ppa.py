@@ -341,6 +341,9 @@ def parse_route_connectivity(global_route_text: str, detailed_route_text: str) -
 
 
 def parse_global_route_metrics(text: str) -> dict[str, Any]:
+    congestion_iterations = re.findall(
+        r"MLX_GRT_ROUTE_ARGS .*?-congestion_iterations (\d+)", text
+    )
     final_report = (
         text.rsplit("[INFO GRT-0096] Final congestion report:", 1)[-1]
         if "[INFO GRT-0096] Final congestion report:" in text
@@ -396,6 +399,9 @@ def parse_global_route_metrics(text: str) -> dict[str, Any]:
     )
     congestion_warning = "[WARNING GRT-0115]" in text
     return {
+        "congestion_iterations": (
+            int(congestion_iterations[-1]) if congestion_iterations else None
+        ),
         "resource": resource,
         "demand": demand,
         "usage_percent": usage_percent,
@@ -1031,6 +1037,9 @@ def main() -> int:
             top_grt_checkpoint.is_file()
             and top_grt_checkpoint.stat().st_size > 0
             and prior_grt_metrics["overflow_resolved"] is True
+            and prior_grt_metrics["congestion_iterations"]
+            == int(route_plan["congestion_iterations"])
+            == int(top_placement["global_route_congestion_iterations"])
             and prior_grt_connectivity["global_missing_pin_routes"] == 0
             and prior_grt_connectivity["global_missing_warning_limit_reached"]
             is False
@@ -1220,6 +1229,11 @@ def main() -> int:
                         grt_ready_for_droute = (
                             grt_ready
                             and grt_metrics["overflow_resolved"] is True
+                            and grt_metrics["congestion_iterations"]
+                            == int(route_plan["congestion_iterations"])
+                            == int(
+                                top_placement["global_route_congestion_iterations"]
+                            )
                             and grt_connectivity["global_missing_pin_routes"] == 0
                             and grt_connectivity[
                                 "global_missing_warning_limit_reached"
@@ -1363,6 +1377,12 @@ def main() -> int:
     global_route_metrics = parse_global_route_metrics(
         top_route_log.read_text() if top_route_log.is_file() else ""
     )
+    global_route_congestion_valid = (
+        global_route_metrics["overflow_resolved"] is True
+        and global_route_metrics["congestion_iterations"]
+        == int(route_plan["congestion_iterations"])
+        == int(top_placement["global_route_congestion_iterations"])
+    )
     top_physical = parse_openroad(
         top_phys["log"].read_text(), float(config["clock_period_ns"])
     )
@@ -1380,7 +1400,7 @@ def main() -> int:
         "cts_buffer_legalization": cts_buffer_legalization_valid,
         "macro_track_alignment": macro_track_alignment_valid,
         "route_connectivity": route_connectivity["all_pins_routed"],
-        "global_route_congestion": global_route_metrics["overflow_resolved"],
+        "global_route_congestion": global_route_congestion_valid,
         "global_route_tool_provenance": route_tool_valid,
     }
     if not all(top_checks.values()):
@@ -1515,7 +1535,7 @@ def main() -> int:
         "cts_buffer_legalization": cts_buffer_legalization_valid,
         "macro_track_alignment": macro_track_alignment_valid,
         "route_connectivity": route_connectivity["all_pins_routed"],
-        "global_route_congestion": global_route_metrics["overflow_resolved"],
+        "global_route_congestion": global_route_congestion_valid,
         "global_route_tool_provenance": route_tool_valid,
     }
 

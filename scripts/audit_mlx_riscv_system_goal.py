@@ -194,6 +194,8 @@ def build_scope_audit(config: dict[str, Any]) -> dict[str, Any]:
         "place_route": ppa["checks"]["place_route"] is True
         and ppa["checks"]["global_route_congestion"] is True
         and route_contract["require_zero_global_route_overflow"] is True
+        and global_route_metrics["congestion_iterations"]
+        == route_contract["congestion_iterations"]
         and global_route_metrics["overflow_resolved"] is True
         and global_route_metrics["resource_total_uses_64bit_layer_sum"] is True
         and global_route_metrics["aggregate_overflow_consistent"] is True
@@ -327,7 +329,7 @@ def build_scope_audit(config: dict[str, Any]) -> dict[str, Any]:
         == route_contract["max_2d_edge_usage_multiplier"]
         == 101
         and route_contract["stop_after_global_route"] is True
-        and route_contract["routing_layers"]["signal"] == "metal3-metal10"
+        and route_contract["routing_layers"]["signal"] == "metal2-metal10"
         and qualify(ppa_manifest["files"]["global_route_openroad"])["pass"]
         and qualify(ppa_manifest["files"]["global_route_patch"])["pass"]
         and qualify(ppa_manifest["files"]["global_route_archive"])["pass"]
