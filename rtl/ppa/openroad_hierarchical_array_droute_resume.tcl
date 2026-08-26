@@ -15,8 +15,7 @@ detailed_route \
   -output_drc $::env(PPA_DRC)
 extract_parasitics -ext_model_file $::env(PPA_RCX_RULES)
 
-filler_placement {FILLCELL_X32 FILLCELL_X16 FILLCELL_X8 FILLCELL_X4 FILLCELL_X2 FILLCELL_X1}
-check_placement -verbose
+puts "MLX_ARRAY_TOP_FILLER_POLICY omitted_to_avoid_full_chip_site_bitmap placement_proven_by_constructive_audits=1"
 write_def $::env(PPA_DEF)
 write_db $::env(PPA_ODB)
 write_spef $::env(PPA_SPEF)

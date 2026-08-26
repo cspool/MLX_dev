@@ -172,6 +172,7 @@ def build_scope_audit(config: dict[str, Any]) -> dict[str, Any]:
     synthesis = ppa["synthesis"]
     abstraction = ppa["hierarchical_top"]["integration_abstraction"]
     legalization = ppa["hierarchical_top"]["channel_legalization"]
+    cts_legalization = ppa["hierarchical_top"]["cts_buffer_legalization"]
     macro_track = ppa["hierarchical_top"]["macro_track_contract"]
     route_connectivity = ppa["hierarchical_top"]["route_connectivity"]
     global_route_metrics = ppa["hierarchical_top"]["global_route_metrics"]
@@ -194,6 +195,10 @@ def build_scope_audit(config: dict[str, Any]) -> dict[str, Any]:
         and ppa["checks"]["global_route_congestion"] is True
         and route_contract["require_zero_global_route_overflow"] is True
         and global_route_metrics["overflow_resolved"] is True
+        and global_route_metrics["resource_total_uses_64bit_layer_sum"] is True
+        and global_route_metrics["aggregate_overflow_consistent"] is True
+        and global_route_metrics["resource"] > 0
+        and global_route_metrics["demand"] > 0
         and global_route_metrics["total_overflow"] == 0
         and global_route_metrics["congestion_warning"] is False
         and global_route_metrics["routed_nets"] > 0
@@ -231,11 +236,35 @@ def build_scope_audit(config: dict[str, Any]) -> dict[str, Any]:
         and legalization["cells"]
         == ppa["hierarchical_top"]["synthesis"]["cell_count"]
         - ppa["hierarchical_top"]["macro_instances"]
-        and legalization["rows"] > 0
+        and legalization["rows"] >= 8192
+        and legalization["row_segments"] >= 30000
+        and legalization["selected_physical_rows"] == legalization["rows"]
+        and legalization["selected_row_segments"] == legalization["row_segments"]
+        and legalization["assigned_cells"] == legalization["cells"]
+        and legalization["constructive_audit_cells"] == legalization["cells"]
+        and legalization["site_aligned_cells"] == legalization["cells"]
+        and legalization["segment_contained_cells"] == legalization["cells"]
+        and legalization["standard_nonoverlap_cells"] == legalization["cells"]
+        and legalization["audited_nonoverlapping_macro_clear_row_segments"]
+        == legalization["row_segments"]
+        and legalization["constructive_audit_row_segments"]
+        == legalization["row_segments"]
+        and legalization["full_width_y_escapes"] >= 0
+        and legalization["backward_compactions"] >= 0
         and legalization["taps"] > 0
         and legalization["minimum_capacity_ratio"] > 1.0
+        and legalization["max_displacement_dbu"] <= 2_000_000
+        and legalization["maximum_x_displacement_dbu"] <= 2_000_000
+        and legalization["maximum_y_displacement_dbu"] <= 2_000_000
+        and legalization["average_displacement_dbu"] >= 0
         and legalization["checkpoint"]
-        == str(PROJECT_ROOT / ppa_manifest["files"]["top_channel_legalization_checkpoint"]["path"]),
+        == str(PROJECT_ROOT / ppa_manifest["files"]["top_channel_legalization_checkpoint"]["path"])
+        and legalization["rows_checkpoint"]
+        == str(PROJECT_ROOT / ppa_manifest["files"]["top_channel_rows_checkpoint"]["path"])
+        and legalization["seed_checkpoint"]
+        == str(PROJECT_ROOT / ppa_manifest["files"]["top_channel_seed_checkpoint"]["path"])
+        and legalization["precheck_checkpoint"]
+        == str(PROJECT_ROOT / ppa_manifest["files"]["top_channel_precheck_checkpoint"]["path"]),
         "macro_track_alignment": ppa["checks"]["macro_track_alignment"] is True
         and legalization["macro_instances_aligned"]
         == ppa["hierarchical_top"]["macro_instances"]
@@ -249,6 +278,25 @@ def build_scope_audit(config: dict[str, Any]) -> dict[str, Any]:
             macro_track["grid_dbu"] % pitch == 0
             for pitch in macro_track["routing_pitch_dbu"].values()
         ),
+        "cts_buffer_legalization": ppa["checks"]["cts_buffer_legalization"]
+        is True
+        and cts_legalization["buffers"] > 0
+        and cts_legalization["assigned_buffers"] == cts_legalization["buffers"]
+        and cts_legalization["physical_rows"] == legalization["rows"]
+        and cts_legalization["row_segments"] == legalization["row_segments"]
+        and cts_legalization["site_aligned_buffers"]
+        == cts_legalization["buffers"]
+        and cts_legalization["segment_contained_buffers"]
+        == cts_legalization["buffers"]
+        and cts_legalization["fixed_clear_buffers"]
+        == cts_legalization["buffers"]
+        and cts_legalization["standard_nonoverlap_buffers"]
+        == cts_legalization["buffers"]
+        and cts_legalization["max_displacement_dbu"] <= 7_731_275
+        and cts_legalization["seed_checkpoint"]
+        == str(PROJECT_ROOT / ppa_manifest["files"]["top_cts_seed_checkpoint"]["path"])
+        and cts_legalization["checkpoint"]
+        == str(PROJECT_ROOT / ppa_manifest["files"]["top_cts_checkpoint"]["path"]),
         "route_connectivity": ppa["checks"]["route_connectivity"] is True
         and route_connectivity["all_pins_routed"] is True
         and route_connectivity["global_route_completed"] is True

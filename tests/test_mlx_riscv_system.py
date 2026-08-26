@@ -5,8 +5,90 @@ from pathlib import Path
 
 import yaml
 
+from scripts.run_mlx_hierarchical_ppa import (
+    parse_channel_legalization,
+    parse_cts_buffer_legalization,
+    parse_global_route_metrics,
+)
+
 ROOT = Path(__file__).resolve().parents[1]
 OPERATIONS = {"load", "store", "fma", "add", "max", "exp", "div", "shuffle", "xfer", "mul"}
+
+
+def test_channel_legalization_parser_tracks_resumable_hybrid_flow() -> None:
+    metrics = parse_channel_legalization(
+        """MLX_CHANNEL_ROWS_RESUME checkpoint=/tmp/rows.odb
+MLX_MACRO_TRACK_ALIGNMENT macros=16 grid_dbu=425600 max_displacement_dbu=0
+MLX_CHANNEL_ROW_SELECTION physical_rows=8192 row_segments=37504 removed_segments=0
+MLX_CHANNEL_ROW_AUDIT nonoverlapping_macro_clear_segments=37504
+MLX_CHANNEL_ROWS_CHECKPOINT checkpoint=/tmp/rows.odb
+MLX_CHANNEL_ASSIGNMENT cells=775745 full_width_y_escapes=18361
+MLX_CHANNEL_1D_LEGALIZATION backward_compactions=21
+MLX_CHANNEL_CONSTRUCTIVE_AUDIT cells=775745 site_aligned=775745 segment_contained=775745 standard_nonoverlap=775745 row_segments=37504
+MLX_CHANNEL_SEED_CHECKPOINT checkpoint=/tmp/seed.odb
+MLX_CHANNEL_PRECHECK checkpoint=/tmp/precheck.odb
+MLX_CHANNEL_LEGALIZER cells=775745 rows=8192 row_segments=37504 taps=1234 removed_rows=0 removed_tapcells=0 max_displacement_dbu=100 min_capacity_ratio=2.0 checkpoint=/tmp/legal.odb
+MLX_CHANNEL_LOCALITY max_x_displacement_dbu=80 max_y_displacement_dbu=20 average_displacement_dbu=3.5
+"""
+    )
+    assert metrics["selected_physical_rows"] == metrics["rows"] == 8192
+    assert metrics["selected_row_segments"] == metrics["row_segments"] == 37504
+    assert metrics["assigned_cells"] == metrics["cells"] == 775745
+    assert metrics["full_width_y_escapes"] == 18361
+    assert metrics["backward_compactions"] == 21
+    assert metrics["audited_nonoverlapping_macro_clear_row_segments"] == 37504
+    assert metrics["constructive_audit_cells"] == 775745
+    assert metrics["site_aligned_cells"] == 775745
+    assert metrics["segment_contained_cells"] == 775745
+    assert metrics["standard_nonoverlap_cells"] == 775745
+    assert metrics["constructive_audit_row_segments"] == 37504
+    assert metrics["rows_checkpoint"] == "/tmp/rows.odb"
+    assert metrics["resumed_from_rows_checkpoint"] is True
+    assert metrics["seed_checkpoint"] == "/tmp/seed.odb"
+    assert metrics["precheck_checkpoint"] == "/tmp/precheck.odb"
+
+
+def test_cts_buffer_legalization_parser_tracks_constructive_audit() -> None:
+    metrics = parse_cts_buffer_legalization(
+        """MLX_ARRAY_CTS_SEED checkpoint=/tmp/cts-seed.odb
+MLX_CTS_BUFFER_ASSIGNMENT buffers=6408 fixed_cells=880129 physical_rows=8192 row_segments=37504
+MLX_CTS_BUFFER_LEGALIZATION buffers=6408 backward_compactions=3 site_aligned=6408 segment_contained=6408 fixed_clear=6408 standard_nonoverlap=6408 max_displacement_dbu=100 average_displacement_dbu=2.5
+MLX_ARRAY_STOP_AFTER_CTS checkpoint=/tmp/post-cts.odb
+"""
+    )
+    assert metrics["assigned_buffers"] == metrics["buffers"] == 6408
+    assert metrics["fixed_cells"] == 880129
+    assert metrics["physical_rows"] == 8192
+    assert metrics["row_segments"] == 37504
+    assert metrics["site_aligned_buffers"] == 6408
+    assert metrics["segment_contained_buffers"] == 6408
+    assert metrics["fixed_clear_buffers"] == 6408
+    assert metrics["standard_nonoverlap_buffers"] == 6408
+    assert metrics["seed_checkpoint"] == "/tmp/cts-seed.odb"
+    assert metrics["checkpoint"] == "/tmp/post-cts.odb"
+
+
+def test_global_route_metrics_use_64bit_layer_aggregation() -> None:
+    metrics = parse_global_route_metrics(
+        """[INFO GRT-0111] Final number of vias: 12
+[INFO GRT-0112] Final usage 3D: 34
+[INFO GRT-0096] Final congestion report:
+Layer         Resource        Demand        Usage (%)    Max H / Max V / Total Overflow
+metal3      1500000000             100            0.00%             1 /  2 /  3
+metal4      1000000000             200            0.00%             4 /  5 /  6
+Total       -1794967296             300           -0.00%             5 /  7 /  9
+[INFO GRT-0018] Total wirelength: 56 um
+[INFO GRT-0014] Routed nets: 78
+[WARNING GRT-0115] Global routing finished with congestion.
+"""
+    )
+    assert metrics["reported_total_resource"] == -1_794_967_296
+    assert metrics["resource"] == 2_500_000_000
+    assert metrics["demand"] == 300
+    assert metrics["total_overflow"] == 9
+    assert metrics["aggregate_overflow_consistent"] is True
+    assert metrics["resource_total_uses_64bit_layer_sum"] is True
+    assert metrics["overflow_resolved"] is False
 
 
 def test_system_workload_manifest_covers_completion_operators() -> None:
@@ -281,14 +363,41 @@ def test_hierarchical_integrated_ppa_is_supported() -> None:
         result["hierarchical_top"]["synthesis"]["cell_count"]
         - result["hierarchical_top"]["macro_instances"]
     )
-    assert legalization["rows"] > 0
+    assert legalization["rows"] >= 8192
+    assert legalization["row_segments"] >= 30000
+    assert legalization["selected_physical_rows"] == legalization["rows"]
+    assert legalization["selected_row_segments"] == legalization["row_segments"]
+    assert legalization["assigned_cells"] == legalization["cells"]
+    assert legalization["constructive_audit_cells"] == legalization["cells"]
+    assert legalization["site_aligned_cells"] == legalization["cells"]
+    assert legalization["segment_contained_cells"] == legalization["cells"]
+    assert legalization["standard_nonoverlap_cells"] == legalization["cells"]
+    assert legalization["audited_nonoverlapping_macro_clear_row_segments"] == (
+        legalization["row_segments"]
+    )
+    assert legalization["constructive_audit_row_segments"] == legalization["row_segments"]
+    assert legalization["full_width_y_escapes"] >= 0
+    assert legalization["backward_compactions"] >= 0
     assert legalization["taps"] > 0
     assert legalization["minimum_capacity_ratio"] > 1.0
+    assert legalization["max_displacement_dbu"] <= 2_000_000
+    assert legalization["maximum_x_displacement_dbu"] <= 2_000_000
+    assert legalization["maximum_y_displacement_dbu"] <= 2_000_000
+    assert legalization["average_displacement_dbu"] >= 0
     macro_track = result["hierarchical_top"]["macro_track_contract"]
     assert result["checks"]["macro_track_alignment"] is True
     assert legalization["macro_instances_aligned"] == 16
     assert legalization["macro_origin_grid_dbu"] == macro_track["grid_dbu"]
     assert legalization["macro_max_displacement_dbu"] == 0
+    cts_legalization = result["hierarchical_top"]["cts_buffer_legalization"]
+    assert result["checks"]["cts_buffer_legalization"] is True
+    assert cts_legalization["buffers"] > 0
+    assert cts_legalization["assigned_buffers"] == cts_legalization["buffers"]
+    assert cts_legalization["site_aligned_buffers"] == cts_legalization["buffers"]
+    assert cts_legalization["segment_contained_buffers"] == cts_legalization["buffers"]
+    assert cts_legalization["fixed_clear_buffers"] == cts_legalization["buffers"]
+    assert cts_legalization["standard_nonoverlap_buffers"] == cts_legalization["buffers"]
+    assert cts_legalization["max_displacement_dbu"] <= 7_731_275
     assert macro_track["grid_dbu"] == 425600
     connectivity = result["hierarchical_top"]["route_connectivity"]
     assert result["checks"]["route_connectivity"] is True

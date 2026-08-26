@@ -82,7 +82,7 @@ component_placement:
       droute_end_iter: 50
       skip_initial_place: false
 hierarchical_top_placement:
-  flow_tag: compact-v1
+  flow_tag: compact-v6-segment8192
   utilization_percent: 80
   density: 0.05
   aspect_ratio: 1.0
@@ -92,15 +92,25 @@ hierarchical_top_placement:
   repair_design: false
   tapcell_distance_um: 1000
   post_gpl_threads: 1
-  detailed_placement_full_width_rows: 128
-  detailed_placement_method: deterministic_gpl_ordered_channel_legalization
-  post_legalization_method: fixed_original_cells_then_opendp_cts_buffers
+  detailed_placement_full_width_rows: 8192
+  detailed_placement_method: deterministic_gpl_local_xy_segment_preserving_channel_legalization
+  post_legalization_method: fixed_original_cells_then_constructive_cts_buffer_legalization
+  top_filler_policy: omitted_after_constructive_placement_audits
   channel_legalizer:
     preserve_gpl_y_neighborhood: true
     preserve_gpl_x_order: true
+    preserve_gpl_x_coordinate: true
+    x_legalization: nearest_capacity_segment_then_forward_backward_compaction
+    invoke_opendp_for_original_cells: false
+    preserve_vertical_macro_channels: true
+    minimum_physical_rows: 8192
+    minimum_row_segments: 30000
     respect_locked_tap_intervals: true
     fix_original_cells_before_cts: true
     target_row_utilization: 0.75
+    maximum_accepted_displacement_um: 1000
+    maximum_cts_buffer_displacement_um: 3865.6375
+    cts_buffer_displacement_basis: half_of_7731_275um_pe_macro_span
   macro_origin_track_alignment:
     method: least_common_multiple_of_all_nangate45_routing_pitches
     dbu_per_micron: 2000
@@ -119,14 +129,15 @@ hierarchical_top_placement:
       metal9: 3200
       metal10: 3200
   detailed_placement_capacity_basis:
+    model: full_width_equivalent_upper_bound_for_selected_segment_rows
     measured_standard_cell_area_um2: 767357.332
     site_width_um: 0.190
     site_height_um: 1.400
     sites_per_full_width_row: 182047
-    reserved_rows: 128
-    reserved_site_capacity: 23302016
+    reserved_rows: 8192
+    reserved_site_capacity: 297949568
     estimated_required_sites: 2884802
-    capacity_ratio: 8.0775
+    capacity_ratio: 103.2825
   skip_initial_place: false
 hierarchical_top_resource_attempt:
   utilization_percent: 70
@@ -332,6 +343,270 @@ hierarchical_top_tile48_full_interior_attempt:
     global_route_checkpoint: artifacts/environment/h206/hierarchical_4x4/mlx-array-4x4-hierarchical-compact-v1-full-interior-global-route.odb
     guide: artifacts/environment/h206/hierarchical_4x4/mlx-array-4x4-hierarchical-compact-v1-full-interior-routed.guide
   result_consumed_as_final_ppa: false
+hierarchical_top_tile48_raster5_spread128_attempt:
+  signal_layers: metal3-metal10
+  clock_layers: metal5-metal10
+  grid_pitches_in_tile: 48
+  max_2d_edge_usage_multiplier: 101
+  integration_method: conservative_5um_raster_union_per_routing_layer
+  legalization_rows: 128
+  legalization_method: uniform_full_row_spreading_after_one_direction_y_spill
+  maximum_standard_cell_displacement_dbu: 44741576
+  maximum_standard_cell_displacement_um: 22370.788
+  elapsed_minutes_at_stop: 1139.97
+  guide_written: true
+  guide_bytes: 4053258198
+  global_route_checkpoint_written: false
+  resource_64bit_layer_sum: 2389586136
+  demand: 523217535
+  usage_percent: 21.895739
+  reported_total_resource_int32_overflow: -1905381160
+  routed_nets: 817784
+  final_vias: 63277445
+  total_wirelength_um: 3755617978
+  total_overflow: 87592576
+  global_missing_route_warnings_observed: 1000
+  warning_message_limit_reached: true
+  status: rejected_locality_destroyed_disconnected_and_congested
+  diagnosis:
+    - compact_obstructions_restored_3_09x_total_routing_resource_vs_full_interior
+    - overflow_reduced_60_56_percent_vs_full_interior_but_remained_nonzero
+    - sparse_128_row_legalization_moved_cells_up_to_22_37mm
+    - uniform_x_spreading_destroyed_global_placement_locality
+    - missing_routes_concentrated_in_top_shell_packet_and_route_state_buses
+  evidence:
+    global_route_log: artifacts/environment/h206/hierarchical_4x4/mlx-array-4x4-hierarchical-compact-v1-raster5-spread128-route.log
+    guide: artifacts/environment/h206/hierarchical_4x4/mlx-array-4x4-hierarchical-compact-v1-raster5-spread128-routed.guide
+    channel_legalization_log: artifacts/environment/h206/hierarchical_4x4/mlx-array-4x4-hierarchical-compact-v1-channel-legalize.log
+  result_consumed_as_final_ppa: false
+hierarchical_top_local640_full_width_attempt:
+  integration_method: conservative_5um_raster_union_per_routing_layer
+  physical_rows: 640
+  row_segments: 640
+  legalization_method: gpl_local_x_preserving_full_width_rows
+  maximum_prebalance_sites: 539260
+  failed_row_index: 243
+  status: failed_vertical_macro_channels_absent_from_full_width_row_model
+  diagnosis:
+    - increasing_full_width_rows_did_not_represent_row_segments_between_macro_columns
+    - cells_in_vertical_macro_channels_collapsed_into_horizontal_full_width_rows
+    - next_attempt_keeps_all_segments_at_640_selected_physical_y_rows
+  evidence:
+    log: artifacts/environment/h206/hierarchical_4x4/mlx-array-4x4-hierarchical-compact-v2-local640-channel-legalize.log
+  result_consumed_as_final_ppa: false
+hierarchical_top_local640_segment_attempt:
+  integration_method: conservative_5um_raster_union_per_routing_layer
+  selected_physical_rows: 640
+  selected_row_segments: 2932
+  total_site_capacity: 23195884
+  maximum_prebalance_sites: 136404
+  rebalanced_segments: 439
+  failed_row_segment_index: 1461
+  status: failed_physical_y_row_subsampling_overfilled_narrow_vertical_segments
+  diagnosis:
+    - segment_aware_assignment_reduced_the_maximum_bucket_by_75_percent
+    - subsampling_approximately_24k_physical_rows_to_640_still_collapsed_local_y_density
+    - next_attempt_keeps_all_physical_rows_and_all_row_segments
+  evidence:
+    log: artifacts/environment/h206/hierarchical_4x4/mlx-array-4x4-hierarchical-compact-v3-segment640-channel-legalize.log
+  result_consumed_as_final_ppa: false
+hierarchical_top_local_all_segment_attempt:
+  integration_method: conservative_5um_raster_union_per_routing_layer
+  selected_physical_rows: 24705
+  selected_row_segments: 113121
+  total_site_capacity: 897790527
+  maximum_prebalance_sites: 13347
+  rebalanced_segments: 0
+  observed_rss_gib_before_final_spike: 104.96
+  exit_code: 137
+  completed_through_row_segment_index: 81919
+  status: failed_tcl_opendb_bucket_memory_with_all_row_segments
+  diagnosis:
+    - all_segments_preserved_global_placement_locality_and_required_no_rebalancing
+    - retaining_113121_tcl_bucket_lists_exceeded_the_container_memory_boundary
+    - next_attempt_samples_4096_physical_rows_for_approximately_18k_segments
+  evidence:
+    log: artifacts/environment/h206/hierarchical_4x4/mlx-array-4x4-hierarchical-compact-v4-segment-all-channel-legalize.log
+  result_consumed_as_final_ppa: false
+hierarchical_top_local4096_origin_obstacle_attempt:
+  integration_method: conservative_5um_raster_union_per_routing_layer
+  selected_physical_rows: 4096
+  selected_row_segments: 18752
+  total_site_capacity: 148974784
+  maximum_prebalance_sites: 59797
+  rebalanced_segments: 12
+  observed_peak_rss_gib: 122.02
+  placed_in_rows_failures: 8931
+  overlap_failures: 8791
+  status: failed_mx_origin_and_cross_segment_fixed_interval_clipping
+  diagnosis:
+    - distribution_and_memory_were_acceptable
+    - mx_standard_cell_location_was_incorrectly_offset_by_one_cell_height
+    - fixed_intervals_from_other_x_segments_extended_free_space_through_pe_macros
+  evidence:
+    origin_obstacle_log: artifacts/environment/h206/hierarchical_4x4/mlx-array-4x4-hierarchical-compact-v5-segment4096-origin-obstacle-fail.log
+    segment_interval_log: artifacts/environment/h206/hierarchical_4x4/mlx-array-4x4-hierarchical-compact-v5-segment4096-segment-interval-fail.log
+    segment_interval_precheck: artifacts/environment/h206/hierarchical_4x4/mlx-array-4x4-hierarchical-compact-v5-segment4096-segment-interval-fail-precheck.odb
+  result_consumed_as_final_ppa: false
+hierarchical_top_local4096_strict_segment_attempt:
+  integration_method: conservative_5um_raster_union_per_routing_layer
+  selected_physical_rows: 4096
+  selected_row_segments: 18752
+  total_site_capacity: 148974784
+  maximum_prebalance_sites: 59797
+  rebalanced_segments: 12
+  failed_row_segment_index: 99
+  failed_instance: _0996832_
+  status: failed_strict_segment_capacity_after_geometry_fixes
+  diagnosis:
+    - mx_site_origin_and_cross_segment_interval_bugs_were_fixed
+    - twelve_narrow_segments_still_exceeded_the_75_percent_target
+    - cross_segment_x_spill_is_rejected_to_preserve_macro_channels
+    - next_attempt_doubles_physical_y_rows_to_8192
+  evidence:
+    log: artifacts/environment/h206/hierarchical_4x4/mlx-array-4x4-hierarchical-compact-v5-segment4096-channel-legalize.log
+  result_consumed_as_final_ppa: false
+hierarchical_top_local8192_unclamped_target_attempt:
+  integration_method: conservative_5um_raster_union_per_routing_layer
+  selected_physical_rows: 8192
+  selected_row_segments: 37504
+  total_site_capacity: 297949568
+  maximum_prebalance_sites: 40125
+  rebalanced_segments: 0
+  failed_row_segment_index: 197
+  failed_instance: _0996832_
+  status: failed_original_x_inside_macro_not_clamped_to_selected_segment
+  diagnosis:
+    - row_and_segment_distribution_required_no_rebalancing
+    - the_nearest_segment_was_selected_but_placement_target_kept_the_illegal_gpl_x
+    - target_x_must_be_clamped_to_the_selected_row_segment_boundary
+  evidence:
+    log: artifacts/environment/h206/hierarchical_4x4/mlx-array-4x4-hierarchical-compact-v6-segment8192-unclamped-target-fail.log
+  result_consumed_as_final_ppa: false
+hierarchical_top_local8192_endcap_clamp_attempt:
+  integration_method: conservative_5um_raster_union_per_routing_layer
+  selected_physical_rows: 8192
+  selected_row_segments: 37504
+  total_site_capacity: 297949568
+  maximum_prebalance_sites: 40125
+  rebalanced_segments: 0
+  failed_row_segment_index: 197
+  failed_instance: _0996832_
+  status: failed_clamped_row_end_landed_inside_fixed_endcap_interval
+  diagnosis:
+    - row_boundary_clamping_was_applied_before_fixed_interval_subtraction
+    - out_of_row_targets_must_start_at_the_nearest_actual_free_segment
+  evidence:
+    log: artifacts/environment/h206/hierarchical_4x4/mlx-array-4x4-hierarchical-compact-v6-segment8192-endcap-clamp-fail.log
+  result_consumed_as_final_ppa: false
+hierarchical_top_local8192_first_free_segment_attempt:
+  integration_method: conservative_5um_raster_union_per_routing_layer
+  selected_physical_rows: 8192
+  selected_row_segments: 37504
+  total_site_capacity: 297949568
+  maximum_prebalance_sites: 40125
+  rebalanced_segments: 0
+  failed_row_segment_index: 8738
+  failed_instance: _1047348_
+  status: failed_multiple_macro_overlapping_gpl_cells_packed_into_one_edge_interval
+  diagnosis:
+    - nearest_x_segment_was_legal_but_multiple_macro_overlapping_cells_shared_its_edge_interval
+    - assignment_must_compare_nearest_vertical_segment_with_nearest_full_width_y_channel
+  evidence:
+    log: artifacts/environment/h206/hierarchical_4x4/mlx-array-4x4-hierarchical-compact-v6-segment8192-first-free-segment-fail.log
+    rows_checkpoint: artifacts/environment/h206/hierarchical_4x4/mlx-array-4x4-hierarchical-compact-v6-segment8192-rows.odb
+  result_consumed_as_final_ppa: false
+hierarchical_top_local8192_full_width_escape_seed_attempt:
+  integration_method: conservative_5um_raster_union_per_routing_layer
+  selected_physical_rows: 8192
+  selected_row_segments: 37504
+  total_site_capacity: 297949568
+  maximum_prebalance_sites: 40125
+  rebalanced_segments: 0
+  full_width_y_escapes: 18361
+  elapsed_minutes_at_stop: 9.9
+  observed_rss_gib: 1.872
+  status: failed_nonprogressing_right_only_seed_wrap
+  diagnosis:
+    - cells_that_exhausted_rightward_space_restarted_at_the_left_segment
+    - the_restart_incorrectly_reapplied_the_same_original_x_target
+    - the_same_failed_rightward_search_repeated_without_progress
+  result_consumed_as_final_ppa: false
+hierarchical_top_local8192_hybrid_opendp_attempt:
+  integration_method: conservative_5um_raster_union_per_routing_layer
+  selected_physical_rows: 8192
+  selected_row_segments: 37504
+  full_width_y_escapes: 18361
+  controlled_seed_wraps: 16
+  seed_checkpoint_written: true
+  seed_checkpoint_bytes: 404104545
+  opendp_peak_rss_gib: 190.834
+  host_available_memory_gib_before_exit_137: 9.547
+  exit_code: 137
+  status: failed_opendp_full_chip_memory_expansion_after_seed
+  diagnosis:
+    - deterministic_seed_completed_in_about_two_minutes
+    - official_opendp_expanded_rss_from_about_two_gib_to_about_191_gib_in_seconds
+    - final_method_uses_capacity_constrained_one_dimensional_segment_legalization
+  result_consumed_as_final_ppa: false
+hierarchical_top_local8192_builtin_check_placement_attempt:
+  integration_method: conservative_5um_raster_union_per_routing_layer
+  legalization_method: nearest_capacity_segment_then_forward_backward_compaction
+  selected_physical_rows: 8192
+  selected_row_segments: 37504
+  backward_compactions: 60
+  precheck_checkpoint_written: true
+  observed_rss_gib_at_safety_stop: 138.748
+  host_available_memory_gib_at_safety_stop: 61.783
+  status: stopped_builtin_check_placement_site_bitmap_at_resource_safety_boundary
+  diagnosis:
+    - deterministic_one_dimensional_legalization_completed_at_about_two_gib_rss
+    - builtin_check_placement_then_allocated_memory_proportional_to_297949568_row_sites
+    - final_gate_uses_constructive_per_cell_and_per_row_segment_invariants
+  result_consumed_as_final_ppa: false
+hierarchical_top_local8192_final_legalization:
+  integration_method: conservative_5um_raster_union_per_routing_layer
+  legalization_method: nearest_capacity_segment_then_forward_backward_compaction
+  selected_physical_rows: 8192
+  selected_row_segments: 37504
+  cells: 775745
+  locked_tapcells: 104384
+  full_width_y_escapes: 8980
+  backward_compactions: 1159
+  minimum_capacity_ratio: 2.013307
+  maximum_displacement_dbu: 1998104
+  maximum_displacement_um: 999.052
+  maximum_x_displacement_um: 997.882
+  maximum_y_displacement_um: 548.202
+  average_displacement_um: 7.392743
+  constructive_audit:
+    site_aligned_cells: 775745
+    segment_contained_cells: 775745
+    standard_nonoverlap_cells: 775745
+    nonoverlapping_macro_clear_row_segments: 37504
+  evidence:
+    log: artifacts/environment/h206/hierarchical_4x4/mlx-array-4x4-hierarchical-compact-v6-segment8192-channel-legalize.log
+    checkpoint: artifacts/environment/h206/hierarchical_4x4/mlx-array-4x4-hierarchical-compact-v6-segment8192-channel-legal.odb
+  result_consumed_as_final_ppa: true
+hierarchical_top_local8192_final_cts_buffer_legalization:
+  cts_buffers: 4727
+  fixed_standard_and_tap_cells: 880129
+  backward_compactions: 98
+  maximum_displacement_dbu: 6979104
+  maximum_displacement_um: 3489.552
+  average_displacement_um: 318.002171
+  displacement_gate_um: 3865.6375
+  displacement_gate_basis: half_of_7731_275um_pe_macro_span
+  constructive_audit:
+    site_aligned_buffers: 4727
+    segment_contained_buffers: 4727
+    fixed_clear_buffers: 4727
+    standard_nonoverlap_buffers: 4727
+  evidence:
+    log: artifacts/environment/h206/hierarchical_4x4/mlx-array-4x4-hierarchical-compact-v6-segment8192-cts.log
+    seed_checkpoint: artifacts/environment/h206/hierarchical_4x4/mlx-array-4x4-hierarchical-compact-v6-segment8192-cts-seed.odb
+    checkpoint: artifacts/environment/h206/hierarchical_4x4/mlx-array-4x4-hierarchical-compact-v6-segment8192-post-cts.odb
+  result_consumed_as_final_ppa: true
 flat_physical_attempt:
   status: stopped_at_resource_safety_boundary
   completed_through: post_cts_detailed_placement

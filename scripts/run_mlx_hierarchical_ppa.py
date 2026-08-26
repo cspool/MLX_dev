@@ -95,16 +95,47 @@ def parse_channel_legalization(text: str) -> dict[str, Any]:
         text,
     )
     records = re.findall(
-        r"MLX_CHANNEL_LEGALIZER cells=(\d+) rows=(\d+) taps=(\d+) "
+        r"MLX_CHANNEL_LEGALIZER cells=(\d+) rows=(\d+) "
+        r"(?:row_segments=(\d+) )?taps=(\d+) "
         r"removed_rows=(\d+) removed_tapcells=(\d+) "
         r"max_displacement_dbu=(\d+) min_capacity_ratio=([0-9.eE+-]+) "
         r"checkpoint=(\S+)",
         text,
     )
+    locality_records = re.findall(
+        r"MLX_CHANNEL_LOCALITY max_x_displacement_dbu=(\d+) "
+        r"max_y_displacement_dbu=(\d+) average_displacement_dbu=([0-9.eE+-]+)",
+        text,
+    )
+    row_selection_records = re.findall(
+        r"MLX_CHANNEL_ROW_SELECTION physical_rows=(\d+) row_segments=(\d+) "
+        r"removed_segments=(\d+)",
+        text,
+    )
+    row_audit_records = re.findall(
+        r"MLX_CHANNEL_ROW_AUDIT nonoverlapping_macro_clear_segments=(\d+)", text
+    )
+    assignment_records = re.findall(
+        r"MLX_CHANNEL_ASSIGNMENT cells=(\d+) full_width_y_escapes=(\d+)",
+        text,
+    )
+    legalizer_records = re.findall(
+        r"MLX_CHANNEL_1D_LEGALIZATION backward_compactions=(\d+)", text
+    )
+    constructive_audit_records = re.findall(
+        r"MLX_CHANNEL_CONSTRUCTIVE_AUDIT cells=(\d+) site_aligned=(\d+) "
+        r"segment_contained=(\d+) standard_nonoverlap=(\d+) row_segments=(\d+)",
+        text,
+    )
+    rows_checkpoints = re.findall(r"MLX_CHANNEL_ROWS_CHECKPOINT checkpoint=(\S+)", text)
+    rows_resumes = re.findall(r"MLX_CHANNEL_ROWS_RESUME checkpoint=(\S+)", text)
+    seed_checkpoints = re.findall(r"MLX_CHANNEL_SEED_CHECKPOINT checkpoint=(\S+)", text)
+    precheck_checkpoints = re.findall(r"MLX_CHANNEL_PRECHECK checkpoint=(\S+)", text)
     if not records:
         return {
             "cells": None,
             "rows": None,
+            "row_segments": None,
             "taps": None,
             "removed_rows": None,
             "removed_tapcells": None,
@@ -114,21 +145,123 @@ def parse_channel_legalization(text: str) -> dict[str, Any]:
             "macro_instances_aligned": None,
             "macro_origin_grid_dbu": None,
             "macro_max_displacement_dbu": None,
+            "maximum_x_displacement_dbu": None,
+            "maximum_y_displacement_dbu": None,
+            "average_displacement_dbu": None,
+            "selected_physical_rows": None,
+            "selected_row_segments": None,
+            "removed_row_segments": None,
+            "audited_nonoverlapping_macro_clear_row_segments": None,
+            "assigned_cells": None,
+            "full_width_y_escapes": None,
+            "backward_compactions": None,
+            "constructive_audit_cells": None,
+            "site_aligned_cells": None,
+            "segment_contained_cells": None,
+            "standard_nonoverlap_cells": None,
+            "constructive_audit_row_segments": None,
+            "rows_checkpoint": None,
+            "resumed_from_rows_checkpoint": False,
+            "seed_checkpoint": None,
+            "precheck_checkpoint": None,
         }
     record = records[-1]
     alignment = alignments[-1] if alignments else (None, None, None)
+    locality = locality_records[-1] if locality_records else (None, None, None)
+    row_selection = (
+        row_selection_records[-1] if row_selection_records else (None, None, None)
+    )
+    assignment = assignment_records[-1] if assignment_records else (None, None)
+    constructive_audit = (
+        constructive_audit_records[-1]
+        if constructive_audit_records
+        else (None, None, None, None, None)
+    )
     return {
         "cells": int(record[0]),
         "rows": int(record[1]),
-        "taps": int(record[2]),
-        "removed_rows": int(record[3]),
-        "removed_tapcells": int(record[4]),
-        "max_displacement_dbu": int(record[5]),
-        "minimum_capacity_ratio": float(record[6]),
-        "checkpoint": record[7],
+        "row_segments": int(record[2]) if record[2] else int(record[1]),
+        "taps": int(record[3]),
+        "removed_rows": int(record[4]),
+        "removed_tapcells": int(record[5]),
+        "max_displacement_dbu": int(record[6]),
+        "minimum_capacity_ratio": float(record[7]),
+        "checkpoint": record[8],
         "macro_instances_aligned": int(alignment[0]) if alignment[0] else None,
         "macro_origin_grid_dbu": int(alignment[1]) if alignment[1] else None,
         "macro_max_displacement_dbu": int(alignment[2]) if alignment[2] else None,
+        "maximum_x_displacement_dbu": int(locality[0]) if locality[0] else None,
+        "maximum_y_displacement_dbu": int(locality[1]) if locality[1] else None,
+        "average_displacement_dbu": float(locality[2]) if locality[2] else None,
+        "selected_physical_rows": (
+            int(row_selection[0]) if row_selection[0] else None
+        ),
+        "selected_row_segments": int(row_selection[1]) if row_selection[1] else None,
+        "removed_row_segments": int(row_selection[2]) if row_selection[2] else None,
+        "audited_nonoverlapping_macro_clear_row_segments": (
+            int(row_audit_records[-1]) if row_audit_records else None
+        ),
+        "assigned_cells": int(assignment[0]) if assignment[0] else None,
+        "full_width_y_escapes": int(assignment[1]) if assignment[1] else None,
+        "backward_compactions": (
+            int(legalizer_records[-1]) if legalizer_records else None
+        ),
+        "constructive_audit_cells": (
+            int(constructive_audit[0]) if constructive_audit[0] else None
+        ),
+        "site_aligned_cells": (
+            int(constructive_audit[1]) if constructive_audit[1] else None
+        ),
+        "segment_contained_cells": (
+            int(constructive_audit[2]) if constructive_audit[2] else None
+        ),
+        "standard_nonoverlap_cells": (
+            int(constructive_audit[3]) if constructive_audit[3] else None
+        ),
+        "constructive_audit_row_segments": (
+            int(constructive_audit[4]) if constructive_audit[4] else None
+        ),
+        "rows_checkpoint": rows_checkpoints[-1] if rows_checkpoints else None,
+        "resumed_from_rows_checkpoint": bool(rows_resumes),
+        "seed_checkpoint": seed_checkpoints[-1] if seed_checkpoints else None,
+        "precheck_checkpoint": precheck_checkpoints[-1] if precheck_checkpoints else None,
+    }
+
+
+def parse_cts_buffer_legalization(text: str) -> dict[str, Any]:
+    assignments = re.findall(
+        r"MLX_CTS_BUFFER_ASSIGNMENT buffers=(\d+) fixed_cells=(\d+) "
+        r"physical_rows=(\d+) row_segments=(\d+)",
+        text,
+    )
+    records = re.findall(
+        r"MLX_CTS_BUFFER_LEGALIZATION buffers=(\d+) backward_compactions=(\d+) "
+        r"site_aligned=(\d+) segment_contained=(\d+) fixed_clear=(\d+) "
+        r"standard_nonoverlap=(\d+) max_displacement_dbu=(\d+) "
+        r"average_displacement_dbu=([0-9.eE+-]+)",
+        text,
+    )
+    seed_checkpoints = re.findall(
+        r"MLX_ARRAY_CTS_SEED(?:_RESUME)? checkpoint=(\S+)", text
+    )
+    final_checkpoints = re.findall(r"MLX_ARRAY_STOP_AFTER_CTS checkpoint=(\S+)", text)
+    assignment = assignments[-1] if assignments else (None, None, None, None)
+    record = records[-1] if records else (None, None, None, None, None, None, None, None)
+    return {
+        "buffers": int(record[0]) if record[0] else None,
+        "assigned_buffers": int(assignment[0]) if assignment[0] else None,
+        "fixed_cells": int(assignment[1]) if assignment[1] else None,
+        "physical_rows": int(assignment[2]) if assignment[2] else None,
+        "row_segments": int(assignment[3]) if assignment[3] else None,
+        "backward_compactions": int(record[1]) if record[1] else None,
+        "site_aligned_buffers": int(record[2]) if record[2] else None,
+        "segment_contained_buffers": int(record[3]) if record[3] else None,
+        "fixed_clear_buffers": int(record[4]) if record[4] else None,
+        "standard_nonoverlap_buffers": int(record[5]) if record[5] else None,
+        "max_displacement_dbu": int(record[6]) if record[6] else None,
+        "average_displacement_dbu": float(record[7]) if record[7] else None,
+        "seed_checkpoint": seed_checkpoints[-1] if seed_checkpoints else None,
+        "checkpoint": final_checkpoints[-1] if final_checkpoints else None,
     }
 
 
@@ -208,10 +341,21 @@ def parse_route_connectivity(global_route_text: str, detailed_route_text: str) -
 
 
 def parse_global_route_metrics(text: str) -> dict[str, Any]:
-    totals = re.findall(
-        r"^Total\s+(\d+)\s+(\d+)\s+([0-9.]+)%\s+"
+    final_report = (
+        text.rsplit("[INFO GRT-0096] Final congestion report:", 1)[-1]
+        if "[INFO GRT-0096] Final congestion report:" in text
+        else ""
+    )
+    layer_rows = re.findall(
+        r"^(metal\d+)\s+(-?\d+)\s+(-?\d+)\s+(-?[0-9.]+)%\s+"
         r"(\d+)\s*/\s*(\d+)\s*/\s*(\d+)\s*$",
-        text,
+        final_report,
+        flags=re.MULTILINE,
+    )
+    totals = re.findall(
+        r"^Total\s+(-?\d+)\s+(-?\d+)\s+(-?[0-9.]+)%\s+"
+        r"(\d+)\s*/\s*(\d+)\s*/\s*(\d+)\s*$",
+        final_report,
         flags=re.MULTILINE,
     )
     final_vias = re.findall(r"\[INFO GRT-0111\] Final number of vias: (\d+)", text)
@@ -219,15 +363,58 @@ def parse_global_route_metrics(text: str) -> dict[str, Any]:
     wirelength = re.findall(r"\[INFO GRT-0018\] Total wirelength: (\d+) um", text)
     routed_nets = re.findall(r"\[INFO GRT-0014\] Routed nets: (\d+)", text)
     total = totals[-1] if totals else (None, None, None, None, None, None)
+    layers = {
+        row[0]: {
+            "resource": int(row[1]),
+            "demand": int(row[2]),
+            "usage_percent": float(row[3]),
+            "max_horizontal_overflow": int(row[4]),
+            "max_vertical_overflow": int(row[5]),
+            "total_overflow": int(row[6]),
+        }
+        for row in layer_rows
+    }
+    resource = sum(row["resource"] for row in layers.values()) if layers else None
+    demand = sum(row["demand"] for row in layers.values()) if layers else None
+    max_horizontal_overflow = (
+        sum(row["max_horizontal_overflow"] for row in layers.values())
+        if layers
+        else None
+    )
+    max_vertical_overflow = (
+        sum(row["max_vertical_overflow"] for row in layers.values())
+        if layers
+        else None
+    )
+    total_overflow = (
+        sum(row["total_overflow"] for row in layers.values()) if layers else None
+    )
+    usage_percent = (
+        100.0 * demand / resource
+        if resource is not None and resource > 0 and demand is not None
+        else None
+    )
     congestion_warning = "[WARNING GRT-0115]" in text
-    total_overflow = int(total[5]) if total[5] is not None else None
     return {
-        "resource": int(total[0]) if total[0] is not None else None,
-        "demand": int(total[1]) if total[1] is not None else None,
-        "usage_percent": float(total[2]) if total[2] is not None else None,
-        "max_horizontal_overflow": int(total[3]) if total[3] is not None else None,
-        "max_vertical_overflow": int(total[4]) if total[4] is not None else None,
+        "resource": resource,
+        "demand": demand,
+        "usage_percent": usage_percent,
+        "max_horizontal_overflow": max_horizontal_overflow,
+        "max_vertical_overflow": max_vertical_overflow,
         "total_overflow": total_overflow,
+        "layers": layers,
+        "reported_total_resource": int(total[0]) if total[0] is not None else None,
+        "reported_total_demand": int(total[1]) if total[1] is not None else None,
+        "reported_total_usage_percent": (
+            float(total[2]) if total[2] is not None else None
+        ),
+        "reported_total_overflow": int(total[5]) if total[5] is not None else None,
+        "resource_total_uses_64bit_layer_sum": bool(layers),
+        "aggregate_overflow_consistent": (
+            total_overflow == int(total[5])
+            if total_overflow is not None and total[5] is not None
+            else False
+        ),
         "final_vias": int(final_vias[-1]) if final_vias else None,
         "final_usage_3d": int(final_usage_3d[-1]) if final_usage_3d else None,
         "total_wirelength_um": int(wirelength[-1]) if wirelength else None,
@@ -741,7 +928,11 @@ def main() -> int:
     checkpoint_stem = f"mlx-array-4x4-hierarchical-{flow_tag}"
     top_phys = physical_paths(top_root, physical_stem)
     top_gpl_checkpoint = top_root / f"{checkpoint_stem}-global-placement.odb"
+    top_rows_checkpoint = top_root / f"{checkpoint_stem}-rows.odb"
+    top_seed_checkpoint = top_root / f"{checkpoint_stem}-seed.odb"
+    top_precheck_checkpoint = top_root / f"{checkpoint_stem}-precheck.odb"
     top_legal_checkpoint = top_root / f"{checkpoint_stem}-channel-legal.odb"
+    top_cts_seed_checkpoint = top_root / f"{checkpoint_stem}-cts-seed.odb"
     top_cts_checkpoint = top_root / f"{checkpoint_stem}-post-cts.odb"
     top_grt_checkpoint = top_root / f"{checkpoint_stem}-global-route.odb"
     top_channel_log = top_root / f"{checkpoint_stem}-channel-legalize.log"
@@ -792,7 +983,11 @@ def main() -> int:
             "PPA_VCD": str(top_vcd),
             "PPA_VCD_SCOPE": config["activity"]["promoted_scope"],
             "PPA_GPL_ODB": str(top_gpl_checkpoint),
+            "PPA_ROWS_ODB": str(top_rows_checkpoint),
+            "PPA_SEED_ODB": str(top_seed_checkpoint),
+            "PPA_PRECHECK_ODB": str(top_precheck_checkpoint),
             "PPA_LEGAL_ODB": str(top_legal_checkpoint),
+            "PPA_CTS_SEED_ODB": str(top_cts_seed_checkpoint),
             "PPA_CTS_ODB": str(top_cts_checkpoint),
             "PPA_GRT_ODB": str(top_grt_checkpoint),
             "PPA_POST_GPL_THREADS": str(top_placement.get("post_gpl_threads", 1)),
@@ -826,9 +1021,19 @@ def main() -> int:
     if args.reuse_top_physical and output_check(top_phys):
         top_physical_rc = 0
     else:
+        prior_grt_metrics = parse_global_route_metrics(
+            top_route_log.read_text() if top_route_log.is_file() else ""
+        )
+        prior_grt_connectivity = parse_route_connectivity(
+            top_route_log.read_text() if top_route_log.is_file() else "", ""
+        )
         resume_top_droute = (
             top_grt_checkpoint.is_file()
             and top_grt_checkpoint.stat().st_size > 0
+            and prior_grt_metrics["overflow_resolved"] is True
+            and prior_grt_connectivity["global_missing_pin_routes"] == 0
+            and prior_grt_connectivity["global_missing_warning_limit_reached"]
+            is False
         )
         resume_top_post_gpl = (
             not resume_top_droute
@@ -880,6 +1085,12 @@ def main() -> int:
                 )
                 if not legal_ready:
                     channel_environment = top_environment.copy()
+                    channel_environment["PPA_RESUME_ROWS"] = (
+                        "1"
+                        if top_rows_checkpoint.is_file()
+                        and top_rows_checkpoint.stat().st_size > 0
+                        else "0"
+                    )
                     channel_environment["PPA_THREADS"] = str(
                         top_placement.get("post_gpl_threads", 1)
                     )
@@ -919,6 +1130,10 @@ def main() -> int:
                         cts_environment["PPA_THREADS"] = str(
                             top_placement.get("post_gpl_threads", 1)
                         )
+                        resume_cts_seed = (
+                            top_cts_seed_checkpoint.is_file()
+                            and top_cts_seed_checkpoint.stat().st_size > 0
+                        )
                         cts_environment["PPA_RESUME_CTS"] = "0"
                         cts_environment["PPA_STOP_AFTER_CTS"] = "1"
                         cts_rc = run_to_log(
@@ -928,7 +1143,11 @@ def main() -> int:
                                 "-exit",
                                 str(
                                     PROJECT_ROOT
-                                    / "rtl/ppa/openroad_hierarchical_array_post_legal_flow.tcl"
+                                    / (
+                                        "rtl/ppa/openroad_hierarchical_array_cts_legalize_resume.tcl"
+                                        if resume_cts_seed
+                                        else "rtl/ppa/openroad_hierarchical_array_post_legal_flow.tcl"
+                                    )
                                 ),
                             ],
                             top_cts_log,
@@ -1038,11 +1257,96 @@ def main() -> int:
     channel_legalization_valid = (
         channel_legalization["cells"]
         == int(top_synthesis["cell_count"] or 0) - macro_instances
-        and channel_legalization["rows"]
-        == int(top_placement["detailed_placement_full_width_rows"])
+        and (
+            (
+                int(top_placement["detailed_placement_full_width_rows"]) > 0
+                and channel_legalization["rows"]
+                == int(top_placement["detailed_placement_full_width_rows"])
+            )
+            or (
+                int(top_placement["detailed_placement_full_width_rows"]) == 0
+                and channel_legalization["rows"]
+                >= int(
+                    top_placement["channel_legalizer"]["minimum_physical_rows"]
+                )
+            )
+        )
+        and int(channel_legalization["row_segments"] or 0)
+        >= int(top_placement["channel_legalizer"]["minimum_row_segments"])
+        and channel_legalization["selected_physical_rows"]
+        == channel_legalization["rows"]
+        and channel_legalization["selected_row_segments"]
+        == channel_legalization["row_segments"]
+        and channel_legalization["assigned_cells"]
+        == channel_legalization["cells"]
+        and channel_legalization["constructive_audit_cells"]
+        == channel_legalization["cells"]
+        and channel_legalization["site_aligned_cells"]
+        == channel_legalization["cells"]
+        and channel_legalization["segment_contained_cells"]
+        == channel_legalization["cells"]
+        and channel_legalization["standard_nonoverlap_cells"]
+        == channel_legalization["cells"]
+        and channel_legalization[
+            "audited_nonoverlapping_macro_clear_row_segments"
+        ]
+        == channel_legalization["row_segments"]
+        and channel_legalization["constructive_audit_row_segments"]
+        == channel_legalization["row_segments"]
+        and channel_legalization["full_width_y_escapes"] is not None
+        and channel_legalization["backward_compactions"] is not None
+        and channel_legalization["rows_checkpoint"] == str(top_rows_checkpoint)
+        and channel_legalization["seed_checkpoint"] == str(top_seed_checkpoint)
+        and channel_legalization["precheck_checkpoint"] == str(top_precheck_checkpoint)
         and int(channel_legalization["taps"] or 0) > 0
         and float(channel_legalization["minimum_capacity_ratio"] or 0.0) > 1.0
         and channel_legalization["checkpoint"] == str(top_legal_checkpoint)
+        and channel_legalization["max_displacement_dbu"] is not None
+        and int(channel_legalization["max_displacement_dbu"])
+        <= float(
+            top_placement["channel_legalizer"][
+                "maximum_accepted_displacement_um"
+            ]
+        )
+        * int(macro_track_contract["dbu_per_micron"])
+        and channel_legalization["maximum_x_displacement_dbu"] is not None
+        and channel_legalization["maximum_y_displacement_dbu"] is not None
+        and channel_legalization["average_displacement_dbu"] is not None
+    )
+    cts_buffer_legalization = parse_cts_buffer_legalization(
+        top_cts_log.read_text() if top_cts_log.is_file() else ""
+    )
+    cts_buffer_legalization_valid = (
+        int(cts_buffer_legalization["buffers"] or 0) > 0
+        and cts_buffer_legalization["assigned_buffers"]
+        == cts_buffer_legalization["buffers"]
+        and cts_buffer_legalization["fixed_cells"]
+        == int(channel_legalization["cells"] or 0)
+        + int(channel_legalization["taps"] or 0)
+        and cts_buffer_legalization["physical_rows"]
+        == channel_legalization["rows"]
+        and cts_buffer_legalization["row_segments"]
+        == channel_legalization["row_segments"]
+        and cts_buffer_legalization["site_aligned_buffers"]
+        == cts_buffer_legalization["buffers"]
+        and cts_buffer_legalization["segment_contained_buffers"]
+        == cts_buffer_legalization["buffers"]
+        and cts_buffer_legalization["fixed_clear_buffers"]
+        == cts_buffer_legalization["buffers"]
+        and cts_buffer_legalization["standard_nonoverlap_buffers"]
+        == cts_buffer_legalization["buffers"]
+        and cts_buffer_legalization["max_displacement_dbu"] is not None
+        and int(cts_buffer_legalization["max_displacement_dbu"])
+        <= float(
+            top_placement["channel_legalizer"][
+                "maximum_cts_buffer_displacement_um"
+            ]
+        )
+        * int(macro_track_contract["dbu_per_micron"])
+        and cts_buffer_legalization["average_displacement_dbu"] is not None
+        and cts_buffer_legalization["seed_checkpoint"]
+        == str(top_cts_seed_checkpoint)
+        and cts_buffer_legalization["checkpoint"] == str(top_cts_checkpoint)
     )
     macro_track_alignment_valid = (
         macro_track_contract_valid
@@ -1073,6 +1377,7 @@ def main() -> int:
         and float(top_physical["total_power_w"] or 0.0) > 0,
         "compact_macro_abstraction": pe_abstraction_valid,
         "channel_legalization": channel_legalization_valid,
+        "cts_buffer_legalization": cts_buffer_legalization_valid,
         "macro_track_alignment": macro_track_alignment_valid,
         "route_connectivity": route_connectivity["all_pins_routed"],
         "global_route_congestion": global_route_metrics["overflow_resolved"],
@@ -1084,6 +1389,7 @@ def main() -> int:
                 {
                     "stage": "hierarchical_top_physical",
                     "checks": top_checks,
+                    "cts_buffer_legalization": cts_buffer_legalization,
                     "global_route_metrics": global_route_metrics,
                     "route_connectivity": route_connectivity,
                 },
@@ -1206,6 +1512,7 @@ def main() -> int:
         and all(all(item["checks"].values()) for item in submacro_chain.values()),
         "compact_macro_abstraction": pe_abstraction_valid,
         "channel_legalization": channel_legalization_valid,
+        "cts_buffer_legalization": cts_buffer_legalization_valid,
         "macro_track_alignment": macro_track_alignment_valid,
         "route_connectivity": route_connectivity["all_pins_routed"],
         "global_route_congestion": global_route_metrics["overflow_resolved"],
@@ -1225,7 +1532,12 @@ def main() -> int:
         "pe_abstract_lef": artifact(pe_lef),
         "pe_integration_abstract_lef": artifact(pe_integration_lef),
         "top_channel_legalization_log": artifact(top_channel_log),
+        "top_channel_rows_checkpoint": artifact(top_rows_checkpoint),
+        "top_channel_seed_checkpoint": artifact(top_seed_checkpoint),
+        "top_channel_precheck_checkpoint": artifact(top_precheck_checkpoint),
         "top_channel_legalization_checkpoint": artifact(top_legal_checkpoint),
+        "top_cts_log": artifact(top_cts_log),
+        "top_cts_seed_checkpoint": artifact(top_cts_seed_checkpoint),
         "top_cts_checkpoint": artifact(top_cts_checkpoint),
         "top_global_route_log": artifact(top_route_log),
         "top_detailed_route_log": artifact(top_droute_resume_log),
@@ -1298,6 +1610,7 @@ def main() -> int:
         "submacro_chain": submacro_chain,
         "pe_integration_abstraction": pe_abstraction,
         "channel_legalization": channel_legalization,
+        "cts_buffer_legalization": cts_buffer_legalization,
         "macro_track_contract": macro_track_contract,
         "route_connectivity": route_connectivity,
         "global_route_metrics": global_route_metrics,
@@ -1308,6 +1621,7 @@ def main() -> int:
             "macro_instances": macro_instances,
             "integration_abstraction": pe_abstraction,
             "channel_legalization": channel_legalization,
+            "cts_buffer_legalization": cts_buffer_legalization,
             "macro_track_contract": macro_track_contract,
             "route_connectivity": route_connectivity,
             "global_route_metrics": global_route_metrics,
@@ -1344,6 +1658,7 @@ def main() -> int:
             "macro_instances": macro_instances,
             "integration_abstraction": pe_abstraction,
             "channel_legalization": channel_legalization,
+            "cts_buffer_legalization": cts_buffer_legalization,
             "macro_track_contract": macro_track_contract,
             "route_connectivity": route_connectivity,
             "global_route_metrics": global_route_metrics,

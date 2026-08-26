@@ -1,15 +1,17 @@
-# MLX + RISC-V 系统协同仿真完成报告
+# MLX + RISC-V 系统协同仿真进度报告
 
-更新日期：2026-08-22
+更新日期：2026-08-26
 
 ## 结论
 
-`mlx-riscv-system-simulation-goal.md` 定义的 P0–P3 已形成一个可重放的闭环：
+`mlx-riscv-system-simulation-goal.md` 定义的 P0–P2 已形成一个可重放的闭环：
 真实 Chipyard Rocket bare-metal ELF 通过 custom0 RoCC 指令配置、启动、等待并
 查询 MLX；同一空间程序和数据可选择独立的架构周期模型或可执行的真实 4×4 PE
 阵列 RTL；输入/输出经 HellaCache 请求完成串行 DMA；四个负载均与软件 FP16
-golden 逐位一致。最终完成证书为
-`artifacts/results/mlx-riscv-system-goal-run213.json`。
+golden 逐位一致。P3 的真实 4×4 顶层已完成分层综合、宏抽象、GPL、标准单元
+合法化和 CTS，当前正在取得零 overflow 的最终 GRT/DRT、STA 与功耗证据；因此
+`artifacts/results/mlx-array-ppa-run211.json` 和最终
+`artifacts/results/mlx-riscv-system-goal-run213.json` 尚未生成，不能提前声明完成。
 
 这里的“完成”是论文约束下的开源系统重建，不是论文作者未公开的完整 SoC、私有
 12 nm 库或 Synopsys 流程复刻。性能趋势、系统仿真、RTL 仿真和 PPA 的证据类别
@@ -213,9 +215,15 @@ rectangle 保持不变；完整 PE LEF 的 10,030,339 个内部 OBS rectangle �
 460,491,587 bytes 压到 2,529,587 bytes（182.04×）。PE 内部的布线、DRC、STA
 和功耗仍取自完整物理数据库；压缩
 LEF 只供 4×4 顶层的宏边界、引脚接入和跨宏互连使用，不能解释为对 PE 内部几何
-重新签核。顶层全局放置后，非宏单元通过 128 行、保持 x 顺序的确定性通道合法化
-全部落位并固定；CTS 新增缓冲再由 OpenDP 合法化。run211 同时保存这些中间检查点
-和单元计数，最终审计逐项核对，而不是只检查输出文件是否存在。
+重新签核。顶层全局放置后，从原始 24,705 个物理 y 行中均匀选择 8,192 行，并保留
+宏切分形成的全部 37,504 个 row segment。775,745 个非宏单元先按 GPL `(x,y)`
+选择最近 segment，再在 tap/endcap 间的自由区间内做容量约束的一维前向/后向压紧；
+最终最大总位移为 999.052 µm（x 997.882 µm、y 548.202 µm），平均 7.393 µm，
+16 个 PE 宏仍保持零位移。机器门禁逐个核对 site 对齐、segment 包含和单元互不
+重叠，并逐段核对 row 不穿越宏。CTS 新增的 4,727 个非固定缓冲采用同一类构造式
+合法化并避开全部 880,129 个固定标准单元/tap；最大移动 3,489.552 µm，小于由
+7,731.275 µm PE 宏半跨度导出的 3,865.6375 µm 门禁。run211 保存 row、seed、
+precheck、legal、CTS-seed 和 post-CTS 检查点及完整计数，而不是只检查输出文件存在。
 
 全局路由的资源边界同样显式留证。exact-commit OpenROAD 的 tile24/101× 方案在
 运行 529.333 分钟、RSS 212.149 GiB 后，于宿主机 `MemAvailable=21.994 GiB`
@@ -244,6 +252,33 @@ resource/demand、wirelength、vias 和 routed-net 数，供结果与失败尝�
 同一判据已向下应用到 full/reduced lane、RF、FU 和 PE 五级物理结果；现有五级
 日志均为 `stdCellPinNoAp=0`、`macroNoAp=0`、`DRT-0073=0`，并在子宏 manifest
 中逐级保存，因而递归硬宏内部的 pin access 也不是仅凭零 DRC 推断。
+
+第二个 tile48 尝试使用 5 µm 保守栅格抽象，把总可用资源从 774,122,596 提升到
+2,389,586,136（3.09×），并把 overflow 从 222,119,840 降到 87,592,576
+（下降 60.57%），但仍有至少 1,000 条 `GRT-0026`。该尝试揭示瓶颈已从宏 OBS
+过度阻塞转移到标准单元合法化：旧自定义合法化仅保留 128 条全宽行，并把每行
+单元均匀铺满整个芯片，导致相对 GPL 的最大位移达到 22.37 mm；缺失路由集中在
+packet/route state 本地总线。修正版改用 640 条行并按原 GPL x 坐标就近放置，
+但仅增加“全宽行”仍会丢失四列 PE 宏之间的纵向通道，预合法化最大桶仍有
+539,260 sites，并在 row 243 耗尽空间。最终修正版从 640 个物理 y 行中保留每个
+y 上由宏切分出的全部 row segment，再按原 `(x,y)` 选择最近 segment；机器门禁
+初步抽样得到 2,932 个 segment，最大预桶降到 136,404 sites，但 439 个窄纵向
+segment 仍需溢出，说明 640 个 y 行的抽样仍过粗。保留全部 24,705 个物理行与
+113,121 个 segment 可把最大预桶降到 13,347 且无需溢出，但 Tcl/OpenDB 分桶在
+约 105 GiB RSS 后被系统终止。4,096 行版本得到 18,752 个 segment，只有 12 个
+窄 segment 超过 75% 目标，但在修复 MX origin 和跨 segment 区间裁剪后必须拒绝
+穿越宏的 x spill。最终版本增至 8,192 个物理 y 行和 37,504 个 segment，按原
+`(x,y)` 同时比较最近纵向 segment 与最近全宽横向通道；约 4.2 µm 的 y 采样间距
+远小于 1 mm 位移门禁，同时仍显著低于 all-segment 的内存边界。
+
+这一阶段还区分了“算法合法”与“工具检查可扩展”两个问题。确定性一维合法化在约
+2 GiB RSS 内完成；随后调用 OpenDP 会在数十秒内涨至约 191 GiB 并以 137 退出，
+而官方 `check_placement` 的全芯片 site bitmap 在安全停止时也已达到约 139 GiB。
+因此最终门禁不调用这两个与 297,949,568 个保留 sites 成比例的结构，而把等价的
+必要条件直接嵌入构造过程：全部 775,745 个单元均 site-aligned、位于实际自由
+segment、互不重叠且避开 tap，全部 37,504 个 row segment 互不重叠且不穿过宏。
+顶层签核也省略会重新构造同一 site bitmap 的 filler placement；tapcell 已保留，
+该选择不改变宏边界、信号路由、DRC、RCX、STA 或 VCD 功耗的证据要求。
 
 功耗活动来自 Transformer-block RTL VCD。为适配综合后网表命名，每一级提取
 相应层级端口 transition，由 OpenSTA 在该级已布线网表中传播；最终 PE 直接由
@@ -317,6 +352,6 @@ bash scripts/bootstrap_rtl_ppa_tools.sh
 /opt/mlx-miniforge/bin/python -m scripts.audit_mlx_riscv_system_goal
 ```
 
-机器可读父结果为 `mlx-system-backends-run210.json`、
-`mlx-array-ppa-run211.json`、`mlx-chipyard-system-run212.json`，最终逐条验收结果为
-`mlx-riscv-system-goal-run213.json`。
+当前已有机器可读父结果 `mlx-system-backends-run210.json` 和
+`mlx-chipyard-system-run212.json`；P3 闭合后生成 `mlx-array-ppa-run211.json`，再由
+`mlx-riscv-system-goal-run213.json` 给出最终逐条验收结果。

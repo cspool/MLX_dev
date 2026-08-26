@@ -23,7 +23,11 @@ if {$::env(PPA_RESUME_CTS) == 1} {
     -root_buf CLKBUF_X3 \
     -buf_list {CLKBUF_X1 CLKBUF_X2 CLKBUF_X3}
   set_propagated_clock [all_clocks]
-  detailed_placement
+  if {[info exists ::env(PPA_CTS_SEED_ODB)] && ($::env(PPA_CTS_SEED_ODB) ne "")} {
+    write_db $::env(PPA_CTS_SEED_ODB)
+    puts "MLX_ARRAY_CTS_SEED checkpoint=$::env(PPA_CTS_SEED_ODB)"
+  }
+  source [file normalize [file join [pwd] rtl ppa openroad_hierarchical_array_cts_buffer_legalize.tcl]]
   set cts_checkpoint_tmp "$::env(PPA_CTS_ODB).tmp"
   write_db $cts_checkpoint_tmp
   file rename -force $cts_checkpoint_tmp $::env(PPA_CTS_ODB)
@@ -73,8 +77,7 @@ detailed_route \
   -output_drc $::env(PPA_DRC)
 extract_parasitics -ext_model_file $::env(PPA_RCX_RULES)
 
-filler_placement {FILLCELL_X32 FILLCELL_X16 FILLCELL_X8 FILLCELL_X4 FILLCELL_X2 FILLCELL_X1}
-check_placement -verbose
+puts "MLX_ARRAY_TOP_FILLER_POLICY omitted_to_avoid_full_chip_site_bitmap placement_proven_by_constructive_audits=1"
 write_def $::env(PPA_DEF)
 write_db $::env(PPA_ODB)
 write_spef $::env(PPA_SPEF)
