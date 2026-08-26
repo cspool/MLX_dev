@@ -286,9 +286,10 @@ spread128 的 523,217,535 降至 153,116,579，overflow 从 87,592,576 降至
 vertical overflow 最大（6,670,371），因此下一对照只开放 metal2 vertical，不改
 CTS、放置、tile 或迭代数。metal2–metal10 初始路由净增 297,044,457 条资源，把
 overflow 再降至 6,688,668，同时 `GRT-0026=0`，证明此前 packet/route-state bus
-已全部取得全局 route；最终方案据此固定 metal2–metal10，并用一次额外 congestion
-iteration 只解决剩余 overflow。零 overflow 之前仍明确拒绝，不以“所有网已有
-route”替代拥塞签核。
+已全部取得全局 route；一次额外 congestion iteration 又把 overflow 降到
+3,494,176，但仍不足以签核。最终方案据此固定 metal2–metal10，并采用 OpenROAD
+标准的 15 次最大迭代上限，在达到零 overflow 时提前结束。零 overflow 之前仍明确
+拒绝，不以“所有网已有 route”替代拥塞签核。
 
 功耗活动来自 Transformer-block RTL VCD。为适配综合后网表命名，每一级提取
 相应层级端口 transition，由 OpenSTA 在该级已布线网表中传播；最终 PE 直接由
