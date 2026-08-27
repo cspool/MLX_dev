@@ -82,8 +82,8 @@ component_placement:
       droute_end_iter: 50
       skip_initial_place: false
 hierarchical_top_placement:
-  flow_tag: compact-v6-segment8192
-  utilization_percent: 80
+  flow_tag: compact-v7-u60-segment8192
+  utilization_percent: 60
   density: 0.05
   aspect_ratio: 1.0
   bin_grid_count: 512
@@ -138,6 +138,20 @@ hierarchical_top_placement:
     reserved_site_capacity: 297949568
     estimated_required_sites: 2884802
     capacity_ratio: 103.2825
+  planned_floorplan_geometry:
+    pe_macro_width_um: 7731.275
+    pe_macro_height_um: 7731.275
+    expected_horizontal_channel_um: 1802.951
+    expected_vertical_channel_um: 1802.506
+    expected_core_width_um: 39939.855
+    expected_core_height_um: 39937.627
+    expected_die_width_um: 39979.855
+    expected_die_height_um: 39977.627
+    expected_die_area_mm2: 1598.300
+    expected_tile48_grid: [5950, 5950]
+    expected_tile48_gcells: 35402500
+    expected_grid_growth_vs_u80: 1.333
+    status: planned_must_be_replaced_by_measured_v7_geometry
   skip_initial_place: false
 hierarchical_top_resource_attempt:
   utilization_percent: 70
@@ -199,6 +213,7 @@ hierarchical_top_route_resource_plan:
   grid_pitches_in_tile: 48
   max_2d_edge_usage_multiplier: 101
   verbose: true
+  congestion_report_iter_step: 1
   route_threads: 1
   malloc_arenas: 2
   temporary_swap_gib: 64
@@ -588,7 +603,8 @@ hierarchical_top_local8192_final_legalization:
   evidence:
     log: artifacts/environment/h206/hierarchical_4x4/mlx-array-4x4-hierarchical-compact-v6-segment8192-channel-legalize.log
     checkpoint: artifacts/environment/h206/hierarchical_4x4/mlx-array-4x4-hierarchical-compact-v6-segment8192-channel-legal.odb
-  result_consumed_as_final_ppa: true
+  result_consumed_as_final_ppa: false
+  superseded_by: compact-v7-u60-segment8192
 hierarchical_top_local8192_final_cts_buffer_legalization:
   cts_buffers: 4727
   fixed_standard_and_tap_cells: 880129
@@ -607,7 +623,8 @@ hierarchical_top_local8192_final_cts_buffer_legalization:
     log: artifacts/environment/h206/hierarchical_4x4/mlx-array-4x4-hierarchical-compact-v6-segment8192-cts.log
     seed_checkpoint: artifacts/environment/h206/hierarchical_4x4/mlx-array-4x4-hierarchical-compact-v6-segment8192-cts-seed.odb
     checkpoint: artifacts/environment/h206/hierarchical_4x4/mlx-array-4x4-hierarchical-compact-v6-segment8192-post-cts.odb
-  result_consumed_as_final_ppa: true
+  result_consumed_as_final_ppa: false
+  superseded_by: compact-v7-u60-segment8192
 hierarchical_top_tile48_local8192_metal3_iter0_attempt:
   signal_layers: metal3-metal10
   clock_layers: metal5-metal10
@@ -726,6 +743,33 @@ hierarchical_top_tile48_local8192_metal2_iter1_attempt:
     global_route_log: artifacts/environment/h206/hierarchical_4x4/mlx-array-4x4-hierarchical-compact-v6-segment8192-metal2-iter1-overflow-route.log
     global_route_checkpoint: artifacts/environment/h206/hierarchical_4x4/mlx-array-4x4-hierarchical-compact-v6-segment8192-metal2-iter1-overflow-global-route.odb
     guide: artifacts/environment/h206/hierarchical_4x4/mlx-array-4x4-hierarchical-compact-v6-segment8192-metal2-iter1-overflow-routed.guide
+  result_consumed_as_final_ppa: false
+hierarchical_top_tile48_local8192_metal2_iter15_u80_attempt:
+  flow_tag: compact-v6-segment8192
+  utilization_percent: 80
+  signal_layers: metal2-metal10
+  clock_layers: metal5-metal10
+  grid_pitches_in_tile: 48
+  max_2d_edge_usage_multiplier: 101
+  congestion_iterations: 15
+  elapsed_minutes_at_stop: 2208.1
+  observed_rss_gib: 77.14
+  host_available_memory_gib_at_stop: 155.8
+  final_congestion_report_present: false
+  global_route_completion_marker_present: false
+  guide_present: false
+  global_route_checkpoint_present: false
+  status: stopped_after_impractical_nonreporting_runtime_before_checkpoint
+  diagnosis:
+    - exact_commit_loop_was_inside_a_finite_maximum_of_15_maze_reroutes
+    - late_maze_search_expansion_produced_no_observable_iteration_progress
+    - stable_rss_and_full_cpu_ruled_out_memory_growth_or_io_wait
+    - no_partial_route_artifact_can_be_consumed_as_final_ppa
+    - next_attempt_reduces_top_utilization_to_60_percent
+    - expected_pe_channel_width_increases_from_0_733mm_to_1_803mm
+    - next_attempt_enables_per_iteration_congestion_reports
+  evidence:
+    global_route_log: artifacts/environment/h206/hierarchical_4x4/mlx-array-4x4-hierarchical-compact-v6-segment8192-route.log
   result_consumed_as_final_ppa: false
 flat_physical_attempt:
   status: stopped_at_resource_safety_boundary

@@ -1,6 +1,6 @@
 # MLX + RISC-V 系统协同仿真进度报告
 
-更新日期：2026-08-26
+更新日期：2026-08-27
 
 ## 结论
 
@@ -9,7 +9,9 @@
 查询 MLX；同一空间程序和数据可选择独立的架构周期模型或可执行的真实 4×4 PE
 阵列 RTL；输入/输出经 HellaCache 请求完成串行 DMA；四个负载均与软件 FP16
 golden 逐位一致。P3 的真实 4×4 顶层已完成分层综合、宏抽象、GPL、标准单元
-合法化和 CTS，当前正在取得零 overflow 的最终 GRT/DRT、STA 与功耗证据；因此
+合法化和 CTS。80% 顶层的 15 轮 GRT 在持续 36 小时 48 分钟仍未返回任何逐轮
+报告或检查点后停止；当前改用 60% 顶层重新执行 GPL、合法化、CTS 和带逐轮报告
+的 GRT，以取得零 overflow 的最终 DRT、STA 与功耗证据。因此
 `artifacts/results/mlx-array-ppa-run211.json` 和最终
 `artifacts/results/mlx-riscv-system-goal-run213.json` 尚未生成，不能提前声明完成。
 
@@ -290,6 +292,16 @@ overflow 再降至 6,688,668，同时 `GRT-0026=0`，证明此前 packet/route-s
 3,494,176，但仍不足以签核。最终方案据此固定 metal2–metal10，并采用 OpenROAD
 标准的 15 次最大迭代上限，在达到零 overflow 时提前结束。零 overflow 之前仍明确
 拒绝，不以“所有网已有 route”替代拥塞签核。
+
+80% 顶层的该次 15 轮尝试随后持续 2,208.1 分钟，OpenROAD 始终保持约 77.14 GiB
+RSS 和单核满载，但没有输出逐轮拥塞报告，也未写出 guide、GRT ODB 或完成标记。
+固定 commit 的循环本身有 15 轮硬上限，但后期扩大的 maze 搜索区使单轮代价不再
+接近首轮的 65.8 分钟；在运行已明显不具工程可用性后停止，并明确保留为无最终
+overflow 的失败尝试。新候选把顶层利用率从 80% 降到 60%，预计把相邻 PE 通道从
+约 0.733 mm 扩到约 1.803 mm；对应 die 约从 34.63 mm 方形增至 39.98 mm 方形，
+tile48 GCell 约增加 33.3%。新 flow 使用独立的
+`compact-v7-u60-segment8192` 文件名，先取得 iter0 基线，再运行最终 15 轮，并把
+每轮 congestion report 写入独立证据文件，避免再次只能以进程存活推断进度。
 
 功耗活动来自 Transformer-block RTL VCD。为适配综合后网表命名，每一级提取
 相应层级端口 transition，由 OpenSTA 在该级已布线网表中传播；最终 PE 直接由

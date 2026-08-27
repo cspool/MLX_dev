@@ -664,7 +664,17 @@ def main() -> int:
     parser.add_argument("--reuse-pe-physical", action="store_true")
     parser.add_argument("--reuse-top-synthesis", action="store_true")
     parser.add_argument("--reuse-top-physical", action="store_true")
+    parser.add_argument(
+        "--top-grt-iterations",
+        type=int,
+        help=(
+            "override only the executed top-level GRT iteration budget; "
+            "the configured final signoff contract remains unchanged"
+        ),
+    )
     args = parser.parse_args()
+    if args.top_grt_iterations is not None and args.top_grt_iterations < 0:
+        parser.error("--top-grt-iterations must be non-negative")
     config_path = args.config.resolve()
     config = yaml.safe_load(config_path.read_text())
     technology = config["technology"]
@@ -944,7 +954,18 @@ def main() -> int:
     top_channel_log = top_root / f"{checkpoint_stem}-channel-legalize.log"
     top_cts_log = top_root / f"{checkpoint_stem}-cts.log"
     top_route_log = top_root / f"{checkpoint_stem}-route.log"
+    top_congestion_report = top_root / f"{checkpoint_stem}-congestion.rpt"
     top_droute_resume_log = top_root / f"{checkpoint_stem}-droute-resume.log"
+    top_grt_execution_iterations = (
+        args.top_grt_iterations
+        if args.top_grt_iterations is not None
+        else int(
+            top_placement.get(
+                "global_route_congestion_iterations",
+                config["global_route_congestion_iterations"],
+            )
+        )
+    )
     top_environment = common_environment.copy()
     top_environment.update(
         {
@@ -964,10 +985,7 @@ def main() -> int:
                 )
             ),
             "PPA_GRT_CONGESTION_ITERATIONS": str(
-                top_placement.get(
-                    "global_route_congestion_iterations",
-                    config["global_route_congestion_iterations"],
-                )
+                top_grt_execution_iterations
             ),
             "PPA_REPAIR_DESIGN": (
                 "1" if top_placement.get("repair_design") else "0"
@@ -1014,6 +1032,10 @@ def main() -> int:
                 route_plan["critical_nets_percentage"]
             ),
             "PPA_GRT_VERBOSE": "1" if route_plan.get("verbose") else "0",
+            "PPA_GRT_CONGESTION_REPORT_FILE": str(top_congestion_report),
+            "PPA_GRT_CONGESTION_REPORT_ITER_STEP": str(
+                route_plan.get("congestion_report_iter_step", 0)
+            ),
             "PPA_LAYER_CAPACITY_ADJUSTMENTS": " ".join(
                 f"{layer} {adjustment}"
                 for layer, adjustment in route_plan[
@@ -1593,6 +1615,10 @@ def main() -> int:
             for item in [*PE_RTL, "rtl/mlx/mlx_array_4x4.sv"]
         },
     }
+    if top_congestion_report.is_file():
+        files["top_global_route_congestion_report"] = artifact(
+            top_congestion_report
+        )
     for paths in (pe_phys, top_phys):
         for name, path in paths.items():
             if path.is_file():

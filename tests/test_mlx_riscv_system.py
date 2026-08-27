@@ -206,9 +206,17 @@ def test_ppa_scope_is_real_array_and_unfitted() -> None:
     )
     assert abstraction["preserve_pin_geometry"] is True
     assert len(abstraction["routing_layers"]) == 10
-    macro_track = config["hierarchical_top_placement"][
-        "macro_origin_track_alignment"
-    ]
+    top_placement = config["hierarchical_top_placement"]
+    assert top_placement["flow_tag"] == "compact-v7-u60-segment8192"
+    assert top_placement["utilization_percent"] == 60
+    planned_geometry = top_placement["planned_floorplan_geometry"]
+    assert planned_geometry["expected_horizontal_channel_um"] > 1800
+    assert planned_geometry["expected_vertical_channel_um"] > 1800
+    assert planned_geometry["expected_grid_growth_vs_u80"] == 1.333
+    assert planned_geometry["status"] == (
+        "planned_must_be_replaced_by_measured_v7_geometry"
+    )
+    macro_track = top_placement["macro_origin_track_alignment"]
     assert macro_track["grid_dbu"] == math.lcm(
         *macro_track["routing_pitch_dbu"].values()
     )
@@ -216,9 +224,7 @@ def test_ppa_scope_is_real_array_and_unfitted() -> None:
         macro_track["grid_dbu"] / macro_track["dbu_per_micron"]
     )
     assert macro_track["required_macro_instances"] == 16
-    capacity = config["hierarchical_top_placement"][
-        "detailed_placement_capacity_basis"
-    ]
+    capacity = top_placement["detailed_placement_capacity_basis"]
     assert capacity["reserved_site_capacity"] > 8 * capacity["estimated_required_sites"]
     route_plan = config["hierarchical_top_route_resource_plan"]
     assert route_plan["routing_layers"]["signal"] == "metal2-metal10"
@@ -227,7 +233,13 @@ def test_ppa_scope_is_real_array_and_unfitted() -> None:
     assert route_plan["grid_pitches_in_tile"] == 48
     assert route_plan["max_2d_edge_usage_multiplier"] == 101
     assert route_plan["verbose"] is True
+    assert route_plan["congestion_report_iter_step"] == 1
     assert route_plan["stop_after_global_route"] is True
+    post_legal_flow = (
+        ROOT / "rtl/ppa/openroad_hierarchical_array_post_legal_flow.tcl"
+    ).read_text()
+    assert "-congestion_report_file" in post_legal_flow
+    assert "-congestion_report_iter_step" in post_legal_flow
     assert route_plan["fast_route_edge_usage_contract"]["observed_usage"] == 2503
     patch = (ROOT / route_plan["global_route_patch"]).read_text()
     assert "pitches_in_tile_ = 15" in patch

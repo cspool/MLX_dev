@@ -56,6 +56,12 @@ set grt_args [list \
   -congestion_iterations $::env(PPA_GRT_CONGESTION_ITERATIONS) \
   -critical_nets_percentage $::env(PPA_CRITICAL_NETS_PERCENTAGE) \
   -guide_file $::env(PPA_GUIDE)]
+if {[info exists ::env(PPA_GRT_CONGESTION_REPORT_ITER_STEP)] &&
+    ($::env(PPA_GRT_CONGESTION_REPORT_ITER_STEP) > 0)} {
+  lappend grt_args \
+    -congestion_report_file $::env(PPA_GRT_CONGESTION_REPORT_FILE) \
+    -congestion_report_iter_step $::env(PPA_GRT_CONGESTION_REPORT_ITER_STEP)
+}
 if {$::env(PPA_GRT_ALLOW_CONGESTION) == 1} {
   lappend grt_args -allow_congestion
 }
