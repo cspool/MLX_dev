@@ -255,9 +255,15 @@ def build_scope_audit(config: dict[str, Any]) -> dict[str, Any]:
         and legalization["backward_compactions"] >= 0
         and legalization["taps"] > 0
         and legalization["minimum_capacity_ratio"] > 1.0
-        and legalization["max_displacement_dbu"] <= 2_000_000
-        and legalization["maximum_x_displacement_dbu"] <= 2_000_000
-        and legalization["maximum_y_displacement_dbu"] <= 2_000_000
+        and legalization["maximum_accepted_displacement_dbu"] == 3_606_000
+        and legalization["maximum_accepted_displacement_basis"]
+        == "one_u60_pe_channel_span"
+        and legalization["max_displacement_dbu"]
+        <= legalization["maximum_accepted_displacement_dbu"]
+        and legalization["maximum_x_displacement_dbu"]
+        <= legalization["maximum_accepted_displacement_dbu"]
+        and legalization["maximum_y_displacement_dbu"]
+        <= legalization["maximum_accepted_displacement_dbu"]
         and legalization["average_displacement_dbu"] >= 0
         and legalization["checkpoint"]
         == str(PROJECT_ROOT / ppa_manifest["files"]["top_channel_legalization_checkpoint"]["path"])

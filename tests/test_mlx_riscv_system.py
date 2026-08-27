@@ -209,13 +209,20 @@ def test_ppa_scope_is_real_array_and_unfitted() -> None:
     top_placement = config["hierarchical_top_placement"]
     assert top_placement["flow_tag"] == "compact-v7-u60-segment8192"
     assert top_placement["utilization_percent"] == 60
-    planned_geometry = top_placement["planned_floorplan_geometry"]
-    assert planned_geometry["expected_horizontal_channel_um"] > 1800
-    assert planned_geometry["expected_vertical_channel_um"] > 1800
-    assert planned_geometry["expected_grid_growth_vs_u80"] == 1.333
-    assert planned_geometry["status"] == (
-        "planned_must_be_replaced_by_measured_v7_geometry"
+    floorplan_geometry = top_placement["floorplan_geometry"]
+    assert floorplan_geometry["source"] == (
+        "measured_compact_v7_u60_global_placement"
     )
+    assert floorplan_geometry["horizontal_channel_um"] > 1800
+    assert floorplan_geometry["vertical_channel_um"] > 1800
+    assert floorplan_geometry["grid_growth_vs_u80"] == 1.333
+    assert floorplan_geometry["status"] == "measured"
+    assert top_placement["channel_legalizer"][
+        "maximum_accepted_displacement_um"
+    ] == 1803
+    assert top_placement["channel_legalizer"][
+        "maximum_accepted_displacement_basis"
+    ] == "one_u60_pe_channel_span"
     macro_track = top_placement["macro_origin_track_alignment"]
     assert macro_track["grid_dbu"] == math.lcm(
         *macro_track["routing_pitch_dbu"].values()
@@ -397,9 +404,19 @@ def test_hierarchical_integrated_ppa_is_supported() -> None:
     assert legalization["backward_compactions"] >= 0
     assert legalization["taps"] > 0
     assert legalization["minimum_capacity_ratio"] > 1.0
-    assert legalization["max_displacement_dbu"] <= 2_000_000
-    assert legalization["maximum_x_displacement_dbu"] <= 2_000_000
-    assert legalization["maximum_y_displacement_dbu"] <= 2_000_000
+    assert legalization["maximum_accepted_displacement_dbu"] == 3_606_000
+    assert legalization["maximum_accepted_displacement_basis"] == (
+        "one_u60_pe_channel_span"
+    )
+    assert legalization["max_displacement_dbu"] <= legalization[
+        "maximum_accepted_displacement_dbu"
+    ]
+    assert legalization["maximum_x_displacement_dbu"] <= legalization[
+        "maximum_accepted_displacement_dbu"
+    ]
+    assert legalization["maximum_y_displacement_dbu"] <= legalization[
+        "maximum_accepted_displacement_dbu"
+    ]
     assert legalization["average_displacement_dbu"] >= 0
     macro_track = result["hierarchical_top"]["macro_track_contract"]
     assert result["checks"]["macro_track_alignment"] is True

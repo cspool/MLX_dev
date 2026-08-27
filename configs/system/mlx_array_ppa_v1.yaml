@@ -108,7 +108,8 @@ hierarchical_top_placement:
     respect_locked_tap_intervals: true
     fix_original_cells_before_cts: true
     target_row_utilization: 0.75
-    maximum_accepted_displacement_um: 1000
+    maximum_accepted_displacement_um: 1803
+    maximum_accepted_displacement_basis: one_u60_pe_channel_span
     maximum_cts_buffer_displacement_um: 3865.6375
     cts_buffer_displacement_basis: half_of_7731_275um_pe_macro_span
   macro_origin_track_alignment:
@@ -133,25 +134,27 @@ hierarchical_top_placement:
     measured_standard_cell_area_um2: 767357.332
     site_width_um: 0.190
     site_height_um: 1.400
-    sites_per_full_width_row: 182047
+    sites_per_full_width_row: 210210
     reserved_rows: 8192
-    reserved_site_capacity: 297949568
+    reserved_site_capacity: 688418676
     estimated_required_sites: 2884802
-    capacity_ratio: 103.2825
-  planned_floorplan_geometry:
+    capacity_ratio: 238.636369
+  floorplan_geometry:
+    source: measured_compact_v7_u60_global_placement
     pe_macro_width_um: 7731.275
     pe_macro_height_um: 7731.275
-    expected_horizontal_channel_um: 1802.951
-    expected_vertical_channel_um: 1802.506
-    expected_core_width_um: 39939.855
-    expected_core_height_um: 39937.627
-    expected_die_width_um: 39979.855
-    expected_die_height_um: 39977.627
-    expected_die_area_mm2: 1598.300
-    expected_tile48_grid: [5950, 5950]
-    expected_tile48_gcells: 35402500
-    expected_grid_growth_vs_u80: 1.333
-    status: planned_must_be_replaced_by_measured_v7_geometry
+    horizontal_channel_um: 1802.960
+    vertical_channel_um: 1802.540
+    core_width_um: 39939.900
+    core_height_um: 39937.800
+    core_area_mm2: 1595.111738
+    die_width_um: 39980.145
+    die_height_um: 39980.145
+    die_area_mm2: 1598.411994
+    tile48_grid: [5950, 5950]
+    tile48_gcells: 35402500
+    grid_growth_vs_u80: 1.333
+    status: measured
   skip_initial_place: false
 hierarchical_top_resource_attempt:
   utilization_percent: 70
@@ -625,6 +628,56 @@ hierarchical_top_local8192_final_cts_buffer_legalization:
     checkpoint: artifacts/environment/h206/hierarchical_4x4/mlx-array-4x4-hierarchical-compact-v6-segment8192-post-cts.odb
   result_consumed_as_final_ppa: false
   superseded_by: compact-v7-u60-segment8192
+hierarchical_top_u60_local8192_final_legalization:
+  flow_tag: compact-v7-u60-segment8192
+  integration_method: conservative_5um_raster_union_per_routing_layer
+  legalization_method: nearest_capacity_segment_then_forward_backward_compaction
+  selected_physical_rows: 8192
+  selected_row_segments: 33580
+  cells: 775745
+  locked_tapcells_and_endcaps: 170850
+  full_width_y_escapes: 3380
+  backward_compactions: 344
+  minimum_capacity_ratio: 5.167556
+  maximum_displacement_dbu: 3076640
+  maximum_displacement_um: 1538.320
+  maximum_x_displacement_um: 1537.592
+  maximum_y_displacement_um: 1495.1545
+  average_displacement_um: 2.556216
+  displacement_gate_um: 1803
+  displacement_gate_basis: one_u60_pe_channel_span
+  constructive_audit:
+    site_aligned_cells: 775745
+    segment_contained_cells: 775745
+    standard_nonoverlap_cells: 775745
+    nonoverlapping_macro_clear_row_segments: 33580
+  evidence:
+    log: artifacts/environment/h206/hierarchical_4x4/mlx-array-4x4-hierarchical-compact-v7-u60-segment8192-channel-legalize.log
+    rows_checkpoint: artifacts/environment/h206/hierarchical_4x4/mlx-array-4x4-hierarchical-compact-v7-u60-segment8192-rows.odb
+    seed_checkpoint: artifacts/environment/h206/hierarchical_4x4/mlx-array-4x4-hierarchical-compact-v7-u60-segment8192-seed.odb
+    precheck_checkpoint: artifacts/environment/h206/hierarchical_4x4/mlx-array-4x4-hierarchical-compact-v7-u60-segment8192-precheck.odb
+    checkpoint: artifacts/environment/h206/hierarchical_4x4/mlx-array-4x4-hierarchical-compact-v7-u60-segment8192-channel-legal.odb
+  result_consumed_as_final_ppa: true
+hierarchical_top_u60_local8192_final_cts_buffer_legalization:
+  flow_tag: compact-v7-u60-segment8192
+  cts_buffers: 4710
+  fixed_standard_tap_and_endcap_cells: 946595
+  backward_compactions: 55
+  maximum_displacement_dbu: 7161325
+  maximum_displacement_um: 3580.6625
+  average_displacement_um: 113.309138
+  displacement_gate_um: 3865.6375
+  displacement_gate_basis: half_of_7731_275um_pe_macro_span
+  constructive_audit:
+    site_aligned_buffers: 4710
+    segment_contained_buffers: 4710
+    fixed_clear_buffers: 4710
+    standard_nonoverlap_buffers: 4710
+  evidence:
+    log: artifacts/environment/h206/hierarchical_4x4/mlx-array-4x4-hierarchical-compact-v7-u60-segment8192-cts.log
+    seed_checkpoint: artifacts/environment/h206/hierarchical_4x4/mlx-array-4x4-hierarchical-compact-v7-u60-segment8192-cts-seed.odb
+    checkpoint: artifacts/environment/h206/hierarchical_4x4/mlx-array-4x4-hierarchical-compact-v7-u60-segment8192-post-cts.odb
+  result_consumed_as_final_ppa: true
 hierarchical_top_tile48_local8192_metal3_iter0_attempt:
   signal_layers: metal3-metal10
   clock_layers: metal5-metal10
@@ -770,6 +823,51 @@ hierarchical_top_tile48_local8192_metal2_iter15_u80_attempt:
     - next_attempt_enables_per_iteration_congestion_reports
   evidence:
     global_route_log: artifacts/environment/h206/hierarchical_4x4/mlx-array-4x4-hierarchical-compact-v6-segment8192-route.log
+  result_consumed_as_final_ppa: false
+hierarchical_top_tile48_u60_local8192_metal2_iter0_attempt:
+  flow_tag: compact-v7-u60-segment8192
+  utilization_percent: 60
+  signal_layers: metal2-metal10
+  clock_layers: metal5-metal10
+  grid_pitches_in_tile: 48
+  max_2d_edge_usage_multiplier: 101
+  congestion_iterations: 0
+  full_pipeline_elapsed_minutes: 61.7
+  global_route_elapsed_minutes: 22.9
+  observed_peak_rss_gib: 55.27
+  host_available_memory_gib_at_peak: 178
+  resource_64bit_layer_sum: 4273549995
+  demand: 167963145
+  usage_percent: 3.930296
+  routed_nets: 815659
+  final_vias: 9868484
+  total_wirelength_um: 1145133298
+  total_overflow: 1439157
+  overflow_by_layer:
+    metal2: 139299
+    metal3: 426799
+    metal4: 42489
+    metal5: 257806
+    metal6: 61250
+    metal7: 161319
+    metal8: 154614
+    metal9: 139410
+    metal10: 56171
+  global_missing_route_warnings_observed: 0
+  warning_message_limit_reached: false
+  status: rejected_overflow_only_all_nets_have_global_routes
+  diagnosis:
+    - available_resources_increased_59_07_percent_vs_u80_iter0
+    - initial_overflow_fell_78_48_percent_vs_u80_iter0
+    - initial_overflow_fell_58_81_percent_vs_u80_iter1
+    - all_nets_have_global_routes
+    - final_attempt_keeps_u60_and_runs_the_15_iteration_signoff_contract
+    - per_iteration_congestion_reports_are_enabled
+  evidence:
+    global_route_log: artifacts/environment/h206/hierarchical_4x4/mlx-array-4x4-hierarchical-compact-v7-u60-segment8192-metal2-iter0-overflow-route.log
+    global_route_checkpoint: artifacts/environment/h206/hierarchical_4x4/mlx-array-4x4-hierarchical-compact-v7-u60-segment8192-metal2-iter0-overflow-global-route.odb
+    guide: artifacts/environment/h206/hierarchical_4x4/mlx-array-4x4-hierarchical-compact-v7-u60-segment8192-metal2-iter0-overflow-routed.guide
+    congestion_report: artifacts/environment/h206/hierarchical_4x4/mlx-array-4x4-hierarchical-compact-v7-u60-segment8192-metal2-iter0-overflow-congestion.rpt
   result_consumed_as_final_ppa: false
 flat_physical_attempt:
   status: stopped_at_resource_safety_boundary

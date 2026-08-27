@@ -1290,6 +1290,19 @@ def main() -> int:
     channel_legalization = parse_channel_legalization(
         top_channel_log.read_text() if top_channel_log.is_file() else ""
     )
+    channel_legalization["maximum_accepted_displacement_dbu"] = round(
+        float(
+            top_placement["channel_legalizer"][
+                "maximum_accepted_displacement_um"
+            ]
+        )
+        * int(macro_track_contract["dbu_per_micron"])
+    )
+    channel_legalization["maximum_accepted_displacement_basis"] = (
+        top_placement["channel_legalizer"].get(
+            "maximum_accepted_displacement_basis", "configured_absolute_limit"
+        )
+    )
     channel_legalization_valid = (
         channel_legalization["cells"]
         == int(top_synthesis["cell_count"] or 0) - macro_instances
@@ -1339,12 +1352,7 @@ def main() -> int:
         and channel_legalization["checkpoint"] == str(top_legal_checkpoint)
         and channel_legalization["max_displacement_dbu"] is not None
         and int(channel_legalization["max_displacement_dbu"])
-        <= float(
-            top_placement["channel_legalizer"][
-                "maximum_accepted_displacement_um"
-            ]
-        )
-        * int(macro_track_contract["dbu_per_micron"])
+        <= channel_legalization["maximum_accepted_displacement_dbu"]
         and channel_legalization["maximum_x_displacement_dbu"] is not None
         and channel_legalization["maximum_y_displacement_dbu"] is not None
         and channel_legalization["average_displacement_dbu"] is not None
