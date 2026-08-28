@@ -46,7 +46,7 @@ physical_seed:
 pre_cts_repair: false
 post_cts_repair: false
 threads: 16
-global_route_congestion_iterations: 15
+global_route_congestion_iterations: 50
 global_route_allow_congestion: true
 droute_end_iter: 20
 component_placement:
@@ -88,7 +88,7 @@ hierarchical_top_placement:
   aspect_ratio: 1.0
   bin_grid_count: 512
   overflow_target: 0.003
-  global_route_congestion_iterations: 15
+  global_route_congestion_iterations: 50
   repair_design: false
   tapcell_distance_um: 1000
   post_gpl_threads: 1
@@ -207,7 +207,7 @@ hierarchical_top_route_resource_plan:
   detailed_route_openroad: /usr/bin/openroad
   stop_after_global_route: true
   require_zero_global_route_overflow: true
-  congestion_iterations: 15
+  congestion_iterations: 50
   completion_markers:
     global_route: MLX_ARRAY_STOP_AFTER_GRT
     detailed_route: MLX_ARRAY_DROUTE_COMPLETE
@@ -868,6 +868,55 @@ hierarchical_top_tile48_u60_local8192_metal2_iter0_attempt:
     global_route_checkpoint: artifacts/environment/h206/hierarchical_4x4/mlx-array-4x4-hierarchical-compact-v7-u60-segment8192-metal2-iter0-overflow-global-route.odb
     guide: artifacts/environment/h206/hierarchical_4x4/mlx-array-4x4-hierarchical-compact-v7-u60-segment8192-metal2-iter0-overflow-routed.guide
     congestion_report: artifacts/environment/h206/hierarchical_4x4/mlx-array-4x4-hierarchical-compact-v7-u60-segment8192-metal2-iter0-overflow-congestion.rpt
+  result_consumed_as_final_ppa: false
+hierarchical_top_tile48_u60_local8192_metal2_iter15_attempt:
+  flow_tag: compact-v7-u60-segment8192
+  utilization_percent: 60
+  signal_layers: metal2-metal10
+  clock_layers: metal5-metal10
+  grid_pitches_in_tile: 48
+  max_2d_edge_usage_multiplier: 101
+  congestion_iterations: 15
+  global_route_elapsed_minutes: 445.1
+  extra_iterations_elapsed_minutes: 425.8
+  observed_peak_rss_gib: 55.3
+  host_available_memory_gib_at_peak: 176
+  resource_64bit_layer_sum: 4273549995
+  demand: 169778765
+  usage_percent: 3.972781
+  routed_nets: 815659
+  final_vias: 9597362
+  total_wirelength_um: 1157272978
+  total_overflow: 121374
+  overflow_reduction_vs_u60_iter0_percent: 91.566313
+  max_horizontal_overflow_sum: 22
+  max_vertical_overflow_sum: 28
+  overflow_by_layer:
+    metal2: 531
+    metal3: 1264
+    metal4: 9656
+    metal5: 17348
+    metal6: 11560
+    metal7: 22617
+    metal8: 25799
+    metal9: 28109
+    metal10: 4490
+  global_missing_route_warnings_observed: 0
+  warning_message_limit_reached: false
+  status: rejected_low_overflow_after_15_iterations
+  diagnosis:
+    - fifteen_iterations_reduced_u60_initial_overflow_91_57_percent
+    - maximum_per_edge_overflow_fell_to_28
+    - all_nets_remained_globally_routed
+    - fast_route_low_overflow_special_phases_begin_at_iterations_20_35_and_50
+    - final_contract_increases_to_the_exact_commit_default_50_iteration_ceiling
+    - zero_overflow_still_permits_early_exit
+    - exact_commit_materialized_only_the_final_congestion_report_despite_iter_step_1
+  evidence:
+    global_route_log: artifacts/environment/h206/hierarchical_4x4/mlx-array-4x4-hierarchical-compact-v7-u60-segment8192-metal2-iter15-overflow-route.log
+    global_route_checkpoint: artifacts/environment/h206/hierarchical_4x4/mlx-array-4x4-hierarchical-compact-v7-u60-segment8192-metal2-iter15-overflow-global-route.odb
+    guide: artifacts/environment/h206/hierarchical_4x4/mlx-array-4x4-hierarchical-compact-v7-u60-segment8192-metal2-iter15-overflow-routed.guide
+    congestion_report: artifacts/environment/h206/hierarchical_4x4/mlx-array-4x4-hierarchical-compact-v7-u60-segment8192-metal2-iter15-overflow-congestion.rpt
   result_consumed_as_final_ppa: false
 flat_physical_attempt:
   status: stopped_at_resource_safety_boundary

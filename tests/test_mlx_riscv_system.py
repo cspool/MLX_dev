@@ -451,7 +451,7 @@ def test_hierarchical_integrated_ppa_is_supported() -> None:
     assert result["checks"]["global_route_tool_provenance"] is True
     assert route_contract["grid_pitches_in_tile"] == 48
     assert route_contract["max_2d_edge_usage_multiplier"] == 101
-    assert route_contract["congestion_iterations"] == 15
+    assert route_contract["congestion_iterations"] == 50
     assert route_contract["stop_after_global_route"] is True
     assert route_contract["completion_markers"] == {
         "global_route": "MLX_ARRAY_STOP_AFTER_GRT",

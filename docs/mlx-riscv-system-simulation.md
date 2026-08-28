@@ -10,7 +10,7 @@
 阵列 RTL；输入/输出经 HellaCache 请求完成串行 DMA；四个负载均与软件 FP16
 golden 逐位一致。P3 的真实 4×4 顶层已完成分层综合、宏抽象、GPL、标准单元
 合法化和 CTS。80% 顶层的 15 轮 GRT 在持续 36 小时 48 分钟仍未返回任何逐轮
-报告或检查点后停止；当前改用 60% 顶层重新执行 GPL、合法化、CTS 和带逐轮报告
+报告或检查点后停止；当前改用 60% 顶层重新执行 GPL、合法化、CTS 和带拥塞报告
 的 GRT，以取得零 overflow 的最终 DRT、STA 与功耗证据。因此
 `artifacts/results/mlx-array-ppa-run211.json` 和最终
 `artifacts/results/mlx-riscv-system-goal-run213.json` 尚未生成，不能提前声明完成。
@@ -300,8 +300,8 @@ RSS 和单核满载，但没有输出逐轮拥塞报告，也未写出 guide、G
 overflow 的失败尝试。新候选把顶层利用率从 80% 降到 60%，实测相邻 PE 横/纵
 通道从约 0.733 mm 扩到 1.8030/1.8025 mm；die 为
 39.980145 mm × 39.980145 mm，tile48 GCell 为约 35.40 M。新 flow 使用独立的
-`compact-v7-u60-segment8192` 文件名，并把每轮 congestion report 写入独立证据
-文件，避免再次只能以进程存活推断进度。
+`compact-v7-u60-segment8192` 文件名，并请求每轮 congestion report 写入独立证据
+文件；实测固定版本仍只在 GRT 返回时物化最终报告，因此不把该参数误称为实时进度。
 
 60% GPL 在第 210 轮达到 0.002925 overflow。其 8,192 个 y 行保留 33,580 个宏安全
 row segment；775,745 个标准单元全部通过 site 对齐、segment 包含与互不重叠审计。
@@ -311,7 +311,12 @@ row segment；775,745 个标准单元全部通过 site 对齐、segment 包含�
 3,580.663 µm，小于半 PE 跨度门限 3,865.638 µm。iter0 GRT 的 64-bit 总资源从
 2,686,630,593 增到 4,273,549,995（+59.07%），overflow 从 u80 iter0 的
 6,688,668 降到 1,439,157（-78.48%），并保持 `GRT-0026=0`；该基线仍拒绝作为
-签核结果，随后以同一 u60 放置和 CTS 检查点运行最终 15 轮。
+签核结果。随后同一 u60 放置和 CTS 检查点运行 15 轮，把 overflow 再降到
+121,374（相对 u60 iter0 下降 91.57%），最大累计 H/V overflow 降到 22/28，且
+保持 `GRT-0026=0`，但仍未满足零 overflow 门禁。固定 FastRoute 对低 overflow
+设计在第 20、35 和 50 轮包含额外 hard-benchmark/`str_accu` 阶段；15 轮尚未触发
+这些阶段。因此最终合同采用该 exact commit 的默认 50 轮上限，仍在零 overflow 时
+提前退出，不通过放宽拥塞判据进入 DRT。
 
 功耗活动来自 Transformer-block RTL VCD。为适配综合后网表命名，每一级提取
 相应层级端口 transition，由 OpenSTA 在该级已布线网表中传播；最终 PE 直接由
