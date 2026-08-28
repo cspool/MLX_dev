@@ -10,8 +10,10 @@
 阵列 RTL；输入/输出经 HellaCache 请求完成串行 DMA；四个负载均与软件 FP16
 golden 逐位一致。P3 的真实 4×4 顶层已完成分层综合、宏抽象、GPL、标准单元
 合法化和 CTS。80% 顶层的 15 轮 GRT 在持续 36 小时 48 分钟仍未返回任何逐轮
-报告或检查点后停止；当前改用 60% 顶层重新执行 GPL、合法化、CTS 和带拥塞报告
-的 GRT，以取得零 overflow 的最终 DRT、STA 与功耗证据。因此
+报告或检查点后停止；60% 顶层随后完成全部 50 轮，但 3D layer assignment 仍有
+109,507 overflow，因而没有越过 DRT 门禁。当前使用同一 60% 边界与更精细的
+2.5 µm 保守 OBS 栅格重新执行顶层流程，以取得零 overflow 的最终 DRT、STA 与
+功耗证据。因此
 `artifacts/results/mlx-array-ppa-run211.json` 和最终
 `artifacts/results/mlx-riscv-system-goal-run213.json` 尚未生成，不能提前声明完成。
 
@@ -212,10 +214,14 @@ PE/FU shell 完成 PE，最后把 16 个已布线 PE 置入并布线真实 4×4 
 为使 16 宏顶层能在当前主机内存边界内完成集成，顶层使用单独生成的保守压缩 PE
 集成 LEF：`7731.275 µm × 7731.275 µm` 的宏边界和全部 4,578 个原始 pin
 rectangle 保持不变；完整 PE LEF 的 10,030,339 个内部 OBS rectangle 在预留的
-1 µm 边界 pin-access halo 之外按 5 µm 栅格向外量化，再逐层合并相邻占用格，得到
-54,172 个 OBS rectangle。该变换不会遗漏 halo 之外的源 OBS 覆盖，同时把 LEF 从
-460,491,587 bytes 压到 2,529,587 bytes（182.04×）。PE 内部的布线、DRC、STA
-和功耗仍取自完整物理数据库；压缩
+1 µm 边界 pin-access halo 之外向外量化，再逐层合并相邻占用格。v7 的 5 µm
+栅格得到 54,172 个 OBS rectangle，并把 LEF 从 460,491,587 bytes 压到
+2,529,587 bytes（182.04×）；它完成 50 轮后仍暴露 3D 分层容量瓶颈。当前 v8
+改为 2.5 µm 栅格，仍保持 4,578/4,578 个 pin rectangle 可访问，得到 123,117 个
+OBS rectangle 和 5,224,567-byte LEF（88.14×），同时相对 5 µm 版本把各层 OBS
+总面积减少 24.78%，其中 metal2–metal10 分别减少约 32.08%–43.38%。两种变换均
+不会遗漏 halo 之外的源 OBS 覆盖。PE 内部的布线、DRC、STA 和功耗仍取自完整物理
+数据库；压缩
 LEF 只供 4×4 顶层的宏边界、引脚接入和跨宏互连使用，不能解释为对 PE 内部几何
 重新签核。顶层全局放置后，从原始 24,705 个物理 y 行中均匀选择 8,192 行，并保留
 宏切分形成的全部 37,504 个 row segment。775,745 个非宏单元先按 GPL `(x,y)`
@@ -301,7 +307,8 @@ overflow 的失败尝试。新候选把顶层利用率从 80% 降到 60%，实�
 通道从约 0.733 mm 扩到 1.8030/1.8025 mm；die 为
 39.980145 mm × 39.980145 mm，tile48 GCell 为约 35.40 M。新 flow 使用独立的
 `compact-v7-u60-segment8192` 文件名，并请求每轮 congestion report 写入独立证据
-文件；实测固定版本仍只在 GRT 返回时物化最终报告，因此不把该参数误称为实时进度。
+文件；固定版本实际按 `congestion-N.rpt` 写出完成第 `N-1` 轮后的 marker，可用于
+实时轮次与热点诊断，但不能替代最终 3D congestion table。
 
 60% GPL 在第 210 轮达到 0.002925 overflow。其 8,192 个 y 行保留 33,580 个宏安全
 row segment；775,745 个标准单元全部通过 site 对齐、segment 包含与互不重叠审计。
@@ -323,6 +330,14 @@ row segment；775,745 个标准单元全部通过 site 对齐、segment 包含�
 逐轮 marker 文件每个方向最多输出 10,000 条，因此其 marker overflow 之和只用于定位
 与趋势诊断，明确标为不可替代完整 final congestion table 的 aggregate overflow；
 零 overflow 门禁仍只接受最终各层 overflow 求和为零。
+
+50 轮 v7 运行耗时约 852.6 分钟并执行 hard-benchmark、`str_accu(25)` 与
+`str_accu(40)`；最后 2D marker 已从 iter15 的 20,000 条降至 360 条，最大 marker
+overflow 为 1，且没有 `GRT-0026`。然而最终 3D layer assignment 的 overflow 仍为
+109,507，只比 iter15 的 121,374 下降 9.78%；metal4–metal10 仍分别留下
+14,422/16,921/17,324/22,415/11,946/20,732/5,726 overflow。该结果证明继续增加
+同一 5 µm 抽象的 2D maze 迭代不是正确修复路径，因而明确拒绝并切换为上述
+`compact-v8-u60-raster2p5-segment8192` 候选，不放宽零 overflow 门禁。
 
 功耗活动来自 Transformer-block RTL VCD。为适配综合后网表命名，每一级提取
 相应层级端口 transition，由 OpenSTA 在该级已布线网表中传播；最终 PE 直接由

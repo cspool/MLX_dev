@@ -301,25 +301,25 @@ def test_ppa_scope_is_real_array_and_unfitted() -> None:
     assert config["calibration"] == {"applied": False, "coefficients": None}
     abstraction = config["abstract_lef_obstructions"]
     assert abstraction["integration_method"] == (
-        "conservative_5um_raster_union_per_routing_layer"
+        "conservative_2p5um_raster_union_per_routing_layer"
     )
-    assert abstraction["raster_pitch_um"] == 5.0
+    assert abstraction["raster_pitch_um"] == 2.5
     assert abstraction["obstruction_cover"] == (
         "outward_quantized_any_overlap_after_access_halo_clip"
     )
     assert abstraction["preserve_pin_geometry"] is True
     assert len(abstraction["routing_layers"]) == 10
     top_placement = config["hierarchical_top_placement"]
-    assert top_placement["flow_tag"] == "compact-v7-u60-segment8192"
+    assert top_placement["flow_tag"] == "compact-v8-u60-raster2p5-segment8192"
     assert top_placement["utilization_percent"] == 60
     floorplan_geometry = top_placement["floorplan_geometry"]
     assert floorplan_geometry["source"] == (
-        "measured_compact_v7_u60_global_placement"
+        "expected_same_u60_boundary_with_raster2p5_abstraction"
     )
     assert floorplan_geometry["horizontal_channel_um"] > 1800
     assert floorplan_geometry["vertical_channel_um"] > 1800
     assert floorplan_geometry["grid_growth_vs_u80"] == 1.333
-    assert floorplan_geometry["status"] == "measured"
+    assert floorplan_geometry["status"] == "candidate"
     assert top_placement["channel_legalizer"][
         "maximum_accepted_displacement_um"
     ] == 1803
@@ -494,8 +494,8 @@ def test_hierarchical_integrated_ppa_is_supported() -> None:
     assert abstraction["integration_obstruction_rectangles"] < (
         abstraction["source_obstruction_rectangles"]
     )
-    assert abstraction["raster_pitch_um"] == 5.0
-    assert abstraction["compression_ratio"] > 100
+    assert abstraction["raster_pitch_um"] == 2.5
+    assert abstraction["compression_ratio"] > 80
     legalization = result["hierarchical_top"]["channel_legalization"]
     assert legalization["cells"] == (
         result["hierarchical_top"]["synthesis"]["cell_count"]

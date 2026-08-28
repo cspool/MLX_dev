@@ -245,8 +245,8 @@ def build_scope_audit(config: dict[str, Any]) -> dict[str, Any]:
         and abstraction["integration_obstruction_rectangles"]
         < abstraction["source_obstruction_rectangles"]
         and abstraction["integration_obstruction_rectangles"] > 10
-        and abstraction["raster_pitch_um"] == 5.0
-        and abstraction["compression_ratio"] > 100,
+        and abstraction["raster_pitch_um"] == 2.5
+        and abstraction["compression_ratio"] > 80,
         "channel_legalization": ppa["checks"]["channel_legalization"] is True
         and legalization["cells"]
         == ppa["hierarchical_top"]["synthesis"]["cell_count"]
