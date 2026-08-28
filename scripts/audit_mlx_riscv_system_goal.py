@@ -176,6 +176,9 @@ def build_scope_audit(config: dict[str, Any]) -> dict[str, Any]:
     macro_track = ppa["hierarchical_top"]["macro_track_contract"]
     route_connectivity = ppa["hierarchical_top"]["route_connectivity"]
     global_route_metrics = ppa["hierarchical_top"]["global_route_metrics"]
+    global_route_iteration_reports = ppa["hierarchical_top"][
+        "global_route_iteration_reports"
+    ]
     route_tool = ppa["global_route_tool"]
     route_contract = ppa["route_contract"]
     paper_array = next(
@@ -205,7 +208,15 @@ def build_scope_audit(config: dict[str, Any]) -> dict[str, Any]:
         and global_route_metrics["congestion_warning"] is False
         and global_route_metrics["routed_nets"] > 0
         and global_route_metrics["final_vias"] > 0
-        and global_route_metrics["total_wirelength_um"] > 0,
+        and global_route_metrics["total_wirelength_um"] > 0
+        and bool(global_route_iteration_reports)
+        and [item["file_suffix"] for item in global_route_iteration_reports]
+        == sorted(item["file_suffix"] for item in global_route_iteration_reports)
+        and all(
+            item["completed_iteration"] == item["file_suffix"] - 1
+            and qualify(item["report"])["pass"]
+            for item in global_route_iteration_reports
+        ),
         "drc_clean": ppa["checks"]["drc_clean"] is True
         and physical["drc_violations"] == 0,
         "sta_1ghz_and_fmax": ppa["checks"]["timing"] is True

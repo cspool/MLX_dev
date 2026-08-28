@@ -67,6 +67,20 @@ def physical_paths(root: Path, stem: str) -> dict[str, Path]:
     }
 
 
+def congestion_iteration_reports(report: Path) -> list[tuple[int, Path]]:
+    """Return FastRoute's suffixed per-iteration reports in numeric order."""
+
+    pattern = re.compile(
+        rf"^{re.escape(report.stem)}-(\d+){re.escape(report.suffix)}$"
+    )
+    reports: list[tuple[int, Path]] = []
+    for candidate in report.parent.glob(f"{report.stem}-*{report.suffix}"):
+        match = pattern.match(candidate.name)
+        if match:
+            reports.append((int(match.group(1)), candidate))
+    return sorted(reports)
+
+
 def output_check(paths: dict[str, Path]) -> bool:
     return all(path.is_file() for key, path in paths.items() if key != "log") and all(
         path.stat().st_size > 0
@@ -1209,6 +1223,10 @@ def main() -> int:
                         route_environment["PPA_STOP_AFTER_GRT"] = (
                             "1" if route_plan["stop_after_global_route"] else "0"
                         )
+                        for _, iteration_report in congestion_iteration_reports(
+                            top_congestion_report
+                        ):
+                            iteration_report.unlink()
                         top_physical_rc = run_to_log(
                             [
                                 str(global_route_openroad),
@@ -1569,6 +1587,15 @@ def main() -> int:
         "global_route_tool_provenance": route_tool_valid,
     }
 
+    global_route_iteration_reports = [
+        {
+            "completed_iteration": file_suffix - 1,
+            "file_suffix": file_suffix,
+            "report": artifact(path),
+        }
+        for file_suffix, path in congestion_iteration_reports(top_congestion_report)
+    ]
+
     files: dict[str, Any] = {
         "config": artifact(config_path),
         "liberty": artifact(liberty),
@@ -1623,6 +1650,10 @@ def main() -> int:
             for item in [*PE_RTL, "rtl/mlx/mlx_array_4x4.sv"]
         },
     }
+    if global_route_iteration_reports:
+        files["top_global_route_congestion_iteration_reports"] = (
+            global_route_iteration_reports
+        )
     if top_congestion_report.is_file():
         files["top_global_route_congestion_report"] = artifact(
             top_congestion_report
@@ -1668,6 +1699,7 @@ def main() -> int:
         "macro_track_contract": macro_track_contract,
         "route_connectivity": route_connectivity,
         "global_route_metrics": global_route_metrics,
+        "global_route_iteration_reports": global_route_iteration_reports,
         "route_contract": route_plan,
         "hierarchical_top": {
             "synthesis": top_synthesis,
@@ -1679,6 +1711,7 @@ def main() -> int:
             "macro_track_contract": macro_track_contract,
             "route_connectivity": route_connectivity,
             "global_route_metrics": global_route_metrics,
+            "global_route_iteration_reports": global_route_iteration_reports,
             "route_contract": route_plan,
             "checks": top_checks,
         },
@@ -1716,6 +1749,7 @@ def main() -> int:
             "macro_track_contract": macro_track_contract,
             "route_connectivity": route_connectivity,
             "global_route_metrics": global_route_metrics,
+            "global_route_iteration_reports": global_route_iteration_reports,
             "route_contract": route_plan,
         },
         "physical": physical,

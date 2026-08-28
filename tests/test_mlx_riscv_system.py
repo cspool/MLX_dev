@@ -7,6 +7,7 @@ import yaml
 
 from scripts.run_mlx_hierarchical_ppa import (
     build_compact_macro_lef,
+    congestion_iteration_reports,
     parse_channel_legalization,
     parse_cts_buffer_legalization,
     parse_global_route_metrics,
@@ -74,6 +75,20 @@ END LIBRARY
     assert result["occupied_raster_cells_by_layer"] == {"metal2": 4, "metal3": 1}
     assert result["conservative_obstruction_cover"] is True
     assert result["pin_geometry_preserved"] is True
+
+
+def test_congestion_iteration_reports_use_numeric_suffix_order(tmp_path: Path) -> None:
+    report = tmp_path / "route-congestion.rpt"
+    expected = [
+        (2, tmp_path / "route-congestion-2.rpt"),
+        (10, tmp_path / "route-congestion-10.rpt"),
+    ]
+    for _, path in reversed(expected):
+        path.write_text("iteration report\n")
+    (tmp_path / "route-congestion-not-an-iteration.rpt").write_text("ignored\n")
+    (tmp_path / "other-congestion-3.rpt").write_text("ignored\n")
+
+    assert congestion_iteration_reports(report) == expected
 
 
 def test_channel_legalization_parser_tracks_resumable_hybrid_flow() -> None:
@@ -431,6 +446,17 @@ def test_hierarchical_integrated_ppa_is_supported() -> None:
     assert global_route["congestion_iterations"] == result["route_contract"][
         "congestion_iterations"
     ]
+    iteration_reports = result["hierarchical_top"][
+        "global_route_iteration_reports"
+    ]
+    assert iteration_reports
+    assert [item["file_suffix"] for item in iteration_reports] == sorted(
+        item["file_suffix"] for item in iteration_reports
+    )
+    assert all(
+        item["completed_iteration"] == item["file_suffix"] - 1
+        for item in iteration_reports
+    )
     abstraction = result["hierarchical_top"]["integration_abstraction"]
     assert abstraction["pin_geometry_preserved"] is True
     assert abstraction["conservative_obstruction_cover"] is True

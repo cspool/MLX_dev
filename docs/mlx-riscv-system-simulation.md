@@ -1,6 +1,6 @@
 # MLX + RISC-V 系统协同仿真进度报告
 
-更新日期：2026-08-27
+更新日期：2026-08-28
 
 ## 结论
 
@@ -316,7 +316,10 @@ row segment；775,745 个标准单元全部通过 site 对齐、segment 包含�
 保持 `GRT-0026=0`，但仍未满足零 overflow 门禁。固定 FastRoute 对低 overflow
 设计在第 20、35 和 50 轮包含额外 hard-benchmark/`str_accu` 阶段；15 轮尚未触发
 这些阶段。因此最终合同采用该 exact commit 的默认 50 轮上限，仍在零 overflow 时
-提前退出，不通过放宽拥塞判据进入 DRT。
+提前退出，不通过放宽拥塞判据进入 DRT。`congestion_report_iter_step=1` 实际把
+完成第 `N-1` 轮后的 marker 报告写为 `congestion-N.rpt`；iter15 的 `-2` 至 `-16`
+报告均已确认，其中 `-16` 与归档最终报告 SHA256 完全一致。runner 现在清理同 stem
+旧轮次文件并把数值排序后的逐轮报告及哈希纳入 run211 manifest，避免新旧运行混杂。
 
 功耗活动来自 Transformer-block RTL VCD。为适配综合后网表命名，每一级提取
 相应层级端口 transition，由 OpenSTA 在该级已布线网表中传播；最终 PE 直接由
