@@ -1,11 +1,13 @@
 import hashlib
 import json
 import math
+import os
 from pathlib import Path
 
 import yaml
 
 from scripts.run_mlx_hierarchical_ppa import (
+    all_congestion_iteration_reports,
     build_compact_macro_lef,
     congestion_iteration_reports,
     parse_channel_legalization,
@@ -77,18 +79,22 @@ END LIBRARY
     assert result["pin_geometry_preserved"] is True
 
 
-def test_congestion_iteration_reports_use_numeric_suffix_order(tmp_path: Path) -> None:
+def test_congestion_iteration_reports_reject_stale_suffixes(tmp_path: Path) -> None:
     report = tmp_path / "route-congestion.rpt"
-    expected = [
+    all_reports = [
         (2, tmp_path / "route-congestion-2.rpt"),
+        (3, tmp_path / "route-congestion-3.rpt"),
         (10, tmp_path / "route-congestion-10.rpt"),
     ]
-    for _, path in reversed(expected):
+    for suffix, path in all_reports:
         path.write_text("iteration report\n")
+        mtime_ns = {2: 300, 3: 200, 10: 100}[suffix]
+        os.utime(path, ns=(mtime_ns, mtime_ns))
     (tmp_path / "route-congestion-not-an-iteration.rpt").write_text("ignored\n")
     (tmp_path / "other-congestion-3.rpt").write_text("ignored\n")
 
-    assert congestion_iteration_reports(report) == expected
+    assert all_congestion_iteration_reports(report) == all_reports
+    assert congestion_iteration_reports(report) == all_reports[:1]
 
 
 def test_channel_legalization_parser_tracks_resumable_hybrid_flow() -> None:

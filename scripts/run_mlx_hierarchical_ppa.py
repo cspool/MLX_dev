@@ -67,8 +67,8 @@ def physical_paths(root: Path, stem: str) -> dict[str, Path]:
     }
 
 
-def congestion_iteration_reports(report: Path) -> list[tuple[int, Path]]:
-    """Return FastRoute's suffixed per-iteration reports in numeric order."""
+def all_congestion_iteration_reports(report: Path) -> list[tuple[int, Path]]:
+    """Return every matching FastRoute iteration report in numeric order."""
 
     pattern = re.compile(
         rf"^{re.escape(report.stem)}-(\d+){re.escape(report.suffix)}$"
@@ -79,6 +79,22 @@ def congestion_iteration_reports(report: Path) -> list[tuple[int, Path]]:
         if match:
             reports.append((int(match.group(1)), candidate))
     return sorted(reports)
+
+
+def congestion_iteration_reports(report: Path) -> list[tuple[int, Path]]:
+    """Return the current run's contiguous, timestamp-ordered report prefix."""
+
+    current: list[tuple[int, Path]] = []
+    expected_suffix = 2
+    prior_mtime_ns = -1
+    for suffix, candidate in all_congestion_iteration_reports(report):
+        mtime_ns = candidate.stat().st_mtime_ns
+        if suffix != expected_suffix or mtime_ns < prior_mtime_ns:
+            break
+        current.append((suffix, candidate))
+        expected_suffix += 1
+        prior_mtime_ns = mtime_ns
+    return current
 
 
 def output_check(paths: dict[str, Path]) -> bool:
@@ -1223,7 +1239,7 @@ def main() -> int:
                         route_environment["PPA_STOP_AFTER_GRT"] = (
                             "1" if route_plan["stop_after_global_route"] else "0"
                         )
-                        for _, iteration_report in congestion_iteration_reports(
+                        for _, iteration_report in all_congestion_iteration_reports(
                             top_congestion_report
                         ):
                             iteration_report.unlink()
