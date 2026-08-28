@@ -320,6 +320,9 @@ row segment；775,745 个标准单元全部通过 site 对齐、segment 包含�
 完成第 `N-1` 轮后的 marker 报告写为 `congestion-N.rpt`；iter15 的 `-2` 至 `-16`
 报告均已确认，其中 `-16` 与归档最终报告 SHA256 完全一致。runner 现在清理同 stem
 旧轮次文件并把数值排序后的逐轮报告及哈希纳入 run211 manifest，避免新旧运行混杂。
+逐轮 marker 文件每个方向最多输出 10,000 条，因此其 marker overflow 之和只用于定位
+与趋势诊断，明确标为不可替代完整 final congestion table 的 aggregate overflow；
+零 overflow 门禁仍只接受最终各层 overflow 求和为零。
 
 功耗活动来自 Transformer-block RTL VCD。为适配综合后网表命名，每一级提取
 相应层级端口 transition，由 OpenSTA 在该级已布线网表中传播；最终 PE 直接由

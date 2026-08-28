@@ -215,6 +215,8 @@ def build_scope_audit(config: dict[str, Any]) -> dict[str, Any]:
         and all(
             item["completed_iteration"] == item["file_suffix"] - 1
             and qualify(item["report"])["pass"]
+            and item["marker_metrics"]["markers"] > 0
+            and item["marker_metrics"]["aggregate_overflow_eligible"] is False
             for item in global_route_iteration_reports
         ),
         "drc_clean": ppa["checks"]["drc_clean"] is True

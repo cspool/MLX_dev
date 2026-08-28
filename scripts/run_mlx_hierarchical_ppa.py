@@ -460,6 +460,33 @@ def parse_global_route_metrics(text: str) -> dict[str, Any]:
     }
 
 
+def parse_congestion_marker_report(text: str) -> dict[str, Any]:
+    """Parse capped diagnostic markers without treating them as overflow."""
+
+    horizontal_markers = len(
+        re.findall(r"violation type: Horizontal congestion", text)
+    )
+    vertical_markers = len(re.findall(r"violation type: Vertical congestion", text))
+    entries = [
+        tuple(map(int, match))
+        for match in re.findall(
+            r"comment: capacity:(\d+) usage:(\d+) overflow:(\d+)", text
+        )
+    ]
+    return {
+        "markers": len(entries),
+        "horizontal_markers": horizontal_markers,
+        "vertical_markers": vertical_markers,
+        "reported_marker_overflow_sum": sum(entry[2] for entry in entries),
+        "max_marker_overflow": max((entry[2] for entry in entries), default=0),
+        "zero_capacity_markers": sum(entry[0] == 0 for entry in entries),
+        "direction_marker_limit_reached": (
+            horizontal_markers >= 10_000 or vertical_markers >= 10_000
+        ),
+        "aggregate_overflow_eligible": False,
+    }
+
+
 def build_compact_macro_lef(
     source: Path,
     destination: Path,
@@ -1608,6 +1635,7 @@ def main() -> int:
             "completed_iteration": file_suffix - 1,
             "file_suffix": file_suffix,
             "report": artifact(path),
+            "marker_metrics": parse_congestion_marker_report(path.read_text()),
         }
         for file_suffix, path in congestion_iteration_reports(top_congestion_report)
     ]

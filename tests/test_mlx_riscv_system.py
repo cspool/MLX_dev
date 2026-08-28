@@ -11,6 +11,7 @@ from scripts.run_mlx_hierarchical_ppa import (
     build_compact_macro_lef,
     congestion_iteration_reports,
     parse_channel_legalization,
+    parse_congestion_marker_report,
     parse_cts_buffer_legalization,
     parse_global_route_metrics,
 )
@@ -95,6 +96,26 @@ def test_congestion_iteration_reports_reject_stale_suffixes(tmp_path: Path) -> N
 
     assert all_congestion_iteration_reports(report) == all_reports
     assert congestion_iteration_reports(report) == all_reports[:1]
+
+
+def test_congestion_marker_report_is_diagnostic_not_aggregate() -> None:
+    metrics = parse_congestion_marker_report(
+        """violation type: Horizontal congestion
+\tcomment: capacity:0 usage:2 overflow:2
+violation type: Vertical congestion
+\tcomment: capacity:4 usage:5 overflow:1
+"""
+    )
+    assert metrics == {
+        "markers": 2,
+        "horizontal_markers": 1,
+        "vertical_markers": 1,
+        "reported_marker_overflow_sum": 3,
+        "max_marker_overflow": 2,
+        "zero_capacity_markers": 1,
+        "direction_marker_limit_reached": False,
+        "aggregate_overflow_eligible": False,
+    }
 
 
 def test_channel_legalization_parser_tracks_resumable_hybrid_flow() -> None:
