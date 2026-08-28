@@ -6,6 +6,7 @@ from pathlib import Path
 import yaml
 
 from scripts.run_mlx_hierarchical_ppa import (
+    build_compact_macro_lef,
     parse_channel_legalization,
     parse_cts_buffer_legalization,
     parse_global_route_metrics,
@@ -13,6 +14,66 @@ from scripts.run_mlx_hierarchical_ppa import (
 
 ROOT = Path(__file__).resolve().parents[1]
 OPERATIONS = {"load", "store", "fma", "add", "max", "exp", "div", "shuffle", "xfer", "mul"}
+
+
+def test_compact_macro_lef_preserves_pins_and_outward_covers_obstructions(
+    tmp_path: Path, monkeypatch
+) -> None:
+    monkeypatch.setattr("scripts.run_mlx_hierarchical_ppa.PROJECT_ROOT", tmp_path)
+    source = tmp_path / "source.lef"
+    destination = tmp_path / "compact.lef"
+    prefix = """VERSION 5.8 ;
+MACRO test_macro
+  CLASS BLOCK ;
+  ORIGIN 0 0 ;
+  SIZE 10 BY 10 ;
+  PIN A
+    DIRECTION INPUT ;
+    USE SIGNAL ;
+    PORT
+      LAYER metal2 ;
+      RECT 0 4 1 5 ;
+    END
+  END A
+"""
+    source.write_text(
+        prefix
+        + """  OBS
+    LAYER metal2 ;
+      RECT 2.2 2.2 3.1 3.1 ;
+      RECT 4.2 2.2 4.8 3.1 ;
+    LAYER metal3 ;
+      RECT 7.2 7.2 8.1 8.1 ;
+  END
+END test_macro
+END LIBRARY
+"""
+    )
+
+    result = build_compact_macro_lef(
+        source,
+        destination,
+        {
+            "integration_method": "test_conservative_raster_union",
+            "source_method": "test_source",
+            "integration_inset_um": 1.0,
+            "raster_pitch_um": 2.0,
+            "routing_layers": ["metal2", "metal3"],
+            "preserve_pin_geometry": True,
+        },
+    )
+
+    compact = destination.read_text()
+    assert compact.startswith(prefix)
+    assert "      RECT 1 1 5 5 ;" in compact
+    assert "      RECT 7 7 9 9 ;" in compact
+    assert result["pin_count"] == 1
+    assert result["pin_rectangles"] == result["accessible_pin_rectangles"] == 1
+    assert result["source_obstruction_rectangles"] == 3
+    assert result["integration_obstruction_rectangles"] == 2
+    assert result["occupied_raster_cells_by_layer"] == {"metal2": 4, "metal3": 1}
+    assert result["conservative_obstruction_cover"] is True
+    assert result["pin_geometry_preserved"] is True
 
 
 def test_channel_legalization_parser_tracks_resumable_hybrid_flow() -> None:
