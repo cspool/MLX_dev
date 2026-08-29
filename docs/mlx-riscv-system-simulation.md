@@ -11,9 +11,10 @@
 golden 逐位一致。P3 的真实 4×4 顶层已完成分层综合、宏抽象、GPL、标准单元
 合法化和 CTS。80% 顶层的 15 轮 GRT 在持续 36 小时 48 分钟仍未返回任何逐轮
 报告或检查点后停止；60% 顶层随后完成全部 50 轮，但 3D layer assignment 仍有
-109,507 overflow，因而没有越过 DRT 门禁。当前使用同一 60% 边界与更精细的
-2.5 µm 保守 OBS 栅格重新执行顶层流程，以取得零 overflow 的最终 DRT、STA 与
-功耗证据。因此
+109,507 overflow。2.5 µm 保守 OBS 候选虽然增加 9.12% 资源，最终 3D overflow
+反而为 128,825，因此同样拒绝。当前用较低 overflow 的 5 µm/v7 checkpoint 做隔离
+详细布线探针，直接检验 TritonRoute 能否得到零 DRC 与完整 pin access；通过前不生成
+最终 DRT、STA 与功耗证据。因此
 `artifacts/results/mlx-array-ppa-run211.json` 和最终
 `artifacts/results/mlx-riscv-system-goal-run213.json` 尚未生成，不能提前声明完成。
 
@@ -216,7 +217,7 @@ PE/FU shell 完成 PE，最后把 16 个已布线 PE 置入并布线真实 4×4 
 rectangle 保持不变；完整 PE LEF 的 10,030,339 个内部 OBS rectangle 在预留的
 1 µm 边界 pin-access halo 之外向外量化，再逐层合并相邻占用格。v7 的 5 µm
 栅格得到 54,172 个 OBS rectangle，并把 LEF 从 460,491,587 bytes 压到
-2,529,587 bytes（182.04×）；它完成 50 轮后仍暴露 3D 分层容量瓶颈。当前 v8
+2,529,587 bytes（182.04×）；它完成 50 轮后仍暴露 3D 分层容量瓶颈。第二个 v8
 改为 2.5 µm 栅格，仍保持 4,578/4,578 个 pin rectangle 可访问，得到 123,117 个
 OBS rectangle 和 5,224,567-byte LEF（88.14×），同时相对 5 µm 版本把各层 OBS
 总面积减少 24.78%，其中 metal2–metal10 分别减少约 32.08%–43.38%。两种变换均
@@ -337,7 +338,12 @@ overflow 为 1，且没有 `GRT-0026`。然而最终 3D layer assignment 的 ove
 109,507，只比 iter15 的 121,374 下降 9.78%；metal4–metal10 仍分别留下
 14,422/16,921/17,324/22,415/11,946/20,732/5,726 overflow。该结果证明继续增加
 同一 5 µm 抽象的 2D maze 迭代不是正确修复路径，因而明确拒绝并切换为上述
-`compact-v8-u60-raster2p5-segment8192` 候选，不放宽零 overflow 门禁。
+`compact-v8-u60-raster2p5-segment8192` 候选，不放宽零 overflow 门禁。v8 同样完成
+50 轮；可用资源从 4,273,549,995 增至 4,663,169,850（+9.12%），最终 2D marker
+从 360 降至 343，但 3D overflow 升至 128,825（比 v7 高 17.64%）。因此 v8 也不作为
+最终结果；后续先对较低 overflow 的 v7 checkpoint 运行详细布线探针，只有 DRT
+完成、pin access 完整且 DRC 为零时，才评估是否以详细布线的真实结果取代过度保守的
+GRT 零 overflow 前置门禁。
 
 功耗活动来自 Transformer-block RTL VCD。为适配综合后网表命名，每一级提取
 相应层级端口 transition，由 OpenSTA 在该级已布线网表中传播；最终 PE 直接由
