@@ -487,6 +487,56 @@ def parse_congestion_marker_report(text: str) -> dict[str, Any]:
     }
 
 
+def aggregate_hierarchical_timing(
+    clock_period_ns: float,
+    components: dict[str, dict[str, Any]],
+) -> dict[str, Any]:
+    """Conservatively select the slowest post-route hierarchical component.
+
+    A parent Liberty abstraction does not necessarily expose an internal
+    register-to-register path from a hard child macro to ``report_checks`` at
+    the parent level.  The integrated Fmax must therefore be the worst measured
+    post-route delay across every sequential hierarchy level, not merely the
+    PE shell and array shell reports.
+    """
+
+    candidates: dict[str, dict[str, float]] = {}
+    for name, metrics in components.items():
+        delay = metrics.get("critical_path_delay_ns")
+        if delay is None:
+            continue
+        numeric_delay = float(delay)
+        if not math.isfinite(numeric_delay) or numeric_delay <= 0.0:
+            continue
+        candidates[name] = {
+            "critical_path_delay_ns": numeric_delay,
+            "worst_slack_ns_at_target": clock_period_ns - numeric_delay,
+            "fmax_ghz": 1.0 / numeric_delay,
+        }
+    if not candidates:
+        return {
+            "method": "worst_postroute_delay_across_recursive_hierarchy",
+            "target_clock_period_ns": clock_period_ns,
+            "candidates": {},
+            "critical_path_component": None,
+            "critical_path_delay_ns": None,
+            "worst_slack_ns_at_target": None,
+            "fmax_ghz": None,
+        }
+    critical_path_component = max(
+        candidates,
+        key=lambda name: candidates[name]["critical_path_delay_ns"],
+    )
+    critical = candidates[critical_path_component]
+    return {
+        "method": "worst_postroute_delay_across_recursive_hierarchy",
+        "target_clock_period_ns": clock_period_ns,
+        "candidates": candidates,
+        "critical_path_component": critical_path_component,
+        **critical,
+    }
+
+
 def build_compact_macro_lef(
     source: Path,
     destination: Path,
@@ -1534,9 +1584,15 @@ def main() -> int:
         "method": "recursive hierarchical Yosys/ABC mapped standard-cell sum",
         "flat_crosscheck": flat_synthesis,
     }
-    integrated_delay = max(
-        float(pe_physical["critical_path_delay_ns"]),
-        float(top_physical["critical_path_delay_ns"]),
+    timing_hierarchy = aggregate_hierarchical_timing(
+        float(config["clock_period_ns"]),
+        {
+            "hierarchical_top_shell": top_physical,
+            **{
+                name: submacro_chain[name]["physical"]
+                for name in sorted(required_submacros)
+            },
+        },
     )
     power_names = (
         "internal_power_w",
@@ -1583,15 +1639,18 @@ def main() -> int:
         **combined_power,
         "die_area_um2": die_area,
         "core_area_um2": core_area,
-        "critical_path_delay_ns": integrated_delay,
-        "fmax_ghz": 1.0 / integrated_delay,
-        "worst_slack_ns_at_1ghz": 1.0 - integrated_delay,
+        "critical_path_delay_ns": timing_hierarchy["critical_path_delay_ns"],
+        "fmax_ghz": timing_hierarchy["fmax_ghz"],
+        "worst_slack_ns_at_1ghz": timing_hierarchy[
+            "worst_slack_ns_at_target"
+        ],
         "drc_violations": int(pe_physical["drc_violations"])
         + int(top_physical["drc_violations"]),
         "annotated_pin_activities": int(top_physical["annotated_pin_activities"] or 0)
         + 16 * per_pe_annotated_pins,
         "pe_macro": pe_physical,
         "hierarchical_top": top_physical,
+        "timing_hierarchy": timing_hierarchy,
         "power_hierarchy": power_hierarchy,
         "power_aggregation": "recursive_postroute_transformer_vcd_hierarchy",
     }
@@ -1603,7 +1662,10 @@ def main() -> int:
         and int(flat_synthesis["cell_count"] or 0) > 0,
         "place_route": pe_checks["place_route"] and top_checks["place_route"],
         "drc_clean": pe_checks["drc_clean"] and top_checks["drc_clean"],
-        "timing": pe_checks["timing"] and top_checks["timing"],
+        "timing": pe_checks["timing"]
+        and top_checks["timing"]
+        and timing_hierarchy["critical_path_component"] is not None
+        and float(timing_hierarchy["critical_path_delay_ns"] or 0.0) > 0.0,
         "vcd_power": top_checks["vcd_power"]
         and all(
             int(item["annotated_pin_activities"] or 0) > 0
@@ -1776,7 +1838,7 @@ def main() -> int:
         "exclusions": ["RISC-V host", "CPU caches", "DMA controller", "SPM storage", "DRAM/PHY"],
         "sources": {
             "area": "hierarchical OpenROAD integrated top database plus recursive and flat Yosys cross-checks",
-            "timing": "worst of PE-macro and hierarchical-top post-route OpenROAD/OpenSTA",
+            "timing": "worst post-route OpenROAD/OpenSTA delay across every recursive hard-macro and top-shell level",
             "power": "recursive representative-PE0 post-route Transformer VCD aggregation over top, combined PE/FU shell, RF, and lane macros",
             "calibration": "none",
         },

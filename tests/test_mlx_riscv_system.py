@@ -7,6 +7,7 @@ from pathlib import Path
 import yaml
 
 from scripts.run_mlx_hierarchical_ppa import (
+    aggregate_hierarchical_timing,
     all_congestion_iteration_reports,
     build_compact_macro_lef,
     congestion_iteration_reports,
@@ -18,6 +19,28 @@ from scripts.run_mlx_hierarchical_ppa import (
 
 ROOT = Path(__file__).resolve().parents[1]
 OPERATIONS = {"load", "store", "fma", "add", "max", "exp", "div", "shuffle", "xfer", "mul"}
+
+
+def test_hierarchical_timing_uses_slowest_recursive_component() -> None:
+    timing = aggregate_hierarchical_timing(
+        1.0,
+        {
+            "hierarchical_top_shell": {"critical_path_delay_ns": 1.5},
+            "pe_top": {"critical_path_delay_ns": 3.5},
+            "functional_unit": {"critical_path_delay_ns": 27.5},
+            "combinational_lane": {"critical_path_delay_ns": None},
+        },
+    )
+
+    assert timing["critical_path_component"] == "functional_unit"
+    assert timing["critical_path_delay_ns"] == 27.5
+    assert math.isclose(timing["worst_slack_ns_at_target"], -26.5)
+    assert math.isclose(timing["fmax_ghz"], 1.0 / 27.5)
+    assert set(timing["candidates"]) == {
+        "hierarchical_top_shell",
+        "pe_top",
+        "functional_unit",
+    }
 
 
 def test_compact_macro_lef_preserves_pins_and_outward_covers_obstructions(
@@ -451,6 +474,24 @@ def test_hierarchical_integrated_ppa_is_supported() -> None:
     assert result["physical"]["die_area_um2"] > 0
     assert result["physical"]["fmax_ghz"] > 0
     assert result["physical"]["total_power_w"] > 0
+    timing_hierarchy = result["physical"]["timing_hierarchy"]
+    assert timing_hierarchy["method"] == (
+        "worst_postroute_delay_across_recursive_hierarchy"
+    )
+    assert timing_hierarchy["target_clock_period_ns"] == 1.0
+    assert timing_hierarchy["critical_path_component"] == max(
+        timing_hierarchy["candidates"],
+        key=lambda name: timing_hierarchy["candidates"][name][
+            "critical_path_delay_ns"
+        ],
+    )
+    assert math.isclose(
+        result["physical"]["critical_path_delay_ns"],
+        timing_hierarchy["critical_path_delay_ns"],
+    )
+    assert math.isclose(
+        result["physical"]["fmax_ghz"], timing_hierarchy["fmax_ghz"]
+    )
     assert result["physical"]["power_aggregation"] == (
         "recursive_postroute_transformer_vcd_hierarchy"
     )

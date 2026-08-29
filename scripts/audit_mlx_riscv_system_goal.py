@@ -6,6 +6,7 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
+import math
 import subprocess
 from datetime import datetime, timezone
 from pathlib import Path
@@ -169,6 +170,7 @@ def build_scope_audit(config: dict[str, Any]) -> dict[str, Any]:
     }
 
     physical = ppa["physical"]
+    timing_hierarchy = physical["timing_hierarchy"]
     synthesis = ppa["synthesis"]
     abstraction = ppa["hierarchical_top"]["integration_abstraction"]
     legalization = ppa["hierarchical_top"]["channel_legalization"]
@@ -223,7 +225,28 @@ def build_scope_audit(config: dict[str, Any]) -> dict[str, Any]:
         and physical["drc_violations"] == 0,
         "sta_1ghz_and_fmax": ppa["checks"]["timing"] is True
         and physical["worst_slack_ns_at_1ghz"] is not None
-        and physical["fmax_ghz"] > 0,
+        and physical["fmax_ghz"] > 0
+        and timing_hierarchy["method"]
+        == "worst_postroute_delay_across_recursive_hierarchy"
+        and timing_hierarchy["target_clock_period_ns"] == 1.0
+        and timing_hierarchy["critical_path_component"]
+        in timing_hierarchy["candidates"]
+        and timing_hierarchy["critical_path_component"]
+        == max(
+            timing_hierarchy["candidates"],
+            key=lambda name: timing_hierarchy["candidates"][name][
+                "critical_path_delay_ns"
+            ],
+        )
+        and math.isclose(
+            physical["critical_path_delay_ns"],
+            timing_hierarchy["critical_path_delay_ns"],
+        )
+        and math.isclose(physical["fmax_ghz"], timing_hierarchy["fmax_ghz"])
+        and math.isclose(
+            physical["worst_slack_ns_at_1ghz"],
+            timing_hierarchy["worst_slack_ns_at_target"],
+        ),
         "vcd_dynamic_power": ppa["checks"]["vcd_power"] is True
         and ppa["checks"]["recursive_submacro_evidence"] is True
         and physical["annotated_pin_activities"] > 0
@@ -406,7 +429,7 @@ def build_scope_audit(config: dict[str, Any]) -> dict[str, Any]:
             "area": "hierarchical OpenROAD integrated top database plus recursive and flat Yosys cross-checks",
             "calibration": "none",
             "power": "recursive representative-PE0 post-route Transformer VCD aggregation over top, combined PE/FU shell, RF, and lane macros",
-            "timing": "worst of PE-macro and hierarchical-top post-route OpenROAD/OpenSTA",
+            "timing": "worst post-route OpenROAD/OpenSTA delay across every recursive hard-macro and top-shell level",
         },
         "scope_exclusions": set(ppa["exclusions"])
         == {"RISC-V host", "CPU caches", "DMA controller", "SPM storage", "DRAM/PHY"},

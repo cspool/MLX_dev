@@ -345,6 +345,18 @@ overflow 为 1，且没有 `GRT-0026`。然而最终 3D layer assignment 的 ove
 完成、pin access 完整且 DRC 为零时，才评估是否以详细布线的真实结果取代过度保守的
 GRT 零 overflow 前置门禁。
 
+已完成的递归硬宏 STA 同时证明当前 Nangate45 实现没有达到论文的 1 GHz 目标，
+但这与正在处理的顶层几何拥塞是两个独立问题。完整 PE shell 已详细布线到零 DRC、
+零 pin-access 缺失，其 1 GHz worst slack 为 -2.559961 ns，对应 3.559961 ns
+关键路径和约 0.280902 GHz Fmax；RF 为 -3.400610 ns/4.400610 ns/
+0.227241 GHz。最慢的是 FU 子宏的 -26.829231 ns/27.829231 ns/
+0.035933 GHz。该 FU 路径是 `high_precision_q[4][28]` 输出寄存器的反馈路径，
+长物理连线和大负载导致严重 slew，而不是已识别为 EXP/DIV 组合运算链。当前流程
+关闭 timing repair，顶层 GRT 也把 critical-net percentage 设为零，因此这些时序
+违例不是本次 DRT 热点的直接成因。最终 run211 必须按所有递归硬宏和顶层 shell 的
+post-route STA 取最坏值，不能只取 PE shell 与阵列 shell 而漏掉 FU；若顶层完成后
+仍无法闭合 1 GHz，则按目标合同明确报告实际 Fmax，而不把目标频率当成测量结果。
+
 功耗活动来自 Transformer-block RTL VCD。为适配综合后网表命名，每一级提取
 相应层级端口 transition，由 OpenSTA 在该级已布线网表中传播；最终 PE 直接由
 combined PE/FU shell、一个 RF、8 个 full lane 和 24 个 reduced lane 组成，功耗按
