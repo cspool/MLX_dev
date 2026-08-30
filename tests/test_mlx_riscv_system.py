@@ -469,6 +469,12 @@ def test_distributed_tile_candidate_is_functional_but_not_promoted() -> None:
     assert "module mlx_array_4x4_distributed" in distributed
     assert "route_candidate" in distributed
     assert "mlx_array_pe_tile" in distributed
+    hierarchical_flow = (
+        ROOT / "rtl/ppa/openroad_hierarchical_array_flow.tcl"
+    ).read_text()
+    assert "PPA_TOP" in hierarchical_flow
+    assert "PPA_MACRO_INSTANCE_KIND" in hierarchical_flow
+    assert "GENERATE_TILES\\[%d\\].physical_tile" in hierarchical_flow
 
 
 def test_recursive_submacros_are_routed_and_vcd_powered() -> None:

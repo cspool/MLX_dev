@@ -16,7 +16,11 @@ if {$::env(PPA_RESUME_GPL) == 1} {
   read_liberty $::env(PPA_LIBERTY)
   read_liberty $::env(PPA_PE_LIBERTY)
   read_verilog $::env(PPA_NETLIST)
-  link_design mlx_array_4x4
+  if {[info exists ::env(PPA_TOP)] && ($::env(PPA_TOP) ne "")} {
+    link_design $::env(PPA_TOP)
+  } else {
+    link_design mlx_array_4x4
+  }
 
   create_clock -name clk -period $::env(PPA_CLOCK_PERIOD_NS) [get_ports clk]
   set_input_transition 0.05 [all_inputs]
@@ -44,9 +48,19 @@ set x_min [$core xMin]
 set y_min [$core yMin]
 set core_width [expr {double([$core xMax] - $x_min)}]
 set core_height [expr {double([$core yMax] - $y_min)}]
-set first_pe [$block findInst {GENERATE_PES\[0\].physical_pe}]
+set distributed_tile_top 0
+if {[info exists ::env(PPA_MACRO_INSTANCE_KIND)]
+    && ($::env(PPA_MACRO_INSTANCE_KIND) == "tile")} {
+  set distributed_tile_top 1
+}
+if {$distributed_tile_top} {
+  set first_macro_name {GENERATE_TILES\[0\].physical_tile}
+} else {
+  set first_macro_name {GENERATE_PES\[0\].physical_pe}
+}
+set first_pe [$block findInst $first_macro_name]
 if {$first_pe == "NULL"} {
-  error "missing PE macro instance 0"
+  error "missing array macro instance 0 ($first_macro_name)"
 }
 set master [$first_pe getMaster]
 set macro_width [$master getWidth]
@@ -57,10 +71,14 @@ if {($x_gap <= 0) || ($y_gap <= 0)} {
   error "floorplan cannot fit 4x4 PE macros"
 }
 for {set pe 0} {$pe < 16} {incr pe} {
-  set name [format {GENERATE_PES\[%d\].physical_pe} $pe]
+  if {$distributed_tile_top} {
+    set name [format {GENERATE_TILES\[%d\].physical_tile} $pe]
+  } else {
+    set name [format {GENERATE_PES\[%d\].physical_pe} $pe]
+  }
   set inst [$block findInst $name]
   if {$inst == "NULL"} {
-    error "missing PE macro $name"
+    error "missing array macro $name"
   }
   set column [expr {$pe % 4}]
   set row [expr {$pe / 4}]
