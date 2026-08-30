@@ -371,6 +371,24 @@ hop-consuming router，而不是在阵列顶层建立全局 512-bit 动态选择
 与局部邻接/skip-hop 链路”做成可复用 tile 硬宏层级，消除 RF/FU 出宏回环；不把
 继续降低顶层利用率或增加同一集中式路由迭代作为首选修复。
 
+该修复方向已先实现为与生产顶层并存的 `mlx_array_pe_tile` 和
+`mlx_array_4x4_distributed` 候选，尚未替换 `mlx_array_4x4` 或 run211 合同。tile
+把 PC/状态机、tag 生命周期、RF/FU 写回、SPM 请求和注册 packet buffer 内聚在
+PE 边界内；4×4 顶层只保留共享 SPM 仲裁、固定距离 1/2 的横纵链路仲裁和统计。
+独立 tile 的 load→add→local-xfer→store 测试通过，BSMM、FFT-CMP、SWA 和组合
+Transformer block 也分别以 66/54/94/78 cycles 通过原 FP16 golden，指令计数为
+44/34/25/45。fresh 旧集中式 Icarus 对照在 22 分钟内只完成 PE0 的前三条 load，
+随后没有继续发射；该辅助仿真已停止，不能作为完整周期对照，但确认不能用陈旧的
+run210 二进制替当前源码背书。
+
+以现有 PE 作为 blackbox 的 Nangate45 快速映射显示，单 tile wrapper 含 7,420 个
+非宏 cells、9,793.588 µm² cell area；16-tile 顶层 shell 含 97,260 个非宏 cells、
+101,197.572 µm²。递归合计的非 PE 额外逻辑为 215,980 cells/257,894.980 µm²，
+相对旧集中式 shell 的 775,745 cells/767,357.332 µm² 分别下降 72.16%/66.39%。
+这些是 Yosys/ABC 结构候选结果，不是布局布线后 PPA。晋升仍需完成 tile wrapper
+围绕现有 PE 宏的真实 P&R、以 16 个 tile 宏重做顶层、重新生成 workload VCD，
+并重跑 standalone/Chipyard/run211/run213 全部门禁。
+
 已完成的递归硬宏 STA 同时证明当前 Nangate45 实现没有达到论文的 1 GHz 目标，
 但这与正在处理的顶层几何拥塞是两个独立问题。完整 PE shell 已详细布线到零 DRC、
 零 pin-access 缺失，其 1 GHz worst slack 为 -2.559961 ns，对应 3.559961 ns
