@@ -1089,6 +1089,86 @@ hierarchical_top_v7_congested_droute_probe:
     odb: artifacts/environment/h206/hierarchical_4x4/mlx-array-4x4-hierarchical-compact-v7-u60-segment8192-metal2-iter50-overflow-droute-probe.odb
     spef: artifacts/environment/h206/hierarchical_4x4/mlx-array-4x4-hierarchical-compact-v7-u60-segment8192-metal2-iter50-overflow-droute-probe.spef
   result_consumed_as_final_ppa: false
+hierarchical_distributed_tile_candidate:
+  topology: autonomous_pe_tile_with_registered_local_packet_buffer_and_fixed_distance_1_2_links
+  status: tile_v2_tight_grt_iter50_running
+  promoted_to_production_top: false
+  result_consumed_as_final_ppa: false
+  functional_probe:
+    tile_program: load_add_local_xfer_store
+    tile_pass_token: MLX_ARRAY_PE_TILE_PASS
+    workloads:
+      bsmm: {cycles: 66, instructions: 44, golden_match: true}
+      fft_cmp: {cycles: 54, instructions: 34, golden_match: true}
+      swa: {cycles: 94, instructions: 25, golden_match: true}
+      transformer_block: {cycles: 78, instructions: 45, golden_match: true}
+  structural_probe:
+    old_centralized_nonmacro_cells: 775745
+    old_centralized_nonmacro_area_um2: 767357.332
+    tile_wrapper_nonmacro_cells_per_tile: 7420
+    tile_wrapper_nonmacro_area_um2_per_tile: 9793.588
+    distributed_top_nonmacro_cells: 97260
+    distributed_top_nonmacro_area_um2: 101197.572
+    recursive_non_pe_cells: 215980
+    recursive_non_pe_area_um2: 257894.980
+    recursive_cell_reduction_vs_centralized: 0.7216
+    recursive_area_reduction_vs_centralized: 0.6639
+    method: yosys_abc_nangate45_with_existing_pe_and_candidate_tile_blackboxes
+  tile_floorplan_v1_rejected:
+    die_um: [9880, 9880]
+    pe_origin_um: [1064, 1064]
+    legal_max_displacement_um: 3481.8
+    cts_buffers: 459
+    cts_average_sink_wire_length_um: 9697.35
+    diagnosis: wrapper_cells_spread_across_excessive_outer_halo
+  tile_floorplan_v2_tight:
+    die_um: [8603, 8603]
+    pe_origin_um: [425.6, 425.6]
+    pe_origin_grid_um: 212.8
+    available_sites_after_macro_cut: 50604667
+    gpl_overflow: 0.009909
+    legal_average_displacement_um: 5.2
+    legal_max_displacement_um: 624.9
+    cts_buffers: 395
+    cts_average_sink_wire_length_um: 8232.03
+    cts_path_depth: 34
+    signal_layers: metal2-metal10
+    clock_layers: metal5-metal10
+    tile48_grt_iter5:
+      routed_nets: 11092
+      missing_route_warnings: 0
+      resource: 188813436
+      demand: 5121395
+      usage_fraction: 0.0271
+      max_horizontal_overflow: 15
+      max_vertical_overflow: 21
+      aggregate_overflow: 9147
+      status: rejected_nonzero_overflow_but_suitable_for_iter50_followup
+  rtl_sources:
+    tile: rtl/mlx/mlx_array_pe_tile.sv
+    distributed_top: rtl/mlx/mlx_array_4x4_distributed.sv
+    tile_testbench: rtl/mlx/tb_mlx_array_pe_tile.sv
+    tile_blackbox: rtl/ppa/mlx_array_pe_tile_blackbox.sv
+  physical_flows:
+    initial: rtl/ppa/openroad_array_pe_tile_flow.tcl
+    resume: rtl/ppa/openroad_array_pe_tile_resume.tcl
+  evidence:
+    synthesis_stats: artifacts/environment/h206/tile_macro/mlx-array-pe-tile-synthesis.stats
+    v2_gpl_checkpoint: artifacts/environment/h206/tile_macro/mlx-array-pe-tile-v2-tight-global-placement.odb
+    v2_legal_checkpoint: artifacts/environment/h206/tile_macro/mlx-array-pe-tile-v2-tight-legal.odb
+    v2_cts_checkpoint: artifacts/environment/h206/tile_macro/mlx-array-pe-tile-v2-tight-cts.odb
+    v2_iter5_global_route_log: artifacts/environment/h206/tile_macro/mlx-array-pe-tile-v2-tight-route-verbose.log
+    v2_iter5_global_route_checkpoint: artifacts/environment/h206/tile_macro/mlx-array-pe-tile-v2-tight-global-route.odb
+  promotion_gates:
+    - fresh_standalone_four_workload_pass
+    - fresh_chipyard_cycle_and_rtl_pass
+    - tile_zero_grt_overflow
+    - tile_zero_drc_and_zero_pin_access_failures
+    - distributed_top_zero_grt_overflow
+    - distributed_top_zero_drc_and_zero_pin_access_failures
+    - workload_vcd_power
+    - recursive_worst_timing_and_fmax
+    - run211_and_run213_full_audit
 flat_physical_attempt:
   status: stopped_at_resource_safety_boundary
   completed_through: post_cts_detailed_placement

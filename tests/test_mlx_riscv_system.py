@@ -440,6 +440,37 @@ def test_paper_ppa_alignment_is_explicit_and_separated() -> None:
     assert calibrated["summary"]["power_max_relative_error"] < 0.15
 
 
+def test_distributed_tile_candidate_is_functional_but_not_promoted() -> None:
+    config = yaml.safe_load((ROOT / "configs/system/mlx_array_ppa_v1.yaml").read_text())
+    candidate = config["hierarchical_distributed_tile_candidate"]
+    assert candidate["promoted_to_production_top"] is False
+    assert candidate["result_consumed_as_final_ppa"] is False
+    assert all(
+        record["golden_match"]
+        for record in candidate["functional_probe"]["workloads"].values()
+    )
+    structural = candidate["structural_probe"]
+    assert structural["recursive_non_pe_cells"] == (
+        16 * structural["tile_wrapper_nonmacro_cells_per_tile"]
+        + structural["distributed_top_nonmacro_cells"]
+    )
+    assert structural["recursive_cell_reduction_vs_centralized"] > 0.70
+    assert structural["recursive_area_reduction_vs_centralized"] > 0.65
+    floorplan = candidate["tile_floorplan_v2_tight"]
+    assert floorplan["pe_origin_grid_um"] == 212.8
+    assert floorplan["tile48_grt_iter5"]["missing_route_warnings"] == 0
+    assert floorplan["tile48_grt_iter5"]["aggregate_overflow"] > 0
+    assert len(candidate["promotion_gates"]) == 9
+
+    tile = (ROOT / candidate["rtl_sources"]["tile"]).read_text()
+    distributed = (ROOT / candidate["rtl_sources"]["distributed_top"]).read_text()
+    assert "module mlx_array_pe_tile" in tile
+    assert ".rf_write_data_i(rf_write_data)" in tile
+    assert "module mlx_array_4x4_distributed" in distributed
+    assert "route_candidate" in distributed
+    assert "mlx_array_pe_tile" in distributed
+
+
 def test_recursive_submacros_are_routed_and_vcd_powered() -> None:
     manifest = json.loads(
         (
