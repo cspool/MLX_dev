@@ -39,7 +39,8 @@ source_layout:
   chipyard_treadle_patch: patches/chipyard/treadle-stable-firrtl.patch
   chipyard_runner: scripts/run_mlx_chipyard.py
   flat_ppa_runner: scripts/run_mlx_array_ppa.py
-  ppa_runner: scripts/run_mlx_hierarchical_ppa.py
+  ppa_runner: scripts/run_mlx_distributed_top_ppa.py
+  ppa_legacy_centralized_runner: scripts/run_mlx_hierarchical_ppa.py
   ppa_submacro_builder: scripts/build_mlx_pe_submacros.py
   ppa_bootstrap: scripts/bootstrap_rtl_ppa_tools.sh
   verification_runner: scripts/run_mlx_riscv_system_verification.py
@@ -51,6 +52,8 @@ source_layout:
   controller: rtl/mlx/mlx_rocc_controller.sv
   cycle_model: rtl/mlx/mlx_cycle_model.sv
   array: rtl/mlx/mlx_array_4x4.sv
+  distributed_array: rtl/mlx/mlx_array_4x4_distributed.sv
+  array_tile: rtl/mlx/mlx_array_pe_tile.sv
   flat_ppa_flow: rtl/ppa/openroad_array_flow.tcl
   ppa_component_flow: rtl/ppa/openroad_component_macro_flow.tcl
   ppa_component_resume: rtl/ppa/openroad_component_droute_resume.tcl
@@ -61,6 +64,7 @@ source_layout:
   ppa_hierarchical_channel_legalizer: rtl/ppa/openroad_hierarchical_array_channel_legalize.tcl
   ppa_hierarchical_post_legal_flow: rtl/ppa/openroad_hierarchical_array_post_legal_flow.tcl
   ppa_hierarchical_resume: rtl/ppa/openroad_hierarchical_array_droute_resume.tcl
+  ppa_distributed_tile_runner: scripts/run_mlx_distributed_tile_ppa.py
   ppa_openroad_tile16_patch: patches/openroad/grt-pitches-in-tile-16.patch
   ppa_openroad_tile24_guard101_patch: patches/openroad/grt-tile24-guard101.patch
   ppa_openroad_tile48_guard101_patch: patches/openroad/grt-tile48-guard101.patch

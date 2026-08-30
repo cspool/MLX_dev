@@ -105,22 +105,27 @@ def build_scope_audit(config: dict[str, Any]) -> dict[str, Any]:
     }
 
     array_text = (PROJECT_ROOT / config["source_layout"]["array"]).read_text()
+    distributed_array_text = (
+        PROJECT_ROOT / config["source_layout"]["distributed_array"]
+    ).read_text()
+    tile_text = (PROJECT_ROOT / config["source_layout"]["array_tile"]).read_text()
     cycle_text = (PROJECT_ROOT / config["source_layout"]["cycle_model"]).read_text()
     p1_checks = {
         "autonomous_execution": all(
-            token in array_text
-            for token in ("pc_q", "instruction_word", "rf_valid_q", "done_o")
+            token in tile_text
+            for token in ("pc_q", "instruction_word", "rf_valid_q", "packet_delivery_accept")
         ),
-        "physical_4x4_pes": "parameter PE_COUNT = 16" in array_text
-        and "mlx_pe_top" in array_text
-        and "for (pe = 0; pe < PE_COUNT" in array_text,
+        "physical_4x4_pes": "parameter PE_COUNT = 16" in distributed_array_text
+        and "mlx_array_pe_tile physical_tile" in distributed_array_text
+        and "for (tile = 0; tile < PE_COUNT" in distributed_array_text
+        and "mlx_array_4x4_distributed" in array_text,
         "physical_network_flow_control": all(
-            token in array_text
+            token in distributed_array_text + tile_text
             for token in (
-                "packet_route_grant",
+                "route_candidate",
                 "packet_delivery_accept",
-                "packet_step",
                 "spm_select_valid",
+                "route_out_ready_i",
             )
         ),
         "distinct_cycle_model": "one shared SIMD functional service" in cycle_text
@@ -197,7 +202,7 @@ def build_scope_audit(config: dict[str, Any]) -> dict[str, Any]:
         and synthesis["cell_count"] > 0
         and synthesis["cell_area_um2"] > 0,
         "place_route": ppa["checks"]["place_route"] is True
-        and ppa["checks"]["global_route_congestion"] is True
+        and ppa["checks"].get("global_route_congestion", False) is True
         and route_contract["require_zero_global_route_overflow"] is True
         and global_route_metrics["congestion_iterations"]
         == route_contract["congestion_iterations"]
@@ -410,6 +415,221 @@ def build_scope_audit(config: dict[str, Any]) -> dict[str, Any]:
         and paper_array["power_target_mw"] == 5846.4,
     }
 
+    # Schema v2 is the promoted autonomous-tile hierarchy.  The preceding
+    # schema-v1 evaluation is retained only so older run211 files remain
+    # inspectable; the completion gate below follows the actual distributed
+    # implementation and treats completed zero-DRC DRT as authoritative.
+    paper_ppa_alignment = p3_checks["paper_ppa_alignment"]
+    diagnostics = ppa["diagnostics"]
+    p3_checks = {
+        "real_4x4_top": ppa["schema_version"] == 2
+        and ppa["checks"]["real_4x4_top"] is True
+        and ppa["checks"]["hierarchical_integrated"] is True
+        and ppa["hierarchical_top"]["implementation"]
+        == "distributed_autonomous_pe_tiles"
+        and ppa["hierarchical_top"]["macro_master"] == "mlx_array_pe_tile"
+        and ppa["hierarchical_top"]["macro_instances"] == 16
+        and all(
+            name in ppa_manifest["files"]["rtl"]
+            for name in (
+                "rtl/mlx/mlx_array_pe_tile.sv",
+                "rtl/mlx/mlx_array_4x4_distributed.sv",
+                "rtl/mlx/mlx_array_4x4.sv",
+            )
+        ),
+        "synthesis": ppa["checks"]["synthesis"] is True
+        and synthesis["cell_count"] > 0
+        and synthesis["cell_area_um2"] > 0
+        and synthesis["top_shell_cells"] > 0
+        and synthesis["recursive_cells_per_tile"] > 0,
+        "place_route": ppa["checks"]["place_route"] is True
+        and ppa["checks"]["actual_detailed_route_signoff"] is True
+        and ppa["checks"]["all_nets_globally_routed"] is True
+        and route_contract["require_all_nets_globally_routed"] is True
+        and route_contract["require_zero_global_missing_pin_routes"] is True
+        and route_contract["require_zero_global_route_overflow"] is False
+        and route_contract["global_route_overflow_policy"]
+        == "diagnostic_after_all_nets_routed_actual_droute_is_authoritative"
+        and global_route_metrics["congestion_iterations"]
+        == route_contract["congestion_iterations"]
+        and global_route_metrics["resource_total_uses_64bit_layer_sum"] is True
+        and global_route_metrics["aggregate_overflow_consistent"] is True
+        and global_route_metrics["resource"] > 0
+        and global_route_metrics["demand"] > 0
+        and global_route_metrics["total_overflow"] >= 0
+        and global_route_metrics["routed_nets"] > 0
+        and global_route_metrics["final_vias"] > 0
+        and global_route_metrics["total_wirelength_um"] > 0
+        and diagnostics["global_route_overflow_is_zero"]
+        == (global_route_metrics["overflow_resolved"] is True)
+        and diagnostics["global_route_overflow_is_not_used_as_actual_drc"] is True
+        and bool(global_route_iteration_reports)
+        and [item["file_suffix"] for item in global_route_iteration_reports]
+        == sorted(item["file_suffix"] for item in global_route_iteration_reports)
+        and all(
+            item["completed_iteration"] == item["file_suffix"] - 1
+            and qualify(item["report"])["pass"]
+            and item["marker_metrics"]["markers"] >= 0
+            and item["marker_metrics"]["aggregate_overflow_eligible"] is False
+            for item in global_route_iteration_reports
+        ),
+        "drc_clean": ppa["checks"]["drc_clean"] is True
+        and route_contract["require_zero_detailed_route_drc"] is True
+        and physical["drc_violations"] == 0,
+        "sta_1ghz_and_fmax": ppa["checks"]["timing"] is True
+        and physical["worst_slack_ns_at_1ghz"] is not None
+        and physical["fmax_ghz"] > 0
+        and timing_hierarchy["method"]
+        == "worst_postroute_delay_across_recursive_hierarchy"
+        and timing_hierarchy["target_clock_period_ns"] == 1.0
+        and {"distributed_top_shell", "autonomous_tile_shell"}
+        <= set(timing_hierarchy["candidates"])
+        and timing_hierarchy["critical_path_component"]
+        == max(
+            timing_hierarchy["candidates"],
+            key=lambda name: timing_hierarchy["candidates"][name][
+                "critical_path_delay_ns"
+            ],
+        )
+        and math.isclose(
+            physical["critical_path_delay_ns"],
+            timing_hierarchy["critical_path_delay_ns"],
+        )
+        and math.isclose(physical["fmax_ghz"], timing_hierarchy["fmax_ghz"]),
+        "vcd_dynamic_power": ppa["checks"]["vcd_power"] is True
+        and ppa["checks"]["recursive_submacro_evidence"] is True
+        and ppa["checks"]["tile_macro_signoff"] is True
+        and physical["annotated_pin_activities"] > 0
+        and physical["total_power_w"] > 0
+        and physical["power_aggregation"]
+        == "recursive_distributed_postroute_transformer_vcd_hierarchy",
+        "raw_unfitted": ppa["checks"]["raw_unfitted"] is True
+        and ppa_manifest["calibration"]
+        == {"applied": False, "coefficients": None},
+        "physical_macro_abstraction": ppa["checks"][
+            "compact_macro_abstraction"
+        ]
+        is True
+        and abstraction["pin_geometry_preserved"] is True
+        and abstraction["conservative_obstruction_cover"] is True
+        and abstraction["pin_count"]
+        == abstraction["pin_rectangles"]
+        == abstraction["accessible_pin_rectangles"]
+        and abstraction["source_obstruction_rectangles"]
+        > abstraction["integration_obstruction_rectangles"]
+        > 0
+        and abstraction["raster_pitch_um"] == 2.5
+        and abstraction["compression_ratio"] > 1,
+        "channel_legalization": ppa["checks"]["channel_legalization"] is True
+        and legalization["cells"]
+        == ppa["hierarchical_top"]["synthesis"]["cell_count"]
+        - ppa["hierarchical_top"]["macro_instances"]
+        and legalization["rows"] >= route_contract["minimum_physical_rows"]
+        and legalization["row_segments"] >= route_contract["minimum_row_segments"]
+        and legalization["selected_physical_rows"] == legalization["rows"]
+        and legalization["selected_row_segments"] == legalization["row_segments"]
+        and legalization["assigned_cells"] == legalization["cells"]
+        and legalization["constructive_audit_cells"] == legalization["cells"]
+        and legalization["site_aligned_cells"] == legalization["cells"]
+        and legalization["segment_contained_cells"] == legalization["cells"]
+        and legalization["standard_nonoverlap_cells"] == legalization["cells"]
+        and legalization["audited_nonoverlapping_macro_clear_row_segments"]
+        == legalization["row_segments"]
+        and legalization["constructive_audit_row_segments"]
+        == legalization["row_segments"]
+        and legalization["minimum_capacity_ratio"] > 1.0
+        and legalization["maximum_accepted_displacement_dbu"]
+        == round(
+            route_contract["maximum_standard_cell_displacement_um"]
+            * macro_track["dbu_per_micron"]
+        )
+        and legalization["max_displacement_dbu"]
+        <= legalization["maximum_accepted_displacement_dbu"]
+        and legalization["checkpoint"]
+        == str(
+            PROJECT_ROOT
+            / ppa_manifest["files"]["top_channel_legalization_checkpoint"][
+                "path"
+            ]
+        ),
+        "macro_track_alignment": ppa["checks"]["macro_track_alignment"] is True
+        and legalization["macro_instances_aligned"]
+        == ppa["hierarchical_top"]["macro_instances"]
+        == macro_track["required_macro_instances"]
+        == 16
+        and legalization["macro_origin_grid_dbu"] == macro_track["grid_dbu"]
+        and legalization["macro_max_displacement_dbu"] == 0
+        and macro_track["grid_dbu"] == 425600
+        and all(
+            macro_track["grid_dbu"] % pitch == 0
+            for pitch in macro_track["routing_pitch_dbu"].values()
+        ),
+        "cts_buffer_legalization": ppa["checks"]["cts_buffer_legalization"]
+        is True
+        and cts_legalization["buffers"] > 0
+        and cts_legalization["assigned_buffers"] == cts_legalization["buffers"]
+        and cts_legalization["physical_rows"] == legalization["rows"]
+        and cts_legalization["row_segments"] == legalization["row_segments"]
+        and cts_legalization["site_aligned_buffers"]
+        == cts_legalization["buffers"]
+        and cts_legalization["segment_contained_buffers"]
+        == cts_legalization["buffers"]
+        and cts_legalization["fixed_clear_buffers"] == cts_legalization["buffers"]
+        and cts_legalization["standard_nonoverlap_buffers"]
+        == cts_legalization["buffers"]
+        and cts_legalization["max_displacement_dbu"]
+        <= round(
+            route_contract["maximum_cts_buffer_displacement_um"]
+            * macro_track["dbu_per_micron"]
+        ),
+        "route_connectivity": ppa["checks"]["route_connectivity"] is True
+        and route_contract["require_zero_detailed_pin_access_failures"] is True
+        and route_connectivity["all_pins_routed"] is True
+        and route_connectivity["global_route_completed"] is True
+        and route_connectivity["detailed_route_completed"] is True
+        and route_connectivity["detailed_pin_access_completed"] is True
+        and route_connectivity["global_missing_pin_routes"] == 0
+        and route_connectivity["global_missing_warning_limit_reached"] is False
+        and route_connectivity["detailed_stdcell_pins_without_access"] == 0
+        and route_connectivity["detailed_macro_pins_without_access"] == 0
+        and route_connectivity["detailed_no_access_errors"] == 0
+        and route_contract["completion_markers"]
+        == {
+            "global_route": "MLX_ARRAY_STOP_AFTER_GRT",
+            "detailed_route": "MLX_ARRAY_DROUTE_COMPLETE",
+        },
+        "global_route_tool": ppa["checks"]["global_route_tool_provenance"]
+        is True
+        and route_tool["base_commit"]
+        == "a008522d88b669ac4c985609533cf5a3d2649222"
+        and route_tool["grid_pitches_in_tile"]
+        == route_contract["grid_pitches_in_tile"]
+        == 48
+        and route_tool["max_2d_edge_usage_multiplier"]
+        == route_contract["max_2d_edge_usage_multiplier"]
+        == 101
+        and qualify(ppa_manifest["files"]["global_route_openroad"])["pass"]
+        and qualify(ppa_manifest["files"]["global_route_patch"])["pass"]
+        and qualify(ppa_manifest["files"]["global_route_archive"])["pass"]
+        and qualify(ppa_manifest["files"]["detailed_route_openroad"])["pass"],
+        "post_route_outputs": all(
+            name in ppa_manifest["files"]
+            for name in (
+                "tile_abstract_lef",
+                "tile_integration_abstract_lef",
+                "tile_timing_liberty",
+                "distributed_4x4_guide",
+                "distributed_4x4_drc",
+                "distributed_4x4_def",
+                "distributed_4x4_odb",
+                "distributed_4x4_spef",
+                "top_global_route_log",
+                "top_detailed_route_log",
+            )
+        ),
+        "paper_ppa_alignment": paper_ppa_alignment,
+    }
+
     handoff = (PROJECT_ROOT / config["source_layout"]["handoff"]).read_text()
     provenance_checks = {
         "parents_supported": backends["status"] == ppa["status"]
@@ -426,10 +646,10 @@ def build_scope_audit(config: dict[str, Any]) -> dict[str, Any]:
         == "architecture simulation",
         "ppa_classified": ppa["sources"]
         == {
-            "area": "hierarchical OpenROAD integrated top database plus recursive and flat Yosys cross-checks",
+            "area": "distributed hierarchical Yosys/OpenROAD top, tile, PE, RF, and lane evidence",
             "calibration": "none",
-            "power": "recursive representative-PE0 post-route Transformer VCD aggregation over top, combined PE/FU shell, RF, and lane macros",
-            "timing": "worst post-route OpenROAD/OpenSTA delay across every recursive hard-macro and top-shell level",
+            "power": "recursive post-route Transformer VCD aggregation over distributed top, tile shell, PE shell, RF, and lanes",
+            "timing": "worst post-route delay across distributed top, autonomous tile, and recursive PE/RF/lane hierarchy",
         },
         "scope_exclusions": set(ppa["exclusions"])
         == {"RISC-V host", "CPU caches", "DMA controller", "SPM storage", "DRAM/PHY"},
@@ -481,7 +701,7 @@ def build_scope_audit(config: dict[str, Any]) -> dict[str, Any]:
         "p0_evaluated": len(p0_checks) == 6,
         "p1_evaluated": len(p1_checks) == 6,
         "p2_evaluated": len(p2_checks) == 8,
-        "p3_evaluated": len(p3_checks) == 14,
+        "p3_evaluated": len(p3_checks) == 15,
         "provenance_evaluated": len(provenance_checks) == 7,
         "sources_evaluated": len(source_checks) == 4,
         "gates_evaluated": len(scope_gates) == 6

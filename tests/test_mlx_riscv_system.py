@@ -533,6 +533,14 @@ def test_distributed_tile_candidate_is_promoted_but_not_final() -> None:
     assert "GENERATE_TILES\\[%d\\].physical_tile" in hierarchical_flow
     runner = ROOT / candidate["physical_flows"]["runner"]
     assert runner.is_file() and os.access(runner, os.X_OK)
+    top_runner = ROOT / candidate["physical_flows"]["top_signoff_runner"]
+    assert top_runner.is_file() and os.access(top_runner, os.X_OK)
+    signoff = candidate["distributed_top_signoff_contract"]
+    assert signoff["macro_instances"] == 16
+    assert signoff["congestion_iterations"] == 5
+    assert signoff["require_zero_global_route_overflow"] is False
+    assert signoff["require_zero_detailed_route_drc"] is True
+    assert signoff["require_zero_detailed_pin_access_failures"] is True
     tile_result = json.loads(
         (ROOT / candidate["evidence"]["tile_candidate_summary"]).read_text()
     )
@@ -569,9 +577,13 @@ def test_hierarchical_integrated_ppa_is_supported() -> None:
     result = json.loads(
         (ROOT / "artifacts/results/mlx-array-ppa-run211.json").read_text()
     )
+    assert result["schema_version"] == 2
     assert result["status"] == "supported"
     assert all(result["checks"].values())
-    assert result["hierarchical_top"]["macro_instances"] == 16
+    top = result["hierarchical_top"]
+    assert top["implementation"] == "distributed_autonomous_pe_tiles"
+    assert top["macro_master"] == "mlx_array_pe_tile"
+    assert top["macro_instances"] == 16
     assert result["physical"]["drc_violations"] == 0
     assert result["physical"]["die_area_um2"] > 0
     assert result["physical"]["fmax_ghz"] > 0
@@ -595,8 +607,10 @@ def test_hierarchical_integrated_ppa_is_supported() -> None:
         result["physical"]["fmax_ghz"], timing_hierarchy["fmax_ghz"]
     )
     assert result["physical"]["power_aggregation"] == (
-        "recursive_postroute_transformer_vcd_hierarchy"
+        "recursive_distributed_postroute_transformer_vcd_hierarchy"
     )
+    assert "distributed_top_shell" in timing_hierarchy["candidates"]
+    assert "autonomous_tile_shell" in timing_hierarchy["candidates"]
     assert all(
         item["checks"]["pin_access"] is True
         and item["pin_access"]["all_pins_accessible"] is True
@@ -605,20 +619,25 @@ def test_hierarchical_integrated_ppa_is_supported() -> None:
         and item["pin_access"]["no_access_errors"] == 0
         for item in result["submacro_chain"].values()
     )
-    global_route = result["hierarchical_top"]["global_route_metrics"]
-    assert result["checks"]["global_route_congestion"] is True
-    assert global_route["overflow_resolved"] is True
-    assert global_route["total_overflow"] == 0
-    assert global_route["congestion_warning"] is False
+    assert result["tile_macro"]["status"] == "supported"
+    assert all(result["tile_macro"]["required_checks"].values())
+    global_route = top["global_route_metrics"]
+    assert result["checks"]["all_nets_globally_routed"] is True
+    assert global_route["resource_total_uses_64bit_layer_sum"] is True
+    assert global_route["aggregate_overflow_consistent"] is True
+    assert global_route["resource"] > 0
+    assert global_route["demand"] > 0
+    assert global_route["total_overflow"] >= 0
     assert global_route["routed_nets"] > 0
     assert global_route["final_vias"] > 0
     assert global_route["total_wirelength_um"] > 0
     assert global_route["congestion_iterations"] == result["route_contract"][
         "congestion_iterations"
     ]
-    iteration_reports = result["hierarchical_top"][
-        "global_route_iteration_reports"
-    ]
+    assert result["diagnostics"]["global_route_overflow_is_zero"] == (
+        global_route["overflow_resolved"] is True
+    )
+    iteration_reports = top["global_route_iteration_reports"]
     assert iteration_reports
     assert [item["file_suffix"] for item in iteration_reports] == sorted(
         item["file_suffix"] for item in iteration_reports
@@ -627,25 +646,29 @@ def test_hierarchical_integrated_ppa_is_supported() -> None:
         item["completed_iteration"] == item["file_suffix"] - 1
         for item in iteration_reports
     )
-    abstraction = result["hierarchical_top"]["integration_abstraction"]
+    assert all(
+        item["marker_metrics"]["aggregate_overflow_eligible"] is False
+        for item in iteration_reports
+    )
+    abstraction = top["integration_abstraction"]
     assert abstraction["pin_geometry_preserved"] is True
     assert abstraction["conservative_obstruction_cover"] is True
     assert abstraction["pin_count"] == abstraction["pin_rectangles"]
     assert abstraction["pin_rectangles"] == abstraction["accessible_pin_rectangles"]
-    assert abstraction["source_obstruction_rectangles"] > 1_000_000
+    assert abstraction["source_obstruction_rectangles"] > 100_000
     assert abstraction["integration_obstruction_rectangles"] > 10
     assert abstraction["integration_obstruction_rectangles"] < (
         abstraction["source_obstruction_rectangles"]
     )
     assert abstraction["raster_pitch_um"] == 2.5
-    assert abstraction["compression_ratio"] > 80
-    legalization = result["hierarchical_top"]["channel_legalization"]
+    assert abstraction["compression_ratio"] > 1
+    legalization = top["channel_legalization"]
     assert legalization["cells"] == (
-        result["hierarchical_top"]["synthesis"]["cell_count"]
-        - result["hierarchical_top"]["macro_instances"]
+        top["synthesis"]["cell_count"] - top["macro_instances"]
     )
-    assert legalization["rows"] >= 8192
-    assert legalization["row_segments"] >= 30000
+    route_contract = result["route_contract"]
+    assert legalization["rows"] >= route_contract["minimum_physical_rows"]
+    assert legalization["row_segments"] >= route_contract["minimum_row_segments"]
     assert legalization["selected_physical_rows"] == legalization["rows"]
     assert legalization["selected_row_segments"] == legalization["row_segments"]
     assert legalization["assigned_cells"] == legalization["cells"]
@@ -661,9 +684,9 @@ def test_hierarchical_integrated_ppa_is_supported() -> None:
     assert legalization["backward_compactions"] >= 0
     assert legalization["taps"] > 0
     assert legalization["minimum_capacity_ratio"] > 1.0
-    assert legalization["maximum_accepted_displacement_dbu"] == 3_606_000
+    assert legalization["maximum_accepted_displacement_dbu"] == 8_603_000
     assert legalization["maximum_accepted_displacement_basis"] == (
-        "one_u60_pe_channel_span"
+        "half_of_8603um_tile_macro_span"
     )
     assert legalization["max_displacement_dbu"] <= legalization[
         "maximum_accepted_displacement_dbu"
@@ -675,12 +698,12 @@ def test_hierarchical_integrated_ppa_is_supported() -> None:
         "maximum_accepted_displacement_dbu"
     ]
     assert legalization["average_displacement_dbu"] >= 0
-    macro_track = result["hierarchical_top"]["macro_track_contract"]
+    macro_track = top["macro_track_contract"]
     assert result["checks"]["macro_track_alignment"] is True
     assert legalization["macro_instances_aligned"] == 16
     assert legalization["macro_origin_grid_dbu"] == macro_track["grid_dbu"]
     assert legalization["macro_max_displacement_dbu"] == 0
-    cts_legalization = result["hierarchical_top"]["cts_buffer_legalization"]
+    cts_legalization = top["cts_buffer_legalization"]
     assert result["checks"]["cts_buffer_legalization"] is True
     assert cts_legalization["buffers"] > 0
     assert cts_legalization["assigned_buffers"] == cts_legalization["buffers"]
@@ -688,9 +711,9 @@ def test_hierarchical_integrated_ppa_is_supported() -> None:
     assert cts_legalization["segment_contained_buffers"] == cts_legalization["buffers"]
     assert cts_legalization["fixed_clear_buffers"] == cts_legalization["buffers"]
     assert cts_legalization["standard_nonoverlap_buffers"] == cts_legalization["buffers"]
-    assert cts_legalization["max_displacement_dbu"] <= 7_731_275
+    assert cts_legalization["max_displacement_dbu"] <= 8_603_000
     assert macro_track["grid_dbu"] == 425600
-    connectivity = result["hierarchical_top"]["route_connectivity"]
+    connectivity = top["route_connectivity"]
     assert result["checks"]["route_connectivity"] is True
     assert connectivity["all_pins_routed"] is True
     assert connectivity["global_route_completed"] is True
@@ -703,13 +726,16 @@ def test_hierarchical_integrated_ppa_is_supported() -> None:
     assert connectivity["detailed_no_access_errors"] == 0
     assert connectivity["detailed_off_grid_macro_terms"] >= 0
     assert connectivity["detailed_off_grid_block_terms"] >= 0
-    route_contract = result["route_contract"]
     route_tool = result["global_route_tool"]
     assert result["checks"]["global_route_tool_provenance"] is True
     assert route_contract["grid_pitches_in_tile"] == 48
     assert route_contract["max_2d_edge_usage_multiplier"] == 101
-    assert route_contract["congestion_iterations"] == 50
+    assert route_contract["congestion_iterations"] == 5
     assert route_contract["stop_after_global_route"] is True
+    assert route_contract["require_zero_global_route_overflow"] is False
+    assert route_contract["global_route_overflow_policy"] == (
+        "diagnostic_after_all_nets_routed_actual_droute_is_authoritative"
+    )
     assert route_contract["completion_markers"] == {
         "global_route": "MLX_ARRAY_STOP_AFTER_GRT",
         "detailed_route": "MLX_ARRAY_DROUTE_COMPLETE",

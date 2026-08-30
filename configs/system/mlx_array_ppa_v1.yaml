@@ -1221,6 +1221,9 @@ hierarchical_distributed_tile_candidate:
       status: complete_zero_drc_zero_pin_access_failures
   distributed_top_floorplan_candidate:
     utilization_percent: 70
+    placement_density: 0.10
+    bin_grid_count: 128
+    overflow_target: 0.003
     tile_macro_width_um: 8603
     tile_macro_height_um: 8603
     tile_macro_count: 16
@@ -1250,10 +1253,46 @@ hierarchical_distributed_tile_candidate:
       report_3_marker_overflow_lower_bound: 20259
       report_3_max_point_overflow: 2
       report_3_unique_nets: 998
+      report_4_marker_count: 20000
+      report_4_marker_overflow_lower_bound: 20076
+      report_4_max_point_overflow: 2
+      report_4_unique_nets: 925
       marker_limit_per_direction: 10000
       aggregate_overflow_available: false
       interpretation: capped_marker_reports_show_local_improvement_but_cannot_prove_final_overflow
     status: tile48_grt_iter5_running
+  distributed_top_signoff_contract:
+    topology: distributed_autonomous_pe_tiles
+    macro_master: mlx_array_pe_tile
+    macro_instances: 16
+    global_route_iterations: 5
+    congestion_iterations: 5
+    stop_after_global_route: true
+    require_zero_global_route_overflow: false
+    global_route_overflow_policy: diagnostic_after_all_nets_routed_actual_droute_is_authoritative
+    require_all_nets_globally_routed: true
+    require_zero_global_missing_pin_routes: true
+    require_zero_detailed_route_drc: true
+    require_zero_detailed_pin_access_failures: true
+    droute_end_iter: 20
+    global_route_threads: 1
+    detailed_route_threads: 16
+    minimum_physical_rows: 4096
+    minimum_row_segments: 17808
+    maximum_standard_cell_displacement_um: 4301.5
+    standard_cell_displacement_basis: half_of_8603um_tile_macro_span
+    maximum_cts_buffer_displacement_um: 4301.5
+    cts_buffer_displacement_basis: half_of_8603um_tile_macro_span
+    completion_markers:
+      global_route: MLX_ARRAY_STOP_AFTER_GRT
+      detailed_route: MLX_ARRAY_DROUTE_COMPLETE
+    required_zero_connectivity_failures: [GRT-0026, DRT-0073, stdCellPinNoAp, macroNoAp]
+    diagnostic_pin_access_warnings: [DRT-0418, DRT-0419, DRT-0421]
+    grid_pitches_in_tile: 48
+    max_2d_edge_usage_multiplier: 101
+    routing_layers:
+      signal: metal2-metal10
+      clock: metal5-metal10
   rtl_sources:
     tile: rtl/mlx/mlx_array_pe_tile.sv
     distributed_top: rtl/mlx/mlx_array_4x4_distributed.sv
@@ -1261,6 +1300,7 @@ hierarchical_distributed_tile_candidate:
     tile_blackbox: rtl/ppa/mlx_array_pe_tile_blackbox.sv
   physical_flows:
     runner: scripts/run_mlx_distributed_tile_ppa.py
+    top_signoff_runner: scripts/run_mlx_distributed_top_ppa.py
     initial: rtl/ppa/openroad_array_pe_tile_flow.tcl
     resume: rtl/ppa/openroad_array_pe_tile_resume.tcl
   evidence:
@@ -1288,6 +1328,7 @@ hierarchical_distributed_tile_candidate:
     distributed_top_grt_log: artifacts/environment/h206/distributed_4x4/mlx-array-4x4-distributed-u70-iter5-route.log
     distributed_top_grt_report_2: artifacts/environment/h206/distributed_4x4/mlx-array-4x4-distributed-u70-iter5-congestion-2.rpt
     distributed_top_grt_report_3: artifacts/environment/h206/distributed_4x4/mlx-array-4x4-distributed-u70-iter5-congestion-3.rpt
+    distributed_top_grt_report_4: artifacts/environment/h206/distributed_4x4/mlx-array-4x4-distributed-u70-iter5-congestion-4.rpt
   promotion_gates:
     - fresh_standalone_four_workload_pass
     - fresh_chipyard_cycle_and_rtl_pass

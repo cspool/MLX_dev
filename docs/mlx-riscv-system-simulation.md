@@ -15,8 +15,9 @@ Chipyard run212 已重新执行，分别为全部 9 项总检查通过和 8/8 �
 P3 已完成单 tile 的综合、GPL、合法化、CTS、GRT、DRT、RCX、STA 与活动功耗；
 实际 DRT 为零 DRC、零 pin-access 缺失。16-tile 顶层也已完成综合、70% 宏利用率
 GPL、97,260 个标准单元的构造合法化和 CTS，当前正在执行 5 轮 tile48 GRT。已写出
-的第 2/3 份 marker 报告均达到每方向 10,000 条的输出上限；可见 overflow 下界从
-20,518 降到 20,259，单点最大值从 5 降到 2，涉及网数从 1,091 降到 998。由于
+的第 2/3/4 份 marker 报告均达到每方向 10,000 条的输出上限；可见 overflow 下界
+从 20,518 经 20,259 降到 20,076，单点最大值从 5 降到 2，涉及网数从 1,091 经
+998 降到 925。由于
 报告被截断，这些数字只证明局部最坏拥塞改善，不能当作最终 aggregate overflow。
 旧集中式 v7 DRT 在第 1 轮 90% 仍有 1,864,670 条违例，已为释放内存而安全停止，
 不作为结果。因此
@@ -422,10 +423,10 @@ overflow 为零。
 真实 16-tile 顶层已继续推进：70% 宏利用率得到约 41.172 mm die 和约 1.344 mm
 tile 间通道，GPL 在第 190 轮达到 0.002926；4,096 行/17,808 segments 对全部
 97,260 个顶层 cells 完成 site/segment/nonoverlap 审计，CTS 新增 1,783 个 buffers
-并全部通过固定单元避让审计。当前 5 轮 tile48 GRT 已完成两个可见优化快照：
-`congestion-2.rpt` 和 `congestion-3.rpt` 都触及水平/垂直各 10,000 marker 上限，
-报告内 overflow 下界为 20,518/20,259，最大单点 overflow 为 5/2，unique nets 为
-1,091/998。热点主要是 `spm_rsp_rdata_i`、`tile_spm_wdata` 和宽 route data；最终
+并全部通过固定单元避让审计。当前 5 轮 tile48 GRT 已完成三个可见优化快照：
+`congestion-2/3/4.rpt` 都触及水平/垂直各 10,000 marker 上限，报告内 overflow
+下界为 20,518/20,259/20,076，最大单点 overflow 为 5/2/2，unique nets 为
+1,091/998/925。热点主要是 `spm_rsp_rdata_i`、`tile_spm_wdata` 和宽 route data；最终
 3D layer assignment 汇总出来前不据此宣布拥塞闭合。旧集中式 DRT 在第 1 轮
 90% 仍有 1,864,670 violations，随后为释放顶层 GRT 内存而安全停止；其日志与
 输入 checkpoint 保留，但没有最终 DRC/DEF/ODB/SPEF，明确不作为最终结果。
@@ -502,11 +503,11 @@ make -C /root/chipyard/sims/verilator CONFIG=MLXRTLRocketConfig -j4
 cd /workspace/MLX_dev
 /opt/mlx-miniforge/bin/python -m scripts.run_mlx_chipyard
 
-# 3. 递归硬宏 P&R、真实 4×4 集成顶层与 VCD power
+# 3. 递归硬宏、autonomous tile 和真实分布式 4×4 顶层 P&R/VCD power
 bash scripts/bootstrap_rtl_ppa_tools.sh
 /opt/mlx-miniforge/bin/python -m scripts.build_mlx_pe_submacros --reuse
-/opt/mlx-miniforge/bin/python -m scripts.run_mlx_hierarchical_ppa \
-  --reuse-pe-synthesis --reuse-pe-physical --reuse-top-synthesis
+/opt/mlx-miniforge/bin/python -m scripts.run_mlx_distributed_tile_ppa --stage all
+/opt/mlx-miniforge/bin/python -m scripts.run_mlx_distributed_top_ppa --stage all
 
 # 4. 测试与最终证书
 /opt/mlx-miniforge/bin/ruff check scripts src tests
