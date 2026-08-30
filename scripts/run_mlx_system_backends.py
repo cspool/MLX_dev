@@ -26,6 +26,8 @@ RTL_SOURCES = [
     "rtl/mlx/mlx_data_network.sv",
     "rtl/mlx/mlx_control_logic.sv",
     "rtl/mlx/mlx_pe_top.sv",
+    "rtl/mlx/mlx_array_pe_tile.sv",
+    "rtl/mlx/mlx_array_4x4_distributed.sv",
     "rtl/mlx/mlx_array_4x4.sv",
 ]
 OPCODE_NAMES = {

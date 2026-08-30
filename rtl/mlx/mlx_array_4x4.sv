@@ -4,7 +4,7 @@
 // tag state, SIMD32 RF/FU, and router.  A single vector SPM port is shared by
 // deterministic lower-coordinate arbitration; packets advance by one or two
 // mesh coordinates per cycle and hold on destination write-port conflicts.
-module mlx_array_4x4 #(
+module mlx_array_4x4_centralized #(
     parameter SIMD_WIDTH = 32,
     parameter DATA_BITS = 16,
     parameter VECTOR_BITS = SIMD_WIDTH * DATA_BITS,
@@ -714,4 +714,81 @@ module mlx_array_4x4 #(
       end
     end
   end
+endmodule
+
+// Canonical system backend.  The prior centralized implementation remains
+// above as an explicit diagnostic baseline, while production uses autonomous
+// tiles and fixed local/skip links.
+module mlx_array_4x4 #(
+    parameter SIMD_WIDTH = 32,
+    parameter DATA_BITS = 16,
+    parameter VECTOR_BITS = SIMD_WIDTH * DATA_BITS,
+    parameter TRANS_LANES = (SIMD_WIDTH / 4),
+    parameter PE_COUNT = 16,
+    parameter PROGRAM_DEPTH = 32,
+    parameter SPM_VECTORS = 128
+) (
+    input  wire                   clk,
+    input  wire                   rst_n,
+    input  wire                   cfg_valid_i,
+    input  wire [4:0]             cfg_pe_i,
+    input  wire [5:0]             cfg_index_i,
+    input  wire [63:0]            cfg_word_i,
+    input  wire                   launch_i,
+    input  wire [7:0]             input_vectors_i,
+    output wire                   spm_req_valid_o,
+    input  wire                   spm_req_ready_i,
+    output wire                   spm_req_write_o,
+    output wire [7:0]             spm_req_addr_o,
+    output wire [VECTOR_BITS-1:0] spm_req_wdata_o,
+    input  wire                   spm_rsp_valid_i,
+    input  wire [VECTOR_BITS-1:0] spm_rsp_rdata_i,
+    output wire                   busy_o,
+    output wire                   done_o,
+    output wire [63:0]            stat_cycles_o,
+    output wire [63:0]            stat_instructions_o,
+    output wire [63:0]            stat_load_o,
+    output wire [63:0]            stat_store_o,
+    output wire [63:0]            stat_compute_o,
+    output wire [63:0]            stat_xfer_o,
+    output wire [63:0]            stat_stall_o,
+    output wire [63:0]            stat_hops_o,
+    output wire [63:0]            stat_conflicts_o
+);
+  mlx_array_4x4_distributed #(
+      .SIMD_WIDTH(SIMD_WIDTH),
+      .DATA_BITS(DATA_BITS),
+      .VECTOR_BITS(VECTOR_BITS),
+      .TRANS_LANES(TRANS_LANES),
+      .PE_COUNT(PE_COUNT),
+      .PROGRAM_DEPTH(PROGRAM_DEPTH),
+      .SPM_VECTORS(SPM_VECTORS)
+  ) distributed_array (
+      .clk(clk),
+      .rst_n(rst_n),
+      .cfg_valid_i(cfg_valid_i),
+      .cfg_pe_i(cfg_pe_i),
+      .cfg_index_i(cfg_index_i),
+      .cfg_word_i(cfg_word_i),
+      .launch_i(launch_i),
+      .input_vectors_i(input_vectors_i),
+      .spm_req_valid_o(spm_req_valid_o),
+      .spm_req_ready_i(spm_req_ready_i),
+      .spm_req_write_o(spm_req_write_o),
+      .spm_req_addr_o(spm_req_addr_o),
+      .spm_req_wdata_o(spm_req_wdata_o),
+      .spm_rsp_valid_i(spm_rsp_valid_i),
+      .spm_rsp_rdata_i(spm_rsp_rdata_i),
+      .busy_o(busy_o),
+      .done_o(done_o),
+      .stat_cycles_o(stat_cycles_o),
+      .stat_instructions_o(stat_instructions_o),
+      .stat_load_o(stat_load_o),
+      .stat_store_o(stat_store_o),
+      .stat_compute_o(stat_compute_o),
+      .stat_xfer_o(stat_xfer_o),
+      .stat_stall_o(stat_stall_o),
+      .stat_hops_o(stat_hops_o),
+      .stat_conflicts_o(stat_conflicts_o)
+  );
 endmodule

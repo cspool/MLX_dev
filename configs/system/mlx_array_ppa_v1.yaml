@@ -1095,9 +1095,20 @@ hierarchical_top_v7_congested_droute_probe:
   result_consumed_as_final_ppa: false
 hierarchical_distributed_tile_candidate:
   topology: autonomous_pe_tile_with_registered_local_packet_buffer_and_fixed_distance_1_2_links
-  status: tile_zero_drc_complete_distributed_top_grt_running
-  promoted_to_production_top: false
+  status: production_top_promoted_tile_zero_drc_complete_distributed_top_grt_running
+  promoted_to_production_top: true
   result_consumed_as_final_ppa: false
+  canonical_system_integration:
+    canonical_top_module: mlx_array_4x4
+    implementation_module: mlx_array_4x4_distributed
+    diagnostic_baseline_module: mlx_array_4x4_centralized
+    standalone_result: artifacts/results/mlx-system-backends-run210.json
+    standalone_status: supported
+    standalone_required_checks_passed: 9
+    chipyard_result: artifacts/results/mlx-chipyard-system-run212.json
+    chipyard_status: supported
+    chipyard_elf_runs_passed: 8
+    chipyard_elf_runs_expected: 8
   functional_probe:
     tile_program: load_add_local_xfer_store
     tile_pass_token: MLX_ARRAY_PE_TILE_PASS
@@ -1230,6 +1241,18 @@ hierarchical_distributed_tile_candidate:
     cts_buffers: 1783
     cts_max_displacement_um: 3995.607
     cts_average_displacement_um: 735.956
+    tile48_grt_iter5_progress:
+      report_2_marker_count: 20000
+      report_2_marker_overflow_lower_bound: 20518
+      report_2_max_point_overflow: 5
+      report_2_unique_nets: 1091
+      report_3_marker_count: 20000
+      report_3_marker_overflow_lower_bound: 20259
+      report_3_max_point_overflow: 2
+      report_3_unique_nets: 998
+      marker_limit_per_direction: 10000
+      aggregate_overflow_available: false
+      interpretation: capped_marker_reports_show_local_improvement_but_cannot_prove_final_overflow
     status: tile48_grt_iter5_running
   rtl_sources:
     tile: rtl/mlx/mlx_array_pe_tile.sv
@@ -1262,6 +1285,9 @@ hierarchical_distributed_tile_candidate:
     distributed_top_gpl_checkpoint: artifacts/environment/h206/distributed_4x4/mlx-array-4x4-distributed-u70-global-placement.odb
     distributed_top_legal_checkpoint: artifacts/environment/h206/distributed_4x4/mlx-array-4x4-distributed-u70-channel-legal.odb
     distributed_top_cts_checkpoint: artifacts/environment/h206/distributed_4x4/mlx-array-4x4-distributed-u70-post-cts.odb
+    distributed_top_grt_log: artifacts/environment/h206/distributed_4x4/mlx-array-4x4-distributed-u70-iter5-route.log
+    distributed_top_grt_report_2: artifacts/environment/h206/distributed_4x4/mlx-array-4x4-distributed-u70-iter5-congestion-2.rpt
+    distributed_top_grt_report_3: artifacts/environment/h206/distributed_4x4/mlx-array-4x4-distributed-u70-iter5-congestion-3.rpt
   promotion_gates:
     - fresh_standalone_four_workload_pass
     - fresh_chipyard_cycle_and_rtl_pass
@@ -1293,6 +1319,8 @@ rtl_sources:
   - rtl/mlx/mlx_data_network.sv
   - rtl/mlx/mlx_control_logic.sv
   - rtl/mlx/mlx_pe_top.sv
+  - rtl/mlx/mlx_array_pe_tile.sv
+  - rtl/mlx/mlx_array_4x4_distributed.sv
   - rtl/mlx/mlx_array_4x4.sv
 technology:
   name: Nangate45

@@ -57,6 +57,8 @@ rtl_files=(
   mlx_data_network.sv
   mlx_control_logic.sv
   mlx_pe_top.sv
+  mlx_array_pe_tile.sv
+  mlx_array_4x4_distributed.sv
   mlx_array_4x4.sv
   mlx_cycle_model.sv
   mlx_rocc_controller.sv

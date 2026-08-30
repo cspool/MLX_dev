@@ -8,13 +8,18 @@
 真实 Chipyard Rocket bare-metal ELF 通过 custom0 RoCC 指令配置、启动、等待并
 查询 MLX；同一空间程序和数据可选择独立的架构周期模型或可执行的真实 4×4 PE
 阵列 RTL；输入/输出经 HellaCache 请求完成串行 DMA；四个负载均与软件 FP16
-golden 逐位一致。P3 的真实 4×4 顶层已完成分层综合、宏抽象、GPL、标准单元
-合法化和 CTS。80% 顶层的 15 轮 GRT 在持续 36 小时 48 分钟仍未返回任何逐轮
-报告或检查点后停止；60% 顶层随后完成全部 50 轮，但 3D layer assignment 仍有
-109,507 overflow。2.5 µm 保守 OBS 候选虽然增加 9.12% 资源，最终 3D overflow
-反而为 128,825，因此同样拒绝。当前用较低 overflow 的 5 µm/v7 checkpoint 做隔离
-详细布线探针，直接检验 TritonRoute 能否得到零 DRC 与完整 pin access；通过前不生成
-最终 DRT、STA 与功耗证据。因此
+golden 逐位一致。默认 `mlx_array_4x4` 已晋升为自主 16-tile 分布式实现，原集中式
+实现保留为 `mlx_array_4x4_centralized` 诊断基线；晋升后的 standalone run210 和
+Chipyard run212 已重新执行，分别为全部 9 项总检查通过和 8/8 个 ELF 通过。
+
+P3 已完成单 tile 的综合、GPL、合法化、CTS、GRT、DRT、RCX、STA 与活动功耗；
+实际 DRT 为零 DRC、零 pin-access 缺失。16-tile 顶层也已完成综合、70% 宏利用率
+GPL、97,260 个标准单元的构造合法化和 CTS，当前正在执行 5 轮 tile48 GRT。已写出
+的第 2/3 份 marker 报告均达到每方向 10,000 条的输出上限；可见 overflow 下界从
+20,518 降到 20,259，单点最大值从 5 降到 2，涉及网数从 1,091 降到 998。由于
+报告被截断，这些数字只证明局部最坏拥塞改善，不能当作最终 aggregate overflow。
+旧集中式 v7 DRT 在第 1 轮 90% 仍有 1,864,670 条违例，已为释放内存而安全停止，
+不作为结果。因此
 `artifacts/results/mlx-array-ppa-run211.json` 和最终
 `artifacts/results/mlx-riscv-system-goal-run213.json` 尚未生成，不能提前声明完成。
 
@@ -126,13 +131,13 @@ RISC-V ELF。`host total = host config + host launch/wait`；`system` 是控制�
 | 工作负载 | 后端 | 指令 | host config | host launch/wait | host total | system | DMA | kernel | sync stall | hops/conflicts | bytes |
 |---|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|
 | BSMM | cycle | 44 | 957 | 472 | 1429 | 458 | 328 | 128 | 0 | 13/171 | 576 |
-| BSMM | RTL | 44 | 957 | 405 | 1362 | 391 | 328 | 61 | 202 | 14/1 | 576 |
+| BSMM | RTL | 44 | 957 | 410 | 1367 | 396 | 328 | 66 | 215 | 14/0 | 576 |
 | FFT-CMP | cycle | 34 | 789 | 399 | 1188 | 385 | 288 | 95 | 9 | 13/115 | 512 |
-| FFT-CMP | RTL | 34 | 789 | 353 | 1142 | 339 | 288 | 49 | 148 | 14/0 | 512 |
+| FFT-CMP | RTL | 34 | 789 | 358 | 1147 | 344 | 288 | 54 | 162 | 14/0 | 512 |
 | SWA | cycle | 25 | 649 | 363 | 1012 | 349 | 248 | 99 | 28 | 10/26 | 448 |
-| SWA | RTL | 25 | 649 | 347 | 996 | 333 | 248 | 83 | 83 | 11/0 | 448 |
+| SWA | RTL | 25 | 649 | 358 | 1007 | 344 | 248 | 94 | 99 | 11/0 | 448 |
 | Transformer block | cycle | 45 | 963 | 516 | 1479 | 478 | 344 | 132 | 40 | 10/152 | 576 |
-| Transformer block | RTL | 45 | 963 | 460 | 1423 | 422 | 344 | 76 | 263 | 12/0 | 576 |
+| Transformer block | RTL | 45 | 963 | 462 | 1425 | 424 | 344 | 78 | 269 | 12/1 | 576 |
 
 所有八条记录同时检查：ELF return code、workload/backend identity、golden、指令
 计数、load/store/compute/xfer 守恒、DMA bytes、`system = DMA + kernel + 2`、
@@ -371,23 +376,24 @@ hop-consuming router，而不是在阵列顶层建立全局 512-bit 动态选择
 与局部邻接/skip-hop 链路”做成可复用 tile 硬宏层级，消除 RF/FU 出宏回环；不把
 继续降低顶层利用率或增加同一集中式路由迭代作为首选修复。
 
-该修复方向已先实现为与生产顶层并存的 `mlx_array_pe_tile` 和
-`mlx_array_4x4_distributed` 候选，尚未替换 `mlx_array_4x4` 或 run211 合同。tile
+该修复方向已实现为 `mlx_array_pe_tile` 和 `mlx_array_4x4_distributed`。tile
 把 PC/状态机、tag 生命周期、RF/FU 写回、SPM 请求和注册 packet buffer 内聚在
 PE 边界内；4×4 顶层只保留共享 SPM 仲裁、固定距离 1/2 的横纵链路仲裁和统计。
 独立 tile 的 load→add→local-xfer→store 测试通过，BSMM、FFT-CMP、SWA 和组合
 Transformer block 也分别以 66/54/94/78 cycles 通过原 FP16 golden，指令计数为
-44/34/25/45。fresh 旧集中式 Icarus 对照在 22 分钟内只完成 PE0 的前三条 load，
-随后没有继续发射；该辅助仿真已停止，不能作为完整周期对照，但确认不能用陈旧的
-run210 二进制替当前源码背书。
+44/34/25/45。完成 tile 详细布线后，默认模块 `mlx_array_4x4` 已改为该分布式顶层
+的薄 wrapper，旧实现改名为 `mlx_array_4x4_centralized`。fresh standalone run210
+状态为 `supported` 且 9 项总检查全真；固定 Chipyard commit 上重新构建两个
+Verilator 配置后，run212 的 cycle/RTL 共 8 个 ELF 全部通过，RTL kernel cycles
+与上述 66/54/94/78 完全一致。因此生产系统仿真不再依赖陈旧二进制背书。
 
 以现有 PE 作为 blackbox 的 Nangate45 快速映射显示，单 tile wrapper 含 7,420 个
 非宏 cells、9,793.588 µm² cell area；16-tile 顶层 shell 含 97,260 个非宏 cells、
 101,197.572 µm²。递归合计的非 PE 额外逻辑为 215,980 cells/257,894.980 µm²，
 相对旧集中式 shell 的 775,745 cells/767,357.332 µm² 分别下降 72.16%/66.39%。
-这些是 Yosys/ABC 结构候选结果，不是布局布线后 PPA。晋升仍需完成 tile wrapper
-围绕现有 PE 宏的真实 P&R、以 16 个 tile 宏重做顶层、重新生成 workload VCD，
-并重跑 standalone/Chipyard/run211/run213 全部门禁。
+这些 Yosys/ABC 数字只是结构比较，不是布局布线后 PPA。功能与 tile 物理门禁已使
+该实现晋升为生产顶层；最终 PPA 仍须完成 16-tile 顶层 GRT/DRT/RCX/STA/power，
+再生成 run211 并由 run213 执行完整目标审计。
 
 后续物理证据已使该候选跨过第一道签核门。8.603 mm × 8.603 mm 的 v2-tight tile
 把现有 7.731275 mm PE 宏固定在 212.8 µm routing-pitch 公倍网格上，四周保留约
@@ -416,7 +422,11 @@ overflow 为零。
 真实 16-tile 顶层已继续推进：70% 宏利用率得到约 41.172 mm die 和约 1.344 mm
 tile 间通道，GPL 在第 190 轮达到 0.002926；4,096 行/17,808 segments 对全部
 97,260 个顶层 cells 完成 site/segment/nonoverlap 审计，CTS 新增 1,783 个 buffers
-并全部通过固定单元避让审计。当前正在运行 tile48 GRT。旧集中式 DRT 在第 1 轮
+并全部通过固定单元避让审计。当前 5 轮 tile48 GRT 已完成两个可见优化快照：
+`congestion-2.rpt` 和 `congestion-3.rpt` 都触及水平/垂直各 10,000 marker 上限，
+报告内 overflow 下界为 20,518/20,259，最大单点 overflow 为 5/2，unique nets 为
+1,091/998。热点主要是 `spm_rsp_rdata_i`、`tile_spm_wdata` 和宽 route data；最终
+3D layer assignment 汇总出来前不据此宣布拥塞闭合。旧集中式 DRT 在第 1 轮
 90% 仍有 1,864,670 violations，随后为释放顶层 GRT 内存而安全停止；其日志与
 输入 checkpoint 保留，但没有最终 DRC/DEF/ODB/SPEF，明确不作为最终结果。
 

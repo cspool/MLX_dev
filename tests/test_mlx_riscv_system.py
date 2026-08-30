@@ -287,11 +287,15 @@ def test_system_instruction_target_is_out_of_band_and_route_is_signed() -> None:
 def test_cycle_model_and_physical_array_are_distinct_backends() -> None:
     cycle = (ROOT / "rtl/mlx/mlx_cycle_model.sv").read_text()
     array = (ROOT / "rtl/mlx/mlx_array_4x4.sv").read_text()
+    distributed = (ROOT / "rtl/mlx/mlx_array_4x4_distributed.sv").read_text()
     assert "one shared SIMD functional service" in cycle
     assert "mlx_array_4x4" not in cycle
     assert "for (pe = 0; pe < PE_COUNT" in array
     assert "mlx_pe_top" in array
     assert "packet_route_grant" in array
+    assert "module mlx_array_4x4_centralized" in array
+    assert "mlx_array_4x4_distributed" in array
+    assert "module mlx_array_4x4_distributed" in distributed
 
 
 def test_backend_runs_match_goldens_and_instruction_counts() -> None:
@@ -431,6 +435,8 @@ def test_ppa_scope_is_real_array_and_unfitted() -> None:
         for name in ("global_route_log", "detailed_route_log")
     )
     assert "mlx_array_4x4.sv" in config["rtl_sources"][-1]
+    assert "rtl/mlx/mlx_array_pe_tile.sv" in config["rtl_sources"]
+    assert "rtl/mlx/mlx_array_4x4_distributed.sv" in config["rtl_sources"]
     assert config["activity"]["provenance"] == "measured_rtl_simulation"
     assert (
         config["activity"]["source_clock_period_ns"]
@@ -468,10 +474,10 @@ def test_paper_ppa_alignment_is_explicit_and_separated() -> None:
     assert calibrated["summary"]["power_max_relative_error"] < 0.15
 
 
-def test_distributed_tile_candidate_is_functional_but_not_promoted() -> None:
+def test_distributed_tile_candidate_is_promoted_but_not_final() -> None:
     config = yaml.safe_load((ROOT / "configs/system/mlx_array_ppa_v1.yaml").read_text())
     candidate = config["hierarchical_distributed_tile_candidate"]
-    assert candidate["promoted_to_production_top"] is False
+    assert candidate["promoted_to_production_top"] is True
     assert candidate["result_consumed_as_final_ppa"] is False
     assert all(
         record["golden_match"]
