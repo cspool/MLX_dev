@@ -475,6 +475,18 @@ def test_distributed_tile_candidate_is_functional_but_not_promoted() -> None:
     assert floorplan["pe_origin_grid_um"] == 212.8
     assert floorplan["tile48_grt_iter5"]["missing_route_warnings"] == 0
     assert floorplan["tile48_grt_iter5"]["aggregate_overflow"] > 0
+    iter50 = floorplan["tile48_grt_iter50"]
+    assert iter50["missing_route_warnings"] == 0
+    assert iter50["final_2d_markers"] < 200
+    assert iter50["aggregate_overflow"] > floorplan["tile48_grt_iter5"][
+        "aggregate_overflow"
+    ]
+    assert all(value == 0 for value in floorplan["detailed_route_probe"]["pin_access_status"].values())
+    loose = candidate["tile_floorplan_v1_rejected"]["tile48_grt_iter5"]
+    assert loose["resource"] > floorplan["tile48_grt_iter5"]["resource"]
+    assert loose["aggregate_overflow"] > floorplan["tile48_grt_iter5"][
+        "aggregate_overflow"
+    ]
     top_floorplan = candidate["distributed_top_floorplan_candidate"]
     assert top_floorplan["tile_macro_count"] == 16
     assert top_floorplan["utilization_percent"] == 70

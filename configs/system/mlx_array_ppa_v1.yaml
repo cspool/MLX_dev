@@ -1091,7 +1091,7 @@ hierarchical_top_v7_congested_droute_probe:
   result_consumed_as_final_ppa: false
 hierarchical_distributed_tile_candidate:
   topology: autonomous_pe_tile_with_registered_local_packet_buffer_and_fixed_distance_1_2_links
-  status: tile_v2_tight_grt_iter50_running
+  status: tile_v2_tight_iter50_droute_probe_running
   promoted_to_production_top: false
   result_consumed_as_final_ppa: false
   functional_probe:
@@ -1120,7 +1120,21 @@ hierarchical_distributed_tile_candidate:
     legal_max_displacement_um: 3481.8
     cts_buffers: 459
     cts_average_sink_wire_length_um: 9697.35
-    diagnosis: wrapper_cells_spread_across_excessive_outer_halo
+    tile48_grt_iter5:
+      routed_nets: 11154
+      missing_route_warnings: 0
+      resource: 282316324
+      demand: 5632705
+      usage_fraction: 0.0200
+      max_horizontal_overflow: 18
+      max_vertical_overflow: 22
+      aggregate_overflow: 11913
+      wirelength_um: 38229730
+    diagnosis:
+      - wrapper_cells_spread_across_excessive_outer_halo
+      - routing_resource_increased_49_52_percent_vs_v2_but_demand_increased_9_98_percent
+      - equal_iter_overflow_increased_30_24_percent_vs_v2
+      - wirelength_increased_9_87_percent_vs_v2
   tile_floorplan_v2_tight:
     die_um: [8603, 8603]
     pe_origin_um: [425.6, 425.6]
@@ -1144,6 +1158,34 @@ hierarchical_distributed_tile_candidate:
       max_vertical_overflow: 21
       aggregate_overflow: 9147
       status: rejected_nonzero_overflow_but_suitable_for_iter50_followup
+    tile48_grt_iter50:
+      routed_nets: 11092
+      missing_route_warnings: 0
+      resource: 188813436
+      demand: 5310097
+      usage_fraction: 0.0281
+      final_vias: 147279
+      wirelength_um: 36195069
+      max_horizontal_overflow: 12
+      max_vertical_overflow: 19
+      aggregate_overflow: 10197
+      final_2d_markers: 179
+      final_2d_marker_overflow_sum: 179
+      status: rejected_nonzero_3d_overflow_droute_probe_running
+      diagnosis:
+        - final_2d_markers_reduced_91_88_percent_from_iter5_marker
+        - final_3d_overflow_increased_11_48_percent_vs_iter5
+        - wirelength_increased_4_02_percent_vs_iter5
+        - all_nets_routed_without_grt_0026
+    detailed_route_probe:
+      input: tile48_grt_iter50
+      require_zero_drc: true
+      require_zero_pin_access_failures: true
+      pin_access_status:
+        std_cell_pins_without_access: 0
+        macro_pins_without_access: 0
+        drt_0073: 0
+      status: running
   distributed_top_floorplan_candidate:
     utilization_percent: 70
     tile_macro_width_um: 8603
@@ -1174,6 +1216,10 @@ hierarchical_distributed_tile_candidate:
     v2_cts_checkpoint: artifacts/environment/h206/tile_macro/mlx-array-pe-tile-v2-tight-cts.odb
     v2_iter5_global_route_log: artifacts/environment/h206/tile_macro/mlx-array-pe-tile-v2-tight-route-verbose.log
     v2_iter5_global_route_checkpoint: artifacts/environment/h206/tile_macro/mlx-array-pe-tile-v2-tight-global-route.odb
+    v2_iter50_global_route_log: artifacts/environment/h206/tile_macro/mlx-array-pe-tile-v2-tight-iter50-route.log
+    v2_iter50_global_route_checkpoint: artifacts/environment/h206/tile_macro/mlx-array-pe-tile-v2-tight-iter50-global-route.odb
+    v2_iter50_detailed_route_probe_log: artifacts/environment/h206/tile_macro/mlx-array-pe-tile-v2-tight-iter50-droute-probe.log
+    distributed_activity_vcd: artifacts/environment/h206/tile_macro/transformer-block-distributed-tile0-ports.vcd
   promotion_gates:
     - fresh_standalone_four_workload_pass
     - fresh_chipyard_cycle_and_rtl_pass
