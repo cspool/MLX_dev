@@ -475,6 +475,11 @@ def test_distributed_tile_candidate_is_functional_but_not_promoted() -> None:
     assert floorplan["pe_origin_grid_um"] == 212.8
     assert floorplan["tile48_grt_iter5"]["missing_route_warnings"] == 0
     assert floorplan["tile48_grt_iter5"]["aggregate_overflow"] > 0
+    top_floorplan = candidate["distributed_top_floorplan_candidate"]
+    assert top_floorplan["tile_macro_count"] == 16
+    assert top_floorplan["utilization_percent"] == 70
+    assert top_floorplan["expected_inter_tile_channel_um"] > 1300
+    assert top_floorplan["status"] == "waiting_for_zero_drc_tile_lef_and_lib"
     assert len(candidate["promotion_gates"]) == 9
 
     tile = (ROOT / candidate["rtl_sources"]["tile"]).read_text()
@@ -490,6 +495,8 @@ def test_distributed_tile_candidate_is_functional_but_not_promoted() -> None:
     assert "PPA_TOP" in hierarchical_flow
     assert "PPA_MACRO_INSTANCE_KIND" in hierarchical_flow
     assert "GENERATE_TILES\\[%d\\].physical_tile" in hierarchical_flow
+    runner = ROOT / candidate["physical_flows"]["runner"]
+    assert runner.is_file() and os.access(runner, os.X_OK)
 
 
 def test_recursive_submacros_are_routed_and_vcd_powered() -> None:
