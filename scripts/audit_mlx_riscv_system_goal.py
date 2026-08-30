@@ -217,6 +217,8 @@ def build_scope_audit(config: dict[str, Any]) -> dict[str, Any]:
         and global_route_metrics["final_vias"] > 0
         and global_route_metrics["total_wirelength_um"] > 0
         and bool(global_route_iteration_reports)
+        and global_route_iteration_reports[-1]["completed_iteration"]
+        == route_contract["congestion_iterations"]
         and [item["file_suffix"] for item in global_route_iteration_reports]
         == sorted(item["file_suffix"] for item in global_route_iteration_reports)
         and all(

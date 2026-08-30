@@ -10,6 +10,7 @@ import math
 import os
 import re
 import subprocess
+from collections import Counter
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
@@ -487,6 +488,10 @@ def parse_congestion_marker_report(text: str) -> dict[str, Any]:
             r"comment: capacity:(\d+) usage:(\d+) overflow:(\d+)", text
         )
     ]
+    source_nets = re.findall(r"(?:^|\s)net:(\S+)", text, flags=re.MULTILINE)
+    source_net_families = Counter(
+        re.split(r"\\?\[", name, maxsplit=1)[0] for name in source_nets
+    )
     return {
         "markers": len(entries),
         "horizontal_markers": horizontal_markers,
@@ -494,6 +499,9 @@ def parse_congestion_marker_report(text: str) -> dict[str, Any]:
         "reported_marker_overflow_sum": sum(entry[2] for entry in entries),
         "max_marker_overflow": max((entry[2] for entry in entries), default=0),
         "zero_capacity_markers": sum(entry[0] == 0 for entry in entries),
+        "source_net_mentions": len(source_nets),
+        "unique_source_nets": len(set(source_nets)),
+        "source_net_families": dict(sorted(source_net_families.items())),
         "direction_marker_limit_reached": (
             horizontal_markers >= 10_000 or vertical_markers >= 10_000
         ),

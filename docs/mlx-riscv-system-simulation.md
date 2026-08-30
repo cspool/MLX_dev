@@ -15,9 +15,9 @@ Chipyard run212 已重新执行，分别为全部 9 项总检查通过和 8/8 �
 P3 已完成单 tile 的综合、GPL、合法化、CTS、GRT、DRT、RCX、STA 与活动功耗；
 实际 DRT 为零 DRC、零 pin-access 缺失。16-tile 顶层也已完成综合、70% 宏利用率
 GPL、97,260 个标准单元的构造合法化和 CTS，当前正在执行 5 轮 tile48 GRT。已写出
-的第 2/3/4 份 marker 报告均达到每方向 10,000 条的输出上限；可见 overflow 下界
-从 20,518 经 20,259 降到 20,076，单点最大值从 5 降到 2，涉及网数从 1,091 经
-998 降到 925。由于
+的第 2/3/4/5 份 marker 报告均达到每方向 10,000 条的输出上限；可见 overflow
+下界从 20,518/20,259/20,076 降到 20,026，单点最大值从 5 降到 2，逐个解析
+`net:` 后的 unique nets 从 973/921/884 降到 854。由于
 报告被截断，这些数字只证明局部最坏拥塞改善，不能当作最终 aggregate overflow。
 旧集中式 v7 DRT 在第 1 轮 90% 仍有 1,864,670 条违例，已为释放内存而安全停止，
 不作为结果。因此
@@ -423,13 +423,21 @@ overflow 为零。
 真实 16-tile 顶层已继续推进：70% 宏利用率得到约 41.172 mm die 和约 1.344 mm
 tile 间通道，GPL 在第 190 轮达到 0.002926；4,096 行/17,808 segments 对全部
 97,260 个顶层 cells 完成 site/segment/nonoverlap 审计，CTS 新增 1,783 个 buffers
-并全部通过固定单元避让审计。当前 5 轮 tile48 GRT 已完成三个可见优化快照：
-`congestion-2/3/4.rpt` 都触及水平/垂直各 10,000 marker 上限，报告内 overflow
-下界为 20,518/20,259/20,076，最大单点 overflow 为 5/2/2，unique nets 为
-1,091/998/925。热点主要是 `spm_rsp_rdata_i`、`tile_spm_wdata` 和宽 route data；最终
+并全部通过固定单元避让审计。当前 5 轮 tile48 GRT 已完成四个可见优化快照：
+`congestion-2/3/4/5.rpt` 都触及水平/垂直各 10,000 marker 上限，报告内 overflow
+下界为 20,518/20,259/20,076/20,026，最大单点 overflow 为 5/2/2/2，逐网 unique
+nets 为 973/921/884/854。热点主要是 `spm_rsp_rdata_i`、`tile_spm_wdata` 和宽
+route data；最终
 3D layer assignment 汇总出来前不据此宣布拥塞闭合。旧集中式 DRT 在第 1 轮
 90% 仍有 1,864,670 violations，随后为释放顶层 GRT 内存而安全停止；其日志与
 输入 checkpoint 保留，但没有最终 DRC/DEF/ODB/SPEF，明确不作为最终结果。
+
+分布式顶层的最终签核不把非零 GRT 诊断值伪装成“零拥塞”，也不再把 FastRoute
+保守 3D layer assignment 当作实际 DRC。只有 GRT completion marker 存在、全部网
+均已 routed、`GRT-0026=0` 且未触发缺失路由 warning limit 时，runner 才允许进入
+TritonRoute；随后必须同时得到 DRT completion、零 DRC、`stdCellPinNoAp=0`、
+`macroNoAp=0` 和 `DRT-0073=0` 才能生成 supported run211。任何一项失败都拒绝，
+而 GRT aggregate overflow 则原样保留为诊断与论文实现差距的一部分。
 
 已完成的递归硬宏 STA 同时证明当前 Nangate45 实现没有达到论文的 1 GHz 目标，
 但这与正在处理的顶层几何拥塞是两个独立问题。完整 PE shell 已详细布线到零 DRC、

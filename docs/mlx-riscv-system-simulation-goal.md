@@ -90,6 +90,9 @@
 
 - lowering、空间汇编、周期模型及自主执行的 4×4 RTL 已实现，四个工作负载共享
   同一套程序、输入、golden、reference 和 lineage 清单。
+- 默认 `mlx_array_4x4` 已切换为 16 个自主 `mlx_array_pe_tile` 构成的分布式顶层；
+  旧集中式实现仅保留为诊断基线。单 tile 已完成零 DRC/零 pin-access 物理签核，
+  分布式顶层由 `scripts/run_mlx_distributed_top_ppa.py` 重放综合至 DRT/STA/power。
 - Chipyard 使用 `/root/chipyard` 固定 checkout，commit
   `b5d013190d637e634113cb5179f8c8885df1945a`；兼容补丁与幂等安装脚本保存在本仓库。
 - cycle/RTL 两个 Rocket 配置均运行真实 bare-metal ELF，并通过相同 RoCC 命令接口

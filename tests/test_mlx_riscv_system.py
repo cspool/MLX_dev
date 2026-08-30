@@ -126,8 +126,10 @@ def test_congestion_iteration_reports_reject_stale_suffixes(tmp_path: Path) -> N
 def test_congestion_marker_report_is_diagnostic_not_aggregate() -> None:
     metrics = parse_congestion_marker_report(
         """violation type: Horizontal congestion
+\tsrcs: net:spm_rsp_rdata_i[1] net:tile_spm_wdata\\[0\\][2]
 \tcomment: capacity:0 usage:2 overflow:2
 violation type: Vertical congestion
+\tsrcs: net:spm_rsp_rdata_i[2]
 \tcomment: capacity:4 usage:5 overflow:1
 """
     )
@@ -138,6 +140,12 @@ violation type: Vertical congestion
         "reported_marker_overflow_sum": 3,
         "max_marker_overflow": 2,
         "zero_capacity_markers": 1,
+        "source_net_mentions": 3,
+        "unique_source_nets": 3,
+        "source_net_families": {
+            "spm_rsp_rdata_i": 2,
+            "tile_spm_wdata": 1,
+        },
         "direction_marker_limit_reached": False,
         "aggregate_overflow_eligible": False,
     }
@@ -621,6 +629,7 @@ def test_hierarchical_integrated_ppa_is_supported() -> None:
     )
     assert result["tile_macro"]["status"] == "supported"
     assert all(result["tile_macro"]["required_checks"].values())
+    route_contract = result["route_contract"]
     global_route = top["global_route_metrics"]
     assert result["checks"]["all_nets_globally_routed"] is True
     assert global_route["resource_total_uses_64bit_layer_sum"] is True
@@ -646,6 +655,9 @@ def test_hierarchical_integrated_ppa_is_supported() -> None:
         item["completed_iteration"] == item["file_suffix"] - 1
         for item in iteration_reports
     )
+    assert iteration_reports[-1]["completed_iteration"] == route_contract[
+        "congestion_iterations"
+    ]
     assert all(
         item["marker_metrics"]["aggregate_overflow_eligible"] is False
         for item in iteration_reports
@@ -666,7 +678,6 @@ def test_hierarchical_integrated_ppa_is_supported() -> None:
     assert legalization["cells"] == (
         top["synthesis"]["cell_count"] - top["macro_instances"]
     )
-    route_contract = result["route_contract"]
     assert legalization["rows"] >= route_contract["minimum_physical_rows"]
     assert legalization["row_segments"] >= route_contract["minimum_row_segments"]
     assert legalization["selected_physical_rows"] == legalization["rows"]

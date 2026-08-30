@@ -671,6 +671,9 @@ def build_result(
         and not connectivity["global_missing_warning_limit_reached"]
         and int(global_route.get("routed_nets") or 0) > 0
     )
+    global_route_iterations_complete = bool(route_reports) and route_reports[-1][
+        "completed_iteration"
+    ] == int(contract["congestion_iterations"])
     actual_droute_signoff = (
         detailed_route_outputs_present(paths)
         and connectivity["all_pins_routed"]
@@ -698,6 +701,7 @@ def build_result(
         "cts_buffer_legalization": cts_valid,
         "macro_track_alignment": macro_track_valid,
         "global_route_checkpoint": present(paths["grt"]),
+        "global_route_iterations_complete": global_route_iterations_complete,
         "all_nets_globally_routed": all_nets_globally_routed,
         "actual_detailed_route_signoff": actual_droute_signoff,
         "drc_clean": top_physical.get("drc_violations") == 0,
