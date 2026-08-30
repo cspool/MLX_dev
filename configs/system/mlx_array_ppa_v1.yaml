@@ -1081,7 +1081,11 @@ hierarchical_top_v7_congested_droute_probe:
   require_detailed_route_completion: true
   require_zero_drc: true
   require_zero_pin_access_failures: true
-  status: running
+  status: stopped_at_first_optimization_90_percent_after_distributed_restructure_superseded_probe
+  last_completed_optimization_iteration: 1
+  last_completed_fraction_percent: 90
+  last_reported_violations: 1864670
+  stop_reason: release_memory_for_distributed_16_tile_global_route
   evidence:
     input_global_route_checkpoint: artifacts/environment/h206/hierarchical_4x4/mlx-array-4x4-hierarchical-compact-v7-u60-segment8192-metal2-iter50-overflow-global-route.odb
     detailed_route_log: artifacts/environment/h206/hierarchical_4x4/mlx-array-4x4-hierarchical-compact-v7-u60-segment8192-metal2-iter50-overflow-droute-probe.log
@@ -1091,7 +1095,7 @@ hierarchical_top_v7_congested_droute_probe:
   result_consumed_as_final_ppa: false
 hierarchical_distributed_tile_candidate:
   topology: autonomous_pe_tile_with_registered_local_packet_buffer_and_fixed_distance_1_2_links
-  status: tile_v2_tight_iter50_droute_probe_running
+  status: tile_zero_drc_complete_distributed_top_grt_running
   promoted_to_production_top: false
   result_consumed_as_final_ppa: false
   functional_probe:
@@ -1185,7 +1189,25 @@ hierarchical_distributed_tile_candidate:
         std_cell_pins_without_access: 0
         macro_pins_without_access: 0
         drt_0073: 0
-      status: running
+      initial_violations: 13828
+      initial_short_violations: 11653
+      first_optimization_violations: 1246
+      second_optimization_violations: 736
+      third_optimization_violations: 2
+      final_stubborn_iteration_violations: 0
+      completed_iterations: 4
+      elapsed_seconds: 3987
+      peak_memory_mb: 11489.36
+      final_wirelength_um: 35721225
+      final_vias: 142506
+      annotated_pin_activities: 2214
+      shell_power_w: 0.038
+      shell_power_excludes_recursive_pe_macro: true
+      worst_slack_ns_at_1ghz: -741.973755
+      critical_path_delay_ns: 742.973755
+      fmax_ghz: 0.001345943
+      timing_diagnosis: rf_fu_vector_datapath_still_crosses_nested_pe_macro_boundary
+      status: complete_zero_drc_zero_pin_access_failures
   distributed_top_floorplan_candidate:
     utilization_percent: 70
     tile_macro_width_um: 8603
@@ -1198,7 +1220,17 @@ hierarchical_distributed_tile_candidate:
     expected_die_side_um: 41171.964
     expected_die_area_mm2: 1695.130645
     macro_origin_grid_um: 212.8
-    status: waiting_for_zero_drc_tile_lef_and_lib
+    gpl_overflow: 0.002926
+    selected_physical_rows: 4096
+    selected_row_segments: 17808
+    legal_cells: 97260
+    legal_max_displacement_um: 1350.040
+    legal_average_displacement_um: 15.9785
+    legal_min_capacity_ratio: 24.867797
+    cts_buffers: 1783
+    cts_max_displacement_um: 3995.607
+    cts_average_displacement_um: 735.956
+    status: tile48_grt_iter5_running
   rtl_sources:
     tile: rtl/mlx/mlx_array_pe_tile.sv
     distributed_top: rtl/mlx/mlx_array_4x4_distributed.sv
@@ -1219,13 +1251,22 @@ hierarchical_distributed_tile_candidate:
     v2_iter50_global_route_log: artifacts/environment/h206/tile_macro/mlx-array-pe-tile-v2-tight-iter50-route.log
     v2_iter50_global_route_checkpoint: artifacts/environment/h206/tile_macro/mlx-array-pe-tile-v2-tight-iter50-global-route.odb
     v2_iter50_detailed_route_probe_log: artifacts/environment/h206/tile_macro/mlx-array-pe-tile-v2-tight-iter50-droute-probe.log
+    v2_iter50_detailed_route_probe_drc: artifacts/environment/h206/tile_macro/mlx-array-pe-tile-v2-tight-iter50-droute-probe.drc
+    v2_iter50_detailed_route_probe_odb: artifacts/environment/h206/tile_macro/mlx-array-pe-tile-v2-tight-iter50-droute-probe.odb
+    v2_iter50_detailed_route_probe_spef: artifacts/environment/h206/tile_macro/mlx-array-pe-tile-v2-tight-iter50-droute-probe.spef
+    v2_iter50_detailed_route_probe_lef: artifacts/environment/h206/tile_macro/mlx-array-pe-tile-v2-tight-iter50-droute-probe.abstract.lef
+    v2_iter50_detailed_route_probe_integration_lef: artifacts/environment/h206/tile_macro/mlx-array-pe-tile-v2-tight-iter50-droute-probe.integration.lef
+    v2_iter50_detailed_route_probe_lib: artifacts/environment/h206/tile_macro/mlx-array-pe-tile-v2-tight-iter50-droute-probe.lib
     distributed_activity_vcd: artifacts/environment/h206/tile_macro/transformer-block-distributed-tile0-ports.vcd
+    distributed_top_gpl_checkpoint: artifacts/environment/h206/distributed_4x4/mlx-array-4x4-distributed-u70-global-placement.odb
+    distributed_top_legal_checkpoint: artifacts/environment/h206/distributed_4x4/mlx-array-4x4-distributed-u70-channel-legal.odb
+    distributed_top_cts_checkpoint: artifacts/environment/h206/distributed_4x4/mlx-array-4x4-distributed-u70-post-cts.odb
   promotion_gates:
     - fresh_standalone_four_workload_pass
     - fresh_chipyard_cycle_and_rtl_pass
-    - tile_zero_grt_overflow
+    - tile_all_nets_globally_routed_without_missing_pin_routes
     - tile_zero_drc_and_zero_pin_access_failures
-    - distributed_top_zero_grt_overflow
+    - distributed_top_all_nets_globally_routed_without_missing_pin_routes
     - distributed_top_zero_drc_and_zero_pin_access_failures
     - workload_vcd_power
     - recursive_worst_timing_and_fmax

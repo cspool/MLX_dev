@@ -6,6 +6,7 @@ from pathlib import Path
 
 import yaml
 
+from scripts.run_mlx_array_ppa import parse_openroad
 from scripts.run_mlx_hierarchical_ppa import (
     aggregate_hierarchical_timing,
     all_congestion_iteration_reports,
@@ -232,6 +233,18 @@ MLX_TILE_DROUTE_COMPLETE odb=/tmp/tile.odb spef=/tmp/tile.spef drc=/tmp/tile.drc
     assert connectivity["global_route_completed"] is True
     assert connectivity["detailed_route_completed"] is True
     assert connectivity["all_pins_routed"] is True
+
+    physical = parse_openroad(
+        """[INFO DRT-0199]   Number of violations = 0.
+MLX_TILE_DIE_UM 8603.000000 8603.000000
+MLX_TILE_CORE_UM 8562.730000 8561.000000
+""",
+        1.0,
+    )
+    assert physical["drc_violations"] == 0
+    assert physical["die_width_um"] == physical["die_height_um"] == 8603.0
+    assert physical["core_width_um"] == 8562.73
+    assert physical["core_height_um"] == 8561.0
 
 
 def test_system_workload_manifest_covers_completion_operators() -> None:
@@ -491,7 +504,12 @@ def test_distributed_tile_candidate_is_functional_but_not_promoted() -> None:
     assert top_floorplan["tile_macro_count"] == 16
     assert top_floorplan["utilization_percent"] == 70
     assert top_floorplan["expected_inter_tile_channel_um"] > 1300
-    assert top_floorplan["status"] == "waiting_for_zero_drc_tile_lef_and_lib"
+    assert top_floorplan["status"] == "tile48_grt_iter5_running"
+    assert top_floorplan["legal_cells"] == 97260
+    assert top_floorplan["cts_buffers"] == 1783
+    droute = floorplan["detailed_route_probe"]
+    assert droute["final_stubborn_iteration_violations"] == 0
+    assert droute["status"] == "complete_zero_drc_zero_pin_access_failures"
     assert len(candidate["promotion_gates"]) == 9
 
     tile = (ROOT / candidate["rtl_sources"]["tile"]).read_text()

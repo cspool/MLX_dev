@@ -389,6 +389,37 @@ run210 二进制替当前源码背书。
 围绕现有 PE 宏的真实 P&R、以 16 个 tile 宏重做顶层、重新生成 workload VCD，
 并重跑 standalone/Chipyard/run211/run213 全部门禁。
 
+后续物理证据已使该候选跨过第一道签核门。8.603 mm × 8.603 mm 的 v2-tight tile
+把现有 7.731275 mm PE 宏固定在 212.8 µm routing-pitch 公倍网格上，四周保留约
+0.4 mm wrapper 环；GPL overflow 为 0.009909，详细合法化最大/平均位移为
+624.9/5.2 µm，CTS 使用 395 个 buffers。相同设计的宽松 9.88 mm v1 虽增加
+49.52% routing resource，却因 wirelength 增加 9.87%，5 轮 GRT aggregate
+overflow 从 v2 的 9,147 升至 11,913，因此拒绝。v2 的 50 轮 2D marker 降至
+179，但最终 3D overflow 反升至 10,197；这再次证明 GRT 的保守 layer assignment
+不能替代实际详细布线结果。
+
+官方 OpenROAD 随后从该 v2 iter50 checkpoint 完成 pin access、DRT、RCX、STA 和
+VCD power：`stdCellPinNoAp=0`、`macroNoAp=0`、`DRT-0073=0`，初始 13,828 条
+DRC 在第 1/2/3 轮分别降至 1,246/736/2，第 4 轮 stubborn-tile 修复后为零。
+DRT 总耗时约 1 小时 6 分 27 秒，峰值约 11.49 GB，最终 wirelength
+35,721,225 µm、vias 142,506；tile shell 的 Transformer 活动功耗为 38.0 mW，
+不含递归 PE 宏内部功耗。由此，tile 的晋升门禁采用“全部网已取得全局 route、无
+缺失 pin route，且实际 DRT 零 DRC/零 pin-access 缺失”，不再机械要求保守 GRT
+overflow 为零。
+
+该结果同时隔离出时序结构问题。tile 的 1 GHz worst slack 为 -741.973755 ns，
+对应 742.973755 ns 关键路径和约 0.001345943 GHz Fmax；路径仍从 tile 控制器进入
+嵌套 PE 宏，经过 `fetch_word`、RF read，再从 PE 宏输出并回到同一宏的 FU input。
+因此 wrapper-over-PE 已解决顶层可布通性，但不是最终时序层级；后续须把自主状态机
+直接并入由 RF/FU 子宏组成的 PE 物理宏，消除 512-bit RF/FU 出宏回环。
+
+真实 16-tile 顶层已继续推进：70% 宏利用率得到约 41.172 mm die 和约 1.344 mm
+tile 间通道，GPL 在第 190 轮达到 0.002926；4,096 行/17,808 segments 对全部
+97,260 个顶层 cells 完成 site/segment/nonoverlap 审计，CTS 新增 1,783 个 buffers
+并全部通过固定单元避让审计。当前正在运行 tile48 GRT。旧集中式 DRT 在第 1 轮
+90% 仍有 1,864,670 violations，随后为释放顶层 GRT 内存而安全停止；其日志与
+输入 checkpoint 保留，但没有最终 DRC/DEF/ODB/SPEF，明确不作为最终结果。
+
 已完成的递归硬宏 STA 同时证明当前 Nangate45 实现没有达到论文的 1 GHz 目标，
 但这与正在处理的顶层几何拥塞是两个独立问题。完整 PE shell 已详细布线到零 DRC、
 零 pin-access 缺失，其 1 GHz worst slack 为 -2.559961 ns，对应 3.559961 ns

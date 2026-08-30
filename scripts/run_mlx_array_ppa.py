@@ -67,8 +67,12 @@ def parse_openroad(text: str, clock_period: float) -> dict[str, Any]:
     )
     annotations = re.findall(r"Annotated\s+(\d+)\s+pin activities", text)
     slacks = re.findall(r"^\s*([+-]?[0-9.]+)\s+slack", text, flags=re.MULTILINE)
-    die = re.findall(r"MLX_PPA_DIE_UM\s+([0-9.]+)\s+([0-9.]+)", text)
-    core = re.findall(r"MLX_PPA_CORE_UM\s+([0-9.]+)\s+([0-9.]+)", text)
+    die = re.findall(
+        r"MLX_(?:PPA|PE|TILE)_DIE_UM\s+([0-9.]+)\s+([0-9.]+)", text
+    )
+    core = re.findall(
+        r"MLX_(?:PPA|PE|TILE)_CORE_UM\s+([0-9.]+)\s+([0-9.]+)", text
+    )
     design_area = re.findall(r"Design area\s+([0-9.eE+-]+)", text)
     violations = re.findall(r"Number of violations\s*=\s*(\d+)", text)
     power = totals[-1] if totals else (None, None, None, None)
