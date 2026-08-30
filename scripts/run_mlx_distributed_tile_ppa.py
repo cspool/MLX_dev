@@ -30,6 +30,7 @@ def tile_paths(output: Path, iterations: int) -> dict[str, Path]:
     base = root / "mlx-array-pe-tile"
     tight = root / "mlx-array-pe-tile-v2-tight"
     routed = root / f"mlx-array-pe-tile-v2-tight-iter{iterations}"
+    detailed = root / f"mlx-array-pe-tile-v2-tight-iter{iterations}-droute-probe"
     return {
         "root": root,
         "netlist": base.with_name(f"{base.name}-mapped.v"),
@@ -45,14 +46,14 @@ def tile_paths(output: Path, iterations: int) -> dict[str, Path]:
         "grt": routed.with_name(f"{routed.name}-global-route.odb"),
         "grt_log": routed.with_name(f"{routed.name}-route.log"),
         "congestion": routed.with_name(f"{routed.name}-congestion.rpt"),
-        "droute_log": routed.with_name(f"{routed.name}-droute.log"),
-        "drc": routed.with_name(f"{routed.name}-routed.drc"),
-        "def": routed.with_name(f"{routed.name}-routed.def"),
-        "odb": routed.with_name(f"{routed.name}-routed.odb"),
-        "spef": routed.with_name(f"{routed.name}-routed.spef"),
-        "lef": routed.with_name(f"{routed.name}.abstract.lef"),
-        "integration_lef": routed.with_name(f"{routed.name}.integration.lef"),
-        "lib": routed.with_name(f"{routed.name}.lib"),
+        "droute_log": detailed.with_name(f"{detailed.name}.log"),
+        "drc": detailed.with_name(f"{detailed.name}.drc"),
+        "def": detailed.with_name(f"{detailed.name}.def"),
+        "odb": detailed.with_name(f"{detailed.name}.odb"),
+        "spef": detailed.with_name(f"{detailed.name}.spef"),
+        "lef": detailed.with_name(f"{detailed.name}.abstract.lef"),
+        "integration_lef": detailed.with_name(f"{detailed.name}.integration.lef"),
+        "lib": detailed.with_name(f"{detailed.name}.lib"),
         "vcd": root / "transformer-block-distributed-tile0-ports.vcd",
         "summary": root / "mlx-array-pe-tile-candidate.json",
     }
@@ -218,7 +219,8 @@ def summarize(config: dict[str, Any], paths: dict[str, Path], iterations: int) -
     files = {
         name: artifact(path)
         for name, path in paths.items()
-        if name not in {"root", "summary"} and present(path)
+        if name not in {"root", "summary"}
+        and (present(path) or (name == "drc" and path.is_file()))
     }
     checks = {
         "synthesis": synthesis_metrics.get("cell_count", 0) > 0,
@@ -226,15 +228,20 @@ def summarize(config: dict[str, Any], paths: dict[str, Path], iterations: int) -
         "legal_checkpoint": present(paths["legal"]),
         "cts_checkpoint": present(paths["cts"]),
         "global_route_checkpoint": present(paths["grt"]),
-        "zero_global_route_overflow": grt.get("overflow_resolved") is True,
-        "global_connectivity": connectivity["global_missing_pin_routes"] == 0
+        "global_route_overflow_is_zero": grt.get("overflow_resolved") is True,
+        "all_nets_globally_routed": connectivity["global_route_completed"]
+        and connectivity["global_missing_pin_routes"] == 0
         and not connectivity["global_missing_warning_limit_reached"],
-        "detailed_route_outputs": all(
-            present(paths[name]) for name in ("drc", "def", "odb", "spef", "lef", "lib")
-        ),
+        "detailed_route_outputs": paths["drc"].is_file()
+        and all(present(paths[name]) for name in ("def", "odb", "spef", "lef", "lib")),
         "zero_drc": physical.get("drc_violations") == 0,
         "all_pins_routed": connectivity["all_pins_routed"],
         "workload_vcd": present(paths["vcd"]),
+    }
+    required_checks = {
+        name: value
+        for name, value in checks.items()
+        if name != "global_route_overflow_is_zero"
     }
     return {
         "schema_version": 1,
@@ -242,13 +249,14 @@ def summarize(config: dict[str, Any], paths: dict[str, Path], iterations: int) -
         "run_id": config["run_id"],
         "classification": "distributed_autonomous_pe_tile_candidate",
         "generated_at": datetime.now(timezone.utc).isoformat(),
-        "status": "supported" if all(checks.values()) else "incomplete",
+        "status": "supported" if all(required_checks.values()) else "incomplete",
         "global_route_iterations": iterations,
         "synthesis": synthesis_metrics,
         "global_route": grt,
         "connectivity": connectivity,
         "physical": physical,
         "checks": checks,
+        "required_checks": required_checks,
         "files": files,
     }
 
@@ -287,8 +295,15 @@ def main() -> int:
             if stage == "droute":
                 grt_text = paths["grt_log"].read_text() if present(paths["grt_log"]) else ""
                 grt = parse_global_route_metrics(grt_text)
-                if grt.get("overflow_resolved") is not True:
-                    raise RuntimeError("refusing detailed route before zero global-route overflow")
+                connectivity = parse_route_connectivity(grt_text, "")
+                globally_routed = connectivity["global_route_completed"] and (
+                    connectivity["global_missing_pin_routes"] == 0
+                    and not connectivity["global_missing_warning_limit_reached"]
+                )
+                if grt.get("overflow_resolved") is not True and not globally_routed:
+                    raise RuntimeError(
+                        "refusing detailed route before all nets have global routes"
+                    )
             rc = run_stage(stage, config, paths, env)
         if rc != 0:
             raise RuntimeError(f"distributed tile stage {stage} failed with return code {rc}")

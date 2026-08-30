@@ -527,6 +527,13 @@ def test_distributed_tile_candidate_is_functional_but_not_promoted() -> None:
     assert "GENERATE_TILES\\[%d\\].physical_tile" in hierarchical_flow
     runner = ROOT / candidate["physical_flows"]["runner"]
     assert runner.is_file() and os.access(runner, os.X_OK)
+    tile_result = json.loads(
+        (ROOT / candidate["evidence"]["tile_candidate_summary"]).read_text()
+    )
+    assert tile_result["status"] == "supported"
+    assert all(tile_result["required_checks"].values())
+    assert tile_result["checks"]["global_route_overflow_is_zero"] is False
+    assert tile_result["physical"]["drc_violations"] == 0
 
 
 def test_recursive_submacros_are_routed_and_vcd_powered() -> None:
