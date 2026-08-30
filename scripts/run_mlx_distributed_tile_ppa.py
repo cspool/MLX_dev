@@ -170,7 +170,7 @@ def run_stage(
             paths["gpl_log"],
             env,
         )
-    stage_inputs = {"legal": ("gpl", "gpl_log"), "cts": ("legal", "legal_log")}
+    stage_inputs = {"legal": ("gpl", "legal_log"), "cts": ("legal", "cts_log")}
     if stage in stage_inputs:
         input_key, log_key = stage_inputs[stage]
         local = env.copy()
