@@ -92,7 +92,9 @@ module mlx_array_pe_tile #(
   reg [15:0] rf_valid_q;
   reg tag_complete_q;
   reg xfer_injected_q;
+`ifndef SYNTHESIS
   reg [63:0] debug_cycle_q;
+`endif
 
   reg router_valid_q;
   reg signed [4:0] router_dx_q;
@@ -364,7 +366,9 @@ module mlx_array_pe_tile #(
       rf_valid_q <= 16'd0;
       tag_complete_q <= 1'b0;
       xfer_injected_q <= 1'b0;
+`ifndef SYNTHESIS
       debug_cycle_q <= 64'd0;
+`endif
       router_valid_q <= 1'b0;
       router_dx_q <= 5'sd0;
       router_dy_q <= 5'sd0;
@@ -379,7 +383,9 @@ module mlx_array_pe_tile #(
         instruction_count_q <= cfg_instruction_count_i;
 
       if (launch_i) begin
+`ifndef SYNTHESIS
         debug_cycle_q <= 64'd0;
+`endif
         pc_q <= 6'd0;
         state_q <= (instruction_count_q == 0) ? ST_DONE : ST_READY;
         compute_countdown_q <= 6'd0;
@@ -390,7 +396,9 @@ module mlx_array_pe_tile #(
         router_dx_q <= 5'sd0;
         router_dy_q <= 5'sd0;
       end else begin
+`ifndef SYNTHESIS
         debug_cycle_q <= debug_cycle_q + 1'b1;
+`endif
         if (compute_issue_o) begin
           state_q <= ST_COMPUTE;
           compute_countdown_q <= operation_latency(decoded_operation);
