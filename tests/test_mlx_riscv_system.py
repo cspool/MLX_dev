@@ -15,6 +15,7 @@ from scripts.run_mlx_hierarchical_ppa import (
     parse_congestion_marker_report,
     parse_cts_buffer_legalization,
     parse_global_route_metrics,
+    parse_route_connectivity,
 )
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -217,6 +218,20 @@ Total       -1794967296             300           -0.00%             5 /  7 /  9
     assert metrics["aggregate_overflow_consistent"] is True
     assert metrics["resource_total_uses_64bit_layer_sum"] is True
     assert metrics["overflow_resolved"] is False
+
+
+def test_route_connectivity_accepts_distributed_tile_completion_markers() -> None:
+    connectivity = parse_route_connectivity(
+        "MLX_TILE_STOP_AFTER_GRT checkpoint=/tmp/tile-grt.odb\n",
+        """[INFO DRT-0166] Complete pin access.
+#stdCellPinNoAp = 0
+#macroNoAp = 0
+MLX_TILE_DROUTE_COMPLETE odb=/tmp/tile.odb spef=/tmp/tile.spef drc=/tmp/tile.drc
+""",
+    )
+    assert connectivity["global_route_completed"] is True
+    assert connectivity["detailed_route_completed"] is True
+    assert connectivity["all_pins_routed"] is True
 
 
 def test_system_workload_manifest_covers_completion_operators() -> None:

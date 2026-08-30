@@ -298,8 +298,20 @@ def parse_cts_buffer_legalization(text: str) -> dict[str, Any]:
 def parse_route_connectivity(global_route_text: str, detailed_route_text: str) -> dict[str, Any]:
     """Require completed routing and zero unresolved pin-access failures."""
 
-    global_route_completed = "MLX_ARRAY_STOP_AFTER_GRT checkpoint=" in global_route_text
-    detailed_route_completed = "MLX_ARRAY_DROUTE_COMPLETE odb=" in detailed_route_text
+    global_route_completed = any(
+        marker in global_route_text
+        for marker in (
+            "MLX_ARRAY_STOP_AFTER_GRT checkpoint=",
+            "MLX_TILE_STOP_AFTER_GRT checkpoint=",
+        )
+    )
+    detailed_route_completed = any(
+        marker in detailed_route_text
+        for marker in (
+            "MLX_ARRAY_DROUTE_COMPLETE odb=",
+            "MLX_TILE_DROUTE_COMPLETE odb=",
+        )
+    )
     detailed_pin_access_completed = (
         "[INFO DRT-0166] Complete pin access." in detailed_route_text
     )
@@ -372,7 +384,9 @@ def parse_route_connectivity(global_route_text: str, detailed_route_text: str) -
 
 def parse_global_route_metrics(text: str) -> dict[str, Any]:
     congestion_iterations = re.findall(
-        r"MLX_GRT_ROUTE_ARGS .*?-congestion_iterations (\d+)", text
+        r"(?:MLX_GRT_ROUTE_ARGS|MLX_TILE_GRT_ROUTE_ARGS) "
+        r".*?-congestion_iterations (\d+)",
+        text,
     )
     final_report = (
         text.rsplit("[INFO GRT-0096] Final congestion report:", 1)[-1]

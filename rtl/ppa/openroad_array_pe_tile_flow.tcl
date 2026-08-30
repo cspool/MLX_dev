@@ -126,6 +126,7 @@ if {$::env(PPA_GRT_ALLOW_CONGESTION) == 1} {
 if {[info exists ::env(PPA_GRT_VERBOSE)] && ($::env(PPA_GRT_VERBOSE) == 1)} {
   lappend grt_args -verbose
 }
+puts "MLX_TILE_GRT_ROUTE_ARGS $grt_args"
 global_route {*}$grt_args
 estimate_parasitics -global_routing
 write_db $::env(PPA_GRT_ODB)
