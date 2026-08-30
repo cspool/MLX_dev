@@ -18,8 +18,11 @@ GPL、97,260 个标准单元的构造合法化、CTS 和 5 轮 tile48 GRT。五�
 报告均达到每方向 10,000 条的输出上限；可见 overflow 下界从 20,518 降至最终
 20,031，单点最大值从 5 降到 2，逐个解析 `net:` 后的 unique nets 从 973 降到
 818。最终 3D 汇总为 117,628 routed nets、302,129 aggregate overflow、
-687,740,376 µm wirelength 和 2,290,350 vias；`GRT-0026=0`。当前已进入实际 DRT，
-只有 DRT 零 DRC/零 pin-access 才会接受该结果。
+687,740,376 µm wirelength 和 2,290,350 vias；`GRT-0026=0`。实际 DRT 的 pin
+access 已满足 `stdCellPinNoAp=0`、`macroNoAp=0`、`DRT-0073=0`；track assignment
+耗时 1 小时 50 分，初始详细布线耗时 6 小时 54 分并得到 170,675 条违例，其中
+147,649 条为 short。相对旧集中式初始 3,115,626 条已下降约 94.5%，当前正在第 1
+轮优化；只有最终 DRT 零 DRC 才会接受该结果。
 旧集中式 v7 DRT 在第 1 轮 90% 仍有 1,864,670 条违例，已为释放内存而安全停止，
 不作为结果。因此
 `artifacts/results/mlx-array-ppa-run211.json` 和最终
@@ -430,7 +433,12 @@ tile 间通道，GPL 在第 190 轮达到 0.002926；4,096 行/17,808 segments �
 为 973/921/884/854/818。最终 3D layer assignment 的 64-bit 资源总和为
 4,043,717,124，demand 101,439,079，aggregate overflow 302,129，主要位于
 metal8/metal9/metal6（111,442/79,374/43,074）；117,628 条网全部 routed，
-`GRT-0026=0`。当前从该 checkpoint 运行实际 DRT。旧集中式 DRT 在第 1 轮
+`GRT-0026=0`。从该 checkpoint 启动的实际 DRT 已完成 94,679 个 pin-access groups，
+`stdCellPinNoAp=0`、`macroNoAp=0`、`DRT-0073=0`。track assignment 处理
+852,167 条 vertical wires 和 1,038,628 条 horizontal wires，耗时 1:50:21，峰值
+67,679.30 MB。第 0 轮初始 detailed route 耗时 6:54:28，得到 170,675 条违例：
+short 147,649、cut spacing 5,025、metal spacing 7,632；wirelength 682,263,234 µm、
+vias 1,913,451。当前正在第 1 轮优化。旧集中式 DRT 在第 1 轮
 90% 仍有 1,864,670 violations，随后为释放顶层 GRT 内存而安全停止；其日志与
 输入 checkpoint 保留，但没有最终 DRC/DEF/ODB/SPEF，明确不作为最终结果。
 

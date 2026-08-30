@@ -525,6 +525,14 @@ def test_distributed_tile_candidate_is_promoted_but_not_final() -> None:
     assert top_grt["routed_nets"] == 117628
     assert top_grt["missing_route_warnings"] == 0
     assert top_grt["aggregate_overflow"] == 302129
+    top_droute = top_floorplan["detailed_route_progress"]
+    assert top_droute["pin_access"]["std_cell_pins_without_access"] == 0
+    assert top_droute["pin_access"]["macro_pins_without_access"] == 0
+    assert top_droute["pin_access"]["drt_0073"] == 0
+    assert top_droute["pin_access"]["groups"] == 94679
+    assert top_droute["initial_route"]["violations"] == 170675
+    assert top_droute["initial_route"]["short_violations"] < 200000
+    assert top_droute["current_iteration"] == 1
     droute = floorplan["detailed_route_probe"]
     assert droute["final_stubborn_iteration_violations"] == 0
     assert droute["status"] == "complete_zero_drc_zero_pin_access_failures"
