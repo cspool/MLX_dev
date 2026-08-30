@@ -52,6 +52,8 @@ module tb_mlx_array_4x4;
 
 `ifdef MLX_CYCLE_MODEL
   mlx_cycle_model dut (
+`elsif MLX_DISTRIBUTED_ARRAY
+  mlx_array_4x4_distributed dut (
 `else
   mlx_array_4x4 dut (
 `endif
