@@ -1095,7 +1095,7 @@ hierarchical_top_v7_congested_droute_probe:
   result_consumed_as_final_ppa: false
 hierarchical_distributed_tile_candidate:
   topology: autonomous_pe_tile_with_registered_local_packet_buffer_and_fixed_distance_1_2_links
-  status: production_top_promoted_tile_zero_drc_complete_distributed_top_droute_running
+  status: production_top_promoted_tile_zero_drc_complete_distributed_top_droute_repair1_running
   promoted_to_production_top: true
   result_consumed_as_final_ppa: false
   canonical_system_integration:
@@ -1312,9 +1312,40 @@ hierarchical_distributed_tile_candidate:
           metal2_spacing_violations: 6409
           total_wirelength_um: 682242116
           vias: 1961863
-      current_iteration: 2
-      status: second_optimization_iteration_running
-    status: tile48_grt_iter5_complete_droute_running
+      full_route_result:
+        elapsed_seconds: 74396
+        completed_optimization_iterations: 20
+        violation_curve: [170675, 60216, 45417, 3052, 1789, 1488, 1316, 1005, 931, 665, 469, 427, 292, 159, 126, 88, 86, 114, 66, 58, 49]
+        final_violations: 49
+        final_short_violations: 39
+        final_metal_spacing_violations: 10
+        final_violations_by_layer:
+          metal3: 11
+          metal5: 11
+          metal6: 1
+          metal7: 1
+          metal8: 17
+          metal10: 8
+        total_wirelength_um: 682254325
+        vias: 2016546
+        annotated_top_pin_activities: 1701
+        top_shell_power_w: 0.0646
+        recursive_power_w: 29.418712
+        top_shell_worst_slack_ns_at_1ghz: -370.568787
+        top_shell_fmax_ghz: 0.002691291720367244
+        recursive_worst_slack_ns_at_1ghz: -741.973755
+        recursive_fmax_ghz: 0.0013459425629375025
+        status: complete_nonzero_drc_repair_required
+      repair1:
+        input_odb: artifacts/environment/h206/distributed_4x4/mlx-array-4x4-distributed-u70-iter5-routed.odb
+        output_stem: artifacts/environment/h206/distributed_4x4/mlx-array-4x4-distributed-u70-iter5-repair1-routed
+        input_violations: 49
+        pin_access_completed: true
+        current_stage: track_assignment
+        status: running
+      current_iteration: repair1
+      status: incremental_repair1_running
+    status: tile48_grt_iter5_complete_droute_repair1_running
   distributed_top_signoff_contract:
     topology: distributed_autonomous_pe_tiles
     macro_master: mlx_array_pe_tile

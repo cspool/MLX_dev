@@ -22,8 +22,9 @@ GPL、97,260 个标准单元的构造合法化、CTS 和 5 轮 tile48 GRT。五�
 access 已满足 `stdCellPinNoAp=0`、`macroNoAp=0`、`DRT-0073=0`；track assignment
 耗时 1 小时 50 分，初始详细布线耗时 6 小时 54 分并得到 170,675 条违例，其中
 147,649 条为 short。相对旧集中式初始 3,115,626 条已下降约 94.5%。第 1 轮随后用
-6:32:56 把总违例降到 60,216（再降 64.7%），当前正在第 2
-轮。只有最终 DRT 零 DRC 才会接受该结果。
+6:32:56 把总违例降到 60,216（再降 64.7%）。20 轮最终曲线降到 49 条 DRC，但未
+达到零，因此 run211 仍被拒绝；当前从最终 routed ODB 做第 1 次增量 repair。只有
+repair 后 DRT 零 DRC 才会接受该结果。
 旧集中式 v7 DRT 在第 1 轮 90% 仍有 1,864,670 条违例，已为释放内存而安全停止，
 不作为结果。因此
 `artifacts/results/mlx-array-ppa-run211.json` 和最终
@@ -440,8 +441,15 @@ metal8/metal9/metal6（111,442/79,374/43,074）；117,628 条网全部 routed，
 67,679.30 MB。第 0 轮初始 detailed route 耗时 6:54:28，得到 170,675 条违例：
 short 147,649、cut spacing 5,025、metal spacing 7,632；wirelength 682,263,234 µm、
 vias 1,913,451。第 1 轮优化耗时 6:32:56，将违例降至 60,216，其中 short 50,547；
-metal2 short/spacing 分别为 38,840/6,409，表明剩余问题已集中在低金属层。当前正在
-第 2 轮优化。旧集中式 DRT 在第 1 轮
+metal2 short/spacing 分别为 38,840/6,409。随后 20 轮违例曲线为
+170,675→60,216→45,417→3,052→1,789→1,488→1,316→1,005→931→665→469→427→
+292→159→126→88→86→114→66→58→49。最终 49 条由 39 shorts 与 10 metal-spacing
+组成，分布在 metal3/5/6/7/8/10 的 11/11/1/1/17/8 个 marker。完整 DRT 耗时
+20:39:56，wirelength 682,254,325 µm、vias 2,016,546；随后 RCX/STA/VCD power
+全部完成。top shell 为 -370.568787 ns、2.691292 MHz、64.6 mW；递归最坏仍来自
+tile shell，为 -741.973755 ns、1.345943 MHz；递归 Transformer 活动功耗为
+29.418712 W。由于 49 条不满足门禁，当前从最终 routed ODB 运行 repair1。旧集中式
+DRT 在第 1 轮
 90% 仍有 1,864,670 violations，随后为释放顶层 GRT 内存而安全停止；其日志与
 输入 checkpoint 保留，但没有最终 DRC/DEF/ODB/SPEF，明确不作为最终结果。
 

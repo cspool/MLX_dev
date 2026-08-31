@@ -518,7 +518,9 @@ def test_distributed_tile_candidate_is_promoted_but_not_final() -> None:
     assert top_floorplan["tile_macro_count"] == 16
     assert top_floorplan["utilization_percent"] == 70
     assert top_floorplan["expected_inter_tile_channel_um"] > 1300
-    assert top_floorplan["status"] == "tile48_grt_iter5_complete_droute_running"
+    assert top_floorplan["status"] == (
+        "tile48_grt_iter5_complete_droute_repair1_running"
+    )
     assert top_floorplan["legal_cells"] == 97260
     assert top_floorplan["cts_buffers"] == 1783
     top_grt = top_floorplan["tile48_grt_iter5_final"]
@@ -537,7 +539,14 @@ def test_distributed_tile_candidate_is_promoted_but_not_final() -> None:
     assert first_optimization["violations"] == 60216
     assert first_optimization["violations"] < top_droute["initial_route"]["violations"]
     assert first_optimization["metal2_short_violations"] == 38840
-    assert top_droute["current_iteration"] == 2
+    full_route = top_droute["full_route_result"]
+    assert full_route["completed_optimization_iterations"] == 20
+    assert full_route["violation_curve"][0] == 170675
+    assert full_route["violation_curve"][-1] == full_route["final_violations"] == 49
+    assert full_route["final_short_violations"] == 39
+    assert full_route["status"] == "complete_nonzero_drc_repair_required"
+    assert top_droute["repair1"]["input_violations"] == 49
+    assert top_droute["current_iteration"] == "repair1"
     droute = floorplan["detailed_route_probe"]
     assert droute["final_stubborn_iteration_violations"] == 0
     assert droute["status"] == "complete_zero_drc_zero_pin_access_failures"
