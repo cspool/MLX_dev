@@ -40,6 +40,7 @@ STAGES = (
     "grt",
     "droute",
     "repair",
+    "retry",
     "finalize",
     "all",
 )
@@ -66,6 +67,7 @@ def distributed_paths(output: Path) -> dict[str, Path]:
     root = output / "distributed_4x4"
     stem = root / "mlx-array-4x4-distributed-u70"
     routed = root / "mlx-array-4x4-distributed-u70-iter5"
+    clean_retry = root / "mlx-array-4x4-distributed-u70-iter5-clean-retry1"
     tile_root = output / "tile_macro"
     tile_droute = tile_root / "mlx-array-pe-tile-v2-tight-iter50-droute-probe"
     paths = {
@@ -102,6 +104,21 @@ def distributed_paths(output: Path) -> dict[str, Path]:
         "repair_def": routed.with_name(f"{routed.name}-repair1-routed.def"),
         "repair_odb": routed.with_name(f"{routed.name}-repair1-routed.odb"),
         "repair_spef": routed.with_name(f"{routed.name}-repair1-routed.spef"),
+        "clean_retry_log": clean_retry.with_name(
+            f"{clean_retry.name}-droute.log"
+        ),
+        "clean_retry_drc": clean_retry.with_name(
+            f"{clean_retry.name}-routed.drc"
+        ),
+        "clean_retry_def": clean_retry.with_name(
+            f"{clean_retry.name}-routed.def"
+        ),
+        "clean_retry_odb": clean_retry.with_name(
+            f"{clean_retry.name}-routed.odb"
+        ),
+        "clean_retry_spef": clean_retry.with_name(
+            f"{clean_retry.name}-routed.spef"
+        ),
         "vcd": output / "transformer-block-distributed-top-ports.vcd",
         "tile_summary": tile_root / "mlx-array-pe-tile-candidate.json",
         "tile_lef": tile_droute.with_name(f"{tile_droute.name}.abstract.lef"),
@@ -114,10 +131,38 @@ def distributed_paths(output: Path) -> dict[str, Path]:
         / "submacro-build-manifest.json",
         "preview": root / "mlx-array-4x4-distributed-candidate.json",
     }
-    repair_complete = paths["repair_log"].is_file() and (
-        "MLX_ARRAY_DROUTE_COMPLETE odb=" in paths["repair_log"].read_text()
+    repair_complete = (
+        paths["repair_log"].is_file()
+        and "MLX_ARRAY_DROUTE_COMPLETE odb=" in paths["repair_log"].read_text()
+        and all(
+            present(paths[name])
+            for name in ("repair_drc", "repair_def", "repair_odb", "repair_spef")
+        )
     )
-    if repair_complete:
+    clean_retry_complete = (
+        paths["clean_retry_log"].is_file()
+        and "MLX_ARRAY_DROUTE_COMPLETE odb="
+        in paths["clean_retry_log"].read_text()
+        and all(
+            present(paths[name])
+            for name in (
+                "clean_retry_drc",
+                "clean_retry_def",
+                "clean_retry_odb",
+                "clean_retry_spef",
+            )
+        )
+    )
+    if clean_retry_complete:
+        for target, source in (
+            ("droute_log", "clean_retry_log"),
+            ("drc", "clean_retry_drc"),
+            ("def", "clean_retry_def"),
+            ("odb", "clean_retry_odb"),
+            ("spef", "clean_retry_spef"),
+        ):
+            paths[target] = paths[source]
+    elif repair_complete:
         for target, source in (
             ("droute_log", "repair_log"),
             ("drc", "repair_drc"),
@@ -319,6 +364,8 @@ def run_physical_stage(
         return run_droute(config, paths)
     if stage == "repair":
         return run_repair(config, paths)
+    if stage == "retry":
+        return run_clean_retry(config, paths)
     raise ValueError(f"unsupported distributed-top stage {stage}")
 
 
@@ -432,6 +479,48 @@ def run_repair(config: dict[str, Any], paths: dict[str, Path]) -> int:
             ),
         ],
         paths["repair_log"],
+        env,
+    )
+
+
+def run_clean_retry(config: dict[str, Any], paths: dict[str, Path]) -> int:
+    """Rerun DRT from the clean GRT checkpoint with an extended iteration budget."""
+    ready, connectivity = global_route_ready(paths)
+    if not ready:
+        raise RuntimeError(
+            "refusing clean distributed-top DRT retry before GRT checkpoint/guide "
+            f"completion and zero missing pin routes: {connectivity}"
+        )
+    for name in ("tile_lib", "vcd"):
+        if not present(paths[name]):
+            raise FileNotFoundError(paths[name])
+    contract = config["hierarchical_distributed_tile_candidate"][
+        "distributed_top_signoff_contract"
+    ]
+    env = droute_environment(config, paths)
+    env.update(
+        {
+            "PPA_DROUTE_END_ITER": str(contract["clean_retry_droute_end_iter"]),
+            "PPA_DRC": str(paths["clean_retry_drc"]),
+            "PPA_DEF": str(paths["clean_retry_def"]),
+            "PPA_ODB": str(paths["clean_retry_odb"]),
+            "PPA_SPEF": str(paths["clean_retry_spef"]),
+        }
+    )
+    openroad = Path(
+        config["toolchain"]["detailed_route_and_signoff_openroad"]["binary"]
+    )
+    return run_to_log(
+        [
+            str(openroad),
+            "-no_init",
+            "-exit",
+            str(
+                PROJECT_ROOT
+                / "rtl/ppa/openroad_hierarchical_array_droute_resume.tcl"
+            ),
+        ],
+        paths["clean_retry_log"],
         env,
     )
 
@@ -833,6 +922,11 @@ def build_result(
         "top_repair_detailed_route_def": paths["repair_def"],
         "top_repair_detailed_route_odb": paths["repair_odb"],
         "top_repair_detailed_route_spef": paths["repair_spef"],
+        "top_clean_retry_detailed_route_log": paths["clean_retry_log"],
+        "top_clean_retry_detailed_route_drc": paths["clean_retry_drc"],
+        "top_clean_retry_detailed_route_def": paths["clean_retry_def"],
+        "top_clean_retry_detailed_route_odb": paths["clean_retry_odb"],
+        "top_clean_retry_detailed_route_spef": paths["clean_retry_spef"],
         "distributed_4x4_guide": paths["guide"],
         "distributed_4x4_drc": paths["drc"],
         "distributed_4x4_def": paths["def"],
@@ -995,6 +1089,7 @@ def main() -> int:
         "grt": paths["grt"],
         "droute": paths["odb"],
         "repair": paths["repair_odb"],
+        "retry": paths["clean_retry_odb"],
     }
     for stage in requested:
         if present(stage_outputs[stage]) and not args.force:
@@ -1013,6 +1108,7 @@ def main() -> int:
     include_abstraction = args.stage in {
         "droute",
         "repair",
+        "retry",
         "finalize",
         "all",
     } and present(

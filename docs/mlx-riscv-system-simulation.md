@@ -448,7 +448,12 @@ metal2 short/spacing 分别为 38,840/6,409。随后 20 轮违例曲线为
 20:39:56，wirelength 682,254,325 µm、vias 2,016,546；随后 RCX/STA/VCD power
 全部完成。top shell 为 -370.568787 ns、2.691292 MHz、64.6 mW；递归最坏仍来自
 tile shell，为 -741.973755 ns、1.345943 MHz；递归 Transformer 活动功耗为
-29.418712 W。由于 49 条不满足门禁，当前从最终 routed ODB 运行 repair1。旧集中式
+29.418712 W。由于 49 条不满足门禁，曾从最终 routed ODB 启动 repair1；该运行完成
+1:54:31 的 track assignment 后，在第 0 轮遇到 `DRT-1010`：最终数据库中
+`spm_req_wdata_o[262]` 的 metal7 线段为非正交 dbWire，不能作为 TritonRoute 的干净
+重启输入。该失败不是 OOM 或新增拥塞，且没有覆盖原 routed 结果。下一候选改从原始
+GRT checkpoint 重启，保持默认确定性 routing order，并把 DRT 上限由 20 轮提高到
+50 轮；输出独立保存为 clean-retry1。旧集中式
 DRT 在第 1 轮
 90% 仍有 1,864,670 violations，随后为释放顶层 GRT 内存而安全停止；其日志与
 输入 checkpoint 保留，但没有最终 DRC/DEF/ODB/SPEF，明确不作为最终结果。

@@ -1095,7 +1095,7 @@ hierarchical_top_v7_congested_droute_probe:
   result_consumed_as_final_ppa: false
 hierarchical_distributed_tile_candidate:
   topology: autonomous_pe_tile_with_registered_local_packet_buffer_and_fixed_distance_1_2_links
-  status: production_top_promoted_tile_zero_drc_complete_distributed_top_droute_repair1_running
+  status: production_top_promoted_tile_zero_drc_complete_distributed_top_clean_retry1_ready
   promoted_to_production_top: true
   result_consumed_as_final_ppa: false
   canonical_system_integration:
@@ -1341,11 +1341,26 @@ hierarchical_distributed_tile_candidate:
         output_stem: artifacts/environment/h206/distributed_4x4/mlx-array-4x4-distributed-u70-iter5-repair1-routed
         input_violations: 49
         pin_access_completed: true
-        current_stage: track_assignment
-        status: running
-      current_iteration: repair1
-      status: incremental_repair1_running
-    status: tile48_grt_iter5_complete_droute_repair1_running
+        track_assignment_completed: true
+        track_assignment_elapsed_seconds: 6871
+        peak_memory_mb: 67513.91
+        failed_stage: detailed_route_iteration_0
+        failure_code: DRT-1010
+        failure_net: spm_req_wdata_o[262]
+        failure_layer: metal7
+        failure_reason: unsupported_non_orthogonal_wire_in_postroute_odb
+        output_generated: false
+        status: failed_postroute_odb_not_valid_as_clean_drt_restart
+      clean_retry1:
+        input_odb: artifacts/environment/h206/distributed_4x4/mlx-array-4x4-distributed-u70-iter5-global-route.odb
+        output_stem: artifacts/environment/h206/distributed_4x4/mlx-array-4x4-distributed-u70-iter5-clean-retry1-routed
+        droute_end_iter: 50
+        routing_order_seed: default_deterministic
+        preserves_base_route_result: true
+        status: ready
+      current_iteration: clean_retry1
+      status: clean_checkpoint_retry1_ready
+    status: tile48_grt_iter5_complete_droute_clean_retry1_ready
   distributed_top_signoff_contract:
     topology: distributed_autonomous_pe_tiles
     macro_master: mlx_array_pe_tile
@@ -1362,6 +1377,9 @@ hierarchical_distributed_tile_candidate:
     droute_end_iter: 20
     repair_droute_end_iter: 20
     repair_rounds: 1
+    clean_retry_droute_end_iter: 50
+    clean_retry_rounds: 1
+    clean_retry_routing_order_seed: default_deterministic
     global_route_threads: 1
     detailed_route_threads: 16
     minimum_physical_rows: 4096
