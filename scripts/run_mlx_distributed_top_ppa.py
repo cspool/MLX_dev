@@ -39,6 +39,7 @@ STAGES = (
     "cts",
     "grt",
     "droute",
+    "repair",
     "finalize",
     "all",
 )
@@ -67,7 +68,7 @@ def distributed_paths(output: Path) -> dict[str, Path]:
     routed = root / "mlx-array-4x4-distributed-u70-iter5"
     tile_root = output / "tile_macro"
     tile_droute = tile_root / "mlx-array-pe-tile-v2-tight-iter50-droute-probe"
-    return {
+    paths = {
         "root": root,
         "netlist": root / "mlx-array-4x4-distributed-mapped.v",
         "stats": root / "mlx-array-4x4-distributed-synthesis.stats",
@@ -91,6 +92,16 @@ def distributed_paths(output: Path) -> dict[str, Path]:
         "def": routed.with_name(f"{routed.name}-routed.def"),
         "odb": routed.with_name(f"{routed.name}-routed.odb"),
         "spef": routed.with_name(f"{routed.name}-routed.spef"),
+        "base_droute_log": routed.with_name(f"{routed.name}-droute.log"),
+        "base_drc": routed.with_name(f"{routed.name}-routed.drc"),
+        "base_def": routed.with_name(f"{routed.name}-routed.def"),
+        "base_odb": routed.with_name(f"{routed.name}-routed.odb"),
+        "base_spef": routed.with_name(f"{routed.name}-routed.spef"),
+        "repair_log": routed.with_name(f"{routed.name}-repair1-droute.log"),
+        "repair_drc": routed.with_name(f"{routed.name}-repair1-routed.drc"),
+        "repair_def": routed.with_name(f"{routed.name}-repair1-routed.def"),
+        "repair_odb": routed.with_name(f"{routed.name}-repair1-routed.odb"),
+        "repair_spef": routed.with_name(f"{routed.name}-repair1-routed.spef"),
         "vcd": output / "transformer-block-distributed-top-ports.vcd",
         "tile_summary": tile_root / "mlx-array-pe-tile-candidate.json",
         "tile_lef": tile_droute.with_name(f"{tile_droute.name}.abstract.lef"),
@@ -103,6 +114,19 @@ def distributed_paths(output: Path) -> dict[str, Path]:
         / "submacro-build-manifest.json",
         "preview": root / "mlx-array-4x4-distributed-candidate.json",
     }
+    repair_complete = paths["repair_log"].is_file() and (
+        "MLX_ARRAY_DROUTE_COMPLETE odb=" in paths["repair_log"].read_text()
+    )
+    if repair_complete:
+        for target, source in (
+            ("droute_log", "repair_log"),
+            ("drc", "repair_drc"),
+            ("def", "repair_def"),
+            ("odb", "repair_odb"),
+            ("spef", "repair_spef"),
+        ):
+            paths[target] = paths[source]
+    return paths
 
 
 def detailed_route_outputs_present(paths: dict[str, Path]) -> bool:
@@ -293,6 +317,8 @@ def run_physical_stage(
         )
     if stage == "droute":
         return run_droute(config, paths)
+    if stage == "repair":
+        return run_repair(config, paths)
     raise ValueError(f"unsupported distributed-top stage {stage}")
 
 
@@ -363,6 +389,50 @@ def run_droute(config: dict[str, Any], paths: dict[str, Path]) -> int:
         ],
         paths["droute_log"],
         droute_environment(config, paths),
+    )
+
+
+def run_repair(config: dict[str, Any], paths: dict[str, Path]) -> int:
+    if not present(paths["base_odb"]):
+        raise FileNotFoundError(paths["base_odb"])
+    technology = config["technology"]
+    contract = config["hierarchical_distributed_tile_candidate"][
+        "distributed_top_signoff_contract"
+    ]
+    env = os.environ.copy()
+    env.update(
+        {
+            "MALLOC_ARENA_MAX": "2",
+            "PPA_THREADS": str(contract["detailed_route_threads"]),
+            "PPA_GRT_ODB": str(paths["base_odb"]),
+            "PPA_LIBERTY": technology["liberty"],
+            "PPA_PE_LIBERTY": str(paths["tile_lib"]),
+            "PPA_CLOCK_PERIOD_NS": str(config["clock_period_ns"]),
+            "PPA_DROUTE_END_ITER": str(contract["repair_droute_end_iter"]),
+            "PPA_DRC": str(paths["repair_drc"]),
+            "PPA_RCX_RULES": technology["rcx_rules"],
+            "PPA_DEF": str(paths["repair_def"]),
+            "PPA_ODB": str(paths["repair_odb"]),
+            "PPA_SPEF": str(paths["repair_spef"]),
+            "PPA_VCD": str(paths["vcd"]),
+            "PPA_VCD_SCOPE": config["activity"]["promoted_scope"],
+        }
+    )
+    openroad = Path(
+        config["toolchain"]["detailed_route_and_signoff_openroad"]["binary"]
+    )
+    return run_to_log(
+        [
+            str(openroad),
+            "-no_init",
+            "-exit",
+            str(
+                PROJECT_ROOT
+                / "rtl/ppa/openroad_hierarchical_array_droute_resume.tcl"
+            ),
+        ],
+        paths["repair_log"],
+        env,
     )
 
 
@@ -753,6 +823,16 @@ def build_result(
         "top_global_route_checkpoint": paths["grt"],
         "top_global_route_guide": paths["guide"],
         "top_detailed_route_log": paths["droute_log"],
+        "top_base_detailed_route_log": paths["base_droute_log"],
+        "top_base_detailed_route_drc": paths["base_drc"],
+        "top_base_detailed_route_def": paths["base_def"],
+        "top_base_detailed_route_odb": paths["base_odb"],
+        "top_base_detailed_route_spef": paths["base_spef"],
+        "top_repair_detailed_route_log": paths["repair_log"],
+        "top_repair_detailed_route_drc": paths["repair_drc"],
+        "top_repair_detailed_route_def": paths["repair_def"],
+        "top_repair_detailed_route_odb": paths["repair_odb"],
+        "top_repair_detailed_route_spef": paths["repair_spef"],
         "distributed_4x4_guide": paths["guide"],
         "distributed_4x4_drc": paths["drc"],
         "distributed_4x4_def": paths["def"],
@@ -914,6 +994,7 @@ def main() -> int:
         "cts": paths["cts"],
         "grt": paths["grt"],
         "droute": paths["odb"],
+        "repair": paths["repair_odb"],
     }
     for stage in requested:
         if present(stage_outputs[stage]) and not args.force:
@@ -928,7 +1009,13 @@ def main() -> int:
                 f"distributed-top stage {stage} failed with return code {rc}"
             )
 
-    include_abstraction = args.stage in {"droute", "finalize", "all"} and present(
+    paths = distributed_paths(PROJECT_ROOT / config["output_root"])
+    include_abstraction = args.stage in {
+        "droute",
+        "repair",
+        "finalize",
+        "all",
+    } and present(
         paths["droute_log"]
     )
     manifest, result = build_result(
