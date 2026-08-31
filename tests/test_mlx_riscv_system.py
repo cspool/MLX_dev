@@ -532,7 +532,12 @@ def test_distributed_tile_candidate_is_promoted_but_not_final() -> None:
     assert top_droute["pin_access"]["groups"] == 94679
     assert top_droute["initial_route"]["violations"] == 170675
     assert top_droute["initial_route"]["short_violations"] < 200000
-    assert top_droute["current_iteration"] == 1
+    first_optimization = top_droute["optimization_iterations"][0]
+    assert first_optimization["iteration"] == 1
+    assert first_optimization["violations"] == 60216
+    assert first_optimization["violations"] < top_droute["initial_route"]["violations"]
+    assert first_optimization["metal2_short_violations"] == 38840
+    assert top_droute["current_iteration"] == 2
     droute = floorplan["detailed_route_probe"]
     assert droute["final_stubborn_iteration_violations"] == 0
     assert droute["status"] == "complete_zero_drc_zero_pin_access_failures"
