@@ -1,6 +1,6 @@
 # MLX + RISC-V 系统协同仿真进度报告
 
-更新日期：2026-08-30
+更新日期：2026-08-31
 
 ## 结论
 
@@ -23,8 +23,10 @@ access 已满足 `stdCellPinNoAp=0`、`macroNoAp=0`、`DRT-0073=0`；track assig
 耗时 1 小时 50 分，初始详细布线耗时 6 小时 54 分并得到 170,675 条违例，其中
 147,649 条为 short。相对旧集中式初始 3,115,626 条已下降约 94.5%。第 1 轮随后用
 6:32:56 把总违例降到 60,216（再降 64.7%）。20 轮最终曲线降到 49 条 DRC，但未
-达到零，因此 run211 仍被拒绝；当前从最终 routed ODB 做第 1 次增量 repair。只有
-repair 后 DRT 零 DRC 才会接受该结果。
+达到零，因此 run211 仍被拒绝。最终 routed ODB 的第 1 次增量 repair 在完成
+track assignment 后因既有非正交 dbWire 触发 `DRT-1010`，没有产生新结果；当前
+clean-retry1 已从干净 GRT checkpoint 以 50 轮上限重新运行。只有实际 DRT 零 DRC
+才会接受该结果。
 旧集中式 v7 DRT 在第 1 轮 90% 仍有 1,864,670 条违例，已为释放内存而安全停止，
 不作为结果。因此
 `artifacts/results/mlx-array-ppa-run211.json` 和最终
@@ -543,9 +545,8 @@ bash scripts/bootstrap_rtl_ppa_tools.sh
 /opt/mlx-miniforge/bin/python -m scripts.run_mlx_distributed_tile_ppa --stage all
 /opt/mlx-miniforge/bin/python -m scripts.run_mlx_distributed_top_ppa --stage all
 
-# 4. 测试与最终证书
-/opt/mlx-miniforge/bin/ruff check scripts src tests
-/opt/mlx-miniforge/bin/pytest -q
+# 4. 冻结文档结果后执行完整验证与最终证书
+/opt/mlx-miniforge/bin/python -m scripts.run_mlx_riscv_system_verification
 /opt/mlx-miniforge/bin/python -m scripts.audit_mlx_riscv_system_goal
 ```
 
