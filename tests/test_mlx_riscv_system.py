@@ -519,7 +519,7 @@ def test_distributed_tile_candidate_is_promoted_but_not_final() -> None:
     assert top_floorplan["utilization_percent"] == 70
     assert top_floorplan["expected_inter_tile_channel_um"] > 1300
     assert top_floorplan["status"] == (
-        "tile48_grt_iter5_complete_droute_clean_retry1_ready"
+        "tile48_grt_iter5_complete_droute_clean_retry1_running"
     )
     assert top_floorplan["legal_cells"] == 97260
     assert top_floorplan["cts_buffers"] == 1783
