@@ -180,6 +180,34 @@ def detailed_route_outputs_present(paths: dict[str, Path]) -> bool:
     )
 
 
+def parse_detailed_route_progress(text: str) -> dict[str, Any]:
+    started_iterations = [
+        int(value)
+        for value in re.findall(
+            r"\[INFO DRT-0195\] Start (\d+)(?:th|st|nd|rd) optimization iteration\.",
+            text,
+        )
+    ]
+    violation_curve = [
+        int(value)
+        for value in re.findall(
+            r"\[INFO DRT-0199\]\s+Number of violations = (\d+)\.", text
+        )
+    ]
+    completed_iterations = started_iterations[: len(violation_curve)]
+    return {
+        "started_iteration_numbers": started_iterations,
+        "completed_iteration_numbers": completed_iterations,
+        "last_completed_optimization_iteration": (
+            completed_iterations[-1] if completed_iterations else None
+        ),
+        "reported_violation_counts": len(violation_curve),
+        "violation_curve": violation_curve,
+        "final_violations": violation_curve[-1] if violation_curve else None,
+        "zero_drc_reached": bool(violation_curve) and violation_curve[-1] == 0,
+    }
+
+
 def synthesize(config: dict[str, Any], paths: dict[str, Path]) -> int:
     liberty = Path(config["technology"]["liberty"])
     commands = [
@@ -695,6 +723,7 @@ def build_result(
     global_route = parse_global_route_metrics(grt_text)
     connectivity = parse_route_connectivity(grt_text, droute_text)
     top_physical = parse_openroad(droute_text, float(config["clock_period_ns"]))
+    detailed_route_progress = parse_detailed_route_progress(droute_text)
     channel = parse_channel_legalization(
         paths["legal_log"].read_text() if present(paths["legal_log"]) else ""
     )
@@ -974,6 +1003,7 @@ def build_result(
         "route_connectivity": connectivity,
         "global_route_metrics": global_route,
         "global_route_iteration_reports": route_reports,
+        "detailed_route_progress": detailed_route_progress,
         "route_contract": contract,
         "checks": checks,
         "diagnostics": diagnostics,

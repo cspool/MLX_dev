@@ -767,6 +767,13 @@ def test_hierarchical_integrated_ppa_is_supported() -> None:
     assert connectivity["detailed_no_access_errors"] == 0
     assert connectivity["detailed_off_grid_macro_terms"] >= 0
     assert connectivity["detailed_off_grid_block_terms"] >= 0
+    detailed_route = top["detailed_route_progress"]
+    assert detailed_route["last_completed_optimization_iteration"] >= 20
+    assert detailed_route["reported_violation_counts"] == len(
+        detailed_route["violation_curve"]
+    )
+    assert detailed_route["final_violations"] == 0
+    assert detailed_route["zero_drc_reached"] is True
     route_tool = result["global_route_tool"]
     assert result["checks"]["global_route_tool_provenance"] is True
     assert route_contract["grid_pitches_in_tile"] == 48
