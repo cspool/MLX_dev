@@ -1,6 +1,6 @@
 # MLX + RISC-V 系统协同仿真进度报告
 
-更新日期：2026-08-31
+更新日期：2026-09-01
 
 ## 结论
 
@@ -22,11 +22,12 @@ GPL、97,260 个标准单元的构造合法化、CTS 和 5 轮 tile48 GRT。五�
 access 已满足 `stdCellPinNoAp=0`、`macroNoAp=0`、`DRT-0073=0`；track assignment
 耗时 1 小时 50 分，初始详细布线耗时 6 小时 54 分并得到 170,675 条违例，其中
 147,649 条为 short。相对旧集中式初始 3,115,626 条已下降约 94.5%。第 1 轮随后用
-6:32:56 把总违例降到 60,216（再降 64.7%）。20 轮最终曲线降到 49 条 DRC，但未
-达到零，因此 run211 仍被拒绝。最终 routed ODB 的第 1 次增量 repair 在完成
-track assignment 后因既有非正交 dbWire 触发 `DRT-1010`，没有产生新结果；当前
-clean-retry1 已从干净 GRT checkpoint 以 50 轮上限重新运行。只有实际 DRT 零 DRC
-才会接受该结果。
+6:32:56 把总违例降到 60,216（再降 64.7%）。20 轮曲线降到 49 条 DRC；随后从
+干净 GRT checkpoint 执行的 clean-retry1 完成全部 50 轮，在第 43–48 轮达到历史
+最低 18 条，最终为 22 条（21 shorts、1 metal-spacing）。RCX、STA、功耗及
+DEF/ODB/SPEF 均已生成，全部网连通且 pin-access 仍为零失败，但 DRC 尚未清零，
+因此 run211 仍被拒绝。下一步只修复这 22 个局部几何错误，验收版本完成并推送后
+再开始 1 GHz 时序优化。
 旧集中式 v7 DRT 在第 1 轮 90% 仍有 1,864,670 条违例，已为释放内存而安全停止，
 不作为结果。因此
 `artifacts/results/mlx-array-ppa-run211.json` 和最终
@@ -455,9 +456,13 @@ tile shell，为 -741.973755 ns、1.345943 MHz；递归 Transformer 活动功耗
 `spm_req_wdata_o[262]` 的 metal7 线段为非正交 dbWire，不能作为 TritonRoute 的干净
 重启输入。该失败不是 OOM 或新增拥塞，且没有覆盖原 routed 结果。下一候选改从原始
 GRT checkpoint 重启，保持默认确定性 routing order，并把 DRT 上限由 20 轮提高到
-50 轮；clean-retry1 前 20 轮精确复现原 `170,675→…→49` 曲线，新增第 21/22/23
-轮继续把实际 DRC 降至 48/46/44，第 24 轮继续运行。输出独立保存且不覆盖基准结果。旧集中式
-DRT 在第 1 轮
+50 轮。clean-retry1 前 20 轮精确复现原 `170,675→…→49` 曲线，新增第 21–50 轮为
+`48→46→44→43→51→41→35→34→33→33→30→29→37→26→23→22→20→20→20→19→24→19→18→18→18→18→18→18→27→22`。
+第 43–48 轮均达到最低 18 条，但流程只保存最终轮数据库，因此第 50 轮签核文件为
+22 条：metal3 5 条 short、metal7 1 条 short、metal8 15 条 short 与 1 条 spacing。
+完整 DRT 耗时 21:56:39、峰值 68,081.55 MB，wirelength 682,255,030 µm、vias
+2,016,530；RCX/STA/VCD power 和独立 DEF/ODB/SPEF 全部完成且未覆盖 20 轮基准。
+这一结果仍不满足零 DRC 门禁，当前进入局部 repair。旧集中式 DRT 在第 1 轮
 90% 仍有 1,864,670 violations，随后为释放顶层 GRT 内存而安全停止；其日志与
 输入 checkpoint 保留，但没有最终 DRC/DEF/ODB/SPEF，明确不作为最终结果。
 
