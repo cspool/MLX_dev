@@ -26,8 +26,8 @@ access 已满足 `stdCellPinNoAp=0`、`macroNoAp=0`、`DRT-0073=0`；track assig
 干净 GRT checkpoint 执行的 clean-retry1 完成全部 50 轮，在第 43–48 轮达到历史
 最低 18 条，最终为 22 条（21 shorts、1 metal-spacing）。RCX、STA、功耗及
 DEF/ODB/SPEF 均已生成，全部网连通且 pin-access 仍为零失败，但 DRC 尚未清零，
-因此 run211 仍被拒绝。下一步只修复这 22 个局部几何错误，验收版本完成并推送后
-再开始 1 GHz 时序优化。
+因此 run211 仍被拒绝。repair2 已于 2026-09-01 15:27 UTC 从该 ODB 启动，只修复
+这 22 个局部几何错误；验收版本完成并推送后再开始 1 GHz 时序优化。
 旧集中式 v7 DRT 在第 1 轮 90% 仍有 1,864,670 条违例，已为释放内存而安全停止，
 不作为结果。因此
 `artifacts/results/mlx-array-ppa-run211.json` 和最终
@@ -462,7 +462,10 @@ GRT checkpoint 重启，保持默认确定性 routing order，并把 DRT 上限�
 22 条：metal3 5 条 short、metal7 1 条 short、metal8 15 条 short 与 1 条 spacing。
 完整 DRT 耗时 21:56:39、峰值 68,081.55 MB，wirelength 682,255,030 µm、vias
 2,016,530；RCX/STA/VCD power 和独立 DEF/ODB/SPEF 全部完成且未覆盖 20 轮基准。
-这一结果仍不满足零 DRC 门禁，当前进入局部 repair。旧集中式 DRT 在第 1 轮
+这一结果仍不满足零 DRC 门禁。源码审计确认 repair1 的 `DRT-1010` 来自 DRT 重入
+解析器只在普通 `POINT` 上切分正交拐角、遗漏零扩展 `POINT_EXT`，并非 ODB 中存在
+真实对角线。仓库现保存同 commit 的最小解析补丁、可执行文件和完整哈希；repair2
+以 64 轮上限从 22 条结果启动，输出独立保存。旧集中式 DRT 在第 1 轮
 90% 仍有 1,864,670 violations，随后为释放顶层 GRT 内存而安全停止；其日志与
 输入 checkpoint 保留，但没有最终 DRC/DEF/ODB/SPEF，明确不作为最终结果。
 

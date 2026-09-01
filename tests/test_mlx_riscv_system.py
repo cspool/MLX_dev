@@ -519,8 +519,7 @@ def test_distributed_tile_candidate_is_promoted_but_not_final() -> None:
     assert top_floorplan["utilization_percent"] == 70
     assert top_floorplan["expected_inter_tile_channel_um"] > 1300
     assert top_floorplan["status"] == (
-        "tile48_grt_iter5_complete_droute_clean_retry1_nonzero_drc_"
-        "local_repair_pending"
+        "tile48_grt_iter5_complete_droute_local_repair2_running"
     )
     assert top_floorplan["legal_cells"] == 97260
     assert top_floorplan["cts_buffers"] == 1783
@@ -561,6 +560,11 @@ def test_distributed_tile_candidate_is_promoted_but_not_final() -> None:
     assert clean_retry["final_metal_spacing_violations"] == 1
     assert clean_retry["drt_completed"] is True
     assert clean_retry["rcx_sta_power_completed"] is True
+    repair2 = top_droute["repair2"]
+    assert repair2["input_violations"] == 22
+    assert repair2["droute_end_iter"] == 64
+    assert repair2["preserves_clean_retry_result"] is True
+    assert repair2["status"].startswith("running_")
     assert top_droute["current_iteration"] == "local_repair2"
     droute = floorplan["detailed_route_probe"]
     assert droute["final_stubborn_iteration_violations"] == 0
