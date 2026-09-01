@@ -187,6 +187,7 @@ def build_scope_audit(config: dict[str, Any]) -> dict[str, Any]:
         "global_route_iteration_reports"
     ]
     route_tool = ppa["global_route_tool"]
+    local_repair_tool = route_tool["local_repair_openroad"]
     route_contract = ppa["route_contract"]
     paper_array = next(
         row
@@ -382,7 +383,13 @@ def build_scope_audit(config: dict[str, Any]) -> dict[str, Any]:
         and qualify(ppa_manifest["files"]["global_route_openroad"])["pass"]
         and qualify(ppa_manifest["files"]["global_route_patch"])["pass"]
         and qualify(ppa_manifest["files"]["global_route_archive"])["pass"]
-        and qualify(ppa_manifest["files"]["detailed_route_openroad"])["pass"],
+        and qualify(ppa_manifest["files"]["detailed_route_openroad"])["pass"]
+        and local_repair_tool["base_commit"]
+        == "a008522d88b669ac4c985609533cf5a3d2649222"
+        and "drt-point-ext" in local_repair_tool["version"]
+        and qualify(ppa_manifest["files"]["local_repair_openroad"])["pass"]
+        and qualify(ppa_manifest["files"]["local_repair_patch"])["pass"]
+        and qualify(ppa_manifest["files"]["local_repair_archive"])["pass"],
         "post_route_outputs": all(
             name in ppa_manifest["files"]
             for name in (
@@ -398,6 +405,11 @@ def build_scope_audit(config: dict[str, Any]) -> dict[str, Any]:
                 "hierarchical_4x4_spef",
                 "top_global_route_log",
                 "top_detailed_route_log",
+                "top_local_repair_detailed_route_log",
+                "top_local_repair_detailed_route_drc",
+                "top_local_repair_detailed_route_def",
+                "top_local_repair_detailed_route_odb",
+                "top_local_repair_detailed_route_spef",
             )
         ),
         "paper_ppa_alignment": paper_calibrated_ppa["hypothesis_status"]

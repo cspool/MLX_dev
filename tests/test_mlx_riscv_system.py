@@ -583,6 +583,9 @@ def test_distributed_tile_candidate_is_promoted_but_not_final() -> None:
     ).read_text()
     assert "PPA_TOP" in hierarchical_flow
     assert "PPA_MACRO_INSTANCE_KIND" in hierarchical_flow
+    drt_patch = (ROOT / "patches/openroad/drt-point-ext-orthogonal.patch").read_text()
+    assert "dbWireDecoder::POINT_EXT" in drt_patch
+    assert "&& hasEndPoint" in drt_patch
     assert "GENERATE_TILES\\[%d\\].physical_tile" in hierarchical_flow
     runner = ROOT / candidate["physical_flows"]["runner"]
     assert runner.is_file() and os.access(runner, os.X_OK)
@@ -819,4 +822,10 @@ def test_hierarchical_integrated_ppa_is_supported() -> None:
     assert route_tool["max_2d_edge_usage_multiplier"] == 101
     assert route_tool["binary"]["sha256"] == (
         "2fe0b0a5a576a4d940487b7ada0d62931ac0fc055e85653c498a08cef7f9a21f"
+    )
+    local_repair_tool = route_tool["local_repair_openroad"]
+    assert local_repair_tool["base_commit"] == route_tool["base_commit"]
+    assert "drt-point-ext" in local_repair_tool["version"]
+    assert local_repair_tool["binary"]["sha256"] == (
+        "50a0bf8d101dfc41b38842f11a3bbd6e961a8ed3fe7291e95ba47822436b3290"
     )
