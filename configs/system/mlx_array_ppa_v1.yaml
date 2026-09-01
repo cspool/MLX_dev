@@ -1569,11 +1569,31 @@ hierarchical_distributed_tile_candidate:
           peak_memory_mb: 69158.12
         point_ext_parser_fix_validated: true
         drt_1010_after_track_assignment: 0
-        current_stage: detailed_route_iteration_0
-        status: running_detailed_route_iteration_0
-      current_iteration: local_repair2
-      status: local_repair2_running
-    status: tile48_grt_iter5_complete_droute_local_repair2_running
+        completed_optimization_iterations: 1
+        first_iteration_elapsed_seconds: 18682
+        first_iteration_violations: 55797939
+        input_layer_wirelength_mismatch_detected: true
+        failure_reason: stale_via_layer_state_in_postroute_dbwire_parser
+        stopped_before_iteration_1_completed: true
+        output_generated: false
+        status: rejected_parser_layer_state_corruption
+      repair3:
+        input_odb: artifacts/environment/h206/distributed_4x4/mlx-array-4x4-distributed-u70-iter5-clean-retry1-routed.odb
+        input_violations: 22
+        droute_end_iter: 64
+        tool_version: a008522d8-tile48-guard101-drt-postroute-safe
+        parser_patch: patches/openroad/drt-point-ext-orthogonal.patch
+        output_stem: artifacts/environment/h206/distributed_4x4/mlx-array-4x4-distributed-u70-iter5-clean-retry1-local-repair3-routed
+        preserves_clean_retry_result: true
+        import_probe:
+          exact_layer_wirelength_match: true
+          wirelength_um: 682255030
+          vias: 2016530
+          metal1_to_metal10_um: [99263, 160608323, 195498951, 42308456, 64421697, 57160344, 43310213, 58053926, 58118444, 2675408]
+        status: ready
+      current_iteration: local_repair3
+      status: local_repair3_ready
+    status: tile48_grt_iter5_complete_droute_local_repair3_ready
   distributed_top_signoff_contract:
     topology: distributed_autonomous_pe_tiles
     macro_master: mlx_array_pe_tile
@@ -1734,15 +1754,15 @@ toolchain:
     binary_sha256: ae81063f4d339d1fc4ca6f8b987f71435b61b8658c6a6f9bee47f1b07d1abd97
   local_repair_openroad:
     base_commit: a008522d88b669ac4c985609533cf5a3d2649222
-    version: a008522d8-tile48-guard101-drt-point-ext
+    version: a008522d8-tile48-guard101-drt-postroute-safe
     binary: artifacts/environment/h206/toolchain/openroad-tile48-guard101-drt-point-ext-install/bin/openroad
-    binary_sha256: 50a0bf8d101dfc41b38842f11a3bbd6e961a8ed3fe7291e95ba47822436b3290
+    binary_sha256: c9ec6634b6f146d37e96485f49f48b494cd2ab629f4948f36d906dd18be1d3e4
     patch: patches/openroad/drt-point-ext-orthogonal.patch
-    patch_sha256: 04d478fb7d98902582b812315f53ab77e262eb0097ce6ca8dfd1e72880c6e45c
+    patch_sha256: 3d6a1901c2f698992b0aab5e25c6f88170b71515dc3281c6e48c64b162de3724
     archive: vendor/openroad/openroad-a008522d8-tile48-guard101-drt-point-ext-amd64.xz
-    archive_sha256: b111d9dbc9d3c326175f32850bfa496c90fe5e5ced8cf0fd5439a780ade4d61c
+    archive_sha256: 33a027eae4570bbab52f7289b798788f81bb114ce243379c47dceaeaed969735
     inherited_global_route_patch: patches/openroad/grt-tile48-guard101.patch
-    purpose: postroute_point_ext_corner_safe_incremental_detailed_route
+    purpose: postroute_corner_and_via_layer_safe_incremental_detailed_route
 output_root: artifacts/environment/h206
 manifest: artifacts/environment/h206/mlx-array-ppa-manifest.json
 result: artifacts/results/mlx-array-ppa-run211.json

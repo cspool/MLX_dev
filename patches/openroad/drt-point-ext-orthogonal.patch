@@ -1,16 +1,69 @@
+diff --git a/src/drt/src/TritonRoute.cpp b/src/drt/src/TritonRoute.cpp
+index 6c636a27f..45eef1eea 100644
+--- a/src/drt/src/TritonRoute.cpp
++++ b/src/drt/src/TritonRoute.cpp
+@@ -32,0 +33,2 @@
++#include <cstdint>
++#include <cstdlib>
+@@ -34,0 +37 @@
++#include <map>
+@@ -963,0 +967,29 @@ int TritonRoute::main()
++  if (std::getenv("MLX_DRT_STOP_AFTER_IMPORT") != nullptr) {
++    std::map<frLayerNum, uint64_t> layer_lengths;
++    uint64_t total_length = 0;
++    uint64_t total_vias = 0;
++    for (const auto& net : getDesign()->getTopBlock()->getNets()) {
++      for (const auto& shape : net->getShapes()) {
++        if (shape->typeId() != frcPathSeg) {
++          continue;
++        }
++        const auto* path_seg = static_cast<const frPathSeg*>(shape.get());
++        const auto [begin, end] = path_seg->getPoints();
++        const uint64_t length = std::abs(end.x() - begin.x())
++                                + std::abs(end.y() - begin.y());
++        layer_lengths[path_seg->getLayerNum()] += length;
++        total_length += length;
++      }
++      total_vias += net->getVias().size();
++    }
++    const double dbu = getDesign()->getTech()->getDBUPerUU();
++    for (const auto& [layer_num, length] : layer_lengths) {
++      logger_->report("MLX_DRT_IMPORT_WIRE layer={} length_um={}",
++                      getDesign()->getTech()->getLayer(layer_num)->getName(),
++                      static_cast<uint64_t>(length / dbu));
++    }
++    logger_->report("MLX_DRT_IMPORT_SUMMARY wirelength_um={} vias={}",
++                    static_cast<uint64_t>(total_length / dbu),
++                    total_vias);
++    return 0;
++  }
 diff --git a/src/drt/src/io/io.cpp b/src/drt/src/io/io.cpp
-index d2efa2d8d..72e7439ce 100644
+index d2efa2d8d..88391d474 100644
 --- a/src/drt/src/io/io.cpp
 +++ b/src/drt/src/io/io.cpp
-@@ -800,9 +800,16 @@ void io::Parser::updateNetRouting(frNet* netIn, odb::dbNet* net)
-         }
-         pathId = decoder.next();
- 
+@@ -679,2 +678,0 @@ void io::Parser::updateNetRouting(frNet* netIn, odb::dbNet* net)
+-  odb::dbTechLayer* lower_layer = nullptr;
+-  odb::dbTechLayer* top_layer = nullptr;
+@@ -765,4 +763,2 @@ void io::Parser::updateNetRouting(frNet* netIn, odb::dbNet* net)
+-            lower_layer = decoder.getVia()->getBottomLayer();
+-            top_layer = decoder.getVia()->getTopLayer();
+-            layerName = prevLayer == top_layer ? lower_layer->getName()
+-                                               : top_layer->getName();
++            prevLayer = decoder.getLayer();
++            layerName = prevLayer->getName();
+@@ -778,4 +774,2 @@ void io::Parser::updateNetRouting(frNet* netIn, odb::dbNet* net)
+-            lower_layer = decoder.getTechVia()->getBottomLayer();
+-            top_layer = decoder.getTechVia()->getTopLayer();
+-            layerName = prevLayer == top_layer ? lower_layer->getName()
+-                                               : top_layer->getName();
++            prevLayer = decoder.getLayer();
++            layerName = prevLayer->getName();
+@@ -803 +797,3 @@ void io::Parser::updateNetRouting(frNet* netIn, odb::dbNet* net)
 -        if (pathId == odb::dbWireDecoder::POINT && hasEndPoint) {
 +        if ((pathId == odb::dbWireDecoder::POINT
 +             || pathId == odb::dbWireDecoder::POINT_EXT)
 +            && hasEndPoint) {
-           frCoord x, y;
+@@ -805 +801,6 @@ void io::Parser::updateNetRouting(frNet* netIn, odb::dbNet* net)
 -          decoder.getPoint(x, y);
 +          if (pathId == odb::dbWireDecoder::POINT_EXT) {
 +            frCoord ext;
@@ -18,6 +71,3 @@ index d2efa2d8d..72e7439ce 100644
 +          } else {
 +            decoder.getPoint(x, y);
 +          }
-           bool curr_conn_vertical = beginX == endX;
-           bool next_conn_vertical = endX == x;
-           orthogonal_conn = curr_conn_vertical != next_conn_vertical;

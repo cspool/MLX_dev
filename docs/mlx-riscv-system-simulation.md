@@ -26,8 +26,10 @@ access 已满足 `stdCellPinNoAp=0`、`macroNoAp=0`、`DRT-0073=0`；track assig
 干净 GRT checkpoint 执行的 clean-retry1 完成全部 50 轮，在第 43–48 轮达到历史
 最低 18 条，最终为 22 条（21 shorts、1 metal-spacing）。RCX、STA、功耗及
 DEF/ODB/SPEF 均已生成，全部网连通且 pin-access 仍为零失败，但 DRC 尚未清零，
-因此 run211 仍被拒绝。repair2 已于 2026-09-01 15:27 UTC 从该 ODB 启动，只修复
-这 22 个局部几何错误；验收版本完成并推送后再开始 1 GHz 时序优化。
+因此 run211 仍被拒绝。repair2 验证了 `POINT_EXT` 修补，但暴露出 VIA 后层状态未
+更新的第二个重入缺陷，已在产生输出前安全停止。修复后的只读 import probe 对
+metal1–metal10 线长、总线长和 via 数逐项精确匹配原结果，repair3 将从同一 22-DRC
+ODB 继续；验收版本完成并推送后再开始 1 GHz 时序优化。
 旧集中式 v7 DRT 在第 1 轮 90% 仍有 1,864,670 条违例，已为释放内存而安全停止，
 不作为结果。因此
 `artifacts/results/mlx-array-ppa-run211.json` 和最终
@@ -464,10 +466,15 @@ GRT checkpoint 重启，保持默认确定性 routing order，并把 DRT 上限�
 2,016,530；RCX/STA/VCD power 和独立 DEF/ODB/SPEF 全部完成且未覆盖 20 轮基准。
 这一结果仍不满足零 DRC 门禁。源码审计确认 repair1 的 `DRT-1010` 来自 DRT 重入
 解析器只在普通 `POINT` 上切分正交拐角、遗漏零扩展 `POINT_EXT`，并非 ODB 中存在
-真实对角线。仓库现保存同 commit 的最小解析补丁、可执行文件和完整哈希；repair2
-以 64 轮上限从 22 条结果启动，pin-access 已再次以 94,679 groups、零失败完成，
-track assignment 已在 1:41:18 完成，峰值 69,158.12 MB；随后成功进入 detailed
-route iteration 0，原失败点未再出现 `DRT-1010`，从而实跑验证了解析修补。输出
+真实对角线。repair2 以 64 轮上限从 22 条结果启动，pin-access 再次以 94,679
+groups、零失败完成，track assignment 用时 1:41:18、峰值 69,158.12 MB；它成功
+越过原 `DRT-1010` 失败点，但首轮内部 DRC 为 55,797,939。逐层线长显示 VIA 后的
+当前层没有随 decoder opcode 更新，下降 VIA 被错误解释为上升 VIA；因此该结果是
+重入解析损坏而不是新拥塞，已在第 1 轮完成前安全停止且未生成输出。扩展修补改用
+decoder 的 VIA/TECH_VIA 出口层，并加入只读 import probe；probe 得到 metal1–10
+线长 `99,263/160,608,323/195,498,951/42,308,456/64,421,697/57,160,344/
+43,310,213/58,053,926/58,118,444/2,675,408` µm，总线长 682,255,030 µm、vias
+2,016,530，逐项精确匹配原 50 轮结果。repair3 据此从同一 22-DRC ODB 启动，输出
 独立保存。旧集中式 DRT 在第 1 轮
 90% 仍有 1,864,670 violations，随后为释放顶层 GRT 内存而安全停止；其日志与
 输入 checkpoint 保留，但没有最终 DRC/DEF/ODB/SPEF，明确不作为最终结果。

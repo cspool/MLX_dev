@@ -386,7 +386,7 @@ def build_scope_audit(config: dict[str, Any]) -> dict[str, Any]:
         and qualify(ppa_manifest["files"]["detailed_route_openroad"])["pass"]
         and local_repair_tool["base_commit"]
         == "a008522d88b669ac4c985609533cf5a3d2649222"
-        and "drt-point-ext" in local_repair_tool["version"]
+        and "drt-postroute-safe" in local_repair_tool["version"]
         and qualify(ppa_manifest["files"]["local_repair_openroad"])["pass"]
         and qualify(ppa_manifest["files"]["local_repair_patch"])["pass"]
         and qualify(ppa_manifest["files"]["local_repair_archive"])["pass"],

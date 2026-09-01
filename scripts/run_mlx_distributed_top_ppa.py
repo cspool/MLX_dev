@@ -69,8 +69,11 @@ def distributed_paths(output: Path) -> dict[str, Path]:
     stem = root / "mlx-array-4x4-distributed-u70"
     routed = root / "mlx-array-4x4-distributed-u70-iter5"
     clean_retry = root / "mlx-array-4x4-distributed-u70-iter5-clean-retry1"
-    local_repair = root / (
+    failed_local_repair2 = root / (
         "mlx-array-4x4-distributed-u70-iter5-clean-retry1-local-repair2"
+    )
+    local_repair = root / (
+        "mlx-array-4x4-distributed-u70-iter5-clean-retry1-local-repair3"
     )
     tile_root = output / "tile_macro"
     tile_droute = tile_root / "mlx-array-pe-tile-v2-tight-iter50-droute-probe"
@@ -125,6 +128,9 @@ def distributed_paths(output: Path) -> dict[str, Path]:
         ),
         "local_repair_log": local_repair.with_name(
             f"{local_repair.name}-droute.log"
+        ),
+        "failed_local_repair2_log": failed_local_repair2.with_name(
+            f"{failed_local_repair2.name}-droute.log"
         ),
         "local_repair_drc": local_repair.with_name(
             f"{local_repair.name}-routed.drc"
@@ -598,7 +604,7 @@ def run_clean_retry(config: dict[str, Any], paths: dict[str, Path]) -> int:
 
 
 def run_local_repair(config: dict[str, Any], paths: dict[str, Path]) -> int:
-    """Run repair2 from the clean retry using the POINT_EXT-safe DRT build."""
+    """Run repair3 from the clean retry using the post-route-safe DRT build."""
     if not present(paths["clean_retry_odb"]):
         raise FileNotFoundError(paths["clean_retry_odb"])
     for name in ("tile_lib", "vcd"):
@@ -1078,6 +1084,9 @@ def build_result(
         "top_clean_retry_detailed_route_odb": paths["clean_retry_odb"],
         "top_clean_retry_detailed_route_spef": paths["clean_retry_spef"],
         "top_local_repair_detailed_route_log": paths["local_repair_log"],
+        "top_failed_local_repair2_detailed_route_log": paths[
+            "failed_local_repair2_log"
+        ],
         "top_local_repair_detailed_route_drc": paths["local_repair_drc"],
         "top_local_repair_detailed_route_def": paths["local_repair_def"],
         "top_local_repair_detailed_route_odb": paths["local_repair_odb"],
