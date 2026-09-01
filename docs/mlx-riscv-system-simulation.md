@@ -465,7 +465,8 @@ GRT checkpoint 重启，保持默认确定性 routing order，并把 DRT 上限�
 这一结果仍不满足零 DRC 门禁。源码审计确认 repair1 的 `DRT-1010` 来自 DRT 重入
 解析器只在普通 `POINT` 上切分正交拐角、遗漏零扩展 `POINT_EXT`，并非 ODB 中存在
 真实对角线。仓库现保存同 commit 的最小解析补丁、可执行文件和完整哈希；repair2
-以 64 轮上限从 22 条结果启动，输出独立保存。旧集中式 DRT 在第 1 轮
+以 64 轮上限从 22 条结果启动，pin-access 已再次以 94,679 groups、零失败完成，
+当前进入 track assignment，输出独立保存。旧集中式 DRT 在第 1 轮
 90% 仍有 1,864,670 violations，随后为释放顶层 GRT 内存而安全停止；其日志与
 输入 checkpoint 保留，但没有最终 DRC/DEF/ODB/SPEF，明确不作为最终结果。
 
