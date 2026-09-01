@@ -519,7 +519,7 @@ def test_distributed_tile_candidate_is_promoted_but_not_final() -> None:
     assert top_floorplan["utilization_percent"] == 70
     assert top_floorplan["expected_inter_tile_channel_um"] > 1300
     assert top_floorplan["status"] == (
-        "tile48_grt_iter5_complete_droute_local_repair3_ready"
+        "tile48_grt_iter5_complete_droute_local_repair3_running"
     )
     assert top_floorplan["legal_cells"] == 97260
     assert top_floorplan["cts_buffers"] == 1783
@@ -570,6 +570,7 @@ def test_distributed_tile_candidate_is_promoted_but_not_final() -> None:
     assert repair3["import_probe"]["exact_layer_wirelength_match"] is True
     assert repair3["import_probe"]["wirelength_um"] == 682255030
     assert repair3["import_probe"]["vias"] == 2016530
+    assert repair3["status"].startswith("running_")
     assert top_droute["current_iteration"] == "local_repair3"
     droute = floorplan["detailed_route_probe"]
     assert droute["final_stubborn_iteration_violations"] == 0
