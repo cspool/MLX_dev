@@ -41,6 +41,7 @@ STAGES = (
     "droute",
     "repair",
     "retry",
+    "local-repair",
     "finalize",
     "all",
 )
@@ -68,6 +69,9 @@ def distributed_paths(output: Path) -> dict[str, Path]:
     stem = root / "mlx-array-4x4-distributed-u70"
     routed = root / "mlx-array-4x4-distributed-u70-iter5"
     clean_retry = root / "mlx-array-4x4-distributed-u70-iter5-clean-retry1"
+    local_repair = root / (
+        "mlx-array-4x4-distributed-u70-iter5-clean-retry1-local-repair2"
+    )
     tile_root = output / "tile_macro"
     tile_droute = tile_root / "mlx-array-pe-tile-v2-tight-iter50-droute-probe"
     paths = {
@@ -119,6 +123,21 @@ def distributed_paths(output: Path) -> dict[str, Path]:
         "clean_retry_spef": clean_retry.with_name(
             f"{clean_retry.name}-routed.spef"
         ),
+        "local_repair_log": local_repair.with_name(
+            f"{local_repair.name}-droute.log"
+        ),
+        "local_repair_drc": local_repair.with_name(
+            f"{local_repair.name}-routed.drc"
+        ),
+        "local_repair_def": local_repair.with_name(
+            f"{local_repair.name}-routed.def"
+        ),
+        "local_repair_odb": local_repair.with_name(
+            f"{local_repair.name}-routed.odb"
+        ),
+        "local_repair_spef": local_repair.with_name(
+            f"{local_repair.name}-routed.spef"
+        ),
         "vcd": output / "transformer-block-distributed-top-ports.vcd",
         "tile_summary": tile_root / "mlx-array-pe-tile-candidate.json",
         "tile_lef": tile_droute.with_name(f"{tile_droute.name}.abstract.lef"),
@@ -153,7 +172,30 @@ def distributed_paths(output: Path) -> dict[str, Path]:
             )
         )
     )
-    if clean_retry_complete:
+    local_repair_complete = (
+        paths["local_repair_log"].is_file()
+        and "MLX_ARRAY_DROUTE_COMPLETE odb="
+        in paths["local_repair_log"].read_text()
+        and all(
+            present(paths[name])
+            for name in (
+                "local_repair_drc",
+                "local_repair_def",
+                "local_repair_odb",
+                "local_repair_spef",
+            )
+        )
+    )
+    if local_repair_complete:
+        for target, source in (
+            ("droute_log", "local_repair_log"),
+            ("drc", "local_repair_drc"),
+            ("def", "local_repair_def"),
+            ("odb", "local_repair_odb"),
+            ("spef", "local_repair_spef"),
+        ):
+            paths[target] = paths[source]
+    elif clean_retry_complete:
         for target, source in (
             ("droute_log", "clean_retry_log"),
             ("drc", "clean_retry_drc"),
@@ -394,6 +436,8 @@ def run_physical_stage(
         return run_repair(config, paths)
     if stage == "retry":
         return run_clean_retry(config, paths)
+    if stage == "local-repair":
+        return run_local_repair(config, paths)
     raise ValueError(f"unsupported distributed-top stage {stage}")
 
 
@@ -553,6 +597,59 @@ def run_clean_retry(config: dict[str, Any], paths: dict[str, Path]) -> int:
     )
 
 
+def run_local_repair(config: dict[str, Any], paths: dict[str, Path]) -> int:
+    """Run repair2 from the clean retry using the POINT_EXT-safe DRT build."""
+    if not present(paths["clean_retry_odb"]):
+        raise FileNotFoundError(paths["clean_retry_odb"])
+    for name in ("tile_lib", "vcd"):
+        if not present(paths[name]):
+            raise FileNotFoundError(paths[name])
+    technology = config["technology"]
+    contract = config["hierarchical_distributed_tile_candidate"][
+        "distributed_top_signoff_contract"
+    ]
+    tool = config["toolchain"]["local_repair_openroad"]
+    openroad = PROJECT_ROOT / tool["binary"]
+    if not present(openroad):
+        raise FileNotFoundError(openroad)
+    if artifact(openroad)["sha256"] != tool["binary_sha256"]:
+        raise RuntimeError(f"local-repair OpenROAD hash mismatch: {openroad}")
+    env = os.environ.copy()
+    env.update(
+        {
+            "MALLOC_ARENA_MAX": "2",
+            "PPA_THREADS": str(contract["detailed_route_threads"]),
+            "PPA_GRT_ODB": str(paths["clean_retry_odb"]),
+            "PPA_LIBERTY": technology["liberty"],
+            "PPA_PE_LIBERTY": str(paths["tile_lib"]),
+            "PPA_CLOCK_PERIOD_NS": str(config["clock_period_ns"]),
+            "PPA_DROUTE_END_ITER": str(
+                contract["local_repair_droute_end_iter"]
+            ),
+            "PPA_DRC": str(paths["local_repair_drc"]),
+            "PPA_RCX_RULES": technology["rcx_rules"],
+            "PPA_DEF": str(paths["local_repair_def"]),
+            "PPA_ODB": str(paths["local_repair_odb"]),
+            "PPA_SPEF": str(paths["local_repair_spef"]),
+            "PPA_VCD": str(paths["vcd"]),
+            "PPA_VCD_SCOPE": config["activity"]["promoted_scope"],
+        }
+    )
+    return run_to_log(
+        [
+            str(openroad),
+            "-no_init",
+            "-exit",
+            str(
+                PROJECT_ROOT
+                / "rtl/ppa/openroad_hierarchical_array_droute_resume.tcl"
+            ),
+        ],
+        paths["local_repair_log"],
+        env,
+    )
+
+
 def recursive_synthesis(
     top: dict[str, Any], tile: dict[str, Any], submacros: dict[str, Any]
 ) -> dict[str, Any]:
@@ -655,10 +752,26 @@ def recursive_power(
 def tool_provenance(config: dict[str, Any]) -> tuple[dict[str, Any], bool]:
     tool = config["toolchain"]["global_route_openroad"]
     signoff = config["toolchain"]["detailed_route_and_signoff_openroad"]
+    local_repair = config["toolchain"]["local_repair_openroad"]
     binary = PROJECT_ROOT / tool["binary"]
     patch = PROJECT_ROOT / tool["patch"]
     archive = PROJECT_ROOT / tool["archive"]
     detailed = Path(signoff["binary"])
+    local_repair_binary = PROJECT_ROOT / local_repair["binary"]
+    local_repair_patch = PROJECT_ROOT / local_repair["patch"]
+    local_repair_archive = PROJECT_ROOT / local_repair["archive"]
+    local_repair_record = {
+        "base_commit": local_repair["base_commit"],
+        "binary": artifact(local_repair_binary),
+        "patch": artifact(local_repair_patch),
+        "archive": artifact(local_repair_archive),
+        "version": subprocess.run(
+            [str(local_repair_binary), "-version"],
+            capture_output=True,
+            text=True,
+            check=False,
+        ).stdout.strip(),
+    }
     record = {
         "base_commit": tool["base_commit"],
         "grid_pitches_in_tile": int(tool["grid_pitches_in_tile"]),
@@ -667,6 +780,7 @@ def tool_provenance(config: dict[str, Any]) -> tuple[dict[str, Any], bool]:
         "patch": artifact(patch),
         "archive": artifact(archive),
         "detailed_route_binary": artifact(detailed),
+        "local_repair_openroad": local_repair_record,
         "version": subprocess.run(
             [str(binary), "-version"],
             capture_output=True,
@@ -680,6 +794,13 @@ def tool_provenance(config: dict[str, Any]) -> tuple[dict[str, Any], bool]:
         and record["archive"]["sha256"] == tool["archive_sha256"]
         and record["detailed_route_binary"]["sha256"]
         == signoff["binary_sha256"]
+        and local_repair_record["binary"]["sha256"]
+        == local_repair["binary_sha256"]
+        and local_repair_record["patch"]["sha256"]
+        == local_repair["patch_sha256"]
+        and local_repair_record["archive"]["sha256"]
+        == local_repair["archive_sha256"]
+        and local_repair["version"] in local_repair_record["version"]
         and tool["base_commit"] in record["version"]
         and record["grid_pitches_in_tile"] == 48
         and record["max_2d_edge_usage_multiplier"] == 101
@@ -956,6 +1077,11 @@ def build_result(
         "top_clean_retry_detailed_route_def": paths["clean_retry_def"],
         "top_clean_retry_detailed_route_odb": paths["clean_retry_odb"],
         "top_clean_retry_detailed_route_spef": paths["clean_retry_spef"],
+        "top_local_repair_detailed_route_log": paths["local_repair_log"],
+        "top_local_repair_detailed_route_drc": paths["local_repair_drc"],
+        "top_local_repair_detailed_route_def": paths["local_repair_def"],
+        "top_local_repair_detailed_route_odb": paths["local_repair_odb"],
+        "top_local_repair_detailed_route_spef": paths["local_repair_spef"],
         "distributed_4x4_guide": paths["guide"],
         "distributed_4x4_drc": paths["drc"],
         "distributed_4x4_def": paths["def"],
@@ -975,6 +1101,13 @@ def build_result(
             "global_route_patch": route_tool["patch"],
             "global_route_archive": route_tool["archive"],
             "detailed_route_openroad": route_tool["detailed_route_binary"],
+            "local_repair_openroad": route_tool["local_repair_openroad"][
+                "binary"
+            ],
+            "local_repair_patch": route_tool["local_repair_openroad"]["patch"],
+            "local_repair_archive": route_tool["local_repair_openroad"][
+                "archive"
+            ],
             "rtl": {
                 name: artifact(PROJECT_ROOT / name)
                 for name in (
@@ -1120,6 +1253,7 @@ def main() -> int:
         "droute": paths["odb"],
         "repair": paths["repair_odb"],
         "retry": paths["clean_retry_odb"],
+        "local-repair": paths["local_repair_odb"],
     }
     for stage in requested:
         if present(stage_outputs[stage]) and not args.force:
@@ -1139,6 +1273,7 @@ def main() -> int:
         "droute",
         "repair",
         "retry",
+        "local-repair",
         "finalize",
         "all",
     } and present(

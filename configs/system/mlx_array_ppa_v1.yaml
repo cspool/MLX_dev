@@ -1566,6 +1566,8 @@ hierarchical_distributed_tile_candidate:
     clean_retry_droute_end_iter: 50
     clean_retry_rounds: 1
     clean_retry_routing_order_seed: default_deterministic
+    local_repair_droute_end_iter: 64
+    local_repair_rounds: 1
     global_route_threads: 1
     detailed_route_threads: 16
     minimum_physical_rows: 4096
@@ -1703,6 +1705,17 @@ toolchain:
   detailed_route_and_signoff_openroad:
     binary: /usr/bin/openroad
     binary_sha256: ae81063f4d339d1fc4ca6f8b987f71435b61b8658c6a6f9bee47f1b07d1abd97
+  local_repair_openroad:
+    base_commit: a008522d88b669ac4c985609533cf5a3d2649222
+    version: a008522d8-tile48-guard101-drt-point-ext
+    binary: artifacts/environment/h206/toolchain/openroad-tile48-guard101-drt-point-ext-install/bin/openroad
+    binary_sha256: 50a0bf8d101dfc41b38842f11a3bbd6e961a8ed3fe7291e95ba47822436b3290
+    patch: patches/openroad/drt-point-ext-orthogonal.patch
+    patch_sha256: 04d478fb7d98902582b812315f53ab77e262eb0097ce6ca8dfd1e72880c6e45c
+    archive: vendor/openroad/openroad-a008522d8-tile48-guard101-drt-point-ext-amd64.xz
+    archive_sha256: b111d9dbc9d3c326175f32850bfa496c90fe5e5ced8cf0fd5439a780ade4d61c
+    inherited_global_route_patch: patches/openroad/grt-tile48-guard101.patch
+    purpose: postroute_point_ext_corner_safe_incremental_detailed_route
 output_root: artifacts/environment/h206
 manifest: artifacts/environment/h206/mlx-array-ppa-manifest.json
 result: artifacts/results/mlx-array-ppa-run211.json

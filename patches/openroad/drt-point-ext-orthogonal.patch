@@ -1,0 +1,23 @@
+diff --git a/src/drt/src/io/io.cpp b/src/drt/src/io/io.cpp
+index d2efa2d8d..72e7439ce 100644
+--- a/src/drt/src/io/io.cpp
++++ b/src/drt/src/io/io.cpp
+@@ -800,9 +800,16 @@ void io::Parser::updateNetRouting(frNet* netIn, odb::dbNet* net)
+         }
+         pathId = decoder.next();
+ 
+-        if (pathId == odb::dbWireDecoder::POINT && hasEndPoint) {
++        if ((pathId == odb::dbWireDecoder::POINT
++             || pathId == odb::dbWireDecoder::POINT_EXT)
++            && hasEndPoint) {
+           frCoord x, y;
+-          decoder.getPoint(x, y);
++          if (pathId == odb::dbWireDecoder::POINT_EXT) {
++            frCoord ext;
++            decoder.getPoint(x, y, ext);
++          } else {
++            decoder.getPoint(x, y);
++          }
+           bool curr_conn_vertical = beginX == endX;
+           bool next_conn_vertical = endX == x;
+           orthogonal_conn = curr_conn_vertical != next_conn_vertical;

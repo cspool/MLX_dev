@@ -17,8 +17,25 @@ The patch changes the FastRoute tile from 15 to 48 routing pitches and raises
 the internal pre-adjustment edge-usage sanity multiplier from 100 to 101.  It
 does not relax detailed-route DRC.  `scripts/bootstrap_rtl_ppa_tools.sh`
 verifies both hashes while installing the executable at the path consumed by
-the PPA config.  Detailed routing, RC extraction, STA, power, and DRC continue
-to use the unmodified official OpenROAD binary.
+the PPA config.  Base detailed routing, RC extraction, STA, power, and DRC use
+the unmodified official OpenROAD binary; only the explicit post-route local
+repair uses the second variant documented below.
 
 OpenROAD is distributed under the BSD 3-Clause license, with component-specific
 licenses documented by the upstream project.
+
+## POINT_EXT-safe local-repair variant
+
+`openroad-a008522d8-tile48-guard101-drt-point-ext-amd64.xz` contains the same
+source commit and FastRoute changes plus
+`patches/openroad/drt-point-ext-orthogonal.patch`.  The DRT parser now performs
+the existing orthogonal-corner split for both `POINT` and `POINT_EXT` records.
+This prevents a zero-extension boundary point from merging two legal Manhattan
+segments into a false diagonal during post-route ODB re-entry; it does not
+change any geometry or DRC rule.
+
+- source commit: `a008522d88b669ac4c985609533cf5a3d2649222`
+- executable version: `a008522d8-tile48-guard101-drt-point-ext`
+- DRT patch SHA-256: `04d478fb7d98902582b812315f53ab77e262eb0097ce6ca8dfd1e72880c6e45c`
+- compressed SHA-256: `b111d9dbc9d3c326175f32850bfa496c90fe5e5ced8cf0fd5439a780ade4d61c`
+- executable SHA-256: `50a0bf8d101dfc41b38842f11a3bbd6e961a8ed3fe7291e95ba47822436b3290`
