@@ -166,6 +166,16 @@
 - 当前窗口仍未出现 `MLX_ARRAY_DROUTE_COMPLETE`、`60%` 及后续 detail-routing 里程碑；`run211`/`run213`
   的受验收 JSON 仍缺失。
 
+### 2026-09-02 20:18 UTC 复核
+
+- 复核点仍显示 `local-repair5-droute.log` 未更新（大小 `25359` 字节，`mtime` 为
+  `2026-09-02 19:45:55`）。
+- `openroad` 进程仍在运行（`PID 2905117`、`Rl+`），`pcpu` 约 `1132%`，`RSS` 约 `69.5 GB`，
+  `etime` 已达约 `04:52:34`（约 4h52m）。
+- 仍未观察到 `MLX_ARRAY_DROUTE_COMPLETE`，本轮仍停留在 `local-repair5` detail routing 的第一轮；
+  `results` 目录依旧缺少 `artifacts/results/mlx-array-ppa-run211.json` 和
+  `artifacts/results/mlx-riscv-system-goal-run213.json`。
+
 ## 9. 变更对齐规则（用于目标审计）
 
 - 本文档以 `docs/mlx-riscv-system-simulation.md` 的最新运行日志与产物为主线，任何
