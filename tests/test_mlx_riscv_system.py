@@ -519,7 +519,7 @@ def test_distributed_tile_candidate_is_promoted_but_not_final() -> None:
     assert top_floorplan["utilization_percent"] == 70
     assert top_floorplan["expected_inter_tile_channel_um"] > 1300
     assert top_floorplan["status"] == (
-        "tile48_grt_iter5_complete_droute_local_repair3_running"
+        "tile48_grt_iter5_complete_droute_local_repair4_ready"
     )
     assert top_floorplan["legal_cells"] == 97260
     assert top_floorplan["cts_buffers"] == 1783
@@ -573,8 +573,11 @@ def test_distributed_tile_candidate_is_promoted_but_not_final() -> None:
     repair3_initial = repair3["optimization_iteration_0_result"]
     assert repair3_initial["final_violations"] == 55
     assert repair3_initial["exact_layer_wirelength_match"] is True
-    assert repair3["status"].startswith("running_")
-    assert top_droute["current_iteration"] == "local_repair3"
+    assert repair3["output_generated"] is False
+    repair4 = top_droute["repair4"]
+    assert repair4["skip_redundant_incremental_iterations"] == [1, 2]
+    assert repair4["first_drc_repair_iteration"] == 3
+    assert top_droute["current_iteration"] == "local_repair4"
     droute = floorplan["detailed_route_probe"]
     assert droute["final_stubborn_iteration_violations"] == 0
     assert droute["status"] == "complete_zero_drc_zero_pin_access_failures"
@@ -597,6 +600,7 @@ def test_distributed_tile_candidate_is_promoted_but_not_final() -> None:
     assert "&& hasEndPoint" in drt_patch
     assert "prevLayer = decoder.getLayer()" in drt_patch
     assert "MLX_DRT_STOP_AFTER_IMPORT" in drt_patch
+    assert "MLX_DRT_SKIP_REDUNDANT_INCREMENTAL" in drt_patch
     assert "GENERATE_TILES\\[%d\\].physical_tile" in hierarchical_flow
     runner = ROOT / candidate["physical_flows"]["runner"]
     assert runner.is_file() and os.access(runner, os.X_OK)
@@ -836,7 +840,7 @@ def test_hierarchical_integrated_ppa_is_supported() -> None:
     )
     local_repair_tool = route_tool["local_repair_openroad"]
     assert local_repair_tool["base_commit"] == route_tool["base_commit"]
-    assert "drt-postroute-safe" in local_repair_tool["version"]
+    assert "drt-postroute-repair" in local_repair_tool["version"]
     assert local_repair_tool["binary"]["sha256"] == (
-        "c9ec6634b6f146d37e96485f49f48b494cd2ab629f4948f36d906dd18be1d3e4"
+        "d43ecf4a09e1dbe25a38b6d4134d7d6ca059c305bae34cf3d9527a513cebcb67"
     )

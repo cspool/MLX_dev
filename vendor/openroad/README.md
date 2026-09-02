@@ -34,10 +34,14 @@ and advances its current layer from each VIA decoder opcode.  These changes
 prevent both false diagonal segments and stale-layer reconstruction during
 post-route ODB re-entry; they do not change any geometry or DRC rule.  A
 read-only import-probe mode reports per-layer wirelength and via totals before
-PA/TA, allowing exact round-trip verification.
+PA/TA, allowing exact round-trip verification.  The optional local-repair
+switch skips incremental iterations 1 and 2 after the initial marker scan;
+those stock iterations preserve every pre-routed net and therefore cannot
+change the imported violations.  Repair resumes directly with the stock DRC
+rip-up strategy at iteration 3.
 
 - source commit: `a008522d88b669ac4c985609533cf5a3d2649222`
-- executable version: `a008522d8-tile48-guard101-drt-postroute-safe`
-- DRT patch SHA-256: `3d6a1901c2f698992b0aab5e25c6f88170b71515dc3281c6e48c64b162de3724`
-- compressed SHA-256: `33a027eae4570bbab52f7289b798788f81bb114ce243379c47dceaeaed969735`
-- executable SHA-256: `c9ec6634b6f146d37e96485f49f48b494cd2ab629f4948f36d906dd18be1d3e4`
+- executable version: `a008522d8-tile48-guard101-drt-postroute-repair`
+- DRT patch SHA-256: `b51349641493c1082fd8be15902cfe03689df20cddc57ef2335b5c67962f699f`
+- compressed SHA-256: `72f754e5b9f4b93655a2a5c83e0443bb511752193f24967e15e883dcfbe1b263`
+- executable SHA-256: `d43ecf4a09e1dbe25a38b6d4134d7d6ca059c305bae34cf3d9527a513cebcb67`

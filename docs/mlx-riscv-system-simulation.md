@@ -28,8 +28,10 @@ access 已满足 `stdCellPinNoAp=0`、`macroNoAp=0`、`DRT-0073=0`；track assig
 DEF/ODB/SPEF 均已生成，全部网连通且 pin-access 仍为零失败，但 DRC 尚未清零，
 因此 run211 仍被拒绝。repair2 验证了 `POINT_EXT` 修补，但暴露出 VIA 后层状态未
 更新的第二个重入缺陷，已在产生输出前安全停止。修复后的只读 import probe 对
-metal1–metal10 线长、总线长和 via 数逐项精确匹配原结果，repair3 将从同一 22-DRC
-ODB 继续；验收版本完成并推送后再开始 1 GHz 时序优化。
+metal1–metal10 线长、总线长和 via 数逐项精确匹配原结果。repair3 首轮得到 55 条
+内部 marker；因 stock 增量第 1/2 轮不修改既有路由，已停止冗余扫描。repair4 将
+保留首轮 marker 并直接进入第 3 轮 DRC repair；验收版本完成并推送后再开始 1 GHz
+时序优化。
 旧集中式 v7 DRT 在第 1 轮 90% 仍有 1,864,670 条违例，已为释放内存而安全停止，
 不作为结果。因此
 `artifacts/results/mlx-array-ppa-run211.json` 和最终
@@ -476,7 +478,10 @@ decoder 的 VIA/TECH_VIA 出口层，并加入只读 import probe；probe 得到
 43,310,213/58,053,926/58,118,444/2,675,408` µm，总线长 682,255,030 µm、vias
 2,016,530，逐项精确匹配原 50 轮结果。repair3 据此从同一 22-DRC ODB 启动；首轮
 内部检查以 5:02:00 得到 55 条（26 shorts、18 metal-spacing、11 cut-spacing），
-且逐层线长和 vias 仍精确匹配，已进入增量优化。输出独立保存。旧集中式 DRT 在第 1 轮
+且逐层线长和 vias 仍精确匹配。源码确认 stock 增量第 1/2 轮把 `ALL` 改为 `INCR`，
+因此不会 rip-up 任何已有路由；repair3 第 1 轮运行 29:35 到 10% 时仍为 55 条，随即
+安全停止。repair4 通过显式环境开关跳过这两轮，只改变迭代调度，不改变第 3 轮起的
+官方 DRC repair 策略。输出独立保存。旧集中式 DRT 在第 1 轮
 90% 仍有 1,864,670 violations，随后为释放顶层 GRT 内存而安全停止；其日志与
 输入 checkpoint 保留，但没有最终 DRC/DEF/ODB/SPEF，明确不作为最终结果。
 

@@ -72,8 +72,11 @@ def distributed_paths(output: Path) -> dict[str, Path]:
     failed_local_repair2 = root / (
         "mlx-array-4x4-distributed-u70-iter5-clean-retry1-local-repair2"
     )
-    local_repair = root / (
+    failed_local_repair3 = root / (
         "mlx-array-4x4-distributed-u70-iter5-clean-retry1-local-repair3"
+    )
+    local_repair = root / (
+        "mlx-array-4x4-distributed-u70-iter5-clean-retry1-local-repair4"
     )
     tile_root = output / "tile_macro"
     tile_droute = tile_root / "mlx-array-pe-tile-v2-tight-iter50-droute-probe"
@@ -131,6 +134,9 @@ def distributed_paths(output: Path) -> dict[str, Path]:
         ),
         "failed_local_repair2_log": failed_local_repair2.with_name(
             f"{failed_local_repair2.name}-droute.log"
+        ),
+        "failed_local_repair3_log": failed_local_repair3.with_name(
+            f"{failed_local_repair3.name}-droute.log"
         ),
         "local_repair_drc": local_repair.with_name(
             f"{local_repair.name}-routed.drc"
@@ -632,6 +638,7 @@ def run_local_repair(config: dict[str, Any], paths: dict[str, Path]) -> int:
             "PPA_DROUTE_END_ITER": str(
                 contract["local_repair_droute_end_iter"]
             ),
+            "MLX_DRT_SKIP_REDUNDANT_INCREMENTAL": "1",
             "PPA_DRC": str(paths["local_repair_drc"]),
             "PPA_RCX_RULES": technology["rcx_rules"],
             "PPA_DEF": str(paths["local_repair_def"]),
@@ -1086,6 +1093,9 @@ def build_result(
         "top_local_repair_detailed_route_log": paths["local_repair_log"],
         "top_failed_local_repair2_detailed_route_log": paths[
             "failed_local_repair2_log"
+        ],
+        "top_failed_local_repair3_detailed_route_log": paths[
+            "failed_local_repair3_log"
         ],
         "top_local_repair_detailed_route_drc": paths["local_repair_drc"],
         "top_local_repair_detailed_route_def": paths["local_repair_def"],

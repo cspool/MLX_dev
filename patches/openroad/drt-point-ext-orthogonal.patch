@@ -37,6 +37,21 @@ index 6c636a27f..45eef1eea 100644
 +                    total_vias);
 +    return 0;
 +  }
+diff --git a/src/drt/src/dr/FlexDR.cpp b/src/drt/src/dr/FlexDR.cpp
+index 31b1f11b4..0275a9c9f 100644
+--- a/src/drt/src/dr/FlexDR.cpp
++++ b/src/drt/src/dr/FlexDR.cpp
+@@ -37,0 +38 @@
++#include <cstdlib>
+@@ -1846,0 +1848,2 @@ int FlexDR::main()
++  const bool skip_redundant_incremental
++      = std::getenv("MLX_DRT_SKIP_REDUNDANT_INCREMENTAL") != nullptr;
+@@ -1851,0 +1855,5 @@ int FlexDR::main()
++    if (skip_redundant_incremental && incremental && iter_ >= 1 && iter_ <= 2) {
++      logger_->report("MLX_DRT_SKIP_REDUNDANT_INCREMENTAL iteration={}", iter_);
++      ++iter_;
++      continue;
++    }
 diff --git a/src/drt/src/io/io.cpp b/src/drt/src/io/io.cpp
 index d2efa2d8d..88391d474 100644
 --- a/src/drt/src/io/io.cpp
