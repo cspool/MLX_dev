@@ -39,8 +39,10 @@ repair4 的 21–24 条平台期从未进入该流程。repair5 已于 2026-09-0
 官方局部求解；94,679 个 pin-access groups 已以零失败完成，当前处于 track
 assignment。第一遍已处理 852,167 条 vertical wires 和 1,038,628 条 horizontal
 wires；第二遍 385,448/380,137 条也已完成。TA 用时 1:47:18、峰值
-68,794.64 MB，59 秒 routing-data preparation 后已进入首轮详细 DRC 扫描。默认阈值仍为 11，不修改规则或签核门禁。验收版本完成并推送后再开始
-1 GHz 时序优化。
+68,794.64 MB，59 秒 routing-data preparation 后已进入首轮详细 DRC 扫描。
+10% 时为 2 条 partial violations、用时 29:31，优于 repair4 同点的 5 条；该计数
+会随扫描区域增加，明确不作为最终 DRC。默认阈值仍为 11，不修改规则或签核门禁。
+验收版本完成并推送后再开始 1 GHz 时序优化。
 旧集中式 v7 DRT 在第 1 轮 90% 仍有 1,864,670 条违例，已为释放内存而安全停止，
 不作为结果。因此
 `artifacts/results/mlx-array-ppa-run211.json` 和最终
