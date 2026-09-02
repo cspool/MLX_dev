@@ -620,7 +620,12 @@ def test_distributed_tile_candidate_is_promoted_but_not_final() -> None:
     assert repair5_ta["first_pass_vertical_wires"] == 852167
     assert repair5_ta["first_pass_horizontal_wires"] == 1038628
     assert repair5_ta["frboxes"] == 123
-    assert repair5_ta["second_pass_completed"] is False
+    assert repair5_ta["second_pass_completed"] is True
+    assert repair5_ta["second_pass_vertical_wires"] == 385448
+    assert repair5_ta["second_pass_horizontal_wires"] == 380137
+    assert repair5_ta["elapsed_seconds"] == 6438
+    assert repair5_ta["peak_memory_mb"] == 68794.64
+    assert repair5["routing_data_preparation_elapsed_seconds"] == 59
     assert repair5["status"].startswith("running_")
     fallback = repair5["fallback_targeted_reroute"]
     assert fallback["status"] == "prepared_not_applied"
