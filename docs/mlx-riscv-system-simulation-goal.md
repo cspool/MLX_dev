@@ -194,6 +194,16 @@
 - 日志末端仍停留在 `Completing 10%/20%/30%/40%/50%` 与 `14`（`elapsed time = 02:32:43`）；
   `MLX_ARRAY_DROUTE_COMPLETE`/`run211`/`run213` 受验收 JSON 仍未形成。
 
+### 2026-09-02 20:16 UTC 小幅进展核验
+
+- `local-repair5-droute.log` 有写入增量：尺寸更新为 `25451`，`mtime` 更新到
+  `2026-09-02 20:14:57`，说明该轮 detail routing 继续有新输出。
+- 日志显示第一轮 detail routing 已到达 `Completing 60% with 14 violations`（`elapsed time = 03:01:45`），
+  表明仍未失活但仍停留在该轮内，尚未出现 `MLX_ARRAY_DROUTE_COMPLETE`。
+- `openroad` 仍由 `PID 2905117` 执行，`Rl+`、`pcpu` 约 `1135%`、`RSS` 约 `69.5 GB`；
+  `results` 受验收文件 `artifacts/results/mlx-array-ppa-run211.json`、
+  `artifacts/results/mlx-riscv-system-goal-run213.json` 仍未出现。
+
 ## 9. 变更对齐规则（用于目标审计）
 
 - 本文档以 `docs/mlx-riscv-system-simulation.md` 的最新运行日志与产物为主线，任何
