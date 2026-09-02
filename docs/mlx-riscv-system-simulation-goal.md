@@ -121,40 +121,14 @@
 - 与 1 GHz 目标的关系：当前目标优先是完成验收版签核链路（零 DRC/可复现验收产物）；
   后续再按 run213 结论决定是否在顶层层级补齐 1 GHz 时序闭合报告。
 
-### 2026-09-02 20:05 UTC 追加核验
+### 2026-09-02 20:05–20:08 UTC 连续停滞核验（连续确认）
 
-- `run211` 观察窗口显示：`openroad` 进程 PID 2905117 仍在运行（CPU 约 1119%，RSS 约 69.5 GB），
-  但日志 `.../local-repair5-droute.log` 自 19:45:55 起长度与时间戳未变化（`25359` 字节）。
-- 仅看到 `Completing 10%/20%/30%/40%/50%` 的进度；尚未出现 `MLX_ARRAY_DROUTE_COMPLETE`、
-  `DRT completion`、`*.routed.{def,odb,drc,spef}`。
-- 这意味着当前卡点是可复现的验证对象本身（repair5 细节布线第一轮），不是 DRT/STA 之后阶段；
-  目标下一步是等待该迭代结束或中止并改造该轮次配置（不在当前目标文档内作策略细节裁剪）。
-
-### 2026-09-02 20:06 UTC 再次核验
-
-- 再次对比 20:05→20:06：`local-repair5-droute.log` 大小仍为 `25359`，未新增记录；
-  进程仍存活 (`PID 2905117`, `RSS ≈ 69.495 GB`, `pcpu 约 1122%`)。
-- 该段时间窗口可作为 run211 证据链中的“可复现停滞观测点”：运行负载尚未切出细节布线首轮，
-  也未产生后续受验收路径的 DRT/STA/功耗制品。
-
-### 2026-09-02 20:07 UTC 复核
-
-- 再次核验（距 `repair5` 启动约 4h46m）：`openroad` 仍在运行 (`PID 2905117`)，
-  `cputime` 约 1123%，RSS 仍约 69.5 GB；日志仍卡在
-  `Completing 50% with 14 violations`，且 `19:45:55` 后无追加输出。
-- 截至目前 `results` 目录中仍无 `artifacts/results/mlx-array-ppa-run211.json`、
-  `artifacts/results/mlx-riscv-system-goal-run213.json`；仍仅看到历史拒绝样本
-  `mlx-array-flat-attempt-run211-rejected.json`。
-- 这条复核保留到 P3 审计链，表明当前阻塞仍是同一 `repair5` detail routing 片段，
-  未进入可交付的受验收 `local-repair5-routed.{def,odb,drc,spef}` 生成路径。
-
-### 2026-09-02 20:05–20:08 UTC 连续停滞核验链
-
-- 从 20:05 开始到 20:08，`local-repair5-droute.log` 长期无增长（始终为 `25359` 字节，最后写入时间 `2026-09-02 19:45:55`），
-  仍只停留在 `Completing 50% with 14 violations` 之前输出。
-- `openroad` 进程 `PID 2905117` 在此区间始终存活（`pcpu` 1122%→1124%，`RSS` ≈ 69.5 GB，状态 `Rl+`），说明是可复现计算卡住而非进程退出。
-- 这段链路证据与 `results` 现状一致：目前仍无 `artifacts/results/mlx-array-ppa-run211.json` 和
-  `artifacts/results/mlx-riscv-system-goal-run213.json`，仍保留拒绝样本 `mlx-array-flat-attempt-run211-rejected.json`。
+- 从 20:05 到 20:08 三次复核中，`local-repair5-droute.log` 始终为
+  `25359` 字节，`mtime` 始终为 `2026-09-02 19:45:55`，未出现 `Completing 60%` 及后续关键进度。
+- `openroad` 进程 `PID 2905117` 一直存活，CPU 高占用（约 `1122%`→`1124%`）且
+  RSS 持续约 `69.5 GB`（状态 `Rl+`），说明运行未退出而是持续卡在同一算法段。
+- `results` 目录仍未出现受验收产物：`artifacts/results/mlx-array-ppa-run211.json`、
+  `artifacts/results/mlx-riscv-system-goal-run213.json`；仅保留 `artifacts/results/mlx-array-flat-attempt-run211-rejected.json`。
 
 ## 9. 变更对齐规则（用于目标审计）
 
