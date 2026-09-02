@@ -185,6 +185,15 @@
 - 受验收路径仍未出现 `run211`/`run213` JSON：`artifacts/results/mlx-array-ppa-run211.json`、
   `artifacts/results/mlx-riscv-system-goal-run213.json` 继续缺失。
 
+### 2026-09-02 20:15 UTC 复核
+
+- 核验结果同前：`local-repair5-droute.log` 仍未更新，文件大小 `25359` 字节，`mtime` 为
+  `2026-09-02 19:45:55`。
+- `openroad` 仍在 `PID 2905117` 上运行，状态 `Rl+`，`pcpu` 约 `1134%`，`RSS` 仍约 `69.5 GB`，
+  `etime` 约 `04:53:07`（约 4h53m）。
+- 日志末端仍停留在 `Completing 10%/20%/30%/40%/50%` 与 `14`（`elapsed time = 02:32:43`）；
+  `MLX_ARRAY_DROUTE_COMPLETE`/`run211`/`run213` 受验收 JSON 仍未形成。
+
 ## 9. 变更对齐规则（用于目标审计）
 
 - 本文档以 `docs/mlx-riscv-system-simulation.md` 的最新运行日志与产物为主线，任何
