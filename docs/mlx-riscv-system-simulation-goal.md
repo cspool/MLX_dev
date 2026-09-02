@@ -176,6 +176,15 @@
   `results` 目录依旧缺少 `artifacts/results/mlx-array-ppa-run211.json` 和
   `artifacts/results/mlx-riscv-system-goal-run213.json`。
 
+### 2026-09-02 20:14 UTC 间隔核验
+
+- 以 `stat/ps` 再次核验：`local-repair5-droute.log` 仍为 `25359` 字节，`mtime` 仍为
+  `2026-09-02 19:45:55`，再次确认 `run211` 仍卡在 repair5 detail routing。
+- `openroad` 仍保持 `PID 2905117` 运行，`Rl+`，`pcpu` 约 `1133%`，`RSS` 仍约 `69.5 GB`，
+  `etime` 约 `04:52:34`（约 4h53m）。
+- 受验收路径仍未出现 `run211`/`run213` JSON：`artifacts/results/mlx-array-ppa-run211.json`、
+  `artifacts/results/mlx-riscv-system-goal-run213.json` 继续缺失。
+
 ## 9. 变更对齐规则（用于目标审计）
 
 - 本文档以 `docs/mlx-riscv-system-simulation.md` 的最新运行日志与产物为主线，任何
