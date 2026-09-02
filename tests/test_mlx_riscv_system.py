@@ -592,6 +592,9 @@ def test_distributed_tile_candidate_is_promoted_but_not_final() -> None:
     assert repair5["preserves_repair4_result"] is True
     assert repair5["stubborn_threshold"] == 64
     assert repair5["stock_stubborn_threshold"] == 11
+    assert repair5["pin_access_groups"] == 94679
+    assert repair5["std_cell_pins_without_access"] == 0
+    assert repair5["macro_pins_without_access"] == 0
     assert repair5["status"].startswith("running_")
     assert top_droute["current_iteration"] == "local_repair5"
     droute = floorplan["detailed_route_probe"]
