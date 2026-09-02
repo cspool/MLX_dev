@@ -616,6 +616,11 @@ def test_distributed_tile_candidate_is_promoted_but_not_final() -> None:
     assert repair5["std_cell_pins_without_access"] == 0
     assert repair5["macro_pins_without_access"] == 0
     assert repair5["status"].startswith("running_")
+    fallback = repair5["fallback_targeted_reroute"]
+    assert fallback["status"] == "prepared_not_applied"
+    assert fallback["preserves_repair4_and_repair5_inputs"] is True
+    assert fallback["selected_net_count"] == len(fallback["selected_nets"]) == 12
+    assert fallback["selected_wire_shapes"] == 5569
     assert top_droute["current_iteration"] == "local_repair5"
     droute = floorplan["detailed_route_probe"]
     assert droute["final_stubborn_iteration_violations"] == 0

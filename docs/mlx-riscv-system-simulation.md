@@ -513,6 +513,12 @@ repair4 长期停在 21–24 条，而源码中的 `stubbornTilesFlow` 只有在
 检查后的少量局部 marker 进入同一官方 stubborn-tile 求解。它不删除 marker、不改
 Nangate45 规则、不扩大允许间距，也不降低零 DRC 验收门禁。
 
+若 repair5 仍非零，ODB 冲突图已给出不覆盖当前运行的备用方案：11 条与宏冲突的
+网络必须重布，剩余 `_040523_`/`_043793_` 冲突选择 wire-shape 较少的
+`_043793_`，合计只处理 12 条网、5,569 个 wire shapes。该方案只会在 repair5
+失败后从独立 ODB 副本删除所选 dbWire，再让增量 DRT 重建；repair4/repair5 原始
+输入和输出均保持只读。
+
 旧集中式 DRT 在第 1 轮
 90% 仍有 1,864,670 violations，随后为释放顶层 GRT 内存而安全停止；其日志与
 输入 checkpoint 保留，但没有最终 DRC/DEF/ODB/SPEF，明确不作为最终结果。

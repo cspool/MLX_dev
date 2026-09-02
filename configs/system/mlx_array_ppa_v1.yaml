@@ -1721,6 +1721,27 @@ hierarchical_distributed_tile_candidate:
         std_cell_pins_without_access: 0
         macro_pins_without_access: 0
         status: running_track_assignment
+        fallback_targeted_reroute:
+          activation_condition: repair5_completes_with_nonzero_drc
+          status: prepared_not_applied
+          method: destroy_selected_dbwires_in_a_copy_then_incrementally_reroute
+          preserves_repair4_and_repair5_inputs: true
+          selected_net_count: 12
+          selected_wire_shapes: 5569
+          selection_basis: all_macro_conflict_nets_plus_smaller_side_of_remaining_net_conflict
+          selected_nets:
+            - _043793_
+            - spm_rsp_rdata_i[80]
+            - spm_rsp_rdata_i[311]
+            - route_out_data\[14\][300]
+            - spm_rsp_rdata_i[414]
+            - _013639_
+            - route_out_data\[4\][306]
+            - route_out_data\[1\][168]
+            - spm_rsp_rdata_i[144]
+            - spm_rsp_rdata_i[30]
+            - cfg_word_i[9]
+            - _043503_
       current_iteration: local_repair5
       status: local_repair5_running
     status: tile48_grt_iter5_complete_droute_local_repair5_running
