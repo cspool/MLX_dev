@@ -1,6 +1,6 @@
 # MLX + RISC-V 系统协同仿真进度报告
 
-更新日期：2026-09-02
+更新日期：2026-09-02（持续更新）
 
 ## 结论
 
@@ -48,6 +48,11 @@ wires；第二遍 385,448/380,137 条也已完成。TA 用时 1:47:18、峰值
 不作为结果。因此
 `artifacts/results/mlx-array-ppa-run211.json` 和最终
 `artifacts/results/mlx-riscv-system-goal-run213.json` 尚未生成，不能提前声明完成。
+截至 2026-09-02 20:00 UTC，修复5 进程仍在运行（PID 2905117，`ps` 显示运行中、`
+cputime`/`RSS` 持续），但其日志
+`artifacts/environment/h206/distributed_4x4/mlx-array-4x4-distributed-u70-iter5-clean-retry1-local-repair5-droute.log`
+文件长度与尾部内容自 15:21 UTC 起保持不变，仍只覆盖
+`Completing 10/20/30/40/50% with 2/9/9/9/14`，尚未进入 `MLX_ARRAY_DROUTE_COMPLETE`。
 
 这里的“完成”是论文约束下的开源系统重建，不是论文作者未公开的完整 SoC、私有
 12 nm 库或 Synopsys 流程复刻。性能趋势、系统仿真、RTL 仿真和 PPA 的证据类别
