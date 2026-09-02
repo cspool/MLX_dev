@@ -23,6 +23,10 @@ MLX_REPAIR_ARCHIVE="$PROJECT_ROOT/vendor/openroad/openroad-a008522d8-tile48-guar
 MLX_REPAIR_ARCHIVE_SHA256=72f754e5b9f4b93655a2a5c83e0443bb511752193f24967e15e883dcfbe1b263
 MLX_REPAIR_BINARY="$PROJECT_ROOT/artifacts/environment/h206/toolchain/openroad-tile48-guard101-drt-point-ext-install/bin/openroad"
 MLX_REPAIR_BINARY_SHA256=d43ecf4a09e1dbe25a38b6d4134d7d6ca059c305bae34cf3d9527a513cebcb67
+MLX_STUBBORN_ARCHIVE="$PROJECT_ROOT/vendor/openroad/openroad-a008522d8-tile48-guard101-drt-stubborn-amd64.xz"
+MLX_STUBBORN_ARCHIVE_SHA256=a5876f6600c2c059964de55890142b26a484fdbedd3755957e1ca3a304bc796f
+MLX_STUBBORN_BINARY="$PROJECT_ROOT/artifacts/environment/h206/toolchain/openroad-tile48-guard101-drt-stubborn-install/bin/openroad"
+MLX_STUBBORN_BINARY_SHA256=25221f49221f74a7a2de20c6879f44055e19f0c3610ec2b6ff89a8157ed0a58a
 
 apt-get update
 DEBIAN_FRONTEND=noninteractive apt-get install -y yosys iverilog verilator curl git xz-utils
@@ -112,4 +116,22 @@ if [[ ! -f "$MLX_REPAIR_BINARY" ]] \
     | sha256sum --check --status
   install -D -m 0755 "$mlx_repair_temporary" "$MLX_REPAIR_BINARY"
   rm -f "$mlx_repair_temporary"
+fi
+
+if [[ ! -f "$MLX_STUBBORN_ARCHIVE" ]]; then
+  echo "missing pinned MLX stubborn-repair archive: $MLX_STUBBORN_ARCHIVE" >&2
+  exit 1
+fi
+echo "$MLX_STUBBORN_ARCHIVE_SHA256  $MLX_STUBBORN_ARCHIVE" \
+  | sha256sum --check --status
+if [[ ! -f "$MLX_STUBBORN_BINARY" ]] \
+    || ! echo "$MLX_STUBBORN_BINARY_SHA256  $MLX_STUBBORN_BINARY" \
+      | sha256sum --check --status; then
+  mlx_stubborn_temporary=$(mktemp)
+  xz --decompress --stdout "$MLX_STUBBORN_ARCHIVE" \
+    > "$mlx_stubborn_temporary"
+  echo "$MLX_STUBBORN_BINARY_SHA256  $mlx_stubborn_temporary" \
+    | sha256sum --check --status
+  install -D -m 0755 "$mlx_stubborn_temporary" "$MLX_STUBBORN_BINARY"
+  rm -f "$mlx_stubborn_temporary"
 fi

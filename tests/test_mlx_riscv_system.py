@@ -519,7 +519,7 @@ def test_distributed_tile_candidate_is_promoted_but_not_final() -> None:
     assert top_floorplan["utilization_percent"] == 70
     assert top_floorplan["expected_inter_tile_channel_um"] > 1300
     assert top_floorplan["status"] == (
-        "tile48_grt_iter5_complete_droute_local_repair4_running"
+        "tile48_grt_iter5_complete_droute_local_repair5_prepared"
     )
     assert top_floorplan["legal_cells"] == 97260
     assert top_floorplan["cts_buffers"] == 1783
@@ -577,8 +577,23 @@ def test_distributed_tile_candidate_is_promoted_but_not_final() -> None:
     repair4 = top_droute["repair4"]
     assert repair4["skip_redundant_incremental_iterations"] == [1, 2]
     assert repair4["first_drc_repair_iteration"] == 3
-    assert repair4["status"].startswith("running_")
-    assert top_droute["current_iteration"] == "local_repair4"
+    repair4_result = repair4["full_route_result"]
+    assert repair4_result["violation_curve"][0] == 55
+    assert repair4_result["violation_curve"][-1] == 23
+    assert repair4_result["best_violations"] == 21
+    assert repair4_result["best_iterations"] == [39, 40]
+    assert repair4_result["final_short_violations"] == 20
+    assert repair4_result["final_metal_spacing_violations"] == 3
+    assert repair4_result["drt_completed"] is True
+    assert repair4_result["rcx_sta_power_completed"] is True
+    assert repair4["output_generated"] is True
+    repair5 = top_droute["repair5"]
+    assert repair5["input_violations"] == 23
+    assert repair5["preserves_repair4_result"] is True
+    assert repair5["stubborn_threshold"] == 64
+    assert repair5["stock_stubborn_threshold"] == 11
+    assert repair5["status"] == "prepared_not_launched"
+    assert top_droute["current_iteration"] == "local_repair5_prepared"
     droute = floorplan["detailed_route_probe"]
     assert droute["final_stubborn_iteration_violations"] == 0
     assert droute["status"] == "complete_zero_drc_zero_pin_access_failures"
@@ -602,17 +617,27 @@ def test_distributed_tile_candidate_is_promoted_but_not_final() -> None:
     assert "prevLayer = decoder.getLayer()" in drt_patch
     assert "MLX_DRT_STOP_AFTER_IMPORT" in drt_patch
     assert "MLX_DRT_SKIP_REDUNDANT_INCREMENTAL" in drt_patch
+    stubborn_patch = (
+        ROOT / "patches/openroad/drt-postroute-stubborn-threshold.patch"
+    ).read_text()
+    assert "MLX_DRT_STUBBORN_THRESHOLD" in stubborn_patch
+    assert "num_drvs <= stubborn_threshold" in stubborn_patch
     assert "GENERATE_TILES\\[%d\\].physical_tile" in hierarchical_flow
     runner = ROOT / candidate["physical_flows"]["runner"]
     assert runner.is_file() and os.access(runner, os.X_OK)
     top_runner = ROOT / candidate["physical_flows"]["top_signoff_runner"]
     assert top_runner.is_file() and os.access(top_runner, os.X_OK)
+    top_runner_text = top_runner.read_text()
+    assert '"PPA_GRT_ODB": str(paths["local_repair4_odb"])' in top_runner_text
+    assert '"MLX_DRT_STUBBORN_THRESHOLD"' in top_runner_text
+    assert 'config["toolchain"]["stubborn_repair_openroad"]' in top_runner_text
     signoff = candidate["distributed_top_signoff_contract"]
     assert signoff["macro_instances"] == 16
     assert signoff["congestion_iterations"] == 5
     assert signoff["require_zero_global_route_overflow"] is False
     assert signoff["require_zero_detailed_route_drc"] is True
     assert signoff["require_zero_detailed_pin_access_failures"] is True
+    assert signoff["local_repair_stubborn_threshold"] == 64
     tile_result = json.loads(
         (ROOT / candidate["evidence"]["tile_candidate_summary"]).read_text()
     )
@@ -841,7 +866,12 @@ def test_hierarchical_integrated_ppa_is_supported() -> None:
     )
     local_repair_tool = route_tool["local_repair_openroad"]
     assert local_repair_tool["base_commit"] == route_tool["base_commit"]
-    assert "drt-postroute-repair" in local_repair_tool["version"]
+    assert "drt-stubborn-repair" in local_repair_tool["version"]
     assert local_repair_tool["binary"]["sha256"] == (
+        "25221f49221f74a7a2de20c6879f44055e19f0c3610ec2b6ff89a8157ed0a58a"
+    )
+    prior_repair_tool = route_tool["prior_local_repair_openroad"]
+    assert "drt-postroute-repair" in prior_repair_tool["version"]
+    assert prior_repair_tool["binary"]["sha256"] == (
         "d43ecf4a09e1dbe25a38b6d4134d7d6ca059c305bae34cf3d9527a513cebcb67"
     )

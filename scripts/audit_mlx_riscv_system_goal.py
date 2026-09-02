@@ -188,6 +188,7 @@ def build_scope_audit(config: dict[str, Any]) -> dict[str, Any]:
     ]
     route_tool = ppa["global_route_tool"]
     local_repair_tool = route_tool["local_repair_openroad"]
+    prior_local_repair_tool = route_tool["prior_local_repair_openroad"]
     route_contract = ppa["route_contract"]
     paper_array = next(
         row
@@ -386,10 +387,16 @@ def build_scope_audit(config: dict[str, Any]) -> dict[str, Any]:
         and qualify(ppa_manifest["files"]["detailed_route_openroad"])["pass"]
         and local_repair_tool["base_commit"]
         == "a008522d88b669ac4c985609533cf5a3d2649222"
-        and "drt-postroute-repair" in local_repair_tool["version"]
+        and "drt-stubborn-repair" in local_repair_tool["version"]
         and qualify(ppa_manifest["files"]["local_repair_openroad"])["pass"]
         and qualify(ppa_manifest["files"]["local_repair_patch"])["pass"]
-        and qualify(ppa_manifest["files"]["local_repair_archive"])["pass"],
+        and qualify(ppa_manifest["files"]["local_repair_archive"])["pass"]
+        and prior_local_repair_tool["base_commit"]
+        == "a008522d88b669ac4c985609533cf5a3d2649222"
+        and "drt-postroute-repair" in prior_local_repair_tool["version"]
+        and qualify(ppa_manifest["files"]["prior_local_repair_openroad"])["pass"]
+        and qualify(ppa_manifest["files"]["prior_local_repair_patch"])["pass"]
+        and qualify(ppa_manifest["files"]["prior_local_repair_archive"])["pass"],
         "post_route_outputs": all(
             name in ppa_manifest["files"]
             for name in (

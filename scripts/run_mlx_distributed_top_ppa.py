@@ -75,8 +75,11 @@ def distributed_paths(output: Path) -> dict[str, Path]:
     failed_local_repair3 = root / (
         "mlx-array-4x4-distributed-u70-iter5-clean-retry1-local-repair3"
     )
-    local_repair = root / (
+    local_repair4 = root / (
         "mlx-array-4x4-distributed-u70-iter5-clean-retry1-local-repair4"
+    )
+    local_repair = root / (
+        "mlx-array-4x4-distributed-u70-iter5-clean-retry1-local-repair5"
     )
     tile_root = output / "tile_macro"
     tile_droute = tile_root / "mlx-array-pe-tile-v2-tight-iter50-droute-probe"
@@ -138,6 +141,21 @@ def distributed_paths(output: Path) -> dict[str, Path]:
         "failed_local_repair3_log": failed_local_repair3.with_name(
             f"{failed_local_repair3.name}-droute.log"
         ),
+        "local_repair4_log": local_repair4.with_name(
+            f"{local_repair4.name}-droute.log"
+        ),
+        "local_repair4_drc": local_repair4.with_name(
+            f"{local_repair4.name}-routed.drc"
+        ),
+        "local_repair4_def": local_repair4.with_name(
+            f"{local_repair4.name}-routed.def"
+        ),
+        "local_repair4_odb": local_repair4.with_name(
+            f"{local_repair4.name}-routed.odb"
+        ),
+        "local_repair4_spef": local_repair4.with_name(
+            f"{local_repair4.name}-routed.spef"
+        ),
         "local_repair_drc": local_repair.with_name(
             f"{local_repair.name}-routed.drc"
         ),
@@ -198,6 +216,20 @@ def distributed_paths(output: Path) -> dict[str, Path]:
             )
         )
     )
+    local_repair4_complete = (
+        paths["local_repair4_log"].is_file()
+        and "MLX_ARRAY_DROUTE_COMPLETE odb="
+        in paths["local_repair4_log"].read_text()
+        and all(
+            present(paths[name])
+            for name in (
+                "local_repair4_drc",
+                "local_repair4_def",
+                "local_repair4_odb",
+                "local_repair4_spef",
+            )
+        )
+    )
     if local_repair_complete:
         for target, source in (
             ("droute_log", "local_repair_log"),
@@ -205,6 +237,15 @@ def distributed_paths(output: Path) -> dict[str, Path]:
             ("def", "local_repair_def"),
             ("odb", "local_repair_odb"),
             ("spef", "local_repair_spef"),
+        ):
+            paths[target] = paths[source]
+    elif local_repair4_complete:
+        for target, source in (
+            ("droute_log", "local_repair4_log"),
+            ("drc", "local_repair4_drc"),
+            ("def", "local_repair4_def"),
+            ("odb", "local_repair4_odb"),
+            ("spef", "local_repair4_spef"),
         ):
             paths[target] = paths[source]
     elif clean_retry_complete:
@@ -610,9 +651,9 @@ def run_clean_retry(config: dict[str, Any], paths: dict[str, Path]) -> int:
 
 
 def run_local_repair(config: dict[str, Any], paths: dict[str, Path]) -> int:
-    """Run repair3 from the clean retry using the post-route-safe DRT build."""
-    if not present(paths["clean_retry_odb"]):
-        raise FileNotFoundError(paths["clean_retry_odb"])
+    """Run repair5 from repair4 using the controlled stubborn-tile DRT build."""
+    if not present(paths["local_repair4_odb"]):
+        raise FileNotFoundError(paths["local_repair4_odb"])
     for name in ("tile_lib", "vcd"):
         if not present(paths[name]):
             raise FileNotFoundError(paths[name])
@@ -620,7 +661,7 @@ def run_local_repair(config: dict[str, Any], paths: dict[str, Path]) -> int:
     contract = config["hierarchical_distributed_tile_candidate"][
         "distributed_top_signoff_contract"
     ]
-    tool = config["toolchain"]["local_repair_openroad"]
+    tool = config["toolchain"]["stubborn_repair_openroad"]
     openroad = PROJECT_ROOT / tool["binary"]
     if not present(openroad):
         raise FileNotFoundError(openroad)
@@ -631,7 +672,7 @@ def run_local_repair(config: dict[str, Any], paths: dict[str, Path]) -> int:
         {
             "MALLOC_ARENA_MAX": "2",
             "PPA_THREADS": str(contract["detailed_route_threads"]),
-            "PPA_GRT_ODB": str(paths["clean_retry_odb"]),
+            "PPA_GRT_ODB": str(paths["local_repair4_odb"]),
             "PPA_LIBERTY": technology["liberty"],
             "PPA_PE_LIBERTY": str(paths["tile_lib"]),
             "PPA_CLOCK_PERIOD_NS": str(config["clock_period_ns"]),
@@ -639,6 +680,9 @@ def run_local_repair(config: dict[str, Any], paths: dict[str, Path]) -> int:
                 contract["local_repair_droute_end_iter"]
             ),
             "MLX_DRT_SKIP_REDUNDANT_INCREMENTAL": "1",
+            "MLX_DRT_STUBBORN_THRESHOLD": str(
+                contract["local_repair_stubborn_threshold"]
+            ),
             "PPA_DRC": str(paths["local_repair_drc"]),
             "PPA_RCX_RULES": technology["rcx_rules"],
             "PPA_DEF": str(paths["local_repair_def"]),
@@ -765,7 +809,8 @@ def recursive_power(
 def tool_provenance(config: dict[str, Any]) -> tuple[dict[str, Any], bool]:
     tool = config["toolchain"]["global_route_openroad"]
     signoff = config["toolchain"]["detailed_route_and_signoff_openroad"]
-    local_repair = config["toolchain"]["local_repair_openroad"]
+    prior_local_repair = config["toolchain"]["local_repair_openroad"]
+    local_repair = config["toolchain"]["stubborn_repair_openroad"]
     binary = PROJECT_ROOT / tool["binary"]
     patch = PROJECT_ROOT / tool["patch"]
     archive = PROJECT_ROOT / tool["archive"]
@@ -773,6 +818,21 @@ def tool_provenance(config: dict[str, Any]) -> tuple[dict[str, Any], bool]:
     local_repair_binary = PROJECT_ROOT / local_repair["binary"]
     local_repair_patch = PROJECT_ROOT / local_repair["patch"]
     local_repair_archive = PROJECT_ROOT / local_repair["archive"]
+    prior_local_repair_binary = PROJECT_ROOT / prior_local_repair["binary"]
+    prior_local_repair_patch = PROJECT_ROOT / prior_local_repair["patch"]
+    prior_local_repair_archive = PROJECT_ROOT / prior_local_repair["archive"]
+    prior_local_repair_record = {
+        "base_commit": prior_local_repair["base_commit"],
+        "binary": artifact(prior_local_repair_binary),
+        "patch": artifact(prior_local_repair_patch),
+        "archive": artifact(prior_local_repair_archive),
+        "version": subprocess.run(
+            [str(prior_local_repair_binary), "-version"],
+            capture_output=True,
+            text=True,
+            check=False,
+        ).stdout.strip(),
+    }
     local_repair_record = {
         "base_commit": local_repair["base_commit"],
         "binary": artifact(local_repair_binary),
@@ -793,6 +853,7 @@ def tool_provenance(config: dict[str, Any]) -> tuple[dict[str, Any], bool]:
         "patch": artifact(patch),
         "archive": artifact(archive),
         "detailed_route_binary": artifact(detailed),
+        "prior_local_repair_openroad": prior_local_repair_record,
         "local_repair_openroad": local_repair_record,
         "version": subprocess.run(
             [str(binary), "-version"],
@@ -814,6 +875,14 @@ def tool_provenance(config: dict[str, Any]) -> tuple[dict[str, Any], bool]:
         and local_repair_record["archive"]["sha256"]
         == local_repair["archive_sha256"]
         and local_repair["version"] in local_repair_record["version"]
+        and prior_local_repair_record["binary"]["sha256"]
+        == prior_local_repair["binary_sha256"]
+        and prior_local_repair_record["patch"]["sha256"]
+        == prior_local_repair["patch_sha256"]
+        and prior_local_repair_record["archive"]["sha256"]
+        == prior_local_repair["archive_sha256"]
+        and prior_local_repair["version"]
+        in prior_local_repair_record["version"]
         and tool["base_commit"] in record["version"]
         and record["grid_pitches_in_tile"] == 48
         and record["max_2d_edge_usage_multiplier"] == 101
@@ -1097,6 +1166,11 @@ def build_result(
         "top_failed_local_repair3_detailed_route_log": paths[
             "failed_local_repair3_log"
         ],
+        "top_local_repair4_detailed_route_log": paths["local_repair4_log"],
+        "top_local_repair4_detailed_route_drc": paths["local_repair4_drc"],
+        "top_local_repair4_detailed_route_def": paths["local_repair4_def"],
+        "top_local_repair4_detailed_route_odb": paths["local_repair4_odb"],
+        "top_local_repair4_detailed_route_spef": paths["local_repair4_spef"],
         "top_local_repair_detailed_route_drc": paths["local_repair_drc"],
         "top_local_repair_detailed_route_def": paths["local_repair_def"],
         "top_local_repair_detailed_route_odb": paths["local_repair_odb"],
@@ -1120,6 +1194,15 @@ def build_result(
             "global_route_patch": route_tool["patch"],
             "global_route_archive": route_tool["archive"],
             "detailed_route_openroad": route_tool["detailed_route_binary"],
+            "prior_local_repair_openroad": route_tool[
+                "prior_local_repair_openroad"
+            ]["binary"],
+            "prior_local_repair_patch": route_tool[
+                "prior_local_repair_openroad"
+            ]["patch"],
+            "prior_local_repair_archive": route_tool[
+                "prior_local_repair_openroad"
+            ]["archive"],
             "local_repair_openroad": route_tool["local_repair_openroad"][
                 "binary"
             ],

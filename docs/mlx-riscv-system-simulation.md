@@ -1,6 +1,6 @@
 # MLX + RISC-V 系统协同仿真进度报告
 
-更新日期：2026-09-01
+更新日期：2026-09-02
 
 ## 结论
 
@@ -29,9 +29,14 @@ DEF/ODB/SPEF 均已生成，全部网连通且 pin-access 仍为零失败，但 
 因此 run211 仍被拒绝。repair2 验证了 `POINT_EXT` 修补，但暴露出 VIA 后层状态未
 更新的第二个重入缺陷，已在产生输出前安全停止。修复后的只读 import probe 对
 metal1–metal10 线长、总线长和 via 数逐项精确匹配原结果。repair3 首轮得到 55 条
-内部 marker；因 stock 增量第 1/2 轮不修改既有路由，已停止冗余扫描。repair4 将
-保留首轮 marker 并直接进入第 3 轮 DRC repair；验收版本完成并推送后再开始 1 GHz
-时序优化。
+内部 marker；因 stock 增量第 1/2 轮不修改既有路由，已停止冗余扫描。repair4
+跳过这两轮并完成到第 64 轮，曲线从 55 降到最终 23，最低为第 39/40 轮的 21；
+最终 23 条由 20 shorts 和 3 metal-spacing 组成。其 RCX、STA、功耗及独立
+DEF/ODB/SPEF 全部完成，顶层仍为 -370.568787 ns/64.6 mW，但零 DRC 门禁尚未满足。
+源码审计显示官方 stubborn-tile 多成本局部求解只在 marker 不超过 11 时启动，
+repair4 的 21–24 条平台期从未进入该流程。repair5 已准备使用显式阈值 64 启动同一
+官方局部求解；默认阈值仍为 11，不修改规则或签核门禁。验收版本完成并推送后再开始
+1 GHz 时序优化。
 旧集中式 v7 DRT 在第 1 轮 90% 仍有 1,864,670 条违例，已为释放内存而安全停止，
 不作为结果。因此
 `artifacts/results/mlx-array-ppa-run211.json` 和最终
@@ -481,7 +486,24 @@ decoder 的 VIA/TECH_VIA 出口层，并加入只读 import probe；probe 得到
 且逐层线长和 vias 仍精确匹配。源码确认 stock 增量第 1/2 轮把 `ALL` 改为 `INCR`，
 因此不会 rip-up 任何已有路由；repair3 第 1 轮运行 29:35 到 10% 时仍为 55 条，随即
 安全停止。repair4 通过显式环境开关跳过这两轮，只改变迭代调度，不改变第 3 轮起的
-官方 DRC repair 策略。输出独立保存。旧集中式 DRT 在第 1 轮
+官方 DRC repair 策略。它完成第 0、3–64 轮，违例曲线为
+`55→31→28→28→26→26→26→26→26→26→26→26→25→24→24→39→27→24→24→
+24→24→24→24→31→24→24→24→23→23→23→22→30→23→23→23→23→23→21→21→
+25→23→23→23→22→22→22→22→32→27→25→23→23→23→23→23→27→27→25→24→24→
+24→23→23`。DRT 用时 6:22:36、峰值 69,483.01 MB；最终 23 条为 metal3
+5 shorts、metal7 1 short、metal8 11 shorts/2 spacing、metal10 3 shorts/1
+spacing，wirelength 682,254,975 µm、vias 2,016,504。RCX、STA、VCD power 与独立
+DEF/ODB/SPEF 随后全部完成，连通性和 pin access 仍为零失败；顶层 shell 的
+-370.568787 ns、2.691292 MHz、64.6 mW 与之前一致。所有输出独立保存。
+
+repair4 长期停在 21–24 条，而源码中的 `stubbornTilesFlow` 只有在 marker 数不超过
+11 时才会为每个局部簇并行尝试九组 DRC/marker cost 并选择最佳几何，因此该流程
+从未被触发。repair5 的固定版本加入有界环境变量 `MLX_DRT_STUBBORN_THRESHOLD`：
+未设置时仍使用 stock 11，显式设置时仅允许 11–64；本次设置 64，使首轮精确导入
+检查后的少量局部 marker 进入同一官方 stubborn-tile 求解。它不删除 marker、不改
+Nangate45 规则、不扩大允许间距，也不降低零 DRC 验收门禁。
+
+旧集中式 DRT 在第 1 轮
 90% 仍有 1,864,670 violations，随后为释放顶层 GRT 内存而安全停止；其日志与
 输入 checkpoint 保留，但没有最终 DRC/DEF/ODB/SPEF，明确不作为最终结果。
 
@@ -569,6 +591,7 @@ bash scripts/bootstrap_rtl_ppa_tools.sh
 /opt/mlx-miniforge/bin/python -m scripts.build_mlx_pe_submacros --reuse
 /opt/mlx-miniforge/bin/python -m scripts.run_mlx_distributed_tile_ppa --stage all
 /opt/mlx-miniforge/bin/python -m scripts.run_mlx_distributed_top_ppa --stage all
+/opt/mlx-miniforge/bin/python -m scripts.run_mlx_distributed_top_ppa --stage local-repair
 
 # 4. 冻结文档结果后执行完整验证与最终证书
 /opt/mlx-miniforge/bin/python -m scripts.run_mlx_riscv_system_verification

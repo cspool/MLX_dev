@@ -1632,10 +1632,73 @@ hierarchical_distributed_tile_candidate:
         skip_redundant_incremental_iterations: [1, 2]
         first_drc_repair_iteration: 3
         launched_at_utc: "2026-09-02T06:29:00Z"
-        status: running_pin_access
-      current_iteration: local_repair4
-      status: local_repair4_running
-    status: tile48_grt_iter5_complete_droute_local_repair4_running
+        pin_access_completed: true
+        pin_access_elapsed_seconds: 121
+        std_cell_pins_without_access: 0
+        macro_pins_without_access: 0
+        pin_access_groups: 94679
+        track_assignment:
+          completed: true
+          elapsed_seconds: 6329
+          vertical_wires: 852167
+          horizontal_wires: 1038628
+          second_pass_vertical_wires: 385448
+          second_pass_horizontal_wires: 380137
+          frboxes: 123
+          peak_memory_mb: 69483.01
+        optimization_iteration_0_result:
+          elapsed_seconds: 18199
+          final_violations: 55
+          short_violations: 26
+          metal_spacing_violations: 18
+          cut_spacing_violations: 11
+          total_wirelength_um: 682255030
+          vias: 2016530
+          exact_layer_wirelength_match: true
+        full_route_result:
+          elapsed_seconds: 22956
+          completed_iteration_numbers: [0, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64]
+          violation_curve: [55, 31, 28, 28, 26, 26, 26, 26, 26, 26, 26, 26, 25, 24, 24, 39, 27, 24, 24, 24, 24, 24, 24, 31, 24, 24, 24, 23, 23, 23, 22, 30, 23, 23, 23, 23, 23, 21, 21, 25, 23, 23, 23, 22, 22, 22, 22, 32, 27, 25, 23, 23, 23, 23, 23, 27, 27, 25, 24, 24, 24, 23, 23]
+          final_violations: 23
+          best_violations: 21
+          best_iterations: [39, 40]
+          final_short_violations: 20
+          final_metal_spacing_violations: 3
+          final_violations_by_layer:
+            metal3: 5
+            metal7: 1
+            metal8: 13
+            metal10: 4
+          total_wirelength_um: 682254975
+          vias: 2016504
+          annotated_top_pin_activities: 1701
+          top_shell_power_w: 0.0646
+          recursive_power_w: 29.418712
+          top_shell_worst_slack_ns_at_1ghz: -370.568787
+          top_shell_fmax_ghz: 0.002691291720367244
+          recursive_worst_slack_ns_at_1ghz: -741.973755
+          recursive_fmax_ghz: 0.0013459425629375025
+          drt_completed: true
+          rcx_sta_power_completed: true
+          status: complete_nonzero_drc_stubborn_repair_required
+        output_generated: true
+        status: complete_nonzero_drc_stubborn_repair_required
+      repair5:
+        input_odb: artifacts/environment/h206/distributed_4x4/mlx-array-4x4-distributed-u70-iter5-clean-retry1-local-repair4-routed.odb
+        input_violations: 23
+        droute_end_iter: 64
+        tool_version: a008522d8-tile48-guard101-drt-stubborn-repair
+        parser_patch: patches/openroad/drt-postroute-stubborn-threshold.patch
+        output_stem: artifacts/environment/h206/distributed_4x4/mlx-array-4x4-distributed-u70-iter5-clean-retry1-local-repair5-routed
+        preserves_repair4_result: true
+        skip_redundant_incremental_iterations: [1, 2]
+        stubborn_threshold: 64
+        stock_stubborn_threshold: 11
+        diagnosis: remaining_23_local_markers_never_entered_stock_stubborn_tile_flow
+        status: prepared_not_launched
+      current_iteration: local_repair5_prepared
+      status: local_repair5_prepared
+    status: tile48_grt_iter5_complete_droute_local_repair5_prepared
   distributed_top_signoff_contract:
     topology: distributed_autonomous_pe_tiles
     macro_master: mlx_array_pe_tile
@@ -1657,6 +1720,7 @@ hierarchical_distributed_tile_candidate:
     clean_retry_routing_order_seed: default_deterministic
     local_repair_droute_end_iter: 64
     local_repair_rounds: 1
+    local_repair_stubborn_threshold: 64
     global_route_threads: 1
     detailed_route_threads: 16
     minimum_physical_rows: 4096
@@ -1805,6 +1869,19 @@ toolchain:
     archive_sha256: 72f754e5b9f4b93655a2a5c83e0443bb511752193f24967e15e883dcfbe1b263
     inherited_global_route_patch: patches/openroad/grt-tile48-guard101.patch
     purpose: postroute_safe_direct_drc_repair_after_single_import_scan
+  stubborn_repair_openroad:
+    base_commit: a008522d88b669ac4c985609533cf5a3d2649222
+    version: a008522d8-tile48-guard101-drt-stubborn-repair
+    binary: artifacts/environment/h206/toolchain/openroad-tile48-guard101-drt-stubborn-install/bin/openroad
+    binary_sha256: 25221f49221f74a7a2de20c6879f44055e19f0c3610ec2b6ff89a8157ed0a58a
+    patch: patches/openroad/drt-postroute-stubborn-threshold.patch
+    patch_sha256: ee65890b3db5a003c13eda51bc95c2971b10b012927814e0608744ac3bbfdc05
+    archive: vendor/openroad/openroad-a008522d8-tile48-guard101-drt-stubborn-amd64.xz
+    archive_sha256: a5876f6600c2c059964de55890142b26a484fdbedd3755957e1ca3a304bc796f
+    inherited_global_route_patch: patches/openroad/grt-tile48-guard101.patch
+    stock_stubborn_threshold: 11
+    selected_stubborn_threshold: 64
+    purpose: postroute_safe_stubborn_tile_repair_for_small_persistent_marker_clusters
 output_root: artifacts/environment/h206
 manifest: artifacts/environment/h206/mlx-array-ppa-manifest.json
 result: artifacts/results/mlx-array-ppa-run211.json

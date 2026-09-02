@@ -45,3 +45,21 @@ rip-up strategy at iteration 3.
 - DRT patch SHA-256: `b51349641493c1082fd8be15902cfe03689df20cddc57ef2335b5c67962f699f`
 - compressed SHA-256: `72f754e5b9f4b93655a2a5c83e0443bb511752193f24967e15e883dcfbe1b263`
 - executable SHA-256: `d43ecf4a09e1dbe25a38b6d4134d7d6ca059c305bae34cf3d9527a513cebcb67`
+
+## Controlled stubborn-tile repair variant
+
+`openroad-a008522d8-tile48-guard101-drt-stubborn-amd64.xz` preserves the
+POINT_EXT/VIA reconstruction and incremental-scan changes above, and adds one
+opt-in switch: `MLX_DRT_STUBBORN_THRESHOLD`.  Upstream enters its nine-cost
+stubborn-tile local search only at 11 or fewer markers.  The 16-tile top
+plateaued at 21--24 localized markers through iteration 64, so repair5 sets
+the bounded threshold to 64 and applies the same upstream local search.  The
+default remains 11 when the environment variable is absent; no DRC rule,
+geometry, routing layer, or signoff gate is relaxed.
+
+- source commit: `a008522d88b669ac4c985609533cf5a3d2649222`
+- executable version: `a008522d8-tile48-guard101-drt-stubborn-repair`
+- cumulative DRT patch: `patches/openroad/drt-postroute-stubborn-threshold.patch`
+- patch SHA-256: `ee65890b3db5a003c13eda51bc95c2971b10b012927814e0608744ac3bbfdc05`
+- compressed SHA-256: `a5876f6600c2c059964de55890142b26a484fdbedd3755957e1ca3a304bc796f`
+- executable SHA-256: `25221f49221f74a7a2de20c6879f44055e19f0c3610ec2b6ff89a8157ed0a58a`
