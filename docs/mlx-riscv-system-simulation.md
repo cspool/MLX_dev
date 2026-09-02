@@ -519,7 +519,9 @@ Nangate45 规则、不扩大允许间距，也不降低零 DRC 验收门禁。
 失败后从独立 ODB 副本删除所选 dbWire，再让增量 DRT 重建；repair4/repair5 原始
 输入和输出均保持只读。seed 工具的只读 audit 模式已验证这 12 条网恰含 5,569 个
 wire shapes、123 个 ITerms 和 6 个 BTerms；apply 模式要求显式 enable，拒绝输入/
-输出同名，也拒绝覆盖已有输出。
+输出同名，也拒绝覆盖已有输出。该 12-net 集合只覆盖 repair4 的冲突图；若
+repair5 仍非零，必须先针对 repair5 新 DRC 重新审计并证明所选网络覆盖全部残余
+marker，不能机械沿用旧集合。
 
 旧集中式 DRT 在第 1 轮
 90% 仍有 1,864,670 violations，随后为释放顶层 GRT 内存而安全停止；其日志与

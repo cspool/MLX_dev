@@ -624,6 +624,8 @@ def test_distributed_tile_candidate_is_promoted_but_not_final() -> None:
     assert fallback["selected_iterms"] == 123
     assert fallback["selected_bterms"] == 6
     assert fallback["audit_mode_validated"] is True
+    assert fallback["selection_source"] == "repair4_residual_drc_only"
+    assert fallback["repair5_residual_reaudit_required"] is True
     seed_script = (ROOT / fallback["seed_script"]).read_text()
     assert "PPA_TARGETED_REROUTE_ENABLE" in seed_script
     assert "refuses to overwrite its input ODB" in seed_script

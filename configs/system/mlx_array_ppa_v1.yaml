@@ -1722,7 +1722,7 @@ hierarchical_distributed_tile_candidate:
         macro_pins_without_access: 0
         status: running_track_assignment
         fallback_targeted_reroute:
-          activation_condition: repair5_completes_with_nonzero_drc
+          activation_condition: repair5_completes_with_nonzero_drc_and_reaudited_net_set_covers_every_residual_marker
           status: prepared_not_applied
           method: destroy_selected_dbwires_in_a_copy_then_incrementally_reroute
           preserves_repair4_and_repair5_inputs: true
@@ -1736,6 +1736,8 @@ hierarchical_distributed_tile_candidate:
           output_must_not_exist: true
           input_output_alias_forbidden: true
           selection_basis: all_macro_conflict_nets_plus_smaller_side_of_remaining_net_conflict
+          selection_source: repair4_residual_drc_only
+          repair5_residual_reaudit_required: true
           selected_nets:
             - _043793_
             - spm_rsp_rdata_i[80]
