@@ -523,6 +523,10 @@ wire shapes、123 个 ITerms 和 6 个 BTerms；apply 模式要求显式 enable�
 repair5 仍非零，必须先针对 repair5 新 DRC 重新审计并证明所选网络覆盖全部残余
 marker，不能机械沿用旧集合。
 
+验收前的软件预检也已执行：全量 Ruff 通过；目标测试为 18 passed、1 failed，唯一
+失败是 run211 尚不存在；完整仓库失败集合复跑为 6 项，其中 5 项与本目标无关且已在
+H208 合约中允许，剩余 1 项同样只是 run211 缺失，没有新增未知失败。
+
 旧集中式 DRT 在第 1 轮
 90% 仍有 1,864,670 violations，随后为释放顶层 GRT 内存而安全停止；其日志与
 输入 checkpoint 保留，但没有最终 DRC/DEF/ODB/SPEF，明确不作为最终结果。

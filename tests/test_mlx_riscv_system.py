@@ -631,6 +631,14 @@ def test_distributed_tile_candidate_is_promoted_but_not_final() -> None:
     assert "refuses to overwrite its input ODB" in seed_script
     assert "output already exists" in seed_script
     assert "MLX_TARGETED_REROUTE_SUMMARY" in seed_script
+    preacceptance = repair5["pre_acceptance_verification"]
+    assert preacceptance["ruff"] == "pass"
+    assert preacceptance["goal_test_passed"] == 18
+    assert preacceptance["goal_test_failed"] == 1
+    assert preacceptance["repository_failed_subset_rerun"] == 6
+    assert preacceptance["allowed_unrelated_repository_failures"] == 5
+    assert preacceptance["mlx_run211_missing_failures"] == 1
+    assert preacceptance["unexpected_repository_failures"] == 0
     assert top_droute["current_iteration"] == "local_repair5"
     droute = floorplan["detailed_route_probe"]
     assert droute["final_stubborn_iteration_violations"] == 0
