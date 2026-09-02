@@ -498,6 +498,14 @@ spacing，wirelength 682,254,975 µm、vias 2,016,504。RCX、STA、VCD power �
 DEF/ODB/SPEF 随后全部完成，连通性和 pin access 仍为零失败；顶层 shell 的
 -370.568787 ns、2.691292 MHz、64.6 mW 与之前一致。所有输出独立保存。
 
+对最终 DRC 与 repair4 ODB 的逐线段审计把 23 条归并为 9 个空间簇：14 条是顶层
+route 与真实 tile 宏 obstruction 相交，9 条是顶层网络互撞，涉及 tile
+1/4/5/6/10/11。它们不是 compact LEF 漏挡；例如 tile11 上
+`spm_rsp_rdata_i[80]` 的 metal10 marker 在宏局部 `(7421, 8141)` µm，恰由
+integration LEF 的 `RECT 7421 8141 7451 8143.5` 覆盖。故剩余问题是 DRT 对少量
+真实局部冲突的平台期，而不是全芯片资源不足，也不能通过删除 obstruction 伪造零
+DRC。
+
 repair4 长期停在 21–24 条，而源码中的 `stubbornTilesFlow` 只有在 marker 数不超过
 11 时才会为每个局部簇并行尝试九组 DRC/marker cost 并选择最佳几何，因此该流程
 从未被触发。repair5 的固定版本加入有界环境变量 `MLX_DRT_STUBBORN_THRESHOLD`：

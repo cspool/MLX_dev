@@ -586,6 +586,20 @@ def test_distributed_tile_candidate_is_promoted_but_not_final() -> None:
     assert repair4_result["final_metal_spacing_violations"] == 3
     assert repair4_result["drt_completed"] is True
     assert repair4_result["rcx_sta_power_completed"] is True
+    residual = repair4["residual_drc_geometry"]
+    assert residual["markers"] == 23
+    assert residual["spatial_clusters"] == 9
+    assert residual["macro_obstruction_intersections"] == 14
+    assert residual["top_net_intersections"] == 9
+    assert sum(residual["cluster_marker_counts"]) == residual["markers"]
+    assert residual["integration_obstruction_cover_missing"] is False
+    assert residual["example"]["marker_local_um"] == [7421.0, 8141.0]
+    assert residual["example"]["covering_obstruction_rect_um"] == [
+        7421.0,
+        8141.0,
+        7451.0,
+        8143.5,
+    ]
     assert repair4["output_generated"] is True
     repair5 = top_droute["repair5"]
     assert repair5["input_violations"] == 23
