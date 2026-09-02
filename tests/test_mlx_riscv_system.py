@@ -615,6 +615,12 @@ def test_distributed_tile_candidate_is_promoted_but_not_final() -> None:
     assert repair5["pin_access_groups"] == 94679
     assert repair5["std_cell_pins_without_access"] == 0
     assert repair5["macro_pins_without_access"] == 0
+    repair5_ta = repair5["track_assignment"]
+    assert repair5_ta["first_pass_completed"] is True
+    assert repair5_ta["first_pass_vertical_wires"] == 852167
+    assert repair5_ta["first_pass_horizontal_wires"] == 1038628
+    assert repair5_ta["frboxes"] == 123
+    assert repair5_ta["second_pass_completed"] is False
     assert repair5["status"].startswith("running_")
     fallback = repair5["fallback_targeted_reroute"]
     assert fallback["status"] == "prepared_not_applied"
