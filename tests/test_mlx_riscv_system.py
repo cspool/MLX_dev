@@ -570,6 +570,9 @@ def test_distributed_tile_candidate_is_promoted_but_not_final() -> None:
     assert repair3["import_probe"]["exact_layer_wirelength_match"] is True
     assert repair3["import_probe"]["wirelength_um"] == 682255030
     assert repair3["import_probe"]["vias"] == 2016530
+    repair3_initial = repair3["optimization_iteration_0_result"]
+    assert repair3_initial["final_violations"] == 55
+    assert repair3_initial["exact_layer_wirelength_match"] is True
     assert repair3["status"].startswith("running_")
     assert top_droute["current_iteration"] == "local_repair3"
     droute = floorplan["detailed_route_probe"]
