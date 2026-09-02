@@ -148,6 +148,15 @@
 - `results` 仍只保留 `artifacts/results/mlx-array-flat-attempt-run211-rejected.json`，缺失
   `artifacts/results/mlx-array-ppa-run211.json` 与 `artifacts/results/mlx-riscv-system-goal-run213.json`。
 
+### 2026-09-02 20:12 UTC 再次复核
+
+- 60 秒复核窗口内日志仍无新增：`local-repair5-droute.log` 仍为 `25359` 字节，
+  `mtime` 仍为 `2026-09-02 19:45:55`。
+- `openroad` 进程（`PID 2905117`）继续运行，状态 `Rl+`，`pcpu` 约 `1129%`，`RSS` 约 `69.5 GB`，
+  运行时长约 `04:49:54`（约 4h50m），与停滞表现一致。
+- 该窗口未观察到 `MLX_ARRAY_DROUTE_COMPLETE` 或 `DRT completion`，`results` 产物仍未补齐至
+  `run211/run213` 受验收文件。
+
 ## 9. 变更对齐规则（用于目标审计）
 
 - 本文档以 `docs/mlx-riscv-system-simulation.md` 的最新运行日志与产物为主线，任何
