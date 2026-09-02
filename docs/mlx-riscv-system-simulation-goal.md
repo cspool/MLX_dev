@@ -1,6 +1,6 @@
 # MLX + RISC-V 系统协同仿真目标
 
-更新日期：2026-08-22
+更新日期：2026-09-02
 
 ## 1. 总目标
 
@@ -101,3 +101,29 @@
   H206/run211 保存真实 4×4 分层物理实现，H208/run213 汇总最终逐项审计。
 - 早期单 PE 外推和目标校准结果不作为本目标证据；最终 PPA 使用未经目标拟合的
   Nangate45 综合、布局布线、STA 与 workload VCD 结果，并明确报告证据边界。
+
+## 8. 2026-09-02 关键进展快照（P3 真实 4×4 PPA）
+
+- P0–P2：真实 Chipyard + bare-metal ELF、周期模型、RTL、四个负载功能闭环已稳定打通；
+  共享接口与数据清单在两个后端一致，并已形成可复用验证链路。
+- 真实 4×4 物理流：`run210`（standalone）与 `run212`（Chipyard）已通过对应检查；
+  当前真实顶层签核仍卡在 `run211`，尚未生成最终结果 JSON 与 `run213` 审计。
+- `run211` 当前执行到 `scripts.run_mlx_distributed_top_ppa --stage local-repair` 的
+  `repair5`，`repair5` 进入 detail 路由第一轮并写到
+  `artifacts/environment/h206/distributed_4x4/mlx-array-4x4-distributed-u70-iter5-clean-retry1-local-repair5-droute.log`；
+  最新日志仅有 `Completing 10%/20%/30%/40%/50%`（2/9/9/9/14），未进入 `MLX_ARRAY_DROUTE_COMPLETE`。
+- `run211` 仍缺失受验收入口要求的签核产物：`artifacts/environment/h206/distributed_4x4/*local-repair5-routed.{def,odb,drc,spef}`
+  以及 `artifacts/results/mlx-array-ppa-run211.json`、`artifacts/results/mlx-riscv-system-goal-run213.json`。
+- 运行证据门禁仍是：
+  1) GRT completion marker 与全部网 routed 且 `GRT-0026=0`
+  2) 同步通过 DRT completion、`stdCellPinNoAp=0`、`macroNoAp=0`、`DRT-0073=0`
+  3) 同时保留 `repair5` 的输入、输出与日志审计链条。
+- 与 1 GHz 目标的关系：当前目标优先是完成验收版签核链路（零 DRC/可复现验收产物）；
+  后续再按 run213 结论决定是否在顶层层级补齐 1 GHz 时序闭合报告。
+
+## 9. 变更对齐规则（用于目标审计）
+
+- 本文档以 `docs/mlx-riscv-system-simulation.md` 的最新运行日志与产物为主线，任何
+  "可运行但未写入受验收路径" 只能作为诊断，不得替代 `run211/run213` 合法通过。
+- `run211` 的受验收条件未满足前，不得将 P3 标注为完成；不以 `GRT` 低 overflow
+  或 "所有网已route" 绕过拥塞/DRT 门禁。
