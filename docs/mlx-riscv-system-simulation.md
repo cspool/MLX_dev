@@ -517,7 +517,9 @@ Nangate45 规则、不扩大允许间距，也不降低零 DRC 验收门禁。
 网络必须重布，剩余 `_040523_`/`_043793_` 冲突选择 wire-shape 较少的
 `_043793_`，合计只处理 12 条网、5,569 个 wire shapes。该方案只会在 repair5
 失败后从独立 ODB 副本删除所选 dbWire，再让增量 DRT 重建；repair4/repair5 原始
-输入和输出均保持只读。
+输入和输出均保持只读。seed 工具的只读 audit 模式已验证这 12 条网恰含 5,569 个
+wire shapes、123 个 ITerms 和 6 个 BTerms；apply 模式要求显式 enable，拒绝输入/
+输出同名，也拒绝覆盖已有输出。
 
 旧集中式 DRT 在第 1 轮
 90% 仍有 1,864,670 violations，随后为释放顶层 GRT 内存而安全停止；其日志与

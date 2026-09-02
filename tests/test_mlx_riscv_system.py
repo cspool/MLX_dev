@@ -621,6 +621,14 @@ def test_distributed_tile_candidate_is_promoted_but_not_final() -> None:
     assert fallback["preserves_repair4_and_repair5_inputs"] is True
     assert fallback["selected_net_count"] == len(fallback["selected_nets"]) == 12
     assert fallback["selected_wire_shapes"] == 5569
+    assert fallback["selected_iterms"] == 123
+    assert fallback["selected_bterms"] == 6
+    assert fallback["audit_mode_validated"] is True
+    seed_script = (ROOT / fallback["seed_script"]).read_text()
+    assert "PPA_TARGETED_REROUTE_ENABLE" in seed_script
+    assert "refuses to overwrite its input ODB" in seed_script
+    assert "output already exists" in seed_script
+    assert "MLX_TARGETED_REROUTE_SUMMARY" in seed_script
     assert top_droute["current_iteration"] == "local_repair5"
     droute = floorplan["detailed_route_probe"]
     assert droute["final_stubborn_iteration_violations"] == 0
