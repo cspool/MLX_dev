@@ -130,6 +130,15 @@
 - `results` 目录仍未出现受验收产物：`artifacts/results/mlx-array-ppa-run211.json`、
   `artifacts/results/mlx-riscv-system-goal-run213.json`；仅保留 `artifacts/results/mlx-array-flat-attempt-run211-rejected.json`。
 
+### 2026-09-02 20:09 UTC 再复核
+
+- `openroad` 进程（`PID 2905117`）仍在运行，`pcpu 约1126%`、`RSS 约 69.5 GB`、状态 `Rl+`；
+  说明仍为高负载长时算法片段未退出。
+- `local-repair5-droute.log` 长度与时间戳仍未变（`25359` 字节，`2026-09-02 19:45:55`），
+  仍未出现 `Completing 60%` 或 `MLX_ARRAY_DROUTE_COMPLETE`。
+- `results` 产物依旧缺失 `run211`/`run213` 所需 JSON：`artifacts/results/mlx-array-ppa-run211.json`、
+  `artifacts/results/mlx-riscv-system-goal-run213.json`。
+
 ## 9. 变更对齐规则（用于目标审计）
 
 - 本文档以 `docs/mlx-riscv-system-simulation.md` 的最新运行日志与产物为主线，任何
