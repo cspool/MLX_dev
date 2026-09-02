@@ -601,6 +601,7 @@ bash scripts/bootstrap_rtl_ppa_tools.sh
 /opt/mlx-miniforge/bin/python -m scripts.build_mlx_pe_submacros --reuse
 /opt/mlx-miniforge/bin/python -m scripts.run_mlx_distributed_tile_ppa --stage all
 /opt/mlx-miniforge/bin/python -m scripts.run_mlx_distributed_top_ppa --stage all
+/opt/mlx-miniforge/bin/python -m scripts.run_mlx_distributed_top_ppa --stage drc-audit
 /opt/mlx-miniforge/bin/python -m scripts.run_mlx_distributed_top_ppa --stage local-repair
 
 # 4. 冻结文档结果后执行完整验证与最终证书

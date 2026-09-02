@@ -593,6 +593,7 @@ def test_distributed_tile_candidate_is_promoted_but_not_final() -> None:
     assert residual["top_net_intersections"] == 9
     assert sum(residual["cluster_marker_counts"]) == residual["markers"]
     assert residual["integration_obstruction_cover_missing"] is False
+    assert (ROOT / residual["audit_script"]).is_file()
     assert residual["example"]["marker_local_um"] == [7421.0, 8141.0]
     assert residual["example"]["covering_obstruction_rect_um"] == [
         7421.0,
@@ -600,6 +601,11 @@ def test_distributed_tile_candidate_is_promoted_but_not_final() -> None:
         7451.0,
         8143.5,
     ]
+    audit_script = (ROOT / residual["audit_script"]).read_text()
+    assert "MLX_DRC_GEOMETRY_SUMMARY" in audit_script
+    assert "uncovered_macro_markers" in audit_script
+    assert residual["audit_summary_validated"] is True
+    assert len(residual["audit_log_sha256"]) == 64
     assert repair4["output_generated"] is True
     repair5 = top_droute["repair5"]
     assert repair5["input_violations"] == 23

@@ -41,6 +41,7 @@ STAGES = (
     "droute",
     "repair",
     "retry",
+    "drc-audit",
     "local-repair",
     "finalize",
     "all",
@@ -155,6 +156,9 @@ def distributed_paths(output: Path) -> dict[str, Path]:
         ),
         "local_repair4_spef": local_repair4.with_name(
             f"{local_repair4.name}-routed.spef"
+        ),
+        "residual_drc_audit_log": local_repair4.with_name(
+            f"{local_repair4.name}-geometry-audit.log"
         ),
         "local_repair_drc": local_repair.with_name(
             f"{local_repair.name}-routed.drc"
@@ -489,6 +493,8 @@ def run_physical_stage(
         return run_repair(config, paths)
     if stage == "retry":
         return run_clean_retry(config, paths)
+    if stage == "drc-audit":
+        return run_residual_drc_audit(config, paths)
     if stage == "local-repair":
         return run_local_repair(config, paths)
     raise ValueError(f"unsupported distributed-top stage {stage}")
@@ -703,6 +709,40 @@ def run_local_repair(config: dict[str, Any], paths: dict[str, Path]) -> int:
             ),
         ],
         paths["local_repair_log"],
+        env,
+    )
+
+
+def run_residual_drc_audit(
+    config: dict[str, Any], paths: dict[str, Path]
+) -> int:
+    """Prove whether repair4 macro markers overlap the integration OBS view."""
+    for name in ("local_repair4_odb", "local_repair4_drc", "tile_integration_lef"):
+        if not present(paths[name]):
+            raise FileNotFoundError(paths[name])
+    env = os.environ.copy()
+    env.update(
+        {
+            "PPA_AUDIT_ODB": str(paths["local_repair4_odb"]),
+            "PPA_AUDIT_DRC": str(paths["local_repair4_drc"]),
+            "PPA_AUDIT_MACRO_LEF": str(paths["tile_integration_lef"]),
+        }
+    )
+    openroad = Path(
+        config["toolchain"]["detailed_route_and_signoff_openroad"]["binary"]
+    )
+    return run_to_log(
+        [
+            str(openroad),
+            "-no_init",
+            "-no_splash",
+            "-exit",
+            str(
+                PROJECT_ROOT
+                / "rtl/ppa/openroad_hierarchical_array_drc_geometry_audit.tcl"
+            ),
+        ],
+        paths["residual_drc_audit_log"],
         env,
     )
 
@@ -1171,6 +1211,9 @@ def build_result(
         "top_local_repair4_detailed_route_def": paths["local_repair4_def"],
         "top_local_repair4_detailed_route_odb": paths["local_repair4_odb"],
         "top_local_repair4_detailed_route_spef": paths["local_repair4_spef"],
+        "top_local_repair4_geometry_audit_log": paths[
+            "residual_drc_audit_log"
+        ],
         "top_local_repair_detailed_route_drc": paths["local_repair_drc"],
         "top_local_repair_detailed_route_def": paths["local_repair_def"],
         "top_local_repair_detailed_route_odb": paths["local_repair_odb"],
@@ -1355,6 +1398,7 @@ def main() -> int:
         "droute": paths["odb"],
         "repair": paths["repair_odb"],
         "retry": paths["clean_retry_odb"],
+        "drc-audit": paths["residual_drc_audit_log"],
         "local-repair": paths["local_repair_odb"],
     }
     for stage in requested:
@@ -1405,7 +1449,15 @@ def main() -> int:
             indent=2,
         )
     )
-    if args.stage in {"inspect", "synthesis", "gpl", "legal", "cts", "grt"}:
+    if args.stage in {
+        "inspect",
+        "synthesis",
+        "gpl",
+        "legal",
+        "cts",
+        "grt",
+        "drc-audit",
+    }:
         return 0
     return 0 if result["status"] == "supported" else 1
 
