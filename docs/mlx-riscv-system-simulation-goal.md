@@ -148,6 +148,14 @@
 - 这条复核保留到 P3 审计链，表明当前阻塞仍是同一 `repair5` detail routing 片段，
   未进入可交付的受验收 `local-repair5-routed.{def,odb,drc,spef}` 生成路径。
 
+### 2026-09-02 20:08 UTC 再复核（30 秒窗口）
+
+- 在 30 秒内再次复核：`local-repair5-droute.log` 仍为 `25359` 字节，时间戳仍为
+  `2026-09-02 19:45:55`，未出现新 log 记录。
+- `openroad` 进程（PID 2905117）仍在运行，`pcpu` 约 1124%，`RSS` 约 69.5 GB，状态 `Rl+`；
+  仍未切换到 `MLX_ARRAY_DROUTE_COMPLETE` 或 `DRT completion`。
+- 该条证据继续表明 run211 仍停留在可复现的 detail routing 瓶颈窗口，未产生后续验收产物。
+
 ## 9. 变更对齐规则（用于目标审计）
 
 - 本文档以 `docs/mlx-riscv-system-simulation.md` 的最新运行日志与产物为主线，任何
