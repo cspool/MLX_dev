@@ -627,10 +627,24 @@ def test_distributed_tile_candidate_is_promoted_but_not_final() -> None:
     assert repair5_ta["peak_memory_mb"] == 68794.64
     assert repair5["routing_data_preparation_elapsed_seconds"] == 59
     repair5_scan = repair5["initial_drc_scan_progress"]
-    assert repair5_scan["completed_percent"] == 10
-    assert repair5_scan["partial_violations"] == 2
-    assert repair5_scan["elapsed_seconds"] == 1771
-    assert repair5_scan["repair4_same_point_violations"] == 5
+    assert repair5_scan["completed_percent"] == 20
+    assert repair5_scan["partial_violations"] == 9
+    assert repair5_scan["elapsed_seconds"] == 3684
+    assert repair5_scan["repair4_same_point_violations"] == 16
+    assert repair5_scan["progress_points"] == [
+        {
+            "completed_percent": 10,
+            "partial_violations": 2,
+            "elapsed_seconds": 1771,
+            "repair4_same_point_violations": 5,
+        },
+        {
+            "completed_percent": 20,
+            "partial_violations": 9,
+            "elapsed_seconds": 3684,
+            "repair4_same_point_violations": 16,
+        },
+    ]
     assert repair5_scan["partial_count_is_not_final_drc"] is True
     assert repair5["status"].startswith("running_")
     fallback = repair5["fallback_targeted_reroute"]
