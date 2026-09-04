@@ -204,6 +204,20 @@
   `results` 受验收文件 `artifacts/results/mlx-array-ppa-run211.json`、
   `artifacts/results/mlx-riscv-system-goal-run213.json` 仍未出现。
 
+### 2026-09-03 01:03 UTC 关键更新（local-repair5 完成，仍未达验收）
+
+- `local-repair5` 日志已写入 `artifacts/environment/h206/distributed_4x4/mlx-array-4x4-distributed-u70-iter5-clean-retry1-local-repair5-droute.log`
+  (`mtime=2026-09-03 01:02:58`, `size=120506`) 并出现
+  `MLX_ARRAY_DROUTE_COMPLETE` 标记，完成了 `local-repair5-routed` 产物链路：
+  `mlx-array-4x4-distributed-u70-iter5-clean-retry1-local-repair5-routed.{def,drc,odb,spef}` 均已生成。
+- `artifacts/environment/h206/distributed_4x4/mlx-array-4x4-distributed-u70-iter5-clean-retry1-local-repair5-routed.drc`
+  尺寸约为 `2219`（仅 0/极低 DRC 条目），`MLX_PPA_TIMING_BEGIN/END` 与功耗段存在，说明
+  `local-repair5` 执行到末段并完成 STA/power，但 `drc_violations` 仍为非零（候选快照 `final_violations=14`），
+  `checks.actual_detailed_route_signoff` 与 `drc_clean` 为 `false`，`status=incomplete`。
+- `results` 门禁文件仍未产出：`artifacts/results/mlx-array-ppa-run211.json` 与
+  `artifacts/results/mlx-riscv-system-goal-run213.json` 仍缺失；仍保留旧拒绝样本
+  `artifacts/results/mlx-array-flat-attempt-run211-rejected.json`，`status= rejected`。
+
 ## 9. 变更对齐规则（用于目标审计）
 
 - 本文档以 `docs/mlx-riscv-system-simulation.md` 的最新运行日志与产物为主线，任何
