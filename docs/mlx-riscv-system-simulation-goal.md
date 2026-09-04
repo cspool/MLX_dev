@@ -218,6 +218,16 @@
   `artifacts/results/mlx-riscv-system-goal-run213.json` 仍缺失；仍保留旧拒绝样本
   `artifacts/results/mlx-array-flat-attempt-run211-rejected.json`，`status= rejected`。
 
+### 2026-09-04 08:15 UTC 核验（run211 尚未产出 run211/run213）
+
+- `local-repair5` 的日志与产物链路未再更新：`local-repair5-droute.log` 仍为
+  `120506` 字节，`mtime=2026-09-03 01:02:58`，未出现新的运行追加。
+- 进程层面当前无 `openroad`/`run_mlx_distributed_top_ppa --stage local-repair` 在跑，说明该轮已结束；
+  目标仍停留在产物未写入受验收 `artifacts/results/mlx-array-ppa-run211.json` 与
+  `artifacts/results/mlx-riscv-system-goal-run213.json`。
+- 候选签核状态仍为 `incomplete`：`checks.actual_detailed_route_signoff=false`、`checks.drc_clean=false`、
+  `hierarchical_top.detailed_route_progress.final_violations=14`，`zero_drc_reached=false`。
+
 ## 9. 变更对齐规则（用于目标审计）
 
 - 本文档以 `docs/mlx-riscv-system-simulation.md` 的最新运行日志与产物为主线，任何
