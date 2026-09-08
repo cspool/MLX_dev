@@ -1,0 +1,442 @@
+{
+  "schema": "mlx_tensor_semantics_v1",
+  "timing_mode": "unmodeled",
+  "assets": {
+    "a": {
+      "kind": "literal",
+      "dtype": "f16",
+      "shape": [
+        5,
+        4
+      ],
+      "values": [
+        [
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ],
+        [
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ],
+        [
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ],
+        [
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ],
+        [
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ]
+      ]
+    },
+    "w": {
+      "kind": "literal",
+      "dtype": "f16",
+      "shape": [
+        19,
+        4
+      ],
+      "values": [
+        [
+          0.25,
+          0.25,
+          0.25,
+          0.25
+        ],
+        [
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ],
+        [
+          4.0,
+          4.0,
+          4.0,
+          4.0
+        ],
+        [
+          0.25,
+          0.25,
+          0.25,
+          0.25
+        ],
+        [
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ],
+        [
+          4.0,
+          4.0,
+          4.0,
+          4.0
+        ],
+        [
+          0.25,
+          0.25,
+          0.25,
+          0.25
+        ],
+        [
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ],
+        [
+          4.0,
+          4.0,
+          4.0,
+          4.0
+        ],
+        [
+          0.25,
+          0.25,
+          0.25,
+          0.25
+        ],
+        [
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ],
+        [
+          4.0,
+          4.0,
+          4.0,
+          4.0
+        ],
+        [
+          0.25,
+          0.25,
+          0.25,
+          0.25
+        ],
+        [
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ],
+        [
+          4.0,
+          4.0,
+          4.0,
+          4.0
+        ],
+        [
+          0.25,
+          0.25,
+          0.25,
+          0.25
+        ],
+        [
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ],
+        [
+          4.0,
+          4.0,
+          4.0,
+          4.0
+        ],
+        [
+          0.25,
+          0.25,
+          0.25,
+          0.25
+        ]
+      ]
+    }
+  },
+  "nodes": [
+    {
+      "id": "v0",
+      "kind": "linear",
+      "args": [
+        {
+          "value": "a"
+        },
+        {
+          "value": "w"
+        }
+      ],
+      "kwargs": {},
+      "output": {
+        "dtype": "f16",
+        "shape": [
+          5,
+          19
+        ]
+      },
+      "source_operator_id": 0,
+      "source_operator": "linear",
+      "forward_id": 0,
+      "layer_idx": null,
+      "module_path": "<unit>",
+      "release": [],
+      "matrix_program": {
+        "profile": "mlx-matrix-f32-kasc-v1",
+        "input_dtype": "f16",
+        "output_dtype": "f16",
+        "has_bias": false,
+        "tile_m": 2,
+        "tile_n": 16,
+        "tile_k": 64,
+        "rf_vectors": 16,
+        "rf_vector_bytes": 64,
+        "spm_bytes": 8192,
+        "rom_words": 32,
+        "rf_vectors_used": 6,
+        "spm_bytes_used": 2336,
+        "prologue": [
+          1025,
+          1049857
+        ],
+        "body": [
+          2097411,
+          2101508,
+          2,
+          4,
+          66053,
+          148486,
+          1048578,
+          1048580,
+          1114629,
+          1201414
+        ],
+        "epilogue": [
+          17415,
+          16392,
+          1070343,
+          1069064
+        ],
+        "numeric_contract": "K ascending; MUL.F32.RNE then ADD.F32.RNE; no contraction; final output cast RNE",
+        "target_status": "reconstructed_functional_microcode_timing_and_system_pending"
+      }
+    },
+    {
+      "id": "v1",
+      "kind": "rsqrt",
+      "args": [
+        {
+          "value": "v0"
+        }
+      ],
+      "kwargs": {},
+      "output": {
+        "dtype": "f16",
+        "shape": [
+          5,
+          19
+        ]
+      },
+      "source_operator_id": 1,
+      "source_operator": "rsqrt",
+      "forward_id": 0,
+      "layer_idx": null,
+      "module_path": "<unit>",
+      "release": [],
+      "vector_program": {
+        "profile": "mlx-vector-fp32-v1",
+        "kind": "rsqrt",
+        "input_dtypes": [
+          "f16"
+        ],
+        "output_dtype": "f16",
+        "width": null,
+        "lanes": 16,
+        "trans_lanes": 4,
+        "rf_vectors": 16,
+        "rf_vector_bytes": 64,
+        "rf_vectors_used": 8,
+        "spm_bytes": 8192,
+        "spm_bytes_used": 320,
+        "rom_words": 32,
+        "rom": [
+          2,
+          4,
+          19,
+          1048595,
+          2097171,
+          3145747,
+          270,
+          4114,
+          1052690,
+          2101266,
+          3149842,
+          7,
+          8
+        ],
+        "phases": {
+          "body": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11,
+            12
+          ]
+        },
+        "constants": [
+          1.0
+        ],
+        "reduction": null,
+        "timing_verified": false,
+        "system_verified": false
+      }
+    },
+    {
+      "id": "v2",
+      "kind": "argmax",
+      "args": [
+        {
+          "value": "v1"
+        },
+        -1
+      ],
+      "kwargs": {},
+      "output": {
+        "dtype": "i64",
+        "shape": [
+          5
+        ]
+      },
+      "source_operator_id": 2,
+      "source_operator": "argmax",
+      "forward_id": 0,
+      "layer_idx": null,
+      "module_path": "<unit>",
+      "release": [],
+      "control_program": {
+        "profile": "mlx-controller-rv64-leaf-v1",
+        "kind": "argmax",
+        "input_dtype": "f16",
+        "xlen": 64,
+        "flen": 64,
+        "gpr_count": 32,
+        "fpr_count": 32,
+        "phases": {
+          "init": [
+            547685843,
+            2579,
+            2707
+          ],
+          "advance": [
+            1739411
+          ],
+          "compare": [
+            3758429907,
+            805762707,
+            13645491,
+            3758462803,
+            805795603,
+            14694195,
+            1525523,
+            15136435,
+            2695206483,
+            14050867
+          ],
+          "select": [
+            394851,
+            690707,
+            547685843
+          ]
+        },
+        "memory_binding": "descriptor_bound_not_riscv_load_store_execution",
+        "rocket_execution_verified": false,
+        "timing_verified": false
+      }
+    }
+  ],
+  "outputs": [
+    {
+      "forward_id": 0,
+      "logits": "v1",
+      "token": "v2"
+    }
+  ],
+  "matrix_backend": "scheduled",
+  "matrix_schedule_options": {
+    "rows": 1,
+    "columns": 1,
+    "trace": true,
+    "trace_limit": 200000
+  },
+  "vector_backend": "scheduled",
+  "vector_schedule_options": {
+    "rows": 1,
+    "columns": 1,
+    "trace": true,
+    "trace_limit": 200000
+  },
+  "memory_backend": "scheduled",
+  "memory_schedule_options": {
+    "trace": false
+  },
+  "control_backend": "scheduled",
+  "control_schedule_options": {
+    "trace": false
+  },
+  "block_pipeline_plan": {
+    "profile": "mlx-bounded-pair-events-v1",
+    "event_slots": 2,
+    "pairs": [
+      {
+        "producer": 0,
+        "consumer": 1,
+        "producer_source": 0,
+        "consumer_source": 1,
+        "value": "v0",
+        "mapping": {
+          "kind": "matrix",
+          "elements": 95,
+          "m": 5,
+          "n": 19,
+          "batches": 1
+        },
+        "producer_blocks": 6,
+        "consumer_blocks": 6,
+        "producer_resources": {
+          "rf": 6,
+          "spm": 37,
+          "rom": 16
+        },
+        "consumer_resources": {
+          "rf": 8,
+          "spm": 5,
+          "rom": 13
+        },
+        "producer_context_limit": 1,
+        "consumer_context_limit": 1
+      }
+    ],
+    "rejected_pairs": [],
+    "unselected_sources": "existing_whole_source_execution_not_numeric_fallback"
+  }
+}

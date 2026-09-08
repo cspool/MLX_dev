@@ -77,7 +77,7 @@ struct Runner {
   std::set<std::pair<uint64_t,unsigned>> ready,active;
   uint64_t cycle=0,max_cycles,preloaded_assets=0,preloaded_bytes=0,completed=0,readback_requests=0;
   unsigned limit,memory_active=0,control_active=0,peak_active=0;
-  bool overlap=true,progress=false;
+  bool overlap=true,progress=false,collection_pending=false;
   bool tile_pipeline=false,whole_pipeline_barrier=false;
   unsigned event_slots=32;
   uint64_t next_pipeline_epoch=1;
@@ -207,7 +207,10 @@ struct Runner {
     // Binding/recycling physical storage remains a quiescent operation. This
     // gate does not stop already active frontends while they wait for data.
     if(!memory.idle()||!mux.idle())return;
-    memory.collect();
+    // Task/model references only disappear in finish(), or in the final
+    // readback cleanup below. Keep collection on the same first quiescent
+    // edge after such a change; unchanged edges cannot expire another owner.
+    if(collection_pending){memory.collect();collection_pending=false;}
     for(auto it=ready.begin();it!=ready.end()&&active.size()<(overlap?limit:1u);){
       auto index=it->second;auto &task=tasks[index];
       if((task.family=="control"&&control_active)||(task.family=="memory"&&!task.view&&memory_active)){++it;continue;}
@@ -229,7 +232,7 @@ struct Runner {
     auto &task=tasks[index];const auto &node=*task.node;auto result=task.result();
     require(result["done"].asBool()&&result["dma_requests"]==result["dma_responses"],"graph backend has undrained requests");
     result["source_operator_id"]=node["source_operator_id"];result["forward_id"]=node["forward_id"];result["layer_idx"]=node["layer_idx"];result["batch_index"]=Json::UInt64(task.batch);
-    result["shared_start_cycle"]=Json::UInt64(task.window_begin);result["shared_end_cycle"]=Json::UInt64(cycle+1);windows[task.family].append(result);task.drop_model();
+    result["shared_start_cycle"]=Json::UInt64(task.window_begin);result["shared_end_cycle"]=Json::UInt64(cycle+1);windows[task.family].append(result);collection_pending=true;task.drop_model();
     if(task.family=="matrix"&&++task.batch<task.batches){task.window_pending=true;return;}
     require(task.output.sizes==shape(node["output"]["shape"])&&dtype_name(task.output.type)==node["output"]["dtype"].asString(),"graph output type/shape changed");memory.require_initialized(task.output);
     require(!task.output.storage->data&&!task.output.storage->writable,"graph backend gained local numerical storage");
