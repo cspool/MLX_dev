@@ -66,8 +66,9 @@ inline void publish_split_views(const Json::Value &node,const Tensor &owner,Valu
 inline void validate_value_contract(const Json::Value &program){
   bool split=false;std::set<std::string> owners;
   for(const auto &node:program["nodes"]){output_ids(node);if(node["kind"]=="split"){split=true;owners.insert(node["id"].asString());}}
-  require(program["schema"]==(split?"mlx_tensor_semantics_v2":"mlx_tensor_semantics_v1")
-          &&(!split||program["value_contract"]=="tuple_view_outputs_v1"),"unsupported/missing tuple-view program contract");
+  bool grouped=program.isMember("source_groups");
+  require(program["schema"]==(grouped?"mlx_tensor_semantics_v3":split?"mlx_tensor_semantics_v2":"mlx_tensor_semantics_v1")
+          &&(grouped?program["value_contract"]=="source_groups_v1":!split||program["value_contract"]=="tuple_view_outputs_v1"),"unsupported/missing tuple-view program contract");
   if(!split)return;
   std::set<std::string> declared;
   for(const auto &id:program["assets"].getMemberNames())declared.insert(id);

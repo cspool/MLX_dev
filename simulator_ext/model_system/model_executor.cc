@@ -5,6 +5,7 @@
 #include "control_schedule.h"
 #include "guard_dependencies.h"
 #include "value_outputs.h"
+#include "source_groups.h"
 #include <algorithm>
 #include <cmath>
 #include <chrono>
@@ -69,9 +70,10 @@ struct Runner {
       require(missing.empty(),"physical observation ID is not in the program");
     }
     require(max_cycles>0&&max_cycles<UINT64_MAX-1000000,"invalid shared cycle limit");
-    require((program["schema"]=="mlx_tensor_semantics_v1"||program["schema"]=="mlx_tensor_semantics_v2")&&program["timing_mode"]=="unmodeled","invalid physical model program");
+    require((program["schema"]=="mlx_tensor_semantics_v1"||program["schema"]=="mlx_tensor_semantics_v2"||program["schema"]=="mlx_tensor_semantics_v3")&&program["timing_mode"]=="unmodeled","invalid physical model program");
     validate_guard_dependencies(program);
     validate_value_contract(program);
+    validate_source_groups(program);
     for(const char *name:{"matrix","vector","memory","control"})require(program[std::string(name)+"_backend"]=="scheduled","physical model requires all four scheduled backends");
     matrix_schedule::Options::parse(program["matrix_schedule_options"]);vector_schedule::Options::parse(program["vector_schedule_options"]);
     memory_model::ScheduleOptions::parse(program["memory_schedule_options"]);control_schedule::Options::parse(program["control_schedule_options"]);
@@ -233,7 +235,7 @@ struct Runner {
     r["preloaded_assets"]=Json::UInt64(preloaded_assets);r["preloaded_bytes"]=Json::UInt64(preloaded_bytes);r["device_component_cycles"]=Json::UInt64(device_end);r["host_readback_cycles"]=Json::UInt64(readback_cycles);r["host_readback_requests"]=Json::UInt64(readback_requests);r["shared_elapsed_cycles"]=Json::UInt64(cycle);
     r["observations"]=observations;r["diagnostic_readback_cycles"]=Json::UInt64(diagnostic_cycles);r["diagnostic_readback_requests"]=Json::UInt64(diagnostic_requests);r["diagnostic_readback_bytes"]=Json::UInt64(diagnostic_bytes);
     r["virtual_tensor_backing_used"]=true;r["functional_entry_calls"]=0;r["blas_calls"]=0;r["python_or_gpu_execution_fallbacks"]=0;
-    r["timing_mode"]="unmodeled_host_and_system";r["cross_operator_execution"]="serial_with_shared_address_space";r["weight_loading"]="preloaded_not_cpu_or_dma_loader";r["mlx_system_verified"]=false;r["inference_performance_eligible"]=false;return r;
+    r["timing_mode"]="unmodeled_host_and_system";r["cross_operator_execution"]="serial_with_shared_address_space";r["weight_loading"]="preloaded_not_cpu_or_dma_loader";r["mlx_system_verified"]=false;r["inference_performance_eligible"]=false;report_source_groups(program,r);return r;
   }
 };
 } // namespace

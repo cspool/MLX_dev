@@ -16,9 +16,12 @@ def value_outputs(node):
 
 
 def require_value_contract(program):
+    from .model_source_groups import validate_source_groups
+    validate_source_groups(program)
     split = any(node["kind"] == "split" for node in program["nodes"])
-    expected = "mlx_tensor_semantics_v2" if split else "mlx_tensor_semantics_v1"
-    if program.get("schema", "mlx_tensor_semantics_v1") != expected or (split and program.get("value_contract") != "tuple_view_outputs_v1"):
+    grouped = "source_groups" in program
+    expected = "mlx_tensor_semantics_v3" if grouped else "mlx_tensor_semantics_v2" if split else "mlx_tensor_semantics_v1"
+    if program.get("schema", "mlx_tensor_semantics_v1") != expected or (split and not grouped and program.get("value_contract") != "tuple_view_outputs_v1"):
         raise ValueError("unsupported/missing tuple-view program contract")
     for node in program["nodes"]:
         value_outputs(node)

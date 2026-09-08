@@ -1,6 +1,7 @@
 """Structural/accounting gates for actual shared-native physical execution."""
 import math
 from .model_value_outputs import value_outputs, require_value_contract
+from .model_source_groups import verify_source_groups
 
 CLASSIFICATION = "shared_native_physical_model_execution_not_chipyard_system_validation"
 EXECUTION_CLASSIFICATION = "full_model_native_physical_not_chipyard_validation"
@@ -20,12 +21,13 @@ def scheduled_compile_options(program):
 
 def verify_physical_execution(program, native, system_options=None):
     require_value_contract(program)
+    verify_source_groups(program,native)
     require(native["classification"]==CLASSIFICATION,"unexpected physical execution evidence class")
     require(all(program.get(name+"_backend")=="scheduled" for name in ("matrix","vector","memory","control")),"physical program permits a functional backend")
     require(native["virtual_tensor_backing_used"] is True and native["functional_entry_calls"]==native["blas_calls"]==native["python_or_gpu_execution_fallbacks"]==0,"physical execution used a prohibited data/compute fallback")
     nodes=program["nodes"];events=native["events"];groups=native["windows"]
     require(len({node["source_operator_id"] for node in nodes})==len(nodes),"physical source IDs are duplicated")
-    require(native["executed_source_calls"]==len(nodes)==len(events),"incomplete physical model execution")
+    require(native.get("executed_lowered_calls",native["executed_source_calls"])==len(nodes)==len(events),"incomplete physical model execution")
     require(set(groups)=={"matrix","vector","memory","control"},"physical backend groups missing or unknown")
     observed={name:[] for name in groups};cursor=0
     diagnostics=native.get("observations",[]);by_id={row["source_operator_id"]:row for row in diagnostics}
@@ -120,5 +122,7 @@ def verify_physical_execution(program, native, system_options=None):
     initial_bytes=sum(math.prod(a["shape"])*BYTES[a["dtype"]] for a in program["assets"].values())
     require(native["preloaded_assets"]==len(program["assets"]) and native["preloaded_bytes"]==initial_bytes,"physical asset preload coverage mismatch")
     require(native["weight_loading"]=="preloaded_not_cpu_or_dma_loader" and native["mlx_system_verified"] is False and native["inference_performance_eligible"] is False,"physical component improperly claims system/performance validation")
-    return {"source_calls":len(nodes),"matrix_mac_lanes":macs,"backend_windows":{name:len(w) for name,w in groups.items()},
-            "physical_requests":memory["submitted"],"all_requests_drained":True,"all_buffers_released":True}
+    coverage={"source_calls":native["executed_source_calls"],"matrix_mac_lanes":macs,"backend_windows":{name:len(w) for name,w in groups.items()},
+              "physical_requests":memory["submitted"],"all_requests_drained":True,"all_buffers_released":True}
+    if "source_groups" in program:coverage["lowered_calls"]=len(nodes)
+    return coverage

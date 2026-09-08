@@ -16,6 +16,7 @@ import torch
 from mlxsim.model_matrix_reference import MatrixReferenceMode
 
 FLOAT_OPERATORS = {
+    "aten.sub.Tensor": "sub",
     "aten.add.Tensor": "add", "aten.mul.Tensor": "mul", "aten.pow.Tensor_Scalar": "pow",
     "aten.rsqrt.default": "rsqrt", "aten.silu.default": "silu", "aten.cos.default": "cos",
     "aten.sin.default": "sin", "aten.neg.default": "neg", "aten.mean.dim": "mean",
@@ -71,7 +72,7 @@ class NumericReferenceMode(MatrixReferenceMode):
         with torch._C._DisableTorchDispatch(), np.errstate(over="ignore", invalid="ignore", divide="ignore"):
             dtype = args[0].dtype
             a = args[0].detach().cpu().numpy().astype(np.float32)
-            if kind in {"add", "mul"}:
+            if kind in {"add", "sub", "mul"}:
                 other = args[1]
                 if isinstance(other, torch.Tensor):
                     if other.dtype not in {torch.float16, torch.float32}:
@@ -81,6 +82,8 @@ class NumericReferenceMode(MatrixReferenceMode):
                 b = np.asarray(other, dtype=np.float32)
                 if kind == "add":
                     result = np.add(a, np.multiply(b, np.float32(kwargs.get("alpha", 1)), dtype=np.float32), dtype=np.float32)
+                elif kind == "sub":
+                    result = np.subtract(a, np.multiply(b, np.float32(kwargs.get("alpha", 1)), dtype=np.float32), dtype=np.float32)
                 else:
                     result = np.multiply(a, b, dtype=np.float32)
             elif kind == "pow":

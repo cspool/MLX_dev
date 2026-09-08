@@ -5,6 +5,7 @@ This validates actual source work, not CPU/cache timing or all-model scope.
 from collections import Counter
 import math
 from .model_value_outputs import value_outputs
+from .model_source_groups import verify_source_groups
 
 from .model_block_pipeline import compile_block_pipelines,references
 from .model_system_evidence import require,count,check_kernel,WIDTH
@@ -13,13 +14,14 @@ CLASSIFICATION="ready_graph_bounded_pair_events_not_general_cdc_or_system_accept
 
 
 def verify_ready_execution(program,result,options):
+    verify_source_groups(program,result)
     require(result["classification"]==CLASSIFICATION and options.get("tile_pipeline") is True,"wrong native paired execution mode")
     require(all(program.get(f+"_backend")=="scheduled" for f in ("matrix","vector","memory","control")),"native graph permits a functional backend")
     require(result["virtual_tensor_backing_used"] is True and all(result[k]==0 for k in ("functional_entry_calls","blas_calls","python_or_gpu_execution_fallbacks")),"native graph used a forbidden numerical fallback")
     require(result["control_execution"]=="scheduled_rv64_leaf_not_actual_cpu" and result["weight_loading"]=="preloaded_not_cpu_or_dma_loader","native execution scope was relabelled")
     nodes=program["nodes"];ids=[n["source_operator_id"] for n in nodes]
     require(nodes and len(set(ids))==len(ids) and len({n["id"] for n in nodes})==len(nodes),"duplicate or empty source identities")
-    events=result["events"];require(len(events)==result["executed_source_calls"]==len(nodes) and {e["source_operator_id"] for e in events}==set(ids),"not every source completed exactly once")
+    events=result["events"];require(len(events)==result.get("executed_lowered_calls",result["executed_source_calls"])==len(nodes) and {e["source_operator_id"] for e in events}==set(ids),"not every lowered source completed exactly once")
     by_id={e["source_operator_id"]:e for e in events};by_value={identifier:by_id[n["source_operator_id"]] for n in nodes for identifier,_ in value_outputs(n)}
     plan=program["block_pipeline_plan"]
     require(compile_block_pipelines(program,event_slots=plan["event_slots"])["block_pipeline_plan"]==plan,"pipeline plan no longer matches the complete graph")
@@ -117,5 +119,7 @@ def verify_ready_execution(program,result,options):
     require(result["shared_elapsed_cycles"]==result["graph_cycles"]+result["host_readback_cycles"] and result["overlap"]==options.get("overlap",True)
             and result["max_active_nodes"]==options.get("max_active_nodes",32) and result["peak_active_nodes"]<=result["max_active_nodes"],"native clock/active-source accounting differs")
     require(not result["mlx_system_verified"] and not result["inference_performance_eligible"],"native evidence was relabelled as system/performance acceptance")
-    return {"source_calls":len(nodes),"backend_windows":{k:len(v) for k,v in groups.items()},"pipeline_groups":len(observed),"numerical_work":dict(totals),
-            "physical_requests":memory["submitted"],"all_buffers_released":True,"all_events_drained":True,"actual_cpu_execution":False,"inference_performance_eligible":False}
+    coverage={"source_calls":result["executed_source_calls"],"backend_windows":{k:len(v) for k,v in groups.items()},"pipeline_groups":len(observed),"numerical_work":dict(totals),
+              "physical_requests":memory["submitted"],"all_buffers_released":True,"all_events_drained":True,"actual_cpu_execution":False,"inference_performance_eligible":False}
+    if "source_groups" in program:coverage["lowered_calls"]=len(nodes)
+    return coverage

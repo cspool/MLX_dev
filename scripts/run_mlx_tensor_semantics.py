@@ -22,7 +22,7 @@ LOGIT_RTOL = 5e-3
 
 
 def source_identity():
-    files = [Path(__file__).resolve(), ROOT / "src/mlxsim/model_value_outputs.py", ROOT / "src/mlxsim/model_tensor_compiler.py", ROOT / "src/mlxsim/model_matrix_program.py", ROOT / "src/mlxsim/model_vector_program.py", ROOT / "src/mlxsim/model_dtype_lowering.py", ROOT / "src/mlxsim/model_memory_program.py", ROOT / "src/mlxsim/model_control_program.py", ROOT / "src/mlxsim/model_block_pipeline.py"]
+    files = [Path(__file__).resolve(), ROOT / "src/mlxsim/model_composites.py", ROOT / "src/mlxsim/model_source_groups.py", ROOT / "src/mlxsim/model_value_outputs.py", ROOT / "src/mlxsim/model_tensor_compiler.py", ROOT / "src/mlxsim/model_matrix_program.py", ROOT / "src/mlxsim/model_vector_program.py", ROOT / "src/mlxsim/model_dtype_lowering.py", ROOT / "src/mlxsim/model_memory_program.py", ROOT / "src/mlxsim/model_control_program.py", ROOT / "src/mlxsim/model_block_pipeline.py"]
     for directory in (ROOT / "simulator_ext/tensor_model", ROOT / "simulator_ext/tagged", ROOT / "simulator_ext/matrix_schedule", ROOT / "simulator_ext/vector_model", ROOT / "simulator_ext/vector_schedule", ROOT / "simulator_ext/model_io", ROOT / "simulator_ext/memory_model", ROOT / "simulator_ext/control_model", ROOT / "simulator_ext/control_schedule", ROOT / "simulator_ext/shared_array", ROOT / "simulator_ext/model_events"):
         files.extend(path for path in directory.iterdir() if path.suffix in {".cc", ".h"} or path.name == "CMakeLists.txt")
     return {str(path.relative_to(ROOT)): sha(path) for path in sorted(files)}

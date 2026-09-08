@@ -357,7 +357,7 @@ Tensor Kernels::execute(const Json::Value &node,const Values &values) {
       }
     }
   } else {
-    const std::vector<std::string> legal={"add","mul","le","where","pow","rsqrt","silu","cos","sin","neg"};
+    const std::vector<std::string> legal={"sub","add","mul","le","where","pow","rsqrt","silu","cos","sin","neg"};
     require(std::find(legal.begin(),legal.end(),kind)!=legal.end(),"unimplemented native tensor kernel: "+kind);
     out=Tensor::allocate(target,declared);
     if (kind=="where") require(ref(args[0],values).type==DType::Bool,"where predicate is not Boolean");
@@ -378,6 +378,7 @@ Tensor Kernels::execute(const Json::Value &node,const Values &values) {
       float a=get(args[0],values,i,declared), value=0;
       if (kind=="add") value=a+get(args[1],values,i,declared)*(node["kwargs"].isMember("alpha")?float(scalar(node["kwargs"]["alpha"])):1.0f);
       else if (kind=="mul") value=a*get(args[1],values,i,declared);
+      else if (kind=="sub") value=a-get(args[1],values,i,declared)*(node["kwargs"].isMember("alpha")?float(scalar(node["kwargs"]["alpha"])):1.0f);
       else if (kind=="le") value=a<=get(args[1],values,i,declared);
       else if (kind=="where") value=get(args[a!=0?1:2],values,i,declared);
       else if (kind=="pow") value=scalar(args[1])==2?a*a:std::pow(a,float(scalar(args[1])));

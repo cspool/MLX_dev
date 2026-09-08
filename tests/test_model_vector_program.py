@@ -17,7 +17,7 @@ from test_model_tensor_semantics import execute_nodes, literal, native, node, re
 
 
 def compare_native_modes(native, tmp_path, kind, tensors, args, expected, dtypes, *, width=None, alpha=1):
-    spec = node(0, kind, args, expected, **({"alpha": alpha} if kind == "add" else {}))
+    spec = node(0, kind, args, expected, **({"alpha": alpha} if kind in {"add", "sub"} else {}))
     assets = {key: literal(value) for key, value in tensors.items()}
     ordinary = execute_nodes(native, tmp_path / "ordinary", assets, [spec])[0]
     micro = copy.deepcopy(spec)
@@ -45,7 +45,7 @@ def test_elementwise_routes_match_native_semantics_bitwise(native, tmp_path, pre
     args = [ref("x")]
     dtypes = [precision]
     expected = x.clone()  # shape/type declaration only; never executable data.
-    if kind in {"add", "mul"}:
+    if kind in {"add", "sub", "mul"}:
         args.append(ref("y")); dtypes.append(precision)
     if kind == "pow":
         args.append(2)

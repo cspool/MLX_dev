@@ -7,6 +7,7 @@
 #include "control_schedule.h"
 #include "guard_dependencies.h"
 #include "value_outputs.h"
+#include "source_groups.h"
 #include <algorithm>
 #include <cmath>
 #include <cstring>
@@ -104,7 +105,7 @@ struct Runner {
     require(!whole_pipeline_barrier||tile_pipeline,"whole-source pipeline barrier requires tile mode");
     require(!tile_pipeline||(overlap&&limit>=2),"tile pipeline requires two active source descriptors");
     require(limit>=1&&limit<=64&&max_cycles>0&&max_cycles<UINT64_MAX-1000000,"invalid ready graph window/cycle budget");
-    require((p["schema"]=="mlx_tensor_semantics_v1"||p["schema"]=="mlx_tensor_semantics_v2")&&p["timing_mode"]=="unmodeled","unsupported ready graph program");
+    require((p["schema"]=="mlx_tensor_semantics_v1"||p["schema"]=="mlx_tensor_semantics_v2"||p["schema"]=="mlx_tensor_semantics_v3")&&p["timing_mode"]=="unmodeled","unsupported ready graph program");
     for(const char *kind:{"matrix","vector","memory","control"}){require(p[std::string(kind)+"_backend"]=="scheduled","ready graph requires all four scheduled routes");windows[kind]=Json::Value(Json::arrayValue);}
     shared_array::Hardware h;h.rows=matrix_options.rows;h.columns=matrix_options.columns;h.contexts=matrix_options.contexts;
     h.spm_period=matrix_options.spm_period;h.writeback_period=matrix_options.writeback_period;h.compute_ii=matrix_options.compute_ii;h.sfu_ii=vector_options.trans_ii;
@@ -121,6 +122,7 @@ struct Runner {
     require(p["nodes"].isArray()&&!p["nodes"].empty(),"ready graph is empty");tasks.resize(p["nodes"].size());
     validate_guard_dependencies(p);
     validate_value_contract(p);
+    validate_source_groups(p);
     std::map<std::string,unsigned> producer;std::set<uint64_t> sources;
     for(unsigned i=0;i<tasks.size();++i){auto &task=tasks[i];task.node=&p["nodes"][i];const auto &node=*task.node;auto name=node["id"].asString();
       require(!name.empty()&&!values.count(name)&&!producer.count(name)&&node["source_operator_id"].isUInt64()&&sources.insert(node["source_operator_id"].asUInt64()).second,"duplicate/invalid source or value identity");
@@ -290,7 +292,7 @@ struct Runner {
     r["preloaded_assets"]=Json::UInt64(preloaded_assets);r["preloaded_bytes"]=Json::UInt64(preloaded_bytes);r["virtual_tensor_backing_used"]=true;r["functional_entry_calls"]=0;r["blas_calls"]=0;r["python_or_gpu_execution_fallbacks"]=0;
     r["dependency_visibility"]="whole_source_completion_next_edge_not_partial_tile_cdc";r["control_execution"]="scheduled_rv64_leaf_not_actual_cpu";r["weight_loading"]="preloaded_not_cpu_or_dma_loader";
     if(tile_pipeline){require(!current_pair&&pipeline_reports.size()==pairs.size(),"not all compiled pipeline pairs executed");r["classification"]="ready_graph_bounded_pair_events_not_general_cdc_or_system_acceptance";r["dependency_visibility"]="compiled_closed_pairs_use_next_edge_block_events_other_edges_whole_source";r["pipeline_groups"]=pipeline_reports;r["pipeline_whole_source_barrier"]=whole_pipeline_barrier;}
-    r["full_model_execution_verified"]=false;r["complete_cdc_verified"]=false;r["mlx_system_verified"]=false;r["inference_performance_eligible"]=false;return r;
+    r["full_model_execution_verified"]=false;r["complete_cdc_verified"]=false;r["mlx_system_verified"]=false;r["inference_performance_eligible"]=false;report_source_groups(program,r);return r;
   }
 };
 }

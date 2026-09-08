@@ -16,6 +16,7 @@ from mlxsim.model_dtype_lowering import lower_softmax_input_cast
 from mlxsim.model_memory_program import Planner
 from mlxsim.model_control_program import control_program
 from mlxsim.model_value_outputs import value_outputs
+from mlxsim.model_composites import LAYER_NORM, layer_norm_contract, expand_composites
 
 ROUTES = {
     "aten.embedding.default": "embedding",
@@ -24,6 +25,8 @@ ROUTES = {
     "aten.mm.default": "matmul",
     "aten.arange.default": "arange",
     "aten.add.Tensor": "add",
+    "aten.sub.Tensor": "sub",
+    "aten.layer_norm.default": "layer_norm",
     "aten.mul.Tensor": "mul",
     "aten.le.Tensor": "le",
     "aten.ge.Scalar": "ge",
@@ -73,6 +76,7 @@ DTYPES = {
 # Only the recorded overloads/attributes with implemented inference semantics
 # are accepted. A familiar ATen name is not permission to ignore its attributes.
 ARITY = {
+    "sub": (2, 2), "layer_norm": (2, 6),
     "split": (2, 3),
     "squeeze": (2, 2), "advanced_index": (2, 2), "new_ones": (2, 2),
     "ge": (2, 2), "bitwise_and": (2, 2), "all": (1, 1), "guard": (1, 1),
@@ -85,6 +89,7 @@ ARITY = {
     "slice": (1, 5), "select": (3, 3), "alias": (1, 1), "dropout_inference": (3, 3),
 }
 KWARGS = {
+    "sub": {"alpha"}, "layer_norm": {"weight", "bias", "eps", "cudnn_enable"},
     "new_ones": {"dtype", "layout", "device", "pin_memory"},
     "arange": {"dtype", "layout", "device", "pin_memory"}, "add": {"alpha"},
     "mean": {"dtype"}, "cast": {"memory_format"}, "cast_device": {"memory_format"},
@@ -97,7 +102,13 @@ def validate_event(event):
     if operator not in ROUTES:
         raise ValueError(f"missing native semantic lowering: {operator}")
     kind = ROUTES[operator]
+    if kind == "layer_norm":
+        layer_norm_contract(event)
+        if event.get("mutable"):raise ValueError("LayerNorm cannot be mutable")
+        return kind
     args, kwargs = event["inputs"], event["kwargs"]
+    if kind == "sub" and (not isinstance(args,list) or not args or not isinstance(args[0],dict) or args[0].get("dtype") not in {"torch.float16","torch.float32"} or event["outputs"].get("dtype") not in {"torch.float16","torch.float32"}):
+        raise ValueError("sub currently requires floating tensor operands/output")
     copy_overload = operator == "aten._to_copy.default"
     layout_overload = operator == "aten.to.dtype_layout"
     first, last = (1, 1) if copy_overload or layout_overload else ARITY[kind]
@@ -163,6 +174,27 @@ def safetensors_header(path):
 
 
 def compile_inventory(inventory, *, matrix_backend="blas", schedule_options=None, vector_backend="functional", vector_schedule_options=None, memory_backend="functional", memory_schedule_options=None, control_backend="functional", control_schedule_options=None):
+    if inventory.get("classification") not in {"real_model_operator_inventory_not_mlx_execution", "mlx_compiler_expanded_inventory_v1"}:
+        raise ValueError("expected a real model execution inventory")
+    if any(event["operator"] == LAYER_NORM for event in inventory.get("operations", [])):
+        if inventory["classification"] != "real_model_operator_inventory_not_mlx_execution":
+            raise ValueError("composite source must be an original captured inventory")
+        if vector_backend not in {"microcode", "scheduled"} or memory_backend not in {"planned", "scheduled"}:
+            raise ValueError("LayerNorm requires explicit vector instructions and memory plans")
+        lowered, groups = expand_composites(inventory)
+        program, coverage = compile_inventory(lowered, matrix_backend=matrix_backend, schedule_options=schedule_options,
+            vector_backend=vector_backend, vector_schedule_options=vector_schedule_options, memory_backend=memory_backend,
+            memory_schedule_options=memory_schedule_options, control_backend=control_backend, control_schedule_options=control_schedule_options)
+        program["schema"]="mlx_tensor_semantics_v3";program["value_contract"]="source_groups_v1";program["source_groups"]=groups
+        for group in groups:
+            last=program["nodes"][group["lowered_ids"][-1]]
+            group["output_values"]=[name for name,_ in value_outputs(last)]
+            group["lowered_kinds"]=[program["nodes"][i]["kind"] for i in group["lowered_ids"]]
+        low_routes=coverage["routes"]
+        coverage.update(source_calls=len(groups),lowered_calls=len(program["nodes"]),lowered_routes=low_routes,
+            routes=[{**group,"status":"compiled_explicit_source_group","lowered_routes":[low_routes[i] for i in group["lowered_ids"]]} for group in groups],
+            canonical_program_sha256=hashlib.sha256(json.dumps(program,sort_keys=True).encode()).hexdigest())
+        return program,coverage
     if matrix_backend not in {"blas", "microcode", "scheduled"}:
         raise ValueError("unknown matrix compilation backend")
     if schedule_options is not None and (matrix_backend != "scheduled" or not isinstance(schedule_options, dict)):
@@ -179,7 +211,7 @@ def compile_inventory(inventory, *, matrix_backend="blas", schedule_options=None
         raise ValueError("unknown controller compilation backend")
     if control_schedule_options is not None and (control_backend != "scheduled" or not isinstance(control_schedule_options, dict)):
         raise ValueError("controller timing options require the scheduled controller backend")
-    if inventory.get("classification") != "real_model_operator_inventory_not_mlx_execution":
+    if inventory.get("classification") not in {"real_model_operator_inventory_not_mlx_execution", "mlx_compiler_expanded_inventory_v1"}:
         raise ValueError("expected a real model execution inventory")
     tensors = inventory["tensors"]
     model = inventory["model_identity"]
@@ -335,6 +367,8 @@ def compile_inventory(inventory, *, matrix_backend="blas", schedule_options=None
             "module_path": event["module_path"],
             "layer_idx": event["layer_idx"],
         }
+        for field in ("origin_source_operator_id", "lowering_stage", "lowering_stage_name"):
+            if field in event:node[field]=event[field]
         if guards:
             node["control_dependencies"] = [{"value": guard} for guard in guards]
         if split:
@@ -344,7 +378,7 @@ def compile_inventory(inventory, *, matrix_backend="blas", schedule_options=None
             input_type = DTYPES[event["inputs"][0]["dtype"]]
             node["matrix_program"] = matrix_program(input_type, spec["dtype"], kind == "linear" and len(args) > 2 and args[2] is not None)
         if vector_backend != "functional" and kind in FLOAT_KINDS and spec["dtype"] in {"f16", "f32"}:
-            count = 2 if kind in {"add", "mul"} else 1
+            count = 2 if kind in {"add", "mul", "sub"} else 1
             input_types = [DTYPES[arg["dtype"]] if isinstance(arg, dict) and "tensor_id" in arg else "f32" for arg in event["inputs"][:count]]
             if any(value not in {"f16", "f32"} for value in input_types):
                 raise ValueError("floating vector microcode cannot silently narrow integer tensor operands")

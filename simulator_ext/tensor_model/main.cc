@@ -1,6 +1,7 @@
 #include "tensor.h"
 #include "guard_dependencies.h"
 #include "value_outputs.h"
+#include "source_groups.h"
 #include "control_program.h"
 #include "vector_program.h"
 #include "memory_program.h"
@@ -16,10 +17,11 @@ int main(int argc,char **argv) {
     require(argc==5 || argc==6,"usage: mlx-tensor-semantics program.json output-directory cpu-blas.so threads [observation-ids.json]");
     uint16_t endian=1; require(*reinterpret_cast<uint8_t*>(&endian)==1,"little-endian host required");
     std::ifstream input(argv[1]); Json::Value program; input>>program;
-    require((program["schema"]=="mlx_tensor_semantics_v1"||program["schema"]=="mlx_tensor_semantics_v2") && program["timing_mode"]=="unmodeled",
+    require((program["schema"]=="mlx_tensor_semantics_v1"||program["schema"]=="mlx_tensor_semantics_v2"||program["schema"]=="mlx_tensor_semantics_v3") && program["timing_mode"]=="unmodeled",
             "unsupported tensor semantics program");
     validate_guard_dependencies(program);
     validate_value_contract(program);
+    validate_source_groups(program);
     const bool scheduled_matrix=program["matrix_backend"]=="scheduled";
     const bool strict_matrix=program["matrix_backend"]=="microcode" || scheduled_matrix;
     const bool scheduled_vector=program["vector_backend"]=="scheduled";
@@ -130,6 +132,7 @@ int main(int argc,char **argv) {
     report["materialized_value_bytes"]=Json::UInt64(kernels.materialized_bytes);
     report["python_or_gpu_execution_fallbacks"]=0;
     report["timing_mode"]="unmodeled"; report["mlx_system_verified"]=false; report["performance_eligible"]=false;
+    report_source_groups(program,report);
     std::ofstream summary(output/"result.json"); summary<<report<<'\n'; require(bool(summary),"cannot save execution report");
     std::cout<<"NATIVE_TENSOR_SEMANTICS_PASS calls="<<executed<<std::endl;
   } catch (const std::exception &error) {

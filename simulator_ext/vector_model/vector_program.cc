@@ -62,7 +62,7 @@ struct Machine {
     }
     check(program["phases"].isObject(),"missing vector phases");
     for(const auto &name:program["phases"].getMemberNames())for(const auto &index:program["phases"][name])check(index.isUInt()&&index.asUInt()<rom.size(),"vector phase points outside ROM");
-    check(program["input_dtypes"].isArray()&&program["input_dtypes"].size()==(node["kind"]=="add"||node["kind"]=="mul"?2u:1u),"vector operand arity mismatch");
+    check(program["input_dtypes"].isArray()&&program["input_dtypes"].size()==(node["kind"]=="add"||node["kind"]=="sub"||node["kind"]=="mul"?2u:1u),"vector operand arity mismatch");
     if(node["kind"]=="pow")check(node["args"].size()==2&&scalar(node["args"][1])==2,"vector pow requires exponent 2");
     for(Json::ArrayIndex i=0;i<program["input_dtypes"].size();++i){
       check(i<node["args"].size(),"missing vector operand");const auto &arg=node["args"][i];Operand operand;
@@ -142,7 +142,7 @@ struct Machine {
   }
 };
 } // namespace
-bool supports(const std::string &kind){return kind=="add"||kind=="mul"||kind=="pow"||kind=="rsqrt"||kind=="silu"||kind=="cos"||kind=="sin"||kind=="neg"||kind=="mean"||kind=="softmax";}
+bool supports(const std::string &kind){return kind=="sub"||kind=="add"||kind=="mul"||kind=="pow"||kind=="rsqrt"||kind=="silu"||kind=="cos"||kind=="sin"||kind=="neg"||kind=="mean"||kind=="softmax";}
 Json::Value Stats::json()const{
   Json::Value r(Json::objectValue);r["profile"]="mlx-vector-fp32-v1";r["classification"]="bounded_vector_microcode_functional_not_cycle_or_system_validation";
   r["calls"]=Json::UInt64(calls);r["instructions"]=Json::UInt64(instructions);r["transcendental_lanes"]=Json::UInt64(trans_lanes);r["arithmetic_lanes"]=Json::UInt64(arithmetic_lanes);

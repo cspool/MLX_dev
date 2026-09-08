@@ -44,6 +44,8 @@ v2 完整模型前置条件继续补齐：[16 GiB/4×4 配对系统验证](mlx-p
 
 [split多输出及单文件参数绑定](mlx-tuple-values-and-checkpoints.md)随后进入编译器和C++三种原生入口：一个源调用发布全部分块值，独立追踪别名生命期；新程序/内存合约显式版本化。361项回归、32次安全重放通过，旧6181节点Llama2编译不变。完整BERT仍在LayerNorm处拒绝，尚缺LayerNorm/GELU、QA协议及完整执行；系统ABI暂拒绝tuple程序，不改变原GPU/系统/性能/RTL门槛。
 
+[LayerNorm显式降级与原始源分组](mlx-layernorm-source-groups.md)继续补齐计算链：现有SUB/归约/SQRT/DIV及搬运原语实际执行，临时存储和访存不隐藏；原始算子与降级步骤分别计数。BERT完整编译推进到GELU，尚未完整执行；数值重建顺序及大偏移输入的框架差异保留，源分组程序也尚未接入实际系统ABI，性能/RTL门槛不变。
+
 ## 1. 目的与适用范围
 
 本文说明如何参考 GPGPU 的编译链、block 到 SM 的准入分配、SM 内 warp 的选择发射机制，补齐当前 MLX 的编译、执行上下文和软硬件调度闭环。第一阶段的主要对象是原生 C++ 模拟器及其编译输入；第二阶段是 `system_sim/` 与系统仿真接口；第三阶段才进入 `rtl/mlx/` 的电路实现。同时利用仓库已有 DSAGEN/dsa-gem5 架构模型作为机制参考。

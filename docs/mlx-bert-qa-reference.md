@@ -30,6 +30,8 @@
 
 后续[split多输出与单文件checkpoint](mlx-tuple-values-and-checkpoints.md)又补齐了独立结果值及其C++发布/回收，并连接显式参数名双射。361项回归、32次安全重放通过；实际完整BERT编译在完成权重索引/名称绑定后停于LayerNorm，名称/属性预检仅剩LayerNorm和GELU共111次拒绝。仍未完成完整BERT执行或QA系统输出验收。
 
+[LayerNorm原语序列及源分组](mlx-layernorm-source-groups.md)进一步将75个LayerNorm降级到现有C++运算与存储路径，区分原始源和实算步骤，实际完整编译已推进到GELU。重建模式与框架浮点顺序的差异单独保留；不将组件数值合约或1,966个编译降级节点计为BERT完整执行，QA协议与模型/系统门槛仍待完成。
+
 | 实际缺失入口 | 三组调用数 | 必须补齐的目标 |
 | --- | ---: | --- |
 | `layer_norm.default` | 75 | 完整最后轴统计、epsilon、仿射参数、数值顺序及有界归约/广播微程序；先定义并验证精度合约 |

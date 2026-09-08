@@ -1,0 +1,790 @@
+{
+  "classification": "layernorm_original_source_to_cpp_primitive_groups_not_full_model_or_system",
+  "file_count": 154,
+  "total_bytes": 70618080,
+  "regression_tests": 368,
+  "new_layernorm_group_tests": 24,
+  "sanitizer_replays": 19,
+  "successful_replays": 8,
+  "expected_rejections": 11,
+  "numeric_profile": "mlx-layernorm-shifted-fp32-v1",
+  "large_offset_framework_max_abs_difference": 0.3466603755950928,
+  "large_offset_float64_max_abs_difference": 2.0860213911788605e-7,
+  "legacy_full_model_compilation_equal": true,
+  "legacy_source_calls": 6181,
+  "bert_full_compile_rejection": "missing native semantic lowering: aten.gelu.default",
+  "full_model_execution_verified": false,
+  "inference_performance_eligible": false,
+  "files": [
+    {
+      "path": "artifacts/tagged/layernorm-safety-002/asan-0.log",
+      "bytes": 61,
+      "sha256": "5eaa1226b204d02d8d4a1b6cad5c8384bf4a47b78d5665376782c3f757f5d15f"
+    },
+    {
+      "path": "artifacts/tagged/layernorm-safety-002/asan-0/logits-0.f32.bin",
+      "bytes": 16,
+      "sha256": "9a5fa6153204709b705eaf7031ad0020ad8b1803842fe7281913d09cc11fc34c"
+    },
+    {
+      "path": "artifacts/tagged/layernorm-safety-002/asan-0/result.json",
+      "bytes": 130916,
+      "sha256": "c17e25cfdd40e7dc3cfbbadae09801f7d6dad31f52ea4aef5e4eea17e17a44a2"
+    },
+    {
+      "path": "artifacts/tagged/layernorm-safety-002/asan-1.log",
+      "bytes": 61,
+      "sha256": "5eaa1226b204d02d8d4a1b6cad5c8384bf4a47b78d5665376782c3f757f5d15f"
+    },
+    {
+      "path": "artifacts/tagged/layernorm-safety-002/asan-1/logits-0.f32.bin",
+      "bytes": 136,
+      "sha256": "d572af9fd1750c01a1f726096ecfb9739dce2db34cd8818fea8c2f4d3bf58926"
+    },
+    {
+      "path": "artifacts/tagged/layernorm-safety-002/asan-1/result.json",
+      "bytes": 383296,
+      "sha256": "b8c20a48ad2c222bd2a999e7ba53efc514c4cb175164d0bd9f3cf6f010ac2841"
+    },
+    {
+      "path": "artifacts/tagged/layernorm-safety-002/asan-10.log",
+      "bytes": 65,
+      "sha256": "c5ed3f9d1a68322444294c261ee0d6fd0d22141450f6a8d0584b13885a594084"
+    },
+    {
+      "path": "artifacts/tagged/layernorm-safety-002/asan-11.log",
+      "bytes": 76,
+      "sha256": "32a0ec95c7c7aa4dd5ddca128fbbfd6dc704d3c605443c81bcecd69a21fc7ac2"
+    },
+    {
+      "path": "artifacts/tagged/layernorm-safety-002/asan-12.log",
+      "bytes": 73,
+      "sha256": "e49e1f17e73a3fcfae734c993f7dc261fcc7770c1e441b7af660fd80cfb0682a"
+    },
+    {
+      "path": "artifacts/tagged/layernorm-safety-002/asan-13.log",
+      "bytes": 59,
+      "sha256": "1cc2c68a1870a6196399566f68fb91d5ad22ec2e1ec738ba61adf517e6ad91d9"
+    },
+    {
+      "path": "artifacts/tagged/layernorm-safety-002/asan-14.log",
+      "bytes": 76,
+      "sha256": "e50bf519c9125e4ae344fa7992207df3bb16255e8c7505b82e269613cd7b6f33"
+    },
+    {
+      "path": "artifacts/tagged/layernorm-safety-002/asan-15.log",
+      "bytes": 72,
+      "sha256": "f18a3c76a082e651dda4a3b2702bdbfbee591695906ecbdbc3a551f6a3e523f2"
+    },
+    {
+      "path": "artifacts/tagged/layernorm-safety-002/asan-16.log",
+      "bytes": 69,
+      "sha256": "2681fc9b7d3c2ffef1ec23fcdbde6389cebc219de52797f50d1c348046b29e58"
+    },
+    {
+      "path": "artifacts/tagged/layernorm-safety-002/asan-17.log",
+      "bytes": 80,
+      "sha256": "499b00704fe703ae29b5842eddbeda094e360c088f4be8f291197d5f167abfa9"
+    },
+    {
+      "path": "artifacts/tagged/layernorm-safety-002/asan-18.log",
+      "bytes": 79,
+      "sha256": "a29c520c560b6955290ea75edfb672ec257d314661bc9be43077b87a865181ed"
+    },
+    {
+      "path": "artifacts/tagged/layernorm-safety-002/asan-2.log",
+      "bytes": 75,
+      "sha256": "67f91d0d961e510e589cd9a09bddd9a826cb49ecee4e89ad2b28b4c85d5f42bd"
+    },
+    {
+      "path": "artifacts/tagged/layernorm-safety-002/asan-2/logits-0.f32.bin",
+      "bytes": 136,
+      "sha256": "d572af9fd1750c01a1f726096ecfb9739dce2db34cd8818fea8c2f4d3bf58926"
+    },
+    {
+      "path": "artifacts/tagged/layernorm-safety-002/asan-2/result.json",
+      "bytes": 32455,
+      "sha256": "1436b1f521a95df404aaf8e29f7cc9e203664de4800c460085c646d10de4c694"
+    },
+    {
+      "path": "artifacts/tagged/layernorm-safety-002/asan-3.log",
+      "bytes": 109,
+      "sha256": "010e2a63c1abd2eee6e0f5fc22b58c0969fcfaf322dcd3a96183bd6852584436"
+    },
+    {
+      "path": "artifacts/tagged/layernorm-safety-002/asan-3/logits-0.f32.bin",
+      "bytes": 136,
+      "sha256": "d572af9fd1750c01a1f726096ecfb9739dce2db34cd8818fea8c2f4d3bf58926"
+    },
+    {
+      "path": "artifacts/tagged/layernorm-safety-002/asan-3/result.json",
+      "bytes": 377902,
+      "sha256": "bbfe12e7a0b2dcf77f2ed5bfff3cc165f873864ca8f5691df8492b426edfe85e"
+    },
+    {
+      "path": "artifacts/tagged/layernorm-safety-002/asan-4.log",
+      "bytes": 109,
+      "sha256": "010e2a63c1abd2eee6e0f5fc22b58c0969fcfaf322dcd3a96183bd6852584436"
+    },
+    {
+      "path": "artifacts/tagged/layernorm-safety-002/asan-4/logits-0.f16.bin",
+      "bytes": 132,
+      "sha256": "bc11419e352802251a1a46c612bf345661f86e925548e979bd8579056b3c1082"
+    },
+    {
+      "path": "artifacts/tagged/layernorm-safety-002/asan-4/result.json",
+      "bytes": 892915,
+      "sha256": "ceb59d56069b333473dfb114f6ac6c5ea3d81d36ce823948e2ed405f3a86a212"
+    },
+    {
+      "path": "artifacts/tagged/layernorm-safety-002/asan-5.log",
+      "bytes": 109,
+      "sha256": "010e2a63c1abd2eee6e0f5fc22b58c0969fcfaf322dcd3a96183bd6852584436"
+    },
+    {
+      "path": "artifacts/tagged/layernorm-safety-002/asan-5/logits-0.f32.bin",
+      "bytes": 9216,
+      "sha256": "4ebabe4e92369c026309dd3b2afb7ee7347a7129dd2369348a8f60883d02bca2"
+    },
+    {
+      "path": "artifacts/tagged/layernorm-safety-002/asan-5/result.json",
+      "bytes": 16003160,
+      "sha256": "3bb90558b17e36fe0cf3df15bd79b63a27c6a8c883295e0b7a45da718c17ab8f"
+    },
+    {
+      "path": "artifacts/tagged/layernorm-safety-002/asan-6.log",
+      "bytes": 109,
+      "sha256": "010e2a63c1abd2eee6e0f5fc22b58c0969fcfaf322dcd3a96183bd6852584436"
+    },
+    {
+      "path": "artifacts/tagged/layernorm-safety-002/asan-6/logits-0.f32.bin",
+      "bytes": 86016,
+      "sha256": "45a1cd1d2c21715c1cf8b34d3a9f8f5c52c988ceb09ff5cb4b496b8f2ecefd37"
+    },
+    {
+      "path": "artifacts/tagged/layernorm-safety-002/asan-6/result.json",
+      "bytes": 16036446,
+      "sha256": "18b189f99fd5280f6b2c8d88bf824d30d95f73133d42600cf91fe55e699b19f5"
+    },
+    {
+      "path": "artifacts/tagged/layernorm-safety-002/asan-7.log",
+      "bytes": 109,
+      "sha256": "010e2a63c1abd2eee6e0f5fc22b58c0969fcfaf322dcd3a96183bd6852584436"
+    },
+    {
+      "path": "artifacts/tagged/layernorm-safety-002/asan-7/logits-0.f32.bin",
+      "bytes": 280,
+      "sha256": "89f3f7bd56f93fdc64d7140f2038b5d4a4113f803f7226df7f78abcf1fd322d0"
+    },
+    {
+      "path": "artifacts/tagged/layernorm-safety-002/asan-7/result.json",
+      "bytes": 733905,
+      "sha256": "ce1875f9acd56b853450627388d1cf1da88967e80e6abacd8d9f0a35f79f618c"
+    },
+    {
+      "path": "artifacts/tagged/layernorm-safety-002/asan-8.log",
+      "bytes": 58,
+      "sha256": "3cce192ec704b9461a15f06b6eef1c2654fa5a407c000521862304e5bd271c9d"
+    },
+    {
+      "path": "artifacts/tagged/layernorm-safety-002/asan-9.log",
+      "bytes": 63,
+      "sha256": "3438c7b3ab082c8d6efca379e246ab5dd9a0b52fc8d8952700d292bccc7e4963"
+    },
+    {
+      "path": "artifacts/tagged/layernorm-safety-002/report.json",
+      "bytes": 43207,
+      "sha256": "369929aecbaf02a9cc67a28f086c74c64eddc9f66a485891b9042cb5da127144"
+    },
+    {
+      "path": "artifacts/tagged/layernorm-tests-005/pytest/test_composite_source_groups_k0/model.safetensors",
+      "bytes": 192,
+      "sha256": "faeef1486a6e506b61640ca274929c7d3fcfc626a507f1493bea206e6b02d4bd"
+    },
+    {
+      "path": "artifacts/tagged/layernorm-tests-005/pytest/test_composite_source_groups_k0/tuple/options.json",
+      "bytes": 117,
+      "sha256": "7487a3a30a0b3cd1ff64eb2b7f8ca309543f12248201d03f580ea2903a1ca3bf"
+    },
+    {
+      "path": "artifacts/tagged/layernorm-tests-005/pytest/test_composite_source_groups_k0/tuple/out/logits-0.f32.bin",
+      "bytes": 16,
+      "sha256": "9a5fa6153204709b705eaf7031ad0020ad8b1803842fe7281913d09cc11fc34c"
+    },
+    {
+      "path": "artifacts/tagged/layernorm-tests-005/pytest/test_composite_source_groups_k0/tuple/out/result.json",
+      "bytes": 130957,
+      "sha256": "802e301ed1700e79ae4645cceca49c7fcb20963ea8cbb0d8812689834e685b40"
+    },
+    {
+      "path": "artifacts/tagged/layernorm-tests-005/pytest/test_composite_source_groups_k0/tuple/program.json",
+      "bytes": 18251,
+      "sha256": "ad8d14b93c4f33781662d6eff0e382088203edce578ab7efb25eae2c957fa058"
+    },
+    {
+      "path": "artifacts/tagged/layernorm-tests-005/pytest/test_composite_source_groups_k0/tuple/run.log",
+      "bytes": 61,
+      "sha256": "5eaa1226b204d02d8d4a1b6cad5c8384bf4a47b78d5665376782c3f757f5d15f"
+    },
+    {
+      "path": "artifacts/tagged/layernorm-tests-005/pytest/test_grouped_recipe_in_plain_a0/model.safetensors",
+      "bytes": 272,
+      "sha256": "7f1722784e1eb2eec766796687fca720ac51890fe0b7d2bb37330287ad324753"
+    },
+    {
+      "path": "artifacts/tagged/layernorm-tests-005/pytest/test_grouped_recipe_in_plain_a0/paired/options.json",
+      "bytes": 117,
+      "sha256": "7487a3a30a0b3cd1ff64eb2b7f8ca309543f12248201d03f580ea2903a1ca3bf"
+    },
+    {
+      "path": "artifacts/tagged/layernorm-tests-005/pytest/test_grouped_recipe_in_plain_a0/paired/out/logits-0.f32.bin",
+      "bytes": 136,
+      "sha256": "d572af9fd1750c01a1f726096ecfb9739dce2db34cd8818fea8c2f4d3bf58926"
+    },
+    {
+      "path": "artifacts/tagged/layernorm-tests-005/pytest/test_grouped_recipe_in_plain_a0/paired/out/result.json",
+      "bytes": 383338,
+      "sha256": "b3b462d04bffd4b4899bd105fc520b25c88e63581ce160c663426d44b951f5e7"
+    },
+    {
+      "path": "artifacts/tagged/layernorm-tests-005/pytest/test_grouped_recipe_in_plain_a0/paired/program.json",
+      "bytes": 16081,
+      "sha256": "c7255253817c6c41edd895ed9cdac26f9df0f2bef6651dec20bcbc743c7faf22"
+    },
+    {
+      "path": "artifacts/tagged/layernorm-tests-005/pytest/test_grouped_recipe_in_plain_a0/paired/run.log",
+      "bytes": 61,
+      "sha256": "5eaa1226b204d02d8d4a1b6cad5c8384bf4a47b78d5665376782c3f757f5d15f"
+    },
+    {
+      "path": "artifacts/tagged/layernorm-tests-005/pytest/test_grouped_recipe_in_plain_a0/tensor/options.json",
+      "bytes": 64,
+      "sha256": "ad045ed61a6f15b6f47b345a32e1476e39d3ff2ad998c60e340009b54419140b"
+    },
+    {
+      "path": "artifacts/tagged/layernorm-tests-005/pytest/test_grouped_recipe_in_plain_a0/tensor/out/logits-0.f32.bin",
+      "bytes": 136,
+      "sha256": "d572af9fd1750c01a1f726096ecfb9739dce2db34cd8818fea8c2f4d3bf58926"
+    },
+    {
+      "path": "artifacts/tagged/layernorm-tests-005/pytest/test_grouped_recipe_in_plain_a0/tensor/out/result.json",
+      "bytes": 32497,
+      "sha256": "4d3c8afc78de9ffa600178c952ed60098319e029ccf8434ec166c0e69486f1a0"
+    },
+    {
+      "path": "artifacts/tagged/layernorm-tests-005/pytest/test_grouped_recipe_in_plain_a0/tensor/program.json",
+      "bytes": 14845,
+      "sha256": "f8f9e9f0ad43f4bd451ff039a6b4419e8574ae166a2fda80f478a5d7ceb1741b"
+    },
+    {
+      "path": "artifacts/tagged/layernorm-tests-005/pytest/test_grouped_recipe_in_plain_a0/tensor/run.log",
+      "bytes": 75,
+      "sha256": "67f91d0d961e510e589cd9a09bddd9a826cb49ecee4e89ad2b28b4c85d5f42bd"
+    },
+    {
+      "path": "artifacts/tagged/layernorm-tests-005/pytest/test_layernorm_full_shapes_run0/model.safetensors",
+      "bytes": 272,
+      "sha256": "7f1722784e1eb2eec766796687fca720ac51890fe0b7d2bb37330287ad324753"
+    },
+    {
+      "path": "artifacts/tagged/layernorm-tests-005/pytest/test_layernorm_full_shapes_run0/physical/options.json",
+      "bytes": 64,
+      "sha256": "ad045ed61a6f15b6f47b345a32e1476e39d3ff2ad998c60e340009b54419140b"
+    },
+    {
+      "path": "artifacts/tagged/layernorm-tests-005/pytest/test_layernorm_full_shapes_run0/physical/out/logits-0.f32.bin",
+      "bytes": 136,
+      "sha256": "d572af9fd1750c01a1f726096ecfb9739dce2db34cd8818fea8c2f4d3bf58926"
+    },
+    {
+      "path": "artifacts/tagged/layernorm-tests-005/pytest/test_layernorm_full_shapes_run0/physical/out/result.json",
+      "bytes": 377946,
+      "sha256": "5118a2f158348ada07a1e304baa1a3c577f811e899e80f833d19363c7bf7c7a6"
+    },
+    {
+      "path": "artifacts/tagged/layernorm-tests-005/pytest/test_layernorm_full_shapes_run0/physical/program.json",
+      "bytes": 14845,
+      "sha256": "8aa2fc5ec474edf1987429bea293af1a5ca11549f7fe4e91a503fb746d49808d"
+    },
+    {
+      "path": "artifacts/tagged/layernorm-tests-005/pytest/test_layernorm_full_shapes_run0/physical/run.log",
+      "bytes": 109,
+      "sha256": "010e2a63c1abd2eee6e0f5fc22b58c0969fcfaf322dcd3a96183bd6852584436"
+    },
+    {
+      "path": "artifacts/tagged/layernorm-tests-005/pytest/test_layernorm_full_shapes_run1/model.safetensors",
+      "bytes": 268,
+      "sha256": "69445adbbcab238a4c43aeeebb8e7869545b93073c979692d880a785f793a6ce"
+    },
+    {
+      "path": "artifacts/tagged/layernorm-tests-005/pytest/test_layernorm_full_shapes_run1/physical/options.json",
+      "bytes": 64,
+      "sha256": "ad045ed61a6f15b6f47b345a32e1476e39d3ff2ad998c60e340009b54419140b"
+    },
+    {
+      "path": "artifacts/tagged/layernorm-tests-005/pytest/test_layernorm_full_shapes_run1/physical/out/logits-0.f16.bin",
+      "bytes": 132,
+      "sha256": "bc11419e352802251a1a46c612bf345661f86e925548e979bd8579056b3c1082"
+    },
+    {
+      "path": "artifacts/tagged/layernorm-tests-005/pytest/test_layernorm_full_shapes_run1/physical/out/result.json",
+      "bytes": 892959,
+      "sha256": "8b8bc59165f86182d65aabd118e4dd313cbadaff11a46b2da5ef17c5abd72da2"
+    },
+    {
+      "path": "artifacts/tagged/layernorm-tests-005/pytest/test_layernorm_full_shapes_run1/physical/program.json",
+      "bytes": 19063,
+      "sha256": "5b9ff5c0fb70d0e7791c547be98ab48073b7fe326c4f1e951d3f3693d97902a6"
+    },
+    {
+      "path": "artifacts/tagged/layernorm-tests-005/pytest/test_layernorm_full_shapes_run1/physical/run.log",
+      "bytes": 109,
+      "sha256": "010e2a63c1abd2eee6e0f5fc22b58c0969fcfaf322dcd3a96183bd6852584436"
+    },
+    {
+      "path": "artifacts/tagged/layernorm-tests-005/pytest/test_layernorm_full_shapes_run2/model.safetensors",
+      "bytes": 16,
+      "sha256": "9bbcbf73561f6bc5d0a17ea6a2081feed2d1304e87602d8c502d9a5c4bd85576"
+    },
+    {
+      "path": "artifacts/tagged/layernorm-tests-005/pytest/test_layernorm_full_shapes_run2/physical/options.json",
+      "bytes": 64,
+      "sha256": "ad045ed61a6f15b6f47b345a32e1476e39d3ff2ad998c60e340009b54419140b"
+    },
+    {
+      "path": "artifacts/tagged/layernorm-tests-005/pytest/test_layernorm_full_shapes_run2/physical/out/logits-0.f32.bin",
+      "bytes": 9216,
+      "sha256": "4ebabe4e92369c026309dd3b2afb7ee7347a7129dd2369348a8f60883d02bca2"
+    },
+    {
+      "path": "artifacts/tagged/layernorm-tests-005/pytest/test_layernorm_full_shapes_run2/physical/out/result.json",
+      "bytes": 16003204,
+      "sha256": "449ed33e4667746494f1ba5f31fb47804aad69ed6d76bf2d0394a992d020e0a0"
+    },
+    {
+      "path": "artifacts/tagged/layernorm-tests-005/pytest/test_layernorm_full_shapes_run2/physical/program.json",
+      "bytes": 59231,
+      "sha256": "6134d283a1e9cd02c90cafd4389a8a85ed569d4ae97b687b82850da458d64e86"
+    },
+    {
+      "path": "artifacts/tagged/layernorm-tests-005/pytest/test_layernorm_full_shapes_run2/physical/run.log",
+      "bytes": 109,
+      "sha256": "010e2a63c1abd2eee6e0f5fc22b58c0969fcfaf322dcd3a96183bd6852584436"
+    },
+    {
+      "path": "artifacts/tagged/layernorm-tests-005/pytest/test_layernorm_full_shapes_run3/model.safetensors",
+      "bytes": 6280,
+      "sha256": "fdfddfda51c00ba4b8289b5aada8197057ac7122d8cb5cc1b7b1698ea1990ab3"
+    },
+    {
+      "path": "artifacts/tagged/layernorm-tests-005/pytest/test_layernorm_full_shapes_run3/physical/options.json",
+      "bytes": 64,
+      "sha256": "ad045ed61a6f15b6f47b345a32e1476e39d3ff2ad998c60e340009b54419140b"
+    },
+    {
+      "path": "artifacts/tagged/layernorm-tests-005/pytest/test_layernorm_full_shapes_run3/physical/out/logits-0.f32.bin",
+      "bytes": 86016,
+      "sha256": "45a1cd1d2c21715c1cf8b34d3a9f8f5c52c988ceb09ff5cb4b496b8f2ecefd37"
+    },
+    {
+      "path": "artifacts/tagged/layernorm-tests-005/pytest/test_layernorm_full_shapes_run3/physical/out/result.json",
+      "bytes": 16036490,
+      "sha256": "97efa64b946cb4addc83f82ca4ca977028ebb40c57ea40151139a974434c370b"
+    },
+    {
+      "path": "artifacts/tagged/layernorm-tests-005/pytest/test_layernorm_full_shapes_run3/physical/program.json",
+      "bytes": 457821,
+      "sha256": "0b8ac7ce700695e62b2e54a75671c6473db7be6646d2a678ea926022a18a9256"
+    },
+    {
+      "path": "artifacts/tagged/layernorm-tests-005/pytest/test_layernorm_full_shapes_run3/physical/run.log",
+      "bytes": 109,
+      "sha256": "010e2a63c1abd2eee6e0f5fc22b58c0969fcfaf322dcd3a96183bd6852584436"
+    },
+    {
+      "path": "artifacts/tagged/layernorm-tests-005/pytest/test_shifted_statistics_handle0/large-offset-comparison.json",
+      "bytes": 141,
+      "sha256": "b024915fb72850dec120fe1ea10d932e3cead1bdd867ba6bbe304a381f12a203"
+    },
+    {
+      "path": "artifacts/tagged/layernorm-tests-005/pytest/test_shifted_statistics_handle0/model.safetensors",
+      "bytes": 416,
+      "sha256": "46bf552fe76790caacf9ad15532ae9bd03f5a932c0374d3d39ec9b8030f76cb6"
+    },
+    {
+      "path": "artifacts/tagged/layernorm-tests-005/pytest/test_shifted_statistics_handle0/shifted/options.json",
+      "bytes": 64,
+      "sha256": "ad045ed61a6f15b6f47b345a32e1476e39d3ff2ad998c60e340009b54419140b"
+    },
+    {
+      "path": "artifacts/tagged/layernorm-tests-005/pytest/test_shifted_statistics_handle0/shifted/out/logits-0.f32.bin",
+      "bytes": 280,
+      "sha256": "89f3f7bd56f93fdc64d7140f2038b5d4a4113f803f7226df7f78abcf1fd322d0"
+    },
+    {
+      "path": "artifacts/tagged/layernorm-tests-005/pytest/test_shifted_statistics_handle0/shifted/out/result.json",
+      "bytes": 733948,
+      "sha256": "b47a8b21c98edfe319578a7782741889539f7186ef3571fca58765fcaa57a041"
+    },
+    {
+      "path": "artifacts/tagged/layernorm-tests-005/pytest/test_shifted_statistics_handle0/shifted/program.json",
+      "bytes": 15004,
+      "sha256": "0ee6edc1415fd3c32921b46fd38cd5c2a301f782e428efdc27bf7db12cd363b2"
+    },
+    {
+      "path": "artifacts/tagged/layernorm-tests-005/pytest/test_shifted_statistics_handle0/shifted/run.log",
+      "bytes": 109,
+      "sha256": "010e2a63c1abd2eee6e0f5fc22b58c0969fcfaf322dcd3a96183bd6852584436"
+    },
+    {
+      "path": "artifacts/tagged/layernorm-tests-005/pytest/test_source_group_cannot_hide_0/invalid/options.json",
+      "bytes": 117,
+      "sha256": "7487a3a30a0b3cd1ff64eb2b7f8ca309543f12248201d03f580ea2903a1ca3bf"
+    },
+    {
+      "path": "artifacts/tagged/layernorm-tests-005/pytest/test_source_group_cannot_hide_0/invalid/program.json",
+      "bytes": 14841,
+      "sha256": "7a2ef67776ee0734b75224a8ebafb5c734ce9910d417a3390b220e17033799c1"
+    },
+    {
+      "path": "artifacts/tagged/layernorm-tests-005/pytest/test_source_group_cannot_hide_0/invalid/run.log",
+      "bytes": 58,
+      "sha256": "3cce192ec704b9461a15f06b6eef1c2654fa5a407c000521862304e5bd271c9d"
+    },
+    {
+      "path": "artifacts/tagged/layernorm-tests-005/pytest/test_source_group_cannot_hide_0/model.safetensors",
+      "bytes": 272,
+      "sha256": "7f1722784e1eb2eec766796687fca720ac51890fe0b7d2bb37330287ad324753"
+    },
+    {
+      "path": "artifacts/tagged/layernorm-tests-005/pytest/test_source_group_cannot_hide_1/invalid/options.json",
+      "bytes": 117,
+      "sha256": "7487a3a30a0b3cd1ff64eb2b7f8ca309543f12248201d03f580ea2903a1ca3bf"
+    },
+    {
+      "path": "artifacts/tagged/layernorm-tests-005/pytest/test_source_group_cannot_hide_1/invalid/program.json",
+      "bytes": 14822,
+      "sha256": "da9f94f861c20170c31f08b13315766e7261606f858d256474b3d0bd61a3208c"
+    },
+    {
+      "path": "artifacts/tagged/layernorm-tests-005/pytest/test_source_group_cannot_hide_1/invalid/run.log",
+      "bytes": 63,
+      "sha256": "3438c7b3ab082c8d6efca379e246ab5dd9a0b52fc8d8952700d292bccc7e4963"
+    },
+    {
+      "path": "artifacts/tagged/layernorm-tests-005/pytest/test_source_group_cannot_hide_1/model.safetensors",
+      "bytes": 272,
+      "sha256": "7f1722784e1eb2eec766796687fca720ac51890fe0b7d2bb37330287ad324753"
+    },
+    {
+      "path": "artifacts/tagged/layernorm-tests-005/pytest/test_source_group_cannot_hide_10/invalid/options.json",
+      "bytes": 117,
+      "sha256": "7487a3a30a0b3cd1ff64eb2b7f8ca309543f12248201d03f580ea2903a1ca3bf"
+    },
+    {
+      "path": "artifacts/tagged/layernorm-tests-005/pytest/test_source_group_cannot_hide_10/invalid/program.json",
+      "bytes": 14843,
+      "sha256": "260d4298a503f87f7fbc76cfbde76824709e35e1e5b1930a9ad8772cbfde5eaf"
+    },
+    {
+      "path": "artifacts/tagged/layernorm-tests-005/pytest/test_source_group_cannot_hide_10/invalid/run.log",
+      "bytes": 65,
+      "sha256": "c5ed3f9d1a68322444294c261ee0d6fd0d22141450f6a8d0584b13885a594084"
+    },
+    {
+      "path": "artifacts/tagged/layernorm-tests-005/pytest/test_source_group_cannot_hide_10/model.safetensors",
+      "bytes": 272,
+      "sha256": "7f1722784e1eb2eec766796687fca720ac51890fe0b7d2bb37330287ad324753"
+    },
+    {
+      "path": "artifacts/tagged/layernorm-tests-005/pytest/test_source_group_cannot_hide_2/invalid/options.json",
+      "bytes": 117,
+      "sha256": "7487a3a30a0b3cd1ff64eb2b7f8ca309543f12248201d03f580ea2903a1ca3bf"
+    },
+    {
+      "path": "artifacts/tagged/layernorm-tests-005/pytest/test_source_group_cannot_hide_2/invalid/program.json",
+      "bytes": 14845,
+      "sha256": "7e2c95548c54a7aad9f0a70831f5bb016fd9d145405649f0d2171f2ccf983515"
+    },
+    {
+      "path": "artifacts/tagged/layernorm-tests-005/pytest/test_source_group_cannot_hide_2/invalid/run.log",
+      "bytes": 76,
+      "sha256": "32a0ec95c7c7aa4dd5ddca128fbbfd6dc704d3c605443c81bcecd69a21fc7ac2"
+    },
+    {
+      "path": "artifacts/tagged/layernorm-tests-005/pytest/test_source_group_cannot_hide_2/model.safetensors",
+      "bytes": 272,
+      "sha256": "7f1722784e1eb2eec766796687fca720ac51890fe0b7d2bb37330287ad324753"
+    },
+    {
+      "path": "artifacts/tagged/layernorm-tests-005/pytest/test_source_group_cannot_hide_3/invalid/options.json",
+      "bytes": 117,
+      "sha256": "7487a3a30a0b3cd1ff64eb2b7f8ca309543f12248201d03f580ea2903a1ca3bf"
+    },
+    {
+      "path": "artifacts/tagged/layernorm-tests-005/pytest/test_source_group_cannot_hide_3/invalid/program.json",
+      "bytes": 14843,
+      "sha256": "06d00e267204c422299c188c8688fee8a3c54eeb17fc04d5e15d3bf548135933"
+    },
+    {
+      "path": "artifacts/tagged/layernorm-tests-005/pytest/test_source_group_cannot_hide_3/invalid/run.log",
+      "bytes": 73,
+      "sha256": "e49e1f17e73a3fcfae734c993f7dc261fcc7770c1e441b7af660fd80cfb0682a"
+    },
+    {
+      "path": "artifacts/tagged/layernorm-tests-005/pytest/test_source_group_cannot_hide_3/model.safetensors",
+      "bytes": 272,
+      "sha256": "7f1722784e1eb2eec766796687fca720ac51890fe0b7d2bb37330287ad324753"
+    },
+    {
+      "path": "artifacts/tagged/layernorm-tests-005/pytest/test_source_group_cannot_hide_4/invalid/options.json",
+      "bytes": 117,
+      "sha256": "7487a3a30a0b3cd1ff64eb2b7f8ca309543f12248201d03f580ea2903a1ca3bf"
+    },
+    {
+      "path": "artifacts/tagged/layernorm-tests-005/pytest/test_source_group_cannot_hide_4/invalid/program.json",
+      "bytes": 14844,
+      "sha256": "1f1e20b471e0afc58c8afb6a789e1aec50c279a42e59c621ffcea835e973524f"
+    },
+    {
+      "path": "artifacts/tagged/layernorm-tests-005/pytest/test_source_group_cannot_hide_4/invalid/run.log",
+      "bytes": 59,
+      "sha256": "1cc2c68a1870a6196399566f68fb91d5ad22ec2e1ec738ba61adf517e6ad91d9"
+    },
+    {
+      "path": "artifacts/tagged/layernorm-tests-005/pytest/test_source_group_cannot_hide_4/model.safetensors",
+      "bytes": 272,
+      "sha256": "7f1722784e1eb2eec766796687fca720ac51890fe0b7d2bb37330287ad324753"
+    },
+    {
+      "path": "artifacts/tagged/layernorm-tests-005/pytest/test_source_group_cannot_hide_5/invalid/options.json",
+      "bytes": 117,
+      "sha256": "7487a3a30a0b3cd1ff64eb2b7f8ca309543f12248201d03f580ea2903a1ca3bf"
+    },
+    {
+      "path": "artifacts/tagged/layernorm-tests-005/pytest/test_source_group_cannot_hide_5/invalid/program.json",
+      "bytes": 14845,
+      "sha256": "ff6120a983919c6316dbc1463a50fd45ec25de7f7bf5e9df257d945495ea4ad1"
+    },
+    {
+      "path": "artifacts/tagged/layernorm-tests-005/pytest/test_source_group_cannot_hide_5/invalid/run.log",
+      "bytes": 76,
+      "sha256": "e50bf519c9125e4ae344fa7992207df3bb16255e8c7505b82e269613cd7b6f33"
+    },
+    {
+      "path": "artifacts/tagged/layernorm-tests-005/pytest/test_source_group_cannot_hide_5/model.safetensors",
+      "bytes": 272,
+      "sha256": "7f1722784e1eb2eec766796687fca720ac51890fe0b7d2bb37330287ad324753"
+    },
+    {
+      "path": "artifacts/tagged/layernorm-tests-005/pytest/test_source_group_cannot_hide_6/invalid/options.json",
+      "bytes": 117,
+      "sha256": "7487a3a30a0b3cd1ff64eb2b7f8ca309543f12248201d03f580ea2903a1ca3bf"
+    },
+    {
+      "path": "artifacts/tagged/layernorm-tests-005/pytest/test_source_group_cannot_hide_6/invalid/program.json",
+      "bytes": 14845,
+      "sha256": "8e38bd8f8771a377aa7335f6302a1c6dfb9f6e5a5cab7bf2fe3501b439ddd813"
+    },
+    {
+      "path": "artifacts/tagged/layernorm-tests-005/pytest/test_source_group_cannot_hide_6/invalid/run.log",
+      "bytes": 72,
+      "sha256": "f18a3c76a082e651dda4a3b2702bdbfbee591695906ecbdbc3a551f6a3e523f2"
+    },
+    {
+      "path": "artifacts/tagged/layernorm-tests-005/pytest/test_source_group_cannot_hide_6/model.safetensors",
+      "bytes": 272,
+      "sha256": "7f1722784e1eb2eec766796687fca720ac51890fe0b7d2bb37330287ad324753"
+    },
+    {
+      "path": "artifacts/tagged/layernorm-tests-005/pytest/test_source_group_cannot_hide_7/invalid/options.json",
+      "bytes": 117,
+      "sha256": "7487a3a30a0b3cd1ff64eb2b7f8ca309543f12248201d03f580ea2903a1ca3bf"
+    },
+    {
+      "path": "artifacts/tagged/layernorm-tests-005/pytest/test_source_group_cannot_hide_7/invalid/program.json",
+      "bytes": 14845,
+      "sha256": "d46bedad3223255f566a8c6de08e24dbda3c3d93dcbfb51c2f73b8869cf71bc8"
+    },
+    {
+      "path": "artifacts/tagged/layernorm-tests-005/pytest/test_source_group_cannot_hide_7/invalid/run.log",
+      "bytes": 69,
+      "sha256": "2681fc9b7d3c2ffef1ec23fcdbde6389cebc219de52797f50d1c348046b29e58"
+    },
+    {
+      "path": "artifacts/tagged/layernorm-tests-005/pytest/test_source_group_cannot_hide_7/model.safetensors",
+      "bytes": 272,
+      "sha256": "7f1722784e1eb2eec766796687fca720ac51890fe0b7d2bb37330287ad324753"
+    },
+    {
+      "path": "artifacts/tagged/layernorm-tests-005/pytest/test_source_group_cannot_hide_8/invalid/options.json",
+      "bytes": 117,
+      "sha256": "7487a3a30a0b3cd1ff64eb2b7f8ca309543f12248201d03f580ea2903a1ca3bf"
+    },
+    {
+      "path": "artifacts/tagged/layernorm-tests-005/pytest/test_source_group_cannot_hide_8/invalid/program.json",
+      "bytes": 14844,
+      "sha256": "fcc28f24c1385cccf163d8a4913541817826f2182aec3f942e71c32359563c75"
+    },
+    {
+      "path": "artifacts/tagged/layernorm-tests-005/pytest/test_source_group_cannot_hide_8/invalid/run.log",
+      "bytes": 80,
+      "sha256": "499b00704fe703ae29b5842eddbeda094e360c088f4be8f291197d5f167abfa9"
+    },
+    {
+      "path": "artifacts/tagged/layernorm-tests-005/pytest/test_source_group_cannot_hide_8/model.safetensors",
+      "bytes": 272,
+      "sha256": "7f1722784e1eb2eec766796687fca720ac51890fe0b7d2bb37330287ad324753"
+    },
+    {
+      "path": "artifacts/tagged/layernorm-tests-005/pytest/test_source_group_cannot_hide_9/invalid/options.json",
+      "bytes": 117,
+      "sha256": "7487a3a30a0b3cd1ff64eb2b7f8ca309543f12248201d03f580ea2903a1ca3bf"
+    },
+    {
+      "path": "artifacts/tagged/layernorm-tests-005/pytest/test_source_group_cannot_hide_9/invalid/program.json",
+      "bytes": 14845,
+      "sha256": "735f85d7ce30544294356daf2e00ff6a66102db61b9f64c151015e3edd452da6"
+    },
+    {
+      "path": "artifacts/tagged/layernorm-tests-005/pytest/test_source_group_cannot_hide_9/invalid/run.log",
+      "bytes": 79,
+      "sha256": "a29c520c560b6955290ea75edfb672ec257d314661bc9be43077b87a865181ed"
+    },
+    {
+      "path": "artifacts/tagged/layernorm-tests-005/pytest/test_source_group_cannot_hide_9/model.safetensors",
+      "bytes": 272,
+      "sha256": "7f1722784e1eb2eec766796687fca720ac51890fe0b7d2bb37330287ad324753"
+    },
+    {
+      "path": "artifacts/tagged/layernorm-tests-005/regression.xml",
+      "bytes": 53255,
+      "sha256": "3212337c613de95a9585a5b7fb267de70750d99ce44a42fec3fefa400c8ce214"
+    },
+    {
+      "path": "docs/mlx-bert-qa-reference.md",
+      "bytes": 7156,
+      "sha256": "c21c1e520daaaad641168368ad84109174407d406e3059b85a77b2512c7e58e2"
+    },
+    {
+      "path": "docs/mlx-gpgpu-toolchain-scheduling-gap-plan.md",
+      "bytes": 45941,
+      "sha256": "2bd09897aa43d2e02599d72a7a27b6f61c1aaecec027118d2f4b24e8bc0d2741"
+    },
+    {
+      "path": "docs/mlx-layernorm-source-groups.md",
+      "bytes": 5392,
+      "sha256": "82f6ec4c2cd15ac7a6c5d8067ab97bbc7dc5ee230f2aaadfa4a527971faf1522"
+    },
+    {
+      "path": "scripts/run_mlx_tensor_semantics.py",
+      "bytes": 12846,
+      "sha256": "fd49cc32ec2463b6925bebf070cd3b76e787369b84cf9163b210691c5e35960d"
+    },
+    {
+      "path": "scripts/verify_mlx_layernorm.py",
+      "bytes": 7750,
+      "sha256": "e160f18ee99600d5f2642cc0586ca6bc57dae97a9ec09f5a87d0ef834ba17601"
+    },
+    {
+      "path": "simulator_ext/model_system/model_executor.cc",
+      "bytes": 21810,
+      "sha256": "2580ea71de3111f76adc298dcd160061c2b6233ebd0cc4ba8dadeef02db884ea"
+    },
+    {
+      "path": "simulator_ext/model_system/ready_graph.cc",
+      "bytes": 31460,
+      "sha256": "deaf57415ad0c32107993a8c65bbf935f802ec1fb49fe9861f885531852748e9"
+    },
+    {
+      "path": "simulator_ext/tensor_model/kernels.cc",
+      "bytes": 24400,
+      "sha256": "88616b7ff0f398c228733c880a324c77a44238b9389b979fc22d35c9f751476d"
+    },
+    {
+      "path": "simulator_ext/tensor_model/main.cc",
+      "bytes": 10657,
+      "sha256": "df1783bc367cc7909ceab63b900a9c70542b6c4c3099d8483fc2a346f81d446f"
+    },
+    {
+      "path": "simulator_ext/tensor_model/source_groups.h",
+      "bytes": 7538,
+      "sha256": "3db10ca699292f4e5ad33ada0657f20febdc599761562b7532eb87675845fd87"
+    },
+    {
+      "path": "simulator_ext/tensor_model/value_outputs.h",
+      "bytes": 5523,
+      "sha256": "7bf202c4685a53500a7e7d408186dc44dcafd26a2e2022a4f38520f24aeaabc3"
+    },
+    {
+      "path": "simulator_ext/vector_model/vector_program.cc",
+      "bytes": 13600,
+      "sha256": "67c1fbcc09c566a18ca2d880daba7ce4778140417b09937c8883aa36fa56a1c5"
+    },
+    {
+      "path": "simulator_ext/vector_schedule/vector_schedule.cc",
+      "bytes": 36560,
+      "sha256": "42609f0eb40e268a855157566d532e3cd036a73dba50384aa73341b0edbd2946"
+    },
+    {
+      "path": "src/mlxsim/model_composites.py",
+      "bytes": 6800,
+      "sha256": "4cc260e3b4d15bc49d1f791d2b0f2468eb8eb87a929a3de8398daa9246f3e90b"
+    },
+    {
+      "path": "src/mlxsim/model_numeric_reference.py",
+      "bytes": 6754,
+      "sha256": "21fd2a805740751958818610c56e7b9022e506b1655c573209d11de98e80b24d"
+    },
+    {
+      "path": "src/mlxsim/model_physical_evidence.py",
+      "bytes": 12410,
+      "sha256": "6fdf9802722a9a25ff03fb862217423f24a893a52a20a62fac4d811689235ceb"
+    },
+    {
+      "path": "src/mlxsim/model_ready_evidence.py",
+      "bytes": 12128,
+      "sha256": "21442c3859bbf556f97578e8786e1a78f51ad9bcc037836106ac5aeaa5b6afe5"
+    },
+    {
+      "path": "src/mlxsim/model_source_groups.py",
+      "bytes": 6520,
+      "sha256": "000aa130f026491151a4fb1d3726416f5d5ac520ca3a093a1bcf880ad987fffa"
+    },
+    {
+      "path": "src/mlxsim/model_tensor_compiler.py",
+      "bytes": 29348,
+      "sha256": "49c517ee09b21531bbcdd08b04e1474662de7cb664b398d0ef7758e0af277726"
+    },
+    {
+      "path": "src/mlxsim/model_value_outputs.py",
+      "bytes": 2549,
+      "sha256": "adc0348f3f32b021996729bb33c2e7c009d5fa4cd3f89218953bf7076159cec4"
+    },
+    {
+      "path": "src/mlxsim/model_vector_program.py",
+      "bytes": 5027,
+      "sha256": "d3a5ac2fdf552e37fbae058cd9b2413029db5d108b3059c2e50c9d4a35ac36a5"
+    },
+    {
+      "path": "system_sim/physical_host/graph_lowering.py",
+      "bytes": 7888,
+      "sha256": "22f2b7cda5b4dfe914fa6764efba3c63a4a23037cd8dd7fa36527c13a3f80e3b"
+    },
+    {
+      "path": "tests/test_layernorm_source_groups.py",
+      "bytes": 10967,
+      "sha256": "6585e1f903713a8476ff991a33db83769484aa031a7fb494ed5833bdab7c999a"
+    },
+    {
+      "path": "tests/test_model_tensor_semantics.py",
+      "bytes": 13336,
+      "sha256": "5b5a191b6a95789b80aa9e01c8fd4d03668e07b928f38c81ff060c6c5562670e"
+    },
+    {
+      "path": "tests/test_model_vector_program.py",
+      "bytes": 8607,
+      "sha256": "741385b2a75a88e21a19fdf7b462131bfaaad4b59e3329b276a405931b14cb82"
+    }
+  ]
+}
