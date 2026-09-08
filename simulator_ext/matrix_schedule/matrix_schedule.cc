@@ -119,6 +119,8 @@ struct Simulator::Impl {
   shared_array::Resources *array=nullptr;
   shared_array::Client client=0;
   uint64_t source_id=UINT64_MAX,array_version=0;
+  model_events::BlockFlow *flow=nullptr;
+  uint64_t flow_version=0;
   std::array<std::optional<PendingInstruction>,16> fu;
   std::array<uint64_t,16> next_compute{};
   std::optional<PendingInstruction> spm_pending;
@@ -140,7 +142,7 @@ struct Simulator::Impl {
   Json::Value trace{Json::arrayValue};
 
   Impl(const Json::Value &p,Tensor a,Tensor b,const Tensor *bias_arg,bool tb,uint64_t ab,uint64_t bb,
-       uint64_t mm,uint64_t nn,uint64_t kk,Tensor out,uint64_t ob,Options o,model_io::MemoryPort *port,shared_array::Resources *shared,uint64_t source)
+       uint64_t mm,uint64_t nn,uint64_t kk,Tensor out,uint64_t ob,Options o,model_io::MemoryPort *port,shared_array::Resources *shared,uint64_t source,model_events::BlockFlow *block_flow)
       :options(o),bias(bool(bias_arg)),transpose(tb),a_batch(ab),b_batch(bb),m(mm),n(nn),k(kk),out_batch(ob),memory_port(port),external_memory(port!=nullptr) {
     options.validate();pes=options.rows*options.columns;
     tensors[0]=std::move(a);tensors[1]=std::move(b);tensors[3]=std::move(out);if(bias)tensors[2]=*bias_arg;
@@ -181,6 +183,7 @@ struct Simulator::Impl {
     for(const char *part:{"prologue","body","epilogue"})for(const auto &word:p[part])words.push_back(word.asUInt());
     const auto key="matrix:"+std::to_string(code[0].size())+":"+std::to_string(code[1].size())+":"+std::to_string(code[2].size());
     client=array->attach(key,words,6,arena_vectors,source_id);
+    flow=block_flow;if(flow){check(shared&&port&&flow->description()["role"]=="producer","matrix block events require an external producer flow");array->residency_limit(client,flow->per_pe_limit(),flow->total_limit());}
   }
   ~Impl(){if(client)array->detach(client,done());}
   Owner owner(unsigned id) const {
@@ -233,8 +236,8 @@ struct Simulator::Impl {
     // Admission and block priority depend ONLY on active slots, next_block,
     // and SPM ownership. PC/FU/DMA changes still arbitrate every actual cycle.
     active_order=priority();admission_offer.reset();++control_recomputations;
-    if(next_block<total_blocks)admission_offer=array->offer(client,unsigned(next_block%pes));
-    resources_dirty=false;array_version=array->version();
+    if(next_block<total_blocks&&(!flow||flow->admission_ready(next_block)))admission_offer=array->offer(client,unsigned(next_block%pes));
+    resources_dirty=false;array_version=array->version();flow_version=flow?flow->revision():0;
   }
   void enter_memory(Context &c,Phase phase) {c.phase=phase;c.pc=0;c.move=0;c.ki=0;c.count=unsigned(std::min<uint64_t>(64,k-c.k_base));}
   void finish_instruction(unsigned id) {
@@ -274,6 +277,7 @@ struct Simulator::Impl {
     else{
       check(!c.busy,"retiring context has an in-flight instruction");event("retire",id);
       for(unsigned r=0;r<6;++r)reg(c,r).type=0;
+      if(flow)flow->completed(c.block,c.lease.id,array->cycle());
       array->retire(c.lease);
       c.active=false;++retired;resources_dirty=true;
     }
@@ -321,7 +325,7 @@ struct Simulator::Impl {
     if(owned_array)array->begin_cycle(cycles);
     array->enter(client);const auto edge=array->cycle();
     memory_port->advance(cycles);
-    if(array_version!=array->version())resources_dirty=true;
+    if(array_version!=array->version()||(flow&&flow_version!=flow->revision()))resources_dirty=true;
     if(resources_dirty||!options.cache_control)recompute_control();
     const auto &ids=active_order;
     bool port=array->spm_ready();
@@ -383,6 +387,7 @@ struct Simulator::Impl {
     if(admission){auto admitted_lease=array->admit(*admission,next_block);check(bool(admitted_lease),"matrix shared admission offer changed before commit");const auto lease=*admitted_lease;unsigned id=lease.pe*2+lease.slot;auto &c=contexts[id];uint64_t epoch=c.epoch+1;c=Context{};c.active=true;c.pe=lease.pe;c.slot=lease.slot;c.lease=lease;c.epoch=epoch;c.block=next_block++;
       c.row_base=(c.block/((n+15)/16))*2;c.col_base=(c.block%((n+15)/16))*16;c.rows=unsigned(std::min<uint64_t>(2,m-c.row_base));c.lanes=unsigned(std::min<uint64_t>(16,n-c.col_base));c.arena=lease.spm_base;
       for(unsigned r=0;r<6;++r)reg(c,r).type=0;
+      if(flow)flow->admitted(c.block,c.lease.id);
       ++admitted;++numeric.tiles;resources_dirty=true;event("admit",id);
     }
     if(resources_dirty||!options.cache_control)invariant();
@@ -415,13 +420,14 @@ struct Simulator::Impl {
     r["counter_units"]["spm_busy_cycles"]="wall_cycle";
     r["counter_units"]["compute_busy_pe_cycles"]="pe_cycle";
     if(!owned_array){r["external_shared_array"]=true;r["shared_client"]=Json::UInt64(client);r["source_operator_id"]=Json::UInt64(source_id);}
+    if(flow)r["block_flow"]=flow->description();
     return r;
   }
 };
 
 Simulator::Simulator(const Json::Value &p,Tensor a,Tensor b,const Tensor *bias,bool tb,uint64_t ab,uint64_t bb,
-                     uint64_t m,uint64_t n,uint64_t k,Tensor out,uint64_t ob,Options o,model_io::MemoryPort *port,shared_array::Resources *array,uint64_t source)
-    :impl(std::make_unique<Impl>(p,std::move(a),std::move(b),bias,tb,ab,bb,m,n,k,std::move(out),ob,o,port,array,source)){}
+                     uint64_t m,uint64_t n,uint64_t k,Tensor out,uint64_t ob,Options o,model_io::MemoryPort *port,shared_array::Resources *array,uint64_t source,model_events::BlockFlow *flow)
+    :impl(std::make_unique<Impl>(p,std::move(a),std::move(b),bias,tb,ab,bb,m,n,k,std::move(out),ob,o,port,array,source,flow)){}
 Simulator::~Simulator()=default;
 bool Simulator::tick(){return impl->tick();}
 bool Simulator::done()const{return impl->done();}

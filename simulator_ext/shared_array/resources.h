@@ -49,6 +49,7 @@ public:
   Client attach(const std::string &decode_key,const std::vector<uint32_t> &words,
                 unsigned rf_vectors,unsigned spm_vectors,uint64_t source_id=UINT64_MAX);
   void detach(Client client,bool completed)noexcept;
+  void residency_limit(Client client,unsigned per_pe,unsigned total);
   void begin_cycle(uint64_t cycle);
   void enter(Client client);
   void end_cycle();
@@ -83,6 +84,7 @@ private:
     unsigned rf=0,spm=0;
     uint64_t source=UINT64_MAX,last_cycle=UINT64_MAX;
     bool attached=true;
+    unsigned per_pe_limit=2,total_limit=32;
   };
   struct Resident {Lease lease;uint64_t template_id=0;bool retiring=false;};
   struct Template {uint64_t id=0;std::string key;std::vector<uint32_t> words;unsigned base=0,refs=0;};

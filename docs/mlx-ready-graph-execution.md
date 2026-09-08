@@ -38,4 +38,4 @@ build/mlx-ready-graph/mlx-ready-graph program.json options.json output-NEW
 
 ## 不能扩大的结论
 
-依赖目前是整个源算子的完成边界，不是生产者部分tile完成后唤醒消费者的CDC机制。完整模型在此入口的端到端结果、实际CPU/cache系统集成、模板装载时序、其他模型与输入范围均未完成；`complete_cdc_verified`、`mlx_system_verified`和`inference_performance_eligible`仍为false，RTL仍后置。
+默认依赖仍是整个源算子的完成边界。后续增加了显式选择的[有界双算子块事件模式](mlx-bounded-block-pipeline.md)，可以在登记闭合对内由部分tile结果唤醒消费者，但不是一般CDC。完整模型在此入口的端到端结果、实际CPU/cache系统集成、模板装载时序、其他模型与输入范围均未完成；`complete_cdc_verified`、`mlx_system_verified`和`inference_performance_eligible`仍为false，RTL仍后置。

@@ -2,6 +2,7 @@
 #include "vector_program.h"
 #include "../model_io/memory_port.h"
 #include "../shared_array/resources.h"
+#include "../model_events/block_flow.h"
 #include <memory>
 #include <optional>
 
@@ -27,7 +28,7 @@ class Simulator {
 public:
   Simulator(const Json::Value &node,const tensor_model::Values &values,
             tensor_model::Tensor output,Options options={},MemoryPort *port=nullptr,
-            shared_array::Resources *array=nullptr,uint64_t source_id=UINT64_MAX);
+            shared_array::Resources *array=nullptr,uint64_t source_id=UINT64_MAX,model_events::BlockFlow *flow=nullptr);
   ~Simulator();
   bool tick();
   bool done() const;

@@ -31,7 +31,12 @@ Client Resources::attach(const std::string &key,const std::vector<uint32_t> &wor
   check(!open&&!poisoned,"cannot attach during an edge or after shared array failure");
   check(!key.empty()&&!words.empty()&&words.size()<=32&&rf>0&&rf<=16&&spm>0&&spm<=128,"client exceeds RF/SPM/ROM capacity");
   check(next_client!=UINT64_MAX,"shared client identities exhausted");auto id=next_client++;
-  clients.emplace(id,ClientInfo{key,words,rf,spm,source,UINT64_MAX,true});return id;
+  clients.emplace(id,ClientInfo{key,words,rf,spm,source,UINT64_MAX,true,config.contexts,pes*config.contexts});return id;
+}
+void Resources::residency_limit(Client id,unsigned per_pe,unsigned total){
+  check(!open&&!poisoned&&live_contexts(id)==0,"cannot change active residency reservations");client_info(id);
+  check(per_pe&&per_pe<=config.contexts&&total&&total<=pes*per_pe,"invalid pipeline residency reservation");
+  clients.at(id).per_pe_limit=per_pe;clients.at(id).total_limit=total;++allocation_version;
 }
 void Resources::detach(Client id,bool completed)noexcept{
   auto found=clients.find(id);if(found==clients.end()||!found->second.attached){poisoned=true;return;}
@@ -57,6 +62,8 @@ const Resources::Resident &Resources::resident(const Lease &lease,bool allow_ret
 void Resources::validate_lease(const Lease &lease)const{resident(lease);}
 std::optional<Offer> Resources::offer(Client id,unsigned pe)const{
   caller(id);check(pe<pes,"shared block PE outside mapped array");const auto &info=client_info(id);std::optional<unsigned> slot;
+  unsigned local=0,total=0;for(const auto &r:residents)if(r&&r->lease.client==id){++total;local+=r->lease.pe==pe;}
+  if(local>=info.per_pe_limit||total>=info.total_limit)return std::nullopt;
   for(unsigned s=0;s<config.contexts&&!slot;++s)if(!residents[pe*2+s])slot=s;
   if(!slot)return std::nullopt;
   auto rf=space(rf_owner[pe],info.rf),spm=space(spm_owner,info.spm);if(!rf||!spm)return std::nullopt;

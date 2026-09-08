@@ -1,5 +1,6 @@
 #include "ready_graph.h"
 #include "../model_io/physical_mux.h"
+#include "../model_events/completion_window.h"
 #include "matrix_schedule.h"
 #include "vector_schedule.h"
 #include "memory_schedule.h"
@@ -44,6 +45,10 @@ struct Task {
   std::vector<model_io::Region> regions;
   std::unique_ptr<model_io::PhysicalMemoryPort> channel;
   std::unique_ptr<model_io::AddressSpacePort> port;
+  int pipeline=-1;
+  bool pipeline_producer=false;
+  std::string streaming_input;
+  std::unique_ptr<model_events::PairFlow> flow;
   std::unique_ptr<matrix_schedule::Simulator> matrix;
   std::unique_ptr<vector_schedule::Simulator> vector;
   std::unique_ptr<memory_model::Simulator> memory;
@@ -54,6 +59,7 @@ struct Task {
   void drop_model(){matrix.reset();vector.reset();memory.reset();control.reset();port.reset();}
 };
 struct Runner {
+  struct Pair {unsigned producer=0,consumer=0,producer_limit=0,consumer_limit=0;model_events::Mapping mapping;std::shared_ptr<model_events::CompletionWindow> window;uint64_t begin=0;};
   const Json::Value &program;
   matrix_schedule::Options matrix_options;
   vector_schedule::Options vector_options;
@@ -72,6 +78,12 @@ struct Runner {
   uint64_t cycle=0,max_cycles,preloaded_assets=0,preloaded_bytes=0,completed=0,readback_requests=0;
   unsigned limit,memory_active=0,control_active=0,peak_active=0;
   bool overlap=true,progress=false;
+  bool tile_pipeline=false,whole_pipeline_barrier=false;
+  unsigned event_slots=32;
+  uint64_t next_pipeline_epoch=1;
+  std::vector<Pair> pairs;
+  std::optional<unsigned> current_pair;
+  Json::Value pipeline_reports{Json::arrayValue};
   Json::Value windows{Json::objectValue},events{Json::arrayValue};
 
   Runner(const Json::Value &p,const Json::Value &options)
@@ -83,9 +95,12 @@ struct Runner {
        memory(arena,MemoryOptions::parse(options.get("memory",Json::Value(Json::objectValue)))),mux(memory,65),
        max_cycles(options.get("max_cycles",Json::UInt64(1000000000000ULL)).asUInt64()),limit(options.get("max_active_nodes",32).asUInt()){
     require(options.isObject(),"ready graph options must be an object");
-    for(const auto &key:options.getMemberNames())require(key=="base"||key=="bytes"||key=="memory"||key=="max_cycles"||key=="max_active_nodes"||key=="overlap"||key=="operator_progress","unsupported ready graph option");
-    for(const char *key:{"overlap","operator_progress"})if(options.isMember(key))require(options[key].isBool(),"ready graph flags must be Boolean");
+    for(const auto &key:options.getMemberNames())require(key=="base"||key=="bytes"||key=="memory"||key=="max_cycles"||key=="max_active_nodes"||key=="overlap"||key=="operator_progress"||key=="tile_pipeline"||key=="pipeline_whole_source_barrier","unsupported ready graph option");
+    for(const char *key:{"overlap","operator_progress","tile_pipeline","pipeline_whole_source_barrier"})if(options.isMember(key))require(options[key].isBool(),"ready graph flags must be Boolean");
     overlap=options.get("overlap",true).asBool();progress=options.get("operator_progress",false).asBool();
+    tile_pipeline=options.get("tile_pipeline",false).asBool();whole_pipeline_barrier=options.get("pipeline_whole_source_barrier",false).asBool();
+    require(!whole_pipeline_barrier||tile_pipeline,"whole-source pipeline barrier requires tile mode");
+    require(!tile_pipeline||(overlap&&limit>=2),"tile pipeline requires two active source descriptors");
     require(limit>=1&&limit<=64&&max_cycles>0&&max_cycles<UINT64_MAX-1000000,"invalid ready graph window/cycle budget");
     require(p["schema"]=="mlx_tensor_semantics_v1"&&p["timing_mode"]=="unmodeled","unsupported ready graph program");
     for(const char *kind:{"matrix","vector","memory","control"}){require(p[std::string(kind)+"_backend"]=="scheduled","ready graph requires all four scheduled routes");windows[kind]=Json::Value(Json::arrayValue);}
@@ -110,6 +125,35 @@ struct Runner {
     }
     require(p["outputs"].isArray()&&!p["outputs"].empty(),"graph has no result contract");std::set<int> forwards;
     for(const auto &out:p["outputs"]){require(out["forward_id"].isInt()&&forwards.insert(out["forward_id"].asInt()).second,"duplicate/invalid graph output forward");for(const char *role:{"logits","token"}){auto id=out[role].asString();require(values.count(id)||producer.count(id),"graph output is unbound");keep.insert(id);}}
+    if(tile_pipeline)load_pipelines(p["block_pipeline_plan"]);
+  }
+  void load_pipelines(const Json::Value &plan){
+    require(plan["profile"]=="mlx-bounded-pair-events-v1"&&plan["pairs"].isArray()&&plan["event_slots"].isUInt(),"missing or unsupported block pipeline plan");
+    event_slots=plan["event_slots"].asUInt();require(event_slots&&event_slots<=32,"pipeline event capacity exceeds bounded bank");
+    auto demand=[](const Task &task){const auto &p=(*task.node)[task.family+"_program"];unsigned words=task.family=="matrix"?p["prologue"].size()+p["body"].size()+p["epilogue"].size():p["rom"].size();
+      require(p["rf_vectors_used"].isUInt()&&p["spm_bytes_used"].isUInt(),"invalid pipeline storage requirement");auto rf=p["rf_vectors_used"].asUInt(),bytes=p["spm_bytes_used"].asUInt();
+      require(rf==(task.family=="matrix"?6u:8u)&&bytes>0&&bytes<=8192&&words>0&&words<=32,"invalid pipeline storage requirement");
+      return std::array<unsigned,3>{rf,(bytes+63)/64,words};};
+    for(const auto &spec:plan["pairs"]){
+      require(spec["producer"].isUInt()&&spec["consumer"].isUInt(),"invalid pipeline source index");Pair pair;pair.producer=spec["producer"].asUInt();pair.consumer=spec["consumer"].asUInt();
+      require(pair.producer<pair.consumer&&pair.consumer<tasks.size(),"pipeline pair is not a forward graph edge");auto &p=tasks[pair.producer],&c=tasks[pair.consumer];const auto &pn=*p.node,&cn=*c.node;
+      require(p.pipeline<0&&c.pipeline<0&&p.consumers.size()==1&&p.consumers[0]==pair.consumer,"pipeline is not a disjoint closed pair");
+      require((p.family=="matrix"||p.family=="vector")&&c.family=="vector"&&cn["kind"]!="mean"&&cn["kind"]!="softmax","unsupported producer/pointwise pipeline");
+      require(pn["source_operator_id"].asUInt64()<cn["source_operator_id"].asUInt64()&&spec["producer_source"].asUInt64()==pn["source_operator_id"].asUInt64()&&spec["consumer_source"].asUInt64()==cn["source_operator_id"].asUInt64(),"pipeline logical source priority differs");
+      auto name=pn["id"].asString();require(spec["value"]==pn["id"]&&pn["output"]["shape"]==cn["output"]["shape"],"pipeline pending input shape/value mismatch");
+      bool direct=false;for(const auto &arg:cn["args"])direct|=is_ref(arg)&&arg["value"].asString()==name;require(direct,"pipeline input is not a direct tensor operand");
+      model_events::Mapping expected;auto sizes=shape(pn["output"]["shape"]);expected.elements=elements(sizes);require(expected.elements>0,"empty output cannot establish a pipeline");
+      if(p.family=="matrix"){require(sizes.size()>=2&&(pn["kind"]=="linear"||pn["kind"]=="matmul"),"invalid pipeline matrix mapping");expected.kind=model_events::Mapping::Kind::Matrix;expected.n=sizes.back();expected.m=pn["kind"]=="linear"?elements(Shape(sizes.begin(),sizes.end()-1)):sizes[sizes.size()-2];expected.batches=pn["kind"]=="linear"?1:elements(Shape(sizes.begin(),sizes.end()-2));}
+      else if(pn["kind"]=="mean"||pn["kind"]=="softmax"){expected.kind=model_events::Mapping::Kind::Reduction;expected.row_width=pn["kind"]=="mean"?1:sizes.back();}
+      pair.mapping=model_events::Mapping::parse(spec["mapping"]);const auto &actual=pair.mapping;
+      require(actual.kind==expected.kind&&actual.elements==expected.elements&&actual.m==expected.m&&actual.n==expected.n&&actual.batches==expected.batches&&actual.row_width==expected.row_width,"pipeline block mapping differs from source geometry");
+      require(spec["producer_blocks"].asUInt64()==actual.producer_blocks()&&spec["consumer_blocks"].asUInt64()==(actual.elements+15)/16,"pipeline block count differs");
+      auto pd=demand(p),cd=demand(c);require(array->hardware().contexts>=2&&pd[0]+cd[0]<=16&&pd[1]+cd[1]<=128&&pd[2]+cd[2]<=32,"pipeline pair exceeds reserved context/RF/SPM/ROM capacity");
+      for(unsigned i=0;i<3;++i){const char *key=i==0?"rf":i==1?"spm":"rom";require(spec["producer_resources"][key].asUInt()==pd[i]&&spec["consumer_resources"][key].asUInt()==cd[i],"pipeline resource descriptor differs");}
+      unsigned pes=array->hardware().rows*array->hardware().columns;pair.producer_limit=pes;pair.consumer_limit=std::min(pes,(128-pd[1])/cd[1]);
+      require(pair.consumer_limit&&spec["producer_context_limit"].asUInt()==pair.producer_limit&&spec["consumer_context_limit"].asUInt()==pair.consumer_limit,"pipeline producer reservation differs");
+      p.pipeline=c.pipeline=int(pairs.size());p.pipeline_producer=true;c.streaming_input=name;pairs.push_back(pair);
+    }
   }
   void region(Task &task,const Tensor *value,bool write=false){
     if(value){task.pins.push_back(arena.pin(*value,write));task.regions.push_back(task.pins.back().region());}
@@ -122,17 +166,19 @@ struct Runner {
   }
   void open_window(Task &task){
     const auto &node=*task.node;const auto &args=node["args"];task.port=std::make_unique<model_io::AddressSpacePort>(*task.channel,tokens,task.regions,cycle);task.window_begin=cycle;
+    if(task.pipeline>=0){auto &pair=pairs[unsigned(task.pipeline)];require(bool(pair.window),"pipeline group has no event bank");auto offset=task.family=="matrix"?task.batch*((task.m+1)/2)*((task.n+15)/16):0;
+      task.flow=std::make_unique<model_events::PairFlow>(pair.window,pair.mapping,task.pipeline_producer,task.pipeline_producer?pair.producer_limit:pair.consumer_limit,offset,whole_pipeline_barrier);}
     if(task.family=="matrix"){
       const auto &a=ref(args[0],task.values),&b=ref(args[1],task.values);const Tensor *bias=task.linear&&args.size()>2&&!args[2].isNull()?&ref(args[2],task.values):nullptr;
-      task.matrix=std::make_unique<matrix_schedule::Simulator>(node["matrix_program"],a,b,bias,task.linear,task.linear?0:broadcast(task.batch,task.batch_shape,task.a_batch),task.linear?0:broadcast(task.batch,task.batch_shape,task.b_batch),task.m,task.n,task.k,task.output,task.batch,matrix_options,task.port.get(),array.get(),node["source_operator_id"].asUInt64());
-    }else if(task.family=="vector")task.vector=std::make_unique<vector_schedule::Simulator>(node,task.values,task.output,vector_options,task.port.get(),array.get(),node["source_operator_id"].asUInt64());
+      task.matrix=std::make_unique<matrix_schedule::Simulator>(node["matrix_program"],a,b,bias,task.linear,task.linear?0:broadcast(task.batch,task.batch_shape,task.a_batch),task.linear?0:broadcast(task.batch,task.batch_shape,task.b_batch),task.m,task.n,task.k,task.output,task.batch,matrix_options,task.port.get(),array.get(),node["source_operator_id"].asUInt64(),task.flow.get());
+    }else if(task.family=="vector")task.vector=std::make_unique<vector_schedule::Simulator>(node,task.values,task.output,vector_options,task.port.get(),array.get(),node["source_operator_id"].asUInt64(),task.flow.get());
     else if(task.family=="control")task.control=std::make_unique<control_schedule::Simulator>(node,task.values,task.output,control_options,task.port.get());
     else{task.memory=std::make_unique<memory_model::Simulator>(node,task.values,memory_options,task.port.get(),task.view?nullptr:&task.output);if(task.view)task.output=task.memory->output();}
     task.window_pending=false;
   }
   void start(unsigned index){
     auto &task=tasks[index];const auto &node=*task.node;const auto &args=node["args"];
-    for(const auto &name:task.inputs)task.values.emplace(name,values.at(name));
+    for(const auto &name:task.inputs){if(name==task.streaming_input){auto &parent=tasks[pairs[unsigned(task.pipeline)].producer];require(parent.started&&!parent.complete&&parent.output.storage,"streaming parent buffer is unavailable");task.values.emplace(name,parent.output);}else task.values.emplace(name,values.at(name));}
     if(!task.view)output(task);
     if(task.family=="matrix"){
       require(node["kind"]=="linear"||node["kind"]=="matmul","matrix route has the wrong source kind");task.linear=node["kind"]=="linear";
@@ -162,6 +208,16 @@ struct Runner {
     for(auto it=ready.begin();it!=ready.end()&&active.size()<(overlap?limit:1u);){
       auto index=it->second;auto &task=tasks[index];
       if((task.family=="control"&&control_active)||(task.family=="memory"&&!task.view&&memory_active)){++it;continue;}
+      const bool pe=task.family=="matrix"||task.family=="vector";
+      if(current_pair&&pe){++it;continue;}
+      if(task.pipeline>=0){
+        require(task.pipeline_producer,"pipeline consumer entered the ordinary ready queue");auto &pair=pairs[unsigned(task.pipeline)];auto &consumer=tasks[pair.consumer];bool others=true;
+        for(const auto &name:consumer.inputs)if(name!=consumer.streaming_input)others&=values.count(name)!=0;
+        bool pe_active=false;for(const auto &[source,at]:active){(void)source;pe_active|=tasks[at].family=="matrix"||tasks[at].family=="vector";}
+        if(!others||pe_active||!array->idle()||active.size()+2>limit){++it;continue;}
+        require(next_pipeline_epoch!=UINT64_MAX,"pipeline event epochs exhausted");pair.window=std::make_shared<model_events::CompletionWindow>(next_pipeline_epoch++,pair.mapping.producer_blocks(),event_slots);pair.begin=cycle;current_pair=unsigned(task.pipeline);
+        it=ready.erase(it);start(index);start(pair.consumer);continue;
+      }
       it=ready.erase(it);start(index);
     }
     peak_active=std::max(peak_active,unsigned(active.size()));
@@ -179,9 +235,9 @@ struct Runner {
     auto name=node["id"].asString();require(values.emplace(name,task.output).second,"graph redefined a published value");
     for(const auto &dep:task.inputs){require(uses.at(dep)>0,"graph use count underflow");if(!--uses[dep]&&!keep.count(dep))require(values.erase(dep)==1,"graph prematurely released an input");}
     if(!uses[name]&&!keep.count(name))values.erase(name);
-    task.values.clear();task.output=Tensor{};task.pins.clear();task.regions.clear();task.channel.reset();task.complete=true;++completed;
+    task.values.clear();task.output=Tensor{};task.pins.clear();task.regions.clear();task.channel.reset();task.flow.reset();task.complete=true;++completed;
     memory_active-=task.family=="memory"&&!task.view;control_active-=task.family=="control";active.erase({node["source_operator_id"].asUInt64(),index});
-    for(auto child:task.consumers){require(tasks[child].missing>0,"graph dependency count underflow");if(!--tasks[child].missing)ready.emplace((*tasks[child].node)["source_operator_id"].asUInt64(),child);}
+    for(auto child:task.consumers){require(tasks[child].missing>0,"graph dependency count underflow");if(!--tasks[child].missing&&!tasks[child].started)ready.emplace((*tasks[child].node)["source_operator_id"].asUInt64(),child);}
     if(progress)std::cout<<"READY_GRAPH complete source="<<node["source_operator_id"].asUInt64()<<" cycle="<<cycle+1<<std::endl;
   }
   Tensor readback(const Tensor &value){
@@ -200,9 +256,11 @@ struct Runner {
     while(completed<tasks.size()){
       require(cycle<max_cycles,"ready graph exceeded global cycle budget");
       for(const auto &[source,index]:active){(void)source;if(tasks[index].window_pending)open_window(tasks[index]);}
-      launch_ready();require(!active.empty(),"ready graph cannot make progress");mux.advance(cycle);array->begin_cycle(cycle);std::vector<unsigned> finished;
+      launch_ready();require(!active.empty(),"ready graph cannot make progress");if(current_pair)pairs[*current_pair].window->advance(cycle);mux.advance(cycle);array->begin_cycle(cycle);std::vector<unsigned> finished;
       for(const auto &[source,index]:active){(void)source;auto &task=tasks[index];if(!task.done())task.tick();if(task.done())finished.push_back(index);}
-      array->end_cycle();for(auto index:finished)finish(index);++cycle;
+      array->end_cycle();for(auto index:finished)finish(index);
+      if(current_pair){auto &pair=pairs[*current_pair];if(tasks[pair.producer].complete&&tasks[pair.consumer].complete){require(pair.window->finished()&&array->idle(),"closed pipeline did not drain its events/resources");auto report=pair.window->snapshot();report["producer_source"]=(*tasks[pair.producer].node)["source_operator_id"];report["consumer_source"]=(*tasks[pair.consumer].node)["source_operator_id"];report["begin_cycle"]=Json::UInt64(pair.begin);report["end_cycle"]=Json::UInt64(cycle+1);pipeline_reports.append(report);pair.window.reset();current_pair.reset();}}
+      ++cycle;
     }
     require(active.empty()&&ready.empty()&&array->idle()&&memory.idle()&&mux.idle(),"ready graph did not drain");uint64_t graph_cycles=cycle;Json::Value outputs(Json::arrayValue);
     for(const auto &spec:program["outputs"]){auto logits=readback(values.at(spec["logits"].asString())),token=readback(values.at(spec["token"].asString()));
@@ -216,6 +274,7 @@ struct Runner {
     r["graph_cycles"]=Json::UInt64(graph_cycles);r["host_readback_cycles"]=Json::UInt64(cycle-graph_cycles);r["host_readback_requests"]=Json::UInt64(readback_requests);r["shared_elapsed_cycles"]=Json::UInt64(cycle);
     r["preloaded_assets"]=Json::UInt64(preloaded_assets);r["preloaded_bytes"]=Json::UInt64(preloaded_bytes);r["virtual_tensor_backing_used"]=true;r["functional_entry_calls"]=0;r["blas_calls"]=0;r["python_or_gpu_execution_fallbacks"]=0;
     r["dependency_visibility"]="whole_source_completion_next_edge_not_partial_tile_cdc";r["control_execution"]="scheduled_rv64_leaf_not_actual_cpu";r["weight_loading"]="preloaded_not_cpu_or_dma_loader";
+    if(tile_pipeline){require(!current_pair&&pipeline_reports.size()==pairs.size(),"not all compiled pipeline pairs executed");r["classification"]="ready_graph_bounded_pair_events_not_general_cdc_or_system_acceptance";r["dependency_visibility"]="compiled_closed_pairs_use_next_edge_block_events_other_edges_whole_source";r["pipeline_groups"]=pipeline_reports;r["pipeline_whole_source_barrier"]=whole_pipeline_barrier;}
     r["full_model_execution_verified"]=false;r["complete_cdc_verified"]=false;r["mlx_system_verified"]=false;r["inference_performance_eligible"]=false;return r;
   }
 };
