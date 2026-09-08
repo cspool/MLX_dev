@@ -6,6 +6,8 @@
 
 已经实现的 C++ 调度模型、系统接口与 RTL 组件保留为基础。当前优先补齐模型 → 编译 → C++ MLX 后端 → 系统执行链，暂停进一步 RTL/PPA 扩展；完整模型正确性通过之后才验证推理性能。
 
+2026-09-08终态更新：[完整公开Llama2原生物理执行](mlx-complete-native-llama2-result.md)已完成全部源/参数、实际token/cache推进及访存/资源排空，三步96,000个FP16 logits通过声明数值合约的逐字节核对。原GPU误差门槛仍失败，实际Rocket/配对路径和其他模型也未验收；该结果不是ME3/ME4或作者hybrid通过。下文的“已启动/尚待终态”保留为对应增量当时的历史记录，以此更新及归档为准。
+
 最新新增 `--memory-backend scheduled`：2659个内存/视图调用进入响应驱动的C++搬运状态机。独立[完整Llama2重跑](../artifacts/tagged/model-e2e/llama2-memory-scheduled-001/numeric-conformance.json)已经结束，6181个源调用全部执行、每个恰好一条路由，291个参数张量均消费；声明数值合约下96000个logits逐位一致，token/cache依赖通过。32446193个memory请求/响应排空，BLAS=0、旧功能辅助入口=0。原GPU比较仍失败，记录和阈值保留。该run的matrix/vector为功能微程序、控制为rv64_leaf，尚非完整系统/全周期执行，因此不开放推理性能门槛。
 
 后续已将控制scheduled选择接入主runner，并将[四类后端与物理缓冲接到共享原生执行器](mlx-shared-physical-model.md)：524项回归包含生成/cache、实际权重扰动、地址复用、写入有效性和重试。新路径只有组合图实际执行与完整Llama2编译核对；完整模型重跑、真实装载/Rocket/HellaCache和跨算子共享资源仍未验收，不能移用上述历史数值结果。

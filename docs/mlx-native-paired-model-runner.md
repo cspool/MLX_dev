@@ -41,3 +41,5 @@ PYTHONPATH="$PWD/src:$PWD" .venv/bin/python -m scripts.run_mlx_ready_model \
 ```
 
 新实现位于独立分支 `mlx-native-e2e-v1`，没有修改三个既有长运行的工作树。实际运行期间继续冻结该尝试的来源、输入、二进制和运行库，不因观察超时重启。
+
+后续状态：旧[逐算子串行完整原生运行](mlx-complete-native-llama2-result.md)已经结束并通过声明数值合约，但原GPU误差门槛失败。该终态不转移为本页配对实现的完整模型通过；本页尝试及两个Rocket完整尝试仍待各自结果与审计。
