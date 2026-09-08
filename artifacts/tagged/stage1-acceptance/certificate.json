@@ -1,0 +1,258 @@
+{
+  "status": "native_stage_passed",
+  "stage": "M0_M1_M2",
+  "created_at": "2026-09-07T08:19:35.933478+00:00",
+  "scope": "registered bounded FP16 vector/region workloads and named native scheduling regressions",
+  "source_fingerprints": {
+    "simulator_ext/tagged/simulator.cc": "fafcd6164d95131b6181f0ee57a8779292ef645f822e0462c878764250278a52",
+    "simulator_ext/tagged/mlx_tagged_simulator.h": "24f86914f63afa1acfb6d7e53c5ff470cb8efd8c98af0a3b1990862dfabcc487",
+    "simulator_ext/tagged/numeric_test.cc": "4a98d0085fd03148a5df41cd2808ae4febebb9bfd692c2cf5b0086ac7cffd795",
+    "simulator_ext/tagged/mlir_frontend.cc": "00869440f1f4577b5ccd81cd302702ea98e14f25bb2db85ee40f605c66ca04c7",
+    "simulator_ext/tagged/main.cc": "75a1943a4f380af25ec0c2396d9e8954f823e38fbb6e40a16ebfc3ac23aee02c",
+    "simulator_ext/tagged/CMakeLists.txt": "591f17a1a621a2427a759a90ff08c1628be5004a8623d8ba07ae10d175e88634",
+    "simulator_ext/tagged/program.cc": "4aa54ff21415bf7f69a22fa7727b170f0e2cacb6407fb5e301adbdff1d31baed",
+    "simulator_ext/tagged/fp16.cc": "f9e1b22c8c744dc22effdd58fb814fa61557729a7bcdb7cf985897a97e72d83e",
+    "simulator_ext/tagged/c_api.cc": "793c9ee338f76e33b5fd090f613d1b10864a821b25f49d67f94c4ae3938adc90",
+    "simulator_ext/tagged/c_api.h": "470af0110c7611f0fef81b2321d2afd82271b9b78f4b0cffa32553220b3c9612",
+    "src/mlxsim/tagged_workloads.py": "5347f7d0e76ef5d5b7c787b46ff0e20faa3765bfc7c77d2fd701ac5d372551a4",
+    "src/mlxsim/tagged_compiler.py": "b49be26625cdcdddf3e5fa9dc0b86e4a35b0a7418866583736f1b18e69ceb2f7",
+    "src/mlxsim/tagged_program.py": "c9df620d858cafe16baa6c5766f87424e872fb9cde760e32556e62d96a6a1819",
+    "src/mlxsim/tagged_mlir.py": "258851b5d1e2078c1611b527714e71e6053b805f4e686321fbbe0a5422d3a6c7",
+    "src/mlxsim/tagged_simulator.py": "44ae8c2577bd1c99a50f9e1bec9a85f013d2adb54641c8d087e9a16ce0dde41c",
+    "src/mlxsim/tagged_regions.py": "8be84be0577e0f58e481351def1c3b004ef94d3e96fd3ef0dcc409df200d5267",
+    "tests/test_tagged_scheduler.py": "3a563d4255ba3e1617d21e44b4d65f00429743c74b1ee2dad1552f4326ccd7e8",
+    "scripts/run_mlx_tagged.py": "a552523881918698eecbb2e4063765e2641640cd74204915b19d5554f0212d41",
+    "scripts/verify_mlx_native_stage1.py": "cdf9afc67518ccb39759a387fb0f6b528c212a239e27262a751c51fd062afa69"
+  },
+  "binary_sha256": "38488dedeb92817607db9a42743f8081265aa81f84ba981081544df60152587b",
+  "test_count": 56,
+  "junit_sha256": "ef1c0ecba2997dc5f96d55708077b2ebfcc95353f655f6710736d32cc3cdc80a",
+  "coverage": {
+    "T1": [
+      "test_native_t1_t2_t4_t12_overlap_with_unchanged_resources"
+    ],
+    "T2": [
+      "test_native_t1_t2_t4_t12_overlap_with_unchanged_resources"
+    ],
+    "T3": [
+      "test_native_t3_t5_t8_t9_transport_and_iteration_ownership[1]",
+      "test_native_t3_t5_t8_t9_transport_and_iteration_ownership[2]",
+      "test_native_t3_t5_t8_t9_transport_and_iteration_ownership[4]"
+    ],
+    "T4": [
+      "test_native_t1_t2_t4_t12_overlap_with_unchanged_resources"
+    ],
+    "T5": [
+      "test_native_t3_t5_t8_t9_transport_and_iteration_ownership[1]",
+      "test_native_t3_t5_t8_t9_transport_and_iteration_ownership[2]",
+      "test_native_t3_t5_t8_t9_transport_and_iteration_ownership[4]"
+    ],
+    "T6": [
+      "test_native_t6_t11_reject_program_abi_and_capacity_without_python_validation"
+    ],
+    "T7": [
+      "test_native_t7_slot_reuse_across_40_logical_blocks"
+    ],
+    "T8": [
+      "test_native_t3_t5_t8_t9_transport_and_iteration_ownership[1]",
+      "test_native_t3_t5_t8_t9_transport_and_iteration_ownership[2]",
+      "test_native_t3_t5_t8_t9_transport_and_iteration_ownership[4]"
+    ],
+    "T9": [
+      "test_native_destination_credit_prevents_future_iteration_router_blocking"
+    ],
+    "T10": [
+      "test_native_fused_regions_spill_between_resource_limited_waves[8]",
+      "test_native_fused_regions_spill_between_resource_limited_waves[16]"
+    ],
+    "T11_component_only": [
+      "test_c_api_tick_pause_poll_and_independent_instances"
+    ],
+    "T12": [
+      "test_native_folded_bsmm_overlaps_real_layers_with_identical_resources"
+    ]
+  },
+  "commands": [
+    {
+      "name": "pytest",
+      "command": [
+        "/workspace/MLX_dev/.venv/bin/python",
+        "-m",
+        "pytest",
+        "-q",
+        "tests/test_tagged_scheduler.py",
+        "--junitxml=/workspace/MLX_dev/artifacts/tagged/stage1-acceptance/pytest.xml"
+      ],
+      "returncode": 0,
+      "log": "/workspace/MLX_dev/artifacts/tagged/stage1-acceptance/pytest.log",
+      "log_sha256": "2c5fc3443aa1057986d067f390b1ac7dfb23a3ea0f3bdefb9e74644ff4292aaf"
+    },
+    {
+      "name": "ctest",
+      "command": [
+        "ctest",
+        "--test-dir",
+        "/workspace/MLX_dev/build/mlx-tagged-cpp",
+        "--output-on-failure"
+      ],
+      "returncode": 0,
+      "log": "/workspace/MLX_dev/artifacts/tagged/stage1-acceptance/ctest.log",
+      "log_sha256": "d6eb32ddfa66fce93bb72a42636c055d085a777a400e142640e55fa0289d212c"
+    },
+    {
+      "name": "bsmm",
+      "command": [
+        "/workspace/MLX_dev/.venv/bin/python",
+        "-m",
+        "scripts.run_mlx_tagged",
+        "--workload",
+        "bsmm",
+        "--no-trace",
+        "--output",
+        "/workspace/MLX_dev/artifacts/tagged/stage1-acceptance/bsmm"
+      ],
+      "returncode": 0,
+      "log": "/workspace/MLX_dev/artifacts/tagged/stage1-acceptance/bsmm.log",
+      "log_sha256": "b54d10d5c2b9d9df51f4cf4d26e377c605786ec0ff2dfa6d2f5e9674a15c0917"
+    },
+    {
+      "name": "fft_cmp",
+      "command": [
+        "/workspace/MLX_dev/.venv/bin/python",
+        "-m",
+        "scripts.run_mlx_tagged",
+        "--workload",
+        "fft_cmp",
+        "--no-trace",
+        "--output",
+        "/workspace/MLX_dev/artifacts/tagged/stage1-acceptance/fft_cmp"
+      ],
+      "returncode": 0,
+      "log": "/workspace/MLX_dev/artifacts/tagged/stage1-acceptance/fft_cmp.log",
+      "log_sha256": "0ed30858e4ebe7595bedd302e6409474e731068b129eb8c45bc4d7458118c5b1"
+    },
+    {
+      "name": "swa",
+      "command": [
+        "/workspace/MLX_dev/.venv/bin/python",
+        "-m",
+        "scripts.run_mlx_tagged",
+        "--workload",
+        "swa",
+        "--no-trace",
+        "--output",
+        "/workspace/MLX_dev/artifacts/tagged/stage1-acceptance/swa"
+      ],
+      "returncode": 0,
+      "log": "/workspace/MLX_dev/artifacts/tagged/stage1-acceptance/swa.log",
+      "log_sha256": "352fea42cf33309018094d795873757169755d268ca376f14c98d3e6777304e6"
+    },
+    {
+      "name": "transformer_block",
+      "command": [
+        "/workspace/MLX_dev/.venv/bin/python",
+        "-m",
+        "scripts.run_mlx_tagged",
+        "--workload",
+        "transformer_block",
+        "--no-trace",
+        "--output",
+        "/workspace/MLX_dev/artifacts/tagged/stage1-acceptance/transformer_block"
+      ],
+      "returncode": 0,
+      "log": "/workspace/MLX_dev/artifacts/tagged/stage1-acceptance/transformer_block.log",
+      "log_sha256": "f78cfba97028a07fc23c0969fea334e33afbe2bdd2117c8d06ae8c47790d2af0"
+    }
+  ],
+  "workloads": {
+    "bsmm": {
+      "program_sha256": "8d64d4d22228d88ec91a988ca34173ad28434ddf5646a2792369c2eb9a63a858",
+      "blocks": 4,
+      "arithmetic_operations": 16,
+      "mlir": {
+        "input_operations": 16,
+        "llvm_major": 14,
+        "output_operations": 16,
+        "passes": [
+          "cse",
+          "canonicalize"
+        ],
+        "source_sha256": "d464c03403ae208085468ff46eba296769e135ce6aa4a54d0806d22e63e1be79",
+        "optimized_sha256": "0b91bdf20a8ca5cb33f6b1b45bd088b04ebef61f6bdbed07c1917b553c6aad15",
+        "frontend_binary_sha256": "88ad66f2c3a30b5861a53b0d878cb0b55cd8385cd3df0fa95dcc20d805d6d8d7"
+      },
+      "native_cycles": 165,
+      "serial_cycles": 165,
+      "result_sha256": "2a6e782da6e5e77002a01d5b1599f8539ffe28159d78c199f9f203f9ed148a68"
+    },
+    "fft_cmp": {
+      "program_sha256": "8efc82ca8b3f5fadcf48c136056a682542a48ecc963e20ca3cb94d7b5bcb366b",
+      "blocks": 4,
+      "arithmetic_operations": 32,
+      "mlir": {
+        "input_operations": 32,
+        "llvm_major": 14,
+        "output_operations": 32,
+        "passes": [
+          "cse",
+          "canonicalize"
+        ],
+        "source_sha256": "ced1f6b1ff2cb5f5392510973de7b23f1a628542d73090a1c733d760018b4179",
+        "optimized_sha256": "678782ffd4d03a62bf798500f4aa946da0213722c34382ca7c558c23b4bdfa98",
+        "frontend_binary_sha256": "88ad66f2c3a30b5861a53b0d878cb0b55cd8385cd3df0fa95dcc20d805d6d8d7"
+      },
+      "native_cycles": 228,
+      "serial_cycles": 228,
+      "result_sha256": "a1a1c2d3d1d1203c4eafc0471524e442ace39a763fd4ca9e72e4cf0388eaee57"
+    },
+    "swa": {
+      "program_sha256": "77073e701ef3d7fab1964937612530307c1cb8f0bcac916d85dc893517d03b39",
+      "blocks": 4,
+      "arithmetic_operations": 12,
+      "mlir": {
+        "input_operations": 12,
+        "llvm_major": 14,
+        "output_operations": 12,
+        "passes": [
+          "cse",
+          "canonicalize"
+        ],
+        "source_sha256": "a7dd3a13191a271dca4d032df2bf7a48b7d90eda75fedde87db8ba797d091255",
+        "optimized_sha256": "22a05adf958813346f93a0507ffa2403cbb62aa27efef1e1ed6a68f9e91ddae0",
+        "frontend_binary_sha256": "88ad66f2c3a30b5861a53b0d878cb0b55cd8385cd3df0fa95dcc20d805d6d8d7"
+      },
+      "native_cycles": 183,
+      "serial_cycles": 183,
+      "result_sha256": "775b56d1875e9922c32a83bdf83f5ca50a92a7a272f149b719e932f1ec71f5db"
+    },
+    "transformer_block": {
+      "program_sha256": "d298fa09e6ad116aa98dbe06591b4325f9b9565dc0af0759fcd2fbd924c4a0e2",
+      "blocks": 13,
+      "arithmetic_operations": 49,
+      "mlir": {
+        "input_operations": 61,
+        "llvm_major": 14,
+        "output_operations": 49,
+        "passes": [
+          "cse",
+          "canonicalize"
+        ],
+        "source_sha256": "96f01cee38725f6a175b000a838a2de7320959596333d7f402272ae5ce323dbc",
+        "optimized_sha256": "44e6ac052052e4d6cf7e539fbee116c25b500fa8b8860633d149e75f22b0b388",
+        "frontend_binary_sha256": "88ad66f2c3a30b5861a53b0d878cb0b55cd8385cd3df0fa95dcc20d805d6d8d7"
+      },
+      "native_cycles": 408,
+      "serial_cycles": 408,
+      "result_sha256": "5ca561253ec9490cd51b099f287ffc2397b7aad28b81be1cb043fccf405df679"
+    }
+  },
+  "next_stage": "M3_system_simulation_integration",
+  "system_integration_verified": false,
+  "rtl_verified": false,
+  "limitations": [
+    "finite vector MLIR dialect, not arbitrary C/PyTorch or general Linalg lowering",
+    "bounded wave admission; no runtime PE migration or cross-wave overlap",
+    "SWA scalar-feature fixture uses the first SIMD/4 lanes",
+    "no claim about full-model or paper-scale performance"
+  ]
+}

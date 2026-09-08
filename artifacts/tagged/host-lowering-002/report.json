@@ -1,0 +1,869 @@
+{
+  "classification": "full_model_host_control_abi_lowering_not_model_execution",
+  "sources": {
+    "scripts/verify_mlx_host_lowering.py": "377e370555b655d59ebc8aa5c433426d16aad89649659c6dd21364fbd1005ff8",
+    "system_sim/physical_host/lowering.py": "28f7b3453aeafa87972f323b125279afbb37bd4bce0535177cab382828853528",
+    "system_sim/physical_host/control_runtime.h": "941b527519bba1ac7176762d78617c744454c974c3aa35e26cf3d36a86362fa1",
+    "src/mlxsim/model_control_program.py": "14eea6c7d5ff8b306db6f3d9ecbc09eb05dc827ff9cd714d397e136992842a76",
+    "src/mlxsim/model_memory_program.py": "ca133a0a09590a7709b07c667bf0795c259a19b2e54c3f49a1fca641cde71c13"
+  },
+  "inputs": {
+    "/workspace/MLX_dev/artifacts/tagged/model-e2e/llama2-physical-full-001/program.json": "d767a3ed68fd5b95ce323039f27fa151ae8c20fc7289ff5e579ddca0e71cd681",
+    "/workspace/MLX_dev/artifacts/tagged/model-storage-002/model-lifetimes.json": "3b9b05e6f4fd0c1ed178368bd197a2db1fdc8b7579e67d2ad68181aa66048d2f"
+  },
+  "source_nodes": 6181,
+  "host_control_routes": [
+    {
+      "source_operator_id": 1,
+      "kind": "arange",
+      "entry": "mlx_host_control_execute",
+      "abi_version": 1,
+      "command_bytes": 640,
+      "bindings": [
+        {
+          "value": "v1",
+          "root": "v1",
+          "base": 10603464832,
+          "bytes": 64,
+          "write": true
+        }
+      ],
+      "host_isa": "RV64IMAFD",
+      "pe_opcode": false,
+      "rocket_execution_verified": false,
+      "mlx_system_verified": false,
+      "command_sha256": "9ce3ee288e1b336fc1503fa0fc9d8ee7017b1845dedad984cd7c9c2e6626cfc7",
+      "command_file": "/workspace/MLX_dev/artifacts/tagged/host-lowering-002/control-1.bin",
+      "forward_id": 0,
+      "layer_idx": null
+    },
+    {
+      "source_operator_id": 2,
+      "kind": "add",
+      "entry": "mlx_host_control_execute",
+      "abi_version": 1,
+      "command_bytes": 640,
+      "bindings": [
+        {
+          "value": "v1",
+          "root": "v1",
+          "base": 10603464832,
+          "bytes": 64,
+          "write": false
+        },
+        {
+          "value": "v2",
+          "root": "v2",
+          "base": 17771868672,
+          "bytes": 64,
+          "write": true
+        }
+      ],
+      "host_isa": "RV64IMAFD",
+      "pe_opcode": false,
+      "rocket_execution_verified": false,
+      "mlx_system_verified": false,
+      "command_sha256": "70d911d0b771019a1212913f9c0cdec4ad6a74bc15b9ef393df71b960cad02ca",
+      "command_file": "/workspace/MLX_dev/artifacts/tagged/host-lowering-002/control-2.bin",
+      "forward_id": 0,
+      "layer_idx": null
+    },
+    {
+      "source_operator_id": 4,
+      "kind": "arange",
+      "entry": "mlx_host_control_execute",
+      "abi_version": 1,
+      "command_bytes": 640,
+      "bindings": [
+        {
+          "value": "v4",
+          "root": "v4",
+          "base": 10603464832,
+          "bytes": 8,
+          "write": true
+        }
+      ],
+      "host_isa": "RV64IMAFD",
+      "pe_opcode": false,
+      "rocket_execution_verified": false,
+      "mlx_system_verified": false,
+      "command_sha256": "d14d1f916b7f3a81e343446fdd8c1c4aafe0721a2385b37741c3cf543b21d980",
+      "command_file": "/workspace/MLX_dev/artifacts/tagged/host-lowering-002/control-4.bin",
+      "forward_id": 0,
+      "layer_idx": null
+    },
+    {
+      "source_operator_id": 5,
+      "kind": "arange",
+      "entry": "mlx_host_control_execute",
+      "abi_version": 1,
+      "command_bytes": 640,
+      "bindings": [
+        {
+          "value": "v5",
+          "root": "v5",
+          "base": 17771868736,
+          "bytes": 8,
+          "write": true
+        }
+      ],
+      "host_isa": "RV64IMAFD",
+      "pe_opcode": false,
+      "rocket_execution_verified": false,
+      "mlx_system_verified": false,
+      "command_sha256": "a152d998f5d2b67963efe7d4f466f90f86d2bc6cc3d92e1474447f3cedfaef61",
+      "command_file": "/workspace/MLX_dev/artifacts/tagged/host-lowering-002/control-5.bin",
+      "forward_id": 0,
+      "layer_idx": null
+    },
+    {
+      "source_operator_id": 6,
+      "kind": "arange",
+      "entry": "mlx_host_control_execute",
+      "abi_version": 1,
+      "command_bytes": 640,
+      "bindings": [
+        {
+          "value": "v6",
+          "root": "v6",
+          "base": 17771868800,
+          "bytes": 64,
+          "write": true
+        }
+      ],
+      "host_isa": "RV64IMAFD",
+      "pe_opcode": false,
+      "rocket_execution_verified": false,
+      "mlx_system_verified": false,
+      "command_sha256": "88448a81a73f865dc45b7b0cf2d22656b7a64059896896658c4cd1f3e815fa0f",
+      "command_file": "/workspace/MLX_dev/artifacts/tagged/host-lowering-002/control-6.bin",
+      "forward_id": 0,
+      "layer_idx": null
+    },
+    {
+      "source_operator_id": 7,
+      "kind": "add",
+      "entry": "mlx_host_control_execute",
+      "abi_version": 1,
+      "command_bytes": 640,
+      "bindings": [
+        {
+          "value": "v6",
+          "root": "v6",
+          "base": 17771868800,
+          "bytes": 64,
+          "write": false
+        },
+        {
+          "value": "v7",
+          "root": "v7",
+          "base": 17771868864,
+          "bytes": 64,
+          "write": true
+        }
+      ],
+      "host_isa": "RV64IMAFD",
+      "pe_opcode": false,
+      "rocket_execution_verified": false,
+      "mlx_system_verified": false,
+      "command_sha256": "8047884383e2227666a992489fd446b6d00596fc8a0595b4799941d59bc36ed1",
+      "command_file": "/workspace/MLX_dev/artifacts/tagged/host-lowering-002/control-7.bin",
+      "forward_id": 0,
+      "layer_idx": null
+    },
+    {
+      "source_operator_id": 8,
+      "kind": "arange",
+      "entry": "mlx_host_control_execute",
+      "abi_version": 1,
+      "command_bytes": 640,
+      "bindings": [
+        {
+          "value": "v8",
+          "root": "v8",
+          "base": 17771868800,
+          "bytes": 64,
+          "write": true
+        }
+      ],
+      "host_isa": "RV64IMAFD",
+      "pe_opcode": false,
+      "rocket_execution_verified": false,
+      "mlx_system_verified": false,
+      "command_sha256": "88448a81a73f865dc45b7b0cf2d22656b7a64059896896658c4cd1f3e815fa0f",
+      "command_file": "/workspace/MLX_dev/artifacts/tagged/host-lowering-002/control-8.bin",
+      "forward_id": 0,
+      "layer_idx": null
+    },
+    {
+      "source_operator_id": 9,
+      "kind": "add",
+      "entry": "mlx_host_control_execute",
+      "abi_version": 1,
+      "command_bytes": 640,
+      "bindings": [
+        {
+          "value": "v8",
+          "root": "v8",
+          "base": 17771868800,
+          "bytes": 64,
+          "write": false
+        },
+        {
+          "value": "v9",
+          "root": "v9",
+          "base": 17771868928,
+          "bytes": 64,
+          "write": true
+        }
+      ],
+      "host_isa": "RV64IMAFD",
+      "pe_opcode": false,
+      "rocket_execution_verified": false,
+      "mlx_system_verified": false,
+      "command_sha256": "25980f68b40726fa1168d8505066f6556a94d107415a8eb51efa8895be4a1106",
+      "command_file": "/workspace/MLX_dev/artifacts/tagged/host-lowering-002/control-9.bin",
+      "forward_id": 0,
+      "layer_idx": null
+    },
+    {
+      "source_operator_id": 22,
+      "kind": "le",
+      "entry": "mlx_host_control_execute",
+      "abi_version": 1,
+      "command_bytes": 640,
+      "bindings": [
+        {
+          "value": "v21",
+          "root": "v9",
+          "base": 17771868928,
+          "bytes": 64,
+          "write": false
+        },
+        {
+          "value": "v18",
+          "root": "v7",
+          "base": 17771868864,
+          "bytes": 64,
+          "write": false
+        },
+        {
+          "value": "v22",
+          "root": "v22",
+          "base": 10603464832,
+          "bytes": 64,
+          "write": true
+        }
+      ],
+      "host_isa": "RV64IMAFD",
+      "pe_opcode": false,
+      "rocket_execution_verified": false,
+      "mlx_system_verified": false,
+      "command_sha256": "d87f014450c040fa6ce3fedc0cca3c712d97aec9962daf915693a5dea07ceff4",
+      "command_file": "/workspace/MLX_dev/artifacts/tagged/host-lowering-002/control-22.bin",
+      "forward_id": 0,
+      "layer_idx": null
+    },
+    {
+      "source_operator_id": 2165,
+      "kind": "argmax",
+      "entry": "mlx_host_control_execute",
+      "abi_version": 1,
+      "command_bytes": 640,
+      "bindings": [
+        {
+          "value": "v2164",
+          "root": "v2163",
+          "base": 17775940288,
+          "bytes": 64000,
+          "write": false
+        },
+        {
+          "value": "v2165",
+          "root": "v2165",
+          "base": 4294967552,
+          "bytes": 8,
+          "write": true
+        }
+      ],
+      "host_isa": "RV64IMAFD",
+      "pe_opcode": false,
+      "rocket_execution_verified": false,
+      "mlx_system_verified": false,
+      "command_sha256": "0290a1a20f73518f8016096e86ad2c0224cabe5d899d182c102fd59845da725f",
+      "command_file": "/workspace/MLX_dev/artifacts/tagged/host-lowering-002/control-2165.bin",
+      "forward_id": 0,
+      "layer_idx": null
+    },
+    {
+      "source_operator_id": 2168,
+      "kind": "arange",
+      "entry": "mlx_host_control_execute",
+      "abi_version": 1,
+      "command_bytes": 640,
+      "bindings": [
+        {
+          "value": "v2168",
+          "root": "v2168",
+          "base": 4294967616,
+          "bytes": 8,
+          "write": true
+        }
+      ],
+      "host_isa": "RV64IMAFD",
+      "pe_opcode": false,
+      "rocket_execution_verified": false,
+      "mlx_system_verified": false,
+      "command_sha256": "bfb5b3ac53ecf1b1ea64662cf8c23654064944e64cb4896a1836b439e4fd7e84",
+      "command_file": "/workspace/MLX_dev/artifacts/tagged/host-lowering-002/control-2168.bin",
+      "forward_id": 1,
+      "layer_idx": null
+    },
+    {
+      "source_operator_id": 2169,
+      "kind": "add",
+      "entry": "mlx_host_control_execute",
+      "abi_version": 1,
+      "command_bytes": 640,
+      "bindings": [
+        {
+          "value": "v2168",
+          "root": "v2168",
+          "base": 4294967616,
+          "bytes": 8,
+          "write": false
+        },
+        {
+          "value": "v2169",
+          "root": "v2169",
+          "base": 4789920128,
+          "bytes": 8,
+          "write": true
+        }
+      ],
+      "host_isa": "RV64IMAFD",
+      "pe_opcode": false,
+      "rocket_execution_verified": false,
+      "mlx_system_verified": false,
+      "command_sha256": "4d8b500e466426745c4ba03767e1deb2a34bd3de3222c6d8048f4256a5b50ed4",
+      "command_file": "/workspace/MLX_dev/artifacts/tagged/host-lowering-002/control-2169.bin",
+      "forward_id": 1,
+      "layer_idx": null
+    },
+    {
+      "source_operator_id": 2171,
+      "kind": "arange",
+      "entry": "mlx_host_control_execute",
+      "abi_version": 1,
+      "command_bytes": 640,
+      "bindings": [
+        {
+          "value": "v2171",
+          "root": "v2171",
+          "base": 4294967616,
+          "bytes": 8,
+          "write": true
+        }
+      ],
+      "host_isa": "RV64IMAFD",
+      "pe_opcode": false,
+      "rocket_execution_verified": false,
+      "mlx_system_verified": false,
+      "command_sha256": "bfb5b3ac53ecf1b1ea64662cf8c23654064944e64cb4896a1836b439e4fd7e84",
+      "command_file": "/workspace/MLX_dev/artifacts/tagged/host-lowering-002/control-2171.bin",
+      "forward_id": 1,
+      "layer_idx": null
+    },
+    {
+      "source_operator_id": 2172,
+      "kind": "arange",
+      "entry": "mlx_host_control_execute",
+      "abi_version": 1,
+      "command_bytes": 640,
+      "bindings": [
+        {
+          "value": "v2172",
+          "root": "v2172",
+          "base": 4789920192,
+          "bytes": 8,
+          "write": true
+        }
+      ],
+      "host_isa": "RV64IMAFD",
+      "pe_opcode": false,
+      "rocket_execution_verified": false,
+      "mlx_system_verified": false,
+      "command_sha256": "66e4e6c0ef6889ed70a3968c955301fd50e3f1b15b0b38728ba445e382b59efa",
+      "command_file": "/workspace/MLX_dev/artifacts/tagged/host-lowering-002/control-2172.bin",
+      "forward_id": 1,
+      "layer_idx": null
+    },
+    {
+      "source_operator_id": 2173,
+      "kind": "arange",
+      "entry": "mlx_host_control_execute",
+      "abi_version": 1,
+      "command_bytes": 640,
+      "bindings": [
+        {
+          "value": "v2173",
+          "root": "v2173",
+          "base": 5375042048,
+          "bytes": 8,
+          "write": true
+        }
+      ],
+      "host_isa": "RV64IMAFD",
+      "pe_opcode": false,
+      "rocket_execution_verified": false,
+      "mlx_system_verified": false,
+      "command_sha256": "f480e0c124c3ca6515736104c60829f9d74220c8ea9e0bc43c2868cf08d3b8a4",
+      "command_file": "/workspace/MLX_dev/artifacts/tagged/host-lowering-002/control-2173.bin",
+      "forward_id": 1,
+      "layer_idx": null
+    },
+    {
+      "source_operator_id": 2174,
+      "kind": "add",
+      "entry": "mlx_host_control_execute",
+      "abi_version": 1,
+      "command_bytes": 640,
+      "bindings": [
+        {
+          "value": "v2173",
+          "root": "v2173",
+          "base": 5375042048,
+          "bytes": 8,
+          "write": false
+        },
+        {
+          "value": "v2174",
+          "root": "v2174",
+          "base": 5375042112,
+          "bytes": 8,
+          "write": true
+        }
+      ],
+      "host_isa": "RV64IMAFD",
+      "pe_opcode": false,
+      "rocket_execution_verified": false,
+      "mlx_system_verified": false,
+      "command_sha256": "23d6b7f812e07e169a753e4bb16e3da6808a4f6dd0ff0c05c18135f6c98198bd",
+      "command_file": "/workspace/MLX_dev/artifacts/tagged/host-lowering-002/control-2174.bin",
+      "forward_id": 1,
+      "layer_idx": null
+    },
+    {
+      "source_operator_id": 2175,
+      "kind": "arange",
+      "entry": "mlx_host_control_execute",
+      "abi_version": 1,
+      "command_bytes": 640,
+      "bindings": [
+        {
+          "value": "v2175",
+          "root": "v2175",
+          "base": 5779817088,
+          "bytes": 72,
+          "write": true
+        }
+      ],
+      "host_isa": "RV64IMAFD",
+      "pe_opcode": false,
+      "rocket_execution_verified": false,
+      "mlx_system_verified": false,
+      "command_sha256": "a080596deb56572bc7999202133902fcab2210dc4f5942a9744ac79f89e27210",
+      "command_file": "/workspace/MLX_dev/artifacts/tagged/host-lowering-002/control-2175.bin",
+      "forward_id": 1,
+      "layer_idx": null
+    },
+    {
+      "source_operator_id": 2176,
+      "kind": "add",
+      "entry": "mlx_host_control_execute",
+      "abi_version": 1,
+      "command_bytes": 640,
+      "bindings": [
+        {
+          "value": "v2175",
+          "root": "v2175",
+          "base": 5779817088,
+          "bytes": 72,
+          "write": false
+        },
+        {
+          "value": "v2176",
+          "root": "v2176",
+          "base": 6251692800,
+          "bytes": 72,
+          "write": true
+        }
+      ],
+      "host_isa": "RV64IMAFD",
+      "pe_opcode": false,
+      "rocket_execution_verified": false,
+      "mlx_system_verified": false,
+      "command_sha256": "bbce6755939a05db436572bf17b8e6cf1ac487c2e1094439ae9375f18d56fab1",
+      "command_file": "/workspace/MLX_dev/artifacts/tagged/host-lowering-002/control-2176.bin",
+      "forward_id": 1,
+      "layer_idx": null
+    },
+    {
+      "source_operator_id": 2189,
+      "kind": "le",
+      "entry": "mlx_host_control_execute",
+      "abi_version": 1,
+      "command_bytes": 640,
+      "bindings": [
+        {
+          "value": "v2188",
+          "root": "v2176",
+          "base": 6251692800,
+          "bytes": 72,
+          "write": false
+        },
+        {
+          "value": "v2185",
+          "root": "v2174",
+          "base": 5375042112,
+          "bytes": 8,
+          "write": false
+        },
+        {
+          "value": "v2189",
+          "root": "v2189",
+          "base": 4294967616,
+          "bytes": 9,
+          "write": true
+        }
+      ],
+      "host_isa": "RV64IMAFD",
+      "pe_opcode": false,
+      "rocket_execution_verified": false,
+      "mlx_system_verified": false,
+      "command_sha256": "c40c97b2cee29e5196c94e50ba5781fd5c2b76c2655d9ddd253498ab94fe0b1f",
+      "command_file": "/workspace/MLX_dev/artifacts/tagged/host-lowering-002/control-2189.bin",
+      "forward_id": 1,
+      "layer_idx": null
+    },
+    {
+      "source_operator_id": 4172,
+      "kind": "argmax",
+      "entry": "mlx_host_control_execute",
+      "abi_version": 1,
+      "command_bytes": 640,
+      "bindings": [
+        {
+          "value": "v4171",
+          "root": "v4170",
+          "base": 17775833600,
+          "bytes": 64000,
+          "write": false
+        },
+        {
+          "value": "v4172",
+          "root": "v4172",
+          "base": 4294967616,
+          "bytes": 8,
+          "write": true
+        }
+      ],
+      "host_isa": "RV64IMAFD",
+      "pe_opcode": false,
+      "rocket_execution_verified": false,
+      "mlx_system_verified": false,
+      "command_sha256": "4c20e9d69f8fcfce753e8b48c972a416a12f9b5d328418c500c9f51a33febaf1",
+      "command_file": "/workspace/MLX_dev/artifacts/tagged/host-lowering-002/control-4172.bin",
+      "forward_id": 1,
+      "layer_idx": null
+    },
+    {
+      "source_operator_id": 4175,
+      "kind": "arange",
+      "entry": "mlx_host_control_execute",
+      "abi_version": 1,
+      "command_bytes": 640,
+      "bindings": [
+        {
+          "value": "v4175",
+          "root": "v4175",
+          "base": 4789920128,
+          "bytes": 8,
+          "write": true
+        }
+      ],
+      "host_isa": "RV64IMAFD",
+      "pe_opcode": false,
+      "rocket_execution_verified": false,
+      "mlx_system_verified": false,
+      "command_sha256": "1ccbd703f85a6c231656181cdb7a9045e58c7b7504fbac46934f5b7239746da3",
+      "command_file": "/workspace/MLX_dev/artifacts/tagged/host-lowering-002/control-4175.bin",
+      "forward_id": 2,
+      "layer_idx": null
+    },
+    {
+      "source_operator_id": 4176,
+      "kind": "add",
+      "entry": "mlx_host_control_execute",
+      "abi_version": 1,
+      "command_bytes": 640,
+      "bindings": [
+        {
+          "value": "v4175",
+          "root": "v4175",
+          "base": 4789920128,
+          "bytes": 8,
+          "write": false
+        },
+        {
+          "value": "v4176",
+          "root": "v4176",
+          "base": 4789920192,
+          "bytes": 8,
+          "write": true
+        }
+      ],
+      "host_isa": "RV64IMAFD",
+      "pe_opcode": false,
+      "rocket_execution_verified": false,
+      "mlx_system_verified": false,
+      "command_sha256": "4119ad9751b2a10bcbaf433e89883bb6601dc3b525740d18c3ada931d4432ee8",
+      "command_file": "/workspace/MLX_dev/artifacts/tagged/host-lowering-002/control-4176.bin",
+      "forward_id": 2,
+      "layer_idx": null
+    },
+    {
+      "source_operator_id": 4178,
+      "kind": "arange",
+      "entry": "mlx_host_control_execute",
+      "abi_version": 1,
+      "command_bytes": 640,
+      "bindings": [
+        {
+          "value": "v4178",
+          "root": "v4178",
+          "base": 4789920128,
+          "bytes": 8,
+          "write": true
+        }
+      ],
+      "host_isa": "RV64IMAFD",
+      "pe_opcode": false,
+      "rocket_execution_verified": false,
+      "mlx_system_verified": false,
+      "command_sha256": "1ccbd703f85a6c231656181cdb7a9045e58c7b7504fbac46934f5b7239746da3",
+      "command_file": "/workspace/MLX_dev/artifacts/tagged/host-lowering-002/control-4178.bin",
+      "forward_id": 2,
+      "layer_idx": null
+    },
+    {
+      "source_operator_id": 4179,
+      "kind": "arange",
+      "entry": "mlx_host_control_execute",
+      "abi_version": 1,
+      "command_bytes": 640,
+      "bindings": [
+        {
+          "value": "v4179",
+          "root": "v4179",
+          "base": 5375042048,
+          "bytes": 8,
+          "write": true
+        }
+      ],
+      "host_isa": "RV64IMAFD",
+      "pe_opcode": false,
+      "rocket_execution_verified": false,
+      "mlx_system_verified": false,
+      "command_sha256": "f480e0c124c3ca6515736104c60829f9d74220c8ea9e0bc43c2868cf08d3b8a4",
+      "command_file": "/workspace/MLX_dev/artifacts/tagged/host-lowering-002/control-4179.bin",
+      "forward_id": 2,
+      "layer_idx": null
+    },
+    {
+      "source_operator_id": 4180,
+      "kind": "arange",
+      "entry": "mlx_host_control_execute",
+      "abi_version": 1,
+      "command_bytes": 640,
+      "bindings": [
+        {
+          "value": "v4180",
+          "root": "v4180",
+          "base": 5375042112,
+          "bytes": 8,
+          "write": true
+        }
+      ],
+      "host_isa": "RV64IMAFD",
+      "pe_opcode": false,
+      "rocket_execution_verified": false,
+      "mlx_system_verified": false,
+      "command_sha256": "f321f23bbb2e5d5497455249e85f88179af06c51042337d4a84bd99d6db4dabd",
+      "command_file": "/workspace/MLX_dev/artifacts/tagged/host-lowering-002/control-4180.bin",
+      "forward_id": 2,
+      "layer_idx": null
+    },
+    {
+      "source_operator_id": 4181,
+      "kind": "add",
+      "entry": "mlx_host_control_execute",
+      "abi_version": 1,
+      "command_bytes": 640,
+      "bindings": [
+        {
+          "value": "v4180",
+          "root": "v4180",
+          "base": 5375042112,
+          "bytes": 8,
+          "write": false
+        },
+        {
+          "value": "v4181",
+          "root": "v4181",
+          "base": 5779817088,
+          "bytes": 8,
+          "write": true
+        }
+      ],
+      "host_isa": "RV64IMAFD",
+      "pe_opcode": false,
+      "rocket_execution_verified": false,
+      "mlx_system_verified": false,
+      "command_sha256": "ee45712740ccbf97a2699efa3481ed0e30eeab24bbc5a1adc26651d154db46e8",
+      "command_file": "/workspace/MLX_dev/artifacts/tagged/host-lowering-002/control-4181.bin",
+      "forward_id": 2,
+      "layer_idx": null
+    },
+    {
+      "source_operator_id": 4182,
+      "kind": "arange",
+      "entry": "mlx_host_control_execute",
+      "abi_version": 1,
+      "command_bytes": 640,
+      "bindings": [
+        {
+          "value": "v4182",
+          "root": "v4182",
+          "base": 6251692800,
+          "bytes": 80,
+          "write": true
+        }
+      ],
+      "host_isa": "RV64IMAFD",
+      "pe_opcode": false,
+      "rocket_execution_verified": false,
+      "mlx_system_verified": false,
+      "command_sha256": "5156b8d3144f7c0327ac98943bde7f91253a2245a481817a9046e423d2dc112a",
+      "command_file": "/workspace/MLX_dev/artifacts/tagged/host-lowering-002/control-4182.bin",
+      "forward_id": 2,
+      "layer_idx": null
+    },
+    {
+      "source_operator_id": 4183,
+      "kind": "add",
+      "entry": "mlx_host_control_execute",
+      "abi_version": 1,
+      "command_bytes": 640,
+      "bindings": [
+        {
+          "value": "v4182",
+          "root": "v4182",
+          "base": 6251692800,
+          "bytes": 80,
+          "write": false
+        },
+        {
+          "value": "v4183",
+          "root": "v4183",
+          "base": 6690014080,
+          "bytes": 80,
+          "write": true
+        }
+      ],
+      "host_isa": "RV64IMAFD",
+      "pe_opcode": false,
+      "rocket_execution_verified": false,
+      "mlx_system_verified": false,
+      "command_sha256": "2f7916609f65316f8f1ca177e7b700ab7c012aaf1f32cb924649c329d6e52d6c",
+      "command_file": "/workspace/MLX_dev/artifacts/tagged/host-lowering-002/control-4183.bin",
+      "forward_id": 2,
+      "layer_idx": null
+    },
+    {
+      "source_operator_id": 4196,
+      "kind": "le",
+      "entry": "mlx_host_control_execute",
+      "abi_version": 1,
+      "command_bytes": 640,
+      "bindings": [
+        {
+          "value": "v4195",
+          "root": "v4183",
+          "base": 6690014080,
+          "bytes": 80,
+          "write": false
+        },
+        {
+          "value": "v4192",
+          "root": "v4181",
+          "base": 5779817088,
+          "bytes": 8,
+          "write": false
+        },
+        {
+          "value": "v4196",
+          "root": "v4196",
+          "base": 4789920128,
+          "bytes": 10,
+          "write": true
+        }
+      ],
+      "host_isa": "RV64IMAFD",
+      "pe_opcode": false,
+      "rocket_execution_verified": false,
+      "mlx_system_verified": false,
+      "command_sha256": "4d7fe192fde0acfb31c07bb5ea5d57fc5e1fd00b27d6b019d9aa177748e95e80",
+      "command_file": "/workspace/MLX_dev/artifacts/tagged/host-lowering-002/control-4196.bin",
+      "forward_id": 2,
+      "layer_idx": null
+    },
+    {
+      "source_operator_id": 6179,
+      "kind": "argmax",
+      "entry": "mlx_host_control_execute",
+      "abi_version": 1,
+      "command_bytes": 640,
+      "bindings": [
+        {
+          "value": "v6178",
+          "root": "v6177",
+          "base": 4294984064,
+          "bytes": 64000,
+          "write": false
+        },
+        {
+          "value": "v6179",
+          "root": "v6179",
+          "base": 4294967296,
+          "bytes": 8,
+          "write": true
+        }
+      ],
+      "host_isa": "RV64IMAFD",
+      "pe_opcode": false,
+      "rocket_execution_verified": false,
+      "mlx_system_verified": false,
+      "command_sha256": "2acb24d572388b78fc3d342d039bb74c978d55a62a9585faddd392b2cfe1f6a1",
+      "command_file": "/workspace/MLX_dev/artifacts/tagged/host-lowering-002/control-6179.bin",
+      "forward_id": 2,
+      "layer_idx": null
+    }
+  ],
+  "control_route_count": 30,
+  "command_bytes_total": 19200,
+  "actual_model_data_executed": false,
+  "rocket_execution_verified": false,
+  "mlx_system_verified": false,
+  "inference_performance_eligible": false
+}

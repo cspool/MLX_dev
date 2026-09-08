@@ -1,0 +1,791 @@
+{
+  "name": "swa",
+  "blocks": [
+    {
+      "block_id": 0,
+      "layer": 0,
+      "pe": 0,
+      "wave": 0,
+      "registers": 3,
+      "instructions": [
+        {
+          "op": "load",
+          "dst": 0,
+          "src": [],
+          "spm": 2,
+          "stride": 0,
+          "target": null
+        },
+        {
+          "op": "load",
+          "dst": 1,
+          "src": [],
+          "spm": 3,
+          "stride": 0,
+          "target": null
+        },
+        {
+          "op": "mul",
+          "dst": 2,
+          "src": [
+            0,
+            1
+          ],
+          "spm": 0,
+          "stride": 0,
+          "target": null
+        },
+        {
+          "op": "xfer",
+          "dst": 0,
+          "src": [
+            2
+          ],
+          "spm": 0,
+          "stride": 0,
+          "target": 2
+        }
+      ],
+      "trip_count": 2
+    },
+    {
+      "block_id": 1,
+      "layer": 0,
+      "pe": 1,
+      "wave": 0,
+      "registers": 3,
+      "instructions": [
+        {
+          "op": "load",
+          "dst": 0,
+          "src": [],
+          "spm": 2,
+          "stride": 0,
+          "target": null
+        },
+        {
+          "op": "load",
+          "dst": 1,
+          "src": [],
+          "spm": 4,
+          "stride": 0,
+          "target": null
+        },
+        {
+          "op": "mul",
+          "dst": 2,
+          "src": [
+            0,
+            1
+          ],
+          "spm": 0,
+          "stride": 0,
+          "target": null
+        },
+        {
+          "op": "xfer",
+          "dst": 1,
+          "src": [
+            2
+          ],
+          "spm": 0,
+          "stride": 0,
+          "target": 2
+        }
+      ],
+      "trip_count": 2
+    },
+    {
+      "block_id": 2,
+      "layer": 1,
+      "pe": 2,
+      "wave": 0,
+      "registers": 6,
+      "instructions": [
+        {
+          "op": "load",
+          "dst": 2,
+          "src": [],
+          "spm": 0,
+          "stride": 0,
+          "target": null
+        },
+        {
+          "op": "max",
+          "dst": 3,
+          "src": [
+            0,
+            1
+          ],
+          "spm": 0,
+          "stride": 0,
+          "target": null
+        },
+        {
+          "op": "fma",
+          "dst": 4,
+          "src": [
+            3,
+            2,
+            0
+          ],
+          "spm": 0,
+          "stride": 0,
+          "target": null
+        },
+        {
+          "op": "exp",
+          "dst": 4,
+          "src": [
+            4
+          ],
+          "spm": 0,
+          "stride": 0,
+          "target": null
+        },
+        {
+          "op": "fma",
+          "dst": 3,
+          "src": [
+            3,
+            2,
+            1
+          ],
+          "spm": 0,
+          "stride": 0,
+          "target": null
+        },
+        {
+          "op": "exp",
+          "dst": 3,
+          "src": [
+            3
+          ],
+          "spm": 0,
+          "stride": 0,
+          "target": null
+        },
+        {
+          "op": "add",
+          "dst": 5,
+          "src": [
+            4,
+            3
+          ],
+          "spm": 0,
+          "stride": 0,
+          "target": null
+        },
+        {
+          "op": "div",
+          "dst": 4,
+          "src": [
+            4,
+            5
+          ],
+          "spm": 0,
+          "stride": 0,
+          "target": null
+        },
+        {
+          "op": "div",
+          "dst": 3,
+          "src": [
+            3,
+            5
+          ],
+          "spm": 0,
+          "stride": 0,
+          "target": null
+        },
+        {
+          "op": "xfer",
+          "dst": 0,
+          "src": [
+            4
+          ],
+          "spm": 0,
+          "stride": 0,
+          "target": 3
+        },
+        {
+          "op": "xfer",
+          "dst": 3,
+          "src": [
+            3
+          ],
+          "spm": 0,
+          "stride": 0,
+          "target": 3
+        }
+      ],
+      "trip_count": 2
+    },
+    {
+      "block_id": 3,
+      "layer": 2,
+      "pe": 3,
+      "wave": 0,
+      "registers": 6,
+      "instructions": [
+        {
+          "op": "load",
+          "dst": 1,
+          "src": [],
+          "spm": 4,
+          "stride": 0,
+          "target": null
+        },
+        {
+          "op": "load",
+          "dst": 2,
+          "src": [],
+          "spm": 1,
+          "stride": 0,
+          "target": null
+        },
+        {
+          "op": "load",
+          "dst": 4,
+          "src": [],
+          "spm": 5,
+          "stride": 0,
+          "target": null
+        },
+        {
+          "op": "fma",
+          "dst": 5,
+          "src": [
+            0,
+            1,
+            2
+          ],
+          "spm": 0,
+          "stride": 0,
+          "target": null
+        },
+        {
+          "op": "fma",
+          "dst": 5,
+          "src": [
+            3,
+            4,
+            5
+          ],
+          "spm": 0,
+          "stride": 0,
+          "target": null
+        },
+        {
+          "op": "store",
+          "dst": 0,
+          "src": [
+            5
+          ],
+          "spm": 6,
+          "stride": 0,
+          "target": null
+        }
+      ],
+      "trip_count": 2
+    }
+  ],
+  "inputs": {
+    "0": [
+      48128,
+      48128,
+      48128,
+      48128,
+      48128,
+      48128,
+      48128,
+      48128,
+      48128,
+      48128,
+      48128,
+      48128,
+      48128,
+      48128,
+      48128,
+      48128,
+      48128,
+      48128,
+      48128,
+      48128,
+      48128,
+      48128,
+      48128,
+      48128,
+      48128,
+      48128,
+      48128,
+      48128,
+      48128,
+      48128,
+      48128,
+      48128
+    ],
+    "1": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    "2": [
+      46080,
+      45948,
+      45816,
+      45684,
+      45551,
+      45419,
+      45287,
+      45155,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    "3": [
+      45568,
+      45436,
+      45304,
+      45172,
+      45023,
+      44759,
+      44494,
+      44230,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    "4": [
+      45056,
+      44792,
+      44527,
+      44263,
+      43966,
+      43437,
+      42810,
+      41522,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    "5": [
+      44032,
+      43503,
+      42942,
+      41786,
+      6177,
+      9381,
+      10339,
+      10868,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ]
+  },
+  "outputs": [
+    6
+  ],
+  "hardware": {
+    "rows": 4,
+    "columns": 4,
+    "lanes": 32,
+    "contexts": 4,
+    "registers": 16,
+    "instruction_words": 32,
+    "spm_vectors": 128
+  },
+  "abi_version": 2,
+  "numerics": "fp16_step_rounding_nonfused_fma_transcendental_quarter_lanes_v1",
+  "lineage": {
+    "frontend": "vector_ssa_v2",
+    "source_sha256": "e172577a3c5d8facb1b5ea30c12465491e265a95a11595c9985ae50b3862d207",
+    "blocks": {
+      "0": {
+        "region": "0:dot_0",
+        "layer": 0,
+        "value": "mlir_v0",
+        "values": [
+          "mlir_v0"
+        ],
+        "register_assignment": {
+          "input_0": 0,
+          "input_1": 1,
+          "mlir_v0": 2
+        },
+        "incoming": [
+          "input_0",
+          "input_1"
+        ],
+        "exports": [
+          "mlir_v0"
+        ],
+        "instructions": [
+          {
+            "pc": 0,
+            "value": "input_0",
+            "kind": "boundary_load"
+          },
+          {
+            "pc": 1,
+            "value": "input_1",
+            "kind": "boundary_load"
+          },
+          {
+            "pc": 2,
+            "value": "mlir_v0",
+            "kind": "arithmetic"
+          },
+          {
+            "pc": 3,
+            "value": "mlir_v0",
+            "kind": "intra_wave_dataflow"
+          }
+        ]
+      },
+      "1": {
+        "region": "0:dot_1",
+        "layer": 0,
+        "value": "mlir_v1",
+        "values": [
+          "mlir_v1"
+        ],
+        "register_assignment": {
+          "input_0": 0,
+          "input_2": 1,
+          "mlir_v1": 2
+        },
+        "incoming": [
+          "input_0",
+          "input_2"
+        ],
+        "exports": [
+          "mlir_v1"
+        ],
+        "instructions": [
+          {
+            "pc": 0,
+            "value": "input_0",
+            "kind": "boundary_load"
+          },
+          {
+            "pc": 1,
+            "value": "input_2",
+            "kind": "boundary_load"
+          },
+          {
+            "pc": 2,
+            "value": "mlir_v1",
+            "kind": "arithmetic"
+          },
+          {
+            "pc": 3,
+            "value": "mlir_v1",
+            "kind": "intra_wave_dataflow"
+          }
+        ]
+      },
+      "2": {
+        "region": "1:softmax",
+        "layer": 1,
+        "value": "mlir_v9",
+        "values": [
+          "mlir_v2",
+          "mlir_v3",
+          "mlir_v4",
+          "mlir_v5",
+          "mlir_v6",
+          "mlir_v7",
+          "mlir_v8",
+          "mlir_v9"
+        ],
+        "register_assignment": {
+          "mlir_v0": 0,
+          "mlir_v1": 1,
+          "constant_0": 2,
+          "mlir_v2": 3,
+          "mlir_v3": 4,
+          "mlir_v4": 4,
+          "mlir_v5": 3,
+          "mlir_v6": 3,
+          "mlir_v7": 5,
+          "mlir_v8": 4,
+          "mlir_v9": 3
+        },
+        "incoming": [
+          "mlir_v0",
+          "mlir_v1",
+          "constant_0"
+        ],
+        "exports": [
+          "mlir_v8",
+          "mlir_v9"
+        ],
+        "instructions": [
+          {
+            "pc": 0,
+            "value": "constant_0",
+            "kind": "boundary_load"
+          },
+          {
+            "pc": 1,
+            "value": "mlir_v2",
+            "kind": "arithmetic"
+          },
+          {
+            "pc": 2,
+            "value": "mlir_v3",
+            "kind": "arithmetic"
+          },
+          {
+            "pc": 3,
+            "value": "mlir_v4",
+            "kind": "arithmetic"
+          },
+          {
+            "pc": 4,
+            "value": "mlir_v5",
+            "kind": "arithmetic"
+          },
+          {
+            "pc": 5,
+            "value": "mlir_v6",
+            "kind": "arithmetic"
+          },
+          {
+            "pc": 6,
+            "value": "mlir_v7",
+            "kind": "arithmetic"
+          },
+          {
+            "pc": 7,
+            "value": "mlir_v8",
+            "kind": "arithmetic"
+          },
+          {
+            "pc": 8,
+            "value": "mlir_v9",
+            "kind": "arithmetic"
+          },
+          {
+            "pc": 9,
+            "value": "mlir_v8",
+            "kind": "intra_wave_dataflow"
+          },
+          {
+            "pc": 10,
+            "value": "mlir_v9",
+            "kind": "intra_wave_dataflow"
+          }
+        ]
+      },
+      "3": {
+        "region": "2:weighted_sum",
+        "layer": 2,
+        "value": "mlir_v11",
+        "values": [
+          "mlir_v10",
+          "mlir_v11"
+        ],
+        "register_assignment": {
+          "mlir_v8": 0,
+          "input_2": 1,
+          "constant_1": 2,
+          "mlir_v9": 3,
+          "input_3": 4,
+          "mlir_v10": 5,
+          "mlir_v11": 5
+        },
+        "incoming": [
+          "mlir_v8",
+          "input_2",
+          "constant_1",
+          "mlir_v9",
+          "input_3"
+        ],
+        "exports": [
+          "mlir_v11"
+        ],
+        "instructions": [
+          {
+            "pc": 0,
+            "value": "input_2",
+            "kind": "boundary_load"
+          },
+          {
+            "pc": 1,
+            "value": "constant_1",
+            "kind": "boundary_load"
+          },
+          {
+            "pc": 2,
+            "value": "input_3",
+            "kind": "boundary_load"
+          },
+          {
+            "pc": 3,
+            "value": "mlir_v10",
+            "kind": "arithmetic"
+          },
+          {
+            "pc": 4,
+            "value": "mlir_v11",
+            "kind": "arithmetic"
+          },
+          {
+            "pc": 5,
+            "value": "mlir_v11",
+            "kind": "boundary_store"
+          }
+        ]
+      }
+    },
+    "spm_values": {
+      "constant_0": 0,
+      "constant_1": 1,
+      "input_0": 2,
+      "input_1": 3,
+      "input_2": 4,
+      "input_3": 5,
+      "mlir_v11": 6
+    },
+    "mapping": "bounded_wave_least_occupied_then_manhattan",
+    "block_policy": "source_regions_static_local_liveness",
+    "operation_counts": {
+      "mul": 2,
+      "max": 1,
+      "fma": 4,
+      "exp": 2,
+      "add": 1,
+      "div": 2
+    },
+    "source_output_aliases": {
+      "v11": "mlir_v11"
+    },
+    "mlir": {
+      "input_operations": 12,
+      "llvm_major": 14,
+      "output_operations": 12,
+      "passes": [
+        "cse",
+        "canonicalize"
+      ],
+      "source_sha256": "a7dd3a13191a271dca4d032df2bf7a48b7d90eda75fedde87db8ba797d091255",
+      "optimized_sha256": "22a05adf958813346f93a0507ffa2403cbb62aa27efef1e1ed6a68f9e91ddae0",
+      "frontend_binary_sha256": "88ad66f2c3a30b5861a53b0d878cb0b55cd8385cd3df0fa95dcc20d805d6d8d7"
+    }
+  }
+}

@@ -1,0 +1,269 @@
+{
+  "classification": "matrix_window_component_validated_not_full_model_or_chipyard",
+  "sources": {
+    "scripts/run_mlx_tensor_semantics.py": "1582a02d5fbcca9014cb4d4170f89fb3fdba0ce2c1129a5fed490c01f772b928",
+    "simulator_ext/matrix_schedule/CMakeLists.txt": "950ebdcc2c0c66af933c6753e9cc2796404be47b154f3733acb47406914d9cdf",
+    "simulator_ext/matrix_schedule/main.cc": "09c7010833b80bc63711e23b36884b3d614f1ae32468ccc51ffe4243d285d6cc",
+    "simulator_ext/matrix_schedule/matrix_schedule.cc": "26805d0087200afccec07ebe66b69c3768417635bd98f45d937f196e153a0b10",
+    "simulator_ext/matrix_schedule/matrix_schedule.h": "8fde91447d236c46289f35c8620e59e4cd797c9ab73768d714673aa9892454a3",
+    "simulator_ext/tagged/CMakeLists.txt": "591f17a1a621a2427a759a90ff08c1628be5004a8623d8ba07ae10d175e88634",
+    "simulator_ext/tagged/c_api.cc": "793c9ee338f76e33b5fd090f613d1b10864a821b25f49d67f94c4ae3938adc90",
+    "simulator_ext/tagged/c_api.h": "470af0110c7611f0fef81b2321d2afd82271b9b78f4b0cffa32553220b3c9612",
+    "simulator_ext/tagged/fp16.cc": "f9e1b22c8c744dc22effdd58fb814fa61557729a7bcdb7cf985897a97e72d83e",
+    "simulator_ext/tagged/main.cc": "75a1943a4f380af25ec0c2396d9e8954f823e38fbb6e40a16ebfc3ac23aee02c",
+    "simulator_ext/tagged/mlir_frontend.cc": "00869440f1f4577b5ccd81cd302702ea98e14f25bb2db85ee40f605c66ca04c7",
+    "simulator_ext/tagged/mlx_tagged_simulator.h": "24f86914f63afa1acfb6d7e53c5ff470cb8efd8c98af0a3b1990862dfabcc487",
+    "simulator_ext/tagged/numeric_test.cc": "4a98d0085fd03148a5df41cd2808ae4febebb9bfd692c2cf5b0086ac7cffd795",
+    "simulator_ext/tagged/program.cc": "4aa54ff21415bf7f69a22fa7727b170f0e2cacb6407fb5e301adbdff1d31baed",
+    "simulator_ext/tagged/simulator.cc": "fafcd6164d95131b6181f0ee57a8779292ef645f822e0462c878764250278a52",
+    "simulator_ext/tensor_model/CMakeLists.txt": "76eb01dcddbadda13f84e8289a0569a58bcfbbccb5631e867d5c53ee5be271ee",
+    "simulator_ext/tensor_model/kernels.cc": "ba58ec0607d749e3fcdfe4d47812e4cf53b02d61a82737e4ef314ef0c0c5759d",
+    "simulator_ext/tensor_model/main.cc": "5d8355a84cbdd0444dfec0c13888cdea321a64cdedbb3a1bbdf1dbc213d5f4e7",
+    "simulator_ext/tensor_model/matrix_program.cc": "21a31afa544ec51765ca1fbdb3f58c6e3f579eaff5582cccb413d8d0a110119d",
+    "simulator_ext/tensor_model/matrix_program.h": "1bf91e5569501be73e6e70e14a98b673b7f7adaf27ddd47eababf2f863b45005",
+    "simulator_ext/tensor_model/tensor.cc": "db8e160192025e6fecf43897ecde44e92bdb79e93f28d6fe6e1a153b6f5683cf",
+    "simulator_ext/tensor_model/tensor.h": "680c01a30111d6dec7de37448fe906ab13e15173762487ea36f16dac9dfca85b",
+    "src/mlxsim/model_matrix_program.py": "0b7bcb1ea47fdceedbd21755042abebf942c907d02e6df992b6fb1cb8d131f35",
+    "src/mlxsim/model_tensor_compiler.py": "2333a74c997fb01feb3f9dbc3a071d5d26c628eabdaaff66259f375458b51690",
+    "src/mlxsim/model_matrix_reference.py": "acb81f04ed4a11359d909c0086b9ca31e31890879e84ecae38cacf3f0cc39554",
+    "src/mlxsim/model_execution_inventory.py": "a431235a2e84e01432b96cda647c85244960889f981f6710599e209fea4f64ff",
+    "tests/test_model_tensor_semantics.py": "7800f26b0e4e1be823fbc6114f4d29c121e6ef970027977b3c087ab27358294c",
+    "tests/test_matrix_window_scheduler.py": "467b68ee5624854411e60457ce8b54502cf97a4697a5049a2da3e048219eb644",
+    "scripts/verify_mlx_matrix_window.py": "dfb6c8748a59f6e90daffac5a52704018ca99d0bd0278172020fd14347c45a0f"
+  },
+  "binary_sha256": "551d6b04ea0706533163dd4e15a4887100676686326278cfb7084034081a4896",
+  "tensor_graph_binary_sha256": "c862ea9accef99de634a3c9cc637249cd85aa038b3d790695560270bacd789c2",
+  "cases": [
+    {
+      "case": "pytest/test_global_spm_capacity_is_no0/array",
+      "shape_mnk": [
+        9,
+        65,
+        3
+      ],
+      "bitwise_equal": true,
+      "cycles": 15308,
+      "same_pe_context_overlap_cycles": 0,
+      "peak_contexts": 3,
+      "peak_spm_vectors": 111,
+      "dma_requests": 1695,
+      "dma_read_bytes": 2220,
+      "dma_write_bytes": 1170,
+      "report_sha256": "49c6d84d92d11f0774d50ef2a4a6ba4377c93f46583826305ed87cc3d602355e",
+      "job_sha256": "73c1a05d0929486c331ca7e976a9f2d8e080fd9d9cca19c4b07636fcd00d4475",
+      "output_sha256": "4525f8442866ae99d3a8c8919da4d5dc9f29e71c4caf5c7d8d98a7e836fdebc6"
+    },
+    {
+      "case": "pytest/test_independent_ready_and_wri0/stalled",
+      "shape_mnk": [
+        5,
+        37,
+        5
+      ],
+      "bitwise_equal": true,
+      "cycles": 12271,
+      "same_pe_context_overlap_cycles": 891,
+      "peak_contexts": 2,
+      "peak_spm_vectors": 74,
+      "dma_requests": 815,
+      "dma_read_bytes": 1260,
+      "dma_write_bytes": 370,
+      "report_sha256": "97c7d8e12609c0c0f1b23bd95f8d809a492f16fa8dd4c4dcdc406541144bd74b",
+      "job_sha256": "ee368846977bbab2a855743a8bdcdcd5b8a07da53edc9411009f72c13bcf3b64",
+      "output_sha256": "1292fd34c8ec9062d02b7365dc95a31486900a1e23b92b540b1fe33e3ca57fcd"
+    },
+    {
+      "case": "pytest/test_overlap_counter_matches_p0/multi-pe",
+      "shape_mnk": [
+        5,
+        37,
+        3
+      ],
+      "bitwise_equal": true,
+      "cycles": 2153,
+      "same_pe_context_overlap_cycles": 272,
+      "peak_contexts": 3,
+      "peak_spm_vectors": 111,
+      "dma_requests": 563,
+      "dma_read_bytes": 756,
+      "dma_write_bytes": 370,
+      "report_sha256": "d488ad5b893bc8cf4d8f795fad3357d36f46b89eb1807722138503c675d6ccd9",
+      "job_sha256": "e3696da01416f77645c26d6a20de9b04b0f28fc12108db7b2e413a439cf3ae3b",
+      "output_sha256": "cf80b9939a4f6c95c956a32636a2d8788d7b7abc528c08db326206a33a24dc51"
+    },
+    {
+      "case": "pytest/test_plain_matmul_b_layout_and0/mixed",
+      "shape_mnk": [
+        3,
+        19,
+        5
+      ],
+      "bitwise_equal": true,
+      "cycles": 2633,
+      "same_pe_context_overlap_cycles": 205,
+      "peak_contexts": 2,
+      "peak_spm_vectors": 74,
+      "dma_requests": 277,
+      "dma_read_bytes": 440,
+      "dma_write_bytes": 228,
+      "report_sha256": "7242f6523af1dee3ee3b181f3841360ecf6c2d504678bc01422f453f985d70f4",
+      "job_sha256": "e6e54e49e0abacc6f219c8a25e0b19d26fb68c6e3fedac5867de788e1eb51e32",
+      "output_sha256": "aa21b66c1b66923dcdd5bf3e624e4c73a012fd8025819d203eafee09846d2df1"
+    },
+    {
+      "case": "pytest/test_scheduled_matrix_matches_0/run",
+      "shape_mnk": [
+        5,
+        37,
+        0
+      ],
+      "bitwise_equal": true,
+      "cycles": 2695,
+      "same_pe_context_overlap_cycles": 71,
+      "peak_contexts": 2,
+      "peak_spm_vectors": 74,
+      "dma_requests": 296,
+      "dma_read_bytes": 222,
+      "dma_write_bytes": 370,
+      "report_sha256": "b78ed456580d113aebc897f33f3f890f96bf640af391c23d91f714625f294ba6",
+      "job_sha256": "1b40dd9bb91a9cba1ae9b5c5b988cf0847eaa8c2175e48cafb237108bb478bff",
+      "output_sha256": "bf73541a3096577fa078d58a32fad0a4a7163bd2f53c9067449c12fe840a6fad"
+    },
+    {
+      "case": "pytest/test_scheduled_matrix_matches_1/run",
+      "shape_mnk": [
+        5,
+        37,
+        0
+      ],
+      "bitwise_equal": true,
+      "cycles": 2853,
+      "same_pe_context_overlap_cycles": 0,
+      "peak_contexts": 1,
+      "peak_spm_vectors": 73,
+      "dma_requests": 296,
+      "dma_read_bytes": 444,
+      "dma_write_bytes": 740,
+      "report_sha256": "6df001a2c899fd32a27d8af5cca3d7c6a398d2364d074b94174ed25cbdad258e",
+      "job_sha256": "018ebb1185baef98df0018d49c86d49dca5f426783eacc16db3d0f870e79bbab",
+      "output_sha256": "8094068b6f4595d1edda0c838569b3c9b52565a8d60b6e8ac1c6f46d511f2939"
+    },
+    {
+      "case": "pytest/test_scheduled_matrix_matches_2/run",
+      "shape_mnk": [
+        5,
+        37,
+        5
+      ],
+      "bitwise_equal": true,
+      "cycles": 7479,
+      "same_pe_context_overlap_cycles": 591,
+      "peak_contexts": 2,
+      "peak_spm_vectors": 74,
+      "dma_requests": 815,
+      "dma_read_bytes": 1260,
+      "dma_write_bytes": 370,
+      "report_sha256": "94bdc24d09e7598af4be9ae807e0ca74fe1342863440d0f88abb7188a7731bc3",
+      "job_sha256": "7f64957046d5d971a98e936649f9618a306bd55ed2aca6131ce0e44e85ee1104",
+      "output_sha256": "1292fd34c8ec9062d02b7365dc95a31486900a1e23b92b540b1fe33e3ca57fcd"
+    },
+    {
+      "case": "pytest/test_scheduled_matrix_matches_3/run",
+      "shape_mnk": [
+        5,
+        37,
+        5
+      ],
+      "bitwise_equal": true,
+      "cycles": 8565,
+      "same_pe_context_overlap_cycles": 0,
+      "peak_contexts": 1,
+      "peak_spm_vectors": 73,
+      "dma_requests": 815,
+      "dma_read_bytes": 2520,
+      "dma_write_bytes": 740,
+      "report_sha256": "2bd59a033a50ac5d0b061f2ded49869b2c9b345719332dd3325e6a2d6f1e096e",
+      "job_sha256": "3316583807914f4eb81fe467a3e12e3a367614f403222281cd8221925bb86687",
+      "output_sha256": "80ac495f892deab22dd43b42be191d2fd41b27a0126849223ccdbd4bf09af22b"
+    },
+    {
+      "case": "pytest/test_scheduled_matrix_matches_4/run",
+      "shape_mnk": [
+        5,
+        37,
+        65
+      ],
+      "bitwise_equal": true,
+      "cycles": 78095,
+      "same_pe_context_overlap_cycles": 7409,
+      "peak_contexts": 2,
+      "peak_spm_vectors": 74,
+      "dma_requests": 8486,
+      "dma_read_bytes": 16602,
+      "dma_write_bytes": 370,
+      "report_sha256": "c1b81094c2a4bdb0dcb1ff6d5115a2d8a2f2cbddd4ceaf41d86c739b262aee7f",
+      "job_sha256": "e15291517afab5f0d91854caf02d0e2d5e8d3b5642424205d6fb6bf338b31a21",
+      "output_sha256": "3d533f42629958e0b08e42ce54e01ce65cca5590704af63afed340a2e9da61f0"
+    },
+    {
+      "case": "pytest/test_scheduled_matrix_matches_5/run",
+      "shape_mnk": [
+        5,
+        37,
+        65
+      ],
+      "bitwise_equal": true,
+      "cycles": 91188,
+      "same_pe_context_overlap_cycles": 0,
+      "peak_contexts": 1,
+      "peak_spm_vectors": 73,
+      "dma_requests": 8486,
+      "dma_read_bytes": 33204,
+      "dma_write_bytes": 740,
+      "report_sha256": "b6e20fb87cfb49f6c6f5aaf46442c4675c19abaa24bdc3316451b9c5ba90ac39",
+      "job_sha256": "816b80adf20d448cadfbbbd28e9bf077922b55a028c5c39d570b00a4989c17a7",
+      "output_sha256": "742efc31abeb55c865f274a0cf926ce73970c3b58cb4cd0898d0b285f00421f4"
+    },
+    {
+      "case": "pytest/test_two_context_issue_hides_w0/overlap",
+      "shape_mnk": [
+        5,
+        37,
+        5
+      ],
+      "bitwise_equal": true,
+      "cycles": 7479,
+      "same_pe_context_overlap_cycles": 591,
+      "peak_contexts": 2,
+      "peak_spm_vectors": 74,
+      "dma_requests": 815,
+      "dma_read_bytes": 1260,
+      "dma_write_bytes": 370,
+      "report_sha256": "94bdc24d09e7598af4be9ae807e0ca74fe1342863440d0f88abb7188a7731bc3",
+      "job_sha256": "7f64957046d5d971a98e936649f9618a306bd55ed2aca6131ce0e44e85ee1104",
+      "output_sha256": "1292fd34c8ec9062d02b7365dc95a31486900a1e23b92b540b1fe33e3ca57fcd"
+    },
+    {
+      "case": "pytest/test_two_context_issue_hides_w0/serial",
+      "shape_mnk": [
+        5,
+        37,
+        5
+      ],
+      "bitwise_equal": true,
+      "cycles": 8980,
+      "same_pe_context_overlap_cycles": 0,
+      "peak_contexts": 2,
+      "peak_spm_vectors": 74,
+      "dma_requests": 815,
+      "dma_read_bytes": 1260,
+      "dma_write_bytes": 370,
+      "report_sha256": "0d33195636caf7b6ef74b2e5152ceb493ba50843b894d7cc383283993fc8fe7a",
+      "job_sha256": "1a93cbe3b6001e90ea1b84b81687514f08cdca7ae023fbd7ca15d1aaa80c9054",
+      "output_sha256": "1292fd34c8ec9062d02b7365dc95a31486900a1e23b92b540b1fe33e3ca57fcd"
+    }
+  ],
+  "regression_xml_sha256": "c66e5db94ae6256492bef961070b2dafc0ad4216bdac26ab4f6c9ab71d42bf7c",
+  "mlx_system_verified": false,
+  "inference_performance_eligible": false
+}

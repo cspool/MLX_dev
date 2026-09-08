@@ -1,0 +1,6 @@
+cmake_minimum_required(VERSION 3.16)
+project(mlx_memory_window LANGUAGES CXX)
+add_subdirectory(../tensor_model tensor-model)
+add_executable(memory-external-memory ../../tests/memory_external_memory.cc)
+target_link_libraries(memory-external-memory PRIVATE mlx_tensor_values)
+target_compile_options(memory-external-memory PRIVATE -Wall -Wextra -Werror -ffp-contract=off)
