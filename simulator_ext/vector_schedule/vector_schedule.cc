@@ -23,7 +23,7 @@ uint32_t bits(float value){uint32_t raw;std::memcpy(&raw,&value,4);return raw;}
 enum Op:unsigned{LoadA16=2,LoadB16=3,CvtUp=4,Mul=5,Add=6,CvtDown=7,Store16=8,LoadA32=9,LoadB32=10,Store32=11,
                  Constant=14,Neg=15,Sub=16,Exp=17,Div=18,Sqrt=19,Cos=20,Sin=21,Shuffle=22,Max=23,Move=24,Broadcast=25,LoadStack=26,StoreStack=27};
 struct Instruction{unsigned op,dst,a,b,imm;};
-struct Register{std::array<uint32_t,16> data{};unsigned type=0,valid=0;};
+using Register=shared_array::Register;
 struct Operand{Tensor tensor;bool literal=false;float value=0;DType type=DType::F32;};
 struct Context{
   bool active=false,busy=false,memory_busy=false,stored=false;
@@ -32,6 +32,7 @@ struct Context{
   uint64_t block=0,epoch=0,row=0,tile=0,base=0,output_base=0,out_tile=0;
   bool maximum=false;
   std::string phase;
+  shared_array::Lease lease;
 };
 struct Owner{unsigned id,pc,level,move;uint64_t block,epoch,base;std::string phase;};
 struct Pending{Owner owner;Instruction instruction;Register value;unsigned mask=0;uint64_t due=0;};
@@ -89,9 +90,10 @@ struct Simulator::Impl{
   std::vector<Operand> operands;
   std::vector<Instruction> rom;
   std::array<Context,32> contexts{};
-  std::array<std::array<Register,16>,16> rf{};
-  std::array<uint8_t,8192> spm{};
-  std::array<int,128> owner_slots{};
+  std::unique_ptr<shared_array::Resources> owned_array;
+  shared_array::Resources *array=nullptr;
+  shared_array::Client client=0;
+  uint64_t source_id=UINT64_MAX;
   std::array<std::optional<Pending>,16> vector_fu,trans_fu;
   std::array<uint64_t,16> next_vector{},next_trans{};
   std::optional<Pending> spm_pending;
@@ -107,7 +109,7 @@ struct Simulator::Impl{
   vector_model::Stats numeric;
   Json::Value trace{Json::arrayValue};
 
-  Impl(const Json::Value &n,const Values &values,Tensor out,Options o,MemoryPort *p)
+  Impl(const Json::Value &n,const Values &values,Tensor out,Options o,MemoryPort *p,shared_array::Resources *shared,uint64_t source)
       :node(n),program(n["vector_program"]),options(o),output(std::move(out)),port(p),external(p!=nullptr){
     options.validate();pes=options.rows*options.columns;
     check(program["profile"]=="mlx-vector-fp32-v1"&&program["kind"]==node["kind"]&&vector_model::supports(node["kind"].asString()),"invalid scheduled vector profile/kind");
@@ -137,15 +139,32 @@ struct Simulator::Impl{
     check((_mm_getcsr()&((1u<<15)|(1u<<6)))==0,"vector schedule forbids FTZ/DAZ");
 #endif
     if(!port){internal=std::make_unique<model_io::TensorMemoryPort>(std::vector<Tensor>(regions.begin(),regions.end()),options.dma_latency);port=internal.get();}
-    owner_slots.fill(-1);numeric.calls=1;numeric.max_rom=rom.size();
+    numeric.calls=1;numeric.max_rom=rom.size();
+    shared_array::Hardware hardware=shared?shared->hardware():shared_array::Hardware{};
+    hardware.rows=options.rows;hardware.columns=options.columns;hardware.contexts=options.contexts;
+    hardware.spm_period=options.spm_period;hardware.writeback_period=options.writeback_period;hardware.compute_ii=options.vector_ii;hardware.sfu_ii=options.trans_ii;
+    hardware.dma_request_period=options.dma_request_period;hardware.dma_response_period=options.dma_response_period;
+    hardware.multiply_latency=options.multiply_latency;hardware.add_latency=options.add_latency;hardware.convert_latency=options.convert_latency;hardware.spm_latency=options.spm_latency;
+    hardware.exp_latency=options.exp_latency;hardware.div_latency=options.div_latency;hardware.sqrt_latency=options.sqrt_latency;
+    if(shared)check(hardware==shared->hardware(),"vector frontend differs from shared physical hardware");
+    else owned_array=std::make_unique<shared_array::Resources>(hardware);
+    array=shared?shared:owned_array.get();source_id=source;
+    if(source_id==UINT64_MAX&&node["source_operator_id"].isUInt64())source_id=node["source_operator_id"].asUInt64();
+    std::vector<uint32_t> words;for(const auto &word:program["rom"])words.push_back(word.asUInt());
+    client=array->attach("vector:"+program["phases"].toStyledString(),words,8,5,source_id);
   }
+  ~Impl(){if(client)array->detach(client,done());}
   Owner owner(unsigned id)const{const auto &c=contexts[id];return Owner{id,c.pc,c.level,c.move,c.block,c.epoch,c.base,c.phase};}
   Context &validate(const Owner &o){auto &c=contexts[o.id];check(c.active&&c.block==o.block&&c.epoch==o.epoch&&c.pc==o.pc&&c.level==o.level&&c.move==o.move&&c.base==o.base&&c.phase==o.phase,"stale or mismatched vector completion owner");return c;}
-  Register &reg(Context &c,unsigned r){return rf[c.pe][c.slot*8+r];}
+  Register &reg(Context &c,unsigned r){return array->reg(c.lease,r);}
+  uint8_t *spm_data(const Context &c,unsigned absolute,unsigned bytes){check(absolute>=c.arena*64,"vector SPM address precedes owned arena");return array->spm(c.lease,absolute-c.arena*64,bytes);}
   void need(Context &c,unsigned r,unsigned type,unsigned mask){auto &v=reg(c,r);check(v.type==type&&(v.valid&mask)==mask,"vector issue reads invalid register type/readiness");}
-  const Instruction &front(const Context &c)const{check(program["phases"].isMember(c.phase),"unknown vector execution phase");return rom[program["phases"][c.phase][c.pc].asUInt()];}
+  Instruction front(const Context &c)const{check(program["phases"].isMember(c.phase),"unknown vector execution phase");auto w=array->instruction(c.lease,program["phases"][c.phase][c.pc].asUInt());return Instruction{w&255,(w>>8)&15,(w>>12)&15,(w>>16)&15,(w>>20)&15};}
   void event(const char *name,unsigned id,const char *pipeline="control",unsigned opcode=0,unsigned mask=0){if(!options.trace)return;check(trace.size()<options.trace_limit,"vector trace bound exceeded");const auto &c=contexts[id];Json::Value e(Json::objectValue);
-    e["cycle"]=Json::UInt64(cycles);e["event"]=name;e["pe"]=c.pe;e["context_slot"]=c.slot;e["block_id"]=Json::UInt64(c.block);e["epoch"]=Json::UInt64(c.epoch);e["phase"]=c.phase;e["pc"]=c.pc;e["base"]=Json::UInt64(c.base);e["level"]=c.level;e["move"]=c.move;e["pipeline"]=pipeline;e["opcode"]=opcode;e["lane_mask"]=mask;trace.append(e);
+    e["cycle"]=Json::UInt64(cycles);e["event"]=name;e["pe"]=c.pe;e["context_slot"]=c.slot;e["block_id"]=Json::UInt64(c.block);e["epoch"]=Json::UInt64(c.epoch);e["phase"]=c.phase;e["pc"]=c.pc;e["base"]=Json::UInt64(c.base);e["level"]=c.level;e["move"]=c.move;e["pipeline"]=pipeline;e["opcode"]=opcode;e["lane_mask"]=mask;
+    if(!owned_array){e["array_cycle"]=Json::UInt64(array->cycle());e["shared_client"]=Json::UInt64(client);e["source_operator_id"]=Json::UInt64(source_id);e["lease_id"]=Json::UInt64(c.lease.id);
+      if(std::strcmp(name,"admit")==0){e["rf_base"]=c.lease.rf_base;e["rf_vectors"]=c.lease.rf_count;e["spm_base"]=c.lease.spm_base;e["spm_vectors"]=c.lease.spm_count;e["rom_base"]=c.lease.rom_base;e["rom_words"]=c.lease.rom_count;}}
+    trace.append(e);
   }
   void memory_event(const char *name,const PendingMemory &p,uint64_t data){event(name,p.owner.id,"dma");if(!options.trace)return;auto &e=trace[trace.size()-1];e["request_id"]=Json::UInt64(p.request.id);e["region"]=p.request.region;e["byte_offset"]=Json::UInt64(p.request.offset);e["bytes"]=p.request.bytes;e["write"]=p.request.write;e["data"]=Json::UInt64(data);e["spm_byte_offset"]=p.spm;}
   bool eligible(unsigned id)const{const auto &c=contexts[id];if(!c.active)return false;if(!options.overlap)for(unsigned slot=0;slot<options.contexts;++slot){const auto &other=contexts[c.pe*2+slot];if(other.active&&other.block<c.block)return false;}return true;}
@@ -167,8 +186,8 @@ struct Simulator::Impl{
   unsigned mask(const Context &c,const Instruction &i)const{unsigned first=trans(i.op)?i.imm*4:0,last=trans(i.op)?std::min(c.lanes,first+4):c.lanes;if(i.op==Move||i.op==LoadStack||i.op==StoreStack)return 1;return first<last?((1u<<(last-first))-1)<<first:0;}
   unsigned latency(unsigned op)const{if(memory(op))return options.spm_latency;if(op==Mul)return options.multiply_latency;if(op==Add||op==Sub||op==Max)return options.add_latency;if(op==CvtUp||op==CvtDown)return options.convert_latency;if(op==Exp||op==Cos||op==Sin)return options.exp_latency;if(op==Div)return options.div_latency;if(op==Sqrt)return options.sqrt_latency;return 1;}
   Register evaluate(Context &c,const Instruction &i,unsigned active){Register result;unsigned bytes=0;
-    if(load_operand(i.op)){check(c.fill==3,"vector load issued before operand fill completed");auto &input=operands[c.operand];unsigned type=(i.op==LoadA16||i.op==LoadB16)?1:2;check(type==(input.type==DType::F16?1u:2u),"vector SPM load precision mismatch");result.type=type;bytes=element_bytes(input.type);for(unsigned lane=0;lane<c.lanes;++lane)std::memcpy(&result.data[lane],spm.data()+c.arena*64+c.operand*64+lane*bytes,bytes);}
-    else if(i.op==LoadStack){check(c.level<32&&(c.stack_valid&(1u<<c.level)),"vector load reads an unready reduction partial");result.type=2;std::memcpy(&result.data[0],spm.data()+c.arena*64+128+c.level*4,4);}
+    if(load_operand(i.op)){check(c.fill==3,"vector load issued before operand fill completed");auto &input=operands[c.operand];unsigned type=(i.op==LoadA16||i.op==LoadB16)?1:2;check(type==(input.type==DType::F16?1u:2u),"vector SPM load precision mismatch");result.type=type;bytes=element_bytes(input.type);for(unsigned lane=0;lane<c.lanes;++lane)std::memcpy(&result.data[lane],spm_data(c,c.arena*64+c.operand*64+lane*bytes,bytes),bytes);}
+    else if(i.op==LoadStack){check(c.level<32&&(c.stack_valid&(1u<<c.level)),"vector load reads an unready reduction partial");result.type=2;std::memcpy(&result.data[0],spm_data(c,c.arena*64+128+c.level*4,4),4);}
     else if(store(i.op)){unsigned type=i.op==Store16?1:2;need(c,i.a,type,active);if(i.op!=StoreStack)check(output.type==(type==1?DType::F16:DType::F32),"vector output store precision mismatch");result=reg(c,i.a);}
     else if(i.op==Constant){check(i.imm<program["constants"].size(),"vector constant index out of bounds");result.type=2;result.data.fill(bits(float(scalar(program["constants"][i.imm]))));}
     else if(i.op==Move||i.op==Broadcast){need(c,i.a,2,1);result.type=2;result.data.fill(reg(c,i.a).data[0]);}
@@ -178,43 +197,45 @@ struct Simulator::Impl{
     result.valid=active;return result;
   }
   void complete(Pending &p,const char *pipeline){auto &c=validate(p.owner);check(c.busy,"vector completion has no busy owner");auto op=p.instruction.op;
-    if(op==StoreStack){check(c.level<32,"vector partial store outside stack");std::memcpy(spm.data()+c.arena*64+128+c.level*4,&p.value.data[0],4);c.stack_valid|=1u<<c.level;numeric.max_stack_level=std::max(numeric.max_stack_level,c.level);}
-    else if(op==Store16||op==Store32){check(!c.stored,"duplicate vector output store");auto bytes=element_bytes(output.type);for(unsigned lane=0;lane<c.valid_count;++lane)std::memcpy(spm.data()+c.arena*64+256+lane*bytes,&p.value.data[lane],bytes);c.stored=true;}
+    if(op==StoreStack){check(c.level<32,"vector partial store outside stack");std::memcpy(spm_data(c,c.arena*64+128+c.level*4,4),&p.value.data[0],4);c.stack_valid|=1u<<c.level;numeric.max_stack_level=std::max(numeric.max_stack_level,c.level);}
+    else if(op==Store16||op==Store32){check(!c.stored,"duplicate vector output store");auto bytes=element_bytes(output.type);for(unsigned lane=0;lane<c.valid_count;++lane)std::memcpy(spm_data(c,c.arena*64+256+lane*bytes,bytes),&p.value.data[lane],bytes);c.stored=true;}
     else{auto &destination=reg(c,p.instruction.dst);if(destination.type!=p.value.type)destination.valid=0;destination.type=p.value.type;for(unsigned lane=0;lane<16;++lane)if(p.mask&(1u<<lane))destination.data[lane]=p.value.data[lane];destination.valid|=p.mask;if(load_operand(op))c.fill=0;}
     event("complete",p.owner.id,pipeline,op,p.mask);advance(p.owner.id);
   }
-  void initialize(unsigned id){auto &c=contexts[id];const auto &i=front(c);auto &input=operands[c.operand];auto bytes=element_bytes(input.type);for(unsigned lane=0;lane<c.lanes;++lane){float value=i.imm?-std::numeric_limits<float>::infinity():0;if(input.literal&&lane<c.valid_count)value=input.value;uint32_t raw=input.type==DType::F16?uint32_t(tagged::float_to_half(value)):bits(value);std::memcpy(spm.data()+c.arena*64+c.operand*64+lane*bytes,&raw,bytes);}c.move=0;c.fill=input.literal||!c.valid_count?3:2;event(c.fill==3?"operand_ready":"operand_initialized",id,"spm_init");}
+  void initialize(unsigned id){auto &c=contexts[id];const auto &i=front(c);auto &input=operands[c.operand];auto bytes=element_bytes(input.type);for(unsigned lane=0;lane<c.lanes;++lane){float value=i.imm?-std::numeric_limits<float>::infinity():0;if(input.literal&&lane<c.valid_count)value=input.value;uint32_t raw=input.type==DType::F16?uint32_t(tagged::float_to_half(value)):bits(value);std::memcpy(spm_data(c,c.arena*64+c.operand*64+lane*bytes,bytes),&raw,bytes);}c.move=0;c.fill=input.literal||!c.valid_count?3:2;event(c.fill==3?"operand_ready":"operand_initialized",id,"spm_init");}
   PendingMemory request(unsigned id){auto &c=contexts[id];PendingMemory p;p.owner=owner(id);p.request.id=next_request;p.request.write=c.phase=="drain";
-    if(p.request.write){p.request.region=2;p.request.bytes=element_bytes(output.type);p.request.offset=output.position(c.output_base+c.move)*p.request.bytes;p.spm=c.arena*64+256+c.move*p.request.bytes;std::memcpy(&p.request.data,spm.data()+p.spm,p.request.bytes);}
+    if(p.request.write){p.request.region=2;p.request.bytes=element_bytes(output.type);p.request.offset=output.position(c.output_base+c.move)*p.request.bytes;p.spm=c.arena*64+256+c.move*p.request.bytes;std::memcpy(&p.request.data,spm_data(c,p.spm,p.request.bytes),p.request.bytes);}
     else{check(c.fill==2&&!operands[c.operand].literal,"invalid vector operand DMA state");const auto &input=operands[c.operand].tensor;uint64_t flat=reduction?c.base+c.move:broadcast_index(c.base+c.move,output.sizes,input.sizes);p.request.region=c.operand;p.request.bytes=element_bytes(input.type);p.request.offset=input.position(flat)*p.request.bytes;p.spm=c.arena*64+c.operand*64+c.move*p.request.bytes;}
     check(p.spm+p.request.bytes<=(c.arena+5)*64,"vector DMA exceeds owned SPM arena");return p;
   }
   void response(const PendingMemory &p,uint64_t data){auto &c=validate(p.owner);check(c.memory_busy,"vector DMA response has no request owner");c.memory_busy=false;++dma_responses;
-    if(p.request.write)numeric.write_bytes+=p.request.bytes;else{std::memcpy(spm.data()+p.spm,&data,p.request.bytes);numeric.read_bytes+=p.request.bytes;}
+    if(p.request.write)numeric.write_bytes+=p.request.bytes;else{std::memcpy(spm_data(c,p.spm,p.request.bytes),&data,p.request.bytes);numeric.read_bytes+=p.request.bytes;}
     memory_event("dma_response",p,p.request.write?p.request.data:data);
     if(++c.move<c.valid_count)return;
     c.move=0;
     if(!p.request.write){c.fill=3;event("operand_ready",p.owner.id);}
     else if(reduction&&softmax&&++c.out_tile<chunks)output_tile(c);
-    else{event("retire",p.owner.id);check(!c.busy,"retiring vector context has in-flight instruction");for(unsigned index=c.arena;index<c.arena+5;++index){check(owner_slots[index]==int(p.owner.id),"vector arena ownership changed");owner_slots[index]=-1;}for(unsigned r=0;r<8;++r)reg(c,r).valid=0;c.active=false;++retired;}
+    else{event("retire",p.owner.id);check(!c.busy,"retiring vector context has in-flight instruction");for(unsigned r=0;r<8;++r)reg(c,r).valid=0;array->retire(c.lease);c.active=false;++retired;}
   }
-  void invariant(){unsigned active=0,allocated=0;for(unsigned p=0;p<pes;++p){unsigned used=0;for(unsigned s=0;s<options.contexts;++s){const auto &c=contexts[p*2+s];if(!c.active)continue;++active;++used;for(unsigned index=c.arena;index<c.arena+5;++index)check(owner_slots[index]==int(p*2+s),"live vector context lost its SPM arena");}check(used*8<=16,"vector RF allocations exceed capacity");}
-    for(int id:owner_slots)if(id>=0){++allocated;check(contexts[id].active,"retired vector context still owns SPM");}
+  void invariant(){unsigned active=0,allocated=array->live_spm_vectors(client);for(unsigned p=0;p<pes;++p){unsigned used=0;for(unsigned s=0;s<options.contexts;++s){const auto &c=contexts[p*2+s];if(!c.active)continue;++active;++used;array->validate_lease(c.lease);}check(used*8<=16,"vector RF allocations exceed capacity");}
+    check(active==array->live_contexts(client),"vector shared context count differs");
     check(allocated==active*5&&allocated<=128,"vector SPM resource conservation failure");peak_contexts=std::max(peak_contexts,active);peak_spm=std::max(peak_spm,allocated);
   }
   bool done()const{return retired==total_blocks;}
   bool tick(){
     if(done()){check(!dma&&!spm_pending,"vector done with pending shared response");for(unsigned p=0;p<pes;++p)check(!vector_fu[p]&&!trans_fu[p],"vector done with pending FU");return false;}
-    check(cycles<options.max_cycles,"vector schedule exceeded cycle bound");port->advance(cycles);auto ids=priority();bool spm_port=cycles%options.spm_period==0;std::array<bool,16> write_port{};write_port.fill(cycles%options.writeback_period==0);
+    check(cycles<options.max_cycles,"vector schedule exceeded cycle bound");if(owned_array)array->begin_cycle(cycles);array->enter(client);const auto edge=array->cycle();
+    port->advance(cycles);auto ids=priority();bool spm_port=array->spm_ready();std::array<bool,16> write_port{};for(unsigned p=0;p<pes;++p)write_port[p]=array->writeback_ready(p);
     bool finish_spm=false;std::array<bool,16> finish_vector{},finish_trans{};std::optional<Response> answer;
-    if(spm_pending&&spm_pending->due<=cycles){auto &c=validate(spm_pending->owner);if(store(spm_pending->instruction.op)){if(spm_port){spm_port=false;finish_spm=true;}}else if(write_port[c.pe]){write_port[c.pe]=false;finish_spm=true;}else ++writeback_stalls;}
-    auto incoming=port->response();
+    if(spm_pending&&spm_pending->due<=cycles){auto &c=validate(spm_pending->owner);if(store(spm_pending->instruction.op)){if(spm_port){array->claim_spm(c.lease);spm_port=false;finish_spm=true;}}else if(write_port[c.pe]){array->claim_writeback(c.lease);write_port[c.pe]=false;finish_spm=true;}else ++writeback_stalls;}
+    check(!dma||array->unit_owned_by(shared_array::Unit::Dma,client),"vector lost shared DMA service ownership");
+    auto incoming=(array->unit_owned_by(shared_array::Unit::Dma,client)||array->unit_ready(shared_array::Unit::Dma))?port->response():std::nullopt;
     if(held_response)check(incoming&&incoming->id==held_response->id&&incoming->data==held_response->data&&incoming->error==held_response->error,"vector memory response changed or withdrew under backpressure");
     if(incoming){check(bool(dma),"unsolicited vector memory response");auto tested=*incoming;if(options.inject_stale_response&&!stale_injected){++tested.id;stale_injected=true;}check(tested.id==dma->request.id,"stale vector memory response token");check(!tested.error,"vector memory response reported error");validate(dma->owner);
       held_response=*incoming;
-      if(cycles%options.dma_response_period==0&&(dma->request.write||spm_port)){answer=tested;if(!dma->request.write)spm_port=false;}}
-    for(unsigned p=0;p<pes;++p){if(vector_fu[p]&&vector_fu[p]->due<=cycles){validate(vector_fu[p]->owner);if(write_port[p]){write_port[p]=false;finish_vector[p]=true;}else ++writeback_stalls;}
-      if(trans_fu[p]&&trans_fu[p]->due<=cycles){validate(trans_fu[p]->owner);if(write_port[p]){write_port[p]=false;finish_trans[p]=true;}else ++writeback_stalls;}
+      if(edge%options.dma_response_period==0&&(dma->request.write||spm_port)){answer=tested;if(!dma->request.write){array->claim_spm(contexts[dma->owner.id].lease);spm_port=false;}}}
+    for(unsigned p=0;p<pes;++p){if(vector_fu[p]&&vector_fu[p]->due<=cycles){validate(vector_fu[p]->owner);if(write_port[p]){array->claim_writeback(contexts[vector_fu[p]->owner.id].lease);write_port[p]=false;finish_vector[p]=true;}else ++writeback_stalls;}
+      if(trans_fu[p]&&trans_fu[p]->due<=cycles){validate(trans_fu[p]->owner);if(write_port[p]){array->claim_writeback(contexts[trans_fu[p]->owner.id].lease);write_port[p]=false;finish_trans[p]=true;}else ++writeback_stalls;}
       if(vector_fu[p])++vector_busy;
       if(trans_fu[p])++trans_busy;
       if(vector_fu[p]&&trans_fu[p])++vec_sfu_overlap;
@@ -223,24 +244,24 @@ struct Simulator::Impl{
     if(dma)++dma_busy;
     if(spm_pending)++spm_busy;
     std::vector<unsigned> start_fill,predicated;std::vector<Pending> issues;std::array<bool,16> selected{};bool new_spm=false;
-    for(unsigned id:ids){auto &c=contexts[id];if(!eligible(id)||c.busy||c.phase=="drain"||selected[c.pe])continue;const auto &i=front(c);unsigned active=mask(c,i);
-      if(!active){selected[c.pe]=true;predicated.push_back(id);continue;}
+    for(unsigned id:ids){auto &c=contexts[id];if(!eligible(id)||c.busy||c.phase=="drain"||selected[c.pe]||!array->issue_ready(c.pe))continue;const auto &i=front(c);unsigned active=mask(c,i);
+      if(!active){array->claim_issue(c.lease);selected[c.pe]=true;predicated.push_back(id);continue;}
       if(load_operand(i.op)&&c.fill!=3){if(!c.fill)start_fill.push_back(id);continue;}
-      if(memory(i.op)){if(spm_pending||new_spm||!spm_port)continue;new_spm=true;spm_port=false;}
-      else if(trans(i.op)){if(trans_fu[c.pe]||cycles<next_trans[c.pe])continue;}
-      else if(vector_fu[c.pe]||cycles<next_vector[c.pe])continue;
-      selected[c.pe]=true;issues.push_back(Pending{owner(id),i,evaluate(c,i,active),active,cycles+latency(i.op)});
+      if(memory(i.op)){if(spm_pending||new_spm||!spm_port||!array->unit_ready(shared_array::Unit::Spm))continue;array->claim_spm(c.lease);array->claim_unit(shared_array::Unit::Spm,c.lease);new_spm=true;spm_port=false;}
+      else if(trans(i.op)){if(trans_fu[c.pe]||cycles<next_trans[c.pe]||!array->unit_ready(shared_array::Unit::Sfu,c.pe))continue;array->claim_unit(shared_array::Unit::Sfu,c.lease);}
+      else{if(vector_fu[c.pe]||cycles<next_vector[c.pe]||!array->unit_ready(shared_array::Unit::Compute,c.pe))continue;array->claim_unit(shared_array::Unit::Compute,c.lease);}
+      array->claim_issue(c.lease);selected[c.pe]=true;issues.push_back(Pending{owner(id),i,evaluate(c,i,active),active,cycles+latency(i.op)});
     }
     std::optional<unsigned> initialize_id;std::optional<PendingMemory> new_dma;
     for(unsigned id:ids){auto &c=contexts[id];if(!eligible(id)||c.busy||c.memory_busy)continue;
-      if(c.fill==1&&spm_port&&!initialize_id){initialize_id=id;spm_port=false;}
-      if(!dma&&!new_dma&&cycles%options.dma_request_period==0&&port->request_ready()&&(c.fill==2||(c.phase=="drain"&&spm_port))){new_dma=request(id);if(c.phase=="drain")spm_port=false;}
+      if(c.fill==1&&spm_port&&!initialize_id){array->claim_spm(c.lease);initialize_id=id;spm_port=false;}
+      if(!dma&&!new_dma&&array->unit_ready(shared_array::Unit::Dma)&&edge%options.dma_request_period==0&&port->request_ready()&&(c.fill==2||(c.phase=="drain"&&spm_port))){if(c.phase=="drain"){array->claim_spm(c.lease);spm_port=false;}array->claim_unit(shared_array::Unit::Dma,c.lease);new_dma=request(id);}
     }
-    std::optional<std::pair<unsigned,unsigned>> admission;
-    if(next_block<total_blocks){unsigned p=next_block%pes;for(unsigned s=0;s<options.contexts&&!admission;++s)if(!contexts[p*2+s].active)for(unsigned start=0;start+5<=128;++start){bool available=true;for(unsigned j=start;j<start+5;++j)available&=owner_slots[j]<0;if(available){admission={p*2+s,start};break;}}if(!admission)++admission_stalls;}
-    if(finish_spm){complete(*spm_pending,"spm");spm_pending.reset();}
-    if(answer){auto pending=*dma;response(pending,answer->data);dma.reset();port->consume_response();held_response.reset();}
-    for(unsigned p=0;p<pes;++p){if(finish_vector[p]){complete(*vector_fu[p],"vector");vector_fu[p].reset();}if(finish_trans[p]){complete(*trans_fu[p],"trans");trans_fu[p].reset();}}
+    std::optional<shared_array::Offer> admission;
+    if(next_block<total_blocks){admission=array->offer(client,unsigned(next_block%pes));if(!admission)++admission_stalls;}
+    if(finish_spm){array->complete_unit(shared_array::Unit::Spm,contexts[spm_pending->owner.id].lease);complete(*spm_pending,"spm");spm_pending.reset();}
+    if(answer){auto pending=*dma;array->complete_unit(shared_array::Unit::Dma,contexts[pending.owner.id].lease);response(pending,answer->data);dma.reset();port->consume_response();held_response.reset();}
+    for(unsigned p=0;p<pes;++p){if(finish_vector[p]){array->complete_unit(shared_array::Unit::Compute,contexts[vector_fu[p]->owner.id].lease);complete(*vector_fu[p],"vector");vector_fu[p].reset();}if(finish_trans[p]){array->complete_unit(shared_array::Unit::Sfu,contexts[trans_fu[p]->owner.id].lease);complete(*trans_fu[p],"trans");trans_fu[p].reset();}}
     if(initialize_id)initialize(*initialize_id);
     for(unsigned id:start_fill){auto &c=contexts[id];const auto &i=front(c);c.operand=(i.op==LoadB16||i.op==LoadB32)?1:0;check(c.operand<operands.size(),"vector operand selector out of bounds");c.fill=1;c.move=0;event("operand_wait",id);}
     for(unsigned id:predicated){auto &c=contexts[id];const auto &i=front(c);++numeric.instructions;++numeric.opcode_counts[i.op];event("predicated_issue",id,"control",i.op,0);advance(id);}
@@ -248,17 +269,18 @@ struct Simulator::Impl{
       const char *pipeline=memory(op)?"spm":trans(op)?"trans":"vector";event("issue",pending.owner.id,pipeline,op,pending.mask);
       if(memory(op))spm_pending=pending;else if(trans(op)){trans_fu[c.pe]=pending;next_trans[c.pe]=cycles+options.trans_ii;}else{vector_fu[c.pe]=pending;next_vector[c.pe]=cycles+options.vector_ii;}}
     if(new_dma){auto &c=validate(new_dma->owner);c.memory_busy=true;memory_event("dma_request",*new_dma,new_dma->request.data);port->submit(new_dma->request);++next_request;++dma_requests;dma=*new_dma;}
-    if(admission){auto [id,start]=*admission;auto &c=contexts[id];auto epoch=c.epoch+1;c=Context{};c.active=true;c.epoch=epoch;c.pe=id/2;c.slot=id%2;c.arena=start;c.block=next_block++;for(unsigned j=start;j<start+5;++j){check(owner_slots[j]<0,"non-atomic vector arena admission");owner_slots[j]=int(id);}for(unsigned r=0;r<8;++r)reg(c,r)=Register{};
+    if(admission){auto admitted_lease=array->admit(*admission,next_block);check(bool(admitted_lease),"vector shared admission offer changed before commit");const auto lease=*admitted_lease;unsigned id=lease.pe*2+lease.slot;auto &c=contexts[id];auto epoch=c.epoch+1;c=Context{};c.active=true;c.epoch=epoch;c.pe=lease.pe;c.slot=lease.slot;c.lease=lease;c.arena=lease.spm_base;c.block=next_block++;for(unsigned r=0;r<8;++r)reg(c,r)=Register{};
       if(reduction){c.row=c.block;c.maximum=softmax;reduction_tile(c);}else{c.base=c.block*16;c.output_base=c.base;c.valid_count=c.lanes=unsigned(std::min<uint64_t>(16,output.numel()-c.base));phase(c,"body");}event("admit",id);
     }
-    invariant();++cycles;return true;
+    invariant();if(owned_array)array->end_cycle();++cycles;return true;
   }
   Json::Value result()const{Json::Value r(Json::objectValue);r["classification"]="cpp_vector_window_cycle_component_not_full_system_validation";r["done"]=done();r["cycles"]=Json::UInt64(cycles);r["admitted"]=Json::UInt64(next_block);r["retired"]=Json::UInt64(retired);r["peak_contexts"]=peak_contexts;r["peak_spm_vectors"]=peak_spm;r["spm_capacity_vectors"]=128;r["rf_frame_vectors"]=8;r["spm_frame_vectors"]=5;
     r["dma_requests"]=Json::UInt64(dma_requests);r["dma_responses"]=Json::UInt64(dma_responses);r["writeback_stall_response_cycles"]=Json::UInt64(writeback_stalls);r["admission_stall_cycles"]=Json::UInt64(admission_stalls);r["same_pe_context_overlap_cycles"]=Json::UInt64(same_pe_overlap);r["vector_sfu_overlap_pe_cycles"]=Json::UInt64(vec_sfu_overlap);
-    r["vector_busy_pe_cycles"]=Json::UInt64(vector_busy);r["trans_busy_pe_cycles"]=Json::UInt64(trans_busy);r["dma_busy_cycles"]=Json::UInt64(dma_busy);r["spm_busy_cycles"]=Json::UInt64(spm_busy);r["numeric_instructions"]=numeric.json();r["external_memory_port"]=external;r["pending_dma"]=bool(dma);r["pending_spm"]=bool(spm_pending);unsigned pending=0,active=0,allocated=0;for(unsigned p=0;p<pes;++p)pending+=bool(vector_fu[p])+bool(trans_fu[p]);for(const auto &c:contexts)active+=c.active;for(int id:owner_slots)allocated+=id>=0;r["pending_fu"]=pending;r["active_contexts"]=active;r["allocated_spm_vectors"]=allocated;r["trace"]=trace;r["mlx_system_verified"]=false;r["inference_performance_eligible"]=false;
+    r["vector_busy_pe_cycles"]=Json::UInt64(vector_busy);r["trans_busy_pe_cycles"]=Json::UInt64(trans_busy);r["dma_busy_cycles"]=Json::UInt64(dma_busy);r["spm_busy_cycles"]=Json::UInt64(spm_busy);r["numeric_instructions"]=numeric.json();r["external_memory_port"]=external;r["pending_dma"]=bool(dma);r["pending_spm"]=bool(spm_pending);unsigned pending=0,active=0,allocated=array->live_spm_vectors(client);for(unsigned p=0;p<pes;++p)pending+=bool(vector_fu[p])+bool(trans_fu[p]);for(const auto &c:contexts)active+=c.active;r["pending_fu"]=pending;r["active_contexts"]=active;r["allocated_spm_vectors"]=allocated;r["trace"]=trace;r["mlx_system_verified"]=false;r["inference_performance_eligible"]=false;
+    if(!owned_array){r["external_shared_array"]=true;r["shared_client"]=Json::UInt64(client);r["source_operator_id"]=Json::UInt64(source_id);}
     r["counter_units"]["cycles"]="wall_cycle";r["counter_units"]["same_pe_context_overlap_cycles"]="pe_cycle";r["counter_units"]["vector_sfu_overlap_pe_cycles"]="pe_cycle";r["counter_units"]["writeback_stall_response_cycles"]="blocked_response_cycle";return r;}
 };
-Simulator::Simulator(const Json::Value &n,const Values &v,Tensor out,Options o,MemoryPort *p):impl(std::make_unique<Impl>(n,v,std::move(out),o,p)){}
+Simulator::Simulator(const Json::Value &n,const Values &v,Tensor out,Options o,MemoryPort *p,shared_array::Resources *array,uint64_t source):impl(std::make_unique<Impl>(n,v,std::move(out),o,p,array,source)){}
 Simulator::~Simulator()=default;
 bool Simulator::tick(){return impl->tick();}
 bool Simulator::done()const{return impl->done();}

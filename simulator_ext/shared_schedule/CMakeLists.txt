@@ -1,0 +1,6 @@
+cmake_minimum_required(VERSION 3.16)
+project(mlx_shared_schedule LANGUAGES CXX)
+add_subdirectory(../model_system model-system)
+add_executable(shared-array-driver ../../tests/shared_array_driver.cc)
+target_link_libraries(shared-array-driver PRIVATE mlx_physical_model)
+target_compile_options(shared-array-driver PRIVATE -Wall -Wextra -Werror -ffp-contract=off)

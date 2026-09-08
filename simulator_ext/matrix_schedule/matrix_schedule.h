@@ -1,6 +1,7 @@
 #pragma once
 #include "matrix_program.h"
 #include "../model_io/memory_port.h"
+#include "../shared_array/resources.h"
 #include <memory>
 
 namespace mlx::matrix_schedule {
@@ -23,7 +24,8 @@ public:
   Simulator(const Json::Value &program, tensor_model::Tensor a, tensor_model::Tensor b,
             const tensor_model::Tensor *bias, bool transposed_b,
             uint64_t a_batch,uint64_t b_batch,uint64_t m,uint64_t n,uint64_t k,
-            tensor_model::Tensor output,uint64_t output_batch,Options options={},model_io::MemoryPort *memory_port=nullptr);
+            tensor_model::Tensor output,uint64_t output_batch,Options options={},model_io::MemoryPort *memory_port=nullptr,
+            shared_array::Resources *array=nullptr,uint64_t source_id=UINT64_MAX);
   ~Simulator();
   bool tick();
   bool done() const;

@@ -51,7 +51,7 @@ def install(chipyard,large=False):
 
 def libraries(large=False):
     return [BUILD/"libmlx_clocked_rocc.a",BUILD/"model-image/libmlx_system_profile.a",BUILD/"clocked-device/libmlx_clocked_device.a",BUILD/"clocked-device/physical-wire/libmlx_matrix_wire.a",
-        BUILD/"clocked-device/physical-wire/tensor-model/libmlx_tensor_values.a",BUILD/"clocked-device/physical-wire/tensor-model/tagged-core/libmlx_tagged.a"]+([WIDE_BUILD/"libmlx_wide_memory.a"] if large else [])
+        BUILD/"clocked-device/physical-wire/tensor-model/libmlx_tensor_values.a",BUILD/"clocked-device/physical-wire/tensor-model/shared-array/libmlx_shared_array.a",BUILD/"clocked-device/physical-wire/tensor-model/tagged-core/libmlx_tagged.a"]+([WIDE_BUILD/"libmlx_wide_memory.a"] if large else [])
 
 
 def inputs(chipyard,large=False):
