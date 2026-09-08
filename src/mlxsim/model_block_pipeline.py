@@ -5,6 +5,7 @@ pairs remain whole-source dependencies; this is not a general CDC compiler.
 """
 import copy
 import math
+from .model_value_outputs import value_outputs, require_value_contract
 
 
 def references(value):
@@ -62,6 +63,7 @@ def compile_block_pipelines(program, *, event_slots=32):
     if type(event_slots) is not int or not 1 <= event_slots <= 32:
         raise ValueError("completion window requires 1..32 event slots")
     result = copy.deepcopy(program); nodes = result["nodes"]
+    require_value_contract(program)
     guards = []
     for node in nodes:
         expected = [{"value": identifier} for identifier in guards]
@@ -69,7 +71,7 @@ def compile_block_pipelines(program, *, event_slots=32):
             raise ValueError("missing or foreign control-flow guard dependency")
         if node["kind"] == "guard":
             guards.append(node["id"])
-    consumers = {n["id"]: set() for n in nodes}
+    consumers = {identifier: set() for n in nodes for identifier, _ in value_outputs(n)}
     for index, node in enumerate(nodes):
         for dep in set(references(node["args"])) | set(references(node.get("kwargs", {}))) | set(references(node.get("control_dependencies", []))):
             if dep in consumers:
@@ -79,7 +81,7 @@ def compile_block_pipelines(program, *, event_slots=32):
     pes = mo.get("rows", 4) * mo.get("columns", 4)
     pairs, used, rejected = [], set(), []
     for producer, node in enumerate(nodes):
-        if producer in used or len(consumers[node["id"]]) != 1 or not any(k in node for k in ("matrix_program", "vector_program")):
+        if producer in used or node["kind"] == "split" or len(consumers[node["id"]]) != 1 or not any(k in node for k in ("matrix_program", "vector_program")):
             continue
         consumer = next(iter(consumers[node["id"]])); target = nodes[consumer]
         reason = None

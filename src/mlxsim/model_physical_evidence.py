@@ -1,5 +1,6 @@
 """Structural/accounting gates for actual shared-native physical execution."""
 import math
+from .model_value_outputs import value_outputs, require_value_contract
 
 CLASSIFICATION = "shared_native_physical_model_execution_not_chipyard_system_validation"
 EXECUTION_CLASSIFICATION = "full_model_native_physical_not_chipyard_validation"
@@ -18,6 +19,7 @@ def scheduled_compile_options(program):
 
 
 def verify_physical_execution(program, native, system_options=None):
+    require_value_contract(program)
     require(native["classification"]==CLASSIFICATION,"unexpected physical execution evidence class")
     require(all(program.get(name+"_backend")=="scheduled" for name in ("matrix","vector","memory","control")),"physical program permits a functional backend")
     require(native["virtual_tensor_backing_used"] is True and native["functional_entry_calls"]==native["blas_calls"]==native["python_or_gpu_execution_fallbacks"]==0,"physical execution used a prohibited data/compute fallback")
@@ -37,6 +39,8 @@ def verify_physical_execution(program, native, system_options=None):
         for field in ("source_operator_id","kind","forward_id","layer_idx"):
             require(event[field]==node[field],"physical event differs from source operator")
         require(event["entry"]=="tensor_model::"+node["kind"],"physical entry routing mismatch")
+        if node["kind"] == "split":
+            require(event.get("produced_values") == [name for name,_ in value_outputs(node)],"physical split did not publish every output")
         require(event["shared_start_cycle"]==cursor and event["shared_end_cycle"]>=cursor,"physical graph clock is discontinuous")
         cursor=event["shared_end_cycle"];name=kinds[0]
         batches=math.prod(node["output"]["shape"][:-2]) if node["kind"]=="matmul" else 1
@@ -59,6 +63,8 @@ def verify_physical_execution(program, native, system_options=None):
             require(window["source_operator_id"]==node["source_operator_id"] and window["batch_index"]==batch,"physical window identity/batch mismatch")
             require(window["forward_id"]==node["forward_id"] and window["layer_idx"]==node["layer_idx"],"physical window layer/forward mismatch")
             require(window["done"] is True and window["external_memory_port"] is True and window["dma_requests"]==window["dma_responses"],"physical backend window did not drain")
+            if node["kind"] == "split":
+                require(window["view_elided"] and window["numeric_instructions"].get("split_view_outputs") == len(value_outputs(node)),"physical split view count differs")
             start,end=window["shared_start_cycle"],window["shared_end_cycle"]
             require(event["shared_start_cycle"]<=start<=end<=event["shared_end_cycle"] and end-start==window["cycles"],"physical window clock mismatch")
             window_cycles+=window["cycles"];request_count+=window["dma_requests"]
@@ -85,7 +91,7 @@ def verify_physical_execution(program, native, system_options=None):
     require(cursor==window_cycles+diagnostic_cycles and window_cycles==native["device_component_cycles"],"physical component cycle accounting mismatch")
     require(native["shared_elapsed_cycles"]==cursor+native["host_readback_cycles"],"physical readback clock accounting mismatch")
     shapes={name:asset["shape"] for name,asset in program["assets"].items()}
-    shapes.update({n["id"]:n["output"]["shape"] for n in nodes})
+    shapes.update({identifier:spec["shape"] for n in nodes for identifier,spec in value_outputs(n)})
     macs=sum(math.prod(n["output"]["shape"])*shapes[n["args"][0]["value"]][-1] for n in nodes if "matrix_program" in n)
     require((native["matrix_microcode"] or {}).get("mul_active_lanes",0)==macs,"physical matrix did not execute every model MAC")
     require((native["vector_microcode"] or {}).get("calls",0)==len(observed["vector"]),"physical vector execution coverage mismatch")

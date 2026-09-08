@@ -15,6 +15,7 @@ from mlxsim.model_vector_program import FLOAT_KINDS, vector_program
 from mlxsim.model_dtype_lowering import lower_softmax_input_cast
 from mlxsim.model_memory_program import Planner
 from mlxsim.model_control_program import control_program
+from mlxsim.model_value_outputs import value_outputs
 
 ROUTES = {
     "aten.embedding.default": "embedding",
@@ -52,6 +53,7 @@ ROUTES = {
     "aten.transpose.int": "transpose",
     "aten.unsqueeze.default": "unsqueeze",
     "aten.squeeze.dim": "squeeze",
+    "aten.split.Tensor": "split",
     "aten.index.Tensor": "advanced_index",
     "aten.new_ones.default": "new_ones",
     "aten.expand.default": "expand",
@@ -71,6 +73,7 @@ DTYPES = {
 # Only the recorded overloads/attributes with implemented inference semantics
 # are accepted. A familiar ATen name is not permission to ignore its attributes.
 ARITY = {
+    "split": (2, 3),
     "squeeze": (2, 2), "advanced_index": (2, 2), "new_ones": (2, 2),
     "ge": (2, 2), "bitwise_and": (2, 2), "all": (1, 1), "guard": (1, 1),
     "embedding": (2, 5), "linear": (2, 3), "matmul": (2, 2), "arange": (1, 1),
@@ -181,8 +184,31 @@ def compile_inventory(inventory, *, matrix_backend="blas", schedule_options=None
     tensors = inventory["tensors"]
     model = inventory["model_identity"]
     path = Path(model["path"])
-    index = json.loads((path / "model.safetensors.index.json").read_text())["weight_map"]
     headers = {}
+    index_file = path / "model.safetensors.index.json"
+    if index_file.is_file():
+        index = json.loads(index_file.read_text())["weight_map"]
+    else:
+        single = path / "model.safetensors"
+        headers[single] = safetensors_header(single)
+        index = {name: single.name for name in headers[single][0] if name != "__metadata__"}
+    if not isinstance(index, dict) or any(not isinstance(k,str) or not isinstance(v,str) for k,v in index.items()):
+        raise ValueError("checkpoint index must map tensor names to shard files")
+    for shard in set(index.values()):
+        target = path / shard
+        if Path(shard).is_absolute() or not target.resolve().is_relative_to(path.resolve()) or not target.is_file():
+            raise ValueError("checkpoint shard is missing or outside the model directory")
+    name_map = model.get("checkpoint_name_by_model_parameter")
+    if name_map is not None:
+        if not isinstance(name_map, dict) or any(not isinstance(k,str) or not isinstance(v,str) for k,v in name_map.items()):
+            raise ValueError("checkpoint parameter name mapping must contain strings")
+        if len(set(name_map.values())) != len(name_map) or set(name_map.values()) != set(index):
+            raise ValueError("checkpoint parameter name mapping must be a complete bijection")
+    fingerprints = dict(inventory.get("files", {}))
+    for file, info in model.get("files", {}).items():
+        if file in fingerprints and fingerprints[file] != info:
+            raise ValueError("conflicting checkpoint file fingerprints")
+        fingerprints[file] = info
     assets, nodes, routes, outputs, current = {}, [], [], [], {}
     guards = []
     memory_planner = Planner()
@@ -205,16 +231,19 @@ def compile_inventory(inventory, *, matrix_backend="blas", schedule_options=None
             spec.update(kind="literal", values=[], origin="empty_tensor")
         else:
             names = tensors[source]["parameter_or_buffer_names"]
-            name = next((name for name in names if name in index), None)
+            name = next((name for name in names if name in (name_map if name_map is not None else index)), None)
             if name is None:
                 raise ValueError(
                     f"unbound tensor {source}: no parameter, input or constant binding"
                 )
-            file = path / index[name]
+            checkpoint_name = name_map[name] if name_map is not None else name
+            file = path / index[checkpoint_name]
             if file not in headers:
                 headers[file] = safetensors_header(file)
             header, data_start = headers[file]
-            weight = header[name]
+            if checkpoint_name not in header:
+                raise ValueError(f"checkpoint index names a missing tensor: {checkpoint_name}")
+            weight = header[checkpoint_name]
             dtypes = {"F16": "f16", "F32": "f32", "I64": "i64", "BOOL": "bool"}
             if weight["shape"] != spec["shape"] or dtypes.get(weight["dtype"]) != spec["dtype"]:
                 raise ValueError(f"runtime/checkpoint tensor mismatch for {name}")
@@ -222,16 +251,25 @@ def compile_inventory(inventory, *, matrix_backend="blas", schedule_options=None
             expected = (
                 math.prod(spec["shape"]) * {"f16": 2, "f32": 4, "i64": 8, "bool": 1}[spec["dtype"]]
             )
-            if end - first != expected or data_start + end > file.stat().st_size:
+            if type(first) is not int or type(end) is not int or first < 0 or end - first != expected or data_start + end > file.stat().st_size:
                 raise ValueError(f"out-of-bounds tensor data for {name}")
+            fingerprint = fingerprints.get(str(file))
+            if not isinstance(fingerprint, dict) or not isinstance(fingerprint.get("sha256"), str) or len(fingerprint["sha256"]) != 64:
+                raise ValueError(f"checkpoint file has no bound fingerprint: {file}")
+            if any(c not in "0123456789abcdef" for c in fingerprint["sha256"]):
+                raise ValueError(f"checkpoint fingerprint is not canonical SHA256: {file}")
+            if "bytes" in fingerprint and fingerprint["bytes"] != file.stat().st_size:
+                raise ValueError(f"checkpoint file size differs from its binding: {file}")
             spec.update(
                 kind="mapped_file",
                 path=str(file),
                 byte_offset=data_start + first,
                 bytes=expected,
-                parameter_name=name,
-                file_sha256=model["files"][str(file)]["sha256"],
+                parameter_name=checkpoint_name,
+                file_sha256=fingerprint["sha256"],
             )
+            if name_map is not None:
+                spec["model_parameter_name"] = name
         assets[identifier] = spec
         memory_planner.add_asset(identifier, spec)
         current[source] = identifier
@@ -256,9 +294,15 @@ def compile_inventory(inventory, *, matrix_backend="blas", schedule_options=None
         guarded = kind == "guard"
         if kind in {"ge", "bitwise_and", "all", "guard"} and control_backend == "functional":
             raise ValueError("Boolean/guard control requires an explicit RV64 leaf or scheduled backend")
-        if kind in {"advanced_index", "new_ones", "squeeze"} and memory_backend == "functional":
+        if kind in {"advanced_index", "new_ones", "squeeze", "split"} and memory_backend == "functional":
             raise ValueError("index/generation/squeeze requires an explicit planned or scheduled memory backend")
-        if not guarded and (not isinstance(event["outputs"], dict) or "tensor_id" not in event["outputs"]):
+        split = kind == "split"
+        if split:
+            if not isinstance(event["outputs"], list) or not event["outputs"] or any(not isinstance(o, dict) or "tensor_id" not in o for o in event["outputs"]):
+                raise ValueError("split requires all tensor outputs")
+            if len({o["tensor_id"] for o in event["outputs"]}) != len(event["outputs"]):
+                raise ValueError("split output tensor identities are duplicated")
+        if not guarded and not split and (not isinstance(event["outputs"], dict) or "tensor_id" not in event["outputs"]):
             raise ValueError(f"multi/non-tensor output needs an explicit lowering: {operator}")
         args, kwargs = resolve(event["inputs"]), resolve(event["kwargs"])
         if operator == "aten._to_copy.default":
@@ -271,12 +315,12 @@ def compile_inventory(inventory, *, matrix_backend="blas", schedule_options=None
             device = kwargs.get("device") or tensors[event["inputs"][0]["tensor_id"]]["device"]
             args = [args[0], device, event["outputs"]["dtype"], kwargs.get("non_blocking", False), kwargs.get("copy", False)]
             kwargs = {key: value for key, value in kwargs.items() if key == "memory_format"}
-        source_output = None if guarded else event["outputs"]["tensor_id"]
+        source_output = None if guarded or split else event["outputs"]["tensor_id"]
         identifier = f"v{event['operator_id']}"
-        spec = {"dtype": "bool", "shape": []} if guarded else metadata(source_output)
+        spec = {"dtype": "bool", "shape": []} if guarded else metadata(event["inputs"][0]["tensor_id"]) if split else metadata(source_output)
         if guarded:
             args.append(event["outputs"])
-        else:
+        elif not split:
             spec.update(shape=event["outputs"]["shape"], dtype=DTYPES[event["outputs"]["dtype"]])
         node = {
             "id": identifier,
@@ -293,6 +337,9 @@ def compile_inventory(inventory, *, matrix_backend="blas", schedule_options=None
         }
         if guards:
             node["control_dependencies"] = [{"value": guard} for guard in guards]
+        if split:
+            node["split_outputs"] = [{"id": f"{identifier}:{index}", "output": {"dtype": DTYPES[out["dtype"]], "shape": out["shape"]}}
+                                     for index, out in enumerate(event["outputs"])]
         if matrix_backend != "blas" and kind in {"linear", "matmul"}:
             input_type = DTYPES[event["inputs"][0]["dtype"]]
             node["matrix_program"] = matrix_program(input_type, spec["dtype"], kind == "linear" and len(args) > 2 and args[2] is not None)
@@ -325,6 +372,9 @@ def compile_inventory(inventory, *, matrix_backend="blas", schedule_options=None
         nodes.append(node)
         if guarded:
             guards.append(identifier)
+        elif split:
+            for index, out in enumerate(event["outputs"]):
+                current[out["tensor_id"]] = f"{identifier}:{index}"
         else:
             current[source_output] = identifier
         routes.append(
@@ -370,6 +420,8 @@ def compile_inventory(inventory, *, matrix_backend="blas", schedule_options=None
     release_at = {}
     for position, node in enumerate(nodes):
         last_use.setdefault(node["id"], position)
+        for identifier, _ in value_outputs(node):
+            last_use.setdefault(identifier, position)
     for value, position in last_use.items():
         release_at.setdefault(position, []).append(value)
     for position, node in enumerate(nodes):
@@ -388,6 +440,9 @@ def compile_inventory(inventory, *, matrix_backend="blas", schedule_options=None
         "mlx_system_verified": False,
         "performance_eligible": False,
     }
+    if any(node["kind"] == "split" for node in nodes):
+        program["schema"] = "mlx_tensor_semantics_v2"
+        program["value_contract"] = "tuple_view_outputs_v1"
     if memory_backend in {"planned", "scheduled"}:
         program["memory_backend"] = memory_backend
     if memory_backend == "scheduled":

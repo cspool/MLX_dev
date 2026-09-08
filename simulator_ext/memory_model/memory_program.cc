@@ -1,5 +1,6 @@
 #include "memory_program.h"
 #include "memory_schedule.h"
+#include "value_outputs.h"
 #include "../model_io/tensor_memory_port.h"
 #include "mlx_tagged_simulator.h"
 #include <algorithm>
@@ -105,13 +106,13 @@ Tensor derive_view(const Json::Value &node,Tensor t,const Json::Value &p){
     check(kind=="contiguous"||args.size()<=copy_index||!args[copy_index].asBool(),"forced copy cannot alias");
     check(p["same_reference_device"].asBool(),"device transfer cannot alias");
     if(kind=="contiguous"||node["kwargs"]["memory_format"]=="torch.contiguous_format")check(t.contiguous(),"noncontiguous conversion cannot alias");
-  }else check(kind=="alias"||kind=="dropout_inference","operation cannot be an affine view");
+  }else check(kind=="alias"||kind=="dropout_inference"||kind=="split","operation cannot be an affine view");
   return t;
 }
 } // namespace
 
 bool supports(const std::string &k){return extended_kind(k)||k=="embedding"||k=="where"||k=="cat"||k=="cast"||k=="cast_device"||k=="contiguous"||k=="reshape"||k=="transpose"||k=="slice"||k=="select"||k=="unsqueeze"||k=="expand"||k=="alias"||k=="dropout_inference";}
-Json::Value Stats::json()const{Json::Value r(Json::objectValue);r["classification"]="bounded_memory_plans_not_system_dma_validation";r["profile"]=v2?"mlx-memory-plan-v2":"mlx-memory-plan-v1";r["calls"]=Json::UInt64(calls);r["view_elisions"]=Json::UInt64(views);r["allocations"]=Json::UInt64(allocations);r["instructions"]=Json::UInt64(instructions);r["read_bytes"]=Json::UInt64(read_bytes);r["write_bytes"]=Json::UInt64(write_bytes);r["index_reads"]=Json::UInt64(index_reads);r["predicate_reads"]=Json::UInt64(predicate_reads);for(unsigned op=1;op<6;++op)r["opcode_counts"][std::to_string(op)]=Json::UInt64(opcode_counts[op]);r["staging_bytes"]=128;r["register_bytes_total"]=32;r["physical_dma_verified"]=false;r["timing_verified"]=false;return r;}
+Json::Value Stats::json()const{Json::Value r(Json::objectValue);r["classification"]="bounded_memory_plans_not_system_dma_validation";r["profile"]=split_view_outputs?"mlx-memory-plan-v3":v2?"mlx-memory-plan-v2":"mlx-memory-plan-v1";r["calls"]=Json::UInt64(calls);r["view_elisions"]=Json::UInt64(views);r["allocations"]=Json::UInt64(allocations);r["instructions"]=Json::UInt64(instructions);r["read_bytes"]=Json::UInt64(read_bytes);r["write_bytes"]=Json::UInt64(write_bytes);r["index_reads"]=Json::UInt64(index_reads);r["predicate_reads"]=Json::UInt64(predicate_reads);for(unsigned op=1;op<6;++op)r["opcode_counts"][std::to_string(op)]=Json::UInt64(opcode_counts[op]);r["staging_bytes"]=128;r["register_bytes_total"]=32;r["physical_dma_verified"]=false;r["timing_verified"]=false;if(split_view_outputs)r["split_view_outputs"]=Json::UInt64(split_view_outputs);return r;}
 
 namespace {
 struct Prepared {
@@ -140,6 +141,7 @@ Prepared prepare(const Json::Value &node,const Values &values,const Tensor *supp
     check(output.storage==input.storage&&out_spec["root"]==p["input_layouts"][args[0]["value"].asString()]["root"],"view lost its storage owner");
     check(output.sizes==shape(node["output"]["shape"])&&dtype_name(output.type)==node["output"]["dtype"].asString(),"view output contract mismatch");
     if(supplied){layout_matches(*supplied,out_spec);check(supplied->storage==output.storage,"supplied view lost its storage owner");}
+    if(kind=="split")split_views(node,output);
     result.output=output;result.view=true;return result;
   }
   check(p["mode"]=="transfer"&&p["words"].isArray()&&!p["words"].empty()&&p["words"].size()<=(kind=="advanced_index"?11u:4u),"invalid memory transfer program");
@@ -207,6 +209,7 @@ Prepared prepare(const Json::Value &node,const Values &values,const Tensor *supp
 
 Tensor execute(const Json::Value &node,const Values &values,Stats &stats){
   auto prepared=prepare(node,values);++stats.calls;stats.v2|=extended_kind(prepared.kind);
+  if(prepared.kind=="split")stats.split_view_outputs+=node["split_outputs"].size();
   auto output=prepared.output;if(prepared.view){++stats.views;return output;}
   const auto &p=node["memory_program"],&args=node["args"];
   const auto &kind=prepared.kind,&selector=prepared.selector;
@@ -292,6 +295,7 @@ struct Simulator::Impl {
     plan=prepare(node,values,output);
     check(plan.names.size()<64,"memory region table exceeds 64 entries");
     stats.calls=1;stats.views=plan.view;stats.allocations=!plan.view;stats.v2=extended_kind(plan.kind);
+    if(plan.kind=="split")stats.split_view_outputs=node["split_outputs"].size();
     total=plan.empty_embedding?ref(node["args"][1],values).numel():plan.output.numel();
     complete=plan.view||total==0;
     if(!port&&!plan.view){std::vector<Tensor> regions;for(const auto &name:plan.names)regions.push_back(values.at(name));regions.push_back(plan.output);local_port=std::make_unique<model_io::TensorMemoryPort>(std::move(regions),options.dma_latency);port=local_port.get();}

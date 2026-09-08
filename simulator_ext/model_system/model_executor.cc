@@ -4,6 +4,7 @@
 #include "memory_schedule.h"
 #include "control_schedule.h"
 #include "guard_dependencies.h"
+#include "value_outputs.h"
 #include <algorithm>
 #include <cmath>
 #include <chrono>
@@ -60,6 +61,7 @@ struct Runner {
       for(const auto &id:options["observe_operators"]){require(id.isUInt(),"invalid physical observation ID");require(observe_ids.insert(id.asUInt()).second,"duplicate physical observation ID");}
       auto missing=observe_ids;uint64_t bytes=0;
       for(const auto &node:program["nodes"])if(missing.erase(node["source_operator_id"].asUInt())){
+        require(node["kind"]!="split","tuple-view observations require explicit result selection");
         auto count=elements(shape(node["output"]["shape"]));auto width=element_bytes(dtype(node["output"]["dtype"].asString()));
         require(count<=1048576/width,"physical observation exceeds per-output byte limit");auto size=count*width;
         require(size<=33554432-bytes,"physical observations exceed total byte limit");bytes+=size;
@@ -67,8 +69,9 @@ struct Runner {
       require(missing.empty(),"physical observation ID is not in the program");
     }
     require(max_cycles>0&&max_cycles<UINT64_MAX-1000000,"invalid shared cycle limit");
-    require(program["schema"]=="mlx_tensor_semantics_v1"&&program["timing_mode"]=="unmodeled","invalid physical model program");
+    require((program["schema"]=="mlx_tensor_semantics_v1"||program["schema"]=="mlx_tensor_semantics_v2")&&program["timing_mode"]=="unmodeled","invalid physical model program");
     validate_guard_dependencies(program);
+    validate_value_contract(program);
     for(const char *name:{"matrix","vector","memory","control"})require(program[std::string(name)+"_backend"]=="scheduled","physical model requires all four scheduled backends");
     matrix_schedule::Options::parse(program["matrix_schedule_options"]);vector_schedule::Options::parse(program["vector_schedule_options"]);
     memory_model::ScheduleOptions::parse(program["memory_schedule_options"]);control_schedule::Options::parse(program["control_schedule_options"]);
@@ -203,9 +206,11 @@ struct Runner {
       auto name=node["id"].asString();require(!values.count(name),"physical model redefines live SSA value");auto start=cycle;
       progress("begin",node);
       try{values.emplace(name,execute_node(node));}catch(const std::exception &error){progress("failed",node);throw std::runtime_error("physical operator "+std::to_string(node["source_operator_id"].asUInt())+": "+error.what());}
+      publish_split_views(node,values.at(name),values);
       progress("complete",node);
       Json::Value event;event["source_operator_id"]=node["source_operator_id"];event["kind"]=node["kind"];event["entry"]="tensor_model::"+node["kind"].asString();event["forward_id"]=node["forward_id"];event["layer_idx"]=node["layer_idx"];
       event["shared_start_cycle"]=Json::UInt64(start);event["shared_end_cycle"]=Json::UInt64(cycle);auto allocation=arena.allocation(values.at(name));event["allocation_id"]=Json::UInt64(allocation.id);event["physical_base"]=Json::UInt64(allocation.base);events.append(event);
+      if(node["kind"]=="split"){events[events.size()-1]["produced_values"]=Json::Value(Json::arrayValue);for(const auto &id:output_ids(node))events[events.size()-1]["produced_values"].append(id);}
       if(observe_ids.erase(node["source_operator_id"].asUInt()))observe(node,values.at(name),directory);
       for(const auto &released:node["release"])require(values.erase(released.asString())==1,"physical model released missing SSA value");
       memory.collect();

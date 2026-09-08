@@ -1,5 +1,6 @@
 #include "tensor.h"
 #include "guard_dependencies.h"
+#include "value_outputs.h"
 #include "control_program.h"
 #include "vector_program.h"
 #include "memory_program.h"
@@ -15,9 +16,10 @@ int main(int argc,char **argv) {
     require(argc==5 || argc==6,"usage: mlx-tensor-semantics program.json output-directory cpu-blas.so threads [observation-ids.json]");
     uint16_t endian=1; require(*reinterpret_cast<uint8_t*>(&endian)==1,"little-endian host required");
     std::ifstream input(argv[1]); Json::Value program; input>>program;
-    require(program["schema"]=="mlx_tensor_semantics_v1" && program["timing_mode"]=="unmodeled",
+    require((program["schema"]=="mlx_tensor_semantics_v1"||program["schema"]=="mlx_tensor_semantics_v2") && program["timing_mode"]=="unmodeled",
             "unsupported tensor semantics program");
     validate_guard_dependencies(program);
+    validate_value_contract(program);
     const bool scheduled_matrix=program["matrix_backend"]=="scheduled";
     const bool strict_matrix=program["matrix_backend"]=="microcode" || scheduled_matrix;
     const bool scheduled_vector=program["vector_backend"]=="scheduled";
@@ -37,6 +39,7 @@ int main(int argc,char **argv) {
         requested_observations.insert(id.asUInt());
       }
     }
+    for(const auto &node:program["nodes"])require(node["kind"]!="split"||!requested_observations.count(node["source_operator_id"].asUInt()),"tuple-view observations require explicit result selection");
     Json::Value observations(Json::arrayValue); uint64_t observation_bytes=0;
     Assets assets; Values values;
     for (const auto &name:program["assets"].getMemberNames()) values[name]=assets.load(program["assets"][name]);
@@ -67,10 +70,12 @@ int main(int argc,char **argv) {
         throw std::runtime_error("operator "+std::to_string(node["source_operator_id"].asUInt())+
             " "+node["source_operator"].asString()+" "+node["module_path"].asString()+": "+error.what());
       }
+      publish_split_views(node,values.at(node["id"].asString()),values);
       Json::Value event(Json::objectValue);
       event["source_operator_id"]=node["source_operator_id"]; event["entry"]="tensor_model::"+node["kind"].asString();
       event["forward_id"]=node["forward_id"]; event["layer_idx"]=node["layer_idx"];
       event["value_id"]=node["id"]; event["status"]="native_semantics_completed";
+      if(node["kind"]=="split"){event.removeMember("value_id");event["produced_values"]=Json::Value(Json::arrayValue);for(const auto &id:output_ids(node))event["produced_values"].append(id);}
       if (node.isMember("matrix_program")) event["matrix_entry"]=scheduled_matrix?"mlx::matrix_schedule::Simulator":"mlx::tensor_model::execute_matrix_program";
       if (node.isMember("vector_program")) event["vector_entry"]=scheduled_vector?"mlx::vector_schedule::Simulator":"mlx::vector_model::execute";
       if (node.isMember("memory_program")) event["memory_entry"]=scheduled_memory?"mlx::memory_model::Simulator":"mlx::memory_model::execute";

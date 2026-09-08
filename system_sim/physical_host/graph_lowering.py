@@ -12,6 +12,8 @@ from ..physical_device.memory_lowering import lower_memory
 
 
 def compile_graph(program,life,*,device_base=2**32,device_bytes=1048576,data_offset=65536,scratch_offset=4096,scratch_bytes=16384,block_pairs=False,event_slots=32):
+    if program.get("schema") == "mlx_tensor_semantics_v2" or any(n.get("kind") == "split" or "split_outputs" in n for n in program["nodes"]):
+        raise ValueError("host graph ABI has not registered tuple-view source outputs")
     if device_base%4096 or not 0<=device_base<2**40 or device_bytes%4096 or not 8192<=device_bytes<=2**40-device_base:raise ValueError("graph device mapping invalid")
     if scratch_offset<4096 or scratch_offset%8 or scratch_bytes<15872 or scratch_offset+scratch_bytes>data_offset or data_offset%64 or data_offset>device_bytes:raise ValueError("graph scratch/data partition invalid")
     if type(block_pairs) is not bool:raise ValueError("block pair selection must be boolean")

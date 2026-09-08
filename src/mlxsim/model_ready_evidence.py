@@ -4,6 +4,7 @@ This validates actual source work, not CPU/cache timing or all-model scope.
 """
 from collections import Counter
 import math
+from .model_value_outputs import value_outputs
 
 from .model_block_pipeline import compile_block_pipelines,references
 from .model_system_evidence import require,count,check_kernel,WIDTH
@@ -19,11 +20,11 @@ def verify_ready_execution(program,result,options):
     nodes=program["nodes"];ids=[n["source_operator_id"] for n in nodes]
     require(nodes and len(set(ids))==len(ids) and len({n["id"] for n in nodes})==len(nodes),"duplicate or empty source identities")
     events=result["events"];require(len(events)==result["executed_source_calls"]==len(nodes) and {e["source_operator_id"] for e in events}==set(ids),"not every source completed exactly once")
-    by_id={e["source_operator_id"]:e for e in events};by_value={n["id"]:by_id[n["source_operator_id"]] for n in nodes}
+    by_id={e["source_operator_id"]:e for e in events};by_value={identifier:by_id[n["source_operator_id"]] for n in nodes for identifier,_ in value_outputs(n)}
     plan=program["block_pipeline_plan"]
     require(compile_block_pipelines(program,event_slots=plan["event_slots"])["block_pipeline_plan"]==plan,"pipeline plan no longer matches the complete graph")
     parents={p["consumer_source"]:p["producer_source"] for p in plan["pairs"]}
-    values={**program["assets"],**{n["id"]:n["output"] for n in nodes}}
+    values={**program["assets"],**{identifier:spec for n in nodes for identifier,spec in value_outputs(n)}}
     profile={f+"_options":{**({"rows":4,"columns":4,"contexts":2} if f!="memory" else {}),**program[f+"_schedule_options"]} for f in ("matrix","vector","memory")}
     groups=result["windows"];require(set(groups)=={"matrix","vector","memory","control"},"missing or unknown native backend groups")
     indexed={};totals=Counter();admitted=0
@@ -39,6 +40,8 @@ def verify_ready_execution(program,result,options):
         family=families[0];batches=math.prod(node["output"]["shape"][:-2]) if node["kind"]=="matmul" else 1
         require(batches>0 and e["batches"]==batches and e["family"]==family,"source batch/family coverage differs")
         for key in ("kind","forward_id","layer_idx"):require(e[key]==node[key],"source event identity differs")
+        if node["kind"] == "split":
+            require(e.get("produced_values") == [name for name,_ in value_outputs(node)],"ready split did not publish every output")
         start=count(e["start_cycle"],"source start");end=count(e["publish_cycle"],"source publish")
         require(start<end<=result["graph_cycles"],"source interval is invalid")
         for dep in set(references(node["args"]))|set(references(node.get("kwargs",{})))|set(references(node.get("control_dependencies",[]))):
@@ -63,6 +66,8 @@ def verify_ready_execution(program,result,options):
                 work={"requests":w["dma_requests"],"read_bytes":count(w["read_bytes"],"control reads"),"write_bytes":size,"matrix_mac_lanes":0}
             elif view:
                 n=w["numeric_instructions"]
+                if node["kind"] == "split":
+                    require(n.get("split_view_outputs") == len(value_outputs(node)),"split view output count differs")
                 require(w["view_elided"] and not w["inflight_transactions"] and n["calls"]==n["view_elisions"]==1
                         and n["allocations"]==n["read_bytes"]==n["write_bytes"]==w["dma_requests"]==0,"view was materialized or reported numerical work")
                 work={"requests":0,"read_bytes":0,"write_bytes":0,"matrix_mac_lanes":0}

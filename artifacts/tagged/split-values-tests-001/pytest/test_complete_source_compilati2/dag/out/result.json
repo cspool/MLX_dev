@@ -1,0 +1,4221 @@
+{
+	"arena_drained" : 
+	{
+		"alignment" : 64,
+		"allocations" : [],
+		"base" : 4294967296,
+		"bytes" : 65536,
+		"classification" : "physical_address_ownership_not_memory_initialization_or_system_validation",
+		"free_bytes" : 65536,
+		"free_ranges" : 
+		[
+			{
+				"base" : 4294967296,
+				"bytes" : 65536
+			}
+		],
+		"inference_performance_eligible" : false,
+		"live_bytes" : 0,
+		"mlx_system_verified" : false,
+		"peak_reserved_bytes" : 256,
+		"reserved_bytes" : 0,
+		"total_allocations" : 8,
+		"total_frees" : 8
+	},
+	"array" : 
+	{
+		"admitted" : 4,
+		"classification" : "shared_tensor_array_resources_not_model_or_system_validation",
+		"context_slots_per_pe" : 2,
+		"cycle" : 1349,
+		"full_model_execution_verified" : false,
+		"idle" : true,
+		"in_cycle" : false,
+		"inference_performance_eligible" : false,
+		"peak_contexts" : 1,
+		"peak_rf_vectors_per_pe" : 8,
+		"peak_rom_words_per_pe" : 4,
+		"peak_spm_vectors" : 5,
+		"poisoned" : false,
+		"retired" : 4,
+		"rf_vectors_per_pe" : 16,
+		"rom_words_per_pe" : 32,
+		"spm_vectors_total" : 128,
+		"template_configuration_cycles_modeled" : false,
+		"template_words_loaded" : 16
+	},
+	"blas_calls" : 0,
+	"classification" : "ready_graph_shared_array_execution_not_cdc_cpu_or_system_acceptance",
+	"complete_cdc_verified" : false,
+	"control_execution" : "scheduled_rv64_leaf_not_actual_cpu",
+	"dependency_visibility" : "whole_source_completion_next_edge_not_partial_tile_cdc",
+	"events" : 
+	[
+		{
+			"allocation_id" : 2,
+			"batches" : 1,
+			"family" : "vector",
+			"forward_id" : 0,
+			"kind" : "mul",
+			"layer_idx" : null,
+			"physical_base" : 4294967360,
+			"publish_cycle" : 322,
+			"source_operator_id" : 0,
+			"start_cycle" : 0
+		},
+		{
+			"allocation_id" : 3,
+			"batches" : 1,
+			"family" : "vector",
+			"forward_id" : 0,
+			"kind" : "add",
+			"layer_idx" : null,
+			"physical_base" : 4294967296,
+			"publish_cycle" : 642,
+			"source_operator_id" : 1,
+			"start_cycle" : 322
+		},
+		{
+			"allocation_id" : 3,
+			"batches" : 1,
+			"family" : "memory",
+			"forward_id" : 0,
+			"kind" : "split",
+			"layer_idx" : null,
+			"physical_base" : 4294967296,
+			"produced_values" : 
+			[
+				"v2:0",
+				"v2:1",
+				"v2:2"
+			],
+			"publish_cycle" : 643,
+			"source_operator_id" : 2,
+			"start_cycle" : 642
+		},
+		{
+			"allocation_id" : 3,
+			"batches" : 1,
+			"family" : "memory",
+			"forward_id" : 0,
+			"kind" : "squeeze",
+			"layer_idx" : null,
+			"physical_base" : 4294967296,
+			"publish_cycle" : 644,
+			"source_operator_id" : 3,
+			"start_cycle" : 643
+		},
+		{
+			"allocation_id" : 3,
+			"batches" : 1,
+			"family" : "memory",
+			"forward_id" : 0,
+			"kind" : "squeeze",
+			"layer_idx" : null,
+			"physical_base" : 4294967296,
+			"publish_cycle" : 644,
+			"source_operator_id" : 5,
+			"start_cycle" : 643
+		},
+		{
+			"allocation_id" : 4,
+			"batches" : 1,
+			"family" : "memory",
+			"forward_id" : 0,
+			"kind" : "contiguous",
+			"layer_idx" : null,
+			"physical_base" : 4294967360,
+			"publish_cycle" : 759,
+			"source_operator_id" : 4,
+			"start_cycle" : 644
+		},
+		{
+			"allocation_id" : 5,
+			"batches" : 1,
+			"family" : "memory",
+			"forward_id" : 0,
+			"kind" : "contiguous",
+			"layer_idx" : null,
+			"physical_base" : 4294967424,
+			"publish_cycle" : 909,
+			"source_operator_id" : 6,
+			"start_cycle" : 759
+		},
+		{
+			"allocation_id" : 6,
+			"batches" : 1,
+			"family" : "vector",
+			"forward_id" : 0,
+			"kind" : "mul",
+			"layer_idx" : null,
+			"physical_base" : 4294967488,
+			"publish_cycle" : 968,
+			"source_operator_id" : 7,
+			"start_cycle" : 759
+		},
+		{
+			"allocation_id" : 7,
+			"batches" : 1,
+			"family" : "vector",
+			"forward_id" : 0,
+			"kind" : "add",
+			"layer_idx" : null,
+			"physical_base" : 4294967296,
+			"publish_cycle" : 1138,
+			"source_operator_id" : 8,
+			"start_cycle" : 968
+		},
+		{
+			"allocation_id" : 8,
+			"batches" : 1,
+			"family" : "control",
+			"forward_id" : 0,
+			"kind" : "argmax",
+			"layer_idx" : null,
+			"physical_base" : 4294967360,
+			"publish_cycle" : 1350,
+			"source_operator_id" : 9,
+			"start_cycle" : 1138
+		}
+	],
+	"executed_source_calls" : 10,
+	"full_model_execution_verified" : false,
+	"functional_entry_calls" : 0,
+	"graph_cycles" : 1350,
+	"host_readback_cycles" : 60,
+	"host_readback_requests" : 6,
+	"inference_performance_eligible" : false,
+	"max_active_nodes" : 32,
+	"memory" : 
+	{
+		"accepted" : 117,
+		"classification" : "shared_preloaded_native_memory_not_hellacache",
+		"clock" : 1409,
+		"consumed" : 117,
+		"idle" : true,
+		"inflight" : false,
+		"initialization_mode" : "preloaded_payload_not_timed_loader",
+		"live_payload_bindings" : 0,
+		"nacks" : 0,
+		"options" : 
+		{
+			"accept_period" : 1,
+			"latency" : 8,
+			"nack_every" : 0,
+			"trace_limit" : 100000
+		},
+		"physical_cache_verified" : false,
+		"queued" : false,
+		"read_bytes" : 268,
+		"reads" : 66,
+		"response_pending" : false,
+		"responses" : 117,
+		"submitted" : 117,
+		"trace" : 
+		[
+			{
+				"address" : 4294967296,
+				"bytes" : 4,
+				"cycle" : 3,
+				"data" : 0,
+				"event" : "submit",
+				"id" : 1,
+				"write" : false
+			},
+			{
+				"address" : 4294967296,
+				"bytes" : 4,
+				"cycle" : 4,
+				"data" : 0,
+				"event" : "accept",
+				"id" : 1,
+				"write" : false
+			},
+			{
+				"address" : 4294967296,
+				"bytes" : 4,
+				"cycle" : 12,
+				"data" : 0,
+				"event" : "commit",
+				"id" : 1,
+				"write" : false
+			},
+			{
+				"address" : 4294967300,
+				"bytes" : 4,
+				"cycle" : 13,
+				"data" : 0,
+				"event" : "submit",
+				"id" : 2,
+				"write" : false
+			},
+			{
+				"address" : 4294967300,
+				"bytes" : 4,
+				"cycle" : 14,
+				"data" : 0,
+				"event" : "accept",
+				"id" : 2,
+				"write" : false
+			},
+			{
+				"address" : 4294967300,
+				"bytes" : 4,
+				"cycle" : 22,
+				"data" : 1065353216,
+				"event" : "commit",
+				"id" : 2,
+				"write" : false
+			},
+			{
+				"address" : 4294967304,
+				"bytes" : 4,
+				"cycle" : 23,
+				"data" : 0,
+				"event" : "submit",
+				"id" : 3,
+				"write" : false
+			},
+			{
+				"address" : 4294967304,
+				"bytes" : 4,
+				"cycle" : 24,
+				"data" : 0,
+				"event" : "accept",
+				"id" : 3,
+				"write" : false
+			},
+			{
+				"address" : 4294967304,
+				"bytes" : 4,
+				"cycle" : 32,
+				"data" : 1073741824,
+				"event" : "commit",
+				"id" : 3,
+				"write" : false
+			},
+			{
+				"address" : 4294967308,
+				"bytes" : 4,
+				"cycle" : 33,
+				"data" : 0,
+				"event" : "submit",
+				"id" : 4,
+				"write" : false
+			},
+			{
+				"address" : 4294967308,
+				"bytes" : 4,
+				"cycle" : 34,
+				"data" : 0,
+				"event" : "accept",
+				"id" : 4,
+				"write" : false
+			},
+			{
+				"address" : 4294967308,
+				"bytes" : 4,
+				"cycle" : 42,
+				"data" : 1077936128,
+				"event" : "commit",
+				"id" : 4,
+				"write" : false
+			},
+			{
+				"address" : 4294967312,
+				"bytes" : 4,
+				"cycle" : 43,
+				"data" : 0,
+				"event" : "submit",
+				"id" : 5,
+				"write" : false
+			},
+			{
+				"address" : 4294967312,
+				"bytes" : 4,
+				"cycle" : 44,
+				"data" : 0,
+				"event" : "accept",
+				"id" : 5,
+				"write" : false
+			},
+			{
+				"address" : 4294967312,
+				"bytes" : 4,
+				"cycle" : 52,
+				"data" : 1082130432,
+				"event" : "commit",
+				"id" : 5,
+				"write" : false
+			},
+			{
+				"address" : 4294967316,
+				"bytes" : 4,
+				"cycle" : 53,
+				"data" : 0,
+				"event" : "submit",
+				"id" : 6,
+				"write" : false
+			},
+			{
+				"address" : 4294967316,
+				"bytes" : 4,
+				"cycle" : 54,
+				"data" : 0,
+				"event" : "accept",
+				"id" : 6,
+				"write" : false
+			},
+			{
+				"address" : 4294967316,
+				"bytes" : 4,
+				"cycle" : 62,
+				"data" : 1084227584,
+				"event" : "commit",
+				"id" : 6,
+				"write" : false
+			},
+			{
+				"address" : 4294967320,
+				"bytes" : 4,
+				"cycle" : 63,
+				"data" : 0,
+				"event" : "submit",
+				"id" : 7,
+				"write" : false
+			},
+			{
+				"address" : 4294967320,
+				"bytes" : 4,
+				"cycle" : 64,
+				"data" : 0,
+				"event" : "accept",
+				"id" : 7,
+				"write" : false
+			},
+			{
+				"address" : 4294967320,
+				"bytes" : 4,
+				"cycle" : 72,
+				"data" : 1086324736,
+				"event" : "commit",
+				"id" : 7,
+				"write" : false
+			},
+			{
+				"address" : 4294967324,
+				"bytes" : 4,
+				"cycle" : 73,
+				"data" : 0,
+				"event" : "submit",
+				"id" : 8,
+				"write" : false
+			},
+			{
+				"address" : 4294967324,
+				"bytes" : 4,
+				"cycle" : 74,
+				"data" : 0,
+				"event" : "accept",
+				"id" : 8,
+				"write" : false
+			},
+			{
+				"address" : 4294967324,
+				"bytes" : 4,
+				"cycle" : 82,
+				"data" : 1088421888,
+				"event" : "commit",
+				"id" : 8,
+				"write" : false
+			},
+			{
+				"address" : 4294967328,
+				"bytes" : 4,
+				"cycle" : 83,
+				"data" : 0,
+				"event" : "submit",
+				"id" : 9,
+				"write" : false
+			},
+			{
+				"address" : 4294967328,
+				"bytes" : 4,
+				"cycle" : 84,
+				"data" : 0,
+				"event" : "accept",
+				"id" : 9,
+				"write" : false
+			},
+			{
+				"address" : 4294967328,
+				"bytes" : 4,
+				"cycle" : 92,
+				"data" : 1090519040,
+				"event" : "commit",
+				"id" : 9,
+				"write" : false
+			},
+			{
+				"address" : 4294967332,
+				"bytes" : 4,
+				"cycle" : 93,
+				"data" : 0,
+				"event" : "submit",
+				"id" : 10,
+				"write" : false
+			},
+			{
+				"address" : 4294967332,
+				"bytes" : 4,
+				"cycle" : 94,
+				"data" : 0,
+				"event" : "accept",
+				"id" : 10,
+				"write" : false
+			},
+			{
+				"address" : 4294967332,
+				"bytes" : 4,
+				"cycle" : 102,
+				"data" : 1091567616,
+				"event" : "commit",
+				"id" : 10,
+				"write" : false
+			},
+			{
+				"address" : 4294967336,
+				"bytes" : 4,
+				"cycle" : 103,
+				"data" : 0,
+				"event" : "submit",
+				"id" : 11,
+				"write" : false
+			},
+			{
+				"address" : 4294967336,
+				"bytes" : 4,
+				"cycle" : 104,
+				"data" : 0,
+				"event" : "accept",
+				"id" : 11,
+				"write" : false
+			},
+			{
+				"address" : 4294967336,
+				"bytes" : 4,
+				"cycle" : 112,
+				"data" : 1092616192,
+				"event" : "commit",
+				"id" : 11,
+				"write" : false
+			},
+			{
+				"address" : 4294967340,
+				"bytes" : 4,
+				"cycle" : 113,
+				"data" : 0,
+				"event" : "submit",
+				"id" : 12,
+				"write" : false
+			},
+			{
+				"address" : 4294967340,
+				"bytes" : 4,
+				"cycle" : 114,
+				"data" : 0,
+				"event" : "accept",
+				"id" : 12,
+				"write" : false
+			},
+			{
+				"address" : 4294967340,
+				"bytes" : 4,
+				"cycle" : 122,
+				"data" : 1093664768,
+				"event" : "commit",
+				"id" : 12,
+				"write" : false
+			},
+			{
+				"address" : 4294967344,
+				"bytes" : 4,
+				"cycle" : 123,
+				"data" : 0,
+				"event" : "submit",
+				"id" : 13,
+				"write" : false
+			},
+			{
+				"address" : 4294967344,
+				"bytes" : 4,
+				"cycle" : 124,
+				"data" : 0,
+				"event" : "accept",
+				"id" : 13,
+				"write" : false
+			},
+			{
+				"address" : 4294967344,
+				"bytes" : 4,
+				"cycle" : 132,
+				"data" : 1094713344,
+				"event" : "commit",
+				"id" : 13,
+				"write" : false
+			},
+			{
+				"address" : 4294967348,
+				"bytes" : 4,
+				"cycle" : 133,
+				"data" : 0,
+				"event" : "submit",
+				"id" : 14,
+				"write" : false
+			},
+			{
+				"address" : 4294967348,
+				"bytes" : 4,
+				"cycle" : 134,
+				"data" : 0,
+				"event" : "accept",
+				"id" : 14,
+				"write" : false
+			},
+			{
+				"address" : 4294967348,
+				"bytes" : 4,
+				"cycle" : 142,
+				"data" : 1095761920,
+				"event" : "commit",
+				"id" : 14,
+				"write" : false
+			},
+			{
+				"address" : 4294967352,
+				"bytes" : 4,
+				"cycle" : 143,
+				"data" : 0,
+				"event" : "submit",
+				"id" : 15,
+				"write" : false
+			},
+			{
+				"address" : 4294967352,
+				"bytes" : 4,
+				"cycle" : 144,
+				"data" : 0,
+				"event" : "accept",
+				"id" : 15,
+				"write" : false
+			},
+			{
+				"address" : 4294967352,
+				"bytes" : 4,
+				"cycle" : 152,
+				"data" : 1096810496,
+				"event" : "commit",
+				"id" : 15,
+				"write" : false
+			},
+			{
+				"address" : 4294967360,
+				"bytes" : 4,
+				"cycle" : 172,
+				"data" : 0,
+				"event" : "submit",
+				"id" : 16,
+				"write" : true
+			},
+			{
+				"address" : 4294967360,
+				"bytes" : 4,
+				"cycle" : 173,
+				"data" : 0,
+				"event" : "accept",
+				"id" : 16,
+				"write" : true
+			},
+			{
+				"address" : 4294967360,
+				"bytes" : 4,
+				"cycle" : 181,
+				"data" : 0,
+				"event" : "commit",
+				"id" : 16,
+				"write" : true
+			},
+			{
+				"address" : 4294967364,
+				"bytes" : 4,
+				"cycle" : 182,
+				"data" : 1073741824,
+				"event" : "submit",
+				"id" : 17,
+				"write" : true
+			},
+			{
+				"address" : 4294967364,
+				"bytes" : 4,
+				"cycle" : 183,
+				"data" : 1073741824,
+				"event" : "accept",
+				"id" : 17,
+				"write" : true
+			},
+			{
+				"address" : 4294967364,
+				"bytes" : 4,
+				"cycle" : 191,
+				"data" : 1073741824,
+				"event" : "commit",
+				"id" : 17,
+				"write" : true
+			},
+			{
+				"address" : 4294967368,
+				"bytes" : 4,
+				"cycle" : 192,
+				"data" : 1082130432,
+				"event" : "submit",
+				"id" : 18,
+				"write" : true
+			},
+			{
+				"address" : 4294967368,
+				"bytes" : 4,
+				"cycle" : 193,
+				"data" : 1082130432,
+				"event" : "accept",
+				"id" : 18,
+				"write" : true
+			},
+			{
+				"address" : 4294967368,
+				"bytes" : 4,
+				"cycle" : 201,
+				"data" : 1082130432,
+				"event" : "commit",
+				"id" : 18,
+				"write" : true
+			},
+			{
+				"address" : 4294967372,
+				"bytes" : 4,
+				"cycle" : 202,
+				"data" : 1086324736,
+				"event" : "submit",
+				"id" : 19,
+				"write" : true
+			},
+			{
+				"address" : 4294967372,
+				"bytes" : 4,
+				"cycle" : 203,
+				"data" : 1086324736,
+				"event" : "accept",
+				"id" : 19,
+				"write" : true
+			},
+			{
+				"address" : 4294967372,
+				"bytes" : 4,
+				"cycle" : 211,
+				"data" : 1086324736,
+				"event" : "commit",
+				"id" : 19,
+				"write" : true
+			},
+			{
+				"address" : 4294967376,
+				"bytes" : 4,
+				"cycle" : 212,
+				"data" : 1090519040,
+				"event" : "submit",
+				"id" : 20,
+				"write" : true
+			},
+			{
+				"address" : 4294967376,
+				"bytes" : 4,
+				"cycle" : 213,
+				"data" : 1090519040,
+				"event" : "accept",
+				"id" : 20,
+				"write" : true
+			},
+			{
+				"address" : 4294967376,
+				"bytes" : 4,
+				"cycle" : 221,
+				"data" : 1090519040,
+				"event" : "commit",
+				"id" : 20,
+				"write" : true
+			},
+			{
+				"address" : 4294967380,
+				"bytes" : 4,
+				"cycle" : 222,
+				"data" : 1092616192,
+				"event" : "submit",
+				"id" : 21,
+				"write" : true
+			},
+			{
+				"address" : 4294967380,
+				"bytes" : 4,
+				"cycle" : 223,
+				"data" : 1092616192,
+				"event" : "accept",
+				"id" : 21,
+				"write" : true
+			},
+			{
+				"address" : 4294967380,
+				"bytes" : 4,
+				"cycle" : 231,
+				"data" : 1092616192,
+				"event" : "commit",
+				"id" : 21,
+				"write" : true
+			},
+			{
+				"address" : 4294967384,
+				"bytes" : 4,
+				"cycle" : 232,
+				"data" : 1094713344,
+				"event" : "submit",
+				"id" : 22,
+				"write" : true
+			},
+			{
+				"address" : 4294967384,
+				"bytes" : 4,
+				"cycle" : 233,
+				"data" : 1094713344,
+				"event" : "accept",
+				"id" : 22,
+				"write" : true
+			},
+			{
+				"address" : 4294967384,
+				"bytes" : 4,
+				"cycle" : 241,
+				"data" : 1094713344,
+				"event" : "commit",
+				"id" : 22,
+				"write" : true
+			},
+			{
+				"address" : 4294967388,
+				"bytes" : 4,
+				"cycle" : 242,
+				"data" : 1096810496,
+				"event" : "submit",
+				"id" : 23,
+				"write" : true
+			},
+			{
+				"address" : 4294967388,
+				"bytes" : 4,
+				"cycle" : 243,
+				"data" : 1096810496,
+				"event" : "accept",
+				"id" : 23,
+				"write" : true
+			},
+			{
+				"address" : 4294967388,
+				"bytes" : 4,
+				"cycle" : 251,
+				"data" : 1096810496,
+				"event" : "commit",
+				"id" : 23,
+				"write" : true
+			},
+			{
+				"address" : 4294967392,
+				"bytes" : 4,
+				"cycle" : 252,
+				"data" : 1098907648,
+				"event" : "submit",
+				"id" : 24,
+				"write" : true
+			},
+			{
+				"address" : 4294967392,
+				"bytes" : 4,
+				"cycle" : 253,
+				"data" : 1098907648,
+				"event" : "accept",
+				"id" : 24,
+				"write" : true
+			},
+			{
+				"address" : 4294967392,
+				"bytes" : 4,
+				"cycle" : 261,
+				"data" : 1098907648,
+				"event" : "commit",
+				"id" : 24,
+				"write" : true
+			},
+			{
+				"address" : 4294967396,
+				"bytes" : 4,
+				"cycle" : 262,
+				"data" : 1099956224,
+				"event" : "submit",
+				"id" : 25,
+				"write" : true
+			},
+			{
+				"address" : 4294967396,
+				"bytes" : 4,
+				"cycle" : 263,
+				"data" : 1099956224,
+				"event" : "accept",
+				"id" : 25,
+				"write" : true
+			},
+			{
+				"address" : 4294967396,
+				"bytes" : 4,
+				"cycle" : 271,
+				"data" : 1099956224,
+				"event" : "commit",
+				"id" : 25,
+				"write" : true
+			},
+			{
+				"address" : 4294967400,
+				"bytes" : 4,
+				"cycle" : 272,
+				"data" : 1101004800,
+				"event" : "submit",
+				"id" : 26,
+				"write" : true
+			},
+			{
+				"address" : 4294967400,
+				"bytes" : 4,
+				"cycle" : 273,
+				"data" : 1101004800,
+				"event" : "accept",
+				"id" : 26,
+				"write" : true
+			},
+			{
+				"address" : 4294967400,
+				"bytes" : 4,
+				"cycle" : 281,
+				"data" : 1101004800,
+				"event" : "commit",
+				"id" : 26,
+				"write" : true
+			},
+			{
+				"address" : 4294967404,
+				"bytes" : 4,
+				"cycle" : 282,
+				"data" : 1102053376,
+				"event" : "submit",
+				"id" : 27,
+				"write" : true
+			},
+			{
+				"address" : 4294967404,
+				"bytes" : 4,
+				"cycle" : 283,
+				"data" : 1102053376,
+				"event" : "accept",
+				"id" : 27,
+				"write" : true
+			},
+			{
+				"address" : 4294967404,
+				"bytes" : 4,
+				"cycle" : 291,
+				"data" : 1102053376,
+				"event" : "commit",
+				"id" : 27,
+				"write" : true
+			},
+			{
+				"address" : 4294967408,
+				"bytes" : 4,
+				"cycle" : 292,
+				"data" : 1103101952,
+				"event" : "submit",
+				"id" : 28,
+				"write" : true
+			},
+			{
+				"address" : 4294967408,
+				"bytes" : 4,
+				"cycle" : 293,
+				"data" : 1103101952,
+				"event" : "accept",
+				"id" : 28,
+				"write" : true
+			},
+			{
+				"address" : 4294967408,
+				"bytes" : 4,
+				"cycle" : 301,
+				"data" : 1103101952,
+				"event" : "commit",
+				"id" : 28,
+				"write" : true
+			},
+			{
+				"address" : 4294967412,
+				"bytes" : 4,
+				"cycle" : 302,
+				"data" : 1104150528,
+				"event" : "submit",
+				"id" : 29,
+				"write" : true
+			},
+			{
+				"address" : 4294967412,
+				"bytes" : 4,
+				"cycle" : 303,
+				"data" : 1104150528,
+				"event" : "accept",
+				"id" : 29,
+				"write" : true
+			},
+			{
+				"address" : 4294967412,
+				"bytes" : 4,
+				"cycle" : 311,
+				"data" : 1104150528,
+				"event" : "commit",
+				"id" : 29,
+				"write" : true
+			},
+			{
+				"address" : 4294967416,
+				"bytes" : 4,
+				"cycle" : 312,
+				"data" : 1105199104,
+				"event" : "submit",
+				"id" : 30,
+				"write" : true
+			},
+			{
+				"address" : 4294967416,
+				"bytes" : 4,
+				"cycle" : 313,
+				"data" : 1105199104,
+				"event" : "accept",
+				"id" : 30,
+				"write" : true
+			},
+			{
+				"address" : 4294967416,
+				"bytes" : 4,
+				"cycle" : 321,
+				"data" : 1105199104,
+				"event" : "commit",
+				"id" : 30,
+				"write" : true
+			},
+			{
+				"address" : 4294967360,
+				"bytes" : 4,
+				"cycle" : 325,
+				"data" : 0,
+				"event" : "submit",
+				"id" : 31,
+				"write" : false
+			},
+			{
+				"address" : 4294967360,
+				"bytes" : 4,
+				"cycle" : 326,
+				"data" : 0,
+				"event" : "accept",
+				"id" : 31,
+				"write" : false
+			},
+			{
+				"address" : 4294967360,
+				"bytes" : 4,
+				"cycle" : 334,
+				"data" : 0,
+				"event" : "commit",
+				"id" : 31,
+				"write" : false
+			},
+			{
+				"address" : 4294967364,
+				"bytes" : 4,
+				"cycle" : 335,
+				"data" : 0,
+				"event" : "submit",
+				"id" : 32,
+				"write" : false
+			},
+			{
+				"address" : 4294967364,
+				"bytes" : 4,
+				"cycle" : 336,
+				"data" : 0,
+				"event" : "accept",
+				"id" : 32,
+				"write" : false
+			},
+			{
+				"address" : 4294967364,
+				"bytes" : 4,
+				"cycle" : 344,
+				"data" : 1073741824,
+				"event" : "commit",
+				"id" : 32,
+				"write" : false
+			},
+			{
+				"address" : 4294967368,
+				"bytes" : 4,
+				"cycle" : 345,
+				"data" : 0,
+				"event" : "submit",
+				"id" : 33,
+				"write" : false
+			},
+			{
+				"address" : 4294967368,
+				"bytes" : 4,
+				"cycle" : 346,
+				"data" : 0,
+				"event" : "accept",
+				"id" : 33,
+				"write" : false
+			},
+			{
+				"address" : 4294967368,
+				"bytes" : 4,
+				"cycle" : 354,
+				"data" : 1082130432,
+				"event" : "commit",
+				"id" : 33,
+				"write" : false
+			},
+			{
+				"address" : 4294967372,
+				"bytes" : 4,
+				"cycle" : 355,
+				"data" : 0,
+				"event" : "submit",
+				"id" : 34,
+				"write" : false
+			},
+			{
+				"address" : 4294967372,
+				"bytes" : 4,
+				"cycle" : 356,
+				"data" : 0,
+				"event" : "accept",
+				"id" : 34,
+				"write" : false
+			},
+			{
+				"address" : 4294967372,
+				"bytes" : 4,
+				"cycle" : 364,
+				"data" : 1086324736,
+				"event" : "commit",
+				"id" : 34,
+				"write" : false
+			},
+			{
+				"address" : 4294967376,
+				"bytes" : 4,
+				"cycle" : 365,
+				"data" : 0,
+				"event" : "submit",
+				"id" : 35,
+				"write" : false
+			},
+			{
+				"address" : 4294967376,
+				"bytes" : 4,
+				"cycle" : 366,
+				"data" : 0,
+				"event" : "accept",
+				"id" : 35,
+				"write" : false
+			},
+			{
+				"address" : 4294967376,
+				"bytes" : 4,
+				"cycle" : 374,
+				"data" : 1090519040,
+				"event" : "commit",
+				"id" : 35,
+				"write" : false
+			},
+			{
+				"address" : 4294967380,
+				"bytes" : 4,
+				"cycle" : 375,
+				"data" : 0,
+				"event" : "submit",
+				"id" : 36,
+				"write" : false
+			},
+			{
+				"address" : 4294967380,
+				"bytes" : 4,
+				"cycle" : 376,
+				"data" : 0,
+				"event" : "accept",
+				"id" : 36,
+				"write" : false
+			},
+			{
+				"address" : 4294967380,
+				"bytes" : 4,
+				"cycle" : 384,
+				"data" : 1092616192,
+				"event" : "commit",
+				"id" : 36,
+				"write" : false
+			},
+			{
+				"address" : 4294967384,
+				"bytes" : 4,
+				"cycle" : 385,
+				"data" : 0,
+				"event" : "submit",
+				"id" : 37,
+				"write" : false
+			},
+			{
+				"address" : 4294967384,
+				"bytes" : 4,
+				"cycle" : 386,
+				"data" : 0,
+				"event" : "accept",
+				"id" : 37,
+				"write" : false
+			},
+			{
+				"address" : 4294967384,
+				"bytes" : 4,
+				"cycle" : 394,
+				"data" : 1094713344,
+				"event" : "commit",
+				"id" : 37,
+				"write" : false
+			},
+			{
+				"address" : 4294967388,
+				"bytes" : 4,
+				"cycle" : 395,
+				"data" : 0,
+				"event" : "submit",
+				"id" : 38,
+				"write" : false
+			},
+			{
+				"address" : 4294967388,
+				"bytes" : 4,
+				"cycle" : 396,
+				"data" : 0,
+				"event" : "accept",
+				"id" : 38,
+				"write" : false
+			},
+			{
+				"address" : 4294967388,
+				"bytes" : 4,
+				"cycle" : 404,
+				"data" : 1096810496,
+				"event" : "commit",
+				"id" : 38,
+				"write" : false
+			},
+			{
+				"address" : 4294967392,
+				"bytes" : 4,
+				"cycle" : 405,
+				"data" : 0,
+				"event" : "submit",
+				"id" : 39,
+				"write" : false
+			},
+			{
+				"address" : 4294967392,
+				"bytes" : 4,
+				"cycle" : 406,
+				"data" : 0,
+				"event" : "accept",
+				"id" : 39,
+				"write" : false
+			},
+			{
+				"address" : 4294967392,
+				"bytes" : 4,
+				"cycle" : 414,
+				"data" : 1098907648,
+				"event" : "commit",
+				"id" : 39,
+				"write" : false
+			},
+			{
+				"address" : 4294967396,
+				"bytes" : 4,
+				"cycle" : 415,
+				"data" : 0,
+				"event" : "submit",
+				"id" : 40,
+				"write" : false
+			},
+			{
+				"address" : 4294967396,
+				"bytes" : 4,
+				"cycle" : 416,
+				"data" : 0,
+				"event" : "accept",
+				"id" : 40,
+				"write" : false
+			},
+			{
+				"address" : 4294967396,
+				"bytes" : 4,
+				"cycle" : 424,
+				"data" : 1099956224,
+				"event" : "commit",
+				"id" : 40,
+				"write" : false
+			},
+			{
+				"address" : 4294967400,
+				"bytes" : 4,
+				"cycle" : 425,
+				"data" : 0,
+				"event" : "submit",
+				"id" : 41,
+				"write" : false
+			},
+			{
+				"address" : 4294967400,
+				"bytes" : 4,
+				"cycle" : 426,
+				"data" : 0,
+				"event" : "accept",
+				"id" : 41,
+				"write" : false
+			},
+			{
+				"address" : 4294967400,
+				"bytes" : 4,
+				"cycle" : 434,
+				"data" : 1101004800,
+				"event" : "commit",
+				"id" : 41,
+				"write" : false
+			},
+			{
+				"address" : 4294967404,
+				"bytes" : 4,
+				"cycle" : 435,
+				"data" : 0,
+				"event" : "submit",
+				"id" : 42,
+				"write" : false
+			},
+			{
+				"address" : 4294967404,
+				"bytes" : 4,
+				"cycle" : 436,
+				"data" : 0,
+				"event" : "accept",
+				"id" : 42,
+				"write" : false
+			},
+			{
+				"address" : 4294967404,
+				"bytes" : 4,
+				"cycle" : 444,
+				"data" : 1102053376,
+				"event" : "commit",
+				"id" : 42,
+				"write" : false
+			},
+			{
+				"address" : 4294967408,
+				"bytes" : 4,
+				"cycle" : 445,
+				"data" : 0,
+				"event" : "submit",
+				"id" : 43,
+				"write" : false
+			},
+			{
+				"address" : 4294967408,
+				"bytes" : 4,
+				"cycle" : 446,
+				"data" : 0,
+				"event" : "accept",
+				"id" : 43,
+				"write" : false
+			},
+			{
+				"address" : 4294967408,
+				"bytes" : 4,
+				"cycle" : 454,
+				"data" : 1103101952,
+				"event" : "commit",
+				"id" : 43,
+				"write" : false
+			},
+			{
+				"address" : 4294967412,
+				"bytes" : 4,
+				"cycle" : 455,
+				"data" : 0,
+				"event" : "submit",
+				"id" : 44,
+				"write" : false
+			},
+			{
+				"address" : 4294967412,
+				"bytes" : 4,
+				"cycle" : 456,
+				"data" : 0,
+				"event" : "accept",
+				"id" : 44,
+				"write" : false
+			},
+			{
+				"address" : 4294967412,
+				"bytes" : 4,
+				"cycle" : 464,
+				"data" : 1104150528,
+				"event" : "commit",
+				"id" : 44,
+				"write" : false
+			},
+			{
+				"address" : 4294967416,
+				"bytes" : 4,
+				"cycle" : 465,
+				"data" : 0,
+				"event" : "submit",
+				"id" : 45,
+				"write" : false
+			},
+			{
+				"address" : 4294967416,
+				"bytes" : 4,
+				"cycle" : 466,
+				"data" : 0,
+				"event" : "accept",
+				"id" : 45,
+				"write" : false
+			},
+			{
+				"address" : 4294967416,
+				"bytes" : 4,
+				"cycle" : 474,
+				"data" : 1105199104,
+				"event" : "commit",
+				"id" : 45,
+				"write" : false
+			},
+			{
+				"address" : 4294967296,
+				"bytes" : 4,
+				"cycle" : 492,
+				"data" : 1065353216,
+				"event" : "submit",
+				"id" : 46,
+				"write" : true
+			},
+			{
+				"address" : 4294967296,
+				"bytes" : 4,
+				"cycle" : 493,
+				"data" : 1065353216,
+				"event" : "accept",
+				"id" : 46,
+				"write" : true
+			},
+			{
+				"address" : 4294967296,
+				"bytes" : 4,
+				"cycle" : 501,
+				"data" : 1065353216,
+				"event" : "commit",
+				"id" : 46,
+				"write" : true
+			},
+			{
+				"address" : 4294967300,
+				"bytes" : 4,
+				"cycle" : 502,
+				"data" : 1077936128,
+				"event" : "submit",
+				"id" : 47,
+				"write" : true
+			},
+			{
+				"address" : 4294967300,
+				"bytes" : 4,
+				"cycle" : 503,
+				"data" : 1077936128,
+				"event" : "accept",
+				"id" : 47,
+				"write" : true
+			},
+			{
+				"address" : 4294967300,
+				"bytes" : 4,
+				"cycle" : 511,
+				"data" : 1077936128,
+				"event" : "commit",
+				"id" : 47,
+				"write" : true
+			},
+			{
+				"address" : 4294967304,
+				"bytes" : 4,
+				"cycle" : 512,
+				"data" : 1084227584,
+				"event" : "submit",
+				"id" : 48,
+				"write" : true
+			},
+			{
+				"address" : 4294967304,
+				"bytes" : 4,
+				"cycle" : 513,
+				"data" : 1084227584,
+				"event" : "accept",
+				"id" : 48,
+				"write" : true
+			},
+			{
+				"address" : 4294967304,
+				"bytes" : 4,
+				"cycle" : 521,
+				"data" : 1084227584,
+				"event" : "commit",
+				"id" : 48,
+				"write" : true
+			},
+			{
+				"address" : 4294967308,
+				"bytes" : 4,
+				"cycle" : 522,
+				"data" : 1088421888,
+				"event" : "submit",
+				"id" : 49,
+				"write" : true
+			},
+			{
+				"address" : 4294967308,
+				"bytes" : 4,
+				"cycle" : 523,
+				"data" : 1088421888,
+				"event" : "accept",
+				"id" : 49,
+				"write" : true
+			},
+			{
+				"address" : 4294967308,
+				"bytes" : 4,
+				"cycle" : 531,
+				"data" : 1088421888,
+				"event" : "commit",
+				"id" : 49,
+				"write" : true
+			},
+			{
+				"address" : 4294967312,
+				"bytes" : 4,
+				"cycle" : 532,
+				"data" : 1091567616,
+				"event" : "submit",
+				"id" : 50,
+				"write" : true
+			},
+			{
+				"address" : 4294967312,
+				"bytes" : 4,
+				"cycle" : 533,
+				"data" : 1091567616,
+				"event" : "accept",
+				"id" : 50,
+				"write" : true
+			},
+			{
+				"address" : 4294967312,
+				"bytes" : 4,
+				"cycle" : 541,
+				"data" : 1091567616,
+				"event" : "commit",
+				"id" : 50,
+				"write" : true
+			},
+			{
+				"address" : 4294967316,
+				"bytes" : 4,
+				"cycle" : 542,
+				"data" : 1093664768,
+				"event" : "submit",
+				"id" : 51,
+				"write" : true
+			},
+			{
+				"address" : 4294967316,
+				"bytes" : 4,
+				"cycle" : 543,
+				"data" : 1093664768,
+				"event" : "accept",
+				"id" : 51,
+				"write" : true
+			},
+			{
+				"address" : 4294967316,
+				"bytes" : 4,
+				"cycle" : 551,
+				"data" : 1093664768,
+				"event" : "commit",
+				"id" : 51,
+				"write" : true
+			},
+			{
+				"address" : 4294967320,
+				"bytes" : 4,
+				"cycle" : 552,
+				"data" : 1095761920,
+				"event" : "submit",
+				"id" : 52,
+				"write" : true
+			},
+			{
+				"address" : 4294967320,
+				"bytes" : 4,
+				"cycle" : 553,
+				"data" : 1095761920,
+				"event" : "accept",
+				"id" : 52,
+				"write" : true
+			},
+			{
+				"address" : 4294967320,
+				"bytes" : 4,
+				"cycle" : 561,
+				"data" : 1095761920,
+				"event" : "commit",
+				"id" : 52,
+				"write" : true
+			},
+			{
+				"address" : 4294967324,
+				"bytes" : 4,
+				"cycle" : 562,
+				"data" : 1097859072,
+				"event" : "submit",
+				"id" : 53,
+				"write" : true
+			},
+			{
+				"address" : 4294967324,
+				"bytes" : 4,
+				"cycle" : 563,
+				"data" : 1097859072,
+				"event" : "accept",
+				"id" : 53,
+				"write" : true
+			},
+			{
+				"address" : 4294967324,
+				"bytes" : 4,
+				"cycle" : 571,
+				"data" : 1097859072,
+				"event" : "commit",
+				"id" : 53,
+				"write" : true
+			},
+			{
+				"address" : 4294967328,
+				"bytes" : 4,
+				"cycle" : 572,
+				"data" : 1099431936,
+				"event" : "submit",
+				"id" : 54,
+				"write" : true
+			},
+			{
+				"address" : 4294967328,
+				"bytes" : 4,
+				"cycle" : 573,
+				"data" : 1099431936,
+				"event" : "accept",
+				"id" : 54,
+				"write" : true
+			},
+			{
+				"address" : 4294967328,
+				"bytes" : 4,
+				"cycle" : 581,
+				"data" : 1099431936,
+				"event" : "commit",
+				"id" : 54,
+				"write" : true
+			},
+			{
+				"address" : 4294967332,
+				"bytes" : 4,
+				"cycle" : 582,
+				"data" : 1100480512,
+				"event" : "submit",
+				"id" : 55,
+				"write" : true
+			},
+			{
+				"address" : 4294967332,
+				"bytes" : 4,
+				"cycle" : 583,
+				"data" : 1100480512,
+				"event" : "accept",
+				"id" : 55,
+				"write" : true
+			},
+			{
+				"address" : 4294967332,
+				"bytes" : 4,
+				"cycle" : 591,
+				"data" : 1100480512,
+				"event" : "commit",
+				"id" : 55,
+				"write" : true
+			},
+			{
+				"address" : 4294967336,
+				"bytes" : 4,
+				"cycle" : 592,
+				"data" : 1101529088,
+				"event" : "submit",
+				"id" : 56,
+				"write" : true
+			},
+			{
+				"address" : 4294967336,
+				"bytes" : 4,
+				"cycle" : 593,
+				"data" : 1101529088,
+				"event" : "accept",
+				"id" : 56,
+				"write" : true
+			},
+			{
+				"address" : 4294967336,
+				"bytes" : 4,
+				"cycle" : 601,
+				"data" : 1101529088,
+				"event" : "commit",
+				"id" : 56,
+				"write" : true
+			},
+			{
+				"address" : 4294967340,
+				"bytes" : 4,
+				"cycle" : 602,
+				"data" : 1102577664,
+				"event" : "submit",
+				"id" : 57,
+				"write" : true
+			},
+			{
+				"address" : 4294967340,
+				"bytes" : 4,
+				"cycle" : 603,
+				"data" : 1102577664,
+				"event" : "accept",
+				"id" : 57,
+				"write" : true
+			},
+			{
+				"address" : 4294967340,
+				"bytes" : 4,
+				"cycle" : 611,
+				"data" : 1102577664,
+				"event" : "commit",
+				"id" : 57,
+				"write" : true
+			},
+			{
+				"address" : 4294967344,
+				"bytes" : 4,
+				"cycle" : 612,
+				"data" : 1103626240,
+				"event" : "submit",
+				"id" : 58,
+				"write" : true
+			},
+			{
+				"address" : 4294967344,
+				"bytes" : 4,
+				"cycle" : 613,
+				"data" : 1103626240,
+				"event" : "accept",
+				"id" : 58,
+				"write" : true
+			},
+			{
+				"address" : 4294967344,
+				"bytes" : 4,
+				"cycle" : 621,
+				"data" : 1103626240,
+				"event" : "commit",
+				"id" : 58,
+				"write" : true
+			},
+			{
+				"address" : 4294967348,
+				"bytes" : 4,
+				"cycle" : 622,
+				"data" : 1104674816,
+				"event" : "submit",
+				"id" : 59,
+				"write" : true
+			},
+			{
+				"address" : 4294967348,
+				"bytes" : 4,
+				"cycle" : 623,
+				"data" : 1104674816,
+				"event" : "accept",
+				"id" : 59,
+				"write" : true
+			},
+			{
+				"address" : 4294967348,
+				"bytes" : 4,
+				"cycle" : 631,
+				"data" : 1104674816,
+				"event" : "commit",
+				"id" : 59,
+				"write" : true
+			},
+			{
+				"address" : 4294967352,
+				"bytes" : 4,
+				"cycle" : 632,
+				"data" : 1105723392,
+				"event" : "submit",
+				"id" : 60,
+				"write" : true
+			},
+			{
+				"address" : 4294967352,
+				"bytes" : 4,
+				"cycle" : 633,
+				"data" : 1105723392,
+				"event" : "accept",
+				"id" : 60,
+				"write" : true
+			},
+			{
+				"address" : 4294967352,
+				"bytes" : 4,
+				"cycle" : 641,
+				"data" : 1105723392,
+				"event" : "commit",
+				"id" : 60,
+				"write" : true
+			},
+			{
+				"address" : 4294967296,
+				"bytes" : 4,
+				"cycle" : 644,
+				"data" : 0,
+				"event" : "submit",
+				"id" : 61,
+				"write" : false
+			},
+			{
+				"address" : 4294967296,
+				"bytes" : 4,
+				"cycle" : 645,
+				"data" : 0,
+				"event" : "accept",
+				"id" : 61,
+				"write" : false
+			},
+			{
+				"address" : 4294967296,
+				"bytes" : 4,
+				"cycle" : 653,
+				"data" : 1065353216,
+				"event" : "commit",
+				"id" : 61,
+				"write" : false
+			},
+			{
+				"address" : 4294967360,
+				"bytes" : 4,
+				"cycle" : 657,
+				"data" : 1065353216,
+				"event" : "submit",
+				"id" : 62,
+				"write" : true
+			},
+			{
+				"address" : 4294967360,
+				"bytes" : 4,
+				"cycle" : 658,
+				"data" : 1065353216,
+				"event" : "accept",
+				"id" : 62,
+				"write" : true
+			},
+			{
+				"address" : 4294967360,
+				"bytes" : 4,
+				"cycle" : 666,
+				"data" : 1065353216,
+				"event" : "commit",
+				"id" : 62,
+				"write" : true
+			},
+			{
+				"address" : 4294967308,
+				"bytes" : 4,
+				"cycle" : 667,
+				"data" : 0,
+				"event" : "submit",
+				"id" : 63,
+				"write" : false
+			},
+			{
+				"address" : 4294967308,
+				"bytes" : 4,
+				"cycle" : 668,
+				"data" : 0,
+				"event" : "accept",
+				"id" : 63,
+				"write" : false
+			},
+			{
+				"address" : 4294967308,
+				"bytes" : 4,
+				"cycle" : 676,
+				"data" : 1088421888,
+				"event" : "commit",
+				"id" : 63,
+				"write" : false
+			},
+			{
+				"address" : 4294967364,
+				"bytes" : 4,
+				"cycle" : 680,
+				"data" : 1088421888,
+				"event" : "submit",
+				"id" : 64,
+				"write" : true
+			},
+			{
+				"address" : 4294967364,
+				"bytes" : 4,
+				"cycle" : 681,
+				"data" : 1088421888,
+				"event" : "accept",
+				"id" : 64,
+				"write" : true
+			},
+			{
+				"address" : 4294967364,
+				"bytes" : 4,
+				"cycle" : 689,
+				"data" : 1088421888,
+				"event" : "commit",
+				"id" : 64,
+				"write" : true
+			},
+			{
+				"address" : 4294967320,
+				"bytes" : 4,
+				"cycle" : 690,
+				"data" : 0,
+				"event" : "submit",
+				"id" : 65,
+				"write" : false
+			},
+			{
+				"address" : 4294967320,
+				"bytes" : 4,
+				"cycle" : 691,
+				"data" : 0,
+				"event" : "accept",
+				"id" : 65,
+				"write" : false
+			},
+			{
+				"address" : 4294967320,
+				"bytes" : 4,
+				"cycle" : 699,
+				"data" : 1095761920,
+				"event" : "commit",
+				"id" : 65,
+				"write" : false
+			},
+			{
+				"address" : 4294967368,
+				"bytes" : 4,
+				"cycle" : 703,
+				"data" : 1095761920,
+				"event" : "submit",
+				"id" : 66,
+				"write" : true
+			},
+			{
+				"address" : 4294967368,
+				"bytes" : 4,
+				"cycle" : 704,
+				"data" : 1095761920,
+				"event" : "accept",
+				"id" : 66,
+				"write" : true
+			},
+			{
+				"address" : 4294967368,
+				"bytes" : 4,
+				"cycle" : 712,
+				"data" : 1095761920,
+				"event" : "commit",
+				"id" : 66,
+				"write" : true
+			},
+			{
+				"address" : 4294967332,
+				"bytes" : 4,
+				"cycle" : 713,
+				"data" : 0,
+				"event" : "submit",
+				"id" : 67,
+				"write" : false
+			},
+			{
+				"address" : 4294967332,
+				"bytes" : 4,
+				"cycle" : 714,
+				"data" : 0,
+				"event" : "accept",
+				"id" : 67,
+				"write" : false
+			},
+			{
+				"address" : 4294967332,
+				"bytes" : 4,
+				"cycle" : 722,
+				"data" : 1100480512,
+				"event" : "commit",
+				"id" : 67,
+				"write" : false
+			},
+			{
+				"address" : 4294967372,
+				"bytes" : 4,
+				"cycle" : 726,
+				"data" : 1100480512,
+				"event" : "submit",
+				"id" : 68,
+				"write" : true
+			},
+			{
+				"address" : 4294967372,
+				"bytes" : 4,
+				"cycle" : 727,
+				"data" : 1100480512,
+				"event" : "accept",
+				"id" : 68,
+				"write" : true
+			},
+			{
+				"address" : 4294967372,
+				"bytes" : 4,
+				"cycle" : 735,
+				"data" : 1100480512,
+				"event" : "commit",
+				"id" : 68,
+				"write" : true
+			},
+			{
+				"address" : 4294967344,
+				"bytes" : 4,
+				"cycle" : 736,
+				"data" : 0,
+				"event" : "submit",
+				"id" : 69,
+				"write" : false
+			},
+			{
+				"address" : 4294967344,
+				"bytes" : 4,
+				"cycle" : 737,
+				"data" : 0,
+				"event" : "accept",
+				"id" : 69,
+				"write" : false
+			},
+			{
+				"address" : 4294967344,
+				"bytes" : 4,
+				"cycle" : 745,
+				"data" : 1103626240,
+				"event" : "commit",
+				"id" : 69,
+				"write" : false
+			},
+			{
+				"address" : 4294967376,
+				"bytes" : 4,
+				"cycle" : 749,
+				"data" : 1103626240,
+				"event" : "submit",
+				"id" : 70,
+				"write" : true
+			},
+			{
+				"address" : 4294967376,
+				"bytes" : 4,
+				"cycle" : 750,
+				"data" : 1103626240,
+				"event" : "accept",
+				"id" : 70,
+				"write" : true
+			},
+			{
+				"address" : 4294967376,
+				"bytes" : 4,
+				"cycle" : 758,
+				"data" : 1103626240,
+				"event" : "commit",
+				"id" : 70,
+				"write" : true
+			},
+			{
+				"address" : 4294967304,
+				"bytes" : 4,
+				"cycle" : 759,
+				"data" : 0,
+				"event" : "submit",
+				"id" : 71,
+				"write" : false
+			},
+			{
+				"address" : 4294967304,
+				"bytes" : 4,
+				"cycle" : 760,
+				"data" : 0,
+				"event" : "accept",
+				"id" : 71,
+				"write" : false
+			},
+			{
+				"address" : 4294967304,
+				"bytes" : 4,
+				"cycle" : 768,
+				"data" : 1084227584,
+				"event" : "commit",
+				"id" : 71,
+				"write" : false
+			},
+			{
+				"address" : 4294967360,
+				"bytes" : 4,
+				"cycle" : 769,
+				"data" : 0,
+				"event" : "submit",
+				"id" : 72,
+				"write" : false
+			},
+			{
+				"address" : 4294967360,
+				"bytes" : 4,
+				"cycle" : 770,
+				"data" : 0,
+				"event" : "accept",
+				"id" : 72,
+				"write" : false
+			},
+			{
+				"address" : 4294967360,
+				"bytes" : 4,
+				"cycle" : 778,
+				"data" : 1065353216,
+				"event" : "commit",
+				"id" : 72,
+				"write" : false
+			},
+			{
+				"address" : 4294967424,
+				"bytes" : 4,
+				"cycle" : 779,
+				"data" : 1084227584,
+				"event" : "submit",
+				"id" : 73,
+				"write" : true
+			},
+			{
+				"address" : 4294967424,
+				"bytes" : 4,
+				"cycle" : 780,
+				"data" : 1084227584,
+				"event" : "accept",
+				"id" : 73,
+				"write" : true
+			},
+			{
+				"address" : 4294967424,
+				"bytes" : 4,
+				"cycle" : 788,
+				"data" : 1084227584,
+				"event" : "commit",
+				"id" : 73,
+				"write" : true
+			},
+			{
+				"address" : 4294967316,
+				"bytes" : 4,
+				"cycle" : 789,
+				"data" : 0,
+				"event" : "submit",
+				"id" : 74,
+				"write" : false
+			},
+			{
+				"address" : 4294967316,
+				"bytes" : 4,
+				"cycle" : 790,
+				"data" : 0,
+				"event" : "accept",
+				"id" : 74,
+				"write" : false
+			},
+			{
+				"address" : 4294967316,
+				"bytes" : 4,
+				"cycle" : 798,
+				"data" : 1093664768,
+				"event" : "commit",
+				"id" : 74,
+				"write" : false
+			},
+			{
+				"address" : 4294967364,
+				"bytes" : 4,
+				"cycle" : 799,
+				"data" : 0,
+				"event" : "submit",
+				"id" : 75,
+				"write" : false
+			},
+			{
+				"address" : 4294967364,
+				"bytes" : 4,
+				"cycle" : 800,
+				"data" : 0,
+				"event" : "accept",
+				"id" : 75,
+				"write" : false
+			},
+			{
+				"address" : 4294967364,
+				"bytes" : 4,
+				"cycle" : 808,
+				"data" : 1088421888,
+				"event" : "commit",
+				"id" : 75,
+				"write" : false
+			},
+			{
+				"address" : 4294967428,
+				"bytes" : 4,
+				"cycle" : 809,
+				"data" : 1093664768,
+				"event" : "submit",
+				"id" : 76,
+				"write" : true
+			},
+			{
+				"address" : 4294967428,
+				"bytes" : 4,
+				"cycle" : 810,
+				"data" : 1093664768,
+				"event" : "accept",
+				"id" : 76,
+				"write" : true
+			},
+			{
+				"address" : 4294967428,
+				"bytes" : 4,
+				"cycle" : 818,
+				"data" : 1093664768,
+				"event" : "commit",
+				"id" : 76,
+				"write" : true
+			},
+			{
+				"address" : 4294967328,
+				"bytes" : 4,
+				"cycle" : 819,
+				"data" : 0,
+				"event" : "submit",
+				"id" : 77,
+				"write" : false
+			},
+			{
+				"address" : 4294967328,
+				"bytes" : 4,
+				"cycle" : 820,
+				"data" : 0,
+				"event" : "accept",
+				"id" : 77,
+				"write" : false
+			},
+			{
+				"address" : 4294967328,
+				"bytes" : 4,
+				"cycle" : 828,
+				"data" : 1099431936,
+				"event" : "commit",
+				"id" : 77,
+				"write" : false
+			},
+			{
+				"address" : 4294967368,
+				"bytes" : 4,
+				"cycle" : 829,
+				"data" : 0,
+				"event" : "submit",
+				"id" : 78,
+				"write" : false
+			},
+			{
+				"address" : 4294967368,
+				"bytes" : 4,
+				"cycle" : 830,
+				"data" : 0,
+				"event" : "accept",
+				"id" : 78,
+				"write" : false
+			},
+			{
+				"address" : 4294967368,
+				"bytes" : 4,
+				"cycle" : 838,
+				"data" : 1095761920,
+				"event" : "commit",
+				"id" : 78,
+				"write" : false
+			},
+			{
+				"address" : 4294967432,
+				"bytes" : 4,
+				"cycle" : 839,
+				"data" : 1099431936,
+				"event" : "submit",
+				"id" : 79,
+				"write" : true
+			},
+			{
+				"address" : 4294967432,
+				"bytes" : 4,
+				"cycle" : 840,
+				"data" : 1099431936,
+				"event" : "accept",
+				"id" : 79,
+				"write" : true
+			},
+			{
+				"address" : 4294967432,
+				"bytes" : 4,
+				"cycle" : 848,
+				"data" : 1099431936,
+				"event" : "commit",
+				"id" : 79,
+				"write" : true
+			},
+			{
+				"address" : 4294967340,
+				"bytes" : 4,
+				"cycle" : 849,
+				"data" : 0,
+				"event" : "submit",
+				"id" : 80,
+				"write" : false
+			},
+			{
+				"address" : 4294967340,
+				"bytes" : 4,
+				"cycle" : 850,
+				"data" : 0,
+				"event" : "accept",
+				"id" : 80,
+				"write" : false
+			},
+			{
+				"address" : 4294967340,
+				"bytes" : 4,
+				"cycle" : 858,
+				"data" : 1102577664,
+				"event" : "commit",
+				"id" : 80,
+				"write" : false
+			},
+			{
+				"address" : 4294967372,
+				"bytes" : 4,
+				"cycle" : 859,
+				"data" : 0,
+				"event" : "submit",
+				"id" : 81,
+				"write" : false
+			},
+			{
+				"address" : 4294967372,
+				"bytes" : 4,
+				"cycle" : 860,
+				"data" : 0,
+				"event" : "accept",
+				"id" : 81,
+				"write" : false
+			},
+			{
+				"address" : 4294967372,
+				"bytes" : 4,
+				"cycle" : 868,
+				"data" : 1100480512,
+				"event" : "commit",
+				"id" : 81,
+				"write" : false
+			},
+			{
+				"address" : 4294967436,
+				"bytes" : 4,
+				"cycle" : 869,
+				"data" : 1102577664,
+				"event" : "submit",
+				"id" : 82,
+				"write" : true
+			},
+			{
+				"address" : 4294967436,
+				"bytes" : 4,
+				"cycle" : 870,
+				"data" : 1102577664,
+				"event" : "accept",
+				"id" : 82,
+				"write" : true
+			},
+			{
+				"address" : 4294967436,
+				"bytes" : 4,
+				"cycle" : 878,
+				"data" : 1102577664,
+				"event" : "commit",
+				"id" : 82,
+				"write" : true
+			},
+			{
+				"address" : 4294967352,
+				"bytes" : 4,
+				"cycle" : 879,
+				"data" : 0,
+				"event" : "submit",
+				"id" : 83,
+				"write" : false
+			},
+			{
+				"address" : 4294967352,
+				"bytes" : 4,
+				"cycle" : 880,
+				"data" : 0,
+				"event" : "accept",
+				"id" : 83,
+				"write" : false
+			},
+			{
+				"address" : 4294967352,
+				"bytes" : 4,
+				"cycle" : 888,
+				"data" : 1105723392,
+				"event" : "commit",
+				"id" : 83,
+				"write" : false
+			},
+			{
+				"address" : 4294967376,
+				"bytes" : 4,
+				"cycle" : 889,
+				"data" : 0,
+				"event" : "submit",
+				"id" : 84,
+				"write" : false
+			},
+			{
+				"address" : 4294967376,
+				"bytes" : 4,
+				"cycle" : 890,
+				"data" : 0,
+				"event" : "accept",
+				"id" : 84,
+				"write" : false
+			},
+			{
+				"address" : 4294967376,
+				"bytes" : 4,
+				"cycle" : 898,
+				"data" : 1103626240,
+				"event" : "commit",
+				"id" : 84,
+				"write" : false
+			},
+			{
+				"address" : 4294967440,
+				"bytes" : 4,
+				"cycle" : 899,
+				"data" : 1105723392,
+				"event" : "submit",
+				"id" : 85,
+				"write" : true
+			},
+			{
+				"address" : 4294967440,
+				"bytes" : 4,
+				"cycle" : 900,
+				"data" : 1105723392,
+				"event" : "accept",
+				"id" : 85,
+				"write" : true
+			},
+			{
+				"address" : 4294967440,
+				"bytes" : 4,
+				"cycle" : 908,
+				"data" : 1105723392,
+				"event" : "commit",
+				"id" : 85,
+				"write" : true
+			},
+			{
+				"address" : 4294967488,
+				"bytes" : 4,
+				"cycle" : 918,
+				"data" : 1077936128,
+				"event" : "submit",
+				"id" : 86,
+				"write" : true
+			},
+			{
+				"address" : 4294967488,
+				"bytes" : 4,
+				"cycle" : 919,
+				"data" : 1077936128,
+				"event" : "accept",
+				"id" : 86,
+				"write" : true
+			},
+			{
+				"address" : 4294967488,
+				"bytes" : 4,
+				"cycle" : 927,
+				"data" : 1077936128,
+				"event" : "commit",
+				"id" : 86,
+				"write" : true
+			},
+			{
+				"address" : 4294967492,
+				"bytes" : 4,
+				"cycle" : 928,
+				"data" : 1101529088,
+				"event" : "submit",
+				"id" : 87,
+				"write" : true
+			},
+			{
+				"address" : 4294967492,
+				"bytes" : 4,
+				"cycle" : 929,
+				"data" : 1101529088,
+				"event" : "accept",
+				"id" : 87,
+				"write" : true
+			},
+			{
+				"address" : 4294967492,
+				"bytes" : 4,
+				"cycle" : 937,
+				"data" : 1101529088,
+				"event" : "commit",
+				"id" : 87,
+				"write" : true
+			},
+			{
+				"address" : 4294967496,
+				"bytes" : 4,
+				"cycle" : 938,
+				"data" : 1109131264,
+				"event" : "submit",
+				"id" : 88,
+				"write" : true
+			},
+			{
+				"address" : 4294967496,
+				"bytes" : 4,
+				"cycle" : 939,
+				"data" : 1109131264,
+				"event" : "accept",
+				"id" : 88,
+				"write" : true
+			},
+			{
+				"address" : 4294967496,
+				"bytes" : 4,
+				"cycle" : 947,
+				"data" : 1109131264,
+				"event" : "commit",
+				"id" : 88,
+				"write" : true
+			},
+			{
+				"address" : 4294967500,
+				"bytes" : 4,
+				"cycle" : 948,
+				"data" : 1113849856,
+				"event" : "submit",
+				"id" : 89,
+				"write" : true
+			},
+			{
+				"address" : 4294967500,
+				"bytes" : 4,
+				"cycle" : 949,
+				"data" : 1113849856,
+				"event" : "accept",
+				"id" : 89,
+				"write" : true
+			},
+			{
+				"address" : 4294967500,
+				"bytes" : 4,
+				"cycle" : 957,
+				"data" : 1113849856,
+				"event" : "commit",
+				"id" : 89,
+				"write" : true
+			},
+			{
+				"address" : 4294967504,
+				"bytes" : 4,
+				"cycle" : 958,
+				"data" : 1117126656,
+				"event" : "submit",
+				"id" : 90,
+				"write" : true
+			},
+			{
+				"address" : 4294967504,
+				"bytes" : 4,
+				"cycle" : 959,
+				"data" : 1117126656,
+				"event" : "accept",
+				"id" : 90,
+				"write" : true
+			},
+			{
+				"address" : 4294967504,
+				"bytes" : 4,
+				"cycle" : 967,
+				"data" : 1117126656,
+				"event" : "commit",
+				"id" : 90,
+				"write" : true
+			},
+			{
+				"address" : 4294967488,
+				"bytes" : 4,
+				"cycle" : 971,
+				"data" : 0,
+				"event" : "submit",
+				"id" : 91,
+				"write" : false
+			},
+			{
+				"address" : 4294967488,
+				"bytes" : 4,
+				"cycle" : 972,
+				"data" : 0,
+				"event" : "accept",
+				"id" : 91,
+				"write" : false
+			},
+			{
+				"address" : 4294967488,
+				"bytes" : 4,
+				"cycle" : 980,
+				"data" : 1077936128,
+				"event" : "commit",
+				"id" : 91,
+				"write" : false
+			},
+			{
+				"address" : 4294967492,
+				"bytes" : 4,
+				"cycle" : 981,
+				"data" : 0,
+				"event" : "submit",
+				"id" : 92,
+				"write" : false
+			},
+			{
+				"address" : 4294967492,
+				"bytes" : 4,
+				"cycle" : 982,
+				"data" : 0,
+				"event" : "accept",
+				"id" : 92,
+				"write" : false
+			},
+			{
+				"address" : 4294967492,
+				"bytes" : 4,
+				"cycle" : 990,
+				"data" : 1101529088,
+				"event" : "commit",
+				"id" : 92,
+				"write" : false
+			},
+			{
+				"address" : 4294967496,
+				"bytes" : 4,
+				"cycle" : 991,
+				"data" : 0,
+				"event" : "submit",
+				"id" : 93,
+				"write" : false
+			},
+			{
+				"address" : 4294967496,
+				"bytes" : 4,
+				"cycle" : 992,
+				"data" : 0,
+				"event" : "accept",
+				"id" : 93,
+				"write" : false
+			},
+			{
+				"address" : 4294967496,
+				"bytes" : 4,
+				"cycle" : 1000,
+				"data" : 1109131264,
+				"event" : "commit",
+				"id" : 93,
+				"write" : false
+			},
+			{
+				"address" : 4294967500,
+				"bytes" : 4,
+				"cycle" : 1001,
+				"data" : 0,
+				"event" : "submit",
+				"id" : 94,
+				"write" : false
+			},
+			{
+				"address" : 4294967500,
+				"bytes" : 4,
+				"cycle" : 1002,
+				"data" : 0,
+				"event" : "accept",
+				"id" : 94,
+				"write" : false
+			},
+			{
+				"address" : 4294967500,
+				"bytes" : 4,
+				"cycle" : 1010,
+				"data" : 1113849856,
+				"event" : "commit",
+				"id" : 94,
+				"write" : false
+			},
+			{
+				"address" : 4294967504,
+				"bytes" : 4,
+				"cycle" : 1011,
+				"data" : 0,
+				"event" : "submit",
+				"id" : 95,
+				"write" : false
+			},
+			{
+				"address" : 4294967504,
+				"bytes" : 4,
+				"cycle" : 1012,
+				"data" : 0,
+				"event" : "accept",
+				"id" : 95,
+				"write" : false
+			},
+			{
+				"address" : 4294967504,
+				"bytes" : 4,
+				"cycle" : 1020,
+				"data" : 1117126656,
+				"event" : "commit",
+				"id" : 95,
+				"write" : false
+			},
+			{
+				"address" : 4294967424,
+				"bytes" : 4,
+				"cycle" : 1027,
+				"data" : 0,
+				"event" : "submit",
+				"id" : 96,
+				"write" : false
+			},
+			{
+				"address" : 4294967424,
+				"bytes" : 4,
+				"cycle" : 1028,
+				"data" : 0,
+				"event" : "accept",
+				"id" : 96,
+				"write" : false
+			},
+			{
+				"address" : 4294967424,
+				"bytes" : 4,
+				"cycle" : 1036,
+				"data" : 1084227584,
+				"event" : "commit",
+				"id" : 96,
+				"write" : false
+			},
+			{
+				"address" : 4294967428,
+				"bytes" : 4,
+				"cycle" : 1037,
+				"data" : 0,
+				"event" : "submit",
+				"id" : 97,
+				"write" : false
+			},
+			{
+				"address" : 4294967428,
+				"bytes" : 4,
+				"cycle" : 1038,
+				"data" : 0,
+				"event" : "accept",
+				"id" : 97,
+				"write" : false
+			},
+			{
+				"address" : 4294967428,
+				"bytes" : 4,
+				"cycle" : 1046,
+				"data" : 1093664768,
+				"event" : "commit",
+				"id" : 97,
+				"write" : false
+			},
+			{
+				"address" : 4294967432,
+				"bytes" : 4,
+				"cycle" : 1047,
+				"data" : 0,
+				"event" : "submit",
+				"id" : 98,
+				"write" : false
+			},
+			{
+				"address" : 4294967432,
+				"bytes" : 4,
+				"cycle" : 1048,
+				"data" : 0,
+				"event" : "accept",
+				"id" : 98,
+				"write" : false
+			},
+			{
+				"address" : 4294967432,
+				"bytes" : 4,
+				"cycle" : 1056,
+				"data" : 1099431936,
+				"event" : "commit",
+				"id" : 98,
+				"write" : false
+			},
+			{
+				"address" : 4294967436,
+				"bytes" : 4,
+				"cycle" : 1057,
+				"data" : 0,
+				"event" : "submit",
+				"id" : 99,
+				"write" : false
+			},
+			{
+				"address" : 4294967436,
+				"bytes" : 4,
+				"cycle" : 1058,
+				"data" : 0,
+				"event" : "accept",
+				"id" : 99,
+				"write" : false
+			},
+			{
+				"address" : 4294967436,
+				"bytes" : 4,
+				"cycle" : 1066,
+				"data" : 1102577664,
+				"event" : "commit",
+				"id" : 99,
+				"write" : false
+			},
+			{
+				"address" : 4294967440,
+				"bytes" : 4,
+				"cycle" : 1067,
+				"data" : 0,
+				"event" : "submit",
+				"id" : 100,
+				"write" : false
+			},
+			{
+				"address" : 4294967440,
+				"bytes" : 4,
+				"cycle" : 1068,
+				"data" : 0,
+				"event" : "accept",
+				"id" : 100,
+				"write" : false
+			},
+			{
+				"address" : 4294967440,
+				"bytes" : 4,
+				"cycle" : 1076,
+				"data" : 1105723392,
+				"event" : "commit",
+				"id" : 100,
+				"write" : false
+			},
+			{
+				"address" : 4294967296,
+				"bytes" : 4,
+				"cycle" : 1088,
+				"data" : 1090519040,
+				"event" : "submit",
+				"id" : 101,
+				"write" : true
+			},
+			{
+				"address" : 4294967296,
+				"bytes" : 4,
+				"cycle" : 1089,
+				"data" : 1090519040,
+				"event" : "accept",
+				"id" : 101,
+				"write" : true
+			},
+			{
+				"address" : 4294967296,
+				"bytes" : 4,
+				"cycle" : 1097,
+				"data" : 1090519040,
+				"event" : "commit",
+				"id" : 101,
+				"write" : true
+			},
+			{
+				"address" : 4294967300,
+				"bytes" : 4,
+				"cycle" : 1098,
+				"data" : 1107296256,
+				"event" : "submit",
+				"id" : 102,
+				"write" : true
+			},
+			{
+				"address" : 4294967300,
+				"bytes" : 4,
+				"cycle" : 1099,
+				"data" : 1107296256,
+				"event" : "accept",
+				"id" : 102,
+				"write" : true
+			},
+			{
+				"address" : 4294967300,
+				"bytes" : 4,
+				"cycle" : 1107,
+				"data" : 1107296256,
+				"event" : "commit",
+				"id" : 102,
+				"write" : true
+			},
+			{
+				"address" : 4294967304,
+				"bytes" : 4,
+				"cycle" : 1108,
+				"data" : 1113587712,
+				"event" : "submit",
+				"id" : 103,
+				"write" : true
+			},
+			{
+				"address" : 4294967304,
+				"bytes" : 4,
+				"cycle" : 1109,
+				"data" : 1113587712,
+				"event" : "accept",
+				"id" : 103,
+				"write" : true
+			},
+			{
+				"address" : 4294967304,
+				"bytes" : 4,
+				"cycle" : 1117,
+				"data" : 1113587712,
+				"event" : "commit",
+				"id" : 103,
+				"write" : true
+			},
+			{
+				"address" : 4294967308,
+				"bytes" : 4,
+				"cycle" : 1118,
+				"data" : 1117782016,
+				"event" : "submit",
+				"id" : 104,
+				"write" : true
+			},
+			{
+				"address" : 4294967308,
+				"bytes" : 4,
+				"cycle" : 1119,
+				"data" : 1117782016,
+				"event" : "accept",
+				"id" : 104,
+				"write" : true
+			},
+			{
+				"address" : 4294967308,
+				"bytes" : 4,
+				"cycle" : 1127,
+				"data" : 1117782016,
+				"event" : "commit",
+				"id" : 104,
+				"write" : true
+			},
+			{
+				"address" : 4294967312,
+				"bytes" : 4,
+				"cycle" : 1128,
+				"data" : 1120927744,
+				"event" : "submit",
+				"id" : 105,
+				"write" : true
+			},
+			{
+				"address" : 4294967312,
+				"bytes" : 4,
+				"cycle" : 1129,
+				"data" : 1120927744,
+				"event" : "accept",
+				"id" : 105,
+				"write" : true
+			},
+			{
+				"address" : 4294967312,
+				"bytes" : 4,
+				"cycle" : 1137,
+				"data" : 1120927744,
+				"event" : "commit",
+				"id" : 105,
+				"write" : true
+			},
+			{
+				"address" : 4294967296,
+				"bytes" : 4,
+				"cycle" : 1138,
+				"data" : 0,
+				"event" : "submit",
+				"id" : 106,
+				"write" : false
+			},
+			{
+				"address" : 4294967296,
+				"bytes" : 4,
+				"cycle" : 1139,
+				"data" : 0,
+				"event" : "accept",
+				"id" : 106,
+				"write" : false
+			},
+			{
+				"address" : 4294967296,
+				"bytes" : 4,
+				"cycle" : 1147,
+				"data" : 1090519040,
+				"event" : "commit",
+				"id" : 106,
+				"write" : false
+			},
+			{
+				"address" : 4294967300,
+				"bytes" : 4,
+				"cycle" : 1156,
+				"data" : 0,
+				"event" : "submit",
+				"id" : 107,
+				"write" : false
+			},
+			{
+				"address" : 4294967300,
+				"bytes" : 4,
+				"cycle" : 1157,
+				"data" : 0,
+				"event" : "accept",
+				"id" : 107,
+				"write" : false
+			},
+			{
+				"address" : 4294967300,
+				"bytes" : 4,
+				"cycle" : 1165,
+				"data" : 1107296256,
+				"event" : "commit",
+				"id" : 107,
+				"write" : false
+			},
+			{
+				"address" : 4294967304,
+				"bytes" : 4,
+				"cycle" : 1202,
+				"data" : 0,
+				"event" : "submit",
+				"id" : 108,
+				"write" : false
+			},
+			{
+				"address" : 4294967304,
+				"bytes" : 4,
+				"cycle" : 1203,
+				"data" : 0,
+				"event" : "accept",
+				"id" : 108,
+				"write" : false
+			},
+			{
+				"address" : 4294967304,
+				"bytes" : 4,
+				"cycle" : 1211,
+				"data" : 1113587712,
+				"event" : "commit",
+				"id" : 108,
+				"write" : false
+			},
+			{
+				"address" : 4294967308,
+				"bytes" : 4,
+				"cycle" : 1248,
+				"data" : 0,
+				"event" : "submit",
+				"id" : 109,
+				"write" : false
+			},
+			{
+				"address" : 4294967308,
+				"bytes" : 4,
+				"cycle" : 1249,
+				"data" : 0,
+				"event" : "accept",
+				"id" : 109,
+				"write" : false
+			},
+			{
+				"address" : 4294967308,
+				"bytes" : 4,
+				"cycle" : 1257,
+				"data" : 1117782016,
+				"event" : "commit",
+				"id" : 109,
+				"write" : false
+			},
+			{
+				"address" : 4294967312,
+				"bytes" : 4,
+				"cycle" : 1294,
+				"data" : 0,
+				"event" : "submit",
+				"id" : 110,
+				"write" : false
+			},
+			{
+				"address" : 4294967312,
+				"bytes" : 4,
+				"cycle" : 1295,
+				"data" : 0,
+				"event" : "accept",
+				"id" : 110,
+				"write" : false
+			},
+			{
+				"address" : 4294967312,
+				"bytes" : 4,
+				"cycle" : 1303,
+				"data" : 1120927744,
+				"event" : "commit",
+				"id" : 110,
+				"write" : false
+			},
+			{
+				"address" : 4294967360,
+				"bytes" : 8,
+				"cycle" : 1340,
+				"data" : 4,
+				"event" : "submit",
+				"id" : 111,
+				"write" : true
+			},
+			{
+				"address" : 4294967360,
+				"bytes" : 8,
+				"cycle" : 1341,
+				"data" : 4,
+				"event" : "accept",
+				"id" : 111,
+				"write" : true
+			},
+			{
+				"address" : 4294967360,
+				"bytes" : 8,
+				"cycle" : 1349,
+				"data" : 4,
+				"event" : "commit",
+				"id" : 111,
+				"write" : true
+			},
+			{
+				"address" : 4294967296,
+				"bytes" : 4,
+				"cycle" : 1350,
+				"data" : 0,
+				"event" : "submit",
+				"id" : 112,
+				"write" : false
+			},
+			{
+				"address" : 4294967296,
+				"bytes" : 4,
+				"cycle" : 1351,
+				"data" : 0,
+				"event" : "accept",
+				"id" : 112,
+				"write" : false
+			},
+			{
+				"address" : 4294967296,
+				"bytes" : 4,
+				"cycle" : 1359,
+				"data" : 1090519040,
+				"event" : "commit",
+				"id" : 112,
+				"write" : false
+			},
+			{
+				"address" : 4294967300,
+				"bytes" : 4,
+				"cycle" : 1360,
+				"data" : 0,
+				"event" : "submit",
+				"id" : 113,
+				"write" : false
+			},
+			{
+				"address" : 4294967300,
+				"bytes" : 4,
+				"cycle" : 1361,
+				"data" : 0,
+				"event" : "accept",
+				"id" : 113,
+				"write" : false
+			},
+			{
+				"address" : 4294967300,
+				"bytes" : 4,
+				"cycle" : 1369,
+				"data" : 1107296256,
+				"event" : "commit",
+				"id" : 113,
+				"write" : false
+			},
+			{
+				"address" : 4294967304,
+				"bytes" : 4,
+				"cycle" : 1370,
+				"data" : 0,
+				"event" : "submit",
+				"id" : 114,
+				"write" : false
+			},
+			{
+				"address" : 4294967304,
+				"bytes" : 4,
+				"cycle" : 1371,
+				"data" : 0,
+				"event" : "accept",
+				"id" : 114,
+				"write" : false
+			},
+			{
+				"address" : 4294967304,
+				"bytes" : 4,
+				"cycle" : 1379,
+				"data" : 1113587712,
+				"event" : "commit",
+				"id" : 114,
+				"write" : false
+			},
+			{
+				"address" : 4294967308,
+				"bytes" : 4,
+				"cycle" : 1380,
+				"data" : 0,
+				"event" : "submit",
+				"id" : 115,
+				"write" : false
+			},
+			{
+				"address" : 4294967308,
+				"bytes" : 4,
+				"cycle" : 1381,
+				"data" : 0,
+				"event" : "accept",
+				"id" : 115,
+				"write" : false
+			},
+			{
+				"address" : 4294967308,
+				"bytes" : 4,
+				"cycle" : 1389,
+				"data" : 1117782016,
+				"event" : "commit",
+				"id" : 115,
+				"write" : false
+			},
+			{
+				"address" : 4294967312,
+				"bytes" : 4,
+				"cycle" : 1390,
+				"data" : 0,
+				"event" : "submit",
+				"id" : 116,
+				"write" : false
+			},
+			{
+				"address" : 4294967312,
+				"bytes" : 4,
+				"cycle" : 1391,
+				"data" : 0,
+				"event" : "accept",
+				"id" : 116,
+				"write" : false
+			},
+			{
+				"address" : 4294967312,
+				"bytes" : 4,
+				"cycle" : 1399,
+				"data" : 1120927744,
+				"event" : "commit",
+				"id" : 116,
+				"write" : false
+			},
+			{
+				"address" : 4294967360,
+				"bytes" : 8,
+				"cycle" : 1400,
+				"data" : 0,
+				"event" : "submit",
+				"id" : 117,
+				"write" : false
+			},
+			{
+				"address" : 4294967360,
+				"bytes" : 8,
+				"cycle" : 1401,
+				"data" : 0,
+				"event" : "accept",
+				"id" : 117,
+				"write" : false
+			},
+			{
+				"address" : 4294967360,
+				"bytes" : 8,
+				"cycle" : 1409,
+				"data" : 4,
+				"event" : "commit",
+				"id" : 117,
+				"write" : false
+			}
+		],
+		"trace_events" : 351,
+		"trace_truncated" : false,
+		"write_bytes" : 208,
+		"writes" : 51
+	},
+	"mlx_system_verified" : false,
+	"outputs" : 
+	[
+		{
+			"dtype" : "f32",
+			"forward_id" : 0,
+			"logits_file" : "/workspace/mlx-host-opt-qkQj9k/artifacts/tagged/split-values-tests-001/pytest/test_complete_source_compilati2/dag/out/logits-0.f32.bin",
+			"shape" : 
+			[
+				1,
+				5
+			],
+			"tokens" : 
+			[
+				4
+			]
+		}
+	],
+	"overlap" : true,
+	"peak_active_nodes" : 2,
+	"physical_mux" : 
+	{
+		"active_channels" : 0,
+		"advance_calls" : 1410,
+		"channels" : 
+		[
+			{
+				"arrived" : 30,
+				"consumed" : 30,
+				"id" : 1,
+				"name" : "source:0",
+				"open" : false,
+				"submitted" : 30
+			},
+			{
+				"arrived" : 30,
+				"consumed" : 30,
+				"id" : 2,
+				"name" : "source:1",
+				"open" : false,
+				"submitted" : 30
+			},
+			{
+				"arrived" : 0,
+				"consumed" : 0,
+				"id" : 3,
+				"name" : "source:2",
+				"open" : false,
+				"submitted" : 0
+			},
+			{
+				"arrived" : 0,
+				"consumed" : 0,
+				"id" : 4,
+				"name" : "source:3",
+				"open" : false,
+				"submitted" : 0
+			},
+			{
+				"arrived" : 0,
+				"consumed" : 0,
+				"id" : 5,
+				"name" : "source:5",
+				"open" : false,
+				"submitted" : 0
+			},
+			{
+				"arrived" : 10,
+				"consumed" : 10,
+				"id" : 6,
+				"name" : "source:4",
+				"open" : false,
+				"submitted" : 10
+			},
+			{
+				"arrived" : 10,
+				"consumed" : 10,
+				"id" : 7,
+				"name" : "source:6",
+				"open" : false,
+				"submitted" : 10
+			},
+			{
+				"arrived" : 10,
+				"consumed" : 10,
+				"id" : 8,
+				"name" : "source:7",
+				"open" : false,
+				"submitted" : 10
+			},
+			{
+				"arrived" : 15,
+				"consumed" : 15,
+				"id" : 9,
+				"name" : "source:8",
+				"open" : false,
+				"submitted" : 15
+			},
+			{
+				"arrived" : 6,
+				"consumed" : 6,
+				"id" : 10,
+				"name" : "source:9",
+				"open" : false,
+				"submitted" : 6
+			},
+			{
+				"arrived" : 5,
+				"consumed" : 5,
+				"id" : 11,
+				"name" : "result-readback",
+				"open" : false,
+				"submitted" : 5
+			},
+			{
+				"arrived" : 1,
+				"consumed" : 1,
+				"id" : 12,
+				"name" : "result-readback",
+				"open" : false,
+				"submitted" : 1
+			}
+		],
+		"classification" : "single_transaction_physical_response_mux_not_cpu_or_cache_validation",
+		"clock" : 1409,
+		"idle" : true,
+		"inference_performance_eligible" : false,
+		"owner_channel" : null,
+		"poisoned" : false
+	},
+	"preloaded_assets" : 1,
+	"preloaded_bytes" : 60,
+	"python_or_gpu_execution_fallbacks" : 0,
+	"shared_elapsed_cycles" : 1410,
+	"virtual_tensor_backing_used" : true,
+	"weight_loading" : "preloaded_not_cpu_or_dma_loader",
+	"windows" : 
+	{
+		"control" : 
+		[
+			{
+				"batch_index" : 0,
+				"branches_taken" : 0,
+				"classification" : "response_driven_controller_leaf_component_not_riscv_cpu",
+				"cycles" : 212,
+				"dma_requests" : 6,
+				"dma_responses" : 6,
+				"done" : true,
+				"execution_stalls" : 34,
+				"external_memory_port" : true,
+				"fflags_observed" : 0,
+				"forward_id" : 0,
+				"inference_performance_eligible" : false,
+				"instruction_fetch" : "descriptor_rom_not_system_fetch",
+				"instructions" : 59,
+				"layer_idx" : null,
+				"max_inflight_instructions" : 1,
+				"max_inflight_transactions" : 1,
+				"memory_binding" : "descriptor_port_not_riscv_load_store",
+				"mlx_system_verified" : false,
+				"read_bytes" : 20,
+				"register_bytes" : 512,
+				"request_stalls" : 0,
+				"response_stalls" : 48,
+				"rocket_execution_verified" : false,
+				"shared_end_cycle" : 1350,
+				"shared_start_cycle" : 1138,
+				"source_operator_id" : 9,
+				"trace" : [],
+				"trace_events" : 130,
+				"trace_truncated" : false,
+				"write_bytes" : 8
+			}
+		],
+		"matrix" : [],
+		"memory" : 
+		[
+			{
+				"batch_index" : 0,
+				"classification" : "memory_transfer_cycle_component_not_system_validation",
+				"conversion_stalls" : 0,
+				"cycles" : 0,
+				"dma_latency_source" : "external_port_responses",
+				"dma_read_bytes" : 0,
+				"dma_requests" : 0,
+				"dma_responses" : 0,
+				"dma_write_bytes" : 0,
+				"done" : true,
+				"external_memory_port" : true,
+				"forward_id" : 0,
+				"inference_performance_eligible" : false,
+				"inflight_transactions" : 0,
+				"layer_idx" : null,
+				"mlx_system_verified" : false,
+				"numeric_instructions" : 
+				{
+					"allocations" : 0,
+					"calls" : 1,
+					"classification" : "bounded_memory_plans_not_system_dma_validation",
+					"index_reads" : 0,
+					"instructions" : 0,
+					"opcode_counts" : 
+					{
+						"1" : 0,
+						"2" : 0,
+						"3" : 0,
+						"4" : 0,
+						"5" : 0
+					},
+					"physical_dma_verified" : false,
+					"predicate_reads" : 0,
+					"profile" : "mlx-memory-plan-v3",
+					"read_bytes" : 0,
+					"register_bytes_total" : 32,
+					"split_view_outputs" : 3,
+					"staging_bytes" : 128,
+					"timing_verified" : false,
+					"view_elisions" : 1,
+					"write_bytes" : 0
+				},
+				"options" : 
+				{
+					"convert_latency" : 2,
+					"dma_latency" : 8,
+					"max_cycles" : 10000000,
+					"request_period" : 1,
+					"response_period" : 1,
+					"trace" : false,
+					"trace_limit" : 200000
+				},
+				"region_names" : 
+				[
+					"v1"
+				],
+				"request_stalls" : 0,
+				"resources" : 
+				{
+					"conversion_result_latch_bytes" : 8,
+					"data_register_bytes" : 32,
+					"max_inflight_conversions" : 1,
+					"max_inflight_transactions" : 1,
+					"request_data_latch_bytes" : 8,
+					"staging_bytes" : 128
+				},
+				"response_stalls" : 0,
+				"shared_end_cycle" : 643,
+				"shared_start_cycle" : 642,
+				"source_operator_id" : 2,
+				"trace" : [],
+				"trace_events" : 0,
+				"trace_truncated" : false,
+				"view_elided" : true
+			},
+			{
+				"batch_index" : 0,
+				"classification" : "memory_transfer_cycle_component_not_system_validation",
+				"conversion_stalls" : 0,
+				"cycles" : 0,
+				"dma_latency_source" : "external_port_responses",
+				"dma_read_bytes" : 0,
+				"dma_requests" : 0,
+				"dma_responses" : 0,
+				"dma_write_bytes" : 0,
+				"done" : true,
+				"external_memory_port" : true,
+				"forward_id" : 0,
+				"inference_performance_eligible" : false,
+				"inflight_transactions" : 0,
+				"layer_idx" : null,
+				"mlx_system_verified" : false,
+				"numeric_instructions" : 
+				{
+					"allocations" : 0,
+					"calls" : 1,
+					"classification" : "bounded_memory_plans_not_system_dma_validation",
+					"index_reads" : 0,
+					"instructions" : 0,
+					"opcode_counts" : 
+					{
+						"1" : 0,
+						"2" : 0,
+						"3" : 0,
+						"4" : 0,
+						"5" : 0
+					},
+					"physical_dma_verified" : false,
+					"predicate_reads" : 0,
+					"profile" : "mlx-memory-plan-v2",
+					"read_bytes" : 0,
+					"register_bytes_total" : 32,
+					"staging_bytes" : 128,
+					"timing_verified" : false,
+					"view_elisions" : 1,
+					"write_bytes" : 0
+				},
+				"options" : 
+				{
+					"convert_latency" : 2,
+					"dma_latency" : 8,
+					"max_cycles" : 10000000,
+					"request_period" : 1,
+					"response_period" : 1,
+					"trace" : false,
+					"trace_limit" : 200000
+				},
+				"region_names" : 
+				[
+					"v2:0"
+				],
+				"request_stalls" : 0,
+				"resources" : 
+				{
+					"conversion_result_latch_bytes" : 8,
+					"data_register_bytes" : 32,
+					"max_inflight_conversions" : 1,
+					"max_inflight_transactions" : 1,
+					"request_data_latch_bytes" : 8,
+					"staging_bytes" : 128
+				},
+				"response_stalls" : 0,
+				"shared_end_cycle" : 644,
+				"shared_start_cycle" : 643,
+				"source_operator_id" : 3,
+				"trace" : [],
+				"trace_events" : 0,
+				"trace_truncated" : false,
+				"view_elided" : true
+			},
+			{
+				"batch_index" : 0,
+				"classification" : "memory_transfer_cycle_component_not_system_validation",
+				"conversion_stalls" : 0,
+				"cycles" : 0,
+				"dma_latency_source" : "external_port_responses",
+				"dma_read_bytes" : 0,
+				"dma_requests" : 0,
+				"dma_responses" : 0,
+				"dma_write_bytes" : 0,
+				"done" : true,
+				"external_memory_port" : true,
+				"forward_id" : 0,
+				"inference_performance_eligible" : false,
+				"inflight_transactions" : 0,
+				"layer_idx" : null,
+				"mlx_system_verified" : false,
+				"numeric_instructions" : 
+				{
+					"allocations" : 0,
+					"calls" : 1,
+					"classification" : "bounded_memory_plans_not_system_dma_validation",
+					"index_reads" : 0,
+					"instructions" : 0,
+					"opcode_counts" : 
+					{
+						"1" : 0,
+						"2" : 0,
+						"3" : 0,
+						"4" : 0,
+						"5" : 0
+					},
+					"physical_dma_verified" : false,
+					"predicate_reads" : 0,
+					"profile" : "mlx-memory-plan-v2",
+					"read_bytes" : 0,
+					"register_bytes_total" : 32,
+					"staging_bytes" : 128,
+					"timing_verified" : false,
+					"view_elisions" : 1,
+					"write_bytes" : 0
+				},
+				"options" : 
+				{
+					"convert_latency" : 2,
+					"dma_latency" : 8,
+					"max_cycles" : 10000000,
+					"request_period" : 1,
+					"response_period" : 1,
+					"trace" : false,
+					"trace_limit" : 200000
+				},
+				"region_names" : 
+				[
+					"v2:2"
+				],
+				"request_stalls" : 0,
+				"resources" : 
+				{
+					"conversion_result_latch_bytes" : 8,
+					"data_register_bytes" : 32,
+					"max_inflight_conversions" : 1,
+					"max_inflight_transactions" : 1,
+					"request_data_latch_bytes" : 8,
+					"staging_bytes" : 128
+				},
+				"response_stalls" : 0,
+				"shared_end_cycle" : 644,
+				"shared_start_cycle" : 643,
+				"source_operator_id" : 5,
+				"trace" : [],
+				"trace_events" : 0,
+				"trace_truncated" : false,
+				"view_elided" : true
+			},
+			{
+				"batch_index" : 0,
+				"classification" : "memory_transfer_cycle_component_not_system_validation",
+				"conversion_stalls" : 5,
+				"cycles" : 115,
+				"dma_latency_source" : "external_port_responses",
+				"dma_read_bytes" : 20,
+				"dma_requests" : 10,
+				"dma_responses" : 10,
+				"dma_write_bytes" : 20,
+				"done" : true,
+				"external_memory_port" : true,
+				"forward_id" : 0,
+				"inference_performance_eligible" : false,
+				"inflight_transactions" : 0,
+				"layer_idx" : null,
+				"mlx_system_verified" : false,
+				"numeric_instructions" : 
+				{
+					"allocations" : 1,
+					"calls" : 1,
+					"classification" : "bounded_memory_plans_not_system_dma_validation",
+					"index_reads" : 0,
+					"instructions" : 15,
+					"opcode_counts" : 
+					{
+						"1" : 5,
+						"2" : 5,
+						"3" : 5,
+						"4" : 0,
+						"5" : 0
+					},
+					"physical_dma_verified" : false,
+					"predicate_reads" : 0,
+					"profile" : "mlx-memory-plan-v1",
+					"read_bytes" : 20,
+					"register_bytes_total" : 32,
+					"staging_bytes" : 128,
+					"timing_verified" : false,
+					"view_elisions" : 0,
+					"write_bytes" : 20
+				},
+				"options" : 
+				{
+					"convert_latency" : 2,
+					"dma_latency" : 8,
+					"max_cycles" : 10000000,
+					"request_period" : 1,
+					"response_period" : 1,
+					"trace" : false,
+					"trace_limit" : 200000
+				},
+				"region_names" : 
+				[
+					"v3",
+					"v4"
+				],
+				"request_stalls" : 0,
+				"resources" : 
+				{
+					"conversion_result_latch_bytes" : 8,
+					"data_register_bytes" : 32,
+					"max_inflight_conversions" : 1,
+					"max_inflight_transactions" : 1,
+					"request_data_latch_bytes" : 8,
+					"staging_bytes" : 128
+				},
+				"response_stalls" : 80,
+				"shared_end_cycle" : 759,
+				"shared_start_cycle" : 644,
+				"source_operator_id" : 4,
+				"trace" : [],
+				"trace_events" : 30,
+				"trace_truncated" : false,
+				"view_elided" : false
+			},
+			{
+				"batch_index" : 0,
+				"classification" : "memory_transfer_cycle_component_not_system_validation",
+				"conversion_stalls" : 5,
+				"cycles" : 150,
+				"dma_latency_source" : "external_port_responses",
+				"dma_read_bytes" : 20,
+				"dma_requests" : 10,
+				"dma_responses" : 10,
+				"dma_write_bytes" : 20,
+				"done" : true,
+				"external_memory_port" : true,
+				"forward_id" : 0,
+				"inference_performance_eligible" : false,
+				"inflight_transactions" : 0,
+				"layer_idx" : null,
+				"mlx_system_verified" : false,
+				"numeric_instructions" : 
+				{
+					"allocations" : 1,
+					"calls" : 1,
+					"classification" : "bounded_memory_plans_not_system_dma_validation",
+					"index_reads" : 0,
+					"instructions" : 15,
+					"opcode_counts" : 
+					{
+						"1" : 5,
+						"2" : 5,
+						"3" : 5,
+						"4" : 0,
+						"5" : 0
+					},
+					"physical_dma_verified" : false,
+					"predicate_reads" : 0,
+					"profile" : "mlx-memory-plan-v1",
+					"read_bytes" : 20,
+					"register_bytes_total" : 32,
+					"staging_bytes" : 128,
+					"timing_verified" : false,
+					"view_elisions" : 0,
+					"write_bytes" : 20
+				},
+				"options" : 
+				{
+					"convert_latency" : 2,
+					"dma_latency" : 8,
+					"max_cycles" : 10000000,
+					"request_period" : 1,
+					"response_period" : 1,
+					"trace" : false,
+					"trace_limit" : 200000
+				},
+				"region_names" : 
+				[
+					"v5",
+					"v6"
+				],
+				"request_stalls" : 35,
+				"resources" : 
+				{
+					"conversion_result_latch_bytes" : 8,
+					"data_register_bytes" : 32,
+					"max_inflight_conversions" : 1,
+					"max_inflight_transactions" : 1,
+					"request_data_latch_bytes" : 8,
+					"staging_bytes" : 128
+				},
+				"response_stalls" : 80,
+				"shared_end_cycle" : 909,
+				"shared_start_cycle" : 759,
+				"source_operator_id" : 6,
+				"trace" : [],
+				"trace_events" : 30,
+				"trace_truncated" : false,
+				"view_elided" : false
+			}
+		],
+		"vector" : 
+		[
+			{
+				"active_contexts" : 0,
+				"admission_stall_cycles" : 0,
+				"admitted" : 1,
+				"allocated_spm_vectors" : 0,
+				"batch_index" : 0,
+				"classification" : "cpp_vector_window_cycle_component_not_full_system_validation",
+				"counter_units" : 
+				{
+					"cycles" : "wall_cycle",
+					"same_pe_context_overlap_cycles" : "pe_cycle",
+					"vector_sfu_overlap_pe_cycles" : "pe_cycle",
+					"writeback_stall_response_cycles" : "blocked_response_cycle"
+				},
+				"cycles" : 322,
+				"dma_busy_cycles" : 270,
+				"dma_requests" : 30,
+				"dma_responses" : 30,
+				"done" : true,
+				"external_memory_port" : true,
+				"external_shared_array" : true,
+				"forward_id" : 0,
+				"inference_performance_eligible" : false,
+				"layer_idx" : null,
+				"mlx_system_verified" : false,
+				"numeric_instructions" : 
+				{
+					"arithmetic_lanes" : 15,
+					"calls" : 1,
+					"classification" : "bounded_vector_microcode_functional_not_cycle_or_system_validation",
+					"global_read_bytes" : 60,
+					"global_write_bytes" : 60,
+					"instructions" : 4,
+					"max_rom_words" : 4,
+					"max_stack_level" : 0,
+					"opcode_counts" : 
+					{
+						"10" : 1,
+						"11" : 1,
+						"5" : 1,
+						"9" : 1
+					},
+					"profile" : "mlx-vector-fp32-v1",
+					"rf_vectors_used" : 8,
+					"spm_bytes_used" : 320,
+					"system_verified" : false,
+					"timing_verified" : false,
+					"transcendental_lanes" : 0
+				},
+				"peak_contexts" : 1,
+				"peak_spm_vectors" : 5,
+				"pending_dma" : false,
+				"pending_fu" : 0,
+				"pending_spm" : false,
+				"retired" : 1,
+				"rf_frame_vectors" : 8,
+				"same_pe_context_overlap_cycles" : 0,
+				"shared_client" : 1,
+				"shared_end_cycle" : 322,
+				"shared_start_cycle" : 0,
+				"source_operator_id" : 0,
+				"spm_busy_cycles" : 9,
+				"spm_capacity_vectors" : 128,
+				"spm_frame_vectors" : 5,
+				"trace" : [],
+				"trans_busy_pe_cycles" : 0,
+				"vector_busy_pe_cycles" : 4,
+				"vector_sfu_overlap_pe_cycles" : 0,
+				"writeback_stall_response_cycles" : 0
+			},
+			{
+				"active_contexts" : 0,
+				"admission_stall_cycles" : 0,
+				"admitted" : 1,
+				"allocated_spm_vectors" : 0,
+				"batch_index" : 0,
+				"classification" : "cpp_vector_window_cycle_component_not_full_system_validation",
+				"counter_units" : 
+				{
+					"cycles" : "wall_cycle",
+					"same_pe_context_overlap_cycles" : "pe_cycle",
+					"vector_sfu_overlap_pe_cycles" : "pe_cycle",
+					"writeback_stall_response_cycles" : "blocked_response_cycle"
+				},
+				"cycles" : 320,
+				"dma_busy_cycles" : 270,
+				"dma_requests" : 30,
+				"dma_responses" : 30,
+				"done" : true,
+				"external_memory_port" : true,
+				"external_shared_array" : true,
+				"forward_id" : 0,
+				"inference_performance_eligible" : false,
+				"layer_idx" : null,
+				"mlx_system_verified" : false,
+				"numeric_instructions" : 
+				{
+					"arithmetic_lanes" : 15,
+					"calls" : 1,
+					"classification" : "bounded_vector_microcode_functional_not_cycle_or_system_validation",
+					"global_read_bytes" : 60,
+					"global_write_bytes" : 60,
+					"instructions" : 4,
+					"max_rom_words" : 4,
+					"max_stack_level" : 0,
+					"opcode_counts" : 
+					{
+						"10" : 1,
+						"11" : 1,
+						"6" : 1,
+						"9" : 1
+					},
+					"profile" : "mlx-vector-fp32-v1",
+					"rf_vectors_used" : 8,
+					"spm_bytes_used" : 320,
+					"system_verified" : false,
+					"timing_verified" : false,
+					"transcendental_lanes" : 0
+				},
+				"peak_contexts" : 1,
+				"peak_spm_vectors" : 5,
+				"pending_dma" : false,
+				"pending_fu" : 0,
+				"pending_spm" : false,
+				"retired" : 1,
+				"rf_frame_vectors" : 8,
+				"same_pe_context_overlap_cycles" : 0,
+				"shared_client" : 2,
+				"shared_end_cycle" : 642,
+				"shared_start_cycle" : 322,
+				"source_operator_id" : 1,
+				"spm_busy_cycles" : 9,
+				"spm_capacity_vectors" : 128,
+				"spm_frame_vectors" : 5,
+				"trace" : [],
+				"trans_busy_pe_cycles" : 0,
+				"vector_busy_pe_cycles" : 2,
+				"vector_sfu_overlap_pe_cycles" : 0,
+				"writeback_stall_response_cycles" : 0
+			},
+			{
+				"active_contexts" : 0,
+				"admission_stall_cycles" : 0,
+				"admitted" : 1,
+				"allocated_spm_vectors" : 0,
+				"batch_index" : 0,
+				"classification" : "cpp_vector_window_cycle_component_not_full_system_validation",
+				"counter_units" : 
+				{
+					"cycles" : "wall_cycle",
+					"same_pe_context_overlap_cycles" : "pe_cycle",
+					"vector_sfu_overlap_pe_cycles" : "pe_cycle",
+					"writeback_stall_response_cycles" : "blocked_response_cycle"
+				},
+				"cycles" : 209,
+				"dma_busy_cycles" : 90,
+				"dma_requests" : 10,
+				"dma_responses" : 10,
+				"done" : true,
+				"external_memory_port" : true,
+				"external_shared_array" : true,
+				"forward_id" : 0,
+				"inference_performance_eligible" : false,
+				"layer_idx" : null,
+				"mlx_system_verified" : false,
+				"numeric_instructions" : 
+				{
+					"arithmetic_lanes" : 5,
+					"calls" : 1,
+					"classification" : "bounded_vector_microcode_functional_not_cycle_or_system_validation",
+					"global_read_bytes" : 20,
+					"global_write_bytes" : 20,
+					"instructions" : 4,
+					"max_rom_words" : 4,
+					"max_stack_level" : 0,
+					"opcode_counts" : 
+					{
+						"10" : 1,
+						"11" : 1,
+						"5" : 1,
+						"9" : 1
+					},
+					"profile" : "mlx-vector-fp32-v1",
+					"rf_vectors_used" : 8,
+					"spm_bytes_used" : 320,
+					"system_verified" : false,
+					"timing_verified" : false,
+					"transcendental_lanes" : 0
+				},
+				"peak_contexts" : 1,
+				"peak_spm_vectors" : 5,
+				"pending_dma" : false,
+				"pending_fu" : 0,
+				"pending_spm" : false,
+				"retired" : 1,
+				"rf_frame_vectors" : 8,
+				"same_pe_context_overlap_cycles" : 0,
+				"shared_client" : 3,
+				"shared_end_cycle" : 968,
+				"shared_start_cycle" : 759,
+				"source_operator_id" : 7,
+				"spm_busy_cycles" : 9,
+				"spm_capacity_vectors" : 128,
+				"spm_frame_vectors" : 5,
+				"trace" : [],
+				"trans_busy_pe_cycles" : 0,
+				"vector_busy_pe_cycles" : 4,
+				"vector_sfu_overlap_pe_cycles" : 0,
+				"writeback_stall_response_cycles" : 0
+			},
+			{
+				"active_contexts" : 0,
+				"admission_stall_cycles" : 0,
+				"admitted" : 1,
+				"allocated_spm_vectors" : 0,
+				"batch_index" : 0,
+				"classification" : "cpp_vector_window_cycle_component_not_full_system_validation",
+				"counter_units" : 
+				{
+					"cycles" : "wall_cycle",
+					"same_pe_context_overlap_cycles" : "pe_cycle",
+					"vector_sfu_overlap_pe_cycles" : "pe_cycle",
+					"writeback_stall_response_cycles" : "blocked_response_cycle"
+				},
+				"cycles" : 170,
+				"dma_busy_cycles" : 135,
+				"dma_requests" : 15,
+				"dma_responses" : 15,
+				"done" : true,
+				"external_memory_port" : true,
+				"external_shared_array" : true,
+				"forward_id" : 0,
+				"inference_performance_eligible" : false,
+				"layer_idx" : null,
+				"mlx_system_verified" : false,
+				"numeric_instructions" : 
+				{
+					"arithmetic_lanes" : 5,
+					"calls" : 1,
+					"classification" : "bounded_vector_microcode_functional_not_cycle_or_system_validation",
+					"global_read_bytes" : 40,
+					"global_write_bytes" : 20,
+					"instructions" : 4,
+					"max_rom_words" : 4,
+					"max_stack_level" : 0,
+					"opcode_counts" : 
+					{
+						"10" : 1,
+						"11" : 1,
+						"6" : 1,
+						"9" : 1
+					},
+					"profile" : "mlx-vector-fp32-v1",
+					"rf_vectors_used" : 8,
+					"spm_bytes_used" : 320,
+					"system_verified" : false,
+					"timing_verified" : false,
+					"transcendental_lanes" : 0
+				},
+				"peak_contexts" : 1,
+				"peak_spm_vectors" : 5,
+				"pending_dma" : false,
+				"pending_fu" : 0,
+				"pending_spm" : false,
+				"retired" : 1,
+				"rf_frame_vectors" : 8,
+				"same_pe_context_overlap_cycles" : 0,
+				"shared_client" : 4,
+				"shared_end_cycle" : 1138,
+				"shared_start_cycle" : 968,
+				"source_operator_id" : 8,
+				"spm_busy_cycles" : 9,
+				"spm_capacity_vectors" : 128,
+				"spm_frame_vectors" : 5,
+				"trace" : [],
+				"trans_busy_pe_cycles" : 0,
+				"vector_busy_pe_cycles" : 2,
+				"vector_sfu_overlap_pe_cycles" : 0,
+				"writeback_stall_response_cycles" : 0
+			}
+		]
+	}
+}

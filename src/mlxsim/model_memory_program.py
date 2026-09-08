@@ -6,10 +6,11 @@ Chipyard DMA timing. View elimination and actual transfers remain distinct.
 
 import copy
 import math
+from .model_value_outputs import value_outputs
 
 KINDS = {"embedding", "where", "cat", "cast", "cast_device", "contiguous", "reshape",
          "transpose", "slice", "select", "unsqueeze", "squeeze", "expand", "alias", "dropout_inference",
-         "advanced_index", "new_ones"}
+         "advanced_index", "new_ones", "split"}
 TYPE = {"f16": 0, "f32": 1, "i64": 2, "bool": 3}
 BYTES = {"f16": 2, "f32": 4, "i64": 8, "bool": 1}
 # Transfer-controller operations, separate from the PE arithmetic opcode space.
@@ -119,7 +120,7 @@ class Planner:
         inputs = {name: copy.deepcopy(self.layouts[name]) for name in references}
         source = self.layouts[args[0]["value"]] if isinstance(args[0], dict) and "value" in args[0] else None
         mode, selector, reason = "transfer", "linear", "materialization"
-        if kind in {"alias", "dropout_inference", "transpose", "slice", "select", "unsqueeze", "squeeze", "expand", "reshape"}:
+        if kind in {"alias", "dropout_inference", "transpose", "slice", "select", "unsqueeze", "squeeze", "split", "expand", "reshape"}:
             result = copy.deepcopy(source)
             if kind == "transpose":
                 a, b = [dimension(value, len(result["shape"])) for value in args[1:]]
@@ -255,11 +256,36 @@ class Planner:
                 raise ValueError("where output shape mismatch")
         if output["dtype"] != node["output"]["dtype"] or output["shape"] != node["output"]["shape"]:
             raise ValueError(f"compiled {kind} layout disagrees with source output")
+        split_layouts = {}
+        if kind == "split":
+            if len(args) not in (2, 3) or type(args[1]) is not int or args[1] < 0 or (len(args) == 3 and type(args[2]) is not int):
+                raise ValueError("split size must be a nonnegative integer")
+            axis = dimension(args[2] if len(args) == 3 else 0, len(source["shape"]))
+            width, step = source["shape"][axis], args[1]
+            if width and not step:
+                raise ValueError("split size zero requires an empty axis")
+            count = max(1, (width + step - 1) // step) if step else 1
+            outputs = value_outputs(node)
+            if len(outputs) != count:
+                raise ValueError("split omits or adds outputs")
+            for index, (identifier, spec) in enumerate(outputs):
+                layout = copy.deepcopy(source)
+                start = index * step
+                layout["shape"][axis] = min(step, width - start)
+                layout["offset"] += start * layout["strides"][axis]
+                if spec != {"dtype": source["dtype"], "shape": layout["shape"]}:
+                    raise ValueError("split output shape/dtype mismatch")
+                if identifier in self.layouts:
+                    raise ValueError("split output redefines an existing value")
+                split_layouts[identifier] = layout
         prefix = [LOAD_INDEX] * len(source["shape"]) if selector == "indexed_nd" else [LOAD_INDEX] if selector == "indexed_rows" else [LOAD_PREDICATE] if selector == "predicate_select" else []
         words = [] if mode == "view" else prefix + [LOAD, CONVERT | TYPE[output["dtype"]] << 8, STORE]
-        node["memory_program"] = {"profile": "mlx-memory-plan-v2" if kind in {"advanced_index", "new_ones", "squeeze"} else "mlx-memory-plan-v1", "kind": kind, "mode": mode,
+        node["memory_program"] = {"profile": "mlx-memory-plan-v3" if kind == "split" else "mlx-memory-plan-v2" if kind in {"advanced_index", "new_ones", "squeeze"} else "mlx-memory-plan-v1", "kind": kind, "mode": mode,
                                   "selector": selector, "reason": reason, "input_layouts": inputs,
                                   "output_layout": output, "words": words, "register_count": 4,
                                   "register_bytes": 8, "staging_bytes": 128, "chunk_bytes": 64,
                                   "same_reference_device": same_device, "physical_dma_verified": False}
         self.layouts[node["id"]] = copy.deepcopy(output)
+        if kind == "split":
+            node["memory_program"]["split_layouts"] = split_layouts
+            self.layouts.update(copy.deepcopy(split_layouts))

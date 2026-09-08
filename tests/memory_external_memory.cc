@@ -1,4 +1,5 @@
 #include "memory_schedule.h"
+#include "value_outputs.h"
 #include "../simulator_ext/model_io/address_space_port.h"
 #include "../simulator_ext/model_io/queued_physical_port.h"
 #include <algorithm>
@@ -116,9 +117,11 @@ int main(int argc,char **argv){
       while(simulator.tick()){}
       auto report=simulator.result();require(simulator.done()&&report["dma_requests"]==report["dma_responses"],"memory execution did not drain");
       last=simulator.output();values[node["id"].asString()]=last;reports.append(report);origin+=report["cycles"].asUInt64()+1;
+      publish_split_views(node,last,values);
       // Compare with the synchronous plan only after target execution completes.
       // It never provides target inputs, predicates, indices, or intermediates.
       oracle_last=execute(node,oracle_values,oracle_stats);oracle_values[node["id"].asString()]=oracle_last;
+      publish_split_views(node,oracle_last,oracle_values);
       if(external)require(!last.storage->data&&!last.storage->writable,"external output had host data");
       for(const auto &name:node["release"]){values.erase(name.asString());oracle_values.erase(name.asString());}
     }

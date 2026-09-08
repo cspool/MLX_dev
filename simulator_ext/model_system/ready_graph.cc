@@ -6,6 +6,7 @@
 #include "memory_schedule.h"
 #include "control_schedule.h"
 #include "guard_dependencies.h"
+#include "value_outputs.h"
 #include <algorithm>
 #include <cmath>
 #include <cstring>
@@ -103,7 +104,7 @@ struct Runner {
     require(!whole_pipeline_barrier||tile_pipeline,"whole-source pipeline barrier requires tile mode");
     require(!tile_pipeline||(overlap&&limit>=2),"tile pipeline requires two active source descriptors");
     require(limit>=1&&limit<=64&&max_cycles>0&&max_cycles<UINT64_MAX-1000000,"invalid ready graph window/cycle budget");
-    require(p["schema"]=="mlx_tensor_semantics_v1"&&p["timing_mode"]=="unmodeled","unsupported ready graph program");
+    require((p["schema"]=="mlx_tensor_semantics_v1"||p["schema"]=="mlx_tensor_semantics_v2")&&p["timing_mode"]=="unmodeled","unsupported ready graph program");
     for(const char *kind:{"matrix","vector","memory","control"}){require(p[std::string(kind)+"_backend"]=="scheduled","ready graph requires all four scheduled routes");windows[kind]=Json::Value(Json::arrayValue);}
     shared_array::Hardware h;h.rows=matrix_options.rows;h.columns=matrix_options.columns;h.contexts=matrix_options.contexts;
     h.spm_period=matrix_options.spm_period;h.writeback_period=matrix_options.writeback_period;h.compute_ii=matrix_options.compute_ii;h.sfu_ii=vector_options.trans_ii;
@@ -119,6 +120,7 @@ struct Runner {
     for(const auto &name:p["assets"].getMemberNames()){auto data=loader.load(p["assets"][name]);auto meta=arena.allocate(data.type,data.sizes,false);memory.bind(meta,data,true);values.emplace(name,std::move(meta));preloaded_bytes+=data.storage->bytes;++preloaded_assets;}
     require(p["nodes"].isArray()&&!p["nodes"].empty(),"ready graph is empty");tasks.resize(p["nodes"].size());
     validate_guard_dependencies(p);
+    validate_value_contract(p);
     std::map<std::string,unsigned> producer;std::set<uint64_t> sources;
     for(unsigned i=0;i<tasks.size();++i){auto &task=tasks[i];task.node=&p["nodes"][i];const auto &node=*task.node;auto name=node["id"].asString();
       require(!name.empty()&&!values.count(name)&&!producer.count(name)&&node["source_operator_id"].isUInt64()&&sources.insert(node["source_operator_id"].asUInt64()).second,"duplicate/invalid source or value identity");
@@ -126,7 +128,9 @@ struct Runner {
       require(routes==1,"graph source lacks one executable backend");task.view=task.family=="memory"&&node["memory_program"]["mode"]=="view";
       std::set<std::string> deps;references(node["args"],deps);references(node["kwargs"],deps);references(node["control_dependencies"],deps);
       for(const auto &dep:deps){require(values.count(dep)||producer.count(dep),"graph has a missing, cyclic or forward SSA reference");task.inputs.push_back(dep);++uses[dep];if(producer.count(dep)){++task.missing;tasks[producer.at(dep)].consumers.push_back(i);}}
-      producer[name]=i;if(!task.missing)ready.emplace(node["source_operator_id"].asUInt64(),i);
+      producer[name]=i;
+      if(node["kind"]=="split")for(const auto &id:output_ids(node))require(producer.emplace(id,i).second,"duplicate graph tuple output");
+      if(!task.missing)ready.emplace(node["source_operator_id"].asUInt64(),i);
     }
     require(p["outputs"].isArray()&&!p["outputs"].empty(),"graph has no result contract");std::set<int> forwards;
     for(const auto &out:p["outputs"]){require(out["forward_id"].isInt()&&forwards.insert(out["forward_id"].asInt()).second,"duplicate/invalid graph output forward");for(const char *role:{"logits","token"}){auto id=out[role].asString();require(values.count(id)||producer.count(id),"graph output is unbound");keep.insert(id);}}
@@ -241,8 +245,11 @@ struct Runner {
     Json::Value event;event["source_operator_id"]=node["source_operator_id"];event["kind"]=node["kind"];event["family"]=task.family;event["forward_id"]=node["forward_id"];event["layer_idx"]=node["layer_idx"];
     event["start_cycle"]=Json::UInt64(task.begin);event["publish_cycle"]=Json::UInt64(cycle+1);event["batches"]=Json::UInt64(task.batches);auto allocation=arena.allocation(task.output);event["allocation_id"]=Json::UInt64(allocation.id);event["physical_base"]=Json::UInt64(allocation.base);events.append(event);
     auto name=node["id"].asString();require(values.emplace(name,task.output).second,"graph redefined a published value");
+    publish_split_views(node,task.output,values);
+    if(node["kind"]=="split"){events[events.size()-1]["produced_values"]=Json::Value(Json::arrayValue);for(const auto &id:output_ids(node))events[events.size()-1]["produced_values"].append(id);}
     for(const auto &dep:task.inputs){require(uses.at(dep)>0,"graph use count underflow");if(!--uses[dep]&&!keep.count(dep))require(values.erase(dep)==1,"graph prematurely released an input");}
-    if(!uses[name]&&!keep.count(name))values.erase(name);
+    for(const auto &id:output_ids(node))if(!uses[id]&&!keep.count(id))values.erase(id);
+    if(node["kind"]=="split")values.erase(name);
     task.values.clear();task.output=Tensor{};task.pins.clear();task.regions.clear();task.channel.reset();task.flow.reset();task.complete=true;++completed;
     memory_active-=task.family=="memory"&&!task.view;control_active-=task.family=="control";active.erase({node["source_operator_id"].asUInt64(),index});
     for(auto child:task.consumers){require(tasks[child].missing>0,"graph dependency count underflow");if(!--tasks[child].missing&&!tasks[child].started)ready.emplace((*tasks[child].node)["source_operator_id"].asUInt64(),child);}
