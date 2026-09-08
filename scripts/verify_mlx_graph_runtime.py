@@ -29,7 +29,7 @@ def main():
     device=json.loads((out/"device.json").read_text())
     if device["launches"] or device["device_reads"] or device["device_writes"] or not device["memory_idle"]:raise RuntimeError("invalid graph tasks reached the accelerator")
     if before!=identity():raise RuntimeError("graph runtime contract sources changed")
-    report={"classification":"actual_rv64_dispatch_contract_not_model_or_system_validation","sources":before,"checks":15,"all_passed":True,"elf_sha256":sha(out/"test.elf"),"plugin_sha256":sha(plugin),"device_sha256":sha(out/"device.json"),"mlx_system_verified":False,"inference_performance_eligible":False}
+    report={"classification":"actual_rv64_dispatch_contract_not_model_or_system_validation","sources":before,"checks":26,"all_passed":True,"elf_sha256":sha(out/"test.elf"),"plugin_sha256":sha(plugin),"device_sha256":sha(out/"device.json"),"mlx_system_verified":False,"inference_performance_eligible":False}
     (out/"report.json").write_text(json.dumps(report,indent=2)+"\n");print(f"GRAPH_RUNTIME_CONTRACT_PASS {out/'report.json'}")
 
 

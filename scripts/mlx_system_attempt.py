@@ -32,10 +32,13 @@ def snapshot_sources(root,destination,sources):
 def launch_metadata(program,plan):
     nodes={node["source_operator_id"]:node for node in program["nodes"]};rows=[]
     for task in plan["tasks"]:
-        if task["kind"]!=2:continue
+        if task["kind"] not in (2,3):continue
         node=nodes[task["source_id"]]
         rows.append({"launch_ordinal":len(rows),"source_operator_id":task["source_id"],"source_ordinal":task["source_ordinal"],"batch_index":task["batch_index"],"batch_count":task["batch_count"],
             "forward_id":node["forward_id"],"layer_idx":node["layer_idx"],"phase":node.get("phase"),"kind":node["kind"],"family":task["family"],"shape":node["output"]["shape"],"dtype":node["output"]["dtype"]})
+        if task["kind"]==3:
+            consumer=program["nodes"][task["consumer_ordinal"]]
+            rows[-1]["consumer"]={"source_ordinal":task["consumer_ordinal"],"source_operator_id":consumer["source_operator_id"],"kind":consumer["kind"],"forward_id":consumer["forward_id"],"layer_idx":consumer["layer_idx"],"phase":consumer.get("phase"),"shape":consumer["output"]["shape"],"dtype":consumer["output"]["dtype"]}
     return rows
 
 

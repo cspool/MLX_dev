@@ -43,10 +43,20 @@ def host_source(plan,assets,reference):
     lines.append('static const volatile mlx_graph_asset assets[]={'+','.join(rows or ['{0}'])+'};')
     rows=[]
     for task in plan["tasks"]:
-        row={key:task[key] for key in ("kind","source_ordinal","source_id","batch_index","batch_count","bytes")};row["command"]=f"(uintptr_t)(command_blob+{task['command_offset']})" if task["bytes"] else 0;rows.append(fields(row))
+        row={key:task[key] for key in ("kind","source_ordinal","source_id","batch_index","batch_count","bytes")};row["command"]=f"(uintptr_t)(command_blob+{task['command_offset']})" if task["bytes"] else 0
+        if task["kind"]==3:row["reserved"]=task["consumer_ordinal"]+1
+        rows.append(fields(row))
     lines.append('static const volatile mlx_graph_task tasks[]={'+','.join(rows or ['{0}'])+'};')
-    p={"magic":"MLX_GRAPH_MAGIC","version":1,"source_count":plan["source_calls"],"task_count":plan["task_count"],"asset_count":len(assets),"assets":"(uintptr_t)assets","tasks":"(uintptr_t)tasks",
+    version=plan.get("host_abi_version",1)
+    if version==2:
+        rows=[]
+        for i,(source,deps) in enumerate(zip(plan["sources"],plan["source_dependencies"],strict=True)):
+            lines.append(f'static const uint64_t dependencies_{i}[]={{'+','.join(map(str,deps or [0]))+'};')
+            rows.append(fields({"source_id":source["source_operator_id"],"dependencies":f"(uintptr_t)dependencies_{i}","dependency_count":len(deps)}))
+        lines.append('static const volatile mlx_graph_source source_table[]={'+','.join(rows or ['{0}'])+'};')
+    p={"magic":"MLX_GRAPH_MAGIC","version":version,"source_count":plan["source_calls"],"task_count":plan["task_count"],"asset_count":len(assets),"assets":"(uintptr_t)assets","tasks":"(uintptr_t)tasks",
        "device_base":f"UINT64_C({plan['device_base']})","device_bytes":f"UINT64_C({plan['device_bytes']})","scratch_offset":plan["scratch_offset"],"scratch_bytes":plan["scratch_bytes"],"poll_limit":"UINT64_C(1000000000000)","completion":"(uintptr_t)completion"}
+    if version==2:p["reserved"]='{(uintptr_t)source_table,0,0}'
     lines.append('static const volatile mlx_graph_program program='+fields(p)+';')
     expected={row["forward_id"]:row for row in reference["outputs"]}
     for index,output in enumerate(plan["outputs"]):
@@ -64,7 +74,7 @@ def host_source(plan,assets,reference):
         'int main(void){',
         'if(mlx_graph_execute(&program,&result))return 10;',
         f'if(result.status||result.completed_sources!={plan["source_calls"]}||result.host_calls!={plan["family_source_calls"]["control"]}||result.view_elisions!={plan["family_source_calls"]["view"]})return 11;',
-        f'if(result.device_calls!={sum(t["kind"]==2 for t in plan["tasks"])}||result.asset_bytes!={sum(a["bytes"] for a in assets)})return 14;',
+        f'if(result.device_calls!={sum(t["kind"] in (2,3) for t in plan["tasks"])}||result.asset_bytes!={sum(a["bytes"] for a in assets)})return 14;',
         *([f'for(unsigned i=0;i<{plan["source_calls"]};++i)if(completion[i]!=source_ids[i])return 12;'] if plan["source_calls"] else []),
         f'for(unsigned row=0;row<sizeof(checks)/sizeof(checks[0]);++row){{',
         'const volatile struct check *c=&checks[row];for(uint64_t flat=0;flat<c->count;++flat){uint64_t index=flat,at=c->offset;for(unsigned d=(unsigned)c->rank;d-->0;){at+=(index%c->shape[d])*c->stride[d];index/=c->shape[d];}const volatile unsigned char *actual=(const volatile unsigned char *)(uintptr_t)(c->base+at*c->width);for(unsigned b=0;b<c->width;++b)if(actual[b]!=c->expected[flat*c->width+b])return 13;}',

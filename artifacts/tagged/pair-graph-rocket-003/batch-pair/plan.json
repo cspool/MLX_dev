@@ -1,0 +1,244 @@
+{
+  "classification": "compiled_rv64_graph_dispatch_plan_not_execution",
+  "host_abi_version": 2,
+  "pair_event_slots": 2,
+  "pair_count": 1,
+  "execution_groups": [
+    [
+      0
+    ],
+    [
+      1,
+      2
+    ],
+    [
+      3
+    ]
+  ],
+  "source_dependencies": [
+    [],
+    [
+      0
+    ],
+    [
+      1
+    ],
+    [
+      2
+    ]
+  ],
+  "storage_intervals": [
+    {
+      "root": "a",
+      "first": -1,
+      "last": 3,
+      "base": 2164326400,
+      "bytes": 120,
+      "writable": false,
+      "reserved_bytes": 128
+    },
+    {
+      "root": "w",
+      "first": -1,
+      "last": 3,
+      "base": 2164326528,
+      "bytes": 560,
+      "writable": false,
+      "reserved_bytes": 576
+    },
+    {
+      "root": "v1",
+      "first": 1,
+      "last": 1,
+      "base": 2164327104,
+      "bytes": 672,
+      "writable": true,
+      "reserved_bytes": 704
+    },
+    {
+      "root": "v2",
+      "first": 1,
+      "last": 3,
+      "base": 2164327808,
+      "bytes": 672,
+      "writable": true,
+      "reserved_bytes": 704
+    },
+    {
+      "root": "v3",
+      "first": 2,
+      "last": 3,
+      "base": 2164327104,
+      "bytes": 192,
+      "writable": true,
+      "reserved_bytes": 192
+    }
+  ],
+  "device_base": 2164260864,
+  "device_bytes": 1048576,
+  "required_mapped_bytes": 67648,
+  "data_offset": 65536,
+  "scratch_offset": 4096,
+  "scratch_bytes": 16384,
+  "sources": [
+    {
+      "source_ordinal": 0,
+      "source_operator_id": 0,
+      "kind": "transpose",
+      "family": "memory",
+      "view_elided": true,
+      "task_count": 1,
+      "forward_id": 0,
+      "layer_idx": null
+    },
+    {
+      "source_ordinal": 1,
+      "source_operator_id": 1,
+      "kind": "matmul",
+      "family": "matrix",
+      "view_elided": false,
+      "task_count": 1,
+      "forward_id": 0,
+      "layer_idx": null
+    },
+    {
+      "source_ordinal": 2,
+      "source_operator_id": 2,
+      "kind": "neg",
+      "family": "vector",
+      "view_elided": false,
+      "task_count": 1,
+      "forward_id": 0,
+      "layer_idx": null
+    },
+    {
+      "source_ordinal": 3,
+      "source_operator_id": 3,
+      "kind": "argmax",
+      "family": "control",
+      "view_elided": false,
+      "task_count": 1,
+      "forward_id": 0,
+      "layer_idx": null
+    }
+  ],
+  "tasks": [
+    {
+      "kind": 0,
+      "source_ordinal": 0,
+      "source_id": 0,
+      "batch_index": 0,
+      "batch_count": 1,
+      "command_offset": 0,
+      "bytes": 0,
+      "family": "memory"
+    },
+    {
+      "kind": 3,
+      "source_ordinal": 1,
+      "source_id": 1,
+      "batch_index": 0,
+      "batch_count": 1,
+      "command_offset": 0,
+      "bytes": 8832,
+      "family": "pair",
+      "consumer_ordinal": 2,
+      "consumer_source_id": 2
+    },
+    {
+      "kind": 1,
+      "source_ordinal": 3,
+      "source_id": 3,
+      "batch_index": 0,
+      "batch_count": 1,
+      "command_offset": 8832,
+      "bytes": 640,
+      "family": "control"
+    }
+  ],
+  "assets": {
+    "a": {
+      "base": 2164326400,
+      "bytes": 120,
+      "writable": false
+    },
+    "w": {
+      "base": 2164326528,
+      "bytes": 560,
+      "writable": false
+    }
+  },
+  "outputs": [
+    {
+      "forward_id": 0,
+      "role": "logits",
+      "value": "v2",
+      "layout": {
+        "dtype": "f32",
+        "shape": [
+          2,
+          4,
+          3,
+          7
+        ],
+        "strides": [
+          84,
+          21,
+          7,
+          1
+        ],
+        "offset": 0,
+        "root": "v2",
+        "storage_elements": 168
+      },
+      "binding": {
+        "base": 2164327808,
+        "bytes": 672,
+        "writable": true
+      }
+    },
+    {
+      "forward_id": 0,
+      "role": "token",
+      "value": "v3",
+      "layout": {
+        "dtype": "i64",
+        "shape": [
+          2,
+          4,
+          3
+        ],
+        "strides": [
+          12,
+          3,
+          1
+        ],
+        "offset": 0,
+        "root": "v3",
+        "storage_elements": 24
+      },
+      "binding": {
+        "base": 2164327104,
+        "bytes": 192,
+        "writable": true
+      }
+    }
+  ],
+  "family_source_calls": {
+    "matrix": 1,
+    "vector": 1,
+    "memory": 1,
+    "control": 1,
+    "view": 1
+  },
+  "command_bytes": 9472,
+  "source_calls": 4,
+  "task_count": 3,
+  "model_data_executed": false,
+  "mlx_system_verified": false,
+  "inference_performance_eligible": false,
+  "asset_initialization": "cpu_copy_from_elf_payload",
+  "initial_asset_count": 2,
+  "initial_asset_bytes": 680,
+  "cpu_asset_copy_bytes": 680
+}

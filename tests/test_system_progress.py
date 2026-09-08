@@ -31,3 +31,33 @@ def test_observation_preserves_data_and_all_target_counters(binary,tmp_path,mode
     else:
         assert sum(e["launch_event"] for e in events)==sum(e["terminal_event"] for e in events)==3
         assert [e["source"]["source_operator_id"] for e in events if e["launch_event"]]==[101,102,103]
+
+
+def pair_metadata():
+    return [{"launch_ordinal":0,"source_operator_id":0,"source_ordinal":0,"family":"pair","consumer":{
+        "source_operator_id":1,"source_ordinal":1,"forward_id":0,"layer_idx":None,"phase":"prefill","kind":"rsqrt","shape":[5,19],"dtype":"f16"}}]
+
+
+def test_pair_observation_preserves_both_sources_and_target_execution(binary,tmp_path):
+    from test_pair_wire import pair_job
+    job,_,_=pair_job();plain=execute(binary,tmp_path/"plain",job)
+    job.update(progress=str(tmp_path/"progress.json"),progress_map=pair_metadata(),progress_period=100)
+    observed=execute(binary,tmp_path/"observed",job);status=observed.pop("progress_observer")
+    assert observed==plain and not status["failed"]
+    row=json.loads((tmp_path/"progress.json").read_text())["source"]
+    assert row["source_operator_id"]==0 and row["consumer"]["source_operator_id"]==1
+
+
+@pytest.mark.parametrize("damage",["unknown","family","ordinal","id","shape","missing"])
+def test_invalid_pair_metadata_is_rejected_before_clocking(binary,tmp_path,damage):
+    job=chain();mapping=pair_metadata();row=mapping[0]
+    if damage=="unknown":row["consumer"]["unbounded_payload"]={}
+    elif damage=="family":row["family"]="matrix"
+    elif damage=="ordinal":row["consumer"]["source_ordinal"]=0
+    elif damage=="id":row["consumer"]["source_operator_id"]=-1
+    elif damage=="shape":row["consumer"]["shape"]=[1]*9
+    else:del row["consumer"]
+    job.update(progress=str(tmp_path/"progress.json"),progress_map=mapping)
+    file=tmp_path/"job.json";file.write_text(json.dumps(job));report=tmp_path/"report.json"
+    process=subprocess.run([str(binary),str(file),str(report)],capture_output=True,text=True,timeout=30)
+    assert process.returncode!=0 and "progress" in process.stderr and not report.exists() and not (tmp_path/"progress.json").exists()

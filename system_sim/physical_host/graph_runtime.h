@@ -2,7 +2,11 @@
 #define MLX_GRAPH_RUNTIME_H
 #include "control_runtime.h"
 #define MLX_GRAPH_MAGIC UINT64_C(0x4d4c584752503031)
-enum mlx_graph_kind { MLX_GRAPH_VIEW=0,MLX_GRAPH_HOST=1,MLX_GRAPH_DEVICE=2 };
+enum mlx_graph_kind { MLX_GRAPH_VIEW=0,MLX_GRAPH_HOST=1,MLX_GRAPH_DEVICE=2,MLX_GRAPH_PAIR=3 };
+// Version 2: program.reserved[0] points to source_count source records.
+// Pair task.reserved is consumer ordinal + 1; zero for all other tasks.
+// Version 1 continues to require all reserved fields zero and ordered tasks.
+typedef struct { uint64_t source_id,dependencies,dependency_count,reserved; } mlx_graph_source;
 typedef struct { uint64_t source,destination,bytes,reserved; } mlx_graph_asset;
 typedef struct {
   uint64_t kind,source_ordinal,source_id,batch_index,batch_count,command,bytes,reserved;
@@ -14,6 +18,6 @@ typedef struct {
 typedef struct {
   uint64_t status,last_task,completed_sources,host_calls,device_calls,view_elisions,asset_bytes,reserved;
 } mlx_graph_result;
-MLX_HOST_STATIC_ASSERT(sizeof(mlx_graph_asset)==32 && sizeof(mlx_graph_task)==64 && sizeof(mlx_graph_program)==128 && sizeof(mlx_graph_result)==64,"graph host ABI layout");
+MLX_HOST_STATIC_ASSERT(sizeof(mlx_graph_source)==32 && sizeof(mlx_graph_asset)==32 && sizeof(mlx_graph_task)==64 && sizeof(mlx_graph_program)==128 && sizeof(mlx_graph_result)==64,"graph host ABI layout");
 int mlx_graph_execute(const volatile mlx_graph_program *program,volatile mlx_graph_result *result);
 #endif

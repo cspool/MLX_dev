@@ -11,9 +11,13 @@ from ..physical_device.vector_lowering import lower_vector
 from ..physical_device.memory_lowering import lower_memory
 
 
-def compile_graph(program,life,*,device_base=2**32,device_bytes=1048576,data_offset=65536,scratch_offset=4096,scratch_bytes=16384):
+def compile_graph(program,life,*,device_base=2**32,device_bytes=1048576,data_offset=65536,scratch_offset=4096,scratch_bytes=16384,block_pairs=False,event_slots=32):
     if device_base%4096 or not 0<=device_base<2**40 or device_bytes%4096 or not 8192<=device_bytes<=2**40-device_base:raise ValueError("graph device mapping invalid")
     if scratch_offset<4096 or scratch_offset%8 or scratch_bytes<15872 or scratch_offset+scratch_bytes>data_offset or data_offset%64 or data_offset>device_bytes:raise ValueError("graph scratch/data partition invalid")
+    if type(block_pairs) is not bool:raise ValueError("block pair selection must be boolean")
+    if block_pairs:
+        from .pair_graph import compile_pair_graph
+        return compile_pair_graph(program,life,device_base=device_base,device_bytes=device_bytes,data_offset=data_offset,scratch_offset=scratch_offset,scratch_bytes=scratch_bytes,event_slots=event_slots)
     origin=life["initial"]["base"];relocation=device_base+data_offset-origin
     peak_end=max([a["base"]+a["reserved_bytes"] for a in life["initial"]["allocations"]]+[e["allocation"]["base"]+e["allocation"]["reserved_bytes"] for e in life["events"]]+[origin])
     required=peak_end-origin+data_offset

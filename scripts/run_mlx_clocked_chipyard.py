@@ -23,7 +23,7 @@ PROFILE=ROOT/"system_sim/model_image"
 
 
 def source_identity():
-    result=bridge_sources();files=[Path(__file__).resolve(),ROOT/"scripts/mlx_system_attempt.py",ROOT/"scripts/run_mlx_spike_graph.py",ROOT/"scripts/run_mlx_native_chipyard.py",ROOT/"system_sim/chipyard/MLXClockedRoCC.scala",ROOT/"system_sim/chipyard/MLXWideMemory.scala"]
+    result=bridge_sources();files=[Path(__file__).resolve(),ROOT/"scripts/mlx_system_attempt.py",ROOT/"scripts/run_mlx_spike_graph.py",ROOT/"scripts/run_mlx_native_chipyard.py",ROOT/"src/mlxsim/model_system_evidence.py",ROOT/"system_sim/chipyard/MLXClockedRoCC.scala",ROOT/"system_sim/chipyard/MLXWideMemory.scala"]
     for directory in (BRIDGE,WIDE,PROFILE,ROOT/"system_sim/clocked_device"):files.extend(p for p in directory.iterdir() if p.is_file())
     for path in files:result[str(path.relative_to(ROOT))]=sha(path)
     return result
@@ -60,7 +60,7 @@ def inputs(chipyard,large=False):
     return {"sources":source_identity(),"dependencies":chipyard_inputs(chipyard),"large_memory":large,"libraries":{str(p):sha(p) for p in libraries(large)},"installed":{str(p):sha(p) for p in installed}}
 
 
-def prepare(case,out,*,graph_base=0x81000000,graph_bytes=1048576,memory_bytes=256*2**20,preload_assets=False):
+def prepare(case,out,*,graph_base=0x81000000,graph_bytes=1048576,memory_bytes=256*2**20,preload_assets=False,block_pairs=False,event_slots=32):
     out.mkdir();paths={key:Path(case[key]).resolve() for key in ("program","lifetimes","reference")};fingerprints={str(p):sha(p) for p in paths.values()}
     program=json.loads(paths["program"].read_text());life=json.loads(paths["lifetimes"].read_text());reference=result_reference(json.loads(paths["reference"].read_text()))
     for row in reference["outputs"]:
@@ -71,7 +71,7 @@ def prepare(case,out,*,graph_base=0x81000000,graph_bytes=1048576,memory_bytes=25
             if str(path) not in fingerprints:fingerprints[str(path)]=sha(path)
             if asset.get("file_sha256",fingerprints[str(path)])!=fingerprints[str(path)]:raise RuntimeError("compiled asset identity mismatch")
     if not 0x80000000<=graph_base or graph_bytes<=0 or graph_base+graph_bytes>0x80000000+memory_bytes:raise RuntimeError("graph window outside actual system RAM")
-    blob,plan=compile_graph(program,life,device_base=graph_base,device_bytes=graph_bytes)
+    blob,plan=compile_graph(program,life,device_base=graph_base,device_bytes=graph_bytes,block_pairs=block_pairs,event_slots=event_slots)
     check_embedded_payload_limit({"assets":{}} if preload_assets else program,len(blob))
     if preload_assets:
         segments=initial_segments(program,plan,out);assets=[]
@@ -148,6 +148,7 @@ def main():
     parser.add_argument("--preload-assets",action="store_true");parser.add_argument("--device-profile",type=Path);parser.add_argument("--max-system-cycles",type=int,default=20000000);parser.add_argument("--watchdog-seconds",type=int,default=600)
     parser.add_argument("--progress",action="store_true");parser.add_argument("--progress-period",type=int,default=1000000)
     parser.add_argument("--seed",type=int)
+    parser.add_argument("--block-pairs",action="store_true");parser.add_argument("--event-slots",type=int,default=32)
     args=parser.parse_args();out=args.output.resolve();chipyard=args.chipyard.resolve();config="MLXClockedLargeRocketConfig" if args.large_memory else CONFIG
     capacity=16*2**30 if args.large_memory else 256*2**20;graph_base=args.graph_base if args.graph_base is not None else 0x181000000 if args.large_memory else 0x81000000
     if args.preload_elf and not args.large_memory:raise RuntimeError("ELF binary preload requires the checked wide-memory profile")
@@ -170,7 +171,7 @@ def main():
         equivalent=case.get("equivalent_to")
         if equivalent is not None and (equivalent not in prepared or args.seed is None):raise RuntimeError("equivalence requires an earlier case and a fixed seed")
         case_options[name]={"progress":observe,"equivalent_to":equivalent}
-        prepared[name]=prepare(case,out/name,graph_base=graph_base,graph_bytes=args.graph_bytes,memory_bytes=capacity,preload_assets=args.preload_assets)
+        prepared[name]=prepare(case,out/name,graph_base=graph_base,graph_bytes=args.graph_bytes,memory_bytes=capacity,preload_assets=args.preload_assets,block_pairs=case.get("block_pairs",args.block_pairs),event_slots=args.event_slots)
     if args.phase=="prepare":
         if sources!=source_identity() or case_hash!=sha(args.cases):raise RuntimeError("image preparation sources changed")
         for _,files in prepared.values():
@@ -230,13 +231,19 @@ def main():
         except Exception as error:
             record_attempt(out/"attempt.json",{"classification":"failed_attempt_not_success","status":"execution_failed","case":name,"execution_record":str(directory/"execution.json"),"error":str(error)});raise
         if "MLX_CLOCKED_CHAIN_PASS" not in (directory/"chipyard.log").read_text():raise RuntimeError("real Rocket ELF did not finish all result checks")
-        device=json.loads((directory/"device.json").read_text());tasks=[t for t in plan["tasks"] if t["kind"]==2]
+        device=json.loads((directory/"device.json").read_text());tasks=[t for t in plan["tasks"] if t["kind"] in (2,3)]
         if device["build_identity"]!=manifest["build_identity"] or device["frontend_error"] or device["cache_request_owned"] or device["cpu_response_pending"]:raise RuntimeError("clocked RoCC lifecycle/build check failed")
         if device["effective_profile"]!=profile:raise RuntimeError("actual system backend profile differs from the prepared profile")
         if observe and device["progress_observer"]["failed"]:raise RuntimeError("model completed but progress observer failed")
         if device["launches"]!=len(tasks) or len(device["windows"])!=len(tasks) or device["requests"]!=device["responses"]:raise RuntimeError("clocked graph did not execute/drain all device tasks")
+        if plan.get("host_abi_version",1)==2:
+            from mlxsim.model_system_evidence import check_pair_kernel,task_coverage
+            model=json.loads(Path(next(c for c in cases if c["name"]==name)["program"]).read_text())
+            _,values,_=task_coverage(model,plan)
         for ordinal,(task,window) in enumerate(zip(tasks,device["windows"])):
             if not window["done"] or window["error"] or not window["transport"]["idle"] or window["source_id"]!=ordinal or window["backend"]!=task["family"] or window["descriptor_bytes_fetched"]!=task["bytes"]:raise RuntimeError("clocked task/source routing failed")
+            if task["kind"]==3:
+                check_pair_kernel(model,task,window["kernel"],profile,values,plan["pair_event_slots"],ordinal+1)
         comparable={key:value for key,value in device.items() if key!="progress_observer"}
         equivalent=case_options[name]["equivalent_to"]
         if equivalent is not None and comparable!=device_results[equivalent]:raise RuntimeError("observation A/B changed target events or cycles")

@@ -1,0 +1,279 @@
+{
+  "classification": "compiled_rv64_graph_dispatch_plan_not_execution",
+  "host_abi_version": 2,
+  "pair_event_slots": 2,
+  "pair_count": 1,
+  "execution_groups": [
+    [
+      0
+    ],
+    [
+      2
+    ],
+    [
+      1,
+      3
+    ],
+    [
+      4
+    ]
+  ],
+  "source_dependencies": [
+    [],
+    [
+      0
+    ],
+    [],
+    [
+      1,
+      2
+    ],
+    [
+      3
+    ]
+  ],
+  "storage_intervals": [
+    {
+      "root": "w",
+      "first": -1,
+      "last": 4,
+      "base": 2164326400,
+      "bytes": 32,
+      "writable": false,
+      "reserved_bytes": 64
+    },
+    {
+      "root": "x",
+      "first": -1,
+      "last": 4,
+      "base": 2164326464,
+      "bytes": 8,
+      "writable": false,
+      "reserved_bytes": 64
+    },
+    {
+      "root": "v0",
+      "first": 0,
+      "last": 2,
+      "base": 2164326528,
+      "bytes": 8,
+      "writable": true,
+      "reserved_bytes": 64
+    },
+    {
+      "root": "v2",
+      "first": 1,
+      "last": 2,
+      "base": 2164326592,
+      "bytes": 8,
+      "writable": true,
+      "reserved_bytes": 64
+    },
+    {
+      "root": "v1",
+      "first": 2,
+      "last": 2,
+      "base": 2164326656,
+      "bytes": 8,
+      "writable": true,
+      "reserved_bytes": 64
+    },
+    {
+      "root": "v3",
+      "first": 2,
+      "last": 4,
+      "base": 2164326720,
+      "bytes": 8,
+      "writable": true,
+      "reserved_bytes": 64
+    },
+    {
+      "root": "v4",
+      "first": 3,
+      "last": 4,
+      "base": 2164326528,
+      "bytes": 8,
+      "writable": true,
+      "reserved_bytes": 64
+    }
+  ],
+  "device_base": 2164260864,
+  "device_bytes": 1048576,
+  "required_mapped_bytes": 65920,
+  "data_offset": 65536,
+  "scratch_offset": 4096,
+  "scratch_bytes": 16384,
+  "sources": [
+    {
+      "source_ordinal": 0,
+      "source_operator_id": 0,
+      "kind": "neg",
+      "family": "vector",
+      "view_elided": false,
+      "task_count": 1,
+      "forward_id": 0,
+      "layer_idx": null
+    },
+    {
+      "source_ordinal": 1,
+      "source_operator_id": 1,
+      "kind": "linear",
+      "family": "matrix",
+      "view_elided": false,
+      "task_count": 1,
+      "forward_id": 0,
+      "layer_idx": null
+    },
+    {
+      "source_ordinal": 2,
+      "source_operator_id": 2,
+      "kind": "neg",
+      "family": "vector",
+      "view_elided": false,
+      "task_count": 1,
+      "forward_id": 0,
+      "layer_idx": null
+    },
+    {
+      "source_ordinal": 3,
+      "source_operator_id": 3,
+      "kind": "add",
+      "family": "vector",
+      "view_elided": false,
+      "task_count": 1,
+      "forward_id": 0,
+      "layer_idx": null
+    },
+    {
+      "source_ordinal": 4,
+      "source_operator_id": 4,
+      "kind": "argmax",
+      "family": "control",
+      "view_elided": false,
+      "task_count": 1,
+      "forward_id": 0,
+      "layer_idx": null
+    }
+  ],
+  "tasks": [
+    {
+      "kind": 2,
+      "source_ordinal": 0,
+      "source_id": 0,
+      "batch_index": 0,
+      "batch_count": 1,
+      "command_offset": 0,
+      "bytes": 4288,
+      "family": "vector"
+    },
+    {
+      "kind": 2,
+      "source_ordinal": 2,
+      "source_id": 2,
+      "batch_index": 0,
+      "batch_count": 1,
+      "command_offset": 4288,
+      "bytes": 4288,
+      "family": "vector"
+    },
+    {
+      "kind": 3,
+      "source_ordinal": 1,
+      "source_id": 1,
+      "batch_index": 0,
+      "batch_count": 1,
+      "command_offset": 8576,
+      "bytes": 8832,
+      "family": "pair",
+      "consumer_ordinal": 3,
+      "consumer_source_id": 3
+    },
+    {
+      "kind": 1,
+      "source_ordinal": 4,
+      "source_id": 4,
+      "batch_index": 0,
+      "batch_count": 1,
+      "command_offset": 17408,
+      "bytes": 640,
+      "family": "control"
+    }
+  ],
+  "assets": {
+    "x": {
+      "base": 2164326464,
+      "bytes": 8,
+      "writable": false
+    },
+    "w": {
+      "base": 2164326400,
+      "bytes": 32,
+      "writable": false
+    }
+  },
+  "outputs": [
+    {
+      "forward_id": 0,
+      "role": "logits",
+      "value": "v3",
+      "layout": {
+        "dtype": "f16",
+        "shape": [
+          1,
+          4
+        ],
+        "strides": [
+          4,
+          1
+        ],
+        "offset": 0,
+        "root": "v3",
+        "storage_elements": 4
+      },
+      "binding": {
+        "base": 2164326720,
+        "bytes": 8,
+        "writable": true
+      }
+    },
+    {
+      "forward_id": 0,
+      "role": "token",
+      "value": "v4",
+      "layout": {
+        "dtype": "i64",
+        "shape": [
+          1
+        ],
+        "strides": [
+          1
+        ],
+        "offset": 0,
+        "root": "v4",
+        "storage_elements": 1
+      },
+      "binding": {
+        "base": 2164326528,
+        "bytes": 8,
+        "writable": true
+      }
+    }
+  ],
+  "family_source_calls": {
+    "matrix": 1,
+    "vector": 3,
+    "memory": 0,
+    "control": 1,
+    "view": 0
+  },
+  "command_bytes": 18048,
+  "source_calls": 5,
+  "task_count": 4,
+  "model_data_executed": false,
+  "mlx_system_verified": false,
+  "inference_performance_eligible": false,
+  "asset_initialization": "cpu_copy_from_elf_payload",
+  "initial_asset_count": 2,
+  "initial_asset_bytes": 40,
+  "cpu_asset_copy_bytes": 40
+}

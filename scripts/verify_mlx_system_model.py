@@ -166,7 +166,8 @@ def audit_case(run, program_file, life_file, reference_file, out, evidence):
     rebuilt_plan, _ = prepare({"program": str(program_file), "lifetimes": str(life_file),
                               "reference": str(reference_file)}, out / "elf-replay",
                              graph_base=plan["device_base"], graph_bytes=plan["device_bytes"],
-                             memory_bytes=memory["bytes"], preload_assets=True)
+                             memory_bytes=memory["bytes"], preload_assets=True,
+                             block_pairs=plan.get("host_abi_version",1)==2,event_slots=plan.get("pair_event_slots",32))
     require(rebuilt_plan == plan, "complete compiler/address/lifetime replay changed the task graph")
     for name in ("command_blob.bin", "test.c", "test.elf", "launch-map.json"):
         require(evidence.add(out / "elf-replay" / name) == evidence.add(run / name),

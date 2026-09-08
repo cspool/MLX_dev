@@ -72,6 +72,33 @@ def task_coverage(program, plan):
                           "batch_index": batch, "batch_count": batches,
                           "command_offset": offset if size else 0, "bytes": size, "family": family})
             offset += size
+    version=plan.get("host_abi_version",1)
+    require(version in (1,2),"unsupported host graph ABI")
+    if version==2:
+        from system_sim.physical_host.pair_graph import schedule,storage
+        from system_sim.physical_host.lowering import collect_layouts
+        groups,dependencies,selected=schedule(program,plan["pair_event_slots"])
+        require(plan["execution_groups"]==groups and plan["source_dependencies"]==dependencies
+                and plan["pair_count"]==len(selected["pairs"]),"paired source dependencies/group coverage differ")
+        by_source={i:[] for i in range(len(nodes))}
+        for task in tasks:by_source[task["source_ordinal"]].append(task)
+        tasks=[];offset=0
+        for group in groups:
+            i=group[0]
+            if len(group)==2:
+                j=group[1];sources[i]["task_count"]=sources[j]["task_count"]=1
+                own=[{"kind":3,"source_ordinal":i,"source_id":nodes[i]["source_operator_id"],"batch_index":0,"batch_count":1,
+                      "bytes":8832,"family":"pair","consumer_ordinal":j,"consumer_source_id":nodes[j]["source_operator_id"]}]
+            else:own=by_source[i]
+            for task in own:
+                tasks.append({**task,"command_offset":offset if task["bytes"] else 0});offset+=task["bytes"]
+        layouts=collect_layouts(program)
+        bindings,intervals,end=storage(program,layouts,groups,base=plan["device_base"]+plan["data_offset"],limit=plan["device_base"]+plan["device_bytes"])
+        require(plan["storage_intervals"]==intervals and plan["required_mapped_bytes"]==end-plan["device_base"]
+                and plan["assets"]=={name:bindings[name] for name in program["assets"]},"paired lifetime/address plan differs")
+        for output in plan["outputs"]:
+            layout=layouts[output["value"]]
+            require(output["layout"]==layout and output["binding"]==bindings[layout["root"]],"paired output allocation differs")
     require(plan["tasks"] == tasks and plan["sources"] == sources,
             "compiled source/batch routing is incomplete, duplicated or reordered")
     require(plan["family_source_calls"] == counts and plan["task_count"] == len(tasks)
@@ -79,7 +106,7 @@ def task_coverage(program, plan):
     outputs = [(o["forward_id"], role, o[role]) for o in program["outputs"] for role in ("logits", "token")]
     require([(o["forward_id"], o["role"], o["value"]) for o in plan["outputs"]] == outputs,
             "compiled final outputs are missing or duplicated")
-    return [t for t in tasks if t["kind"] == 2], values, counts
+    return [t for t in tasks if t["kind"] in (2,3)], values, counts
 
 
 def check_kernel(node, task, kernel, profile, values):
@@ -134,6 +161,37 @@ def check_kernel(node, task, kernel, profile, values):
     return {"requests": requests, "read_bytes": reads, "write_bytes": writes, "matrix_mac_lanes": macs}
 
 
+def check_pair_kernel(program,task,kernel,profile,values,event_slots,epoch):
+    from mlxsim.model_block_pipeline import mapping
+    producer=program["nodes"][task["source_ordinal"]];consumer=program["nodes"][task["consumer_ordinal"]]
+    require(kernel["done"] and kernel["external_memory_port"] and not kernel["functional_entry_calls"] and not kernel["blas_calls"],"pair did not finish through scheduled physical backends")
+    require(kernel["producer_source"]==producer["source_operator_id"]==task["source_id"]
+            and kernel["consumer_source"]==consumer["source_operator_id"]==task["consumer_source_id"],"pair source identities differ")
+    family="matrix" if "matrix_program" in producer else "vector"
+    batches=matrix_work(producer,values)[3] if family=="matrix" else 1
+    require(kernel["producer_batches"]==len(kernel["producer_windows"])==batches,"pair omitted full-source broadcast batches")
+    total=Counter();admitted=0
+    for index,window in enumerate(kernel["producer_windows"]):
+        require(window["batch_index"]==index,"pair producer batch order/identity differs")
+        total.update(check_kernel(producer,{"family":family,"batch_count":batches},window,profile,values));admitted+=window["admitted"]
+    total.update(check_kernel(consumer,{"family":"vector","batch_count":1},kernel["consumer_window"],profile,values));admitted+=kernel["consumer_window"]["admitted"]
+    array,events,mux=kernel["array"],kernel["block_events"],kernel["physical_mux"]
+    require(array["idle"] and not array["poisoned"] and array["admitted"]==array["retired"]==admitted
+            and array["rf_vectors_per_pe"]==16 and array["rom_words_per_pe"]==32 and array["spm_vectors_total"]==128
+            and array["peak_rf_vectors_per_pe"]<=16 and array["peak_rom_words_per_pe"]<=32 and array["peak_spm_vectors"]<=128,
+            "pair shared resources changed, exceeded capacity or did not retire")
+    require(array["template_configuration_cycles_modeled"] and array["template_word_period"]==1
+            and not array["pending_template_words"] and array["template_words_requested"]==array["template_words_loaded"],"pair template programming incomplete")
+    blocks=mapping(producer)[1]
+    require(events["epoch"]==epoch and events["event_slots"]==event_slots and events["peak_event_slots"]<=event_slots
+            and events["finished"] and all(events[k]==blocks for k in ("blocks","admitted","completed","frontier"))
+            and not any(events[k] for k in ("active","pending_visibility","out_of_order_done")),"pair block completion coverage/epoch differs")
+    require(mux["idle"] and not mux["poisoned"] and mux["owner_channel"] is None and len(mux["channels"])==2
+            and sum(c["submitted"] for c in mux["channels"])==total["requests"]
+            and all(c["submitted"]==c["arrived"]==c["consumed"] for c in mux["channels"]),"pair physical responses did not drain to owners")
+    return dict(total)
+
+
 def verify_system_execution(program, plan, device, memory, profile):
     tasks, values, source_counts = task_coverage(program, plan)
     require(tasks, "system execution has no device tasks")
@@ -169,7 +227,8 @@ def verify_system_execution(program, plan, device, memory, profile):
         require(all(transport[k] == submitted for k in ("accepted", "responses", "consumed"))
                 and transport["nacks"] == 0, "transport conservation or cache replay ownership differs")
         node = program["nodes"][task["source_ordinal"]]
-        work = check_kernel(node, task, window["kernel"], profile, values)
+        work = (check_pair_kernel(program,task,window["kernel"],profile,values,plan["pair_event_slots"],ordinal+1)
+                if task["kind"]==3 else check_kernel(node, task, window["kernel"], profile, values))
         require(submitted - previous_requests == task["bytes"] // 8 + work["requests"],
                 "descriptor/data request accounting omits or duplicates traffic")
         totals.update(work)
@@ -179,6 +238,7 @@ def verify_system_execution(program, plan, device, memory, profile):
                            "batch_count": task["batch_count"], "backend": task["family"],
                            "forward_id": node["forward_id"], "layer_idx": node["layer_idx"],
                            "phase": node.get("phase"), "work": work})
+        if task["kind"]==3:per_source[-1].update(consumer_ordinal=task["consumer_ordinal"],consumer_source_id=task["consumer_source_id"])
         previous_cycle, previous_requests = end, submitted
     final = device["device"]
     require({k: v for k, v in final.items() if k != "cycle"}
