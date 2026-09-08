@@ -98,13 +98,14 @@ struct Simulator::Impl {
   Impl(const Json::Value &n,const Values &values,Tensor output,Options o,model_io::MemoryPort *p)
       :node(n),kind(n["kind"].asString()),options(o),port(p),external(p!=nullptr){
     options.validate();const auto &program=node["control_program"],&args=node["args"];
-    check(program["profile"]=="mlx-controller-rv64-leaf-v1"&&program["kind"]==kind&&program["xlen"]==64&&program["flen"]==64&&program["gpr_count"]==32&&program["fpr_count"]==32,"controller profile/resource mismatch");
+    check(program["profile"]==control_model::profile(kind)&&program["kind"]==kind&&program["xlen"]==64&&program["flen"]==64&&program["gpr_count"]==32&&program["fpr_count"]==32,"controller profile/resource mismatch");
     check(program["input_dtype"]=="i64"||program["input_dtype"]=="f16"||program["input_dtype"]=="f32","controller input dtype not registered");
     check(std::fegetround()==FE_TONEAREST,"controller requires RNE");integer=program["input_dtype"]=="i64";
-    check(kind=="arange"||kind=="add"||kind=="mul"||kind=="le"||kind=="argmax","controller kind not supported");
+    check(kind=="arange"||kind=="add"||kind=="mul"||kind=="le"||kind=="argmax"||control_model::extended_kind(kind),"controller kind not supported");
+    control_model::validate_extended_program(program,kind);
     tensors[2]=output;metadata(output);check(output.sizes==shape(node["output"]["shape"])&&dtype_name(output.type)==node["output"]["dtype"].asString(),"controller output contract mismatch");
     check(output.offset==0&&output.contiguous(),"controller output requires contiguous new storage");
-    unsigned input_count=kind=="arange"?0:kind=="argmax"?1:2;
+    unsigned input_count=control_model::input_count(kind);
     for(unsigned i=0;i<input_count;++i){
       if(reference(args[i])){
         tensors[i]=ref(args[i],values);metadata(tensors[i]);auto type=tensors[i].type;
@@ -114,12 +115,19 @@ struct Simulator::Impl {
       else scalar(args[i]);
     }
     if(kind=="arange")check(integer&&output.type==DType::I64&&args.size()==1&&args[0].isUInt64()&&args[0].asUInt64()<=INT64_MAX&&output.sizes==Shape{args[0].asInt64()},"controller arange contract mismatch");
-    else if(kind=="argmax"){
+    else if(kind=="all"){
+      check(args.size()==1&&reference(args[0])&&integer&&tensors[0].type==DType::Bool&&output.type==DType::Bool&&output.sizes.empty(),"controller all requires Boolean input and scalar output");
+      width=tensors[0].numel();
+    }else if(kind=="guard"){
+      check(args.size()==2&&reference(args[0])&&integer&&tensors[0].type==DType::Bool&&tensors[0].numel()==1&&args[1].isBool()&&output.type==DType::Bool&&output.sizes.empty(),"controller guard requires one Boolean element and expected Boolean");
+    }else if(kind=="argmax"){
       const auto &input=tensors[0];check(reference(args[0])&&args.size()>=2&&args.size()<=3&&!input.sizes.empty()&&input.sizes.back()>0&&output.type==DType::I64,"controller argmax contract mismatch");
       check(dtype_name(input.type)==program["input_dtype"].asString(),"argmax precision binding mismatch");auto axis=args[1].asInt64();check(axis==-1||axis==int64_t(input.sizes.size()-1),"controller argmax axis unsupported");
       auto expected=input.sizes;if(args.size()==3&&args[2].asBool())expected.back()=1;else expected.pop_back();check(expected==output.sizes,"argmax output shape mismatch");width=input.sizes.back();
     }else{
-      check(args.size()==2&&(kind=="le"?output.type==DType::Bool:integer&&output.type==DType::I64),"controller elementwise type/arity mismatch");
+      const bool predicate=kind=="le"||kind=="ge"||kind=="bitwise_and";
+      check(args.size()==2&&(predicate?output.type==DType::Bool:integer&&output.type==DType::I64),"controller elementwise type/arity mismatch");
+      if(kind=="bitwise_and")check(integer&&reference(args[0])&&reference(args[1])&&tensors[0].type==DType::Bool&&tensors[1].type==DType::Bool,"controller bitwise_and requires Boolean tensors");
       check(!node["kwargs"].isMember("alpha")||scalar(node["kwargs"]["alpha"])==1,"controller integer add requires unit alpha");Shape expected;
       for(unsigned i=0;i<2;++i)if(reference(args[i])){
         const auto &input=tensors[i];if(expected.size()<input.sizes.size())expected.insert(expected.begin(),input.sizes.size()-expected.size(),1);auto shift=expected.size()-input.sizes.size();
@@ -127,14 +135,14 @@ struct Simulator::Impl {
       }
       check(expected==output.sizes,"controller broadcast output mismatch");
     }
-    phases=program["phases"];std::set<std::string> expected=kind=="arange"?std::set<std::string>{"init","body","advance"}:kind=="argmax"?std::set<std::string>{"init","advance","compare","select"}:std::set<std::string>{"body"};
+    phases=program["phases"];std::set<std::string> expected=kind=="arange"?std::set<std::string>{"init","body","advance"}:kind=="all"?std::set<std::string>{"init","body"}:kind=="argmax"?std::set<std::string>{"init","advance","compare","select"}:std::set<std::string>{"body"};
     auto names=phases.getMemberNames();check(std::set<std::string>(names.begin(),names.end())==expected,"controller phase set mismatch");
     unsigned count=0;for(const auto &name:names){leaf.begin(phases[name]);count+=phases[name].size();}check(count>0&&count<=32,"controller template capacity violation");
     leaf=Leaf{};
     if(!port){std::vector<Tensor> regions(tensors.begin(),tensors.end());local=std::make_unique<model_io::TensorMemoryPort>(std::move(regions),options.dma_latency);port=local.get();}
     // Even arange(0) executes the registered init leaf, as the functional path
     // does. Other empty outputs still validate code but perform no tensor I/O.
-    if(kind=="arange")begin("init");else complete=output.numel()==0;
+    if(kind=="arange"||kind=="all")begin("init");else complete=output.numel()==0;
   }
   void event(const char *name,const model_io::Request *request=nullptr){
     ++trace_events;if(!options.trace||events.size()>=options.trace_limit)return;
@@ -151,6 +159,7 @@ struct Simulator::Impl {
   }
   void loaded(unsigned operand){
     if(kind=="argmax")begin(column?"advance":"init");
+    else if(kind=="all")begin("body");
     else if(operand==0)stage=Stage::Load1;else begin("body");
   }
   void account(){instructions+=leaf.state.retired;branches+=leaf.state.branches_taken;fflags|=leaf.state.fflags;leaf.state.retired=leaf.state.branches_taken=0;}
@@ -160,11 +169,14 @@ struct Simulator::Impl {
       if(phase=="init"){if(!tensors[2].numel())complete=true;else begin("body");}
       else if(phase=="body")stage=Stage::Store;
       else if(row==tensors[2].numel())complete=true;else begin("body");
+    }else if(kind=="all"){
+      if(phase=="body")++column;
+      stage=column==width?Stage::Store:Stage::Load0;
     }else if(kind=="argmax"){
       if(phase=="advance")begin("compare");
       else if(phase=="compare")begin("select");
       else{++column;if(column==width)stage=Stage::Store;else stage=Stage::Load0;}
-    }else stage=Stage::Store;
+    }else{if(kind=="guard")check(leaf.state.x[13]==0,"control-flow guard mismatch");stage=Stage::Store;}
   }
   void store_done(){
     ++row;
@@ -183,7 +195,7 @@ struct Simulator::Impl {
     const auto &arg=node["args"][operand];
     if(reference(arg)){
       if(!can_request())return;
-      request(operand,kind=="argmax"?row*width+column:broadcast(row,tensors[2].sizes,tensors[operand].sizes),false);
+      request(operand,kind=="argmax"?row*width+column:kind=="all"?column:kind=="guard"?0:broadcast(row,tensors[2].sizes,tensors[operand].sizes),false);
     }else{
       if(integer)leaf.state.x[10+operand]=arg.isBool()?arg.asBool():uint64_t(arg.asInt64());else leaf.state.set_float(10+operand,float(scalar(arg)));
       event("literal");loaded(operand);
@@ -219,6 +231,7 @@ struct Simulator::Impl {
     r["trace"]=events;r["trace_events"]=Json::UInt64(trace_events);r["trace_truncated"]=options.trace&&trace_events>events.size();
     r["register_bytes"]=512;r["max_inflight_instructions"]=1;r["max_inflight_transactions"]=1;
     r["instruction_fetch"]="descriptor_rom_not_system_fetch";r["memory_binding"]="descriptor_port_not_riscv_load_store";
+    if(control_model::extended_kind(kind))r["program_profile"]=node["control_program"]["profile"];
     r["rocket_execution_verified"]=false;r["mlx_system_verified"]=false;r["inference_performance_eligible"]=false;
     return r;
   }

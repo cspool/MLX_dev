@@ -41,7 +41,7 @@ def verify_ready_execution(program,result,options):
         for key in ("kind","forward_id","layer_idx"):require(e[key]==node[key],"source event identity differs")
         start=count(e["start_cycle"],"source start");end=count(e["publish_cycle"],"source publish")
         require(start<end<=result["graph_cycles"],"source interval is invalid")
-        for dep in set(references(node["args"]))|set(references(node.get("kwargs",{}))):
+        for dep in set(references(node["args"]))|set(references(node.get("kwargs",{})))|set(references(node.get("control_dependencies",[]))):
             if dep not in by_value:continue
             parent=by_value[dep]
             if parents.get(sid)==parent["source_operator_id"]:

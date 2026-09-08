@@ -3,6 +3,7 @@
 #include "vector_schedule.h"
 #include "memory_schedule.h"
 #include "control_schedule.h"
+#include "guard_dependencies.h"
 #include <algorithm>
 #include <cmath>
 #include <chrono>
@@ -67,6 +68,7 @@ struct Runner {
     }
     require(max_cycles>0&&max_cycles<UINT64_MAX-1000000,"invalid shared cycle limit");
     require(program["schema"]=="mlx_tensor_semantics_v1"&&program["timing_mode"]=="unmodeled","invalid physical model program");
+    validate_guard_dependencies(program);
     for(const char *name:{"matrix","vector","memory","control"})require(program[std::string(name)+"_backend"]=="scheduled","physical model requires all four scheduled backends");
     matrix_schedule::Options::parse(program["matrix_schedule_options"]);vector_schedule::Options::parse(program["vector_schedule_options"]);
     memory_model::ScheduleOptions::parse(program["memory_schedule_options"]);control_schedule::Options::parse(program["control_schedule_options"]);
@@ -116,7 +118,7 @@ struct Runner {
       auto report=run_window(model,"memory",node);output=model.output();
       accumulate(memory_stats,report["numeric_instructions"],{"calls","view_elisions","allocations","instructions","read_bytes","write_bytes","index_reads","predicate_reads"});
     }else if(node.isMember("control_program")){
-      std::vector<const Tensor*> inputs(2,nullptr);unsigned count=node["kind"]=="arange"?0:node["kind"]=="argmax"?1:2;
+      std::vector<const Tensor*> inputs(2,nullptr);unsigned count=control_model::input_count(node["kind"].asString());
       for(unsigned i=0;i<count;++i)if(is_ref(args[i]))inputs[i]=&ref(args[i],values);
       Binding binding(*this,inputs,&output);model_io::AddressSpacePort port(memory,tokens,binding.regions,cycle);
       control_schedule::Simulator model(node,values,output,control_schedule::Options::parse(program["control_schedule_options"]),&port);

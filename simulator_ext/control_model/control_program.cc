@@ -13,13 +13,14 @@ const Tensor &ref(const Json::Value &arg,const Values &values){check(arg.isObjec
 uint64_t broadcast(uint64_t flat,const Shape &out,const Shape &in){uint64_t result=0,step=1;check(in.size()<=out.size(),"controller broadcast rank mismatch");
   for(size_t d=out.size();d-->0;){auto index=out[d]?flat%out[d]:0;if(out[d])flat/=out[d];if(d+in.size()>=out.size()){auto n=in[d+in.size()-out.size()];check(n==1||n==out[d],"controller broadcast extent mismatch");if(n!=1)result+=index*step;step*=n;}}return result;}
 }
-Json::Value Stats::json()const{Json::Value r(Json::objectValue);r["profile"]="mlx-controller-rv64-leaf-v1";r["classification"]="rv64_alu_leaf_execution_not_rocket_or_system_validation";r["calls"]=Json::UInt64(calls);r["instructions"]=Json::UInt64(instructions);r["branches_taken"]=Json::UInt64(branches);r["read_bytes"]=Json::UInt64(read_bytes);r["write_bytes"]=Json::UInt64(write_bytes);r["fflags_observed"]=fflags;r["register_bytes"]=512;r["rocket_execution_verified"]=false;r["timing_verified"]=false;return r;}
+Json::Value Stats::json()const{Json::Value r(Json::objectValue);r["profile"]=v2?"mlx-controller-rv64-leaf-v2":"mlx-controller-rv64-leaf-v1";r["classification"]="rv64_alu_leaf_execution_not_rocket_or_system_validation";r["calls"]=Json::UInt64(calls);r["instructions"]=Json::UInt64(instructions);r["branches_taken"]=Json::UInt64(branches);r["read_bytes"]=Json::UInt64(read_bytes);r["write_bytes"]=Json::UInt64(write_bytes);r["fflags_observed"]=fflags;r["register_bytes"]=512;r["rocket_execution_verified"]=false;r["timing_verified"]=false;return r;}
 Tensor execute(const Json::Value &node,const Values &values,Stats &stats){
   const auto &p=node["control_program"],&args=node["args"];auto kind=node["kind"].asString();
-  check(p["profile"]=="mlx-controller-rv64-leaf-v1"&&p["kind"]==node["kind"]&&p["xlen"]==64&&p["flen"]==64&&p["gpr_count"]==32&&p["fpr_count"]==32,"controller profile/resource mismatch");
+  check(p["profile"]==profile(kind)&&p["kind"]==node["kind"]&&p["xlen"]==64&&p["flen"]==64&&p["gpr_count"]==32&&p["fpr_count"]==32,"controller profile/resource mismatch");
   check(p["input_dtype"]=="i64"||p["input_dtype"]=="f16"||p["input_dtype"]=="f32","unregistered controller input precision");
   check(std::fegetround()==FE_TONEAREST,"controller input conversions require RNE");
-  check(kind=="arange"||kind=="add"||kind=="mul"||kind=="le"||kind=="argmax","unsupported controller operation");
+  check(kind=="arange"||kind=="add"||kind=="mul"||kind=="le"||kind=="argmax"||extended_kind(kind),"unsupported controller operation");
+  validate_extended_program(p,kind);
   unsigned words=0;for(const auto &name:p["phases"].getMemberNames()){check(p["phases"][name].isArray(),"controller phase is not code");words+=p["phases"][name].size();}check(words>0&&words<=32,"controller template capacity violation");
   auto output=Tensor::allocate(dtype(node["output"]["dtype"].asString()),shape(node["output"]["shape"]));
   const bool integer=p["input_dtype"]=="i64";
@@ -32,10 +33,21 @@ Tensor execute(const Json::Value &node,const Values &values,Stats &stats){
     else if(integer){check(arg.isInt64()||arg.isBool(),"controller integer scalar is not exact int64");state.x[reg]=arg.isBool()?arg.asBool():uint64_t(arg.asInt64());}
     else state.set_float(reg,float(scalar(arg)));
   };
-  ++stats.calls;
+  ++stats.calls;stats.v2|=extended_kind(kind);
   if(kind=="arange"){
     check(integer&&output.type==DType::I64&&args.size()==1&&args[0].isUInt64()&&output.sizes==Shape{int64_t(args[0].asUInt64())},"controller arange contract mismatch");
     RV64 state;phase(state,"init");for(uint64_t index=0;index<output.numel();++index){phase(state,"body");output.set_integer(index,signed_bits(state.x[12]));phase(state,"advance");}accumulate(state);
+  }else if(kind=="all"){
+    check(args.size()==1&&integer&&output.type==DType::Bool&&output.sizes.empty(),"controller all requires a scalar Boolean output");
+    const auto &input=ref(args[0],values);check(input.type==DType::Bool,"controller all requires Boolean input");
+    RV64 state;phase(state,"init");
+    for(uint64_t index=0;index<input.numel();++index){state.x[10]=uint64_t(input.integer(index)!=0);++stats.read_bytes;phase(state,"body");}
+    output.set_integer(0,signed_bits(state.x[12]));accumulate(state);
+  }else if(kind=="guard"){
+    check(args.size()==2&&integer&&args[1].isBool()&&output.type==DType::Bool&&output.sizes.empty(),"controller guard contract mismatch");
+    const auto &input=ref(args[0],values);check(input.type==DType::Bool&&input.numel()==1,"controller guard requires one Boolean element");
+    RV64 state;state.x[10]=uint64_t(input.integer(0)!=0);state.x[11]=args[1].asBool();++stats.read_bytes;phase(state,"body");
+    check(state.x[13]==0,"control-flow guard mismatch");output.set_integer(0,signed_bits(state.x[12]));accumulate(state);
   }else if(kind=="argmax"){
     const auto &input=ref(args[0],values);check(!input.sizes.empty()&&input.sizes.back()>0&&output.type==DType::I64,"controller argmax requires nonempty final dimension");
     check(dtype_name(input.type)==p["input_dtype"].asString(),"argmax precision binding mismatch");auto dim=args[1].asInt64();check(dim==-1||dim==int64_t(input.sizes.size()-1),"controller argmax axis unsupported");
@@ -46,7 +58,9 @@ Tensor execute(const Json::Value &node,const Values &values,Stats &stats){
       check(state.x[20]<width,"controller argmax produced an invalid index");output.set_integer(row,int64_t(state.x[20]));accumulate(state);
     }
   }else{
-    check(args.size()==2&&(kind=="le"?output.type==DType::Bool:integer&&output.type==DType::I64),"controller elementwise type/arity mismatch");
+    const bool predicate=kind=="le"||kind=="ge"||kind=="bitwise_and";
+    check(args.size()==2&&(predicate?output.type==DType::Bool:integer&&output.type==DType::I64),"controller elementwise type/arity mismatch");
+    if(kind=="bitwise_and")for(const auto &arg:args)check(integer&&ref(arg,values).type==DType::Bool,"controller bitwise_and requires Boolean tensors");
     check(!node["kwargs"].isMember("alpha")||scalar(node["kwargs"]["alpha"])==1,"controller integer add requires unit alpha");
     Shape expected;
     for(const auto &arg:args)if(arg.isObject()&&arg.isMember("value")){const auto &input=ref(arg,values);if(expected.size()<input.sizes.size())expected.insert(expected.begin(),input.sizes.size()-expected.size(),1);auto shift=expected.size()-input.sizes.size();

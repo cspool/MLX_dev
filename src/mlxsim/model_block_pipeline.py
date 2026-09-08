@@ -62,9 +62,16 @@ def compile_block_pipelines(program, *, event_slots=32):
     if type(event_slots) is not int or not 1 <= event_slots <= 32:
         raise ValueError("completion window requires 1..32 event slots")
     result = copy.deepcopy(program); nodes = result["nodes"]
+    guards = []
+    for node in nodes:
+        expected = [{"value": identifier} for identifier in guards]
+        if node.get("control_dependencies", []) != expected:
+            raise ValueError("missing or foreign control-flow guard dependency")
+        if node["kind"] == "guard":
+            guards.append(node["id"])
     consumers = {n["id"]: set() for n in nodes}
     for index, node in enumerate(nodes):
-        for dep in set(references(node["args"])) | set(references(node.get("kwargs", {}))):
+        for dep in set(references(node["args"])) | set(references(node.get("kwargs", {}))) | set(references(node.get("control_dependencies", []))):
             if dep in consumers:
                 consumers[dep].add(index)
     mo, vo = result.get("matrix_schedule_options", {}), result.get("vector_schedule_options", {})

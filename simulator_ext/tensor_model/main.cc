@@ -1,4 +1,6 @@
 #include "tensor.h"
+#include "guard_dependencies.h"
+#include "control_program.h"
 #include "vector_program.h"
 #include "memory_program.h"
 #include <cmath>
@@ -15,6 +17,7 @@ int main(int argc,char **argv) {
     std::ifstream input(argv[1]); Json::Value program; input>>program;
     require(program["schema"]=="mlx_tensor_semantics_v1" && program["timing_mode"]=="unmodeled",
             "unsupported tensor semantics program");
+    validate_guard_dependencies(program);
     const bool scheduled_matrix=program["matrix_backend"]=="scheduled";
     const bool strict_matrix=program["matrix_backend"]=="microcode" || scheduled_matrix;
     const bool scheduled_vector=program["vector_backend"]=="scheduled";
@@ -51,7 +54,7 @@ int main(int argc,char **argv) {
       const bool floating_output=node["output"]["dtype"]=="f16"||node["output"]["dtype"]=="f32";
       require(!strict_vector || !floating_output || !mlx::vector_model::supports(node["kind"].asString()) || node.isMember("vector_program"),"strict floating vector program has a missing lowering");
       require(!strict_memory || !mlx::memory_model::supports(node["kind"].asString()) || node.isMember("memory_program"),"strict memory program has a missing lowering");
-      const bool control=node["kind"]=="arange"||node["kind"]=="le"||node["kind"]=="argmax"||((node["kind"]=="add"||node["kind"]=="mul")&&node["output"]["dtype"]=="i64");
+      const bool control=mlx::control_model::extended_kind(node["kind"].asString())||node["kind"]=="arange"||node["kind"]=="le"||node["kind"]=="argmax"||((node["kind"]=="add"||node["kind"]=="mul")&&node["output"]["dtype"]=="i64");
       require(!strict_control || !control || node.isMember("control_program"),"strict controller program has a missing lowering");
       unsigned paths=0;for(const char *field:{"matrix_program","vector_program","memory_program","control_program"})paths+=node.isMember(field);
       require(paths<=1,"operator has ambiguous executable lowering paths");

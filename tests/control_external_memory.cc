@@ -67,7 +67,19 @@ int main(int argc,char **argv){
       auto output=Tensor::allocate(dtype(node["output"]["dtype"].asString()),shape(node["output"]["shape"]));port.regions[2]=output;
       auto metadata=external?virtual_tensor(output):output;Simulator simulator(node,values,metadata,Options::parse(job.get("options",Json::Value(Json::objectValue))),external?&port:nullptr);
       if(!simulator.done()){bool rejected=false;try{simulator.result();}catch(const std::exception&){rejected=true;}require(rejected,"unfinished controller report escaped");}
-      while(simulator.tick()){}
+      try{while(simulator.tick()){}}
+      catch(const std::exception &error){
+        if(job.get("expect_guard_mismatch",false).asBool()){
+          require(node["kind"]=="guard"&&external&&std::string(error.what())=="control-flow guard mismatch","unexpected guard test failure");
+          require(port.reads==1&&port.writes==0&&!simulator.done(),"guard mismatch wrote a result or failed to read the actual input");
+          bool rejected=false;try{simulator.result();}catch(const std::exception&){rejected=true;}require(rejected,"failed guard exposed a success report");
+          Json::Value failure;failure["classification"]="expected_guard_mismatch_not_success";
+          failure["physical_reads"]=Json::UInt64(port.reads);failure["physical_writes"]=Json::UInt64(port.writes);
+          failure["result_report_rejected"]=true;
+          std::filesystem::create_directories(directory);std::ofstream file(directory/"failure-evidence.json");file<<failure<<'\n';require(bool(file),"cannot save guard failure evidence");
+        }
+        throw;
+      }
       report=simulator.result();report["virtual_tensor_backing_used"]=external;
       if(external){require(!metadata.storage->data&&!metadata.storage->writable,"external controller used host backing");require(port.requests==report["dma_responses"].asUInt64()&&port.reads+port.writes==port.requests,"foreign controller did not drain");}
       report["physical_reads"]=Json::UInt64(port.reads);report["physical_writes"]=Json::UInt64(port.writes);

@@ -106,6 +106,7 @@ Tensor Kernels::control(const Json::Value &node,const Values &values) {
   while(simulator.tick()){}
   auto report=simulator.result();require(report["done"].asBool()&&report["dma_requests"]==report["dma_responses"],"controller cycle window did not drain");
   ++control_stats->calls;control_stats->instructions+=report["instructions"].asUInt64();control_stats->branches+=report["branches_taken"].asUInt64();
+  control_stats->v2|=control_model::extended_kind(node["kind"].asString());
   control_stats->read_bytes+=report["read_bytes"].asUInt64();control_stats->write_bytes+=report["write_bytes"].asUInt64();control_stats->fflags|=report["fflags_observed"].asUInt();
   report["source_operator_id"]=node["source_operator_id"];report["forward_id"]=node["forward_id"];report["layer_idx"]=node["layer_idx"];
   control_window_reports.append(report);return output;

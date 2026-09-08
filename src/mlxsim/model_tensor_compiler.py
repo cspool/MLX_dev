@@ -25,6 +25,12 @@ ROUTES = {
     "aten.add.Tensor": "add",
     "aten.mul.Tensor": "mul",
     "aten.le.Tensor": "le",
+    "aten.ge.Scalar": "ge",
+    "aten.__and__.Tensor": "bitwise_and",
+    "aten.bitwise_and.Tensor": "bitwise_and",
+    "aten.all.default": "all",
+    "aten.is_nonzero.default": "guard",
+    "aten._local_scalar_dense.default": "guard",
     "aten.where.ScalarOther": "where",
     "aten.pow.Tensor_Scalar": "pow",
     "aten.rsqrt.default": "rsqrt",
@@ -61,6 +67,7 @@ DTYPES = {
 # Only the recorded overloads/attributes with implemented inference semantics
 # are accepted. A familiar ATen name is not permission to ignore its attributes.
 ARITY = {
+    "ge": (2, 2), "bitwise_and": (2, 2), "all": (1, 1), "guard": (1, 1),
     "embedding": (2, 5), "linear": (2, 3), "matmul": (2, 2), "arange": (1, 1),
     "add": (2, 2), "mul": (2, 2), "le": (2, 2), "where": (3, 3), "pow": (2, 2),
     "rsqrt": (1, 1), "mean": (2, 3), "silu": (1, 1), "cos": (1, 1), "sin": (1, 1),
@@ -91,6 +98,16 @@ def validate_event(event):
         raise ValueError(f"unsupported attributes for {operator}: {kwargs}")
     if event.get("mutable") and operator != "aten.detach_.default":
         raise ValueError(f"mutable operation requires alias/write tracking: {operator}")
+    if kind in {"bitwise_and", "all", "guard"}:
+        inputs = args if kind == "bitwise_and" else args[:1]
+        if any(not isinstance(arg, dict) or arg.get("dtype") != "torch.bool" for arg in inputs):
+            raise ValueError("Boolean control lowering requires Boolean tensor inputs")
+        output = event["outputs"]
+        if kind == "guard":
+            if type(output) is not bool or math.prod(args[0]["shape"]) != 1:
+                raise ValueError("control-flow guard requires one Boolean element and scalar Boolean result")
+        elif not isinstance(output, dict) or output.get("dtype") != "torch.bool" or (kind == "all" and output.get("shape") != []):
+            raise ValueError("Boolean control output contract mismatch")
     if kwargs.get("memory_format") not in (None, "torch.contiguous_format", "torch.preserve_format"):
         raise ValueError("unsupported tensor memory format")
     if kind == "contiguous" and kwargs.get("memory_format") == "torch.preserve_format":
@@ -146,6 +163,7 @@ def compile_inventory(inventory, *, matrix_backend="blas", schedule_options=None
     index = json.loads((path / "model.safetensors.index.json").read_text())["weight_map"]
     headers = {}
     assets, nodes, routes, outputs, current = {}, [], [], [], {}
+    guards = []
     memory_planner = Planner()
 
     def metadata(source):
@@ -214,7 +232,10 @@ def compile_inventory(inventory, *, matrix_backend="blas", schedule_options=None
         kind = validate_event(event)
         if event["operator_id"] != position:
             raise ValueError("operator IDs must be unique and sequential")
-        if not isinstance(event["outputs"], dict) or "tensor_id" not in event["outputs"]:
+        guarded = kind == "guard"
+        if kind in {"ge", "bitwise_and", "all", "guard"} and control_backend == "functional":
+            raise ValueError("Boolean/guard control requires an explicit RV64 leaf or scheduled backend")
+        if not guarded and (not isinstance(event["outputs"], dict) or "tensor_id" not in event["outputs"]):
             raise ValueError(f"multi/non-tensor output needs an explicit lowering: {operator}")
         args, kwargs = resolve(event["inputs"]), resolve(event["kwargs"])
         if operator == "aten._to_copy.default":
@@ -223,10 +244,13 @@ def compile_inventory(inventory, *, matrix_backend="blas", schedule_options=None
             # lowering, just as for the existing functional to.device entry.
             args = [args[0], event["outputs"]["dtype"], kwargs.get("non_blocking", False), True]
             kwargs = {key: value for key, value in kwargs.items() if key == "memory_format"}
-        source_output = event["outputs"]["tensor_id"]
+        source_output = None if guarded else event["outputs"]["tensor_id"]
         identifier = f"v{event['operator_id']}"
-        spec = metadata(source_output)
-        spec.update(shape=event["outputs"]["shape"], dtype=DTYPES[event["outputs"]["dtype"]])
+        spec = {"dtype": "bool", "shape": []} if guarded else metadata(source_output)
+        if guarded:
+            args.append(event["outputs"])
+        else:
+            spec.update(shape=event["outputs"]["shape"], dtype=DTYPES[event["outputs"]["dtype"]])
         node = {
             "id": identifier,
             "kind": kind,
@@ -240,6 +264,8 @@ def compile_inventory(inventory, *, matrix_backend="blas", schedule_options=None
             "module_path": event["module_path"],
             "layer_idx": event["layer_idx"],
         }
+        if guards:
+            node["control_dependencies"] = [{"value": guard} for guard in guards]
         if matrix_backend != "blas" and kind in {"linear", "matmul"}:
             input_type = DTYPES[event["inputs"][0]["dtype"]]
             node["matrix_program"] = matrix_program(input_type, spec["dtype"], kind == "linear" and len(args) > 2 and args[2] is not None)
@@ -259,18 +285,21 @@ def compile_inventory(inventory, *, matrix_backend="blas", schedule_options=None
             target_meta = tensors[event["outputs"]["tensor_id"]]
             same_device = source_meta.get("device") == target_meta.get("device")
         memory_planner.register(node, planned=memory_backend in {"planned", "scheduled"}, same_device=same_device)
-        if control_backend in {"rv64_leaf", "scheduled"} and (kind in {"arange", "le", "argmax"} or kind in {"add", "mul"} and spec["dtype"] == "i64"):
+        if control_backend in {"rv64_leaf", "scheduled"} and (kind in {"arange", "le", "argmax", "ge", "bitwise_and", "all", "guard"} or kind in {"add", "mul"} and spec["dtype"] == "i64"):
             if kind in {"arange", "add", "mul"}:
                 input_type = "i64"
                 if spec["dtype"] != "i64":
                     raise ValueError("controller generator/arithmetic requires int64 output")
             else:
                 input_type = DTYPES[event["inputs"][0]["dtype"]]
-                if input_type == "bool" and kind == "le":
+                if input_type == "bool" and kind in {"le", "ge", "bitwise_and", "all", "guard"}:
                     input_type = "i64"
             node["control_program"] = control_program(kind, input_type)
         nodes.append(node)
-        current[source_output] = identifier
+        if guarded:
+            guards.append(identifier)
+        else:
+            current[source_output] = identifier
         routes.append(
             {
                 "source_operator_id": event["operator_id"],
@@ -308,6 +337,7 @@ def compile_inventory(inventory, *, matrix_backend="blas", schedule_options=None
     for position, node in enumerate(nodes):
         visit(node["args"], position)
         visit(node["kwargs"], position)
+        visit(node.get("control_dependencies", []), position)
     for output in outputs:
         last_use[output["logits"]] = last_use[output["token"]] = len(nodes)
     release_at = {}

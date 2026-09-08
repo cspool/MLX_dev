@@ -5,6 +5,7 @@
 #include "vector_schedule.h"
 #include "memory_schedule.h"
 #include "control_schedule.h"
+#include "guard_dependencies.h"
 #include <algorithm>
 #include <cmath>
 #include <cstring>
@@ -117,12 +118,13 @@ struct Runner {
     Assets loader;
     for(const auto &name:p["assets"].getMemberNames()){auto data=loader.load(p["assets"][name]);auto meta=arena.allocate(data.type,data.sizes,false);memory.bind(meta,data,true);values.emplace(name,std::move(meta));preloaded_bytes+=data.storage->bytes;++preloaded_assets;}
     require(p["nodes"].isArray()&&!p["nodes"].empty(),"ready graph is empty");tasks.resize(p["nodes"].size());
+    validate_guard_dependencies(p);
     std::map<std::string,unsigned> producer;std::set<uint64_t> sources;
     for(unsigned i=0;i<tasks.size();++i){auto &task=tasks[i];task.node=&p["nodes"][i];const auto &node=*task.node;auto name=node["id"].asString();
       require(!name.empty()&&!values.count(name)&&!producer.count(name)&&node["source_operator_id"].isUInt64()&&sources.insert(node["source_operator_id"].asUInt64()).second,"duplicate/invalid source or value identity");
       unsigned routes=0;for(const char *family:{"matrix","vector","memory","control"})if(node.isMember(std::string(family)+"_program")){task.family=family;++routes;}
       require(routes==1,"graph source lacks one executable backend");task.view=task.family=="memory"&&node["memory_program"]["mode"]=="view";
-      std::set<std::string> deps;references(node["args"],deps);references(node["kwargs"],deps);
+      std::set<std::string> deps;references(node["args"],deps);references(node["kwargs"],deps);references(node["control_dependencies"],deps);
       for(const auto &dep:deps){require(values.count(dep)||producer.count(dep),"graph has a missing, cyclic or forward SSA reference");task.inputs.push_back(dep);++uses[dep];if(producer.count(dep)){++task.missing;tasks[producer.at(dep)].consumers.push_back(i);}}
       producer[name]=i;if(!task.missing)ready.emplace(node["source_operator_id"].asUInt64(),i);
     }
@@ -194,7 +196,7 @@ struct Runner {
       require(task.batches&&expected==task.output.sizes,"graph matrix output or batch scope mismatch");
       region(task,&a);region(task,&b);region(task,task.linear&&args.size()>2&&!args[2].isNull()?&ref(args[2],task.values):nullptr);region(task,&task.output,true);
     }else if(task.family=="vector"||task.family=="control"){
-      unsigned count=task.family=="vector"?node["vector_program"]["input_dtypes"].size():node["kind"]=="arange"?0:node["kind"]=="argmax"?1:2;
+      unsigned count=task.family=="vector"?node["vector_program"]["input_dtypes"].size():control_model::input_count(node["kind"].asString());
       require(count<=2,"graph backend input region capacity exceeded");for(unsigned i=0;i<2;++i)region(task,i<count&&is_ref(args[i])?&ref(args[i],task.values):nullptr);region(task,&task.output,true);
     }else{
       auto names=node["memory_program"]["input_layouts"].getMemberNames();std::sort(names.begin(),names.end());for(const auto &name:names)region(task,&task.values.at(name));if(!task.view)region(task,&task.output,true);

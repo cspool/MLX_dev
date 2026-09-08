@@ -26,10 +26,11 @@ def beq(a, b, offset):
 
 
 def control_program(kind, input_dtype="i64"):
-    if kind not in {"arange", "add", "mul", "le", "argmax"} or input_dtype not in {"i64", "f16", "f32"}:
+    extended = kind in {"ge", "bitwise_and", "all", "guard"}
+    if kind not in {"arange", "add", "mul", "le", "argmax", "ge", "bitwise_and", "all", "guard"} or input_dtype not in {"i64", "f16", "f32"}:
         raise ValueError("unsupported controller operation/type")
     integer = input_dtype == "i64"
-    if kind in {"arange", "add", "mul"} and not integer:
+    if kind in {"arange", "add", "mul", "bitwise_and", "all", "guard"} and not integer:
         raise ValueError("controller arithmetic entry is integer only")
     phases = {}
     if kind == "arange":
@@ -38,6 +39,14 @@ def control_program(kind, input_dtype="i64"):
         phases["body"] = [r(1 if kind == "mul" else 0, 0, 12, 10, 11)]
     elif kind == "le":
         phases["body"] = [r(0, 2, 12, 11, 10), i(4, 12, 12, 1)] if integer else [f(0x50, 0, 12, 10, 11)]
+    elif kind == "ge":
+        phases["body"] = [r(0, 2, 12, 10, 11), i(4, 12, 12, 1)] if integer else [f(0x50, 0, 12, 11, 10)]
+    elif kind == "bitwise_and":
+        phases["body"] = [r(0, 7, 12, 10, 11)]
+    elif kind == "all":
+        phases = {"init": [i(0, 12, 0, 1)], "body": [r(0, 3, 10, 0, 10), r(0, 7, 12, 12, 10)]}
+    elif kind == "guard":
+        phases["body"] = [r(0, 3, 12, 0, 10), r(0, 4, 13, 12, 11)]
     else:
         move_best = i(0, 11, 10, 0) if integer else f(0x10, 0, 11, 10, 10)
         phases["init"] = [move_best, i(0, 20, 0, 0), i(0, 21, 0, 0)]
@@ -49,7 +58,7 @@ def control_program(kind, input_dtype="i64"):
         phases["select"] = [beq(12, 0, 12), i(0, 20, 21, 0), move_best]
     if sum(map(len, phases.values())) > 32:
         raise ValueError("controller leaf template exceeds 32 words")
-    return {"profile": "mlx-controller-rv64-leaf-v1", "kind": kind, "input_dtype": input_dtype,
+    return {"profile": "mlx-controller-rv64-leaf-v2" if extended else "mlx-controller-rv64-leaf-v1", "kind": kind, "input_dtype": input_dtype,
             "xlen": 64, "flen": 64, "gpr_count": 32, "fpr_count": 32, "phases": phases,
             "memory_binding": "descriptor_bound_not_riscv_load_store_execution",
             "rocket_execution_verified": False, "timing_verified": False}
