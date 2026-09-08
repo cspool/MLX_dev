@@ -28,6 +28,7 @@ struct Operand{Tensor tensor;bool literal=false;float value=0;DType type=DType::
 struct Context{
   bool active=false,busy=false,memory_busy=false,stored=false;
   bool flow_ready=true;
+  bool code_ready=true;
   unsigned pe=0,slot=0,arena=0,pc=0,lanes=0,valid_count=0,level=0,stack_valid=0,move=0;
   unsigned fill=0,operand=0; // 0=none, 1=initialize, 2=read, 3=ready
   uint64_t block=0,epoch=0,row=0,tile=0,base=0,output_base=0,out_tile=0;
@@ -97,6 +98,7 @@ struct Simulator::Impl{
   uint64_t source_id=UINT64_MAX;
   model_events::BlockFlow *flow=nullptr;
   uint64_t dependency_wait_cycles=0;
+  uint64_t template_wait_cycles=0;
   std::array<std::optional<Pending>,16> vector_fu,trans_fu;
   std::array<uint64_t,16> next_vector{},next_trans{};
   std::optional<Pending> spm_pending;
@@ -171,7 +173,7 @@ struct Simulator::Impl{
     trace.append(e);
   }
   void memory_event(const char *name,const PendingMemory &p,uint64_t data){event(name,p.owner.id,"dma");if(!options.trace)return;auto &e=trace[trace.size()-1];e["request_id"]=Json::UInt64(p.request.id);e["region"]=p.request.region;e["byte_offset"]=Json::UInt64(p.request.offset);e["bytes"]=p.request.bytes;e["write"]=p.request.write;e["data"]=Json::UInt64(data);e["spm_byte_offset"]=p.spm;}
-  bool eligible(unsigned id)const{const auto &c=contexts[id];if(!c.active||!c.flow_ready)return false;if(!options.overlap)for(unsigned slot=0;slot<options.contexts;++slot){const auto &other=contexts[c.pe*2+slot];if(other.active&&other.block<c.block)return false;}return true;}
+  bool eligible(unsigned id)const{const auto &c=contexts[id];if(!c.active||!c.flow_ready||!c.code_ready)return false;if(!options.overlap)for(unsigned slot=0;slot<options.contexts;++slot){const auto &other=contexts[c.pe*2+slot];if(other.active&&other.block<c.block)return false;}return true;}
   std::vector<unsigned> priority()const{std::vector<unsigned> ids;for(unsigned p=0;p<pes;++p)for(unsigned s=0;s<options.contexts;++s)if(contexts[p*2+s].active)ids.push_back(p*2+s);std::sort(ids.begin(),ids.end(),[&](unsigned a,unsigned b){return contexts[a].block<contexts[b].block;});return ids;}
   void phase(Context &c,const char *name){check(program["phases"].isMember(name),"required scheduled vector phase is missing");c.phase=name;c.pc=0;}
   void reduction_tile(Context &c){c.base=c.row*width+c.tile*16;c.valid_count=c.tile*16<width?unsigned(std::min<uint64_t>(16,width-c.tile*16)):0;c.lanes=reduce_lanes;c.fill=0;c.move=0;phase(c,c.maximum?"max_tile":"sum_tile");}
@@ -229,6 +231,7 @@ struct Simulator::Impl{
   bool tick(){
     if(done()){check(!dma&&!spm_pending,"vector done with pending shared response");for(unsigned p=0;p<pes;++p)check(!vector_fu[p]&&!trans_fu[p],"vector done with pending FU");return false;}
     check(cycles<options.max_cycles,"vector schedule exceeded cycle bound");if(owned_array)array->begin_cycle(cycles);array->enter(client);const auto edge=array->cycle();
+    if(array->hardware().template_load_timing)for(unsigned id=0;id<contexts.size();++id){auto &c=contexts[id];if(c.active&&!c.code_ready){if(array->template_ready(c.lease)){c.code_ready=true;event("template_ready",id,"configuration");}else ++template_wait_cycles;}}
     if(flow)for(unsigned id=0;id<contexts.size();++id){auto &c=contexts[id];if(c.active&&!c.flow_ready){if(flow->inputs_ready(c.block)){c.flow_ready=true;event("wake",id,"dependency");}else ++dependency_wait_cycles;}}
     port->advance(cycles);auto ids=priority();bool spm_port=array->spm_ready();std::array<bool,16> write_port{};for(unsigned p=0;p<pes;++p)write_port[p]=array->writeback_ready(p);
     bool finish_spm=false;std::array<bool,16> finish_vector{},finish_trans{};std::optional<Response> answer;
@@ -276,7 +279,7 @@ struct Simulator::Impl{
     if(new_dma){auto &c=validate(new_dma->owner);c.memory_busy=true;memory_event("dma_request",*new_dma,new_dma->request.data);port->submit(new_dma->request);++next_request;++dma_requests;dma=*new_dma;}
     if(admission){auto admitted_lease=array->admit(*admission,next_block);check(bool(admitted_lease),"vector shared admission offer changed before commit");const auto lease=*admitted_lease;unsigned id=lease.pe*2+lease.slot;auto &c=contexts[id];auto epoch=c.epoch+1;c=Context{};c.active=true;c.epoch=epoch;c.pe=lease.pe;c.slot=lease.slot;c.lease=lease;c.arena=lease.spm_base;c.block=next_block++;for(unsigned r=0;r<8;++r)reg(c,r)=Register{};
       if(reduction){c.row=c.block;c.maximum=softmax;reduction_tile(c);}else{c.base=c.block*16;c.output_base=c.base;c.valid_count=c.lanes=unsigned(std::min<uint64_t>(16,output.numel()-c.base));phase(c,"body");}
-      if(flow){flow->admitted(c.block,c.lease.id);c.flow_ready=flow->inputs_ready(c.block);}event("admit",id);if(!c.flow_ready)event("wait_event",id,"dependency");
+      if(flow){flow->admitted(c.block,c.lease.id);c.flow_ready=flow->inputs_ready(c.block);}c.code_ready=array->template_ready(c.lease);event("admit",id);if(!c.flow_ready)event("wait_event",id,"dependency");if(!c.code_ready)event("wait_template",id,"configuration");
     }
     invariant();if(owned_array)array->end_cycle();++cycles;return true;
   }
@@ -285,6 +288,7 @@ struct Simulator::Impl{
     r["vector_busy_pe_cycles"]=Json::UInt64(vector_busy);r["trans_busy_pe_cycles"]=Json::UInt64(trans_busy);r["dma_busy_cycles"]=Json::UInt64(dma_busy);r["spm_busy_cycles"]=Json::UInt64(spm_busy);r["numeric_instructions"]=numeric.json();r["external_memory_port"]=external;r["pending_dma"]=bool(dma);r["pending_spm"]=bool(spm_pending);unsigned pending=0,active=0,allocated=array->live_spm_vectors(client);for(unsigned p=0;p<pes;++p)pending+=bool(vector_fu[p])+bool(trans_fu[p]);for(const auto &c:contexts)active+=c.active;r["pending_fu"]=pending;r["active_contexts"]=active;r["allocated_spm_vectors"]=allocated;r["trace"]=trace;r["mlx_system_verified"]=false;r["inference_performance_eligible"]=false;
     if(!owned_array){r["external_shared_array"]=true;r["shared_client"]=Json::UInt64(client);r["source_operator_id"]=Json::UInt64(source_id);}
     if(flow){r["block_flow"]=flow->description();r["dependency_wait_context_cycles"]=Json::UInt64(dependency_wait_cycles);}
+    if(array->hardware().template_load_timing)r["template_wait_context_cycles"]=Json::UInt64(template_wait_cycles);
     r["counter_units"]["cycles"]="wall_cycle";r["counter_units"]["same_pe_context_overlap_cycles"]="pe_cycle";r["counter_units"]["vector_sfu_overlap_pe_cycles"]="pe_cycle";r["counter_units"]["writeback_stall_response_cycles"]="blocked_response_cycle";return r;}
 };
 Simulator::Simulator(const Json::Value &n,const Values &v,Tensor out,Options o,MemoryPort *p,shared_array::Resources *array,uint64_t source,model_events::BlockFlow *flow):impl(std::make_unique<Impl>(n,v,std::move(out),o,p,array,source,flow)){}

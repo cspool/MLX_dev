@@ -36,6 +36,7 @@ struct Context {
   unsigned pe=0,slot=0,arena=0,rows=0,lanes=0,count=0,ki=0,pc=0,move=0;
   Phase phase=Prologue;
   std::array<bool,2> stored{};
+  bool code_ready=true;
   shared_array::Lease lease;
 };
 struct Owner {
@@ -121,6 +122,7 @@ struct Simulator::Impl {
   uint64_t source_id=UINT64_MAX,array_version=0;
   model_events::BlockFlow *flow=nullptr;
   uint64_t flow_version=0;
+  uint64_t template_wait_cycles=0;
   std::array<std::optional<PendingInstruction>,16> fu;
   std::array<uint64_t,16> next_compute{};
   std::optional<PendingInstruction> spm_pending;
@@ -223,7 +225,7 @@ struct Simulator::Impl {
   }
   bool eligible(unsigned id) const {
     const auto &c=contexts[id];
-    if(!c.active)return false;
+    if(!c.active||!c.code_ready)return false;
     if(!options.overlap)for(unsigned s=0;s<options.contexts;++s){const auto &other=contexts[c.pe*2+s];if(other.active&&other.block<c.block)return false;}
     return true;
   }
@@ -324,6 +326,7 @@ struct Simulator::Impl {
     check(cycles<options.max_cycles,"matrix scheduler exceeded cycle bound");
     if(owned_array)array->begin_cycle(cycles);
     array->enter(client);const auto edge=array->cycle();
+    if(array->hardware().template_load_timing)for(unsigned id=0;id<contexts.size();++id){auto &c=contexts[id];if(c.active&&!c.code_ready){if(array->template_ready(c.lease)){c.code_ready=true;event("template_ready",id,"configuration");}else ++template_wait_cycles;}}
     memory_port->advance(cycles);
     if(array_version!=array->version()||(flow&&flow_version!=flow->revision()))resources_dirty=true;
     if(resources_dirty||!options.cache_control)recompute_control();
@@ -388,7 +391,9 @@ struct Simulator::Impl {
       c.row_base=(c.block/((n+15)/16))*2;c.col_base=(c.block%((n+15)/16))*16;c.rows=unsigned(std::min<uint64_t>(2,m-c.row_base));c.lanes=unsigned(std::min<uint64_t>(16,n-c.col_base));c.arena=lease.spm_base;
       for(unsigned r=0;r<6;++r)reg(c,r).type=0;
       if(flow)flow->admitted(c.block,c.lease.id);
+      c.code_ready=array->template_ready(c.lease);
       ++admitted;++numeric.tiles;resources_dirty=true;event("admit",id);
+      if(!c.code_ready)event("wait_template",id,"configuration");
     }
     if(resources_dirty||!options.cache_control)invariant();
     if(owned_array)array->end_cycle();
@@ -421,6 +426,7 @@ struct Simulator::Impl {
     r["counter_units"]["compute_busy_pe_cycles"]="pe_cycle";
     if(!owned_array){r["external_shared_array"]=true;r["shared_client"]=Json::UInt64(client);r["source_operator_id"]=Json::UInt64(source_id);}
     if(flow)r["block_flow"]=flow->description();
+    if(array->hardware().template_load_timing)r["template_wait_context_cycles"]=Json::UInt64(template_wait_cycles);
     return r;
   }
 };

@@ -95,8 +95,8 @@ struct Runner {
        memory(arena,MemoryOptions::parse(options.get("memory",Json::Value(Json::objectValue)))),mux(memory,65),
        max_cycles(options.get("max_cycles",Json::UInt64(1000000000000ULL)).asUInt64()),limit(options.get("max_active_nodes",32).asUInt()){
     require(options.isObject(),"ready graph options must be an object");
-    for(const auto &key:options.getMemberNames())require(key=="base"||key=="bytes"||key=="memory"||key=="max_cycles"||key=="max_active_nodes"||key=="overlap"||key=="operator_progress"||key=="tile_pipeline"||key=="pipeline_whole_source_barrier","unsupported ready graph option");
-    for(const char *key:{"overlap","operator_progress","tile_pipeline","pipeline_whole_source_barrier"})if(options.isMember(key))require(options[key].isBool(),"ready graph flags must be Boolean");
+    for(const auto &key:options.getMemberNames())require(key=="base"||key=="bytes"||key=="memory"||key=="max_cycles"||key=="max_active_nodes"||key=="overlap"||key=="operator_progress"||key=="tile_pipeline"||key=="pipeline_whole_source_barrier"||key=="template_load_timing"||key=="template_word_period"||key=="template_trace_limit","unsupported ready graph option");
+    for(const char *key:{"overlap","operator_progress","tile_pipeline","pipeline_whole_source_barrier","template_load_timing"})if(options.isMember(key))require(options[key].isBool(),"ready graph flags must be Boolean");
     overlap=options.get("overlap",true).asBool();progress=options.get("operator_progress",false).asBool();
     tile_pipeline=options.get("tile_pipeline",false).asBool();whole_pipeline_barrier=options.get("pipeline_whole_source_barrier",false).asBool();
     require(!whole_pipeline_barrier||tile_pipeline,"whole-source pipeline barrier requires tile mode");
@@ -109,6 +109,9 @@ struct Runner {
     h.dma_request_period=matrix_options.dma_request_period;h.dma_response_period=matrix_options.dma_response_period;
     h.multiply_latency=matrix_options.multiply_latency;h.add_latency=matrix_options.add_latency;h.convert_latency=matrix_options.convert_latency;h.spm_latency=matrix_options.spm_latency;
     h.exp_latency=vector_options.exp_latency;h.div_latency=vector_options.div_latency;h.sqrt_latency=vector_options.sqrt_latency;
+    h.template_load_timing=options.get("template_load_timing",false).asBool();
+    for(const char *key:{"template_word_period","template_trace_limit"})if(options.isMember(key))require(options[key].isUInt(),"invalid template programming option");
+    h.template_word_period=options.get("template_word_period",1).asUInt();h.template_trace_limit=options.get("template_trace_limit",0).asUInt();
     require(h.rows==vector_options.rows&&h.columns==vector_options.columns&&h.contexts==vector_options.contexts&&h.spm_period==vector_options.spm_period&&h.writeback_period==vector_options.writeback_period&&h.compute_ii==vector_options.vector_ii&&h.multiply_latency==vector_options.multiply_latency&&h.add_latency==vector_options.add_latency&&h.convert_latency==vector_options.convert_latency&&h.spm_latency==vector_options.spm_latency&&h.dma_request_period==vector_options.dma_request_period&&h.dma_response_period==vector_options.dma_response_period,"matrix/vector hardware profiles disagree");
     array=std::make_unique<shared_array::Resources>(h);
     Assets loader;

@@ -22,6 +22,8 @@ struct Hardware {
   unsigned dma_request_period=1,dma_response_period=1;
   unsigned multiply_latency=4,add_latency=2,convert_latency=2,spm_latency=3;
   unsigned exp_latency=8,div_latency=12,sqrt_latency=12;
+  bool template_load_timing=false;
+  unsigned template_word_period=1,template_trace_limit=0;
   void validate()const;
   bool operator==(const Hardware &other)const;
 };
@@ -36,8 +38,8 @@ struct Offer { Lease placement; uint64_t allocation_version=0; };
 // One physical bank and arbitration domain, shared by all attached frontends.
 // Clients execute in declared logical-source order within an edge. Resource
 // releases are committed at end_cycle, never exposed to a later caller in the
-// same cycle. Configuring templates is tracked separately, not called timed
-// instruction memory traffic or a model-performance result.
+// same cycle. Optional local template writes share the PE issue opportunity;
+// descriptor/host transport is a separate, still unmodeled operation.
 class Resources {
 public:
   explicit Resources(Hardware hardware={});
@@ -62,6 +64,7 @@ public:
   Register &reg(const Lease &lease,unsigned relative);
   uint8_t *spm(const Lease &lease,unsigned relative,unsigned bytes);
   uint32_t instruction(const Lease &lease,unsigned relative)const;
+  bool template_ready(const Lease &lease)const;
   void validate_lease(const Lease &lease)const;
   unsigned live_contexts(Client client)const;
   unsigned live_spm_vectors(Client client)const;
@@ -87,13 +90,15 @@ private:
     unsigned per_pe_limit=2,total_limit=32;
   };
   struct Resident {Lease lease;uint64_t template_id=0;bool retiring=false;};
-  struct Template {uint64_t id=0;std::string key;std::vector<uint32_t> words;unsigned base=0,refs=0;};
+  struct Template {uint64_t id=0;std::string key;std::vector<uint32_t> words;unsigned base=0,refs=0,loaded=0;uint64_t requested_at=0,ready_at=0;};
   struct Service {uint64_t lease=0,client=0,next=0;bool completing=false;};
   Hardware config;
   unsigned pes=0;
   bool open=false,poisoned=false,spm_claimed=false;
   uint64_t current_cycle=0,next_cycle=0,next_client=1,next_lease=1,next_template=1;
   uint64_t allocation_version=0,current_client=0,admissions=0,retirements=0,template_words_loaded=0;
+  uint64_t template_words_requested=0,template_wall_cycles=0,template_pe_cycles=0,template_trace_events=0;
+  Json::Value template_trace{Json::arrayValue};
   unsigned peak_contexts=0,peak_spm=0,peak_rf=0,peak_rom=0;
   std::optional<std::pair<uint64_t,uint64_t>> last_priority;
   std::map<Client,ClientInfo> clients;
@@ -105,7 +110,7 @@ private:
   std::array<std::array<uint64_t,32>,16> rom_owner{};
   std::array<std::array<uint32_t,32>,16> rom{};
   std::array<std::vector<Template>,16> templates;
-  std::array<bool,16> issued{},written{};
+  std::array<bool,16> issued{},written{},config_port{};
   std::array<Service,16> compute{},sfu{};
   Service spm_service,dma_service;
   std::vector<Service*> finishing;
