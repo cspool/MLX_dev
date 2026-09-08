@@ -7,7 +7,9 @@ from pathlib import Path
 from mlxsim.model_tensor_compiler import compile_inventory
 from mlxsim.model_physical_evidence import scheduled_compile_options
 from scripts.verify_mlx_model_numeric import normalize_reference_device,verify_generation_links
-from scripts.run_mlx_clocked_chipyard import ROOT,source_identity
+from scripts.run_mlx_clocked_chipyard import ROOT,source_identity,prepare
+from scripts.verify_mlx_system_model import initialized_assets
+from mlxsim.model_system_evidence import task_coverage
 from scripts.run_mlx_spike_graph import sha
 from system_sim.physical_host.graph_lowering import compile_graph
 
@@ -20,7 +22,7 @@ def main():
     out.mkdir(parents=True)
     def identity():
         result=source_identity()
-        for path in (Path(__file__).resolve(),ROOT/"scripts/verify_mlx_model_numeric.py",ROOT/"tests/wide_memory_contract.cc"):result[str(path.relative_to(ROOT))]=sha(path)
+        for path in (Path(__file__).resolve(),ROOT/"scripts/verify_mlx_model_numeric.py",ROOT/"scripts/verify_mlx_system_model.py",ROOT/"tests/wide_memory_contract.cc"):result[str(path.relative_to(ROOT))]=sha(path)
         return result
     sources=identity();paths=[args.program,args.lifetimes,args.source,args.reference,image/"image.json",image/"plan.json",image/"segments.json",image/"test.elf",image/"command_blob.bin",image/"test.c",image.parent/"profile.json"]
     fingerprints={str(path.resolve()):sha(path) for path in paths}
@@ -36,8 +38,18 @@ def main():
     if actual_normalized!=expected_normalized or changes!=reference_changes:raise RuntimeError("reference differs beyond declared device-placement normalization")
     links=verify_generation_links(program,source)
     if record["source_calls"]!=len(program["nodes"]) or record["task_count"]!=len(plan["tasks"]):raise RuntimeError("image source/task coverage incomplete")
-    rebuilt,layout=compile_graph(program,json.loads(args.lifetimes.read_text()),device_base=plan["device_base"],device_bytes=plan["device_bytes"],data_offset=plan["data_offset"],scratch_offset=plan["scratch_offset"],scratch_bytes=plan["scratch_bytes"])
+    paired=plan.get("host_abi_version",1)==2;event_slots=plan.get("pair_event_slots",32)
+    rebuilt,layout=compile_graph(program,json.loads(args.lifetimes.read_text()),device_base=plan["device_base"],device_bytes=plan["device_bytes"],data_offset=plan["data_offset"],scratch_offset=plan["scratch_offset"],scratch_bytes=plan["scratch_bytes"],block_pairs=paired,event_slots=event_slots)
     if rebuilt!=(image/"command_blob.bin").read_bytes() or any(plan[key]!=value for key,value in layout.items()):raise RuntimeError("image commands/bindings differ from complete compiler replay")
+    task_coverage(program,plan)
+    replay=out/"elf-replay"
+    replay_plan,_=prepare({"program":str(args.program.resolve()),"lifetimes":str(args.lifetimes.resolve()),"reference":str(args.reference.resolve())},replay,
+                          graph_base=plan["device_base"],graph_bytes=plan["device_bytes"],memory_bytes=16*2**30,preload_assets=True,block_pairs=paired,event_slots=event_slots)
+    if replay_plan!=plan:raise RuntimeError("complete image replay changed the task/lifetime plan")
+    rebuilt_images={}
+    for name in ("test.c","test.elf","command_blob.bin","launch-map.json"):
+        if sha(replay/name)!=sha(image/name):raise RuntimeError(f"complete image checker/ELF replay differs: {name}")
+        rebuilt_images[name]=sha(replay/name)
     profile=json.loads((image.parent/"profile.json").read_text());native_profile={"version":1,"name":profile["name"],"max_busy_cycles":profile["max_busy_cycles"]}
     for kind in ("matrix","vector","memory"):native_profile[kind+"_options"]=program[kind+"_schedule_options"]
     (out/"native-profile.json").write_text(json.dumps(native_profile)+"\n")
@@ -57,9 +69,13 @@ def main():
     memory=json.loads((out/"memory.json").read_text());loaded=[row for row in memory["initialized_segments"] if not row["name"].startswith("elf:")]
     if loaded!=segments or not any(row["name"].startswith("elf:") for row in memory["initialized_segments"]):raise RuntimeError("ELF and all resident assets did not initialize together")
     if memory["cycle"] or memory["ar_requests"] or memory["aw_requests"]:raise RuntimeError("initialization audit unexpectedly executed the system")
+    initialization=initialized_assets(program,plan,segments,memory,image/"test.elf",json.loads((replay/"segments.json").read_text()))
+    for name,digest in rebuilt_images.items():
+        if sha(replay/name)!=digest:raise RuntimeError("replayed image changed during initialization audit")
     if sources!=identity() or sha(binary)!=binary_hash or any(sha(Path(path))!=digest for path,digest in fingerprints.items()):raise RuntimeError("image audit sources/inputs changed")
     report={"classification":"full_model_system_image_reference_and_ram_initialization_audit_not_execution","sources":sources,"inputs":fingerprints,"source_calls":len(program["nodes"]),"task_count":len(plan["tasks"]),"asset_count":len(segments),"asset_bytes":sum(row["file_bytes"] for row in segments),
-        "reference_device_normalization":changes,"generation_links":links,"complete_compiler_replay_equal":True,"device_profile_matches_native":True,"memory_sha256":sha(out/"memory.json"),"binary_sha256":binary_hash,"full_model_execution_verified":False,"actual_cpu_execution":False,"mlx_system_verified":False,"inference_performance_eligible":False}
+        "reference_device_normalization":changes,"generation_links":links,"complete_compiler_replay_equal":True,"complete_cpu_elf_rebuild_equal":True,"rebuilt_images":rebuilt_images,"initialization":initialization,
+        "host_abi_version":plan.get("host_abi_version",1),"pair_count":plan.get("pair_count",0),"device_profile_matches_native":True,"memory_sha256":sha(out/"memory.json"),"binary_sha256":binary_hash,"full_model_execution_verified":False,"actual_cpu_execution":False,"mlx_system_verified":False,"inference_performance_eligible":False}
     (out/"report.json").write_text(json.dumps(report,indent=2)+"\n");print(f"COMPLETE_SYSTEM_IMAGE_AUDIT_PASS {out/'report.json'}")
 
 

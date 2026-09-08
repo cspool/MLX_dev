@@ -46,6 +46,14 @@ class Evidence:
             require(digest(file) == expected, f"evidence changed before audit completion: {file}")
 
 
+def reference_argmax(logits,shape):
+    require(shape and all(type(n) is int and n>0 for n in shape)
+            and len(logits)==math.prod(shape) and all(map(math.isfinite,logits)),
+            "reference argmax requires finite, nonempty, shape-matched logits")
+    width=shape[-1]
+    return [max(range(width),key=lambda i:logits[base+i]) for base in range(0,len(logits),width)]
+
+
 def elf_load_segments(file):
     """Independently derive the initialized PT_LOAD rows from the bound ELF."""
     raw = file.read_bytes()
@@ -192,7 +200,7 @@ def audit_case(run, program_file, life_file, reference_file, out, evidence):
         logits = [v[0] for v in struct.iter_unpack("<" + width, path.read_bytes())]
         require(len(logits) == math.prod(row["shape"]) and logits and all(map(math.isfinite, logits)),
                 "nonfinite, empty or wrong-sized final logits")
-        require(row["shape"][0] == 1 and row["tokens"] == [max(range(len(logits)), key=logits.__getitem__)],
+        require(row["tokens"] == reference_argmax(logits,row["shape"]),
                 "reference tokens do not describe the free-running logits argmax")
         checks.append({"forward_id": row["forward_id"], "elements": len(logits), "tokens": row["tokens"],
                        "logits_sha256": checksum, "bitwise_checked_by_actual_cpu": True})
