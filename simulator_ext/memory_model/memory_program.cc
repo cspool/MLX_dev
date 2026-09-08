@@ -60,6 +60,15 @@ uint64_t broadcast(uint64_t index,const Shape &out,const Shape &in){
 }
 struct Value {uint64_t bits=0;DType type=DType::F32;bool valid=false;};
 int64_t integer_bits(uint64_t raw){int64_t value;std::memcpy(&value,&raw,8);return value;}
+void append_index(Value &address,const Tensor &source,unsigned dim,int64_t coordinate){
+  check(dim<source.sizes.size(),"advanced index axis out of range");
+  auto extent=source.sizes[dim];if(coordinate<0)coordinate+=extent;
+  check(coordinate>=0&&coordinate<extent,"advanced index out of range");
+  if(dim==0){address.bits=0;address.type=DType::I64;address.valid=true;}
+  check(address.valid&&address.type==DType::I64,"advanced index has an unready address accumulator");
+  check(uint64_t(extent)&&address.bits<=(UINT64_MAX-uint64_t(coordinate))/uint64_t(extent),"advanced index address overflow");
+  address.bits=address.bits*uint64_t(extent)+uint64_t(coordinate);
+}
 float number(const Value &v){
   if(v.type==DType::F16)return tagged::half_to_float(uint16_t(v.bits));
   if(v.type==DType::F32){uint32_t raw=uint32_t(v.bits);float out;std::memcpy(&out,&raw,4);return out;}
@@ -89,6 +98,7 @@ Tensor derive_view(const Json::Value &node,Tensor t,const Json::Value &p){
     check(step>0,"nonpositive memory slice step");if(start<0)start+=n;if(end<0)end+=n;start=std::clamp<int64_t>(start,0,n);end=std::clamp<int64_t>(end,0,n);t.offset+=start*t.steps[d];t.sizes[d]=end>start?(end-start+step-1)/step:0;t.steps[d]*=step;}
   else if(kind=="expand"){auto wanted=shape(args[1]);check(wanted.size()>=t.sizes.size(),"expand reduced rank");auto extra=wanted.size()-t.sizes.size();t.sizes.insert(t.sizes.begin(),extra,1);t.steps.insert(t.steps.begin(),extra,0);
     for(size_t d=0;d<wanted.size();++d){if(wanted[d]==-1){check(d>=extra,"cannot infer leading expand axis");wanted[d]=t.sizes[d];}check(wanted[d]>=0&&(t.sizes[d]==1||t.sizes[d]==wanted[d]),"invalid expand extent");if(wanted[d]!=t.sizes[d])t.steps[d]=0;}t.sizes=wanted;}
+  else if(kind=="squeeze"){check(args.size()==2&&args[1].isInt64(),"squeeze requires an integer axis");if(t.sizes.empty())check(args[1].asInt64()==-1||args[1].asInt64()==0,"scalar squeeze axis out of bounds");else{auto d=axis(args[1].asInt64(),t.sizes.size());if(t.sizes[d]==1){t.sizes.erase(t.sizes.begin()+d);t.steps.erase(t.steps.begin()+d);}}}
   else if(kind=="reshape"){auto wanted=resolve_shape(args[1],t.numel());auto steps=reshape_steps(t,wanted);check(bool(steps),"compiled view requires a data copy");t.sizes=wanted;t.steps=*steps;}
   else if(kind=="cast"||kind=="cast_device"||kind=="contiguous"){
     check(dtype_name(t.type)==node["output"]["dtype"].asString(),"dtype-changing conversion cannot alias");unsigned copy_index=kind=="cast"?3:4;
@@ -100,8 +110,8 @@ Tensor derive_view(const Json::Value &node,Tensor t,const Json::Value &p){
 }
 } // namespace
 
-bool supports(const std::string &k){return k=="embedding"||k=="where"||k=="cat"||k=="cast"||k=="cast_device"||k=="contiguous"||k=="reshape"||k=="transpose"||k=="slice"||k=="select"||k=="unsqueeze"||k=="expand"||k=="alias"||k=="dropout_inference";}
-Json::Value Stats::json()const{Json::Value r(Json::objectValue);r["classification"]="bounded_memory_plans_not_system_dma_validation";r["profile"]="mlx-memory-plan-v1";r["calls"]=Json::UInt64(calls);r["view_elisions"]=Json::UInt64(views);r["allocations"]=Json::UInt64(allocations);r["instructions"]=Json::UInt64(instructions);r["read_bytes"]=Json::UInt64(read_bytes);r["write_bytes"]=Json::UInt64(write_bytes);r["index_reads"]=Json::UInt64(index_reads);r["predicate_reads"]=Json::UInt64(predicate_reads);for(unsigned op=1;op<6;++op)r["opcode_counts"][std::to_string(op)]=Json::UInt64(opcode_counts[op]);r["staging_bytes"]=128;r["register_bytes_total"]=32;r["physical_dma_verified"]=false;r["timing_verified"]=false;return r;}
+bool supports(const std::string &k){return extended_kind(k)||k=="embedding"||k=="where"||k=="cat"||k=="cast"||k=="cast_device"||k=="contiguous"||k=="reshape"||k=="transpose"||k=="slice"||k=="select"||k=="unsqueeze"||k=="expand"||k=="alias"||k=="dropout_inference";}
+Json::Value Stats::json()const{Json::Value r(Json::objectValue);r["classification"]="bounded_memory_plans_not_system_dma_validation";r["profile"]=v2?"mlx-memory-plan-v2":"mlx-memory-plan-v1";r["calls"]=Json::UInt64(calls);r["view_elisions"]=Json::UInt64(views);r["allocations"]=Json::UInt64(allocations);r["instructions"]=Json::UInt64(instructions);r["read_bytes"]=Json::UInt64(read_bytes);r["write_bytes"]=Json::UInt64(write_bytes);r["index_reads"]=Json::UInt64(index_reads);r["predicate_reads"]=Json::UInt64(predicate_reads);for(unsigned op=1;op<6;++op)r["opcode_counts"][std::to_string(op)]=Json::UInt64(opcode_counts[op]);r["staging_bytes"]=128;r["register_bytes_total"]=32;r["physical_dma_verified"]=false;r["timing_verified"]=false;return r;}
 
 namespace {
 struct Prepared {
@@ -116,7 +126,7 @@ struct Prepared {
 Prepared prepare(const Json::Value &node,const Values &values,const Tensor *supplied=nullptr){
   Prepared result;
   const auto &p=node["memory_program"],&args=node["args"],&out_spec=p["output_layout"];auto kind=node["kind"].asString();
-  check(supports(kind)&&p["profile"]=="mlx-memory-plan-v1"&&p["kind"]==node["kind"],"unsupported/mismatched memory program");
+  check(supports(kind)&&p["profile"]==profile(kind)&&p["kind"]==node["kind"],"unsupported/mismatched memory program");
   check(p["register_count"]==4&&p["register_bytes"]==8&&p["staging_bytes"]==128&&p["chunk_bytes"]==64,"memory transfer resource contract mismatch");
   std::set<std::string> referenced;
   auto collect=[&](auto &&self,const Json::Value &v)->void{if(v.isObject()&&v.isMember("value"))referenced.insert(v["value"].asString());else if(v.isArray())for(const auto &child:v)self(self,child);};
@@ -132,9 +142,9 @@ Prepared prepare(const Json::Value &node,const Values &values,const Tensor *supp
     if(supplied){layout_matches(*supplied,out_spec);check(supplied->storage==output.storage,"supplied view lost its storage owner");}
     result.output=output;result.view=true;return result;
   }
-  check(p["mode"]=="transfer"&&p["words"].isArray()&&!p["words"].empty()&&p["words"].size()<=4,"invalid memory transfer program");
+  check(p["mode"]=="transfer"&&p["words"].isArray()&&!p["words"].empty()&&p["words"].size()<=(kind=="advanced_index"?11u:4u),"invalid memory transfer program");
   for(const auto &raw:p["words"]){check(raw.isUInt(),"invalid memory instruction word");unsigned word=raw.asUInt(),op=word&255;check(op>=1&&op<=5&&(word>>10)==0&&(op==2||(word>>8)==0),"memory opcode/reserved field violation");}
-  const auto selector=p["selector"].asString();check((selector=="linear"&&(kind=="cast"||kind=="cast_device"||kind=="contiguous"||kind=="reshape"))||(selector=="concat"&&kind=="cat")||(selector=="indexed_rows"&&kind=="embedding")||(selector=="predicate_select"&&kind=="where"),"memory selector/operation mismatch");
+  const auto selector=p["selector"].asString();check((selector=="linear"&&(kind=="cast"||kind=="cast_device"||kind=="contiguous"||kind=="reshape"))||(selector=="concat"&&kind=="cat")||(selector=="indexed_rows"&&kind=="embedding")||(selector=="predicate_select"&&kind=="where")||(selector=="indexed_nd"&&kind=="advanced_index")||(selector=="constant_one"&&kind=="new_ones"),"memory selector/operation mismatch");
   auto target=dtype(out_spec["dtype"].asString());auto output=supplied?*supplied:Tensor::allocate(target,shape(out_spec["shape"]));
   if(!supplied)output.steps=shape(out_spec["strides"]);
   for(const auto &name:names)check(output.storage!=values.at(name).storage,"transfer output aliases an input storage owner");
@@ -146,6 +156,21 @@ Prepared prepare(const Json::Value &node,const Values &values,const Tensor *supp
   if(kind=="contiguous")check(ref(args[0],values).sizes==output.sizes,"contiguous copy changes shape");
   check(output.steps==expected_steps,"output allocation has unregistered layout");
   if(kind=="embedding"){const auto &weight=ref(args[0],values),&ids=ref(args[1],values);check(weight.sizes.size()==2&&ids.type==DType::I64&&target==weight.type,"embedding input contract mismatch");Shape expected=ids.sizes;expected.push_back(weight.sizes[1]);check(expected==output.sizes,"embedding output shape mismatch");}
+  if(kind=="advanced_index"){
+    const auto &input=ref(args[0],values);check(args.size()==2&&args[1].isArray()&&input.sizes.size()>=1&&input.sizes.size()<=8&&args[1].size()==input.sizes.size()&&target==input.type,"advanced index requires one I64 tensor per source axis");
+    Shape expected;
+    for(const auto &arg:args[1]){const auto &indices=ref(arg,values);check(indices.type==DType::I64,"advanced index requires I64 index tensors");
+      if(expected.size()<indices.sizes.size())expected.insert(expected.begin(),indices.sizes.size()-expected.size(),1);
+      auto shift=expected.size()-indices.sizes.size();for(size_t d=0;d<indices.sizes.size();++d){auto size=indices.sizes[d];auto &current=expected[shift+d];if(current==1)current=size;else check(size==1||size==current,"advanced index broadcast mismatch");}}
+    check(expected==output.sizes,"advanced index output shape mismatch");
+  }
+  if(kind=="new_ones"){
+    const auto &input=ref(args[0],values);check(args.size()==2&&args[1].isArray()&&shape(args[1])==output.sizes,"new_ones output shape mismatch");
+    const char *types[]={"torch.float16","torch.float32","torch.int64","torch.bool"};const auto &kw=node["kwargs"];
+    check(kw["dtype"].isNull()?target==input.type:kw["dtype"]==types[unsigned(target)],"new_ones dtype contract mismatch");
+    check(kw["layout"].isNull()||kw["layout"]=="torch.strided","new_ones layout not registered");
+    check(kw["pin_memory"].isNull()||(kw["pin_memory"].isBool()&&!kw["pin_memory"].asBool()),"new_ones pinned memory not registered");
+  }
   if(kind=="where"){
     check(ref(args[0],values).type==DType::Bool,"where requires a Boolean predicate");Shape expected;
     for(const auto &arg:args)if(arg.isObject()&&arg.isMember("value")){const auto &input=ref(arg,values);if(expected.size()<input.sizes.size())expected.insert(expected.begin(),input.sizes.size()-expected.size(),1);size_t shift=expected.size()-input.sizes.size();
@@ -164,6 +189,7 @@ Prepared prepare(const Json::Value &node,const Values &values,const Tensor *supp
   // a missing index/predicate load from reusing a previous element's register.
   std::vector<unsigned> expected;
   if(selector=="indexed_rows")expected.push_back(4);
+  if(selector=="indexed_nd")expected.insert(expected.end(),ref(args[0],values).sizes.size(),4);
   if(selector=="predicate_select")expected.push_back(5);
   expected.insert(expected.end(),{1,2|(unsigned(target)<<8),3});
   check(p["words"].size()==expected.size(),"memory transfer template mismatch");
@@ -180,7 +206,7 @@ Prepared prepare(const Json::Value &node,const Values &values,const Tensor *supp
 } // namespace
 
 Tensor execute(const Json::Value &node,const Values &values,Stats &stats){
-  auto prepared=prepare(node,values);++stats.calls;
+  auto prepared=prepare(node,values);++stats.calls;stats.v2|=extended_kind(prepared.kind);
   auto output=prepared.output;if(prepared.view){++stats.views;return output;}
   const auto &p=node["memory_program"],&args=node["args"];
   const auto &kind=prepared.kind,&selector=prepared.selector;
@@ -197,12 +223,18 @@ Tensor execute(const Json::Value &node,const Values &values,Stats &stats){
     check(has_index_load,"empty embedding still requires index validation");const auto &weight=ref(args[0],values),&ids=ref(args[1],values);
     for(uint64_t index=0;index<ids.numel();++index){auto value=read(ids,index,unsigned(index%chunk_elements));auto row=integer_bits(value.bits);check(row>=0&&row<weight.sizes[0],"embedding index out of range");++stats.instructions;++stats.opcode_counts[4];++stats.index_reads;}
   }
-  for(uint64_t flat=0;flat<output.numel();++flat){unsigned slot=flat%chunk_elements;registers[0].valid=registers[1].valid=false;bool stored=false;
+  for(uint64_t flat=0;flat<output.numel();++flat){unsigned slot=flat%chunk_elements,index_axis=0;registers[0].valid=registers[1].valid=false;bool stored=false;
     for(const auto &raw:p["words"]){check(raw.isUInt(),"invalid memory instruction word");unsigned word=raw.asUInt(),op=word&255;check(op>=1&&op<=5&&(word>>10)==0&&(op==2||(word>>8)==0),"memory opcode/reserved field violation");++stats.instructions;++stats.opcode_counts[op];
-      if(op==4){check(selector=="indexed_rows","index load used outside embedding");const auto &weight=ref(args[0],values),&ids=ref(args[1],values);check(weight.sizes[1]>0,"empty embedding row issued a load");uint64_t index=flat/uint64_t(weight.sizes[1]);registers[2]=read(ids,index,slot);auto row=integer_bits(registers[2].bits);check(row>=0&&row<weight.sizes[0],"embedding index out of range");++stats.index_reads;}
+      if(op==4){
+        if(selector=="indexed_nd"){check(index_axis<args[1].size(),"advanced index instruction axis mismatch");const auto &ids=ref(args[1][index_axis],values);registers[2]=read(ids,broadcast(flat,output.sizes,ids.sizes),slot);append_index(registers[3],ref(args[0],values),index_axis,integer_bits(registers[2].bits));++index_axis;}
+        else{check(selector=="indexed_rows","index load used outside embedding");const auto &weight=ref(args[0],values),&ids=ref(args[1],values);check(weight.sizes[1]>0,"empty embedding row issued a load");uint64_t index=flat/uint64_t(weight.sizes[1]);registers[2]=read(ids,index,slot);auto row=integer_bits(registers[2].bits);check(row>=0&&row<weight.sizes[0],"embedding index out of range");}
+        ++stats.index_reads;
+      }
       else if(op==5){check(selector=="predicate_select","predicate load used outside selection");registers[2]=operand(args[0],flat,slot);check(registers[2].type==DType::Bool,"predicate has wrong type");++stats.predicate_reads;}
       else if(op==1){
-        if(selector=="linear")registers[0]=read(ref(args[0],values),flat,slot);
+        if(selector=="constant_one")registers[0]=literal(Json::Value(1));
+        else if(selector=="indexed_nd"){check(registers[3].valid&&index_axis==ref(args[0],values).sizes.size(),"advanced index lacks a complete address");registers[0]=read(ref(args[0],values),registers[3].bits,slot);}
+        else if(selector=="linear")registers[0]=read(ref(args[0],values),flat,slot);
         else if(selector=="indexed_rows"){check(registers[2].valid&&registers[2].type==DType::I64,"embedding address lacks a loaded index");const auto &weight=ref(args[0],values);registers[0]=read(weight,uint64_t(integer_bits(registers[2].bits))*weight.sizes[1]+flat%uint64_t(weight.sizes[1]),slot);}
         else if(selector=="predicate_select"){check(registers[2].valid&&registers[2].type==DType::Bool,"selection lacks a loaded predicate");registers[0]=operand(args[registers[2].bits?1:2],flat,slot);}
         else{uint64_t width=uint64_t(output.sizes[concat_dim])*inner,outer=flat/width,index=flat%width;bool found=false;for(const auto *input:concatenated){uint64_t count=uint64_t(input->sizes[concat_dim])*inner;if(index<count){registers[0]=read(*input,outer*count+index,slot);found=true;break;}index-=count;}check(found,"concat transfer did not cover an output");}
@@ -259,7 +291,7 @@ struct Simulator::Impl {
     check(!external||n["memory_program"]["mode"]=="view"||output,"external memory transfer requires output metadata");
     plan=prepare(node,values,output);
     check(plan.names.size()<64,"memory region table exceeds 64 entries");
-    stats.calls=1;stats.views=plan.view;stats.allocations=!plan.view;
+    stats.calls=1;stats.views=plan.view;stats.allocations=!plan.view;stats.v2=extended_kind(plan.kind);
     total=plan.empty_embedding?ref(node["args"][1],values).numel():plan.output.numel();
     complete=plan.view||total==0;
     if(!port&&!plan.view){std::vector<Tensor> regions;for(const auto &name:plan.names)regions.push_back(values.at(name));regions.push_back(plan.output);local_port=std::make_unique<model_io::TensorMemoryPort>(std::move(regions),options.dma_latency);port=local_port.get();}
@@ -308,7 +340,7 @@ struct Simulator::Impl {
       Value value;value.type=pending->type;value.valid=true;
       std::memcpy(staging.data()+slot(),&response.data,request.bytes);std::memcpy(&value.bits,staging.data()+slot(),request.bytes);
       registers[op==1?0:2]=value;stats.read_bytes+=request.bytes;
-      if(op==4){auto row=integer_bits(value.bits);check(row>=0&&row<ref(node["args"][0],values).sizes[0],"embedding index out of range");++stats.index_reads;}
+      if(op==4){auto row=integer_bits(value.bits);if(plan.selector=="indexed_nd")append_index(registers[3],ref(node["args"][0],values),pc,row);else check(row>=0&&row<ref(node["args"][0],values).sizes[0],"embedding index out of range");++stats.index_reads;}
       if(op==5){check(value.type==DType::Bool,"predicate has wrong type");++stats.predicate_reads;}
     }
     event("response",&request,request.write?request.data:response.data);
@@ -329,12 +361,16 @@ struct Simulator::Impl {
       else ++conversion_stalls;
     }else{
       const auto &args=node["args"];unsigned word=plan.empty_embedding?4:node["memory_program"]["words"][pc].asUInt(),op=word&255;
-      if(op==4){if(can_request()){const auto &ids=ref(args[1],values);auto width=ref(args[0],values).sizes[1];submit(ids,plan.empty_embedding?flat:flat/uint64_t(width),op);}}
+      if(op==4){if(can_request()){
+        if(plan.selector=="indexed_nd"){check(pc<args[1].size(),"advanced index instruction axis mismatch");const auto &ids=ref(args[1][pc],values);submit(ids,broadcast(flat,plan.output.sizes,ids.sizes),op);}
+        else{const auto &ids=ref(args[1],values);auto width=ref(args[0],values).sizes[1];submit(ids,plan.empty_embedding?flat:flat/uint64_t(width),op);}}}
       else if(op==5)load_operand(args[0],op);
       else if(op==1){
-        if(plan.selector=="predicate_select"){check(registers[2].valid,"selection lacks a loaded predicate");load_operand(args[registers[2].bits?1:2],op);}
+        if(plan.selector=="constant_one")load_operand(Json::Value(1),op);
+        else if(plan.selector=="predicate_select"){check(registers[2].valid,"selection lacks a loaded predicate");load_operand(args[registers[2].bits?1:2],op);}
         else if(can_request()){
-          if(plan.selector=="linear")submit(ref(args[0],values),flat,op);
+          if(plan.selector=="indexed_nd"){check(registers[3].valid,"advanced index lacks a complete address");submit(ref(args[0],values),registers[3].bits,op);}
+          else if(plan.selector=="linear")submit(ref(args[0],values),flat,op);
           else if(plan.selector=="indexed_rows"){
             check(registers[2].valid,"embedding address lacks a loaded index");const auto &weight=ref(args[0],values);
             submit(weight,uint64_t(integer_bits(registers[2].bits))*weight.sizes[1]+flat%uint64_t(weight.sizes[1]),op);

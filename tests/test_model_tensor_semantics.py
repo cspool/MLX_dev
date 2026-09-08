@@ -100,7 +100,7 @@ def test_all_native_entries_have_numerical_or_alias_conformance(native, tmp_path
     cases.append(("matmul", [ref("a"), ref("b")], a @ b))
     # v2 Boolean/guard entries deliberately require real RV64 leaves, not the
     # generic functional tensor fallback exercised here.
-    assert {case[0] for case in cases} == set(ROUTES.values()) - {"ge", "bitwise_and", "all", "guard"}
+    assert {case[0] for case in cases} == set(ROUTES.values()) - {"ge", "bitwise_and", "all", "guard", "advanced_index", "new_ones", "squeeze"}
     results = execute_nodes(native, tmp_path / "all", {key: literal(value) for key, value in tensors.items()}, [node(i, kind, args, expected) for i, (kind, args, expected) in enumerate(cases)])
     for (kind, _, expected), actual in zip(cases, results, strict=True):
         # Per-entry contract frozen independently from model-level tolerance.

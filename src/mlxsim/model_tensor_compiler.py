@@ -45,11 +45,15 @@ ROUTES = {
     "aten.contiguous.default": "contiguous",
     "aten.to.dtype": "cast",
     "aten._to_copy.default": "cast",
+    "aten.to.dtype_layout": "cast_device",
     "aten.to.device": "cast_device",
     "aten.view.default": "reshape",
     "aten.reshape.default": "reshape",
     "aten.transpose.int": "transpose",
     "aten.unsqueeze.default": "unsqueeze",
+    "aten.squeeze.dim": "squeeze",
+    "aten.index.Tensor": "advanced_index",
+    "aten.new_ones.default": "new_ones",
     "aten.expand.default": "expand",
     "aten.slice.Tensor": "slice",
     "aten.select.int": "select",
@@ -67,6 +71,7 @@ DTYPES = {
 # Only the recorded overloads/attributes with implemented inference semantics
 # are accepted. A familiar ATen name is not permission to ignore its attributes.
 ARITY = {
+    "squeeze": (2, 2), "advanced_index": (2, 2), "new_ones": (2, 2),
     "ge": (2, 2), "bitwise_and": (2, 2), "all": (1, 1), "guard": (1, 1),
     "embedding": (2, 5), "linear": (2, 3), "matmul": (2, 2), "arange": (1, 1),
     "add": (2, 2), "mul": (2, 2), "le": (2, 2), "where": (3, 3), "pow": (2, 2),
@@ -77,6 +82,7 @@ ARITY = {
     "slice": (1, 5), "select": (3, 3), "alias": (1, 1), "dropout_inference": (3, 3),
 }
 KWARGS = {
+    "new_ones": {"dtype", "layout", "device", "pin_memory"},
     "arange": {"dtype", "layout", "device", "pin_memory"}, "add": {"alpha"},
     "mean": {"dtype"}, "cast": {"memory_format"}, "cast_device": {"memory_format"},
     "contiguous": {"memory_format"},
@@ -90,10 +96,13 @@ def validate_event(event):
     kind = ROUTES[operator]
     args, kwargs = event["inputs"], event["kwargs"]
     copy_overload = operator == "aten._to_copy.default"
-    first, last = (1, 1) if copy_overload else ARITY[kind]
+    layout_overload = operator == "aten.to.dtype_layout"
+    first, last = (1, 1) if copy_overload or layout_overload else ARITY[kind]
     if not isinstance(args, list) or not first <= len(args) <= last:
         raise ValueError(f"unsupported argument count for {operator}")
     allowed_kwargs = {"dtype", "layout", "device", "pin_memory", "non_blocking", "memory_format"} if copy_overload else KWARGS.get(kind, set())
+    if layout_overload:
+        allowed_kwargs = {"dtype", "layout", "device", "pin_memory", "non_blocking", "copy", "memory_format"}
     if set(kwargs) - allowed_kwargs:
         raise ValueError(f"unsupported attributes for {operator}: {kwargs}")
     if event.get("mutable") and operator != "aten.detach_.default":
@@ -114,6 +123,18 @@ def validate_event(event):
         raise ValueError("contiguous requires contiguous memory format")
     if kwargs.get("layout") not in {None, "torch.strided"}:
         raise ValueError("only strided tensor layout is implemented")
+    if kind == "new_ones" or layout_overload:
+        if kwargs.get("pin_memory") is not None and type(kwargs["pin_memory"]) is not bool:
+            raise ValueError("pin_memory must be Boolean or None")
+        if kwargs.get("pin_memory") not in (None, False):
+            raise ValueError("pinned-memory allocation is not registered")
+        if kwargs.get("dtype") not in (None, event["outputs"]["dtype"]):
+            raise ValueError("dtype disagrees with the actual output contract")
+        for flag in ("copy", "non_blocking"):
+            if flag in kwargs and type(kwargs[flag]) is not bool:
+                raise ValueError("conversion flags must be Boolean")
+        if kwargs.get("dtype") is None and args[0]["dtype"] != event["outputs"]["dtype"]:
+            raise ValueError("implicit dtype cannot change the input precision")
     if kind == "dropout_inference" and args[2] is not False:
         raise ValueError("dropout elimination requires an explicit inference guard")
     if kind == "argmax" and (len(args) < 2 or args[1] is None):
@@ -235,6 +256,8 @@ def compile_inventory(inventory, *, matrix_backend="blas", schedule_options=None
         guarded = kind == "guard"
         if kind in {"ge", "bitwise_and", "all", "guard"} and control_backend == "functional":
             raise ValueError("Boolean/guard control requires an explicit RV64 leaf or scheduled backend")
+        if kind in {"advanced_index", "new_ones", "squeeze"} and memory_backend == "functional":
+            raise ValueError("index/generation/squeeze requires an explicit planned or scheduled memory backend")
         if not guarded and (not isinstance(event["outputs"], dict) or "tensor_id" not in event["outputs"]):
             raise ValueError(f"multi/non-tensor output needs an explicit lowering: {operator}")
         args, kwargs = resolve(event["inputs"]), resolve(event["kwargs"])
@@ -243,6 +266,10 @@ def compile_inventory(inventory, *, matrix_backend="blas", schedule_options=None
             # dtype is unchanged. Device placement is still a pending system
             # lowering, just as for the existing functional to.device entry.
             args = [args[0], event["outputs"]["dtype"], kwargs.get("non_blocking", False), True]
+            kwargs = {key: value for key, value in kwargs.items() if key == "memory_format"}
+        if operator == "aten.to.dtype_layout":
+            device = kwargs.get("device") or tensors[event["inputs"][0]["tensor_id"]]["device"]
+            args = [args[0], device, event["outputs"]["dtype"], kwargs.get("non_blocking", False), kwargs.get("copy", False)]
             kwargs = {key: value for key, value in kwargs.items() if key == "memory_format"}
         source_output = None if guarded else event["outputs"]["tensor_id"]
         identifier = f"v{event['operator_id']}"

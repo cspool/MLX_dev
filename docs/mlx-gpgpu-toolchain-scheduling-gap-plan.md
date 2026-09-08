@@ -38,6 +38,8 @@ v2 完整模型前置条件继续补齐：[16 GiB/4×4 配对系统验证](mlx-p
 
 基于该清单新增[原生 C++ Boolean 控制与分支守卫](mlx-mask-control-guards.md)：比较/AND/ALL/guard 进入真实RV64叶程序和响应驱动模型，guard依赖进入DAG准入及生命期。444项回归、31次安全重放、28组独立Spike指令对照通过；旧完整6181节点Llama2编译产物保持一致。此增量尚非BERT完整执行或真实Rocket v2控制ABI接入，不开放推理性能或RTL。
 
+进一步补齐[BERT 所需 C++ 索引、常量及布局](mlx-bert-memory-paths.md)：实际坐标读取/地址检查、fresh ones写入、squeeze生命期和dtype/layout转换均进入显式计划，345项回归、46次安全重放通过；旧完整Llama2编译产物仍一致。完整BERT还需LayerNorm/GELU、split多输出、资产/QA协议与端到端运行，新v2搬运模式也尚未接入实际系统ABI；模型、性能及RTL门槛保持关闭。
+
 ## 1. 目的与适用范围
 
 本文说明如何参考 GPGPU 的编译链、block 到 SM 的准入分配、SM 内 warp 的选择发射机制，补齐当前 MLX 的编译、执行上下文和软硬件调度闭环。第一阶段的主要对象是原生 C++ 模拟器及其编译输入；第二阶段是 `system_sim/` 与系统仿真接口；第三阶段才进入 `rtl/mlx/` 的电路实现。同时利用仓库已有 DSAGEN/dsa-gem5 架构模型作为机制参考。

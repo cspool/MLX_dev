@@ -117,6 +117,7 @@ Tensor Kernels::memory(const Json::Value &node,const Values &values) {
   memory_model::Simulator simulator(node,values,memory_model::ScheduleOptions::parse(memory_scheduled_options));
   while(simulator.tick()){}
   auto report=simulator.result();const auto count=simulator.instruction_stats();
+  memory_stats->v2|=count.v2;
   memory_stats->calls+=count.calls;memory_stats->views+=count.views;memory_stats->allocations+=count.allocations;
   memory_stats->instructions+=count.instructions;memory_stats->read_bytes+=count.read_bytes;memory_stats->write_bytes+=count.write_bytes;
   memory_stats->index_reads+=count.index_reads;memory_stats->predicate_reads+=count.predicate_reads;
