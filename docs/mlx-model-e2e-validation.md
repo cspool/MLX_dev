@@ -38,6 +38,8 @@
 
 论文算法实验与 Table III 架构工作负载的尺寸/变体也不能自动视为同一 checkpoint。作者压缩模型与本地公开/重建模型的选择已请求用户确认；在此之前，公开基座可用于前端和算子覆盖诊断，不计为作者 hybrid 验证通过。
 
+后续[本地材料审计](mlx-next-model-materials.md)确认 InternLM2 的227个真实checkpoint张量全部为BF16，而当前编译器没有BF16 dtype路由；BERT baseline与结构化k1虽然config相似，后者第12层Q/K/V实为factors参数。新审计只读metadata并绑定文件摘要，13项拒绝/范围测试通过，不执行模型、不允许静默转换或非严格加载代替模型身份/完整性核验。
+
 ## 实施与退出条件
 
 1. **ME0 模型/输入固定**：记录 checkpoint、tokenizer/预处理、完整模型源码/配置、变更层与结构化参数、dtype/累加策略、输入及生成策略的摘要。不改层数、hidden size 或权重规模来取得通过。
