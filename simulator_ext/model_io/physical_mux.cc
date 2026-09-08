@@ -31,7 +31,10 @@ std::optional<Response> PhysicalMux::checked_response()const{
 }
 void PhysicalMux::advance(uint64_t now){
   check(!poisoned&&(!started||now>=cycle),"physical mux clock regressed or failed");
-  checked_response();
+  // External bus responses may be presented before the owner advances this
+  // edge. Validate an already-held response first, then use the new clock to
+  // validate a newly arrived response (without accepting a same-edge reply).
+  if(held)checked_response();
   if(!started||now!=cycle){cycle=now;started=true;physical.advance(now);++advances;}
   auto value=checked_response();
   if(value&&!held){held=value;++entries.at(owner->channel).arrived;}

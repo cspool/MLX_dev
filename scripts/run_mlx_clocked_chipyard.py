@@ -195,11 +195,12 @@ def main():
         extra_sources=[BRIDGE/"dpi.cc"]
         if args.large_memory:
             include.extend([WIDE,chipyard/"generators/testchipip/src/main/resources/testchipip/csrc"]);extra_sources.append(WIDE/"memory_dpi.cc")
+        json_cflags=subprocess.run(["pkg-config","--cflags","jsoncpp"],capture_output=True,text=True,check=True,timeout=15).stdout.strip()
         # This Verilator release appends its configured GNU++14 flag after
         # VM_USER_CFLAGS. Override that make variable too, without editing the
         # shared Verilator installation or downgrading the C++17 backend.
         command=["make","-C",str(chipyard/"sims/verilator"),f"CONFIG={config}","CFG_CXXFLAGS_STD_NEWEST=-std=gnu++17",f"RISCV={ROOT/'build/riscv-native'}",f"SBT={sbt}",
-            "EXTRA_SIM_SOURCES="+" ".join(map(str,extra_sources)),"EXTRA_SIM_CXXFLAGS=-std=c++17 "+" ".join(f"-I{p}" for p in include)+f" -include {header}",
+            "EXTRA_SIM_SOURCES="+" ".join(map(str,extra_sources)),"EXTRA_SIM_CXXFLAGS=-std=c++17 "+json_cflags+" "+" ".join(f"-I{p}" for p in include)+f" -include {header}",
             "EXTRA_SIM_REQS="+" ".join(map(str,[header,*extra_sources,*libraries(args.large_memory)])),"EXTRA_SIM_LDFLAGS="+" ".join(map(str,libraries(args.large_memory)))+" -ljsoncpp -ldl"+(" -lcrypto" if args.large_memory else ""),"-j4"]
         execute(command,out/"chipyard-build.log",3600)
         if before!=inputs(chipyard,args.large_memory):raise RuntimeError("clocked Chipyard build inputs changed")

@@ -1,0 +1,35 @@
+#include "host_runtime.h"
+#include "control_runtime.h"
+volatile uint64_t tohost __attribute__((section(".tohost"),aligned(64)))=0;
+volatile uint64_t fromhost __attribute__((section(".tohost"),aligned(64)))=0;
+extern const unsigned char pair_image[],control_image[];
+static void copy(uint64_t address,const unsigned char *source,uint64_t bytes){volatile unsigned char *out=(volatile unsigned char *)(uintptr_t)address;for(uint64_t i=0;i<bytes;++i)out[i]=source[i];}
+static int equal(uint64_t address,const unsigned char *expected,uint64_t bytes){const volatile unsigned char *in=(const volatile unsigned char *)(uintptr_t)address;for(uint64_t i=0;i<bytes;++i)if(in[i]!=expected[i])return 0;return 1;}
+static const unsigned char initial_0[]={0,0,0,0,0,0,0,69,0,0,0,0,0,0,0,0,0,70,0,66,0,0,0,0,0,0,0,0,0,68,0,0};
+static const unsigned char expected_0_0[]={0,0,0,0,0,70,0,0};
+static const unsigned char expected_0_1[]={0,0,0,0,0,74,0,0};
+static const unsigned char expected_1_0[]={0,0,0,0,0,0,0,68};
+static const unsigned char expected_1_1[]={0,0,0,0,0,0,0,72};
+static const unsigned char expected_2_0[]={0,69,0,0,0,0,0,0};
+static const unsigned char expected_2_1[]={0,73,0,0,0,0,0,0};
+static const unsigned char *const expected[][2]={{expected_0_0,expected_0_1},{expected_1_0,expected_1_1},{expected_2_0,expected_2_1}};
+static const uint64_t expected_tokens[][ 1 ]={{2},{3},{0}};
+static const unsigned char embeddings[]={0,60,0,0,0,0,0,0,0,0,0,60,0,0,0,0,0,0,0,0,0,60,0,0,0,0,0,0,0,0,0,60};
+int main(void){
+if(mlx_clocked_status(14)!=MLX_CLOCKED_ROCC_MAGIC)return 10;
+copy(UINT64_C(2164326656),initial_0,sizeof(initial_0));
+copy(UINT64_C(2164264960),pair_image,8832);
+uint64_t current=0;
+for(unsigned step=0;step<3;++step){
+if(current>=4)return 11;
+copy(UINT64_C(2164326400),embeddings+current*8,8);
+if(mlx_clocked_submit(UINT64_C(2164264960),8832)!=2)return 12;
+if(!equal(UINT64_C(2164326912),expected[step][0],8))return 13;
+if(!equal(UINT64_C(2164327168),expected[step][1],8))return 13;
+if(mlx_host_control_execute((const volatile mlx_host_control_command *)(const void *)control_image))return 14;
+const volatile uint64_t *tokens=(const volatile uint64_t *)(uintptr_t)UINT64_C(2165243904);
+current=tokens[0];
+for(unsigned i=0;i<1;++i)if(tokens[i]!=expected_tokens[step][i])return 15;
+}
+mlx_clocked_pass();return 0;
+}

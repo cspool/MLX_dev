@@ -44,4 +44,4 @@ PYTHONPATH="$PWD/src:$PWD" .venv/bin/python -m scripts.compile_mlx_block_pipelin
 
 给`mlx-ready-graph`的options显式设置`"tile_pipeline": true`，同时保持`overlap=true`和至少两个活动源描述符。`pipeline_whole_source_barrier=true`只用于同资源对照：消费者仍驻留并保留相同预约，但等待生产者全部块完成。
 
-事件profile尚未封装进新的真实CPU/RoCC系统ABI。后续已增加可选的[PE本地模板逐字装载](mlx-template-programming.md)，但主机/cache描述符传输、一般CDC、完整模型端到端、所有目标模型与输入、系统性能及RTL仍未完成。主工作树的两项完整运行继续使用原有冻结版本，不重新标为已经使用本实现。
+后续已增加可选的[PE本地模板逐字装载](mlx-template-programming.md)，并将有限双算子模式接入[真实CPU/RoCC系统ABI](mlx-pair-system-abi.md)。通用图CPU任务表的自动分组、一般CDC、完整模型端到端、所有目标模型与输入、系统性能及RTL仍未完成。主工作树的两项完整运行继续使用原有冻结版本，不重新标为已经使用本实现。

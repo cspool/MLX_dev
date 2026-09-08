@@ -2,6 +2,7 @@
 #include "matrix_wire.hh"
 #include "vector_wire.hh"
 #include "memory_wire.hh"
+#include "pair_runtime.hh"
 #include <memory>
 #include <optional>
 

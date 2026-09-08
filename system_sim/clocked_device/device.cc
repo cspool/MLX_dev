@@ -54,10 +54,12 @@ struct Device::Impl {
   std::optional<DecodedMatrix> matrix;
   std::optional<DecodedVector> vector;
   std::optional<DecodedMemory> memory;
+  std::optional<DecodedPair> pair;
   std::unique_ptr<AddressSpacePort> addresses;
   std::unique_ptr<matrix_schedule::Simulator> matrix_model;
   std::unique_ptr<vector_schedule::Simulator> vector_model;
   std::unique_ptr<memory_model::Simulator> memory_model;
+  std::unique_ptr<PairRuntime> pair_model;
   Json::Value kernel;
 
   explicit Impl(Options value):options(std::move(value)),transport(valid_bits(options.address_bits)){
@@ -66,8 +68,8 @@ struct Device::Impl {
   static unsigned valid_bits(unsigned bits){check(bits>=32&&bits<=63,"unsupported clocked device address width");return bits;}
   bool busy()const{return phase==Phase::Fetch||phase==Phase::Run||phase==Phase::Drain;}
   bool complete()const{return phase==Phase::Done||phase==Phase::Failed;}
-  void release_models(){matrix_model.reset();vector_model.reset();memory_model.reset();}
-  void release_decoded(){addresses.reset();matrix.reset();vector.reset();memory.reset();}
+  void release_models(){matrix_model.reset();vector_model.reset();memory_model.reset();pair_model.reset();}
+  void release_decoded(){addresses.reset();matrix.reset();vector.reset();memory.reset();pair.reset();}
   void fail(const std::string &message){
     if(error.empty())error=message;
     release_models();phase=transport.queue.idle()?Phase::Failed:Phase::Drain;
@@ -75,34 +77,36 @@ struct Device::Impl {
   }
   void launch(uint64_t address,uint64_t bytes,uint64_t id){
     check(!busy()&&transport.queue.idle(),"launch requires drained device");
-    check(bytes==sizeof(mlx_matrix_wire)||bytes==sizeof(mlx_vector_wire)||bytes==sizeof(mlx_memory_wire),"unregistered descriptor size");
+    check(bytes==sizeof(mlx_matrix_wire)||bytes==sizeof(mlx_vector_wire)||bytes==sizeof(mlx_memory_wire)||bytes==sizeof(mlx_pair_wire),"unregistered descriptor size");
     check(address%8==0&&address<=transport.address_limit&&bytes-1<=transport.address_limit-address,"descriptor address alignment/range invalid");
     release_models();release_decoded();kernel=Json::Value();transport.written.clear();error.clear();backend.clear();
     descriptor_address=address;descriptor_bytes=bytes;descriptor.assign(size_t(bytes),0);fetched=0;
     source=id;start=cycle;fetch_cycles=run_cycles=drain_cycles=0;++launches;phase=Phase::Fetch;
   }
   uint64_t expected_magic()const{
-    return descriptor_bytes==sizeof(mlx_matrix_wire)?MLX_MATRIX_WIRE_MAGIC:descriptor_bytes==sizeof(mlx_vector_wire)?MLX_VECTOR_WIRE_MAGIC:MLX_MEMORY_WIRE_MAGIC;
+    return descriptor_bytes==sizeof(mlx_matrix_wire)?MLX_MATRIX_WIRE_MAGIC:descriptor_bytes==sizeof(mlx_vector_wire)?MLX_VECTOR_WIRE_MAGIC:descriptor_bytes==sizeof(mlx_pair_wire)?MLX_PAIR_WIRE_MAGIC:MLX_MEMORY_WIRE_MAGIC;
   }
   void decode(){
     if(descriptor_bytes==sizeof(mlx_matrix_wire)){auto wire=std::make_unique<mlx_matrix_wire>();std::memcpy(wire.get(),descriptor.data(),sizeof(*wire));matrix=decode_matrix(*wire);backend="matrix";}
     else if(descriptor_bytes==sizeof(mlx_vector_wire)){auto wire=std::make_unique<mlx_vector_wire>();std::memcpy(wire.get(),descriptor.data(),sizeof(*wire));vector=decode_vector(*wire);backend="vector";}
+    else if(descriptor_bytes==sizeof(mlx_pair_wire)){auto wire=std::make_unique<mlx_pair_wire>();std::memcpy(wire.get(),descriptor.data(),sizeof(*wire));pair=decode_pair(*wire);backend="pair";}
     else{auto wire=std::make_unique<mlx_memory_wire>();std::memcpy(wire.get(),descriptor.data(),sizeof(*wire));memory=decode_memory(*wire);backend="memory";}
-    const auto &regions=matrix?matrix->regions:vector?vector->regions:memory->regions;
+    const auto &regions=matrix?matrix->regions:vector?vector->regions:pair?pair->regions:memory->regions;
     for(const auto &r:regions)if(r.bytes){
       check(r.base<=transport.address_limit&&r.bytes-1<=transport.address_limit-r.base,"tensor region exceeds system address width");
       check(r.base+r.bytes<=descriptor_address||r.base>=descriptor_address+descriptor_bytes,"tensor region overlaps live descriptor");
     }
     // The last descriptor beat commits on this edge. Backend local cycle zero
     // starts on the next edge, sharing the same monotonic transport clock.
-    addresses=std::make_unique<AddressSpacePort>(transport,tokens,regions,cycle+1);
+    if(pair)pair_model=std::make_unique<PairRuntime>(*pair,options.matrix,options.vector,transport,tokens,cycle+1,launches);
+    else addresses=std::make_unique<AddressSpacePort>(transport,tokens,regions,cycle+1);
     if(matrix)matrix_model=std::make_unique<matrix_schedule::Simulator>(matrix->program,matrix->a,matrix->b,matrix->has_bias?&matrix->bias:nullptr,matrix->transpose_b,
       matrix->a_batch,matrix->b_batch,matrix->m,matrix->n,matrix->k,matrix->output,matrix->output_batch,options.matrix,addresses.get());
     else if(vector)vector_model=std::make_unique<vector_schedule::Simulator>(vector->node,vector->values,vector->output,options.vector,addresses.get());
-    else memory_model=std::make_unique<memory_model::Simulator>(memory->node,memory->values,options.memory,addresses.get(),&memory->output);
+    else if(memory)memory_model=std::make_unique<memory_model::Simulator>(memory->node,memory->values,options.memory,addresses.get(),&memory->output);
     phase=Phase::Run;
   }
-  bool engine_done()const{return matrix_model?matrix_model->done():vector_model?vector_model->done():memory_model->done();}
+  bool engine_done()const{return matrix_model?matrix_model->done():vector_model?vector_model->done():pair_model?pair_model->done():memory_model->done();}
   void fetch(){
     if(auto response=transport.response()){
       check(!response->error,"descriptor memory response reported error");
@@ -113,6 +117,13 @@ struct Device::Impl {
     if(transport.request_ready())transport.submit({tokens.take(),descriptor_address+fetched,0,8,false});
   }
   void check_output()const{
+    if(pair){
+      const auto &producer=pair->producer_output(),&consumer=pair->consumer.output;const auto &regions=pair->producer_regions();
+      for(const auto &item:{std::make_pair(&producer,regions.back().base),std::make_pair(&consumer,pair->consumer.regions.back().base)}){
+        auto width=tensor_model::element_bytes(item.first->type);for(uint64_t index=0;index<item.first->numel();++index)check(transport.produced(item.second+item.first->position(index)*width,unsigned(width)),"pair output lacks acknowledged stores from this launch");
+      }
+      return;
+    }
     if(memory&&memory->view)return;
     const auto &out=matrix?matrix->output:vector?vector->output:memory->output;
     const auto &regions=matrix?matrix->regions:vector?vector->regions:memory->regions;
@@ -142,10 +153,10 @@ struct Device::Impl {
         check(cycle-start<options.max_busy_cycles,"clocked device exceeded busy cycle limit");
         if(phase==Phase::Fetch){fetch();}
         else{
-          if(!engine_done()){if(matrix_model)matrix_model->tick();else if(vector_model)vector_model->tick();else memory_model->tick();}
+          if(!engine_done()){if(matrix_model)matrix_model->tick();else if(vector_model)vector_model->tick();else if(pair_model)pair_model->tick();else memory_model->tick();}
           if(engine_done()){
             check(transport.queue.idle(),"backend completed before transport drained");check_output();
-            kernel=matrix_model?matrix_model->result():vector_model?vector_model->result():memory_model->result();
+            kernel=matrix_model?matrix_model->result():vector_model?vector_model->result():pair_model?pair_model->result():memory_model->result();
             release_models();release_decoded();phase=Phase::Done;
           }
         }
