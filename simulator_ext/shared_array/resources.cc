@@ -75,15 +75,18 @@ const Resources::Resident &Resources::resident(const Lease &lease,bool allow_ret
 void Resources::validate_lease(const Lease &lease)const{resident(lease);}
 std::optional<Offer> Resources::offer(Client id,unsigned pe)const{
   caller(id);check(pe<pes,"shared block PE outside mapped array");const auto &info=client_info(id);std::optional<unsigned> slot;
+  const auto key=std::make_pair(allocation_version,pe);
+  if(info.failed_offer&&*info.failed_offer==key)return std::nullopt;
+  auto unavailable=[&]()->std::optional<Offer>{info.failed_offer=key;return std::nullopt;};
   unsigned local=0,total=0;for(const auto &r:residents)if(r&&r->lease.client==id){++total;local+=r->lease.pe==pe;}
-  if(local>=info.per_pe_limit||total>=info.total_limit)return std::nullopt;
+  if(local>=info.per_pe_limit||total>=info.total_limit)return unavailable();
   for(unsigned s=0;s<config.contexts&&!slot;++s)if(!residents[pe*2+s])slot=s;
-  if(!slot)return std::nullopt;
-  auto rf=space(rf_owner[pe],info.rf),spm=space(spm_owner,info.spm);if(!rf||!spm)return std::nullopt;
+  if(!slot)return unavailable();
+  auto rf=space(rf_owner[pe],info.rf),spm=space(spm_owner,info.spm);if(!rf||!spm)return unavailable();
   std::optional<unsigned> code;
   for(const auto &t:templates[pe])if(t.key==info.key&&t.words==info.words){code=t.base;break;}
   if(!code)code=space(rom_owner[pe],unsigned(info.words.size()));
-  if(!code)return std::nullopt;
+  if(!code)return unavailable();
   return Offer{Lease{0,id,0,pe,*slot,*rf,info.rf,*spm,info.spm,*code,unsigned(info.words.size())},allocation_version};
 }
 std::optional<Lease> Resources::admit(const Offer &proposal,uint64_t block){

@@ -1,0 +1,610 @@
+{
+  "schema": "mlx_tensor_semantics_v1",
+  "timing_mode": "unmodeled",
+  "assets": {
+    "a": {
+      "kind": "literal",
+      "dtype": "f32",
+      "shape": [
+        2,
+        1,
+        3,
+        5
+      ],
+      "values": [
+        [
+          [
+            [
+              0.0,
+              0.0625,
+              0.125,
+              0.1875,
+              0.25
+            ],
+            [
+              0.3125,
+              0.375,
+              0.4375,
+              0.5,
+              0.5625
+            ],
+            [
+              0.625,
+              0.6875,
+              0.75,
+              0.8125,
+              0.875
+            ]
+          ]
+        ],
+        [
+          [
+            [
+              0.9375,
+              1.0,
+              1.0625,
+              1.125,
+              1.1875
+            ],
+            [
+              1.25,
+              1.3125,
+              1.375,
+              1.4375,
+              1.5
+            ],
+            [
+              1.5625,
+              1.625,
+              1.6875,
+              1.75,
+              1.8125
+            ]
+          ]
+        ]
+      ]
+    },
+    "w": {
+      "kind": "literal",
+      "dtype": "f32",
+      "shape": [
+        1,
+        4,
+        7,
+        5
+      ],
+      "values": [
+        [
+          [
+            [
+              0.0,
+              0.03125,
+              0.0625,
+              0.09375,
+              0.125
+            ],
+            [
+              0.15625,
+              0.1875,
+              0.21875,
+              0.25,
+              0.28125
+            ],
+            [
+              0.3125,
+              0.34375,
+              0.375,
+              0.40625,
+              0.4375
+            ],
+            [
+              0.46875,
+              0.5,
+              0.53125,
+              0.5625,
+              0.59375
+            ],
+            [
+              0.625,
+              0.65625,
+              0.6875,
+              0.71875,
+              0.75
+            ],
+            [
+              0.78125,
+              0.8125,
+              0.84375,
+              0.875,
+              0.90625
+            ],
+            [
+              0.9375,
+              0.96875,
+              1.0,
+              1.03125,
+              1.0625
+            ]
+          ],
+          [
+            [
+              1.09375,
+              1.125,
+              1.15625,
+              1.1875,
+              1.21875
+            ],
+            [
+              1.25,
+              1.28125,
+              1.3125,
+              1.34375,
+              1.375
+            ],
+            [
+              1.40625,
+              1.4375,
+              1.46875,
+              1.5,
+              1.53125
+            ],
+            [
+              1.5625,
+              1.59375,
+              1.625,
+              1.65625,
+              1.6875
+            ],
+            [
+              1.71875,
+              1.75,
+              1.78125,
+              1.8125,
+              1.84375
+            ],
+            [
+              1.875,
+              1.90625,
+              1.9375,
+              1.96875,
+              2.0
+            ],
+            [
+              2.03125,
+              2.0625,
+              2.09375,
+              2.125,
+              2.15625
+            ]
+          ],
+          [
+            [
+              2.1875,
+              2.21875,
+              2.25,
+              2.28125,
+              2.3125
+            ],
+            [
+              2.34375,
+              2.375,
+              2.40625,
+              2.4375,
+              2.46875
+            ],
+            [
+              2.5,
+              2.53125,
+              2.5625,
+              2.59375,
+              2.625
+            ],
+            [
+              2.65625,
+              2.6875,
+              2.71875,
+              2.75,
+              2.78125
+            ],
+            [
+              2.8125,
+              2.84375,
+              2.875,
+              2.90625,
+              2.9375
+            ],
+            [
+              2.96875,
+              3.0,
+              3.03125,
+              3.0625,
+              3.09375
+            ],
+            [
+              3.125,
+              3.15625,
+              3.1875,
+              3.21875,
+              3.25
+            ]
+          ],
+          [
+            [
+              3.28125,
+              3.3125,
+              3.34375,
+              3.375,
+              3.40625
+            ],
+            [
+              3.4375,
+              3.46875,
+              3.5,
+              3.53125,
+              3.5625
+            ],
+            [
+              3.59375,
+              3.625,
+              3.65625,
+              3.6875,
+              3.71875
+            ],
+            [
+              3.75,
+              3.78125,
+              3.8125,
+              3.84375,
+              3.875
+            ],
+            [
+              3.90625,
+              3.9375,
+              3.96875,
+              4.0,
+              4.03125
+            ],
+            [
+              4.0625,
+              4.09375,
+              4.125,
+              4.15625,
+              4.1875
+            ],
+            [
+              4.21875,
+              4.25,
+              4.28125,
+              4.3125,
+              4.34375
+            ]
+          ]
+        ]
+      ]
+    }
+  },
+  "nodes": [
+    {
+      "id": "v0",
+      "kind": "transpose",
+      "args": [
+        {
+          "value": "w"
+        },
+        -2,
+        -1
+      ],
+      "kwargs": {},
+      "output": {
+        "dtype": "f32",
+        "shape": [
+          1,
+          4,
+          5,
+          7
+        ]
+      },
+      "source_operator_id": 0,
+      "source_operator": "transpose",
+      "forward_id": 0,
+      "layer_idx": null,
+      "module_path": "<unit>",
+      "release": [],
+      "memory_program": {
+        "profile": "mlx-memory-plan-v1",
+        "kind": "transpose",
+        "mode": "view",
+        "selector": "linear",
+        "reason": "checked_affine_view",
+        "input_layouts": {
+          "w": {
+            "dtype": "f32",
+            "shape": [
+              1,
+              4,
+              7,
+              5
+            ],
+            "strides": [
+              140,
+              35,
+              5,
+              1
+            ],
+            "offset": 0,
+            "root": "w",
+            "storage_elements": 140
+          }
+        },
+        "output_layout": {
+          "dtype": "f32",
+          "shape": [
+            1,
+            4,
+            5,
+            7
+          ],
+          "strides": [
+            140,
+            35,
+            1,
+            5
+          ],
+          "offset": 0,
+          "root": "w",
+          "storage_elements": 140
+        },
+        "words": [],
+        "register_count": 4,
+        "register_bytes": 8,
+        "staging_bytes": 128,
+        "chunk_bytes": 64,
+        "same_reference_device": true,
+        "physical_dma_verified": false
+      }
+    },
+    {
+      "id": "v1",
+      "kind": "matmul",
+      "args": [
+        {
+          "value": "a"
+        },
+        {
+          "value": "v0"
+        }
+      ],
+      "kwargs": {},
+      "output": {
+        "dtype": "f32",
+        "shape": [
+          2,
+          4,
+          3,
+          7
+        ]
+      },
+      "source_operator_id": 1,
+      "source_operator": "matmul",
+      "forward_id": 0,
+      "layer_idx": null,
+      "module_path": "<unit>",
+      "release": [],
+      "matrix_program": {
+        "profile": "mlx-matrix-f32-kasc-v1",
+        "input_dtype": "f32",
+        "output_dtype": "f32",
+        "has_bias": false,
+        "tile_m": 2,
+        "tile_n": 16,
+        "tile_k": 64,
+        "rf_vectors": 16,
+        "rf_vector_bytes": 64,
+        "spm_bytes": 8192,
+        "rom_words": 32,
+        "rf_vectors_used": 6,
+        "spm_bytes_used": 4672,
+        "prologue": [
+          1025,
+          1049857
+        ],
+        "body": [
+          2097418,
+          9,
+          66053,
+          148486,
+          1048585,
+          1114629,
+          1201414
+        ],
+        "epilogue": [
+          16395,
+          1069067
+        ],
+        "numeric_contract": "K ascending; MUL.F32.RNE then ADD.F32.RNE; no contraction; final output cast RNE",
+        "target_status": "reconstructed_functional_microcode_timing_and_system_pending"
+      }
+    },
+    {
+      "id": "v2",
+      "kind": "neg",
+      "args": [
+        {
+          "value": "v1"
+        }
+      ],
+      "kwargs": {},
+      "output": {
+        "dtype": "f32",
+        "shape": [
+          2,
+          4,
+          3,
+          7
+        ]
+      },
+      "source_operator_id": 2,
+      "source_operator": "neg",
+      "forward_id": 0,
+      "layer_idx": null,
+      "module_path": "<unit>",
+      "release": [],
+      "vector_program": {
+        "profile": "mlx-vector-fp32-v1",
+        "kind": "neg",
+        "input_dtypes": [
+          "f32"
+        ],
+        "output_dtype": "f32",
+        "width": null,
+        "lanes": 16,
+        "trans_lanes": 4,
+        "rf_vectors": 16,
+        "rf_vector_bytes": 64,
+        "rf_vectors_used": 8,
+        "spm_bytes": 8192,
+        "spm_bytes_used": 320,
+        "rom_words": 32,
+        "rom": [
+          9,
+          15,
+          11
+        ],
+        "phases": {
+          "body": [
+            0,
+            1,
+            2
+          ]
+        },
+        "constants": [],
+        "reduction": null,
+        "timing_verified": false,
+        "system_verified": false
+      }
+    },
+    {
+      "id": "v3",
+      "kind": "argmax",
+      "args": [
+        {
+          "value": "v2"
+        },
+        -1
+      ],
+      "kwargs": {},
+      "output": {
+        "dtype": "i64",
+        "shape": [
+          2,
+          4,
+          3
+        ]
+      },
+      "source_operator_id": 3,
+      "source_operator": "argmax",
+      "forward_id": 0,
+      "layer_idx": null,
+      "module_path": "<unit>",
+      "release": [],
+      "control_program": {
+        "profile": "mlx-controller-rv64-leaf-v1",
+        "kind": "argmax",
+        "input_dtype": "f32",
+        "xlen": 64,
+        "flen": 64,
+        "gpr_count": 32,
+        "fpr_count": 32,
+        "phases": {
+          "init": [
+            547685843,
+            2579,
+            2707
+          ],
+          "advance": [
+            1739411
+          ],
+          "compare": [
+            3758429907,
+            805762707,
+            13645491,
+            3758462803,
+            805795603,
+            14694195,
+            1525523,
+            15136435,
+            2695206483,
+            14050867
+          ],
+          "select": [
+            394851,
+            690707,
+            547685843
+          ]
+        },
+        "memory_binding": "descriptor_bound_not_riscv_load_store_execution",
+        "rocket_execution_verified": false,
+        "timing_verified": false
+      }
+    }
+  ],
+  "outputs": [
+    {
+      "forward_id": 0,
+      "logits": "v2",
+      "token": "v3"
+    }
+  ],
+  "matrix_backend": "scheduled",
+  "matrix_schedule_options": {
+    "trace": false
+  },
+  "vector_backend": "scheduled",
+  "vector_schedule_options": {
+    "trace": false
+  },
+  "memory_backend": "scheduled",
+  "memory_schedule_options": {
+    "trace": false
+  },
+  "control_backend": "scheduled",
+  "control_schedule_options": {
+    "trace": false
+  },
+  "block_pipeline_plan": {
+    "profile": "mlx-bounded-pair-events-v1",
+    "event_slots": 2,
+    "pairs": [
+      {
+        "producer": 1,
+        "consumer": 2,
+        "producer_source": 1,
+        "consumer_source": 2,
+        "value": "v1",
+        "mapping": {
+          "kind": "matrix",
+          "elements": 168,
+          "m": 3,
+          "n": 7,
+          "batches": 8
+        },
+        "producer_blocks": 16,
+        "consumer_blocks": 11,
+        "producer_resources": {
+          "rf": 6,
+          "spm": 73,
+          "rom": 11
+        },
+        "consumer_resources": {
+          "rf": 8,
+          "spm": 5,
+          "rom": 3
+        },
+        "producer_context_limit": 16,
+        "consumer_context_limit": 11
+      }
+    ],
+    "rejected_pairs": [],
+    "unselected_sources": "existing_whole_source_execution_not_numeric_fallback"
+  }
+}

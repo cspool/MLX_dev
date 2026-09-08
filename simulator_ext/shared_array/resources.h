@@ -88,6 +88,9 @@ private:
     uint64_t source=UINT64_MAX,last_cycle=UINT64_MAX;
     bool attached=true;
     unsigned per_pe_limit=2,total_limit=32;
+    // Host-only memoization of a failed physical-capacity query. Register/SPM
+    // values, template loading and issue readiness are not cached here.
+    mutable std::optional<std::pair<uint64_t,unsigned>> failed_offer=std::nullopt;
   };
   struct Resident {Lease lease;uint64_t template_id=0;bool retiring=false;};
   struct Template {uint64_t id=0;std::string key;std::vector<uint32_t> words;unsigned base=0,refs=0,loaded=0;uint64_t requested_at=0,ready_at=0;};
