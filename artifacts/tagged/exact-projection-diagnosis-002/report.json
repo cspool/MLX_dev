@@ -1,0 +1,338 @@
+{
+  "classification": "same_input_full_projection_exact_diagnosis_not_full_model_execution_or_acceptance",
+  "sources": {
+    "scripts/diagnose_mlx_exact_projections.py": "2eb0c05413077ce2b6340bc85d2928a26f4d34725fd33a05d911617a4c692e39",
+    "scripts/run_mlx_tensor_semantics.py": "9f6680de7f570c6ff61ea8237192beb83aadd81f035635ac97f3b6a260d766e2",
+    "simulator_ext/exact_numeric/CMakeLists.txt": "75e728c8b98cf28fd14652f82f6f0a59d0fad14de74206274ed23efe6bffb904",
+    "simulator_ext/exact_numeric/exact_f16_dot.cc": "f2004ad1770ca44ddc35a2a14fbfbe81892e350a7044bd292f979247859d7f42"
+  },
+  "files": {
+    "/workspace/mlx-host-opt-qkQj9k/scripts/diagnose_mlx_exact_projections.py": "2eb0c05413077ce2b6340bc85d2928a26f4d34725fd33a05d911617a4c692e39",
+    "/workspace/mlx-host-opt-qkQj9k/scripts/run_mlx_tensor_semantics.py": "9f6680de7f570c6ff61ea8237192beb83aadd81f035635ac97f3b6a260d766e2",
+    "/workspace/mlx-host-opt-qkQj9k/simulator_ext/exact_numeric/CMakeLists.txt": "75e728c8b98cf28fd14652f82f6f0a59d0fad14de74206274ed23efe6bffb904",
+    "/workspace/mlx-host-opt-qkQj9k/simulator_ext/exact_numeric/exact_f16_dot.cc": "f2004ad1770ca44ddc35a2a14fbfbe81892e350a7044bd292f979247859d7f42",
+    "/workspace/MLX_dev/artifacts/tagged/model-e2e/llama2-reference-005/inventory.json": "f0d10f739353940772f024462525ca40e09f1e50f0ec950ccf625f878af51b08",
+    "/workspace/MLX_dev/artifacts/tagged/model-e2e/llama2-reference-005/diagnostics/observations.json": "c60ba63fce46bd9dde601321a091c542121644c3ef3d07436c0c40e766f6bf81",
+    "/workspace/MLX_dev/artifacts/tagged/model-e2e/llama2-native-003/native/result.json": "ad654d61edb3a054b95bdcf954a911569a039e79571f4131b67ab12aa9219a9b",
+    "/workspace/MLX_dev/artifacts/tagged/model-e2e/llama2-microcode-001/native/result.json": "b3b6cefe702b18a88369d106ff63b35788fe7e84f3eabcde198ab6cfb0c8ba07",
+    "/workspace/MLX_dev/artifacts/tagged/model-e2e/llama2-native-003/program.json": "69f3e5ef1e5a784c61b614fc80ad2d5797e199ba3b9186d986316af770a1f9bc",
+    "/workspace/MLX_dev/artifacts/tagged/model-e2e/llama2-microcode-001/program.json": "e6087cd79647548110d2b199fcf5eec601ba148c16178bd7afbb3c436969b729",
+    "/workspace/MLX_dev/artifacts/tagged/model-e2e/llama2-native-003/comparison.json": "5b7ce97d54cce6f468a4d2a25949b204f7be5accfb4cd93e6488f970d63cdc47",
+    "/workspace/MLX_dev/artifacts/tagged/model-e2e/llama2-native-003/gpu-numerical-diagnosis.json": "f8c68de2b18c0e309660ad3a4c68e66eb91e0abc427d7f6ec38eede20007f7fb",
+    "/workspace/MLX_dev/artifacts/tagged/model-e2e/llama2-native-003/native/v49.bin": "8460efbd6aec6d2361e15d02d465afe60cfb5e6d65e299fd1aca2563c723606b",
+    "/workspace/MLX_dev/artifacts/tagged/model-e2e/llama2-native-003/native/v50.bin": "1a8ba09c06b1c1bdd7863d852a171377688343ee189049519e3a4f7d6ea5ad7a",
+    "/workspace/MLX_dev/artifacts/tagged/model-e2e/llama2-native-003/native/v53.bin": "3cd7442eea30c6501cbd6466b1ccd8799199b9b66038b36fb4f107a87e439c42",
+    "/workspace/MLX_dev/artifacts/tagged/model-e2e/llama2-native-003/native/v56.bin": "a51f7787979fbb8355b1a16d43a61a47b8c00122d3dad2992af92fb5bc194b44",
+    "/workspace/MLX_dev/artifacts/tagged/model-e2e/llama2-microcode-001/comparison.json": "78408bdc7ab499d3e401af6bba79d4d13c6da9cfa726b198d7684f04f5a55220",
+    "/workspace/MLX_dev/artifacts/tagged/model-e2e/llama2-microcode-001/kasc-numerical-diagnosis.json": "3a9205036a400f2785a90f41ff88564c281ecf806bbc1598df7cd33f317d97e4",
+    "/workspace/MLX_dev/artifacts/tagged/model-e2e/llama2-microcode-001/native/v49.bin": "8460efbd6aec6d2361e15d02d465afe60cfb5e6d65e299fd1aca2563c723606b",
+    "/workspace/MLX_dev/artifacts/tagged/model-e2e/llama2-microcode-001/native/v50.bin": "4d9d03e5808006e759c510abcbc09510075996985c4b1fe267a01bf75747ac41",
+    "/workspace/MLX_dev/artifacts/tagged/model-e2e/llama2-microcode-001/native/v53.bin": "26d7e9c6be3649e562cd7fbd0a20e60369c8cafcfbbee41d8948f8c12936310e",
+    "/workspace/MLX_dev/artifacts/tagged/model-e2e/llama2-microcode-001/native/v56.bin": "da85fb7ec4f50e2959b6bd2f1d4e47e4d9dfd7357932e7ee0f78eaf4bd3612fa",
+    "/workspace/MLX_dev/artifacts/tagged/model-e2e/llama2-reference-005/diagnostics/v49.bin": "8460efbd6aec6d2361e15d02d465afe60cfb5e6d65e299fd1aca2563c723606b",
+    "/workspace/mlx-host-opt-qkQj9k/build/mlx-exact-numeric/mlx-exact-f16-dot": "95941b4020359d0b604050d0b9fc7e6d2f9d1c2183561d986a8c9d44ce93f7fd",
+    "/workspace/MLX_dev/third_party/models/llama2-7b-hf-msmirror/model-00001-of-00002.safetensors": "4ec71fd53e99766de38f24753b30c9e8942630e9e576a1ba27b0ec531e87be41",
+    "/workspace/MLX_dev/artifacts/tagged/model-e2e/llama2-reference-005/diagnostics/v50.bin": "ee888ef7c8e84e389a4c243dda38663a4fda8a24b6384ccbcbd6fe906a9fc69b",
+    "/workspace/mlx-host-opt-qkQj9k/artifacts/tagged/exact-projection-diagnosis-002/q/job.json": "6fe351244357fcf4948d34190f8789c47d3044e658f62c9c2170c78a40d4cc61",
+    "/workspace/mlx-host-opt-qkQj9k/artifacts/tagged/exact-projection-diagnosis-002/q/exact/report.json": "4bc61a5a356bd814cef66bed1c3ad2071379ffbf85b72b47de8ceee11ff17988",
+    "/workspace/mlx-host-opt-qkQj9k/artifacts/tagged/exact-projection-diagnosis-002/q/exact/exact.f16.bin": "fe303dc9c901853dd7ed8edbcbdd2ad8e322ff87fa4f01b32165d48cefab7cef",
+    "/workspace/mlx-host-opt-qkQj9k/artifacts/tagged/exact-projection-diagnosis-002/q/exact/kasc.f16.bin": "4d9d03e5808006e759c510abcbc09510075996985c4b1fe267a01bf75747ac41",
+    "/workspace/MLX_dev/artifacts/tagged/model-e2e/llama2-reference-005/diagnostics/v53.bin": "2412f89671da18ffe21b595ca2b8d74785ed4a2f6df40d18758489b404b6814e",
+    "/workspace/mlx-host-opt-qkQj9k/artifacts/tagged/exact-projection-diagnosis-002/k/job.json": "5a05aa4e29d7bd042f7c77abd6aea6b1b6976dffa8478c9e2adccb59a67a477b",
+    "/workspace/mlx-host-opt-qkQj9k/artifacts/tagged/exact-projection-diagnosis-002/k/exact/report.json": "4bc61a5a356bd814cef66bed1c3ad2071379ffbf85b72b47de8ceee11ff17988",
+    "/workspace/mlx-host-opt-qkQj9k/artifacts/tagged/exact-projection-diagnosis-002/k/exact/exact.f16.bin": "ba82e3e5167d482799a3bb3d28ff294a7ed8a630e771ae54403d62636ab8fe2e",
+    "/workspace/mlx-host-opt-qkQj9k/artifacts/tagged/exact-projection-diagnosis-002/k/exact/kasc.f16.bin": "26d7e9c6be3649e562cd7fbd0a20e60369c8cafcfbbee41d8948f8c12936310e",
+    "/workspace/MLX_dev/artifacts/tagged/model-e2e/llama2-reference-005/diagnostics/v56.bin": "568581c5c23c2f1229af8594f263aba18094b77cd0b8af2cefac8ec8068cc244",
+    "/workspace/mlx-host-opt-qkQj9k/artifacts/tagged/exact-projection-diagnosis-002/v/job.json": "02e6297021f1afa1bf9ae6f252c0442fc6443890d9bce2a9ccd2a60c35ed30ad",
+    "/workspace/mlx-host-opt-qkQj9k/artifacts/tagged/exact-projection-diagnosis-002/v/exact/report.json": "4bc61a5a356bd814cef66bed1c3ad2071379ffbf85b72b47de8ceee11ff17988",
+    "/workspace/mlx-host-opt-qkQj9k/artifacts/tagged/exact-projection-diagnosis-002/v/exact/exact.f16.bin": "eb38df242ae00e81ebd943c08f9e2c41f358575018d2057f11ba541ef608efe9",
+    "/workspace/mlx-host-opt-qkQj9k/artifacts/tagged/exact-projection-diagnosis-002/v/exact/kasc.f16.bin": "da85fb7ec4f50e2959b6bd2f1d4e47e4d9dfd7357932e7ee0f78eaf4bd3612fa"
+  },
+  "binary_sha256": "95941b4020359d0b604050d0b9fc7e6d2f9d1c2183561d986a8c9d44ce93f7fd",
+  "reference_runtime": {
+    "python": "3.12.13 | packaged by Anaconda, Inc. | (main, Mar 19 2026, 20:20:58) [GCC 14.3.0]",
+    "torch": "2.13.0+cu130",
+    "transformers": "5.15.0",
+    "dtype": "float16",
+    "attention": "eager",
+    "device": "cuda:1",
+    "deterministic_algorithms": true,
+    "tf32": false,
+    "fp16_reduced_precision_reduction": false,
+    "bf16_reduced_precision_reduction": false
+  },
+  "projections": [
+    {
+      "source_operator_id": 50,
+      "projection": "q",
+      "same_input_sha256": "8460efbd6aec6d2361e15d02d465afe60cfb5e6d65e299fd1aca2563c723606b",
+      "weight_parameter": "model.layers.0.self_attn.q_proj.weight",
+      "elements": 32768,
+      "exact_products": 134217728,
+      "gpu_vs_exact": {
+        "elements": 32768,
+        "bitwise_changed": 362,
+        "value_changed": 362,
+        "max_abs_error": 0.001953125,
+        "max_binary16_steps": 46,
+        "binary16_step_histogram": {
+          "0": 32406,
+          "1": 344,
+          "2": 5,
+          "3": 6,
+          "4": 1,
+          "6": 2,
+          "7": 2,
+          "17": 1,
+          "46": 1
+        },
+        "actual_sha256": "ee888ef7c8e84e389a4c243dda38663a4fda8a24b6384ccbcbd6fe906a9fc69b",
+        "oracle_sha256": "fe303dc9c901853dd7ed8edbcbdd2ad8e322ff87fa4f01b32165d48cefab7cef"
+      },
+      "blas_vs_exact": {
+        "elements": 32768,
+        "bitwise_changed": 40,
+        "value_changed": 40,
+        "max_abs_error": 0.00048828125,
+        "max_binary16_steps": 5,
+        "binary16_step_histogram": {
+          "0": 32728,
+          "1": 38,
+          "3": 1,
+          "5": 1
+        },
+        "actual_sha256": "1a8ba09c06b1c1bdd7863d852a171377688343ee189049519e3a4f7d6ea5ad7a",
+        "oracle_sha256": "fe303dc9c901853dd7ed8edbcbdd2ad8e322ff87fa4f01b32165d48cefab7cef"
+      },
+      "microcode_vs_exact": {
+        "elements": 32768,
+        "bitwise_changed": 64,
+        "value_changed": 64,
+        "max_abs_error": 0.001953125,
+        "max_binary16_steps": 3,
+        "binary16_step_histogram": {
+          "0": 32704,
+          "1": 63,
+          "3": 1
+        },
+        "actual_sha256": "4d9d03e5808006e759c510abcbc09510075996985c4b1fe267a01bf75747ac41",
+        "oracle_sha256": "fe303dc9c901853dd7ed8edbcbdd2ad8e322ff87fa4f01b32165d48cefab7cef"
+      },
+      "microcode_vs_independent_kasc": {
+        "elements": 32768,
+        "bitwise_changed": 0,
+        "value_changed": 0,
+        "max_abs_error": 0.0,
+        "max_binary16_steps": 0,
+        "binary16_step_histogram": {
+          "0": 32768
+        },
+        "actual_sha256": "4d9d03e5808006e759c510abcbc09510075996985c4b1fe267a01bf75747ac41",
+        "oracle_sha256": "4d9d03e5808006e759c510abcbc09510075996985c4b1fe267a01bf75747ac41"
+      },
+      "gpu_vs_microcode": {
+        "elements": 32768,
+        "bitwise_changed": 351,
+        "value_changed": 351,
+        "max_abs_error": 0.001953125,
+        "max_binary16_steps": 43,
+        "binary16_step_histogram": {
+          "0": 32417,
+          "1": 333,
+          "2": 4,
+          "3": 6,
+          "4": 1,
+          "5": 1,
+          "6": 1,
+          "7": 2,
+          "8": 1,
+          "18": 1,
+          "43": 1
+        },
+        "actual_sha256": "ee888ef7c8e84e389a4c243dda38663a4fda8a24b6384ccbcbd6fe906a9fc69b",
+        "oracle_sha256": "4d9d03e5808006e759c510abcbc09510075996985c4b1fe267a01bf75747ac41"
+      }
+    },
+    {
+      "source_operator_id": 53,
+      "projection": "k",
+      "same_input_sha256": "8460efbd6aec6d2361e15d02d465afe60cfb5e6d65e299fd1aca2563c723606b",
+      "weight_parameter": "model.layers.0.self_attn.k_proj.weight",
+      "elements": 32768,
+      "exact_products": 134217728,
+      "gpu_vs_exact": {
+        "elements": 32768,
+        "bitwise_changed": 390,
+        "value_changed": 390,
+        "max_abs_error": 0.001953125,
+        "max_binary16_steps": 74,
+        "binary16_step_histogram": {
+          "0": 32378,
+          "1": 366,
+          "2": 9,
+          "3": 5,
+          "4": 2,
+          "6": 1,
+          "7": 1,
+          "8": 1,
+          "9": 1,
+          "10": 1,
+          "12": 1,
+          "16": 1,
+          "74": 1
+        },
+        "actual_sha256": "2412f89671da18ffe21b595ca2b8d74785ed4a2f6df40d18758489b404b6814e",
+        "oracle_sha256": "ba82e3e5167d482799a3bb3d28ff294a7ed8a630e771ae54403d62636ab8fe2e"
+      },
+      "blas_vs_exact": {
+        "elements": 32768,
+        "bitwise_changed": 22,
+        "value_changed": 22,
+        "max_abs_error": 0.00048828125,
+        "max_binary16_steps": 2,
+        "binary16_step_histogram": {
+          "0": 32746,
+          "1": 21,
+          "2": 1
+        },
+        "actual_sha256": "3cd7442eea30c6501cbd6466b1ccd8799199b9b66038b36fb4f107a87e439c42",
+        "oracle_sha256": "ba82e3e5167d482799a3bb3d28ff294a7ed8a630e771ae54403d62636ab8fe2e"
+      },
+      "microcode_vs_exact": {
+        "elements": 32768,
+        "bitwise_changed": 62,
+        "value_changed": 62,
+        "max_abs_error": 0.0009765625,
+        "max_binary16_steps": 7,
+        "binary16_step_histogram": {
+          "0": 32706,
+          "1": 58,
+          "2": 2,
+          "4": 1,
+          "7": 1
+        },
+        "actual_sha256": "26d7e9c6be3649e562cd7fbd0a20e60369c8cafcfbbee41d8948f8c12936310e",
+        "oracle_sha256": "ba82e3e5167d482799a3bb3d28ff294a7ed8a630e771ae54403d62636ab8fe2e"
+      },
+      "microcode_vs_independent_kasc": {
+        "elements": 32768,
+        "bitwise_changed": 0,
+        "value_changed": 0,
+        "max_abs_error": 0.0,
+        "max_binary16_steps": 0,
+        "binary16_step_histogram": {
+          "0": 32768
+        },
+        "actual_sha256": "26d7e9c6be3649e562cd7fbd0a20e60369c8cafcfbbee41d8948f8c12936310e",
+        "oracle_sha256": "26d7e9c6be3649e562cd7fbd0a20e60369c8cafcfbbee41d8948f8c12936310e"
+      },
+      "gpu_vs_microcode": {
+        "elements": 32768,
+        "bitwise_changed": 395,
+        "value_changed": 395,
+        "max_abs_error": 0.001953125,
+        "max_binary16_steps": 67,
+        "binary16_step_histogram": {
+          "0": 32373,
+          "1": 372,
+          "2": 9,
+          "3": 3,
+          "4": 1,
+          "5": 2,
+          "6": 1,
+          "8": 2,
+          "11": 1,
+          "12": 1,
+          "14": 1,
+          "15": 1,
+          "67": 1
+        },
+        "actual_sha256": "2412f89671da18ffe21b595ca2b8d74785ed4a2f6df40d18758489b404b6814e",
+        "oracle_sha256": "26d7e9c6be3649e562cd7fbd0a20e60369c8cafcfbbee41d8948f8c12936310e"
+      }
+    },
+    {
+      "source_operator_id": 56,
+      "projection": "v",
+      "same_input_sha256": "8460efbd6aec6d2361e15d02d465afe60cfb5e6d65e299fd1aca2563c723606b",
+      "weight_parameter": "model.layers.0.self_attn.v_proj.weight",
+      "elements": 32768,
+      "exact_products": 134217728,
+      "gpu_vs_exact": {
+        "elements": 32768,
+        "bitwise_changed": 731,
+        "value_changed": 731,
+        "max_abs_error": 0.0001220703125,
+        "max_binary16_steps": 6,
+        "binary16_step_histogram": {
+          "0": 32037,
+          "1": 722,
+          "2": 8,
+          "6": 1
+        },
+        "actual_sha256": "568581c5c23c2f1229af8594f263aba18094b77cd0b8af2cefac8ec8068cc244",
+        "oracle_sha256": "eb38df242ae00e81ebd943c08f9e2c41f358575018d2057f11ba541ef608efe9"
+      },
+      "blas_vs_exact": {
+        "elements": 32768,
+        "bitwise_changed": 56,
+        "value_changed": 56,
+        "max_abs_error": 3.0517578125e-05,
+        "max_binary16_steps": 1,
+        "binary16_step_histogram": {
+          "0": 32712,
+          "1": 56
+        },
+        "actual_sha256": "a51f7787979fbb8355b1a16d43a61a47b8c00122d3dad2992af92fb5bc194b44",
+        "oracle_sha256": "eb38df242ae00e81ebd943c08f9e2c41f358575018d2057f11ba541ef608efe9"
+      },
+      "microcode_vs_exact": {
+        "elements": 32768,
+        "bitwise_changed": 93,
+        "value_changed": 93,
+        "max_abs_error": 0.0001220703125,
+        "max_binary16_steps": 1,
+        "binary16_step_histogram": {
+          "0": 32675,
+          "1": 93
+        },
+        "actual_sha256": "da85fb7ec4f50e2959b6bd2f1d4e47e4d9dfd7357932e7ee0f78eaf4bd3612fa",
+        "oracle_sha256": "eb38df242ae00e81ebd943c08f9e2c41f358575018d2057f11ba541ef608efe9"
+      },
+      "microcode_vs_independent_kasc": {
+        "elements": 32768,
+        "bitwise_changed": 0,
+        "value_changed": 0,
+        "max_abs_error": 0.0,
+        "max_binary16_steps": 0,
+        "binary16_step_histogram": {
+          "0": 32768
+        },
+        "actual_sha256": "da85fb7ec4f50e2959b6bd2f1d4e47e4d9dfd7357932e7ee0f78eaf4bd3612fa",
+        "oracle_sha256": "da85fb7ec4f50e2959b6bd2f1d4e47e4d9dfd7357932e7ee0f78eaf4bd3612fa"
+      },
+      "gpu_vs_microcode": {
+        "elements": 32768,
+        "bitwise_changed": 733,
+        "value_changed": 733,
+        "max_abs_error": 0.0001220703125,
+        "max_binary16_steps": 6,
+        "binary16_step_histogram": {
+          "0": 32035,
+          "1": 726,
+          "2": 5,
+          "3": 1,
+          "6": 1
+        },
+        "actual_sha256": "568581c5c23c2f1229af8594f263aba18094b77cd0b8af2cefac8ec8068cc244",
+        "oracle_sha256": "da85fb7ec4f50e2959b6bd2f1d4e47e4d9dfd7357932e7ee0f78eaf4bd3612fa"
+      }
+    }
+  ],
+  "oracle": "exact integer dot over finite FP16 inputs; final IEEE binary16 RN ties-to-even",
+  "model_outputs_injected": false,
+  "original_gpu_tolerance_changed": false,
+  "full_model_execution_verified": false,
+  "mlx_system_verified": false,
+  "inference_performance_eligible": false
+}

@@ -1,0 +1,8 @@
+cmake_minimum_required(VERSION 3.16)
+project(mlx_exact_numeric_diagnostics LANGUAGES CXX)
+set(CMAKE_CXX_STANDARD 17)
+find_package(PkgConfig REQUIRED)
+pkg_check_modules(JSONCPP REQUIRED IMPORTED_TARGET jsoncpp)
+add_executable(mlx-exact-f16-dot exact_f16_dot.cc)
+target_link_libraries(mlx-exact-f16-dot PRIVATE PkgConfig::JSONCPP)
+target_compile_options(mlx-exact-f16-dot PRIVATE -Wall -Wextra -Werror -ffp-contract=off)

@@ -1,0 +1,112 @@
+{
+  "classification": "exact_integer_diagnostic_validation_not_full_model_acceptance",
+  "sources": {
+    "scripts/verify_mlx_exact_numeric.py": "6eee37669ce2d331a2c97d827f1747b9ca2b4ed1dfcae1adb871213096a18e12",
+    "scripts/diagnose_mlx_exact_projections.py": "2eb0c05413077ce2b6340bc85d2928a26f4d34725fd33a05d911617a4c692e39",
+    "tests/test_exact_f16_dot.py": "f605383891bcdf56901c7395c1f25e17ae5223e39cb55b1248d2cdc26686dcca",
+    "simulator_ext/exact_numeric/exact_f16_dot.cc": "f2004ad1770ca44ddc35a2a14fbfbe81892e350a7044bd292f979247859d7f42",
+    "simulator_ext/exact_numeric/CMakeLists.txt": "75e728c8b98cf28fd14652f82f6f0a59d0fad14de74206274ed23efe6bffb904",
+    "src/mlxsim/model_matrix_reference.py": "acb81f04ed4a11359d909c0086b9ca31e31890879e84ecae38cacf3f0cc39554",
+    "scripts/run_mlx_tensor_semantics.py": "9f6680de7f570c6ff61ea8237192beb83aadd81f035635ac97f3b6a260d766e2"
+  },
+  "tests": 14,
+  "regression_xml_sha256": "4b24c5de5bf73c6fb1a7d5b47b9a84eeebfe7f84654381f8a11babacd8df0ef6",
+  "sanitizer_binary_sha256": "7f4168555f3078c0c659fd5e3bbdf54008d76d273ecc24efa317c8d06ba8cc66",
+  "cases": [
+    {
+      "job": "pytest/test_all_halfway_points_and_ad0/midpoints/job.json",
+      "job_sha256": "e5d61c980af59ffe378986cee24401d4c95ce81d1281310cbca73c69b9373bed",
+      "exit_code": 0,
+      "expected_report_sha256": "85a80ca5deb8ddc3d408ed07a05ecfacbd26ae06a48e6ee603ec27e5c216fece",
+      "sanitizer_report_sha256": "85a80ca5deb8ddc3d408ed07a05ecfacbd26ae06a48e6ee603ec27e5c216fece"
+    },
+    {
+      "job": "pytest/test_all_halfway_points_and_ad1/midpoints/job.json",
+      "job_sha256": "37ef153c538196467324576b5fbc58a09937300bd39fe96b6b9d94ee3f4a4e8c",
+      "exit_code": 0,
+      "expected_report_sha256": "f7a06241d361a6e6387647cc990ed614a4d98e3f0525640f4485f998a5622db6",
+      "sanitizer_report_sha256": "f7a06241d361a6e6387647cc990ed614a4d98e3f0525640f4485f998a5622db6"
+    },
+    {
+      "job": "pytest/test_every_finite_half_roundtr0/all-half/job.json",
+      "job_sha256": "8d72410971e4a1d4b47059b720cb000906a6dfa575dc3c8278ff72c93cf3ea8a",
+      "exit_code": 0,
+      "expected_report_sha256": "7eb01d350464a5c4f8aafb85412cc09f0ad7a73df562c3119874a51db571e225",
+      "sanitizer_report_sha256": "7eb01d350464a5c4f8aafb85412cc09f0ad7a73df562c3119874a51db571e225"
+    },
+    {
+      "job": "pytest/test_exact_dot_matches_python_0/dot/job.json",
+      "job_sha256": "010fca129ec42ee4765e7a813bcc0bfc9736f9e982e901e5335d4ca6771898e2",
+      "exit_code": 0,
+      "expected_report_sha256": "e9bac780ae757811dc0749af238446ef957bb22157b2011cfb973e442a6a5523",
+      "sanitizer_report_sha256": "e9bac780ae757811dc0749af238446ef957bb22157b2011cfb973e442a6a5523"
+    },
+    {
+      "job": "pytest/test_exact_dot_matches_python_1/dot/job.json",
+      "job_sha256": "464f7ab966724fac4d1d61980eea32a15fe8bdb9b45dcaf7b7a6e02a283ce1fc",
+      "exit_code": 0,
+      "expected_report_sha256": "25c721b28064d7215bfc56cd72b323290f2f35c23505a94c34955542cc34787b",
+      "sanitizer_report_sha256": "25c721b28064d7215bfc56cd72b323290f2f35c23505a94c34955542cc34787b"
+    },
+    {
+      "job": "pytest/test_exact_dot_matches_python_2/dot/job.json",
+      "job_sha256": "3ade3ef8e09525cd27bbd113b972301f4e82f058a0af2e948c71c64c50a44880",
+      "exit_code": 0,
+      "expected_report_sha256": "a8dc5b5282044071582b9e910b2071e6c00e1a8f5118fae11fb594afefcc9f16",
+      "sanitizer_report_sha256": "a8dc5b5282044071582b9e910b2071e6c00e1a8f5118fae11fb594afefcc9f16"
+    },
+    {
+      "job": "pytest/test_exact_dot_matches_python_3/dot/job.json",
+      "job_sha256": "bb69db8f4a52cf9b50b8f1d9db79a2b47a8fd8f6e9d1cfad009a6bdb4728224a",
+      "exit_code": 0,
+      "expected_report_sha256": "90c58554aade38e3d75125fe1d2b33f017a3c4aa7c3156b0e082e6c67d14abc2",
+      "sanitizer_report_sha256": "90c58554aade38e3d75125fe1d2b33f017a3c4aa7c3156b0e082e6c67d14abc2"
+    },
+    {
+      "job": "pytest/test_invalid_inputs_do_not_pro0/reject/job.json",
+      "job_sha256": "8871077a375f8f89329ac920c1da51a2fb242d32626e75eb57bba1e7ad02cef7",
+      "exit_code": 1
+    },
+    {
+      "job": "pytest/test_invalid_inputs_do_not_pro1/reject/job.json",
+      "job_sha256": "3ea5f36efa3073a22dbc7496062ffd7721e8c720287c63bc478e7b563a93574e",
+      "exit_code": 1
+    },
+    {
+      "job": "pytest/test_invalid_inputs_do_not_pro2/reject/job.json",
+      "job_sha256": "e7338b820c043093ff47bea0c63d22260fbab3111b26a0ac6981e48dfd4994d1",
+      "exit_code": 1
+    },
+    {
+      "job": "pytest/test_invalid_inputs_do_not_pro3/reject/job.json",
+      "job_sha256": "de051a820ea98c2c55e418b370bd815190481bb4d2c57385d07dc3bc5810538b",
+      "exit_code": 1
+    },
+    {
+      "job": "pytest/test_invalid_inputs_do_not_pro4/reject/job.json",
+      "job_sha256": "11e11d0d4c94894019bf4c64df8ddac5c9a57f6970fcb3c63cc683673fc4a732",
+      "exit_code": 1
+    },
+    {
+      "job": "pytest/test_invalid_inputs_do_not_pro5/reject/job.json",
+      "job_sha256": "964fce7e69b089c5565173aa924ed29b9006444ccc0f2e84578725506f78e76d",
+      "exit_code": 1
+    },
+    {
+      "job": "pytest/test_random_wide_signed_exact_0/wide/job.json",
+      "job_sha256": "c72987beed3ec12878c9a258bf8b3a22ce7a3916ce075b36c0ad93089ecbd13d",
+      "exit_code": 0,
+      "expected_report_sha256": "8eeb6f2f481424f2fd7fc100af1d8910f786ddf4a6093b0b7d9c341957892a88",
+      "sanitizer_report_sha256": "8eeb6f2f481424f2fd7fc100af1d8910f786ddf4a6093b0b7d9c341957892a88"
+    }
+  ],
+  "finite_half_roundtrip_cases": 63488,
+  "midpoint_and_adjacent_cases": 190464,
+  "random_exact_rounding_cases": 4000,
+  "full_projections": 3,
+  "full_projection_exact_products": 402653184,
+  "diagnosis_sha256": "50232ba2abe6d7d0f836999efb66c219125c101dc9c023d7caf069c01cf73d6e",
+  "sanitized_diagnosis_sha256": "ed83a44b25ce87e5f76ee68091753196cb21521ca70a26bbefae1391998dc8d4",
+  "full_model_execution_verified": false,
+  "inference_performance_eligible": false
+}
