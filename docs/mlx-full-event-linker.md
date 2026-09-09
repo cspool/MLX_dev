@@ -32,7 +32,9 @@
 
 `scripts.run_mlx_full_event_graph` 已启动 `artifacts/tagged/model-e2e/bert-full-event-graph-001` 的完整 C++ 事件运行。运行器复制二进制，记录依赖库、源码、审计和输入摘要；正常结束后再核对全部事件、源、配对与资源排空。实际进程终态以 `execution.json` 和进程查询共同核对，不能将状态文件单独当作存活证据。当前尚无完整事件运行终态，宿主看门狗为 172,800 秒；观察超时不触发重启。
 
-完整 Llama2 仍缺实际控制见证，不能绕过完整目录门槛。原有整模进程继续使用冻结程序与二进制。GPU 实验和 RTL/PPA 的优先级不变。
+后续 Llama2 增量：三个 argmax 通过已验收原生整模保存的实际 logits 进行 RV64 重放，三个 where 通过原始无外部输入的 36 节点控制／视图闭包实际执行取得谓词。两类证据明确分别标记，不冒充新的整模执行。六处见证经绑定检查后，`llama2-full-event-windows-audit-003.json` 对全部 12,133 窗口独立重建通过；argmax 额外核对原节点、实际输入文件及完整分支顺序。相关绑定／闭包测试 14 项通过。
+
+`llama2-full-event-link-001` 和对应 `llama2-full-event-link-audit-001.json` 保留 6,181 源、873 配对、2,273,057 逻辑块、68,045,439,147 声明动态事件；2,743 种窗口映射独立核对通过。`model-e2e/llama2-full-event-graph-001` 已启动实际 C++ 完整事件运行，尚无终态。原有整模进程继续使用冻结程序与二进制。GPU 实验和 RTL/PPA 的优先级不变。
 
 ## 最终读回边界
 
