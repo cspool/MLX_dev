@@ -1,0 +1,984 @@
+{
+	"all_resources_drained" : true,
+	"block_intervals" : 
+	[
+		{
+			"admit_cycle" : 0,
+			"id" : "b0",
+			"pe" : 0,
+			"retire_cycle" : 90,
+			"source_operator_id" : 0
+		},
+		{
+			"admit_cycle" : 0,
+			"id" : "b1",
+			"pe" : 1,
+			"retire_cycle" : 99,
+			"source_operator_id" : 1
+		},
+		{
+			"admit_cycle" : 0,
+			"id" : "b2",
+			"pe" : 2,
+			"retire_cycle" : 183,
+			"source_operator_id" : 2
+		}
+	],
+	"blocks" : 3,
+	"calendar_transitions" : 63,
+	"capacity" : 
+	{
+		"contexts_per_pe" : 2,
+		"pes" : 4,
+		"rf_vectors_per_pe" : 16,
+		"rom_words_per_pe" : 32,
+		"source_window_limit" : 32,
+		"spm_vectors_total" : 128
+	},
+	"capacity_time_denominators" : 
+	{
+		"context_slot_cycles" : 1464,
+		"pe_cycles" : 732,
+		"rf_vector_cycles" : 11712,
+		"rom_word_cycles" : 23424,
+		"spm_vector_cycles" : 23424
+	},
+	"classification" : "native_concurrent_event_component_not_full_model_or_numerical_execution",
+	"counter_units" : 
+	{
+		"compute_busy_pe_cycles" : "pe_cycle",
+		"compute_dma_overlap_pe_cycles" : "pe_cycle",
+		"dependency_wait_context_cycles" : "context_cycle",
+		"dma_busy_cycles" : "wall_cycle",
+		"inflight_context_cycles" : "context_cycle",
+		"resident_context_cycles" : "context_cycle",
+		"resource_wait_context_cycles" : "context_cycle",
+		"retirement_wait_context_cycles" : "context_cycle",
+		"rf_vector_cycles" : "vector_cycle",
+		"rom_word_cycles" : "word_cycle",
+		"spm_vector_cycles" : "vector_cycle",
+		"template_wait_context_cycles" : "context_cycle"
+	},
+	"counts" : 
+	{
+		"blocks_admitted" : 3,
+		"events_completed" : 51,
+		"events_issued" : 51,
+		"template_program_pe_cycles" : 9,
+		"template_words_loaded" : 9,
+		"trace_admit" : 3,
+		"trace_complete" : 51,
+		"trace_issue" : 51,
+		"trace_retire" : 3
+	},
+	"cycles" : 183,
+	"declared_work" : 
+	{
+		"add_bytes" : 0,
+		"add_declared_active_lanes" : 288,
+		"add_events" : 18,
+		"dma_read_bytes" : 36,
+		"dma_read_declared_active_lanes" : 0,
+		"dma_read_events" : 9,
+		"dma_write_bytes" : 12,
+		"dma_write_declared_active_lanes" : 0,
+		"dma_write_events" : 3,
+		"mul_bytes" : 0,
+		"mul_declared_active_lanes" : 288,
+		"mul_events" : 18,
+		"zero_bytes" : 0,
+		"zero_declared_active_lanes" : 48,
+		"zero_events" : 3
+	},
+	"dependency_visibility" : "completion_next_edge",
+	"events" : 51,
+	"full_model_verified" : false,
+	"inference_performance_eligible" : false,
+	"integrated_usage" : 
+	{
+		"compute_busy_pe_cycles" : 150,
+		"compute_dma_overlap_pe_cycles" : 56,
+		"dependency_wait_context_cycles" : 125,
+		"dma_busy_cycles" : 108,
+		"inflight_context_cycles" : 207,
+		"resident_context_cycles" : 372,
+		"resource_wait_context_cycles" : 25,
+		"retirement_wait_context_cycles" : 3,
+		"rf_vector_cycles" : 2232,
+		"rom_word_cycles" : 1116,
+		"spm_vector_cycles" : 1860,
+		"template_wait_context_cycles" : 12
+	},
+	"peak" : 
+	{
+		"active_sources" : 3,
+		"contexts" : 3,
+		"rf_vectors_per_pe" : 6,
+		"rom_words_per_pe" : 3,
+		"spm_vectors" : 15
+	},
+	"policy" : "round_robin",
+	"tensor_values_executed" : false,
+	"trace" : 
+	[
+		{
+			"block" : "b0",
+			"cycle" : 0,
+			"event" : "admit",
+			"pe" : 0,
+			"source_operator_id" : 0
+		},
+		{
+			"block" : "b1",
+			"cycle" : 0,
+			"event" : "admit",
+			"pe" : 1,
+			"source_operator_id" : 1
+		},
+		{
+			"block" : "b2",
+			"cycle" : 0,
+			"event" : "admit",
+			"pe" : 2,
+			"source_operator_id" : 2
+		},
+		{
+			"block" : "b0",
+			"cycle" : 4,
+			"event" : "issue",
+			"operation" : "init0@0",
+			"pe" : 0,
+			"source_operator_id" : 0
+		},
+		{
+			"block" : "b1",
+			"cycle" : 4,
+			"event" : "issue",
+			"operation" : "init1@0",
+			"pe" : 1,
+			"source_operator_id" : 1
+		},
+		{
+			"block" : "b0",
+			"cycle" : 5,
+			"event" : "complete",
+			"operation" : "init0@0",
+			"pe" : 0,
+			"source_operator_id" : 0
+		},
+		{
+			"block" : "b1",
+			"cycle" : 5,
+			"event" : "complete",
+			"operation" : "init1@0",
+			"pe" : 1,
+			"source_operator_id" : 1
+		},
+		{
+			"block" : "b0",
+			"cycle" : 6,
+			"event" : "issue",
+			"operation" : "read0@0",
+			"pe" : 0,
+			"source_operator_id" : 0
+		},
+		{
+			"block" : "b0",
+			"cycle" : 14,
+			"event" : "complete",
+			"operation" : "read0@0",
+			"pe" : 0,
+			"source_operator_id" : 0
+		},
+		{
+			"block" : "b0",
+			"cycle" : 15,
+			"event" : "issue",
+			"operation" : "mul0@0",
+			"pe" : 0,
+			"source_operator_id" : 0
+		},
+		{
+			"block" : "b1",
+			"cycle" : 15,
+			"event" : "issue",
+			"operation" : "read1@0",
+			"pe" : 1,
+			"source_operator_id" : 1
+		},
+		{
+			"block" : "b0",
+			"cycle" : 19,
+			"event" : "complete",
+			"operation" : "mul0@0",
+			"pe" : 0,
+			"source_operator_id" : 0
+		},
+		{
+			"block" : "b0",
+			"cycle" : 20,
+			"event" : "issue",
+			"operation" : "add0@0",
+			"pe" : 0,
+			"source_operator_id" : 0
+		},
+		{
+			"block" : "b0",
+			"cycle" : 22,
+			"event" : "complete",
+			"operation" : "add0@0",
+			"pe" : 0,
+			"source_operator_id" : 0
+		},
+		{
+			"block" : "b1",
+			"cycle" : 23,
+			"event" : "complete",
+			"operation" : "read1@0",
+			"pe" : 1,
+			"source_operator_id" : 1
+		},
+		{
+			"block" : "b0",
+			"cycle" : 23,
+			"event" : "issue",
+			"operation" : "mul0@1",
+			"pe" : 0,
+			"source_operator_id" : 0
+		},
+		{
+			"block" : "b1",
+			"cycle" : 24,
+			"event" : "issue",
+			"operation" : "mul1@0",
+			"pe" : 1,
+			"source_operator_id" : 1
+		},
+		{
+			"block" : "b0",
+			"cycle" : 27,
+			"event" : "complete",
+			"operation" : "mul0@1",
+			"pe" : 0,
+			"source_operator_id" : 0
+		},
+		{
+			"block" : "b1",
+			"cycle" : 28,
+			"event" : "complete",
+			"operation" : "mul1@0",
+			"pe" : 1,
+			"source_operator_id" : 1
+		},
+		{
+			"block" : "b0",
+			"cycle" : 28,
+			"event" : "issue",
+			"operation" : "add0@1",
+			"pe" : 0,
+			"source_operator_id" : 0
+		},
+		{
+			"block" : "b1",
+			"cycle" : 29,
+			"event" : "issue",
+			"operation" : "add1@0",
+			"pe" : 1,
+			"source_operator_id" : 1
+		},
+		{
+			"block" : "b0",
+			"cycle" : 30,
+			"event" : "complete",
+			"operation" : "add0@1",
+			"pe" : 0,
+			"source_operator_id" : 0
+		},
+		{
+			"block" : "b1",
+			"cycle" : 31,
+			"event" : "complete",
+			"operation" : "add1@0",
+			"pe" : 1,
+			"source_operator_id" : 1
+		},
+		{
+			"block" : "b0",
+			"cycle" : 31,
+			"event" : "issue",
+			"operation" : "read0@1",
+			"pe" : 0,
+			"source_operator_id" : 0
+		},
+		{
+			"block" : "b1",
+			"cycle" : 32,
+			"event" : "issue",
+			"operation" : "mul1@1",
+			"pe" : 1,
+			"source_operator_id" : 1
+		},
+		{
+			"block" : "b1",
+			"cycle" : 36,
+			"event" : "complete",
+			"operation" : "mul1@1",
+			"pe" : 1,
+			"source_operator_id" : 1
+		},
+		{
+			"block" : "b1",
+			"cycle" : 37,
+			"event" : "issue",
+			"operation" : "add1@1",
+			"pe" : 1,
+			"source_operator_id" : 1
+		},
+		{
+			"block" : "b0",
+			"cycle" : 39,
+			"event" : "complete",
+			"operation" : "read0@1",
+			"pe" : 0,
+			"source_operator_id" : 0
+		},
+		{
+			"block" : "b1",
+			"cycle" : 39,
+			"event" : "complete",
+			"operation" : "add1@1",
+			"pe" : 1,
+			"source_operator_id" : 1
+		},
+		{
+			"block" : "b0",
+			"cycle" : 40,
+			"event" : "issue",
+			"operation" : "mul0@2",
+			"pe" : 0,
+			"source_operator_id" : 0
+		},
+		{
+			"block" : "b1",
+			"cycle" : 40,
+			"event" : "issue",
+			"operation" : "read1@1",
+			"pe" : 1,
+			"source_operator_id" : 1
+		},
+		{
+			"block" : "b0",
+			"cycle" : 44,
+			"event" : "complete",
+			"operation" : "mul0@2",
+			"pe" : 0,
+			"source_operator_id" : 0
+		},
+		{
+			"block" : "b0",
+			"cycle" : 45,
+			"event" : "issue",
+			"operation" : "add0@2",
+			"pe" : 0,
+			"source_operator_id" : 0
+		},
+		{
+			"block" : "b0",
+			"cycle" : 47,
+			"event" : "complete",
+			"operation" : "add0@2",
+			"pe" : 0,
+			"source_operator_id" : 0
+		},
+		{
+			"block" : "b1",
+			"cycle" : 48,
+			"event" : "complete",
+			"operation" : "read1@1",
+			"pe" : 1,
+			"source_operator_id" : 1
+		},
+		{
+			"block" : "b0",
+			"cycle" : 48,
+			"event" : "issue",
+			"operation" : "mul0@3",
+			"pe" : 0,
+			"source_operator_id" : 0
+		},
+		{
+			"block" : "b1",
+			"cycle" : 49,
+			"event" : "issue",
+			"operation" : "mul1@2",
+			"pe" : 1,
+			"source_operator_id" : 1
+		},
+		{
+			"block" : "b0",
+			"cycle" : 52,
+			"event" : "complete",
+			"operation" : "mul0@3",
+			"pe" : 0,
+			"source_operator_id" : 0
+		},
+		{
+			"block" : "b1",
+			"cycle" : 53,
+			"event" : "complete",
+			"operation" : "mul1@2",
+			"pe" : 1,
+			"source_operator_id" : 1
+		},
+		{
+			"block" : "b0",
+			"cycle" : 53,
+			"event" : "issue",
+			"operation" : "add0@3",
+			"pe" : 0,
+			"source_operator_id" : 0
+		},
+		{
+			"block" : "b1",
+			"cycle" : 54,
+			"event" : "issue",
+			"operation" : "add1@2",
+			"pe" : 1,
+			"source_operator_id" : 1
+		},
+		{
+			"block" : "b0",
+			"cycle" : 55,
+			"event" : "complete",
+			"operation" : "add0@3",
+			"pe" : 0,
+			"source_operator_id" : 0
+		},
+		{
+			"block" : "b1",
+			"cycle" : 56,
+			"event" : "complete",
+			"operation" : "add1@2",
+			"pe" : 1,
+			"source_operator_id" : 1
+		},
+		{
+			"block" : "b0",
+			"cycle" : 56,
+			"event" : "issue",
+			"operation" : "read0@2",
+			"pe" : 0,
+			"source_operator_id" : 0
+		},
+		{
+			"block" : "b1",
+			"cycle" : 57,
+			"event" : "issue",
+			"operation" : "mul1@3",
+			"pe" : 1,
+			"source_operator_id" : 1
+		},
+		{
+			"block" : "b1",
+			"cycle" : 61,
+			"event" : "complete",
+			"operation" : "mul1@3",
+			"pe" : 1,
+			"source_operator_id" : 1
+		},
+		{
+			"block" : "b1",
+			"cycle" : 62,
+			"event" : "issue",
+			"operation" : "add1@3",
+			"pe" : 1,
+			"source_operator_id" : 1
+		},
+		{
+			"block" : "b0",
+			"cycle" : 64,
+			"event" : "complete",
+			"operation" : "read0@2",
+			"pe" : 0,
+			"source_operator_id" : 0
+		},
+		{
+			"block" : "b1",
+			"cycle" : 64,
+			"event" : "complete",
+			"operation" : "add1@3",
+			"pe" : 1,
+			"source_operator_id" : 1
+		},
+		{
+			"block" : "b0",
+			"cycle" : 65,
+			"event" : "issue",
+			"operation" : "mul0@4",
+			"pe" : 0,
+			"source_operator_id" : 0
+		},
+		{
+			"block" : "b1",
+			"cycle" : 65,
+			"event" : "issue",
+			"operation" : "read1@2",
+			"pe" : 1,
+			"source_operator_id" : 1
+		},
+		{
+			"block" : "b0",
+			"cycle" : 69,
+			"event" : "complete",
+			"operation" : "mul0@4",
+			"pe" : 0,
+			"source_operator_id" : 0
+		},
+		{
+			"block" : "b0",
+			"cycle" : 70,
+			"event" : "issue",
+			"operation" : "add0@4",
+			"pe" : 0,
+			"source_operator_id" : 0
+		},
+		{
+			"block" : "b0",
+			"cycle" : 72,
+			"event" : "complete",
+			"operation" : "add0@4",
+			"pe" : 0,
+			"source_operator_id" : 0
+		},
+		{
+			"block" : "b1",
+			"cycle" : 73,
+			"event" : "complete",
+			"operation" : "read1@2",
+			"pe" : 1,
+			"source_operator_id" : 1
+		},
+		{
+			"block" : "b0",
+			"cycle" : 73,
+			"event" : "issue",
+			"operation" : "mul0@5",
+			"pe" : 0,
+			"source_operator_id" : 0
+		},
+		{
+			"block" : "b1",
+			"cycle" : 74,
+			"event" : "issue",
+			"operation" : "mul1@4",
+			"pe" : 1,
+			"source_operator_id" : 1
+		},
+		{
+			"block" : "b0",
+			"cycle" : 77,
+			"event" : "complete",
+			"operation" : "mul0@5",
+			"pe" : 0,
+			"source_operator_id" : 0
+		},
+		{
+			"block" : "b1",
+			"cycle" : 78,
+			"event" : "complete",
+			"operation" : "mul1@4",
+			"pe" : 1,
+			"source_operator_id" : 1
+		},
+		{
+			"block" : "b0",
+			"cycle" : 78,
+			"event" : "issue",
+			"operation" : "add0@5",
+			"pe" : 0,
+			"source_operator_id" : 0
+		},
+		{
+			"block" : "b1",
+			"cycle" : 79,
+			"event" : "issue",
+			"operation" : "add1@4",
+			"pe" : 1,
+			"source_operator_id" : 1
+		},
+		{
+			"block" : "b0",
+			"cycle" : 80,
+			"event" : "complete",
+			"operation" : "add0@5",
+			"pe" : 0,
+			"source_operator_id" : 0
+		},
+		{
+			"block" : "b1",
+			"cycle" : 81,
+			"event" : "complete",
+			"operation" : "add1@4",
+			"pe" : 1,
+			"source_operator_id" : 1
+		},
+		{
+			"block" : "b0",
+			"cycle" : 81,
+			"event" : "issue",
+			"operation" : "write0@0",
+			"pe" : 0,
+			"source_operator_id" : 0
+		},
+		{
+			"block" : "b2",
+			"cycle" : 81,
+			"event" : "issue",
+			"operation" : "init2@0",
+			"pe" : 2,
+			"source_operator_id" : 2
+		},
+		{
+			"block" : "b2",
+			"cycle" : 82,
+			"event" : "complete",
+			"operation" : "init2@0",
+			"pe" : 2,
+			"source_operator_id" : 2
+		},
+		{
+			"block" : "b1",
+			"cycle" : 82,
+			"event" : "issue",
+			"operation" : "mul1@5",
+			"pe" : 1,
+			"source_operator_id" : 1
+		},
+		{
+			"block" : "b1",
+			"cycle" : 86,
+			"event" : "complete",
+			"operation" : "mul1@5",
+			"pe" : 1,
+			"source_operator_id" : 1
+		},
+		{
+			"block" : "b1",
+			"cycle" : 87,
+			"event" : "issue",
+			"operation" : "add1@5",
+			"pe" : 1,
+			"source_operator_id" : 1
+		},
+		{
+			"block" : "b0",
+			"cycle" : 89,
+			"event" : "complete",
+			"operation" : "write0@0",
+			"pe" : 0,
+			"source_operator_id" : 0
+		},
+		{
+			"block" : "b1",
+			"cycle" : 89,
+			"event" : "complete",
+			"operation" : "add1@5",
+			"pe" : 1,
+			"source_operator_id" : 1
+		},
+		{
+			"block" : "b0",
+			"cycle" : 90,
+			"event" : "retire",
+			"pe" : 0,
+			"source_operator_id" : 0
+		},
+		{
+			"block" : "b1",
+			"cycle" : 90,
+			"event" : "issue",
+			"operation" : "write1@0",
+			"pe" : 1,
+			"source_operator_id" : 1
+		},
+		{
+			"block" : "b1",
+			"cycle" : 98,
+			"event" : "complete",
+			"operation" : "write1@0",
+			"pe" : 1,
+			"source_operator_id" : 1
+		},
+		{
+			"block" : "b1",
+			"cycle" : 99,
+			"event" : "retire",
+			"pe" : 1,
+			"source_operator_id" : 1
+		},
+		{
+			"block" : "b2",
+			"cycle" : 99,
+			"event" : "issue",
+			"operation" : "read2@0",
+			"pe" : 2,
+			"source_operator_id" : 2
+		},
+		{
+			"block" : "b2",
+			"cycle" : 107,
+			"event" : "complete",
+			"operation" : "read2@0",
+			"pe" : 2,
+			"source_operator_id" : 2
+		},
+		{
+			"block" : "b2",
+			"cycle" : 108,
+			"event" : "issue",
+			"operation" : "mul2@0",
+			"pe" : 2,
+			"source_operator_id" : 2
+		},
+		{
+			"block" : "b2",
+			"cycle" : 112,
+			"event" : "complete",
+			"operation" : "mul2@0",
+			"pe" : 2,
+			"source_operator_id" : 2
+		},
+		{
+			"block" : "b2",
+			"cycle" : 113,
+			"event" : "issue",
+			"operation" : "add2@0",
+			"pe" : 2,
+			"source_operator_id" : 2
+		},
+		{
+			"block" : "b2",
+			"cycle" : 115,
+			"event" : "complete",
+			"operation" : "add2@0",
+			"pe" : 2,
+			"source_operator_id" : 2
+		},
+		{
+			"block" : "b2",
+			"cycle" : 116,
+			"event" : "issue",
+			"operation" : "mul2@1",
+			"pe" : 2,
+			"source_operator_id" : 2
+		},
+		{
+			"block" : "b2",
+			"cycle" : 120,
+			"event" : "complete",
+			"operation" : "mul2@1",
+			"pe" : 2,
+			"source_operator_id" : 2
+		},
+		{
+			"block" : "b2",
+			"cycle" : 121,
+			"event" : "issue",
+			"operation" : "add2@1",
+			"pe" : 2,
+			"source_operator_id" : 2
+		},
+		{
+			"block" : "b2",
+			"cycle" : 123,
+			"event" : "complete",
+			"operation" : "add2@1",
+			"pe" : 2,
+			"source_operator_id" : 2
+		},
+		{
+			"block" : "b2",
+			"cycle" : 124,
+			"event" : "issue",
+			"operation" : "read2@1",
+			"pe" : 2,
+			"source_operator_id" : 2
+		},
+		{
+			"block" : "b2",
+			"cycle" : 132,
+			"event" : "complete",
+			"operation" : "read2@1",
+			"pe" : 2,
+			"source_operator_id" : 2
+		},
+		{
+			"block" : "b2",
+			"cycle" : 133,
+			"event" : "issue",
+			"operation" : "mul2@2",
+			"pe" : 2,
+			"source_operator_id" : 2
+		},
+		{
+			"block" : "b2",
+			"cycle" : 137,
+			"event" : "complete",
+			"operation" : "mul2@2",
+			"pe" : 2,
+			"source_operator_id" : 2
+		},
+		{
+			"block" : "b2",
+			"cycle" : 138,
+			"event" : "issue",
+			"operation" : "add2@2",
+			"pe" : 2,
+			"source_operator_id" : 2
+		},
+		{
+			"block" : "b2",
+			"cycle" : 140,
+			"event" : "complete",
+			"operation" : "add2@2",
+			"pe" : 2,
+			"source_operator_id" : 2
+		},
+		{
+			"block" : "b2",
+			"cycle" : 141,
+			"event" : "issue",
+			"operation" : "mul2@3",
+			"pe" : 2,
+			"source_operator_id" : 2
+		},
+		{
+			"block" : "b2",
+			"cycle" : 145,
+			"event" : "complete",
+			"operation" : "mul2@3",
+			"pe" : 2,
+			"source_operator_id" : 2
+		},
+		{
+			"block" : "b2",
+			"cycle" : 146,
+			"event" : "issue",
+			"operation" : "add2@3",
+			"pe" : 2,
+			"source_operator_id" : 2
+		},
+		{
+			"block" : "b2",
+			"cycle" : 148,
+			"event" : "complete",
+			"operation" : "add2@3",
+			"pe" : 2,
+			"source_operator_id" : 2
+		},
+		{
+			"block" : "b2",
+			"cycle" : 149,
+			"event" : "issue",
+			"operation" : "read2@2",
+			"pe" : 2,
+			"source_operator_id" : 2
+		},
+		{
+			"block" : "b2",
+			"cycle" : 157,
+			"event" : "complete",
+			"operation" : "read2@2",
+			"pe" : 2,
+			"source_operator_id" : 2
+		},
+		{
+			"block" : "b2",
+			"cycle" : 158,
+			"event" : "issue",
+			"operation" : "mul2@4",
+			"pe" : 2,
+			"source_operator_id" : 2
+		},
+		{
+			"block" : "b2",
+			"cycle" : 162,
+			"event" : "complete",
+			"operation" : "mul2@4",
+			"pe" : 2,
+			"source_operator_id" : 2
+		},
+		{
+			"block" : "b2",
+			"cycle" : 163,
+			"event" : "issue",
+			"operation" : "add2@4",
+			"pe" : 2,
+			"source_operator_id" : 2
+		},
+		{
+			"block" : "b2",
+			"cycle" : 165,
+			"event" : "complete",
+			"operation" : "add2@4",
+			"pe" : 2,
+			"source_operator_id" : 2
+		},
+		{
+			"block" : "b2",
+			"cycle" : 166,
+			"event" : "issue",
+			"operation" : "mul2@5",
+			"pe" : 2,
+			"source_operator_id" : 2
+		},
+		{
+			"block" : "b2",
+			"cycle" : 170,
+			"event" : "complete",
+			"operation" : "mul2@5",
+			"pe" : 2,
+			"source_operator_id" : 2
+		},
+		{
+			"block" : "b2",
+			"cycle" : 171,
+			"event" : "issue",
+			"operation" : "add2@5",
+			"pe" : 2,
+			"source_operator_id" : 2
+		},
+		{
+			"block" : "b2",
+			"cycle" : 173,
+			"event" : "complete",
+			"operation" : "add2@5",
+			"pe" : 2,
+			"source_operator_id" : 2
+		},
+		{
+			"block" : "b2",
+			"cycle" : 174,
+			"event" : "issue",
+			"operation" : "write2@0",
+			"pe" : 2,
+			"source_operator_id" : 2
+		},
+		{
+			"block" : "b2",
+			"cycle" : 182,
+			"event" : "complete",
+			"operation" : "write2@0",
+			"pe" : 2,
+			"source_operator_id" : 2
+		},
+		{
+			"block" : "b2",
+			"cycle" : 183,
+			"event" : "retire",
+			"pe" : 2,
+			"source_operator_id" : 2
+		}
+	],
+	"trace_truncated" : false
+}

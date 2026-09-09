@@ -1,0 +1,192 @@
+{
+	"all_resources_drained" : true,
+	"block_intervals" : 
+	[
+		{
+			"admit_cycle" : 0,
+			"id" : "b0",
+			"pe" : 0,
+			"retire_cycle" : 8,
+			"source_operator_id" : 0
+		},
+		{
+			"admit_cycle" : 0,
+			"id" : "b1",
+			"pe" : 0,
+			"retire_cycle" : 4,
+			"source_operator_id" : 1
+		}
+	],
+	"blocks" : 2,
+	"calendar_transitions" : 6,
+	"capacity" : 
+	{
+		"contexts_per_pe" : 2,
+		"pes" : 4,
+		"rf_vectors_per_pe" : 16,
+		"rom_words_per_pe" : 32,
+		"source_window_limit" : 32,
+		"spm_vectors_total" : 128
+	},
+	"capacity_time_denominators" : 
+	{
+		"context_slot_cycles" : 64,
+		"pe_cycles" : 32,
+		"rf_vector_cycles" : 512,
+		"rom_word_cycles" : 1024,
+		"spm_vector_cycles" : 1024
+	},
+	"classification" : "native_concurrent_event_component_not_full_model_or_numerical_execution",
+	"counter_units" : 
+	{
+		"compute_busy_pe_cycles" : "pe_cycle",
+		"dependency_wait_context_cycles" : "context_cycle",
+		"inflight_context_cycles" : "context_cycle",
+		"resident_context_cycles" : "context_cycle",
+		"resource_wait_context_cycles" : "context_cycle",
+		"retirement_wait_context_cycles" : "context_cycle",
+		"rf_vector_cycles" : "vector_cycle",
+		"rom_word_cycles" : "word_cycle",
+		"spm_vector_cycles" : "vector_cycle"
+	},
+	"counts" : 
+	{
+		"blocks_admitted" : 2,
+		"events_completed" : 4,
+		"events_issued" : 4,
+		"template_words_loaded" : 3,
+		"trace_admit" : 2,
+		"trace_complete" : 4,
+		"trace_issue" : 4,
+		"trace_retire" : 2
+	},
+	"cycles" : 8,
+	"declared_work" : 
+	{
+		"zero_bytes" : 0,
+		"zero_declared_active_lanes" : 64,
+		"zero_events" : 4
+	},
+	"dependency_visibility" : "completion_next_edge",
+	"events" : 4,
+	"full_model_verified" : false,
+	"inference_performance_eligible" : false,
+	"integrated_usage" : 
+	{
+		"compute_busy_pe_cycles" : 8,
+		"dependency_wait_context_cycles" : 2,
+		"inflight_context_cycles" : 4,
+		"resident_context_cycles" : 12,
+		"resource_wait_context_cycles" : 4,
+		"retirement_wait_context_cycles" : 2,
+		"rf_vector_cycles" : 72,
+		"rom_word_cycles" : 24,
+		"spm_vector_cycles" : 60
+	},
+	"peak" : 
+	{
+		"active_sources" : 2,
+		"contexts" : 2,
+		"rf_vectors_per_pe" : 12,
+		"rom_words_per_pe" : 3,
+		"spm_vectors" : 10
+	},
+	"policy" : "round_robin",
+	"tensor_values_executed" : false,
+	"trace" : 
+	[
+		{
+			"block" : "b0",
+			"cycle" : 0,
+			"event" : "admit",
+			"pe" : 0,
+			"source_operator_id" : 0
+		},
+		{
+			"block" : "b1",
+			"cycle" : 0,
+			"event" : "admit",
+			"pe" : 0,
+			"source_operator_id" : 1
+		},
+		{
+			"block" : "b0",
+			"cycle" : 0,
+			"event" : "issue",
+			"operation" : "a0",
+			"pe" : 0,
+			"source_operator_id" : 0
+		},
+		{
+			"block" : "b0",
+			"cycle" : 1,
+			"event" : "complete",
+			"operation" : "a0",
+			"pe" : 0,
+			"source_operator_id" : 0
+		},
+		{
+			"block" : "b1",
+			"cycle" : 2,
+			"event" : "issue",
+			"operation" : "b0",
+			"pe" : 0,
+			"source_operator_id" : 1
+		},
+		{
+			"block" : "b1",
+			"cycle" : 3,
+			"event" : "complete",
+			"operation" : "b0",
+			"pe" : 0,
+			"source_operator_id" : 1
+		},
+		{
+			"block" : "b1",
+			"cycle" : 4,
+			"event" : "retire",
+			"pe" : 0,
+			"source_operator_id" : 1
+		},
+		{
+			"block" : "b0",
+			"cycle" : 4,
+			"event" : "issue",
+			"operation" : "a1",
+			"pe" : 0,
+			"source_operator_id" : 0
+		},
+		{
+			"block" : "b0",
+			"cycle" : 5,
+			"event" : "complete",
+			"operation" : "a1",
+			"pe" : 0,
+			"source_operator_id" : 0
+		},
+		{
+			"block" : "b0",
+			"cycle" : 6,
+			"event" : "issue",
+			"operation" : "a2",
+			"pe" : 0,
+			"source_operator_id" : 0
+		},
+		{
+			"block" : "b0",
+			"cycle" : 7,
+			"event" : "complete",
+			"operation" : "a2",
+			"pe" : 0,
+			"source_operator_id" : 0
+		},
+		{
+			"block" : "b0",
+			"cycle" : 8,
+			"event" : "retire",
+			"pe" : 0,
+			"source_operator_id" : 0
+		}
+	],
+	"trace_truncated" : false
+}

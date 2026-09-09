@@ -1,0 +1,428 @@
+{
+  "classification": "concurrent_event_core_component_validation_not_full_model",
+  "sources": {
+    "simulator_ext/event_schedule/event_schedule.h": "891ceb5a3a34e16dbe29b253b41bbc8c441f74481127ab3be37f535e2ec60b8a",
+    "simulator_ext/event_schedule/event_schedule.cc": "bbcff2e2d6e3424160fa0aecb001a029315837d2c9a68f8e10554b0b5db37161",
+    "simulator_ext/event_schedule/main.cc": "bba33e9c7998c3f1827873374618ac391b52241c79ac64b093068ad9d6f81047",
+    "simulator_ext/event_schedule/CMakeLists.txt": "2e7a7e0347f6dae7aa02935f83e38ef25a8ce77a338af2af3bc305f5d87e4f8b",
+    "scripts/verify_mlx_event_schedule.py": "8ef23e16cb3f071b53749ca46435fe21c7831d2e059d0024cf39bd0133b2410a",
+    "tests/test_event_schedule.py": "b336a655e800cc6c57e4dd4e010a8a5d8fa53872319fe563f98b93a66ef0b26b",
+    "src/mlxsim/model_event_resources.py": "a3df26f5b725ce4e3010461443a7fc77e1b4e66a99593957e2daa658551fb1e5",
+    "tests/test_event_loops.py": "ce38536d0bf251a11fbd45344ba79ec4d4f54742e847522e77ed615d79e8451c"
+  },
+  "inputs": {
+    "/workspace/mlx-event-runtime-upfKzE/artifacts/tagged/event-loop-regression-001/pytest/test_invalid_or_unrepresentabl2/bad/program.json": "d5053ab0bee2762912fb8190c9726cd9e75958addac394ec3dac3f7a99579687",
+    "/workspace/mlx-event-runtime-upfKzE/artifacts/tagged/event-loop-regression-001/pytest/test_invalid_or_unrepresentabl9/bad/program.json": "83339ad6f9b09bbfb9427b581c18bdbb685d79aa1110dc21e7162fa831acf792",
+    "/workspace/mlx-event-runtime-upfKzE/artifacts/tagged/event-loop-regression-001/pytest/test_calendar_advances_over_id0/skip/program.json": "43029968065a2c7e7c54f4fefc243364b2b5c973a04cdcddd0fd41ddfdf6ac53",
+    "/workspace/mlx-event-runtime-upfKzE/artifacts/tagged/event-loop-regression-001/pytest/test_invalid_or_ambiguous_loop2/bool/program.json": "9646ffda2ea32b4db371cc3711fde9dbfd4176980d8509b13f7955b99bf4e4eb",
+    "/workspace/mlx-event-runtime-upfKzE/artifacts/tagged/event-loop-regression-001/pytest/test_actual_matrix_template_sp1/f32/program.json": "9886254a0870cfc28e7b1c22aa0c95aa6726989a1ba5138e9f0954eddcc48df6",
+    "/workspace/mlx-event-runtime-upfKzE/artifacts/tagged/event-loop-regression-001/pytest/test_single_dma_resource_and_c0/dma/program.json": "864257dcfb6b2dd190655c8b917216f73d9fe4c63c95043c02a0cc52072cf5b1",
+    "/workspace/mlx-event-runtime-upfKzE/artifacts/tagged/event-loop-regression-001/pytest/test_invalid_or_unrepresentabl0/bad/program.json": "ea85b07799e512613c96e9723cb1dc45b6cd21a960820a9bda883416dd5bfdfd",
+    "/workspace/mlx-event-runtime-upfKzE/artifacts/tagged/event-loop-regression-001/pytest/test_same_pe_different_pipelin0/overlap/program.json": "d3f66e2752d5d4de5cf9dadf2cb199f81b3ec95c761c203a52efc9ca2cf1682b",
+    "/workspace/mlx-event-runtime-upfKzE/artifacts/tagged/event-loop-regression-001/pytest/test_nested_loops_equal_full_u7/loop/program.json": "95f56515b6a0dd4b19d3f999587ff2c45ae6aa29ab5faabe8c78f40461348ed5",
+    "/workspace/mlx-event-runtime-upfKzE/artifacts/tagged/event-loop-regression-001/pytest/test_nested_loops_equal_full_u7/flat/program.json": "61e86362e56a97fd30aa956c2b83e8fed2d39500c52c66e14447b1628c09ed70",
+    "/workspace/mlx-event-runtime-upfKzE/artifacts/tagged/event-loop-regression-001/pytest/test_invalid_or_ambiguous_loop1/negative/program.json": "0ec326af8d15da2928b2c6f0acc693e4f9d42c68c3ec1920dabe2b56da5cb421",
+    "/workspace/mlx-event-runtime-upfKzE/artifacts/tagged/event-loop-regression-001/pytest/test_nested_loops_equal_full_u4/loop/program.json": "374b40494a89a22ef1ff5530611d7d8745b03985d61c7a61aaf536602e814e3a",
+    "/workspace/mlx-event-runtime-upfKzE/artifacts/tagged/event-loop-regression-001/pytest/test_nested_loops_equal_full_u4/flat/program.json": "95e74e6468f800b99d5677aa671d0ead6dd8ad8640bfff2a14f27a8c8a3e23b5",
+    "/workspace/mlx-event-runtime-upfKzE/artifacts/tagged/event-loop-regression-001/pytest/test_invalid_or_unrepresentabl8/bad/program.json": "6440b211be69f6dedb73395fc89dd49f2adbcd587ecc82d38b2049dc53c55ac8",
+    "/workspace/mlx-event-runtime-upfKzE/artifacts/tagged/event-loop-regression-001/pytest/test_two_contexts_share_one_re0/shared-code/program.json": "d12af14fa5aa41b9c5bcd78e80bee1a12d08ba1f9ac54c32fff993022bf75bfa",
+    "/workspace/mlx-event-runtime-upfKzE/artifacts/tagged/event-loop-regression-001/pytest/test_nested_loops_equal_full_u2/loop/program.json": "f346ee14e32d152be978344be631ca715399a803b691890e8736c79aca1b7f0b",
+    "/workspace/mlx-event-runtime-upfKzE/artifacts/tagged/event-loop-regression-001/pytest/test_nested_loops_equal_full_u2/flat/program.json": "a505e9d39cca171cf97c481fd2c3d64524a4c1cbf071e80fac534e359cab3aef",
+    "/workspace/mlx-event-runtime-upfKzE/artifacts/tagged/event-loop-regression-001/pytest/test_invalid_or_ambiguous_loop0/zero/program.json": "7e0a8670fb6839ff162c76a3393f85b9dd35dea29f3e332fc6017ae8a3aa7f4d",
+    "/workspace/mlx-event-runtime-upfKzE/artifacts/tagged/event-loop-regression-001/pytest/test_nested_loops_equal_full_u0/loop/program.json": "b33fe0b5afd2f8c72729b6cf12ec4dd94b22eec2efe9d93c5cd1fa6453f7e2df",
+    "/workspace/mlx-event-runtime-upfKzE/artifacts/tagged/event-loop-regression-001/pytest/test_nested_loops_equal_full_u0/flat/program.json": "f70d4a60bb7e0dee56d6417bb5e14e83f76989711d9aa50e472b2cbdfdbccf5e",
+    "/workspace/mlx-event-runtime-upfKzE/artifacts/tagged/event-loop-regression-001/pytest/test_many_mapped_blocks_are_no0/many/program.json": "c3c03e48ca1dc1dd50528a175552198f8c308d599b934ffd157143196ab2ccdb",
+    "/workspace/mlx-event-runtime-upfKzE/artifacts/tagged/event-loop-regression-001/pytest/test_invalid_or_unrepresentabl5/bad/program.json": "09627b52f199ae9f17894542f6132a25c3ca7acaeba291453a41247e8ec7bdc9",
+    "/workspace/mlx-event-runtime-upfKzE/artifacts/tagged/event-loop-regression-001/pytest/test_admission_dependency_does0/admission/program.json": "7b068d37558ce365424657181bbfac517fcce26fbde02bcbb0b9ffc0ef5828cf",
+    "/workspace/mlx-event-runtime-upfKzE/artifacts/tagged/event-loop-regression-001/pytest/test_invalid_or_unrepresentabl4/bad/program.json": "4eedd6dfb48ddf3136e887dc071566a74670bef67a95c00d8cd25053098a3a71",
+    "/workspace/mlx-event-runtime-upfKzE/artifacts/tagged/event-loop-regression-001/pytest/test_source_window_limits_sour0/one-source/program.json": "dacba92fce7fedc7c7c926ce8f65c24bcf4d6b0a4b41b8d2222507ffa56d85b2",
+    "/workspace/mlx-event-runtime-upfKzE/artifacts/tagged/event-loop-regression-001/pytest/test_independent_pes_execute_c0/two-pes/program.json": "0ba15e99d6de62972bcef6eb827fa2c25601e503ce013082ac19d00c8a2e01a3",
+    "/workspace/mlx-event-runtime-upfKzE/artifacts/tagged/event-loop-regression-001/pytest/test_nested_loops_equal_full_u5/loop/program.json": "d21c04e1b07c28c7701860e74df4a32c74ee8053771666ef01cbc9b83f38bbb4",
+    "/workspace/mlx-event-runtime-upfKzE/artifacts/tagged/event-loop-regression-001/pytest/test_nested_loops_equal_full_u5/flat/program.json": "ed7d7ab437912b6af45d46b62ad38a81954077c7c583e1929be82ef22144457f",
+    "/workspace/mlx-event-runtime-upfKzE/artifacts/tagged/event-loop-regression-001/pytest/test_actual_matrix_template_sp0/f16/program.json": "723bb69040eb4fc4072fd74bd2c955d6da3fb531118838ff50d9eaa72045bf2c",
+    "/workspace/mlx-event-runtime-upfKzE/artifacts/tagged/event-loop-regression-001/pytest/test_nested_loops_equal_full_u3/loop/program.json": "e0afdf7d43aac1476c7ed9f15b0b01403ea8a07780cafe641a888b8d0cb73004",
+    "/workspace/mlx-event-runtime-upfKzE/artifacts/tagged/event-loop-regression-001/pytest/test_nested_loops_equal_full_u3/flat/program.json": "222981843d3263373814d619f6df841c641f2ff38b7b2b46e1ca7601e180276a",
+    "/workspace/mlx-event-runtime-upfKzE/artifacts/tagged/event-loop-regression-001/pytest/test_completion_at_exact_cycle0/exact-budget/program.json": "64d8faafe9f9f7cdb9a66c58f54406d01b17a5c930827a96a5c5c9b431230a23",
+    "/workspace/mlx-event-runtime-upfKzE/artifacts/tagged/event-loop-regression-001/pytest/test_invalid_or_ambiguous_loop6/local_dependency/program.json": "3828aad4758b07ff06d1d83fbc2bf58585e4d82a65c64572198602c85ac14c21",
+    "/workspace/mlx-event-runtime-upfKzE/artifacts/tagged/event-loop-regression-001/pytest/test_issue_policy_changes_sele0/priority/program.json": "38d85063c387c2b3a3d25732556a79ce7739435030e2fc11d9073582e972fc2d",
+    "/workspace/mlx-event-runtime-upfKzE/artifacts/tagged/event-loop-regression-001/pytest/test_issue_policy_changes_sele0/rr/program.json": "f506f422dfc1d2631dfc11c415121dd0e90d0ad945be40b6261d02c2f75fd125",
+    "/workspace/mlx-event-runtime-upfKzE/artifacts/tagged/event-loop-regression-001/pytest/test_invalid_or_unrepresentabl7/bad/program.json": "fc31ee7af28e3967005d19129819e3a0818afdd9dfb93764410827274a6abbb6",
+    "/workspace/mlx-event-runtime-upfKzE/artifacts/tagged/event-loop-regression-001/pytest/test_policy_ablation_keeps_mul1/round_robin/program.json": "9019a16af781118e9f541ae5867af0d4aff199534cdc94316299e3417fbc1b48",
+    "/workspace/mlx-event-runtime-upfKzE/artifacts/tagged/event-loop-regression-001/pytest/test_invalid_or_ambiguous_loop8/legacy/program.json": "518eb995b96350d29d3524e4439935c8edcea3f34ee2eb44eb2d1650510581c7",
+    "/workspace/mlx-event-runtime-upfKzE/artifacts/tagged/event-loop-regression-001/pytest/test_invalid_or_ambiguous_loop3/empty/program.json": "2b4e5c6e8a517ef80682246ea2f680fa1c7c4cc277631b0455afcab9523259a3",
+    "/workspace/mlx-event-runtime-upfKzE/artifacts/tagged/event-loop-regression-001/pytest/test_event_identity_is_not_imp0/id/program.json": "926a7124bf32dc8ffb2547a492fd26b715a967b80d1322f722338a0d07edfa14",
+    "/workspace/mlx-event-runtime-upfKzE/artifacts/tagged/event-loop-regression-001/pytest/test_billion_repeat_reaches_cy0/budget/program.json": "472913b918da026dc870a6ce1d2dcb241f4ad864f16efb35b0149d808c2299c1",
+    "/workspace/mlx-event-runtime-upfKzE/artifacts/tagged/event-loop-regression-001/pytest/test_nested_loops_equal_full_u6/loop/program.json": "99dddf4b1b0af6c15bba4d347882c685a2e8e1efb8efd962a145845f2ea663a7",
+    "/workspace/mlx-event-runtime-upfKzE/artifacts/tagged/event-loop-regression-001/pytest/test_nested_loops_equal_full_u6/flat/program.json": "b374092b52d485e4902c653ee7f9632f79bb62625bb1f9b1241680bd950f3b0b",
+    "/workspace/mlx-event-runtime-upfKzE/artifacts/tagged/event-loop-regression-001/pytest/test_invalid_or_ambiguous_loop4/field/program.json": "871e125f73b5fe2291b3757288a5150e5595ddcc350a39337e8efbd72151178c",
+    "/workspace/mlx-event-runtime-upfKzE/artifacts/tagged/event-loop-regression-001/pytest/test_rom_exhaustion_waits_for_0/rom/program.json": "a8ff290f7f16ca2d72dfe7ab58a4e77d75616f67ee3e80c0c45c569e82762663",
+    "/workspace/mlx-event-runtime-upfKzE/artifacts/tagged/event-loop-regression-001/pytest/test_invalid_or_unrepresentabl6/bad/program.json": "f5025a48e030249fe3431be9675b260eb7483233afd3da69f9c82738003e2516",
+    "/workspace/mlx-event-runtime-upfKzE/artifacts/tagged/event-loop-regression-001/pytest/test_policy_ablation_keeps_mul0/source_priority/program.json": "69be6a8ca42e1cdb390a94d5afa248bf5710fd03f7fbebbb96023eca9fd19020",
+    "/workspace/mlx-event-runtime-upfKzE/artifacts/tagged/event-loop-regression-001/pytest/test_late_leaf_dependency_wait0/flat/program.json": "c164c01c2127e4640f553476ffa552385005540a62543f3ee03c503dc507a777",
+    "/workspace/mlx-event-runtime-upfKzE/artifacts/tagged/event-loop-regression-001/pytest/test_late_leaf_dependency_wait0/last/program.json": "01c155ebeed92a44d348208a64637f8f5e59ece231b450d9eefb987935b5eee6",
+    "/workspace/mlx-event-runtime-upfKzE/artifacts/tagged/event-loop-regression-001/pytest/test_invalid_or_ambiguous_loop5/overflow/program.json": "725fd557d2fed40ca667278bfc9f759431cd42e04ca7ac116c71a32bba0ab803",
+    "/workspace/mlx-event-runtime-upfKzE/artifacts/tagged/event-loop-regression-001/pytest/test_nested_loops_equal_full_u1/loop/program.json": "980131142c772a6356ebe418992524f4cab295331db7378ab3bc8bcccee7ed2d",
+    "/workspace/mlx-event-runtime-upfKzE/artifacts/tagged/event-loop-regression-001/pytest/test_nested_loops_equal_full_u1/flat/program.json": "f068e683b99c133b4aada16d6fc7b1dd58b3525fd23bf62f5d3162d3972e439c",
+    "/workspace/mlx-event-runtime-upfKzE/artifacts/tagged/event-loop-regression-001/pytest/test_large_repeat_executes_all0/large/program.json": "eeee121bbb743334af1be59538b312ad14f1eb0a6e2c184aa8d2ad295ecc571b",
+    "/workspace/mlx-event-runtime-upfKzE/artifacts/tagged/event-loop-regression-001/pytest/test_invalid_or_ambiguous_loop7/depth/program.json": "aeabc392dc598bf04c02e4c962cf1ecc80ca90658a9059c13f8d4bd33677dc8c",
+    "/workspace/mlx-event-runtime-upfKzE/artifacts/tagged/event-loop-regression-001/pytest/test_invalid_or_unrepresentabl1/bad/program.json": "5808370120a690092a170cf83cd8c5bd04116769b778b97617dffa8bb7df8d8c",
+    "/workspace/mlx-event-runtime-upfKzE/artifacts/tagged/event-loop-regression-001/pytest/test_boolean_dma_is_one_real_b0/bool-dma/program.json": "9b3b16ab8eb451f86699aee5f5b3f6bf0d8487fc0a58545357a55d5413e78046",
+    "/workspace/mlx-event-runtime-upfKzE/artifacts/tagged/event-loop-regression-001/pytest/test_invalid_or_unrepresentabl3/bad/program.json": "129e2a3d55f5718754ab78a993a959c7c7c2d78fe60a401d834cd4e5e85ff74c",
+    "/workspace/mlx-event-runtime-upfKzE/artifacts/tagged/event-loop-regression-001/pytest/test_explicit_dependency_uses_0/edge/program.json": "95cc6d6ac0b4179fce764ed8a9a3ee3b9f38f8e5727aaa41a37b719d21b5e1ee"
+  },
+  "regression_tests": 55,
+  "replays": [
+    {
+      "program": "/workspace/mlx-event-runtime-upfKzE/artifacts/tagged/event-loop-regression-001/pytest/test_actual_matrix_template_sp0/f16/program.json",
+      "expected_exit": 0,
+      "result": "/workspace/mlx-event-runtime-upfKzE/artifacts/tagged/event-loop-safety-001/case-00.json",
+      "log_sha256": "3fd3c2299a33ca394dcdc908f141bfde3e7a64d708399d236068a7505af45903"
+    },
+    {
+      "program": "/workspace/mlx-event-runtime-upfKzE/artifacts/tagged/event-loop-regression-001/pytest/test_actual_matrix_template_sp1/f32/program.json",
+      "expected_exit": 0,
+      "result": "/workspace/mlx-event-runtime-upfKzE/artifacts/tagged/event-loop-safety-001/case-01.json",
+      "log_sha256": "914030913571eab12744155efc7086a136c6d3ccfccb911f911caaae363f56a4"
+    },
+    {
+      "program": "/workspace/mlx-event-runtime-upfKzE/artifacts/tagged/event-loop-regression-001/pytest/test_admission_dependency_does0/admission/program.json",
+      "expected_exit": 0,
+      "result": "/workspace/mlx-event-runtime-upfKzE/artifacts/tagged/event-loop-safety-001/case-02.json",
+      "log_sha256": "7b753354856d63cc887c88b298f0fd08eac7f16e8f4e970c35d10512d7bd5a72"
+    },
+    {
+      "program": "/workspace/mlx-event-runtime-upfKzE/artifacts/tagged/event-loop-regression-001/pytest/test_billion_repeat_reaches_cy0/budget/program.json",
+      "expected_exit": 1,
+      "result": null,
+      "log_sha256": "fe430ee937d4b111135300bb0d29ab936f4abeba97a48d8de3963a39ee1e90c8"
+    },
+    {
+      "program": "/workspace/mlx-event-runtime-upfKzE/artifacts/tagged/event-loop-regression-001/pytest/test_boolean_dma_is_one_real_b0/bool-dma/program.json",
+      "expected_exit": 0,
+      "result": "/workspace/mlx-event-runtime-upfKzE/artifacts/tagged/event-loop-safety-001/case-04.json",
+      "log_sha256": "3834876f40aa88993ee59a9b4720fc1657b5b04a0f5ea139bdf3923fe373778f"
+    },
+    {
+      "program": "/workspace/mlx-event-runtime-upfKzE/artifacts/tagged/event-loop-regression-001/pytest/test_calendar_advances_over_id0/skip/program.json",
+      "expected_exit": 0,
+      "result": "/workspace/mlx-event-runtime-upfKzE/artifacts/tagged/event-loop-safety-001/case-05.json",
+      "log_sha256": "63867572b399f053d223cab51f81ec6492ec86fc3f05cd0a30bcc71f374b9725"
+    },
+    {
+      "program": "/workspace/mlx-event-runtime-upfKzE/artifacts/tagged/event-loop-regression-001/pytest/test_completion_at_exact_cycle0/exact-budget/program.json",
+      "expected_exit": 0,
+      "result": "/workspace/mlx-event-runtime-upfKzE/artifacts/tagged/event-loop-safety-001/case-06.json",
+      "log_sha256": "6774f047cd0d9307190133b0f6736687596a8ca98df0e5a22fa0711e4949aa5e"
+    },
+    {
+      "program": "/workspace/mlx-event-runtime-upfKzE/artifacts/tagged/event-loop-regression-001/pytest/test_event_identity_is_not_imp0/id/program.json",
+      "expected_exit": 1,
+      "result": null,
+      "log_sha256": "2fc07109670d161335c2604b84b0b1a565dc7dd8c6b4246dcb6ba9c2da3680f3"
+    },
+    {
+      "program": "/workspace/mlx-event-runtime-upfKzE/artifacts/tagged/event-loop-regression-001/pytest/test_explicit_dependency_uses_0/edge/program.json",
+      "expected_exit": 0,
+      "result": "/workspace/mlx-event-runtime-upfKzE/artifacts/tagged/event-loop-safety-001/case-08.json",
+      "log_sha256": "7b753354856d63cc887c88b298f0fd08eac7f16e8f4e970c35d10512d7bd5a72"
+    },
+    {
+      "program": "/workspace/mlx-event-runtime-upfKzE/artifacts/tagged/event-loop-regression-001/pytest/test_independent_pes_execute_c0/two-pes/program.json",
+      "expected_exit": 0,
+      "result": "/workspace/mlx-event-runtime-upfKzE/artifacts/tagged/event-loop-safety-001/case-09.json",
+      "log_sha256": "6774f047cd0d9307190133b0f6736687596a8ca98df0e5a22fa0711e4949aa5e"
+    },
+    {
+      "program": "/workspace/mlx-event-runtime-upfKzE/artifacts/tagged/event-loop-regression-001/pytest/test_invalid_or_ambiguous_loop0/zero/program.json",
+      "expected_exit": 1,
+      "result": null,
+      "log_sha256": "f7a7748e56f8f9a2cdfde672b4dc643d414419b21ddfdb924910c9ac2b071927"
+    },
+    {
+      "program": "/workspace/mlx-event-runtime-upfKzE/artifacts/tagged/event-loop-regression-001/pytest/test_invalid_or_ambiguous_loop1/negative/program.json",
+      "expected_exit": 1,
+      "result": null,
+      "log_sha256": "f7a7748e56f8f9a2cdfde672b4dc643d414419b21ddfdb924910c9ac2b071927"
+    },
+    {
+      "program": "/workspace/mlx-event-runtime-upfKzE/artifacts/tagged/event-loop-regression-001/pytest/test_invalid_or_ambiguous_loop2/bool/program.json",
+      "expected_exit": 1,
+      "result": null,
+      "log_sha256": "f7a7748e56f8f9a2cdfde672b4dc643d414419b21ddfdb924910c9ac2b071927"
+    },
+    {
+      "program": "/workspace/mlx-event-runtime-upfKzE/artifacts/tagged/event-loop-regression-001/pytest/test_invalid_or_ambiguous_loop3/empty/program.json",
+      "expected_exit": 1,
+      "result": null,
+      "log_sha256": "663cb213cf2e3930879b06b3065417e08fd7efd8c386428725990a1ee83d8109"
+    },
+    {
+      "program": "/workspace/mlx-event-runtime-upfKzE/artifacts/tagged/event-loop-regression-001/pytest/test_invalid_or_ambiguous_loop4/field/program.json",
+      "expected_exit": 1,
+      "result": null,
+      "log_sha256": "35ae60753285c726cd12b19167ea308ab5ae35136ff0bdac5911b8a3d67b63fe"
+    },
+    {
+      "program": "/workspace/mlx-event-runtime-upfKzE/artifacts/tagged/event-loop-regression-001/pytest/test_invalid_or_ambiguous_loop5/overflow/program.json",
+      "expected_exit": 1,
+      "result": null,
+      "log_sha256": "63a7ebcbb5711b0d46db364a32ef7d223ea305f083eea0f4739e1d57a1180ecd"
+    },
+    {
+      "program": "/workspace/mlx-event-runtime-upfKzE/artifacts/tagged/event-loop-regression-001/pytest/test_invalid_or_ambiguous_loop6/local_dependency/program.json",
+      "expected_exit": 1,
+      "result": null,
+      "log_sha256": "020745372ca7723b46474f8485544d95c06081d46e1a81e22717eb5671b2314e"
+    },
+    {
+      "program": "/workspace/mlx-event-runtime-upfKzE/artifacts/tagged/event-loop-regression-001/pytest/test_invalid_or_ambiguous_loop7/depth/program.json",
+      "expected_exit": 1,
+      "result": null,
+      "log_sha256": "663cb213cf2e3930879b06b3065417e08fd7efd8c386428725990a1ee83d8109"
+    },
+    {
+      "program": "/workspace/mlx-event-runtime-upfKzE/artifacts/tagged/event-loop-regression-001/pytest/test_invalid_or_ambiguous_loop8/legacy/program.json",
+      "expected_exit": 1,
+      "result": null,
+      "log_sha256": "05709812ebfb7c84db61cc73c2d48933a63bc405d8b072f536ef7a76ab9b8beb"
+    },
+    {
+      "program": "/workspace/mlx-event-runtime-upfKzE/artifacts/tagged/event-loop-regression-001/pytest/test_invalid_or_unrepresentabl0/bad/program.json",
+      "expected_exit": 1,
+      "result": null,
+      "log_sha256": "ea3dc5f30b5c5c96eac0543a240bf8e022bfad3ba3d48ca92176908b85571ef5"
+    },
+    {
+      "program": "/workspace/mlx-event-runtime-upfKzE/artifacts/tagged/event-loop-regression-001/pytest/test_invalid_or_unrepresentabl1/bad/program.json",
+      "expected_exit": 1,
+      "result": null,
+      "log_sha256": "73ef08187cc0a9be22a2c055e3cf55cc7dabd1f60aaaee41f476c2c4e815a53e"
+    },
+    {
+      "program": "/workspace/mlx-event-runtime-upfKzE/artifacts/tagged/event-loop-regression-001/pytest/test_invalid_or_unrepresentabl2/bad/program.json",
+      "expected_exit": 1,
+      "result": null,
+      "log_sha256": "e34eb54406b62ab5934ead1ebf01dfc0d2996f33c4c1758e0df52ef293a75245"
+    },
+    {
+      "program": "/workspace/mlx-event-runtime-upfKzE/artifacts/tagged/event-loop-regression-001/pytest/test_invalid_or_unrepresentabl3/bad/program.json",
+      "expected_exit": 1,
+      "result": null,
+      "log_sha256": "d9182a8b45a5fd8cf067f055e1a880cc836b2ff79cb9750cc5f82bc4ff6ec07c"
+    },
+    {
+      "program": "/workspace/mlx-event-runtime-upfKzE/artifacts/tagged/event-loop-regression-001/pytest/test_invalid_or_unrepresentabl4/bad/program.json",
+      "expected_exit": 1,
+      "result": null,
+      "log_sha256": "5fa58a46cded603c804ec0ec19976eecb70627ae827f505d17feb916f85765c6"
+    },
+    {
+      "program": "/workspace/mlx-event-runtime-upfKzE/artifacts/tagged/event-loop-regression-001/pytest/test_invalid_or_unrepresentabl5/bad/program.json",
+      "expected_exit": 1,
+      "result": null,
+      "log_sha256": "a764f090515bfdc93c3b4624280e994958c4aacea65add11d63ea0863bbb1aa4"
+    },
+    {
+      "program": "/workspace/mlx-event-runtime-upfKzE/artifacts/tagged/event-loop-regression-001/pytest/test_invalid_or_unrepresentabl6/bad/program.json",
+      "expected_exit": 1,
+      "result": null,
+      "log_sha256": "6bb0dbf0d55a175cf3988633193bbe56ae0234181a2e5e198772030c33589433"
+    },
+    {
+      "program": "/workspace/mlx-event-runtime-upfKzE/artifacts/tagged/event-loop-regression-001/pytest/test_invalid_or_unrepresentabl7/bad/program.json",
+      "expected_exit": 1,
+      "result": null,
+      "log_sha256": "fe430ee937d4b111135300bb0d29ab936f4abeba97a48d8de3963a39ee1e90c8"
+    },
+    {
+      "program": "/workspace/mlx-event-runtime-upfKzE/artifacts/tagged/event-loop-regression-001/pytest/test_invalid_or_unrepresentabl8/bad/program.json",
+      "expected_exit": 1,
+      "result": null,
+      "log_sha256": "4029df8e14b517351d45da12e63d1c2c6d6cae718314dab09b0fcbc4b13829b4"
+    },
+    {
+      "program": "/workspace/mlx-event-runtime-upfKzE/artifacts/tagged/event-loop-regression-001/pytest/test_invalid_or_unrepresentabl9/bad/program.json",
+      "expected_exit": 1,
+      "result": null,
+      "log_sha256": "6cf72f489ba4f74d3aef3ad1f32d0af6766e105e3217045b78f7d3396563e27c"
+    },
+    {
+      "program": "/workspace/mlx-event-runtime-upfKzE/artifacts/tagged/event-loop-regression-001/pytest/test_issue_policy_changes_sele0/priority/program.json",
+      "expected_exit": 0,
+      "result": "/workspace/mlx-event-runtime-upfKzE/artifacts/tagged/event-loop-safety-001/case-29.json",
+      "log_sha256": "efa61214a3a7b1a5f2d9a4834b38f1e5b56a4782f329927b286b3e3273b8891b"
+    },
+    {
+      "program": "/workspace/mlx-event-runtime-upfKzE/artifacts/tagged/event-loop-regression-001/pytest/test_issue_policy_changes_sele0/rr/program.json",
+      "expected_exit": 0,
+      "result": "/workspace/mlx-event-runtime-upfKzE/artifacts/tagged/event-loop-safety-001/case-30.json",
+      "log_sha256": "efa61214a3a7b1a5f2d9a4834b38f1e5b56a4782f329927b286b3e3273b8891b"
+    },
+    {
+      "program": "/workspace/mlx-event-runtime-upfKzE/artifacts/tagged/event-loop-regression-001/pytest/test_large_repeat_executes_all0/large/program.json",
+      "expected_exit": 0,
+      "result": "/workspace/mlx-event-runtime-upfKzE/artifacts/tagged/event-loop-safety-001/case-31.json",
+      "log_sha256": "9aa4a38904d5d77f316afd784b7e2d89526560cdef76ed4cdc169e03863aa9e9"
+    },
+    {
+      "program": "/workspace/mlx-event-runtime-upfKzE/artifacts/tagged/event-loop-regression-001/pytest/test_late_leaf_dependency_wait0/flat/program.json",
+      "expected_exit": 0,
+      "result": "/workspace/mlx-event-runtime-upfKzE/artifacts/tagged/event-loop-safety-001/case-32.json",
+      "log_sha256": "2e1f8382f96ae66a73e1a5b7d7b5f92219911e898ed2fe69f9a8c1a393966ce8"
+    },
+    {
+      "program": "/workspace/mlx-event-runtime-upfKzE/artifacts/tagged/event-loop-regression-001/pytest/test_late_leaf_dependency_wait0/last/program.json",
+      "expected_exit": 0,
+      "result": "/workspace/mlx-event-runtime-upfKzE/artifacts/tagged/event-loop-safety-001/case-33.json",
+      "log_sha256": "2e1f8382f96ae66a73e1a5b7d7b5f92219911e898ed2fe69f9a8c1a393966ce8"
+    },
+    {
+      "program": "/workspace/mlx-event-runtime-upfKzE/artifacts/tagged/event-loop-regression-001/pytest/test_many_mapped_blocks_are_no0/many/program.json",
+      "expected_exit": 0,
+      "result": "/workspace/mlx-event-runtime-upfKzE/artifacts/tagged/event-loop-safety-001/case-34.json",
+      "log_sha256": "23214a13cbf6e80ca5372cf0d32aba50cf772bf76799e1ed4549e1179834e9d5"
+    },
+    {
+      "program": "/workspace/mlx-event-runtime-upfKzE/artifacts/tagged/event-loop-regression-001/pytest/test_nested_loops_equal_full_u0/flat/program.json",
+      "expected_exit": 0,
+      "result": "/workspace/mlx-event-runtime-upfKzE/artifacts/tagged/event-loop-safety-001/case-35.json",
+      "log_sha256": "c3f68eab8c639a410ebd2043d36b0863fc65ad546c7950c886d8050f2db6a877"
+    },
+    {
+      "program": "/workspace/mlx-event-runtime-upfKzE/artifacts/tagged/event-loop-regression-001/pytest/test_nested_loops_equal_full_u0/loop/program.json",
+      "expected_exit": 0,
+      "result": "/workspace/mlx-event-runtime-upfKzE/artifacts/tagged/event-loop-safety-001/case-36.json",
+      "log_sha256": "c3f68eab8c639a410ebd2043d36b0863fc65ad546c7950c886d8050f2db6a877"
+    },
+    {
+      "program": "/workspace/mlx-event-runtime-upfKzE/artifacts/tagged/event-loop-regression-001/pytest/test_nested_loops_equal_full_u1/flat/program.json",
+      "expected_exit": 0,
+      "result": "/workspace/mlx-event-runtime-upfKzE/artifacts/tagged/event-loop-safety-001/case-37.json",
+      "log_sha256": "c3f68eab8c639a410ebd2043d36b0863fc65ad546c7950c886d8050f2db6a877"
+    },
+    {
+      "program": "/workspace/mlx-event-runtime-upfKzE/artifacts/tagged/event-loop-regression-001/pytest/test_nested_loops_equal_full_u1/loop/program.json",
+      "expected_exit": 0,
+      "result": "/workspace/mlx-event-runtime-upfKzE/artifacts/tagged/event-loop-safety-001/case-38.json",
+      "log_sha256": "c3f68eab8c639a410ebd2043d36b0863fc65ad546c7950c886d8050f2db6a877"
+    },
+    {
+      "program": "/workspace/mlx-event-runtime-upfKzE/artifacts/tagged/event-loop-regression-001/pytest/test_nested_loops_equal_full_u2/flat/program.json",
+      "expected_exit": 0,
+      "result": "/workspace/mlx-event-runtime-upfKzE/artifacts/tagged/event-loop-safety-001/case-39.json",
+      "log_sha256": "93686713067d209d5d891e3793bb32a44ad5139d0fe184babc282257849c2248"
+    },
+    {
+      "program": "/workspace/mlx-event-runtime-upfKzE/artifacts/tagged/event-loop-regression-001/pytest/test_nested_loops_equal_full_u2/loop/program.json",
+      "expected_exit": 0,
+      "result": "/workspace/mlx-event-runtime-upfKzE/artifacts/tagged/event-loop-safety-001/case-40.json",
+      "log_sha256": "93686713067d209d5d891e3793bb32a44ad5139d0fe184babc282257849c2248"
+    },
+    {
+      "program": "/workspace/mlx-event-runtime-upfKzE/artifacts/tagged/event-loop-regression-001/pytest/test_nested_loops_equal_full_u3/flat/program.json",
+      "expected_exit": 0,
+      "result": "/workspace/mlx-event-runtime-upfKzE/artifacts/tagged/event-loop-safety-001/case-41.json",
+      "log_sha256": "93686713067d209d5d891e3793bb32a44ad5139d0fe184babc282257849c2248"
+    },
+    {
+      "program": "/workspace/mlx-event-runtime-upfKzE/artifacts/tagged/event-loop-regression-001/pytest/test_nested_loops_equal_full_u3/loop/program.json",
+      "expected_exit": 0,
+      "result": "/workspace/mlx-event-runtime-upfKzE/artifacts/tagged/event-loop-safety-001/case-42.json",
+      "log_sha256": "93686713067d209d5d891e3793bb32a44ad5139d0fe184babc282257849c2248"
+    },
+    {
+      "program": "/workspace/mlx-event-runtime-upfKzE/artifacts/tagged/event-loop-regression-001/pytest/test_nested_loops_equal_full_u4/flat/program.json",
+      "expected_exit": 0,
+      "result": "/workspace/mlx-event-runtime-upfKzE/artifacts/tagged/event-loop-safety-001/case-43.json",
+      "log_sha256": "61216721eb04c02dcf459a14e66833f0d3a850051e688d636e48835fa85561d0"
+    },
+    {
+      "program": "/workspace/mlx-event-runtime-upfKzE/artifacts/tagged/event-loop-regression-001/pytest/test_nested_loops_equal_full_u4/loop/program.json",
+      "expected_exit": 0,
+      "result": "/workspace/mlx-event-runtime-upfKzE/artifacts/tagged/event-loop-safety-001/case-44.json",
+      "log_sha256": "61216721eb04c02dcf459a14e66833f0d3a850051e688d636e48835fa85561d0"
+    },
+    {
+      "program": "/workspace/mlx-event-runtime-upfKzE/artifacts/tagged/event-loop-regression-001/pytest/test_nested_loops_equal_full_u5/flat/program.json",
+      "expected_exit": 0,
+      "result": "/workspace/mlx-event-runtime-upfKzE/artifacts/tagged/event-loop-safety-001/case-45.json",
+      "log_sha256": "18b061b851a95cac710f59629afdeee5acf490280a2c08fab1a9f09658e4062b"
+    },
+    {
+      "program": "/workspace/mlx-event-runtime-upfKzE/artifacts/tagged/event-loop-regression-001/pytest/test_nested_loops_equal_full_u5/loop/program.json",
+      "expected_exit": 0,
+      "result": "/workspace/mlx-event-runtime-upfKzE/artifacts/tagged/event-loop-safety-001/case-46.json",
+      "log_sha256": "18b061b851a95cac710f59629afdeee5acf490280a2c08fab1a9f09658e4062b"
+    },
+    {
+      "program": "/workspace/mlx-event-runtime-upfKzE/artifacts/tagged/event-loop-regression-001/pytest/test_nested_loops_equal_full_u6/flat/program.json",
+      "expected_exit": 0,
+      "result": "/workspace/mlx-event-runtime-upfKzE/artifacts/tagged/event-loop-safety-001/case-47.json",
+      "log_sha256": "cc204436ae20c6003a14794478d81474bc7786bdb26bfe69670e599f8d60d025"
+    },
+    {
+      "program": "/workspace/mlx-event-runtime-upfKzE/artifacts/tagged/event-loop-regression-001/pytest/test_nested_loops_equal_full_u6/loop/program.json",
+      "expected_exit": 0,
+      "result": "/workspace/mlx-event-runtime-upfKzE/artifacts/tagged/event-loop-safety-001/case-48.json",
+      "log_sha256": "cc204436ae20c6003a14794478d81474bc7786bdb26bfe69670e599f8d60d025"
+    },
+    {
+      "program": "/workspace/mlx-event-runtime-upfKzE/artifacts/tagged/event-loop-regression-001/pytest/test_nested_loops_equal_full_u7/flat/program.json",
+      "expected_exit": 0,
+      "result": "/workspace/mlx-event-runtime-upfKzE/artifacts/tagged/event-loop-safety-001/case-49.json",
+      "log_sha256": "a2e476ec5100ce7724184096168c1f8ee4e71c73e1b13b92eb27706ff76223ea"
+    },
+    {
+      "program": "/workspace/mlx-event-runtime-upfKzE/artifacts/tagged/event-loop-regression-001/pytest/test_nested_loops_equal_full_u7/loop/program.json",
+      "expected_exit": 0,
+      "result": "/workspace/mlx-event-runtime-upfKzE/artifacts/tagged/event-loop-safety-001/case-50.json",
+      "log_sha256": "a2e476ec5100ce7724184096168c1f8ee4e71c73e1b13b92eb27706ff76223ea"
+    },
+    {
+      "program": "/workspace/mlx-event-runtime-upfKzE/artifacts/tagged/event-loop-regression-001/pytest/test_policy_ablation_keeps_mul0/source_priority/program.json",
+      "expected_exit": 0,
+      "result": "/workspace/mlx-event-runtime-upfKzE/artifacts/tagged/event-loop-safety-001/case-51.json",
+      "log_sha256": "6774f047cd0d9307190133b0f6736687596a8ca98df0e5a22fa0711e4949aa5e"
+    },
+    {
+      "program": "/workspace/mlx-event-runtime-upfKzE/artifacts/tagged/event-loop-regression-001/pytest/test_policy_ablation_keeps_mul1/round_robin/program.json",
+      "expected_exit": 0,
+      "result": "/workspace/mlx-event-runtime-upfKzE/artifacts/tagged/event-loop-safety-001/case-52.json",
+      "log_sha256": "6774f047cd0d9307190133b0f6736687596a8ca98df0e5a22fa0711e4949aa5e"
+    },
+    {
+      "program": "/workspace/mlx-event-runtime-upfKzE/artifacts/tagged/event-loop-regression-001/pytest/test_rom_exhaustion_waits_for_0/rom/program.json",
+      "expected_exit": 0,
+      "result": "/workspace/mlx-event-runtime-upfKzE/artifacts/tagged/event-loop-safety-001/case-53.json",
+      "log_sha256": "3fd3c2299a33ca394dcdc908f141bfde3e7a64d708399d236068a7505af45903"
+    },
+    {
+      "program": "/workspace/mlx-event-runtime-upfKzE/artifacts/tagged/event-loop-regression-001/pytest/test_same_pe_different_pipelin0/overlap/program.json",
+      "expected_exit": 0,
+      "result": "/workspace/mlx-event-runtime-upfKzE/artifacts/tagged/event-loop-safety-001/case-54.json",
+      "log_sha256": "7b753354856d63cc887c88b298f0fd08eac7f16e8f4e970c35d10512d7bd5a72"
+    },
+    {
+      "program": "/workspace/mlx-event-runtime-upfKzE/artifacts/tagged/event-loop-regression-001/pytest/test_single_dma_resource_and_c0/dma/program.json",
+      "expected_exit": 0,
+      "result": "/workspace/mlx-event-runtime-upfKzE/artifacts/tagged/event-loop-safety-001/case-55.json",
+      "log_sha256": "aa50fe2fab9d4a562609929fe7d88d2f34903803b81f6d3b5742f15f6bacbab7"
+    },
+    {
+      "program": "/workspace/mlx-event-runtime-upfKzE/artifacts/tagged/event-loop-regression-001/pytest/test_source_window_limits_sour0/one-source/program.json",
+      "expected_exit": 0,
+      "result": "/workspace/mlx-event-runtime-upfKzE/artifacts/tagged/event-loop-safety-001/case-56.json",
+      "log_sha256": "6774f047cd0d9307190133b0f6736687596a8ca98df0e5a22fa0711e4949aa5e"
+    },
+    {
+      "program": "/workspace/mlx-event-runtime-upfKzE/artifacts/tagged/event-loop-regression-001/pytest/test_two_contexts_share_one_re0/shared-code/program.json",
+      "expected_exit": 0,
+      "result": "/workspace/mlx-event-runtime-upfKzE/artifacts/tagged/event-loop-safety-001/case-57.json",
+      "log_sha256": "c5eadaaadbba54ec643aef08febecd252ae6bb15475f01f7212af49a50166af1"
+    }
+  ],
+  "asan_binary_sha256": "8ded78900832df01bdd01ca2f4e4f58e41d5c4b9488c3cd571b6e8bab83ae4c8",
+  "full_model_verified": false,
+  "performance_error_available": false,
+  "trace_resource_accounting_checked": true
+}
