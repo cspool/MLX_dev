@@ -8,6 +8,8 @@
 
 用户补充的知识库 `human_notes/模拟器卡片` 已纳入参考，重点是完整编译产物、instance/就绪调度、DMA 完成协议和逐周期/合并推进的分层，见[DFU/simict 卡片参考与弥补目标](mlx-dfu-simulator-reference.md)。这些资料不替代 MLX 资源约束，也不作为现有整模运行或合并推进精度的通过证据。
 
+新增 `专题回答` 已纳入同一参考文档：区分空间映射、独立任务、顺序阶段与重复实例，指导紧凑块描述和 C++ 按需实例化；同时保留原始布局、地址、累加状态及有限完成事件。Task 不固定绑定功能单元，DFU 层次不直接等同 GPU block／warp，COPY 也不能证明未给出的 NoC 细节。实施顺序和整模验收门槛不变。
+
 系统主线增量：[BERT 布尔控制和 memory v2 ABI](mlx-bert-system-abi.md)已连接实际 RV64/C++ 响应驱动入口，完成组合链及安全重放；source-group、split 生命周期、QA 系统输出和对应 Rocket 整模仍待接入/验收。
 
 后续[现代系统图增量](mlx-modern-system-graph.md)已接入 source-group、split 生命周期、QA CPU 读回/后处理和实际输出导出，227 项回归、两个实际配对 Rocket 小图及独立审计通过。完整 BERT 配对系统镜像已完成，首次整模 Rocket 尝试正在运行；其终态、主要正确性和性能仍须独立验收，其他 P0/GPU/RTL 的顺序不变。
