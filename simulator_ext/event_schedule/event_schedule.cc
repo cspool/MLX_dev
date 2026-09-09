@@ -38,6 +38,7 @@ struct Sequence {U repeat=1,total=0;unsigned event=UINT32_MAX;std::vector<Sequen
 struct Event {std::string id,op;unsigned owner=0;std::vector<unsigned> deps;std::vector<std::string> dependency_names;
   U begin=NEVER,end=NEVER,visible=NEVER,instances=1,issued=0,completed=0;unsigned lanes=0,bytes=0;};
 struct Block {std::string id;U source=0,pc=0,total=0,frontier_ready=0;unsigned pe=0,code=0,slot=0,rf=0,spm=0;std::vector<unsigned> events,deps;Sequence sequence;
+  unsigned graph_source=UINT32_MAX,graph_window=0;
   std::vector<unsigned> children;unsigned unmet=0;
   bool active=false,running=false,retired=false,controller=false,control=false,zero_work=false;U begin=NEVER,end=NEVER;};
 struct ResidentCode {unsigned pe=0,code=0,base=0,refs=0,loaded=0;U ready=NEVER;bool live=false;};
@@ -45,11 +46,15 @@ struct ResidentCode {unsigned pe=0,code=0,base=0,refs=0,loaded=0;U ready=NEVER;b
 // then use the resulting registered state; results become visible next edge.
 enum Change {Complete,Retire,Word};
 struct Wake {U time;Change kind;unsigned item;bool operator>(const Wake &o)const{return std::tie(time,kind,item)>std::tie(o.time,o.kind,o.item);}};
+struct Source {U id=0,begin=NEVER,end=NEVER,window_begin=NEVER;std::string family;unsigned unmet=0,window=0;bool active=false,complete=false,view=false;
+  std::vector<unsigned> children,remaining;Json::Value intervals{Json::arrayValue};};
 struct Engine {
   unsigned pes=0,contexts=0,source_limit=0;U max_cycles=0,now=0,retired=0,transitions=0;
   bool timed_templates=true,loops=false,ports=false;U total_events=0,sequence_nodes=0;std::string policy;
   unsigned version=1;
   bool source_ticks=false;std::map<U,std::vector<Wake>> source_completions;
+  bool graph_mode=false;std::vector<Source> graph;std::map<U,unsigned> source_ids;std::set<std::pair<U,unsigned>> graph_ready;
+  unsigned graph_active=0,peak_graph_active=0,graph_memory=0,graph_control=0,graph_completed=0;
   U spm_period=1,writeback_period=1,dma_request_period=1,dma_response_period=1,compute_ii=1;
   U spm_port_free=0,admission_retry=NEVER;std::vector<U> writeback_free,compute_issue_free;
   U sfu_ii=1;std::vector<U> sfu_issue_free;
@@ -73,8 +78,9 @@ struct Engine {
   explicit Engine(const Json::Value &p){
     const bool control=p["schema"]=="mlx_event_schedule_v6";
     const bool controllers=p["schema"]=="mlx_event_schedule_v5"||control;
-    auto top_fields=std::set<std::string>{"schema","hardware","templates","blocks","max_cycles","trace_limit","policy"};if(controllers)top_fields.insert("controllers");if(control)top_fields.insert("source_tick_order");fields(p,top_fields);
+    auto top_fields=std::set<std::string>{"schema","hardware","templates","blocks","max_cycles","trace_limit","policy"};if(controllers)top_fields.insert("controllers");if(control){top_fields.insert("source_tick_order");top_fields.insert("source_graph");}fields(p,top_fields);
     if(p.isMember("source_tick_order")){need(p["source_tick_order"].isBool(),"source tick order must be Boolean");source_ticks=p["source_tick_order"].asBool();}
+    graph_mode=p.isMember("source_graph");need(!graph_mode||source_ticks,"source graph requires explicit native source tick order");
     need(p["schema"]=="mlx_event_schedule_v1"||p["schema"]=="mlx_event_schedule_v2"||p["schema"]=="mlx_event_schedule_v3"||p["schema"]=="mlx_event_schedule_v4"||controllers,"unsupported event timing contract");
     version=control?6:controllers?5:p["schema"]=="mlx_event_schedule_v4"?4:p["schema"]=="mlx_event_schedule_v3"?3:p["schema"]=="mlx_event_schedule_v2"?2:1;ports=version>=3;loops=version>=2;
     const auto &h=p["hardware"];std::set<std::string> hardware_fields={"rows","columns","contexts","rf_vectors_per_pe","spm_vectors_total","rom_words_per_pe","source_window_limit","latencies","template_load_timing"};
@@ -130,6 +136,30 @@ struct Engine {
         if(e.op=="memory_predicate_read")need(e.bytes==1,"memory predicate read must preserve Boolean width");
         if(e.op=="memory_complete"||e.op=="control_complete"){need(block.total==1,"zero-work controller must have only a completion marker");block.zero_work=true;}}
       source_order[block.source].push_back(owner);blocks.push_back(std::move(block));
+    }
+    if(graph_mode){
+      need(p["source_graph"].isArray()&&!p["source_graph"].empty(),"source graph is empty");
+      for(const auto &descriptor:p["source_graph"]){
+        fields(descriptor,{"source_operator_id","family","parents","windows"});Source s;s.id=number(descriptor["source_operator_id"],"graph source identity",0,NEVER/4);s.family=descriptor["family"].asString();
+        need(source_order.count(s.id)&&source_ids.emplace(s.id,unsigned(graph.size())).second,"source graph identity missing or duplicated");
+        need(s.family=="matrix"||s.family=="vector"||s.family=="memory"||s.family=="control","source graph family unsupported");
+        need(descriptor["parents"].isArray()&&descriptor["windows"].isArray()&&!descriptor["windows"].empty(),"source graph parents/windows missing");
+        std::set<U> parents;for(const auto &value:descriptor["parents"]){U parent=number(value,"graph parent identity",0,NEVER/4);auto found=source_ids.find(parent);
+          need(found!=source_ids.end()&&found->second<graph.size()&&parents.insert(parent).second,"source graph parent is missing, cyclic or repeated");graph[found->second].children.push_back(unsigned(graph.size()));++s.unmet;}
+        std::vector<unsigned> ordered;
+        for(const auto &window:descriptor["windows"]){need(window.isArray()&&!window.empty(),"source graph window must own actual blocks");
+          for(const auto &name:window){need(name.isString()&&block_ids.count(name.asString()),"source graph block is missing");auto index=block_ids.at(name.asString());auto &b=blocks[index];
+            need(b.source==s.id&&b.graph_source==UINT32_MAX,"source graph block owner mismatch or duplicated");
+            need((s.family=="control")?b.control:(s.family=="memory")?(b.controller&&!b.control):!b.controller,"source graph resource domain differs");
+            b.graph_source=unsigned(graph.size());b.graph_window=unsigned(s.remaining.size());ordered.push_back(index);}
+          s.remaining.push_back(window.size());}
+        need(ordered==source_order.at(s.id),"source graph windows do not exactly partition source block order");
+        if(s.family=="memory"||s.family=="control")need(s.remaining.size()==1&&s.remaining[0]==1,"private frontend requires one controller window");
+        s.view=s.family=="memory"&&blocks[ordered[0]].zero_work;
+        if(!s.unmet)graph_ready.emplace(s.id,unsigned(graph.size()));
+        graph.push_back(std::move(s));
+      }
+      need(source_ids.size()==source_order.size(),"source graph omitted a source");
     }
     unsigned bi=0;
     for(const auto &b:descriptions){
@@ -230,10 +260,28 @@ struct Engine {
   U request_period(const Block &b)const{return b.control?control_request_period:memory_request_period;}
   U response_period(const Block &b)const{return b.control?control_response_period:memory_response_period;}
   std::string controller_prefix(const Block &b)const{return b.control?"control":"memory";}
+  void launch_sources(){
+    if(!graph_mode||dma_free>now)return;
+    for(auto it=graph_ready.begin();it!=graph_ready.end()&&graph_active<source_limit;){auto &s=graph[it->second];
+      if((s.family=="control"&&graph_control)||(s.family=="memory"&&!s.view&&graph_memory)){++it;continue;}
+      need(!s.active&&!s.complete&&!s.unmet,"source graph readiness corrupted");s.active=true;s.begin=s.window_begin=now;++graph_active;
+      graph_control+=s.family=="control";graph_memory+=s.family=="memory"&&!s.view;it=graph_ready.erase(it);resources_changed=true;}
+    peak_graph_active=std::max(peak_graph_active,graph_active);
+  }
+  void retire_source_block(const Block &b){
+    if(!graph_mode)return;
+    auto &s=graph[b.graph_source];need(s.active&&b.graph_window==s.window&&s.remaining[s.window],"source window completion mismatch");
+    if(--s.remaining[s.window])return;
+    Json::Value interval;interval["index"]=s.window;interval["begin_cycle"]=Json::UInt64(s.window_begin);interval["end_cycle"]=Json::UInt64(now);s.intervals.append(interval);
+    if(++s.window<s.remaining.size()){s.window_begin=now;return;}
+    s.active=false;s.complete=true;s.end=now;--graph_active;++graph_completed;graph_control-=s.family=="control";graph_memory-=s.family=="memory"&&!s.view;
+    for(auto child:s.children){auto &c=graph[child];need(c.unmet,"source graph parent counter underflow");if(!--c.unmet)graph_ready.emplace(c.id,child);}
+  }
   U aligned(U time,U period)const{return time%period?add(time,period-time%period):time;}
   bool spm_port_ready()const{return spm_port_free<=now&&now%spm_period==0;}
   bool admit(unsigned i){
     auto &b=blocks[i];if(b.active||b.retired)return false;for(auto parent:b.deps)if(!blocks[parent].retired)return false;
+    if(graph_mode){const auto &s=graph[b.graph_source];if(!s.active||b.graph_window!=s.window)return false;}
     if(!live_sources.count(b.source)&&live_sources.size()>=source_limit)return false;
     if(b.controller){if(!b.zero_work||b.control){auto &live=b.control?control_live:memory_live;if(live)return false;live=true;(b.control?peak_control:peak_memory)=1;}b.active=true;b.begin=now;b.frontier_ready=now;++live_sources[b.source];++counts[controller_prefix(b)+(b.zero_work?"_zero_work_admitted":"_controllers_admitted")];emit("admit",i);return true;}
     const auto &t=templates[b.code];unsigned pe=b.pe;int slot=-1;for(unsigned s=0;s<contexts;++s)if(slots[pe][s]<0){slot=int(s);break;}
@@ -311,6 +359,7 @@ struct Engine {
         b.active=false;b.retired=true;b.end=now;++retired;active.erase({b.source,w.item});resources_changed=true;
         for(auto child:b.children){need(blocks[child].unmet>0,"admission dependency counter underflow");if(!--blocks[child].unmet)enqueue_admission(child);}
         auto it=live_sources.find(b.source);need(it!=live_sources.end()&&it->second,"source lease missing");if(!--it->second)live_sources.erase(it);
+        retire_source_block(b);
         emit("retire",w.item);
       }else{auto &c=codes[w.item];need(c.live&&c.refs,"template programming lost owner");
         if(configured.count(c.pe)){calendar.push(Wake{add(now,1),Word,w.item});continue;}
@@ -385,6 +434,7 @@ struct Engine {
   Json::Value run(){
     while(retired<blocks.size()){
       need(now<=max_cycles,"event model exceeded cycle limit");changes();
+      launch_sources();
       admissions();
       if(source_ticks){
         std::set<U> sources;for(auto [source,i]:active){(void)i;sources.insert(source);}
@@ -397,6 +447,7 @@ struct Engine {
     need(used(spm)==0&&!memory_live&&!control_live&&live_sources.empty()&&calendar.empty()&&active.empty()&&admission_heads.empty(),"event model failed to drain");
     for(unsigned pe=0;pe<pes;++pe)need(used(rf[pe])==0&&used(rom[pe])==0&&used(slots[pe])==0,"event resource leak");
     need(counts["events_issued"]==total_events&&counts["events_completed"]==total_events,"not every event instance executed exactly once");
+    need(!graph_mode||(graph_completed==graph.size()&&!graph_active&&!graph_memory&&!graph_control&&graph_ready.empty()),"source graph failed to drain");
     Json::Value r;r["classification"]="native_concurrent_event_component_not_full_model_or_numerical_execution";r["cycles"]=Json::UInt64(now);
     r["calendar_transitions"]=Json::UInt64(transitions);r["blocks"]=Json::UInt64(blocks.size());r["events"]=Json::UInt64(total_events);r["policy"]=policy;
     if(loops){r["schema"]=version==6?"mlx_event_schedule_v6":version==5?"mlx_event_schedule_v5":version==4?"mlx_event_schedule_v4":ports?"mlx_event_schedule_v3":"mlx_event_schedule_v2";r["stored_event_leaves"]=Json::UInt64(events.size());r["stored_sequence_nodes"]=Json::UInt64(sequence_nodes);
@@ -411,6 +462,8 @@ struct Engine {
     if(version>=6){r["control_controller_resources"]["register_bytes"]=512;r["control_controller_resources"]["rom_words"]=32;r["control_controller_resources"]["peak_active"]=peak_control;r["control_controller_resources"]["uses_array_rf_spm"]=false;r["control_controller_resources"]["rocket_cpu_timing"]=false;
       r["port_contract"]["issue_after_admission_edge_scope"]="array_only_controllers_start_on_admission_edge";}
     if(source_ticks)r["timing_semantics"]="source_priority_completion_then_issue_per_source_next_edge_visibility_not_full_graph";
+    if(graph_mode){r["source_graph_completed"]=true;r["source_frontend_peak"]=peak_graph_active;r["source_frontend_capacity"]=source_limit;r["source_launch_gate"]="shared_dma_quiescent";r["source_intervals"]=Json::Value(Json::arrayValue);
+      for(const auto &s:graph){Json::Value row;row["source_operator_id"]=Json::UInt64(s.id);row["family"]=s.family;row["begin_cycle"]=Json::UInt64(s.begin);row["publish_cycle"]=Json::UInt64(s.end);row["windows"]=s.intervals;r["source_intervals"].append(row);}}
     for(const auto &[k,v]:counts)r["counts"][k]=Json::UInt64(v);
     for(const auto &[k,v]:areas)r["integrated_usage"][k]=Json::UInt64(v);
     for(const auto &[k,v]:work)r["declared_work"][k]=Json::UInt64(v);

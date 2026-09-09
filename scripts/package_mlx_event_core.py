@@ -20,14 +20,18 @@ def main():
     parser.add_argument("--include-memory",action="store_true")
     parser.add_argument("--include-control",action="store_true")
     parser.add_argument("--include-source-order",action="store_true")
+    parser.add_argument("--include-source-graph",action="store_true")
     parser.add_argument("--matrix-alignment",type=Path)
     parser.add_argument("--vector-alignment",type=Path)
     parser.add_argument("--memory-alignment",type=Path)
     parser.add_argument("--control-alignment",type=Path)
     parser.add_argument("--group-alignment",type=Path)
+    parser.add_argument("--graph-alignment",type=Path)
+    parser.add_argument("--graph-plans",type=Path)
     args = parser.parse_args(); out = args.output.resolve(); tests = args.tests.resolve(); safety = args.safety.resolve()
+    if args.include_source_graph:args.include_source_order=True
     if args.include_source_order:args.include_control=True
-    test_count,replay_count,success_count=(261,272,236) if args.include_source_order else (221,202,168) if args.include_control else (176,166,136) if args.include_memory else (148,142,115) if args.include_vectors else (95,94,67) if args.include_ports else (55,58,37) if args.include_loops else (35,29,18)
+    test_count,replay_count,success_count=(293,291,248) if args.include_source_graph else (261,272,236) if args.include_source_order else (221,202,168) if args.include_control else (176,166,136) if args.include_memory else (148,142,115) if args.include_vectors else (95,94,67) if args.include_ports else (55,58,37) if args.include_loops else (35,29,18)
     require(not out.exists(), "choose a fresh event publication")
     suite = ET.parse(tests / "regression.xml").getroot().find("testsuite")
     require(suite is not None and suite.get("tests") == str(test_count) and all(suite.get(k) == "0" for k in ("errors", "failures", "skipped")), "event regression not accepted")
@@ -134,6 +138,30 @@ def main():
                 for p in solo.iterdir():
                     if p.is_file() and p.suffix in {".json",".bin"}:copies[p]=destination/f"solo{i}/out"/p.name
         copies[ROOT/"docs/mlx-event-source-order.md"]=Path("sources/docs/mlx-event-source-order.md")
+    if args.include_source_graph:
+        from mlxsim.model_event_graph_plan import graph_plan
+        require(args.graph_alignment is not None and args.graph_plans is not None,"source graph publication needs numerical graphs and full plans")
+        alignment=args.graph_alignment.resolve();bound=json.loads((alignment/"report.json").read_text())
+        require(len(bound["cases"])==8 and bound["all_source_cycles_and_publication_equal"],"numerical graph alignment incomplete")
+        for name,value in bound["sources"].items():
+            require(sha(ROOT/name)==value,"graph alignment source changed");copies[ROOT/name]=Path("sources")/name
+        for p in alignment.rglob("*"):
+            if p.is_file() and p.suffix in {".json",".bin",".log"}:copies[p]=Path("graph-alignment")/p.relative_to(alignment)
+        for row in bound["cases"]:
+            job=Path(row["job"]);require(sha(job)==row["job_sha256"],"graph input changed")
+            destination=Path("graph-inputs")/job.parent.name;copies[job]=destination/"graph-job.json"
+            for i,value in enumerate(row["numerical_output_sha256"]):
+                solo=job.parent/f"solo{i}/out";require(sha(solo/"output.bin")==value,"standalone graph reference changed")
+                for p in solo.iterdir():
+                    if p.is_file() and p.suffix in {".json",".bin"}:copies[p]=destination/f"solo{i}/out"/p.name
+        plans=list(args.graph_plans.resolve().glob("*.json"));require({p.stem for p in plans}=={"bert","llama2"},"both complete model plans required")
+        for p in plans:
+            bound=json.loads(p.read_text());program=Path(bound["program_path"]);require(sha(program)==bound["program_file_sha256"],"full source graph program changed")
+            fresh=graph_plan(json.loads(program.read_text()));require(all(bound[k]==v for k,v in fresh.items()),"full source graph plan does not reproduce")
+            for name,value in bound["sources_sha256"].items():
+                require(sha(ROOT/name)==value,"full graph planner source changed");copies[ROOT/name]=Path("sources")/name
+            copies[p]=Path("graph-plans")/p.name;copies[program]=Path("graph-plans")/(p.stem+"-program.json")
+        copies[ROOT/"docs/mlx-event-source-graph.md"]=Path("sources/docs/mlx-event-source-graph.md")
     out.mkdir(parents=True); files = []
     for source, relative in sorted(copies.items()):
         target = out / relative; target.parent.mkdir(parents=True, exist_ok=True); digest = sha(source); shutil.copy2(source, target)

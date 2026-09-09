@@ -142,6 +142,24 @@ def audit_trace(program, result):
                 if live>1:overlap+=time-previous
                 live+=delta;previous=time
         require(areas.get("same_pe_inflight_context_overlap_pe_cycles",0)==overlap,"same-PE context overlap differs")
+    if "source_graph" in program:
+        rows={r["source_operator_id"]:r for r in result["source_intervals"]};blocks={b["id"]:b for b in result["block_intervals"]}
+        require(result["source_graph_completed"] and set(rows)=={s["source_operator_id"] for s in program["source_graph"]},"source graph completion coverage differs")
+        changes=Counter()
+        for source in program["source_graph"]:
+            r=rows[source["source_operator_id"]];begin=r["begin_cycle"];end=r["publish_cycle"]
+            require(begin<end and all(rows[parent]["publish_cycle"]<=begin for parent in source["parents"]),"source graph dependency publication bypassed")
+            require(not any(a<begin<b for a,b in dma),"source launched before shared DMA quiescence")
+            require(len(r["windows"])==len(source["windows"]) and r["windows"][0]["begin_cycle"]==begin and r["windows"][-1]["end_cycle"]==end,"source batch coverage differs")
+            previous=begin
+            for index,(window,names) in enumerate(zip(r["windows"],source["windows"])):
+                require(window["index"]==index and window["begin_cycle"]==previous,"source batch gap/order differs")
+                require(all(blocks[name]["admit_cycle"]>=previous for name in names) and max(blocks[name]["retire_cycle"] for name in names)==window["end_cycle"],"source window starts/publishes before its blocks")
+                previous=window["end_cycle"]
+            changes[begin]+=1;changes[end]-=1
+        live=peak=0
+        for time,delta in sorted(changes.items()):live+=delta;peak=max(peak,live)
+        require(live==0 and peak==result["source_frontend_peak"]<=program["hardware"]["source_window_limit"],"source frontend slots counted by blocks instead of source lifetime")
 
 
 def main():
@@ -153,14 +171,16 @@ def main():
     parser.add_argument("--include-memory",action="store_true")
     parser.add_argument("--include-control",action="store_true")
     parser.add_argument("--include-source-order",action="store_true")
+    parser.add_argument("--include-source-graph",action="store_true")
     args = parser.parse_args(); out = args.output.resolve(); tests = args.tests.resolve()
+    if args.include_source_graph:args.include_source_order=True
     if args.include_source_order:args.include_control=True
     require(not out.exists(), "choose a fresh event verification directory")
     suite = ET.parse(tests / "regression.xml").getroot().find("testsuite")
     require(suite is not None and all(suite.get(k) == "0" for k in ("failures", "errors", "skipped")), "event regression failed")
     paths = [p for p in (tests / "pytest").rglob("program.json") if not any(a.is_symlink() for a in p.parents)
              and json.loads(p.read_text()).get("schema","").startswith("mlx_event_schedule_")]
-    require(len(paths) == (272 if args.include_source_order else 202 if args.include_control else 166 if args.include_memory else 142 if args.include_vectors else 94 if args.include_ports else 58 if args.include_loops else 29), "event safety replay scope differs")
+    require(len(paths) == (291 if args.include_source_graph else 272 if args.include_source_order else 202 if args.include_control else 166 if args.include_memory else 142 if args.include_vectors else 94 if args.include_ports else 58 if args.include_loops else 29), "event safety replay scope differs")
     sources = {str(p.relative_to(ROOT)): sha(p) for p in (ROOT / "simulator_ext/event_schedule").iterdir() if p.is_file()}
     for p in (Path(__file__).resolve(), ROOT / "tests/test_event_schedule.py", ROOT / "src/mlxsim/model_event_resources.py"):
         sources[str(p.relative_to(ROOT))] = sha(p)
@@ -180,6 +200,9 @@ def main():
     if args.include_source_order:
         for name in ("tests/test_event_source_order.py","src/mlxsim/model_array_group_events.py","simulator_ext/event_alignment/main.cc","simulator_ext/event_alignment/CMakeLists.txt"):
             sources[name]=sha(ROOT/name)
+    if args.include_source_graph:
+        for name in ("tests/test_event_source_graph.py","tests/test_event_graph_plan.py","src/mlxsim/model_array_graph_events.py","src/mlxsim/model_event_graph_plan.py"):
+            sources[name]=sha(ROOT/name)
     binary_hash = sha(args.binary); files = {str(p): sha(p) for p in paths}; out.mkdir(parents=True)
     replays = []; env = dict(os.environ, ASAN_OPTIONS="detect_leaks=1:halt_on_error=1", UBSAN_OPTIONS="halt_on_error=1:print_stacktrace=1")
     for i, p in enumerate(sorted(paths)):
@@ -193,7 +216,7 @@ def main():
             require(result == baseline, "event sanitizer changed full result")
             audit_trace(json.loads(p.read_text()), result)
         replays.append(dict(program=str(p), expected_exit=expected, result=str(actual) if not expected else None, log_sha256=sha(log)))
-    require(sum(r["expected_exit"] == 0 for r in replays) == (236 if args.include_source_order else 168 if args.include_control else 136 if args.include_memory else 115 if args.include_vectors else 67 if args.include_ports else 37 if args.include_loops else 18), "event safety success coverage differs")
+    require(sum(r["expected_exit"] == 0 for r in replays) == (248 if args.include_source_graph else 236 if args.include_source_order else 168 if args.include_control else 136 if args.include_memory else 115 if args.include_vectors else 67 if args.include_ports else 37 if args.include_loops else 18), "event safety success coverage differs")
     require(all(sha(ROOT / p) == h for p,h in sources.items()) and all(sha(Path(p)) == h for p,h in files.items()) and sha(args.binary) == binary_hash, "event safety sources/inputs changed")
     record(out / "report.json", dict(classification="concurrent_event_core_component_validation_not_full_model", sources=sources, inputs=files,
                                      regression_tests=int(suite.get("tests")), replays=replays, asan_binary_sha256=binary_hash, full_model_verified=False,
