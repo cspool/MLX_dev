@@ -1,5 +1,7 @@
 #include "buffer_arena.h"
 #include "memory_program.h"
+#include "source_groups.h"
+#include "result_contract.h"
 #include <filesystem>
 #include <fstream>
 #include <iostream>
@@ -27,12 +29,14 @@ void builtin(){
   require(survivor.allocation().id==owned_id&&survivor.region().writable,"pin did not outlive Arena wrapper");survivor={};
 }
 Json::Value model_lifetimes(const Json::Value &program){
+  validate_value_contract(program);validate_source_groups(program);validate_result_contract(program);
   Arena arena(uint64_t(1)<<32,uint64_t(16)<<30);Values values;std::set<std::string> used_assets;
   for(const auto &name:program["assets"].getMemberNames()){
     const auto &asset=program["assets"][name];values.emplace(name,arena.allocate(dtype(asset["dtype"].asString()),shape(asset["shape"]),false));
   }
-  auto initial=arena.snapshot();Json::Value events(Json::arrayValue);uint64_t views=0,materializations=0;
+  auto initial=arena.snapshot();Json::Value events(Json::arrayValue),guards(Json::arrayValue);uint64_t views=0,materializations=0;
   for(const auto &node:program["nodes"]){
+    require(node.get("control_dependencies",Json::Value(Json::arrayValue))==guards,"missing or foreign lifetime guard dependency");
     Json::Value event;event["source_operator_id"]=node["source_operator_id"];event["kind"]=node["kind"];
     {
       std::set<std::string> inputs;
@@ -40,7 +44,7 @@ Json::Value model_lifetimes(const Json::Value &program){
         if(v.isObject()){if(v.isMember("value"))inputs.insert(v["value"].asString());else for(const auto &key:v.getMemberNames())self(self,v[key]);}
         else if(v.isArray())for(const auto &child:v)self(self,child);
       };
-      collect(collect,node["args"]);collect(collect,node["kwargs"]);
+      collect(collect,node["args"]);collect(collect,node["kwargs"]);collect(collect,node["control_dependencies"]);
       std::vector<Arena::Pin> pins;
       for(const auto &name:inputs){auto found=values.find(name);require(found!=values.end(),"model uses an unbound/released physical SSA value");pins.push_back(arena.pin(found->second));if(program["assets"].isMember(name))used_assets.insert(name);}
       auto name=node["id"].asString();require(!values.count(name),"model redefines a live physical SSA value");unsigned routes=0;
@@ -54,15 +58,26 @@ Json::Value model_lifetimes(const Json::Value &program){
         if(node.isMember("memory_program"))output.steps=shape(node["memory_program"]["output_layout"]["strides"]);
         pins.push_back(arena.pin(output,true));++materializations;
       }
-      event["allocation"]=info(arena.allocation(output));values.emplace(name,output);
+      event["allocation"]=info(arena.allocation(output));
+      if(node["kind"]=="split"){
+        for(auto &[id,value]:split_views(node,output)){
+          event["value_allocations"][id]=info(arena.allocation(value));
+          require(values.emplace(id,std::move(value)).second,"lifetime split output was redefined");
+        }
+      }else values.emplace(name,output);
       // Deliberately erase SSA owners while pins are retained, as could happen
       // during asynchronous completion. No physical address may recycle yet.
-      for(const auto &released:node["release"])require(values.erase(released.asString())==1,"model releases a missing physical SSA value");
+      bool owner_released=false;
+      for(const auto &released:node["release"]){
+        if(node["kind"]=="split"&&released==name){require(!owner_released,"split container released twice");owner_released=true;continue;}
+        require(values.erase(released.asString())==1,"model releases a missing physical SSA value "+released.asString()+" after "+name);
+      }
       for(const auto &pin:pins)require(pin.allocation().id==arena.allocation(pin.tensor()).id,"physical allocation recycled before pin drain");
     }
     auto state=arena.snapshot();event["live_bytes_after_drain"]=state["live_bytes"];event["reserved_bytes_after_drain"]=state["reserved_bytes"];event["live_allocations_after_drain"]=state["allocations"].size();events.append(event);
+    if(node["kind"]=="guard"){Json::Value dep;dep["value"]=node["id"];guards.append(dep);}
   }
-  for(const auto &output:program["outputs"])for(const char *field:{"logits","token"})require(values.count(output[field].asString()),"model result storage was released before host observation");
+  for(const auto &output:program["outputs"])for(const auto &field:result_roles(program))require(values.count(output[field].asString()),"model result storage was released before host observation");
   auto final=arena.snapshot();values.clear();auto drained=arena.snapshot();require(drained["reserved_bytes"].asUInt64()==0&&drained["allocations"].empty()&&drained["free_ranges"].size()==1,"model storage owners leaked");
   Json::Value report;report["classification"]="full_model_address_lifetime_replay_not_inference_execution";
   report["initial"]=initial;report["before_result_release"]=final;report["drained"]=drained;report["events"]=events;
@@ -75,7 +90,7 @@ int main(int argc,char **argv){
   try{
     builtin();if(argc==1){std::cout<<"MODEL_STORAGE_CONTRACT_PASS"<<std::endl;return 0;}
     require(argc==3,"usage: model-storage-contract [job.json output.json]");std::ifstream input(argv[1]);Json::Value job;input>>job;
-    if(job["schema"]=="mlx_tensor_semantics_v1"){
+    if(job.isMember("schema")){
       auto report=model_lifetimes(job);auto output=std::filesystem::path(argv[2]);std::filesystem::create_directories(output.parent_path());std::ofstream stream(output);stream<<report<<'\n';require(bool(stream),"cannot write model lifetime report");std::cout<<"MODEL_LIFETIME_REPLAY_PASS"<<std::endl;return 0;
     }
     Arena arena(job["base"].asUInt64(),job["bytes"].asUInt64(),job.get("alignment",64).asUInt64());

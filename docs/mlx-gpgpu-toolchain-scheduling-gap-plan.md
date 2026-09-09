@@ -10,6 +10,8 @@
 
 系统主线增量：[BERT 布尔控制和 memory v2 ABI](mlx-bert-system-abi.md)已连接实际 RV64/C++ 响应驱动入口，完成组合链及安全重放；source-group、split 生命周期、QA 系统输出和对应 Rocket 整模仍待接入/验收。
 
+后续[现代系统图增量](mlx-modern-system-graph.md)已接入 source-group、split 生命周期、QA CPU 读回/后处理和实际输出导出，227 项回归、两个实际配对 Rocket 小图及独立审计通过。完整 BERT 配对系统镜像已完成，首次整模 Rocket 尝试正在运行；其终态、主要正确性和性能仍须独立验收，其他 P0/GPU/RTL 的顺序不变。
+
 | 优先级 | 工作范围 | 当前执行约束 |
 | --- | --- | --- |
 | P0：最高 | 完整模型主要正确性、MLX并发端到端、完整事件驱动接入、MLX两模型性能误差、Chipyard整模系统集成 | 先集中处理Chipyard整模验收；其他MLX实现应服务于这条验收主线，不用小负载或原生版本结果替代系统结果 |

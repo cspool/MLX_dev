@@ -9,15 +9,15 @@ from .lowering import BYTES,lower_control,tensor_descriptor
 from ..physical_device.lowering import geometry,lower_matrix_window
 from ..physical_device.vector_lowering import lower_vector
 from ..physical_device.memory_lowering import lower_memory
+from ..physical_device.memory_lowering import lower_view
+from mlxsim.model_value_outputs import value_outputs,require_value_contract
+from mlxsim.model_result_contract import result_roles
+from .modern_graph import attach as attach_modern_graph
 
 
 def compile_graph(program,life,*,device_base=2**32,device_bytes=1048576,data_offset=65536,scratch_offset=4096,scratch_bytes=16384,block_pairs=False,event_slots=32):
-    if program.get("schema")=="mlx_tensor_semantics_v4" or "output_contract" in program:
-        raise ValueError("host graph ABI has not registered QA result programs")
-    if program.get("schema")=="mlx_tensor_semantics_v3" or "source_groups" in program:
-        raise ValueError("host graph ABI has not registered source-group programs")
-    if program.get("schema") == "mlx_tensor_semantics_v2" or any(n.get("kind") == "split" or "split_outputs" in n for n in program["nodes"]):
-        raise ValueError("host graph ABI has not registered tuple-view source outputs")
+    require_value_contract(program)
+    if not isinstance(life,dict) or not {"initial","events","source_nodes"}<=life.keys():raise ValueError("missing validated lifetime plan")
     if device_base%4096 or not 0<=device_base<2**40 or device_bytes%4096 or not 8192<=device_bytes<=2**40-device_base:raise ValueError("graph device mapping invalid")
     if scratch_offset<4096 or scratch_offset%8 or scratch_bytes<15872 or scratch_offset+scratch_bytes>data_offset or data_offset%64 or data_offset>device_bytes:raise ValueError("graph scratch/data partition invalid")
     if type(block_pairs) is not bool:raise ValueError("block pair selection must be boolean")
@@ -40,7 +40,7 @@ def compile_graph(program,life,*,device_base=2**32,device_bytes=1048576,data_off
         if len(kinds)!=1:raise ValueError("graph source has missing/ambiguous executable route")
         family=kinds[0];view=family=="memory" and node["memory_program"]["mode"]=="view";commands=[]
         if view:
-            lower_memory(node,layouts,relocated);commands=[None];counts["view"]+=1
+            lower_view(node,layouts,relocated);commands=[None];counts["view"]+=1
         elif family=="matrix":commands=[lower_matrix_window(node,layouts,relocated,b)[0] for b in range(geometry(node,layouts)["batches"])]
         elif family=="vector":commands=[lower_vector(node,layouts,relocated)[0]]
         elif family=="memory":commands=[lower_memory(node,layouts,relocated)[0]]
@@ -53,16 +53,16 @@ def compile_graph(program,life,*,device_base=2**32,device_bytes=1048576,data_off
                 blob.extend(command)
             tasks.append({"kind":0 if view else 1 if family=="control" else 2,"source_ordinal":ordinal,"source_id":node["source_operator_id"],"batch_index":batch,"batch_count":len(commands),"command_offset":offset,"bytes":len(command) if command else 0,"family":family})
         sources.append({"source_ordinal":ordinal,"source_operator_id":node["source_operator_id"],"kind":node["kind"],"family":family,"view_elided":view,"task_count":len(commands),"forward_id":node["forward_id"],"layer_idx":node["layer_idx"]})
-        output_bindings[node["id"]]=relocated[layouts[node["id"]]["root"]]
+        for name,_ in value_outputs(node):output_bindings[name]=relocated[layouts[name]["root"]]
     if layouts_last is None:raise ValueError("empty graph is not registered")
     outputs=[]
     for spec in program["outputs"]:
-        for role in ("logits","token"):
+        for role in result_roles(program):
             value=spec[role];layout=layouts_last[value];binding=output_bindings.get(value,asset_bindings.get(value))
             if binding is None:raise ValueError("graph output binding missing")
             outputs.append({"forward_id":spec["forward_id"],"role":role,"value":value,"layout":layout,"binding":binding})
-    return bytes(blob),{"classification":"compiled_rv64_graph_dispatch_plan_not_execution","device_base":device_base,"device_bytes":device_bytes,"required_mapped_bytes":required,"data_offset":data_offset,"scratch_offset":scratch_offset,"scratch_bytes":scratch_bytes,
-        "sources":sources,"tasks":tasks,"assets":asset_bindings,"outputs":outputs,"family_source_calls":counts,"command_bytes":len(blob),"source_calls":len(sources),"task_count":len(tasks),"model_data_executed":False,"mlx_system_verified":False,"inference_performance_eligible":False}
+    return bytes(blob),attach_modern_graph(program,{"classification":"compiled_rv64_graph_dispatch_plan_not_execution","device_base":device_base,"device_bytes":device_bytes,"required_mapped_bytes":required,"data_offset":data_offset,"scratch_offset":scratch_offset,"scratch_bytes":scratch_bytes,
+        "sources":sources,"tasks":tasks,"assets":asset_bindings,"outputs":outputs,"family_source_calls":counts,"command_bytes":len(blob),"source_calls":len(sources),"task_count":len(tasks),"model_data_executed":False,"mlx_system_verified":False,"inference_performance_eligible":False})
 
 
 def literal_bytes(spec):

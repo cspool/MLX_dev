@@ -11,6 +11,29 @@ KINDS=("embedding","where","cat","cast","cast_device","contiguous","reshape","tr
 SELECTORS=("linear","concat","indexed_rows","predicate_select","indexed_nd","constant_one")
 
 
+def lower_view(node,layouts,bindings):
+    """Validate all tuple aliases without inventing a device data transfer."""
+    if node["kind"]!="split":
+        _,route=lower_memory(node,layouts,bindings)
+        require(route["mode"]=="view","view elision requires a checked affine view")
+        return route
+    from mlxsim.model_value_outputs import value_outputs
+    p=node.get("memory_program",{});candidate=copy.deepcopy(node);planner=Planner()
+    require(p.get("mode")=="view" and p.get("words")==[],"split requires a nonexecuting affine plan")
+    planner.layouts={name:copy.deepcopy(layouts[name]) for name in p["input_layouts"]}
+    planner.register(candidate,planned=True,same_device=p["same_reference_device"])
+    require(candidate["memory_program"]==p and layouts[node["id"]]==p["output_layout"],"split view plan was modified")
+    source=node["args"][0]["value"];root=layouts[source]["root"]
+    tensor_descriptor(source,layouts,bindings)
+    definitions=[]
+    for name,spec in value_outputs(node):
+        require(layouts[name]==p["split_layouts"][name] and layouts[name]["root"]==root,"split output layout lost its root")
+        _,info=tensor_descriptor(name,layouts,bindings)
+        definitions.append({"value":name,"output":spec,"layout":layouts[name],"binding":info})
+    return {"kind":"split","entry":"checked_split_affine_aliases","mode":"view","definitions":definitions,
+            "device_commands":0,"model_execution_verified":False,"mlx_system_verified":False}
+
+
 def signed(value):
     require(type(value) is int and -2**63<=value<2**63,"memory wire integer parameter out of range");return value&MAX
 

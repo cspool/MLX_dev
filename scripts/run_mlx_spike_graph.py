@@ -14,6 +14,7 @@ from pathlib import Path
 from scripts.verify_mlx_spike_matrix_chain import ROOT,HOST,DEVICE,SPIKE,source_identity as bridge_sources
 from system_sim.physical_host.graph_lowering import compile_graph,write_payload
 from system_sim.physical_host.asset_source import SOURCE_BASE,source_manifest
+from system_sim.physical_host.qa_host import reference_files
 
 
 def sha(path):
@@ -48,18 +49,29 @@ def host_source(plan,assets,reference):
         rows.append(fields(row))
     lines.append('static const volatile mlx_graph_task tasks[]={'+','.join(rows or ['{0}'])+'};')
     version=plan.get("host_abi_version",1)
-    if version==2:
+    if version>=2:
         rows=[]
         for i,(source,deps) in enumerate(zip(plan["sources"],plan["source_dependencies"],strict=True)):
             lines.append(f'static const uint64_t dependencies_{i}[]={{'+','.join(map(str,deps or [0]))+'};')
-            rows.append(fields({"source_id":source["source_operator_id"],"dependencies":f"(uintptr_t)dependencies_{i}","dependency_count":len(deps)}))
+            row={"source_id":source["source_operator_id"],"dependencies":f"(uintptr_t)dependencies_{i}","dependency_count":len(deps)}
+            if version==3:row["reserved"]=plan["stage_to_source_group"][i]+1
+            rows.append(fields(row))
         lines.append('static const volatile mlx_graph_source source_table[]={'+','.join(rows or ['{0}'])+'};')
+    if version==3:
+        lines.append('static volatile mlx_graph_source_group source_groups[]={'+','.join(fields(row) for row in plan["source_group_table"])+'};')
     p={"magic":"MLX_GRAPH_MAGIC","version":version,"source_count":plan["source_calls"],"task_count":plan["task_count"],"asset_count":len(assets),"assets":"(uintptr_t)assets","tasks":"(uintptr_t)tasks",
        "device_base":f"UINT64_C({plan['device_base']})","device_bytes":f"UINT64_C({plan['device_bytes']})","scratch_offset":plan["scratch_offset"],"scratch_bytes":plan["scratch_bytes"],"poll_limit":"UINT64_C(1000000000000)","completion":"(uintptr_t)completion"}
     if version==2:p["reserved"]='{(uintptr_t)source_table,0,0}'
+    elif version==3:p["reserved"]='{(uintptr_t)source_table,'+str(plan["original_source_calls"])+',(uintptr_t)source_groups}'
     lines.append('static const volatile mlx_graph_program program='+fields(p)+';')
+    qa=plan.get("output_contract")=="mlx-qa-result-v1"
+    qa_execute=[];qa_check=[];qa_publish=[]
+    if qa:
+        from system_sim.physical_host.qa_host import emit
+        declarations,qa_execute,qa_check,qa_publish=emit(plan,reference);lines.extend(declarations)
+        lines.append('static uint64_t cpu_cycle(void){uint64_t n;__asm__ volatile("rdcycle %0":"=r"(n)::"memory");return n;}')
     expected={row["forward_id"]:row for row in reference["outputs"]}
-    for index,output in enumerate(plan["outputs"]):
+    for index,output in enumerate([] if qa else plan["outputs"]):
         ref=expected[output["forward_id"]];layout=output["layout"]
         raw=Path(ref["logits_file"]).read_bytes() if output["role"]=="logits" else struct.pack('<'+'q'*len(ref["tokens"]),*ref["tokens"])
         width={"f16":2,"f32":4,"i64":8,"bool":1}[layout["dtype"]]
@@ -72,13 +84,17 @@ def host_source(plan,assets,reference):
         'static const volatile struct check checks[]={'+','.join(checks or ['{0}'])+'};',
         *(['static const uint64_t source_ids[]={'+','.join(str(row["source_operator_id"]+1) for row in plan["sources"])+'};'] if plan["sources"] else []),
         'int main(void){',
+        *(['uint64_t qa_begin=cpu_cycle();'] if qa else []),
         'if(mlx_graph_execute(&program,&result))return 10;',
+        *(['uint64_t qa_graph_end=cpu_cycle();',*qa_execute,'uint64_t qa_post_end=cpu_cycle();'] if qa else []),
         f'if(result.status||result.completed_sources!={plan["source_calls"]}||result.host_calls!={plan["family_source_calls"]["control"]}||result.view_elisions!={plan["family_source_calls"]["view"]})return 11;',
         f'if(result.device_calls!={sum(t["kind"] in (2,3) for t in plan["tasks"])}||result.asset_bytes!={sum(a["bytes"] for a in assets)})return 14;',
         *([f'for(unsigned i=0;i<{plan["source_calls"]};++i)if(completion[i]!=source_ids[i])return 12;'] if plan["source_calls"] else []),
+        *([f'if(result.completed_source_groups!={plan["original_source_calls"]})return 15;',
+           f'for(unsigned i=0;i<{plan["original_source_calls"]};++i)if(source_groups[i].completed_stages!=source_groups[i].stage_count)return 16;'] if version==3 else []),
         f'for(unsigned row=0;row<sizeof(checks)/sizeof(checks[0]);++row){{',
         'const volatile struct check *c=&checks[row];for(uint64_t flat=0;flat<c->count;++flat){uint64_t index=flat,at=c->offset;for(unsigned d=(unsigned)c->rank;d-->0;){at+=(index%c->shape[d])*c->stride[d];index/=c->shape[d];}const volatile unsigned char *actual=(const volatile unsigned char *)(uintptr_t)(c->base+at*c->width);for(unsigned b=0;b<c->width;++b)if(actual[b]!=c->expected[flat*c->width+b])return 13;}',
-        '}','return 0;','}']
+        '}',*qa_check,*qa_publish,*(['mlx_host_qa_timing(qa_begin,qa_graph_end,qa_post_end);'] if qa else []),'return 0;','}']
     return '\n'.join(lines)+'\n'
 
 
@@ -105,7 +121,7 @@ def main():
     reference={"outputs":[]}
     if not args.load_only:
         inputs[str(args.reference.resolve())]=sha(args.reference);reference=json.loads(args.reference.read_text())
-    for row in reference["outputs"]:inputs[str(Path(row["logits_file"]).resolve())]=sha(Path(row["logits_file"]))
+    for path in reference_files(reference):inputs[str(path.resolve())]=sha(path)
     for asset in program["assets"].values():
         if asset["kind"]=="mapped_file":
             path=Path(asset["path"]).resolve();name=str(path)
@@ -125,6 +141,7 @@ def main():
     for stem in (("command_blob",) if source_config is not None else ("command_blob","payload_blob")):
         subprocess.run(["riscv64-unknown-elf-objcopy","-I","binary","-O","elf64-littleriscv","-B","riscv","--set-section-alignment",".data=8","--redefine-sym",f"_binary_{stem}_bin_start={stem}",f"{stem}.bin",f"{stem}.o"],cwd=out,capture_output=True,check=True,timeout=30);objects.append(str(out/f"{stem}.o"))
     elf=out/"test.elf";command=["riscv64-unknown-elf-gcc","-std=c11","-O2","-march=rv64imafd","-mabi=lp64d","-mcmodel=medany","-ffreestanding","-fno-builtin","-fno-tree-loop-distribute-patterns","-ffp-contract=off","-Wall","-Wextra","-Werror","-nostdlib","-static","-Wl,--no-relax","-I",str(HOST),"-T",str(HOST/"link.ld"),str(HOST/"start.S"),str(HOST/"control_runtime.c"),str(HOST/"graph_runtime.c"),str(out/"test.c"),*objects,"-o",str(elf)]
+    if plan.get("output_contract")=="mlx-qa-result-v1":command.extend([str(HOST/"qa_output.c"),str(ROOT/"simulator_ext/control_model/qa_span.c")])
     with (out/"elf-build.log").open("w") as log:subprocess.run(command,stdout=log,stderr=subprocess.STDOUT,check=True,timeout=120)
     symbols=subprocess.run(["riscv64-unknown-elf-nm",str(elf)],capture_output=True,text=True,check=True,timeout=30).stdout.splitlines()
     stack=[int(line.split()[0],16) for line in symbols if line.split()[-1]=="__stack_top"]
@@ -168,6 +185,11 @@ def main():
         "device_capacity_bytes":plan["device_bytes"],"data_offset":plan["data_offset"],"host_memory_backing":device["host_memory_backing"],"asset_loading":"actual_cpu_load_from_read_only_file_aperture_and_store_to_device" if source_config is not None else "actual_cpu_copy_from_embedded_small_elf_not_full_model_loader",
         "all_assets_loaded_and_digest_checked":source_config is not None,"loaded_asset_bytes":sum(a["bytes"] for a in assets),"asset_source_report_sha256":sha(out/"asset-source.json") if source_config is not None else None,"load_only":args.load_only,
         "full_model_execution_verified":False,"rocket_execution_verified":False,"mlx_system_verified":False,"inference_performance_eligible":False}
+    if plan.get("host_abi_version")==3:
+        report.update(lowered_calls=plan["lowered_calls"],original_source_calls=plan["original_source_calls"],source_count_basis="lowered_stage_slots")
+    if plan.get("output_contract")=="mlx-qa-result-v1" and not args.load_only:
+        from system_sim.physical_host.qa_host import audit_output
+        report["qa_cpu_output"]=audit_output((out/"spike.log").read_text(),plan,reference,out)
     (out/"report.json").write_text(json.dumps(report,indent=2)+"\n");print(f"GENERIC_RV64_GRAPH_EXECUTION_PASS {out/'report.json'}")
 
 

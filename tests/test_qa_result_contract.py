@@ -138,7 +138,7 @@ def test_qa_python_and_cpp_reject_bad_contracts(binaries, tmp_path, damage):
 
 def test_qa_system_abi_not_silently_relabelled(tmp_path):
     p, _, _, _ = capture(tmp_path)
-    with pytest.raises(ValueError, match="QA result"): compile_graph(p, {})
+    with pytest.raises(ValueError, match="validated lifetime"): compile_graph(p, {})
 
 
 @pytest.mark.parametrize("damage", ["padding", "input_binding", "selection", "missing_output", "uncomputed"])

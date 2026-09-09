@@ -9,7 +9,8 @@ from mlxsim.model_memory_program import contiguous
 from system_sim.physical_host.lowering import tensor_descriptor,require
 
 MAGIC=0x4D4C585645433031
-KINDS=("add","mul","pow","rsqrt","silu","cos","sin","neg","mean","softmax")
+KINDS=("add","mul","pow","rsqrt","silu","cos","sin","neg","mean","softmax","sub","div","maximum","exp")
+BINARY={"add","sub","mul","div","maximum"}
 PHASES=("body","to_carry","save_carry","root","merge_sum","sum_tile","final","max_tile","merge_max","save_max","save_sum","output_tile")
 
 
@@ -22,8 +23,8 @@ def lower_vector(node,layouts,bindings):
     kind=node["kind"];require(kind in FLOAT_KINDS,"vector wire kind is not registered")
     require(node["id"] in layouts,"vector wire output layout missing");out=layouts[node["id"]]
     require(out["dtype"] in {"f16","f32"} and out["shape"]==node["output"]["shape"] and out["dtype"]==node["output"]["dtype"] and out["offset"]==0 and contiguous(out),"vector wire output contract mismatch")
-    args=node["args"];count=2 if kind in {"add","mul"} else 1;require(len(args)>=count,"vector wire operands missing")
-    if kind in {"add","mul"}:require(len(args)==2,"vector wire unexpected binary arguments")
+    args=node["args"];count=2 if kind in BINARY else 1;require(len(args)>=count,"vector wire operands missing")
+    if kind in BINARY:require(len(args)==2,"vector wire unexpected binary arguments")
     descriptors=[];used=[];types=[];shapes=[]
     for index in range(2):
         if index>=count:descriptors.extend([0]*26);continue
@@ -46,7 +47,7 @@ def lower_vector(node,layouts,bindings):
         require(expected==out["shape"],"vector wire reduction output shape mismatch")
     else:
         if kind=="pow":require(len(args)==2 and args[1]==2,"vector wire only supports pow2")
-        elif kind not in {"add","mul"}:require(len(args)==1,"vector wire unexpected unary arguments")
+        elif kind not in BINARY:require(len(args)==1,"vector wire unexpected unary arguments")
         expected=[]
         for shape in shapes:
             rank=max(len(shape),len(expected));left=[1]*(rank-len(expected))+expected;right=[1]*(rank-len(shape))+shape;expected=[]
@@ -63,8 +64,9 @@ def lower_vector(node,layouts,bindings):
         sequence=p["phases"].get(phase,[]);require(len(sequence)<=32 and all(type(i) is int and 0<=i<len(p["rom"]) for i in sequence),"vector wire phase length/index invalid")
         lengths.append(len(sequence));indices.extend(sequence+[0]*(32-len(sequence)))
     require(set(p["phases"])<=set(PHASES),"vector wire unknown phase")
-    words=[MAGIC,1,KINDS.index(kind)+1,flags,width or 0,len(p["rom"]),len(p["constants"]),len(p["phases"]),*([0]*8),*descriptors,*output,
+    version=2 if kind in {"sub","div","maximum","exp"} else 1
+    words=[MAGIC,version,KINDS.index(kind)+1,flags,width or 0,len(p["rom"]),len(p["constants"]),len(p["phases"]),*([0]*8),*descriptors,*output,
         *p["rom"],*([0]*(32-len(p["rom"]))),*[double_bits(v) for v in p["constants"]],*([0]*(16-len(p["constants"]))),*lengths,*indices,0,0]
     require(len(words)==536,"vector wire ABI size changed")
     blob=struct.pack("<536Q",*words)
-    return blob,{"source_operator_id":node["source_operator_id"],"kind":kind,"entry":"mlx::vector_schedule::Simulator","wire_version":1,"command_bytes":len(blob),"rom_words":len(p["rom"]),"phase_index_entries":sum(lengths),"bindings":used,"model_execution_verified":False,"mlx_system_verified":False}
+    return blob,{"source_operator_id":node["source_operator_id"],"kind":kind,"entry":"mlx::vector_schedule::Simulator","wire_version":version,"command_bytes":len(blob),"rom_words":len(p["rom"]),"phase_index_entries":sum(lengths),"bindings":used,"model_execution_verified":False,"mlx_system_verified":False}

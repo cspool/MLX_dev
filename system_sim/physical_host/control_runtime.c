@@ -98,6 +98,20 @@ static uint64_t float_less(float a,float b){uint64_t result;__asm__ volatile("fl
 static uint64_t float_le(float a,float b){uint64_t result;__asm__ volatile("fle.s %0, %1, %2":"=r"(result):"f"(a),"f"(b));return result;}
 static int integer(uint64_t dtype){return dtype==MLX_HOST_I64||dtype==MLX_HOST_BOOL;}
 
+enum mlx_host_status mlx_host_tensor_readback(const volatile mlx_host_tensor *descriptor,void *destination,uint64_t capacity){
+  struct view v;
+  if(!descriptor||(uintptr_t)descriptor%8)return MLX_HOST_BAD_DESCRIPTOR;
+  enum mlx_host_status status=tensor(&v,descriptor,MLX_HOST_READ);if(status)return status;
+  if(v.count>capacity/v.width)return MLX_HOST_BOUNDS;
+  uint64_t bytes=v.count*v.width,base=(uintptr_t)destination;
+  if((bytes&&!destination)||bytes>UINT64_MAX-base)return MLX_HOST_BOUNDS;
+  if(bytes&&v.bytes&&base<v.base+v.bytes&&v.base<base+bytes)return MLX_HOST_OVERLAP;
+  volatile unsigned char *out=destination;
+  __asm__ volatile("fence rw, rw":::"memory");
+  for(uint64_t i=0;i<v.count;++i){uint64_t raw=load(address(&v,i),(unsigned)v.width);for(unsigned b=0;b<v.width;++b)out[i*v.width+b]=(unsigned char)(raw>>(8*b));}
+  __asm__ volatile("fence rw, rw":::"memory");return MLX_HOST_OK;
+}
+
 enum mlx_host_status mlx_host_control_execute(const volatile mlx_host_control_command *cmd){
   if(!cmd || (uintptr_t)cmd%8 || (uintptr_t)cmd>UINT64_MAX-sizeof(*cmd) || cmd->magic!=MLX_HOST_CONTROL_MAGIC || (cmd->version!=1&&cmd->version!=2) || cmd->reserved)return MLX_HOST_BAD_DESCRIPTOR;
   if(cmd->version==2&&cmd->opcode<=MLX_HOST_ARGMAX)return MLX_HOST_BAD_DESCRIPTOR;

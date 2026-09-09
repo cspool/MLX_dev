@@ -10,7 +10,8 @@
 #define MLX_VECTOR_PHASES 12
 enum mlx_vector_kind { MLX_VECTOR_ADD=1,MLX_VECTOR_MUL=2,MLX_VECTOR_POW2=3,
   MLX_VECTOR_RSQRT=4,MLX_VECTOR_SILU=5,MLX_VECTOR_COS=6,MLX_VECTOR_SIN=7,
-  MLX_VECTOR_NEG=8,MLX_VECTOR_MEAN=9,MLX_VECTOR_SOFTMAX=10 };
+  MLX_VECTOR_NEG=8,MLX_VECTOR_MEAN=9,MLX_VECTOR_SOFTMAX=10,
+  MLX_VECTOR_SUB=11,MLX_VECTOR_DIV=12,MLX_VECTOR_MAXIMUM=13,MLX_VECTOR_EXP=14 };
 /* Phase-index tables are bounded control descriptors, not additional PE ROM.
  * Their eventual hardware storage/implementation is a separate RTL obligation. */
 typedef struct {

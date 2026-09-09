@@ -52,6 +52,8 @@ MLX_HOST_STATIC_ASSERT(offsetof(mlx_host_control_command,a)==48 && offsetof(mlx_
  * specialization and returns GUARD_FAILED before publishing output on mismatch. */
 enum mlx_host_status mlx_host_control_execute(const volatile mlx_host_control_command *command);
 uint32_t mlx_host_half_to_float_bits(uint16_t bits);
+/* Actual CPU readback into an ordinary caller-owned dense buffer. */
+enum mlx_host_status mlx_host_tensor_readback(const volatile mlx_host_tensor *tensor,void *destination,uint64_t capacity_bytes);
 #ifdef __cplusplus
 }
 #endif

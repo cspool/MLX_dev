@@ -153,7 +153,7 @@ def test_plain_native_consumes_all_split_values_but_observer_requires_selection(
     assert not (tmp_path/"observe/result.json").exists()
 
 
-def test_system_abi_rejects_tuple_elision_before_building_tasks(tmp_path):
+def test_system_abi_requires_validated_tuple_lifetimes_before_building_tasks(tmp_path):
     program,_,_,_,_=capture(tmp_path)
-    with pytest.raises(ValueError,match="has not registered tuple-view"):
+    with pytest.raises(ValueError,match="validated lifetime"):
         compile_graph(program,{})

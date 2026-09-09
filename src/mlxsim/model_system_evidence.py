@@ -44,13 +44,16 @@ def matrix_work(node, values):
 
 
 def task_coverage(program, plan):
+    from .model_value_outputs import require_value_contract,value_outputs
+    from .model_result_contract import result_roles
+    require_value_contract(program)
     nodes = program["nodes"]
     require(nodes and len({n["id"] for n in nodes}) == len(nodes)
             and len({n["source_operator_id"] for n in nodes}) == len(nodes),
             "source/node IDs are empty or duplicated")
     require(plan["source_calls"] == len(nodes), "source completion scope is incomplete")
     values = {name: asset for name, asset in program["assets"].items()}
-    values.update({node["id"]: node["output"] for node in nodes})
+    values.update({name: spec for node in nodes for name,spec in value_outputs(node)})
     tasks, sources, counts = [], [], {name: 0 for name in (*WIRE_BYTES, "view")}
     offset = 0
     for ordinal, node in enumerate(nodes):
@@ -66,15 +69,15 @@ def task_coverage(program, plan):
                         "task_count": batches, "forward_id": node["forward_id"],
                         "layer_idx": node["layer_idx"]})
         for batch in range(batches):
-            size = 0 if view else WIRE_BYTES[family]
+            size = 0 if view else 15936 if family=="memory" and node["kind"] in {"advanced_index","new_ones","squeeze"} else WIRE_BYTES[family]
             tasks.append({"kind": 0 if view else 1 if family == "control" else 2,
                           "source_ordinal": ordinal, "source_id": node["source_operator_id"],
                           "batch_index": batch, "batch_count": batches,
                           "command_offset": offset if size else 0, "bytes": size, "family": family})
             offset += size
     version=plan.get("host_abi_version",1)
-    require(version in (1,2),"unsupported host graph ABI")
-    if version==2:
+    require(version in (1,2,3),"unsupported host graph ABI")
+    if version==2 or (version==3 and "pair_event_slots" in plan):
         from system_sim.physical_host.pair_graph import schedule,storage
         from system_sim.physical_host.lowering import collect_layouts
         groups,dependencies,selected=schedule(program,plan["pair_event_slots"])
@@ -99,11 +102,17 @@ def task_coverage(program, plan):
         for output in plan["outputs"]:
             layout=layouts[output["value"]]
             require(output["layout"]==layout and output["binding"]==bindings[layout["root"]],"paired output allocation differs")
+    if version==3:
+        from system_sim.physical_host.modern_graph import attach
+        expected=attach(program,{"sources":sources})
+        require(expected.get("host_abi_version")==3,"modern system plan relabels a legacy program")
+        for key,value in expected.items():
+            if key!="sources":require(plan.get(key)==value,f"system source/result group metadata differs: {key}")
     require(plan["tasks"] == tasks and plan["sources"] == sources,
             "compiled source/batch routing is incomplete, duplicated or reordered")
     require(plan["family_source_calls"] == counts and plan["task_count"] == len(tasks)
             and plan["command_bytes"] == offset, "task/source/command accounting differs")
-    outputs = [(o["forward_id"], role, o[role]) for o in program["outputs"] for role in ("logits", "token")]
+    outputs = [(o["forward_id"], role, o[role]) for o in program["outputs"] for role in result_roles(program)]
     require([(o["forward_id"], o["role"], o["value"]) for o in plan["outputs"]] == outputs,
             "compiled final outputs are missing or duplicated")
     return [t for t in tasks if t["kind"] in (2,3)], values, counts
@@ -158,6 +167,12 @@ def check_kernel(node, task, kernel, profile, values):
                 "memory transfer work/storage accounting differs")
         require(kernel["dma_read_bytes"] == reads and kernel["dma_write_bytes"] == writes,
                 "memory numeric and physical byte counters disagree")
+        if node["kind"]=="advanced_index":
+            axes=len(values[node["args"][0]["value"]]["shape"])
+            require(numeric["index_reads"]==elements*axes and numeric["instructions"]==elements*(axes+3)
+                    and reads==elements*(axes*8+WIDTH[node["output"]["dtype"]]),"advanced indexing omitted real index/data work")
+        elif node["kind"]=="new_ones":
+            require(reads==0 and numeric["instructions"]==elements*3,"new_ones read data or omitted its transfer program")
     return {"requests": requests, "read_bytes": reads, "write_bytes": writes, "matrix_mac_lanes": macs}
 
 
@@ -252,9 +267,11 @@ def verify_system_execution(program, plan, device, memory, profile):
     require(memory["idle"] and memory["aw_requests"] == memory["write_responses"]
             and memory["cycle"] == final["cycle"], "system memory clock or outstanding writes differ")
     require(memory["max_read_address"] >= plan["device_base"], "graph addresses did not reach actual RAM")
-    return {"classification": "checked_system_task_execution_not_standalone_model_certificate",
+    report={"classification": "checked_system_task_execution_not_standalone_model_certificate",
             "source_calls": len(program["nodes"]), "source_counts": source_counts,
             "device_windows": len(tasks), "system_requests": previous_requests,
             "system_clock_edges_at_exit": final["cycle"], "backend_totals": dict(totals),
             "executed_device_routes": per_source, "full_model_execution_verified": False,
             "mlx_system_verified": False, "inference_performance_eligible": False}
+    if plan.get("host_abi_version")==3:report.update(source_count_basis="lowered_stage_slots",lowered_calls=len(program["nodes"]),original_source_calls=plan["original_source_calls"])
+    return report

@@ -43,27 +43,46 @@ static int ready(const volatile mlx_graph_source *sources,const volatile uint64_
   for(uint64_t i=0;i<s->dependency_count;++i){uint64_t d=deps[i];if(d!=except && completion[d]!=sources[d].source_id+1)return 0;}
   return 1;
 }
+static int finish_group(const volatile mlx_graph_source *sources,volatile mlx_graph_source_group *groups,
+                        uint64_t ordinal,volatile mlx_graph_result *result){
+  volatile mlx_graph_source_group *g=&groups[sources[ordinal].reserved-1];
+  if(g->completed_stages>=g->stage_count)return 0;
+  if(++g->completed_stages==g->stage_count)++result->completed_source_groups;
+  return 1;
+}
 
 int mlx_graph_execute(const volatile mlx_graph_program *p,volatile mlx_graph_result *r){
   if(!p||!r || (uintptr_t)p%8 || (uintptr_t)r%8)return 1;
   r->status=r->last_task=r->completed_sources=r->host_calls=r->device_calls=r->view_elisions=r->asset_bytes=r->reserved=0;
-  if(p->magic!=MLX_GRAPH_MAGIC||(p->version!=1&&p->version!=2)||!p->poll_limit||p->device_base%4096||p->device_bytes>UINT64_MAX-p->device_base)return fail(r,1);
-  int v2=p->version==2;
-  for(unsigned i=v2?1:0;i<3;++i)if(p->reserved[i])return fail(r,1);
+  if(p->magic!=MLX_GRAPH_MAGIC||(p->version<1||p->version>3)||!p->poll_limit||p->device_base%4096||p->device_bytes>UINT64_MAX-p->device_base)return fail(r,1);
+  int v2=p->version>=2,v3=p->version==3;
+  for(unsigned i=v3?3:v2?1:0;i<3;++i)if(p->reserved[i])return fail(r,1);
   if(p->scratch_offset<MLX_MATRIX_DATA_OFFSET||p->scratch_offset%8||p->scratch_offset>p->device_bytes||p->scratch_bytes>p->device_bytes-p->scratch_offset)return fail(r,1);
   if(p->asset_count>UINT64_MAX/sizeof(mlx_graph_asset)||p->task_count>UINT64_MAX/sizeof(mlx_graph_task)||p->assets%8||p->tasks%8||p->assets>UINT64_MAX-p->asset_count*sizeof(mlx_graph_asset)||p->tasks>UINT64_MAX-p->task_count*sizeof(mlx_graph_task))return fail(r,1);
   if((p->asset_count&&!p->assets)||(p->task_count&&!p->tasks))return fail(r,1);
   if(p->source_count>UINT64_MAX/8||p->completion%8||p->completion>UINT64_MAX-p->source_count*8||(p->source_count&&!p->completion))return fail(r,1);
   volatile uint64_t *completion=(volatile uint64_t *)(uintptr_t)p->completion;for(uint64_t i=0;i<p->source_count;++i)completion[i]=0;
   const volatile mlx_graph_source *sources=(const volatile mlx_graph_source *)(uintptr_t)p->reserved[0];
+  volatile mlx_graph_source_group *groups=(volatile mlx_graph_source_group *)(uintptr_t)p->reserved[2];
   if(v2){
     if(!sources||p->reserved[0]%8||p->source_count>UINT64_MAX/sizeof(*sources)||p->reserved[0]>UINT64_MAX-p->source_count*sizeof(*sources))return fail(r,1);
     for(uint64_t i=0;i<p->source_count;++i){
       const volatile mlx_graph_source *s=&sources[i];
-      if(s->reserved||s->source_id==UINT64_MAX||s->dependency_count>i||s->dependencies%8||s->dependency_count>UINT64_MAX/8||s->dependencies>UINT64_MAX-s->dependency_count*8||(s->dependency_count&&!s->dependencies))return fail(r,1);
+      if((v3?(!s->reserved||s->reserved>p->reserved[1]):s->reserved)||s->source_id==UINT64_MAX||s->dependency_count>i||s->dependencies%8||s->dependency_count>UINT64_MAX/8||s->dependencies>UINT64_MAX-s->dependency_count*8||(s->dependency_count&&!s->dependencies))return fail(r,1);
       const volatile uint64_t *deps=(const volatile uint64_t *)(uintptr_t)s->dependencies;
       for(uint64_t j=0;j<s->dependency_count;++j)if(deps[j]>=i||(j&&deps[j]<=deps[j-1]))return fail(r,1);
     }
+  }
+  if(v3){
+    uint64_t count=p->reserved[1],cursor=0;
+    if(!count||count>p->source_count||!groups||p->reserved[2]%8||count>UINT64_MAX/sizeof(*groups)||p->reserved[2]>UINT64_MAX-count*sizeof(*groups))return fail(r,1);
+    for(uint64_t i=0;i<count;++i){
+      volatile mlx_graph_source_group *g=&groups[i];
+      if(g->source_id==UINT64_MAX||(i&&g->source_id<=groups[i-1].source_id)||g->stage_begin!=cursor||!g->stage_count||g->stage_count>p->source_count-cursor)return fail(r,1);
+      for(uint64_t j=0;j<g->stage_count;++j)if(sources[cursor+j].reserved!=i+1)return fail(r,1);
+      cursor+=g->stage_count;g->completed_stages=0;
+    }
+    if(cursor!=p->source_count)return fail(r,1);
   }
   if(device_id(p->device_base)!=MLX_MATRIX_WIRE_MAGIC)return fail(r,2);
   const volatile mlx_graph_asset *assets=(const volatile mlx_graph_asset *)(uintptr_t)p->assets;
@@ -118,10 +137,11 @@ int mlx_graph_execute(const volatile mlx_graph_program *p,volatile mlx_graph_res
     }else return fail(r,4);
     if(++next_batch==batches){
       completion[next_source]=source_id+1;next_batch=0;++r->completed_sources;
-      if(consumer!=UINT64_MAX){completion[consumer]=consumer_id+1;++r->completed_sources;}
+      if(v3&&!finish_group(sources,groups,next_source,r))return fail(r,4);
+      if(consumer!=UINT64_MAX){completion[consumer]=consumer_id+1;++r->completed_sources;if(v3&&!finish_group(sources,groups,consumer,r))return fail(r,4);}
       if(!v2)++next_source;
     }
   }
-  if(next_batch||r->completed_sources!=p->source_count)return fail(r,4);
+  if(next_batch||r->completed_sources!=p->source_count||(v3&&r->completed_source_groups!=p->reserved[1]))return fail(r,4);
   fence();return 0;
 }

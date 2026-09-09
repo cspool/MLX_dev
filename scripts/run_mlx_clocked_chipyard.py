@@ -12,6 +12,7 @@ from scripts.verify_mlx_spike_matrix_chain import source_identity as bridge_sour
 from scripts.run_mlx_native_chipyard import build_inputs as chipyard_inputs,identity,CHIPYARD_COMMIT
 from system_sim.physical_host.graph_lowering import compile_graph,write_payload
 from system_sim.model_image.image import initial_segments,result_reference
+from system_sim.physical_host.qa_host import reference_files
 from scripts.mlx_system_attempt import run_process,snapshot_sources,launch_metadata,linked_libraries,record as record_attempt
 
 BRIDGE=ROOT/"system_sim/clocked_rocc"
@@ -63,8 +64,8 @@ def inputs(chipyard,large=False):
 def prepare(case,out,*,graph_base=0x81000000,graph_bytes=1048576,memory_bytes=256*2**20,preload_assets=False,block_pairs=False,event_slots=32):
     out.mkdir();paths={key:Path(case[key]).resolve() for key in ("program","lifetimes","reference")};fingerprints={str(p):sha(p) for p in paths.values()}
     program=json.loads(paths["program"].read_text());life=json.loads(paths["lifetimes"].read_text());reference=result_reference(json.loads(paths["reference"].read_text()))
-    for row in reference["outputs"]:
-        path=Path(row["logits_file"]).resolve();fingerprints[str(path)]=sha(path)
+    for file in reference_files(reference):
+        path=file.resolve();fingerprints[str(path)]=sha(path)
     for asset in program["assets"].values():
         if asset["kind"]=="mapped_file":
             path=Path(asset["path"]).resolve()
@@ -94,6 +95,7 @@ def prepare(case,out,*,graph_base=0x81000000,graph_bytes=1048576,memory_bytes=25
         subprocess.run(["riscv64-unknown-elf-objcopy","-I","binary","-O","elf64-littleriscv","-B","riscv","--set-section-alignment",".data=8","--redefine-sym",f"_binary_{stem}_bin_start={stem}",f"{stem}.bin",f"{stem}.o"],cwd=out,capture_output=True,check=True,timeout=30);objects.append(str(out/f"{stem}.o"))
     elf=out/"test.elf"
     command=["riscv64-unknown-elf-gcc","-std=c11","-O2","-march=rv64imafd","-mabi=lp64d","-mcmodel=medany","-ffreestanding","-fno-builtin","-fno-tree-loop-distribute-patterns","-ffp-contract=off","-Wall","-Wextra","-Werror","-nostdlib","-static","-Wl,--no-relax","-DMLX_GRAPH_CLOCKED_ROCC=1","-I",str(HOST),"-I",str(BRIDGE),"-T",str(ROOT/"system_sim/native/link.ld"),str(HOST/"start.S"),str(HOST/"control_runtime.c"),str(HOST/"graph_runtime.c"),str(out/"test.c"),*objects,"-o",str(elf)]
+    if plan.get("output_contract")=="mlx-qa-result-v1":command.extend([str(HOST/"qa_output.c"),str(ROOT/"simulator_ext/control_model/qa_span.c")])
     execute(command,out/"elf-build.log",120)
     symbols=subprocess.run(["riscv64-unknown-elf-nm",str(elf)],capture_output=True,text=True,check=True).stdout.splitlines()
     stack=[int(line.split()[0],16) for line in symbols if line.split()[-1]=="__stack_top"]
@@ -236,7 +238,7 @@ def main():
         if device["effective_profile"]!=profile:raise RuntimeError("actual system backend profile differs from the prepared profile")
         if observe and device["progress_observer"]["failed"]:raise RuntimeError("model completed but progress observer failed")
         if device["launches"]!=len(tasks) or len(device["windows"])!=len(tasks) or device["requests"]!=device["responses"]:raise RuntimeError("clocked graph did not execute/drain all device tasks")
-        if plan.get("host_abi_version",1)==2:
+        if plan.get("host_abi_version",1)>=2:
             from mlxsim.model_system_evidence import check_pair_kernel,task_coverage
             model=json.loads(Path(next(c for c in cases if c["name"]==name)["program"]).read_text())
             _,values,_=task_coverage(model,plan)
@@ -258,6 +260,12 @@ def main():
                 segments=json.loads((directory/"segments.json").read_text());actual=[row for row in memory["initialized_segments"] if not row["name"].startswith("elf:")]
                 if actual!=segments:raise RuntimeError("actual system resident input initialization differs from image")
         results.append({"case":name,"inputs":files,"source_calls":plan["source_calls"],"family_source_calls":plan["family_source_calls"],"device_windows":len(tasks),"elf_sha256":sha(directory/"test.elf"),"device_sha256":sha(directory/"device.json"),"log_sha256":sha(directory/"chipyard.log"),"plan_sha256":sha(directory/"plan.json"),"memory_sha256":sha(directory/"memory.json") if memory is not None else None,"asset_initialization":plan["asset_initialization"],"initial_asset_bytes":plan["initial_asset_bytes"],"cpu_asset_copy_bytes":plan["cpu_asset_copy_bytes"]})
+        if plan.get("host_abi_version")==3:results[-1].update(lowered_calls=plan["lowered_calls"],original_source_calls=plan["original_source_calls"],source_count_basis="lowered_stage_slots")
+        if plan.get("output_contract")=="mlx-qa-result-v1":
+            from system_sim.physical_host.qa_host import audit_output
+            original_case=next(c for c in cases if c["name"]==name)
+            reference=result_reference(json.loads(Path(original_case["reference"]).read_text()))
+            results[-1]["qa_cpu_output"]=audit_output((directory/"chipyard.log").read_text(),plan,reference,directory)
         execution.update(validation="registered_graph_checks_passed");record_attempt(directory/"execution.json",execution)
     if sources!=source_identity() or case_hash!=sha(args.cases) or sha(owned)!=manifest["simulator_sha256"] or any(sha(Path(p))!=digest for p,digest in runtime_libraries.items()):raise RuntimeError("clocked run sources/binary/libraries changed")
     if sha(out/"profile.json")!=profile_identity["effective_sha256"]:raise RuntimeError("runtime profile file changed")

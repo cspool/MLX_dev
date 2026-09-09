@@ -6,7 +6,7 @@
 namespace mlx::physical_device {
 using namespace tensor_model;
 namespace {
-const char *kinds[]={"","add","mul","pow","rsqrt","silu","cos","sin","neg","mean","softmax"};
+const char *kinds[]={"","add","mul","pow","rsqrt","silu","cos","sin","neg","mean","softmax","sub","div","maximum","exp"};
 const char *phases[]={"body","to_carry","save_carry","root","merge_sum","sum_tile","final","max_tile","merge_max","save_max","save_sum","output_tile"};
 bool zero(const void *value,size_t bytes){const auto *p=static_cast<const uint8_t*>(value);for(size_t i=0;i<bytes;++i)if(p[i])return false;return true;}
 Json::Value number(uint64_t bits){
@@ -15,7 +15,7 @@ Json::Value number(uint64_t bits){
 }
 }
 DecodedVector decode_vector(const mlx_vector_wire &wire){
-  require(wire.magic==MLX_VECTOR_WIRE_MAGIC&&wire.version==1&&wire.kind>=1&&wire.kind<=10&&!(wire.flags&~UINT64_C(3))&&zero(wire.reserved,sizeof(wire.reserved))&&zero(wire.tail_reserved,sizeof(wire.tail_reserved)),"vector wire header/reserved fields invalid");
+  require(wire.magic==MLX_VECTOR_WIRE_MAGIC&&((wire.version==1&&wire.kind>=1&&wire.kind<=10)||(wire.version==2&&wire.kind>=11&&wire.kind<=14))&&!(wire.flags&~UINT64_C(3))&&zero(wire.reserved,sizeof(wire.reserved))&&zero(wire.tail_reserved,sizeof(wire.tail_reserved)),"vector wire header/reserved fields invalid");
   bool reduction=wire.kind==MLX_VECTOR_MEAN||wire.kind==MLX_VECTOR_SOFTMAX;bool mean=wire.kind==MLX_VECTOR_MEAN;
   require(mean||!(wire.flags&MLX_VECTOR_KEEP_DIM),"vector wire keepdim outside mean");
   require(reduction?(wire.width>0&&wire.width<=UINT64_C(0x80000000)):wire.width==0,"vector wire reduction width invalid");
@@ -27,7 +27,7 @@ DecodedVector decode_vector(const mlx_vector_wire &wire){
   result.output=decode_float_tensor(wire.output,true);node["output"]["dtype"]=dtype_name(result.output.type);node["output"]["shape"]=Json::Value(Json::arrayValue);
   for(auto n:result.output.sizes)node["output"]["shape"].append(Json::Int64(n));
   p["output_dtype"]=node["output"]["dtype"];
-  p["input_dtypes"]=Json::Value(Json::arrayValue);unsigned count=wire.kind==MLX_VECTOR_ADD||wire.kind==MLX_VECTOR_MUL?2:1;
+  p["input_dtypes"]=Json::Value(Json::arrayValue);unsigned count=wire.kind==MLX_VECTOR_ADD||wire.kind==MLX_VECTOR_MUL||wire.kind==MLX_VECTOR_SUB||wire.kind==MLX_VECTOR_DIV||wire.kind==MLX_VECTOR_MAXIMUM?2:1;
   const mlx_host_operand *operands[]={&wire.a,&wire.b};
   for(unsigned i=0;i<2;++i){
     const auto &arg=*operands[i];const char *name=i?"b":"a";

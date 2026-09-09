@@ -9,8 +9,10 @@ from .address_plan import iter_bindings
 from .lowering import BYTES,lower_control
 from ..physical_device.lowering import geometry,lower_matrix_window
 from ..physical_device.vector_lowering import lower_vector
-from ..physical_device.memory_lowering import lower_memory
+from ..physical_device.memory_lowering import lower_memory,lower_view
 from ..physical_device.pair_lowering import lower_pair
+from mlxsim.model_result_contract import result_roles
+from .modern_graph import dependencies as graph_dependencies,attach as attach_modern_graph
 
 
 def schedule(program,event_slots):
@@ -18,12 +20,7 @@ def schedule(program,event_slots):
     ids=[n["source_operator_id"] for n in nodes]
     if not nodes or len(ordinal)!=len(nodes) or len(set(ids))!=len(ids) or any(type(i) is not int or not 0<=i<2**64-1 for i in ids):
         raise ValueError("pair graph has invalid or duplicate source identities")
-    dependencies=[]
-    for i,n in enumerate(nodes):
-        names=set(references(n["args"]))|set(references(n.get("kwargs",{})))|set(references(n.get("control_dependencies",[])))
-        if any(name not in program["assets"] and (name not in ordinal or ordinal[name]>=i) for name in names):
-            raise ValueError("pair graph input order is not a complete SSA DAG")
-        dependencies.append(sorted(ordinal[name] for name in names if name in ordinal))
+    dependencies=graph_dependencies(program)
     selected=compile_block_pipelines(program,event_slots=event_slots)["block_pipeline_plan"]
     producers={p["producer"] for p in selected["pairs"]};consumers={p["consumer"]:p["producer"] for p in selected["pairs"]}
     # A closed producer has no intervening users. Delay it until its consumer,
@@ -51,7 +48,7 @@ def storage(program,layouts,groups,*,base,limit):
             if at[i]<record["first"]:raise ValueError("pair storage used before its producer group")
             record["last"]=max(record["last"],at[i])
     for output in program["outputs"]:
-        for role in ("logits","token"):intervals[layouts[output[role]]["root"]]["last"]=len(groups)
+        for role in result_roles(program):intervals[layouts[output[role]]["root"]]["last"]=len(groups)
     active=[];holes=[];end=base;bindings={};records=[]
     for root in sorted(roots,key=lambda name:(intervals[name]["first"],name)):
         interval=intervals[root];live=[]
@@ -97,7 +94,7 @@ def compile_pair_graph(program,life,*,device_base,device_bytes,data_offset,scrat
             j=group[1];command,_=lower_pair(node,nodes[j],layouts,bindings,event_slots=event_slots);commands=[command];family="pair"
             extra={"consumer_ordinal":j,"consumer_source_id":nodes[j]["source_operator_id"]}
             sources[j]["task_count"]=1
-        elif source["view_elided"]:lower_memory(node,layouts,bindings);commands=[None]
+        elif source["view_elided"]:lower_view(node,layouts,bindings);commands=[None]
         elif family=="matrix":commands=[lower_matrix_window(node,layouts,bindings,b)[0] for b in range(geometry(node,layouts)["batches"])]
         elif family=="vector":commands=[lower_vector(node,layouts,bindings)[0]]
         elif family=="memory":commands=[lower_memory(node,layouts,bindings)[0]]
@@ -110,9 +107,9 @@ def compile_pair_graph(program,life,*,device_base,device_bytes,data_offset,scrat
                           "source_ordinal":i,"source_id":node["source_operator_id"],"batch_index":batch,"batch_count":len(commands),
                           "command_offset":offset,"bytes":len(command) if command else 0,"family":family,**extra})
     outputs=[{"forward_id":o["forward_id"],"role":role,"value":o[role],"layout":layouts[o[role]],"binding":bindings[layouts[o[role]]["root"]]}
-             for o in program["outputs"] for role in ("logits","token")]
-    return bytes(blob),{"classification":"compiled_rv64_graph_dispatch_plan_not_execution","host_abi_version":2,"pair_event_slots":event_slots,
+             for o in program["outputs"] for role in result_roles(program)]
+    return bytes(blob),attach_modern_graph(program,{"classification":"compiled_rv64_graph_dispatch_plan_not_execution","host_abi_version":2,"pair_event_slots":event_slots,
         "pair_count":len(selected["pairs"]),"execution_groups":groups,"source_dependencies":dependencies,"storage_intervals":intervals,
         "device_base":device_base,"device_bytes":device_bytes,"required_mapped_bytes":end-device_base,"data_offset":data_offset,"scratch_offset":scratch_offset,"scratch_bytes":scratch_bytes,
         "sources":sources,"tasks":tasks,"assets":{name:bindings[name] for name in program["assets"]},"outputs":outputs,"family_source_calls":counts,
-        "command_bytes":len(blob),"source_calls":len(sources),"task_count":len(tasks),"model_data_executed":False,"mlx_system_verified":False,"inference_performance_eligible":False}
+        "command_bytes":len(blob),"source_calls":len(sources),"task_count":len(tasks),"model_data_executed":False,"mlx_system_verified":False,"inference_performance_eligible":False})

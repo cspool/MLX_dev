@@ -175,7 +175,7 @@ def audit_case(run, program_file, life_file, reference_file, out, evidence):
                               "reference": str(reference_file)}, out / "elf-replay",
                              graph_base=plan["device_base"], graph_bytes=plan["device_bytes"],
                              memory_bytes=memory["bytes"], preload_assets=True,
-                             block_pairs=plan.get("host_abi_version",1)==2,event_slots=plan.get("pair_event_slots",32))
+                             block_pairs="pair_event_slots" in plan,event_slots=plan.get("pair_event_slots",32))
     require(rebuilt_plan == plan, "complete compiler/address/lifetime replay changed the task graph")
     for name in ("command_blob.bin", "test.c", "test.elf", "launch-map.json"):
         require(evidence.add(out / "elf-replay" / name) == evidence.add(run / name),
@@ -192,7 +192,8 @@ def audit_case(run, program_file, life_file, reference_file, out, evidence):
     require([r["forward_id"] for r in outputs] == [r["forward_id"] for r in program["outputs"]],
             "final reference checks do not cover exactly the compiled forwards")
     checks = []
-    for row in outputs:
+    qa=program.get("output_contract")=="mlx-qa-result-v1"
+    for row in ([] if qa else outputs):
         path = Path(row["logits_file"])
         checksum = evidence.add(path)
         width = {"f16": "e", "f32": "f"}.get(row["dtype"])
@@ -204,10 +205,16 @@ def audit_case(run, program_file, life_file, reference_file, out, evidence):
                 "reference tokens do not describe the free-running logits argmax")
         checks.append({"forward_id": row["forward_id"], "elements": len(logits), "tokens": row["tokens"],
                        "logits_sha256": checksum, "bitwise_checked_by_actual_cpu": True})
+    if qa:
+        from system_sim.physical_host.qa_host import audit_output,reference_files
+        for path in reference_files(result_reference(reference)):evidence.add(path)
+        checks=audit_output((run/"chipyard.log").read_text(),plan,result_reference(reference),out)
+        for row in checks["outputs"]:
+            for data in row["outputs"].values():evidence.add(data["file"],data["sha256"])
     return {"classification": "registered_rocket_graph_executable_and_output_audit_not_full_model_acceptance",
             "registered_graph_execution_verified": True, "complete_elf_rebuild_equal": True,
-            "actual_output_dump_emitted": False,
-            "output_evidence": "successful CPU byte comparisons in the exactly rebuilt executed ELF; not a new target dump",
+            "actual_output_dump_emitted": qa,
+            "output_evidence": "CPU-emitted logits and span, independent recomputation, and exact executed ELF rebuild" if qa else "successful CPU byte comparisons in the exactly rebuilt executed ELF; not a new target dump",
             "coverage": coverage, "initialization": loading, "output_checks": checks,
             "full_model_execution_verified": False, "mlx_system_verified": False,
             "inference_performance_eligible": False}, program, state, profile
