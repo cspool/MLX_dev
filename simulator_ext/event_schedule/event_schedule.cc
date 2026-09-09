@@ -43,13 +43,29 @@ struct Block {std::string id;U source=0,pc=0,total=0,frontier_ready=0;unsigned p
   unsigned graph_source=UINT32_MAX,graph_window=0;
   std::vector<unsigned> children;unsigned unmet=0;
   bool active=false,running=false,retired=false,controller=false,control=false,zero_work=false;U begin=NEVER,end=NEVER;};
+// Legacy inputs retain their vector representation. Compact inputs keep only
+// live/pending blocks, keyed by stable logical identity, never host slot order.
+struct BlockTable {
+  std::vector<Block> eager;std::map<unsigned,Block> live;unsigned total=0,peak=0;bool compact=false;
+  size_t size()const{return compact?total:eager.size();}
+  Block &operator[](unsigned i){return compact?live.at(i):eager.at(i);}
+  const Block &operator[](unsigned i)const{return compact?live.at(i):eager.at(i);}
+  void push_back(Block b){need(!compact,"eager insertion into compact table");eager.push_back(std::move(b));}
+  auto begin(){return eager.begin();}auto end(){return eager.end();}
+  auto begin()const{return eager.begin();}auto end()const{return eager.end();}
+  void insert(unsigned id,Block b){need(compact&&id<total&&live.emplace(id,std::move(b)).second,"compact logical block identity reused");peak=std::max(peak,unsigned(live.size()));}
+  void erase(unsigned id){need(compact&&live.erase(id)==1,"compact block retirement lost owner");}
+};
+struct BlockRun {U count=0;unsigned pe=0,stride=0,code=0;std::string pattern;};
+struct BlockWindow {U base=0,total=0;std::vector<BlockRun> runs;};
 struct ResidentCode {unsigned pe=0,code=0,base=0,refs=0,loaded=0;U ready=NEVER;bool live=false;U generation=0;};
 // Calendar order is completions, retirements, template programming. Decisions
 // then use the resulting registered state; results become visible next edge.
 enum Change {Complete,Retire,Word};
 struct Wake {U time;Change kind;unsigned item;bool operator>(const Wake &o)const{return std::tie(time,kind,item)>std::tie(o.time,o.kind,o.item);}};
 struct Source {U id=0,begin=NEVER,end=NEVER,window_begin=NEVER;std::string family;unsigned unmet=0,window=0;bool active=false,complete=false,view=false;
-  std::vector<unsigned> children,remaining;Json::Value intervals{Json::arrayValue};};
+  std::vector<unsigned> children,remaining;Json::Value intervals{Json::arrayValue};
+  std::vector<BlockWindow> windows;U cursor=0,in_run=0;unsigned run=0;};
 struct Engine {
   unsigned pes=0,contexts=0,source_limit=0;U max_cycles=0,now=0,retired=0,transitions=0;
   bool timed_templates=true,loops=false,ports=false;U total_events=0,sequence_nodes=0;std::string policy;
@@ -58,6 +74,7 @@ struct Engine {
   bool lazy=false;Json::Value pattern_specs;std::unique_ptr<PatternStore> pattern_store;
   std::vector<unsigned> free_events;U resident_nodes=0,peak_nodes=0,peak_leaves=0,loaded_leaves=0,loaded_blocks=0;
   std::vector<unsigned> free_codes;U code_generations=0;
+  bool compact=false;U interval_limit=0,compact_runs=0;std::map<unsigned,Json::Value> interval_history;
   bool graph_mode=false;std::vector<Source> graph;std::map<U,unsigned> source_ids;std::set<std::pair<U,unsigned>> graph_ready;
   unsigned graph_active=0,peak_graph_active=0,graph_memory=0,graph_control=0,graph_completed=0;
   U spm_period=1,writeback_period=1,dma_request_period=1,dma_response_period=1,compute_ii=1;
@@ -65,7 +82,7 @@ struct Engine {
   U sfu_ii=1;std::vector<U> sfu_issue_free;
   U memory_request_period=1,memory_response_period=1,memory_convert_free=0;bool memory_live=false;unsigned peak_memory=0;
   U control_request_period=1,control_response_period=1,control_free=0;bool control_live=false;unsigned peak_control=0;
-  std::map<std::string,U> latency;std::vector<Template> templates;std::vector<Event> events;std::vector<Block> blocks;
+  std::map<std::string,U> latency;std::vector<Template> templates;std::vector<Event> events;BlockTable blocks;
   std::map<std::string,unsigned> template_ids,event_ids,block_ids;
   using Group=std::tuple<U,unsigned,unsigned>;
   std::map<Group,std::set<unsigned>> admission_groups;
@@ -83,10 +100,12 @@ struct Engine {
   explicit Engine(const Json::Value &p){
     const bool control=p["schema"]=="mlx_event_schedule_v6";
     const bool controllers=p["schema"]=="mlx_event_schedule_v5"||control;
-    auto top_fields=std::set<std::string>{"schema","hardware","templates","blocks","max_cycles","trace_limit","policy"};if(controllers)top_fields.insert("controllers");if(control){top_fields.insert("source_tick_order");top_fields.insert("source_graph");top_fields.insert("event_patterns");top_fields.insert("pattern_cache_bytes");}fields(p,top_fields);
+    auto top_fields=std::set<std::string>{"schema","hardware","templates","blocks","max_cycles","trace_limit","policy"};if(controllers)top_fields.insert("controllers");if(control){top_fields.insert("source_tick_order");top_fields.insert("source_graph");top_fields.insert("event_patterns");top_fields.insert("pattern_cache_bytes");top_fields.insert("source_streams");top_fields.insert("block_interval_limit");}fields(p,top_fields);
     if(p.isMember("source_tick_order")){need(p["source_tick_order"].isBool(),"source tick order must be Boolean");source_ticks=p["source_tick_order"].asBool();}
-    graph_mode=p.isMember("source_graph");need(!graph_mode||source_ticks,"source graph requires explicit native source tick order");
+    compact=p.isMember("source_streams");graph_mode=p.isMember("source_graph")||compact;need(!graph_mode||source_ticks,"source graph requires explicit native source tick order");
     lazy=p.isMember("event_patterns");need(!lazy||source_ticks,"lazy patterns require explicit native source tick order");need(lazy==p.isMember("pattern_cache_bytes"),"lazy pattern cache configuration missing");
+    need(!compact||(lazy&&!p.isMember("source_graph")&&p["blocks"].empty()&&p["controllers"].empty()),"compact streams cannot mix eager blocks or source graph");
+    need(compact==p.isMember("block_interval_limit"),"compact interval bound must be explicit");if(compact)interval_limit=number(p["block_interval_limit"],"block interval limit",0,1000000);
     if(lazy){pattern_specs=p["event_patterns"];need(pattern_specs.isObject()&&!pattern_specs.empty(),"lazy pattern registry empty");pattern_store=std::make_unique<PatternStore>(number(p["pattern_cache_bytes"],"pattern cache bytes",1,268435456));
       for(const auto &id:pattern_specs.getMemberNames()){const auto &spec=pattern_specs[id];fields(spec,{"path","sha256","dynamic_events","zero_work"});need(spec["path"].isString()&&!spec["path"].asString().empty()&&spec["sha256"].isString()&&spec["sha256"].asString().size()==64&&spec["zero_work"].isBool(),"invalid lazy pattern binding");number(spec["dynamic_events"],"pattern dynamic work",1,NEVER/4);}}
     need(p["schema"]=="mlx_event_schedule_v1"||p["schema"]=="mlx_event_schedule_v2"||p["schema"]=="mlx_event_schedule_v3"||p["schema"]=="mlx_event_schedule_v4"||controllers,"unsupported event timing contract");
@@ -119,7 +138,7 @@ struct Engine {
     need((!p["blocks"].empty()&&!p["templates"].empty())||(controllers&&p["blocks"].empty()),"event array templates missing");
     if(controllers)need(p["controllers"].isArray()&&p["controllers"].size()<=unsigned(INT32_MAX),"controller list invalid");
     Json::Value descriptions=p["blocks"];if(controllers)for(const auto &c:p["controllers"])descriptions.append(c);
-    need(!descriptions.empty()&&descriptions.size()<=unsigned(INT32_MAX),"event program has no work streams");
+    need((compact||!descriptions.empty())&&descriptions.size()<=unsigned(INT32_MAX),"event program has no work streams");
     for(const auto &t:p["templates"]){
       fields(t,{"id","words","rf_vectors","spm_vectors"});Template code;need(t["id"].isString(),"template id must be a string");code.id=t["id"].asString();need(!code.id.empty()&&template_ids.emplace(code.id,unsigned(templates.size())).second,"duplicate/empty template");
       code.rf=unsigned(number(t["rf_vectors"],"template RF",1,16));code.spm=unsigned(number(t["spm_vectors"],"template SPM",1,128));
@@ -149,7 +168,31 @@ struct Engine {
         if(e.op=="memory_complete"||e.op=="control_complete"){need(block.total==1,"zero-work controller must have only a completion marker");block.zero_work=true;}}
       source_order[block.source].push_back(owner);blocks.push_back(std::move(block));
     }
-    if(graph_mode){
+    if(compact){
+      need(p["source_streams"].isArray()&&!p["source_streams"].empty(),"compact source streams empty");U total=0;
+      for(const auto &descriptor:p["source_streams"]){
+        fields(descriptor,{"source_operator_id","family","parents","windows"});Source s;s.id=number(descriptor["source_operator_id"],"compact source identity",0,NEVER/4);s.family=descriptor["family"].asString();
+        need(source_ids.emplace(s.id,unsigned(graph.size())).second,"compact source duplicated");
+        const bool private_unit=s.family=="memory"||s.family=="control";need(private_unit||s.family=="matrix"||s.family=="vector","compact source family unsupported");
+        need(descriptor["parents"].isArray()&&descriptor["windows"].isArray()&&!descriptor["windows"].empty(),"compact parents/windows missing");
+        std::set<U> parents;for(const auto &value:descriptor["parents"]){U parent=number(value,"compact parent",0,NEVER/4);auto found=source_ids.find(parent);
+          need(found!=source_ids.end()&&found->second<graph.size()&&parents.insert(parent).second,"compact parent missing, cyclic or repeated");graph[found->second].children.push_back(unsigned(graph.size()));++s.unmet;}
+        for(const auto &window:descriptor["windows"]){fields(window,{"runs"});need(window["runs"].isArray()&&!window["runs"].empty(),"compact window runs missing");BlockWindow w;w.base=total;
+          for(const auto &r:window["runs"]){fields(r,private_unit?std::set<std::string>{"count","event_pattern"}:std::set<std::string>{"count","event_pattern","template","pe_base","pe_stride"});BlockRun run;
+            run.count=number(r["count"],"compact run count",1,INT32_MAX);need(r["event_pattern"].isString()&&pattern_specs.isMember(r["event_pattern"].asString()),"compact event pattern missing");run.pattern=r["event_pattern"].asString();
+            if(!private_unit){need(r["template"].isString()&&template_ids.count(r["template"].asString()),"compact template missing");run.code=template_ids.at(r["template"].asString());run.pe=unsigned(number(r["pe_base"],"compact PE base",0,pes-1));run.stride=unsigned(number(r["pe_stride"],"compact PE stride",0,pes-1));need(!pattern_specs[run.pattern]["zero_work"].asBool(),"compact array cannot be zero-work controller");}
+            w.total=add(w.total,run.count);total=add(total,run.count);need(total<=INT32_MAX,"compact logical block identity range exceeded");accumulate(total_events,run.count,pattern_specs[run.pattern]["dynamic_events"].asUInt64());w.runs.push_back(std::move(run));++compact_runs;
+          }
+          s.remaining.push_back(unsigned(w.total));s.windows.push_back(std::move(w));
+        }
+        if(private_unit)need(s.windows.size()==1&&s.windows[0].total==1,"compact private source must have one controller block");
+        s.view=s.family=="memory"&&pattern_specs[s.windows[0].runs[0].pattern]["zero_work"].asBool();
+        if(!s.unmet)graph_ready.emplace(s.id,unsigned(graph.size()));
+        graph.push_back(std::move(s));
+      }
+      blocks.compact=true;blocks.total=unsigned(total);
+    }
+    if(graph_mode&&!compact){
       need(p["source_graph"].isArray()&&!p["source_graph"].empty(),"source graph is empty");
       for(const auto &descriptor:p["source_graph"]){
         fields(descriptor,{"source_operator_id","family","parents","windows"});Source s;s.id=number(descriptor["source_operator_id"],"graph source identity",0,NEVER/4);s.family=descriptor["family"].asString();
@@ -203,7 +246,7 @@ struct Engine {
     rf.resize(pes);rom.resize(pes);slots.resize(pes);for(auto &a:rf)a.fill(-1);for(auto &a:rom)a.fill(-1);for(auto &a:slots)a.fill(-1);spm.fill(-1);
     issue_free.resize(pes);compute_free.resize(pes);sfu_free.resize(pes);last_block.assign(pes,-1);
     writeback_free.resize(pes);compute_issue_free.resize(pes);sfu_issue_free.resize(pes);
-    for(unsigned i=0;i<blocks.size();++i)if(!blocks[i].unmet)enqueue_admission(i);
+    if(!compact)for(unsigned i=0;i<blocks.size();++i)if(!blocks[i].unmet)enqueue_admission(i);
   }
   Sequence parse_sequence(const Json::Value &items,unsigned owner,U factor,unsigned depth,std::vector<unsigned> &ids){
     need(depth<=16&&items.isArray()&&!items.empty(),"invalid/empty or excessively nested event loop");Sequence sequence;
@@ -251,11 +294,11 @@ struct Engine {
     for(;;){bool changed=false;
       for(auto [source,i]:admission_heads){
         if(ports&&!examined.insert(source).second)continue;
-        if(ports&&source_order.at(source).at(source_admitted[source])!=i)continue;
+        if(ports&&!compact&&source_order.at(source).at(source_admitted[source])!=i)continue;
         if(!admit(i))continue;
         auto &b=blocks[i];auto &group=admission_groups.at({source,b.pe,b.code});need(group.erase(i)==1,"admission queue lost block");
         admission_heads.erase({source,i});if(!group.empty())admission_heads.emplace(source,*group.begin());
-        active.emplace(source,i);if(ports)++source_admitted[source];changed=true;any=true;break;
+        active.emplace(source,i);if(ports)++source_admitted[source];if(compact)generate_next(b.graph_source);changed=true;any=true;break;
       }
       if(!changed)break;
     }
@@ -297,7 +340,7 @@ struct Engine {
     for(auto it=graph_ready.begin();it!=graph_ready.end()&&graph_active<source_limit;){auto &s=graph[it->second];
       if((s.family=="control"&&graph_control)||(s.family=="memory"&&!s.view&&graph_memory)){++it;continue;}
       need(!s.active&&!s.complete&&!s.unmet,"source graph readiness corrupted");s.active=true;s.begin=s.window_begin=now;++graph_active;
-      graph_control+=s.family=="control";graph_memory+=s.family=="memory"&&!s.view;it=graph_ready.erase(it);resources_changed=true;}
+      graph_control+=s.family=="control";graph_memory+=s.family=="memory"&&!s.view;if(compact)generate_next(it->second);it=graph_ready.erase(it);resources_changed=true;}
     peak_graph_active=std::max(peak_graph_active,graph_active);
   }
   void retire_source_block(const Block &b){
@@ -305,10 +348,20 @@ struct Engine {
     auto &s=graph[b.graph_source];need(s.active&&b.graph_window==s.window&&s.remaining[s.window],"source window completion mismatch");
     if(--s.remaining[s.window])return;
     Json::Value interval;interval["index"]=s.window;interval["begin_cycle"]=Json::UInt64(s.window_begin);interval["end_cycle"]=Json::UInt64(now);s.intervals.append(interval);
-    if(++s.window<s.remaining.size()){s.window_begin=now;return;}
+    if(++s.window<s.remaining.size()){s.window_begin=now;if(compact){s.cursor=s.in_run=0;s.run=0;generate_next(b.graph_source);}return;}
     s.active=false;s.complete=true;s.end=now;--graph_active;++graph_completed;graph_control-=s.family=="control";graph_memory-=s.family=="memory"&&!s.view;
     for(auto child:s.children){auto &c=graph[child];need(c.unmet,"source graph parent counter underflow");if(!--c.unmet)graph_ready.emplace(c.id,child);}
   }
+  void generate_next(unsigned source){
+    auto &s=graph[source];need(compact&&s.active&&s.window<s.windows.size(),"compact cursor has no active window");const auto &w=s.windows[s.window];if(s.cursor==w.total)return;
+    need(s.run<w.runs.size(),"compact run cursor overflow");const auto &run=w.runs[s.run];unsigned id=unsigned(w.base+s.cursor);Block b;
+    b.id=std::to_string(s.id)+":"+std::to_string(s.window)+":b"+std::to_string(s.cursor);b.source=s.id;b.graph_source=source;b.graph_window=s.window;b.pattern=run.pattern;
+    b.controller=s.family=="memory"||s.family=="control";b.control=s.family=="control";b.zero_work=pattern_specs[run.pattern]["zero_work"].asBool();b.total=pattern_specs[run.pattern]["dynamic_events"].asUInt64();b.code=run.code;
+    b.pe=unsigned((run.pe+s.in_run*run.stride)%pes);blocks.insert(id,std::move(b));need(blocks.live.size()<=pes*contexts+2*source_limit+2,"compact live descriptor bound exceeded");enqueue_admission(id);++s.cursor;
+    if(++s.in_run==run.count){s.in_run=0;++s.run;}
+  }
+  Json::Value interval(const Block &b)const{Json::Value x;x["id"]=b.id;x["source_operator_id"]=Json::UInt64(b.source);x["pe"]=b.pe;x["admit_cycle"]=Json::UInt64(b.begin);x["retire_cycle"]=Json::UInt64(b.end);
+    if(version>=5){x["domain"]=b.control?"control_controller":b.controller?"memory_controller":"array";if(b.controller){x["pe"]=Json::Value();x["window_cycles"]=Json::UInt64(b.zero_work?0:b.end-b.begin);}}return x;}
   U aligned(U time,U period)const{return time%period?add(time,period-time%period):time;}
   bool spm_port_ready()const{return spm_port_free<=now&&now%spm_period==0;}
   bool admit(unsigned i){
@@ -398,6 +451,7 @@ struct Engine {
         retire_source_block(b);
         emit("retire",w.item);
         unload_events(b);
+        if(compact){if(interval_history.size()<interval_limit)interval_history.emplace(w.item,interval(b));blocks.erase(w.item);}
       }else{auto &c=codes[w.item];need(c.live&&c.refs,"template programming lost owner");
         if(configured.count(c.pe)){calendar.push(Wake{add(now,1),Word,w.item});continue;}
         configured.insert(c.pe);issue_free[c.pe]=add(now,1);++c.loaded;++counts["template_words_loaded"];++counts["template_program_pe_cycles"];
@@ -487,6 +541,7 @@ struct Engine {
     need(!graph_mode||(graph_completed==graph.size()&&!graph_active&&!graph_memory&&!graph_control&&graph_ready.empty()),"source graph failed to drain");
     need(!lazy||(!resident_nodes&&event_ids.empty()&&free_events.size()==events.size()&&loaded_blocks==blocks.size()),"lazy event state failed to drain");
     need(!lazy||free_codes.size()==codes.size(),"lazy ROM records failed to drain");
+    need(!compact||blocks.live.empty(),"compact descriptors failed to drain");
     Json::Value r;r["classification"]="native_concurrent_event_component_not_full_model_or_numerical_execution";r["cycles"]=Json::UInt64(now);
     r["calendar_transitions"]=Json::UInt64(transitions);r["blocks"]=Json::UInt64(blocks.size());r["events"]=Json::UInt64(total_events);r["policy"]=policy;
     if(loops){r["schema"]=version==6?"mlx_event_schedule_v6":version==5?"mlx_event_schedule_v5":version==4?"mlx_event_schedule_v4":ports?"mlx_event_schedule_v3":"mlx_event_schedule_v2";r["stored_event_leaves"]=Json::UInt64(lazy?loaded_leaves:events.size());r["stored_sequence_nodes"]=Json::UInt64(sequence_nodes);
@@ -501,7 +556,7 @@ struct Engine {
     if(version>=6){r["control_controller_resources"]["register_bytes"]=512;r["control_controller_resources"]["rom_words"]=32;r["control_controller_resources"]["peak_active"]=peak_control;r["control_controller_resources"]["uses_array_rf_spm"]=false;r["control_controller_resources"]["rocket_cpu_timing"]=false;
       r["port_contract"]["issue_after_admission_edge_scope"]="array_only_controllers_start_on_admission_edge";}
     if(source_ticks)r["timing_semantics"]="source_priority_completion_then_issue_per_source_next_edge_visibility_not_full_graph";
-    if(lazy){r["lazy_patterns"]=pattern_store->report();r["lazy_patterns"]["loaded_blocks"]=Json::UInt64(loaded_blocks);r["lazy_patterns"]["peak_live_sequence_nodes"]=Json::UInt64(peak_nodes);r["lazy_patterns"]["peak_live_event_leaves"]=Json::UInt64(peak_leaves);r["lazy_patterns"]["allocated_event_slots"]=Json::UInt64(events.size());r["lazy_patterns"]["event_state_drained"]=true;r["lazy_patterns"]["block_descriptors_still_eager"]=true;}
+    if(lazy){r["lazy_patterns"]=pattern_store->report();r["lazy_patterns"]["loaded_blocks"]=Json::UInt64(loaded_blocks);r["lazy_patterns"]["peak_live_sequence_nodes"]=Json::UInt64(peak_nodes);r["lazy_patterns"]["peak_live_event_leaves"]=Json::UInt64(peak_leaves);r["lazy_patterns"]["allocated_event_slots"]=Json::UInt64(events.size());r["lazy_patterns"]["event_state_drained"]=true;r["lazy_patterns"]["block_descriptors_still_eager"]=!compact;}
     if(lazy){r["lazy_patterns"]["allocated_rom_record_slots"]=Json::UInt64(codes.size());r["lazy_patterns"]["rom_record_generations"]=Json::UInt64(code_generations);r["lazy_patterns"]["rom_records_drained"]=true;}
     if(graph_mode){r["source_graph_completed"]=true;r["source_frontend_peak"]=peak_graph_active;r["source_frontend_capacity"]=source_limit;r["source_launch_gate"]="shared_dma_quiescent";r["source_intervals"]=Json::Value(Json::arrayValue);
       for(const auto &s:graph){Json::Value row;row["source_operator_id"]=Json::UInt64(s.id);row["family"]=s.family;row["begin_cycle"]=Json::UInt64(s.begin);row["publish_cycle"]=Json::UInt64(s.end);row["windows"]=s.intervals;r["source_intervals"].append(row);}}
@@ -513,8 +568,10 @@ struct Engine {
     denominator("pe_cycles",pes);denominator("context_slot_cycles",pes*contexts);denominator("rf_vector_cycles",pes*16);denominator("spm_vector_cycles",128);denominator("rom_word_cycles",pes*32);
     r["capacity"]["pes"]=pes;r["capacity"]["contexts_per_pe"]=contexts;r["capacity"]["rf_vectors_per_pe"]=16;r["capacity"]["rom_words_per_pe"]=32;r["capacity"]["spm_vectors_total"]=128;r["capacity"]["source_window_limit"]=source_limit;
     r["peak"]["contexts"]=peak_contexts;r["peak"]["spm_vectors"]=peak_spm;r["peak"]["rf_vectors_per_pe"]=peak_rf;r["peak"]["rom_words_per_pe"]=peak_rom;r["peak"]["active_sources"]=peak_sources;
-    r["block_intervals"]=Json::Value(Json::arrayValue);for(const auto &b:blocks){Json::Value x;x["id"]=b.id;x["source_operator_id"]=Json::UInt64(b.source);x["pe"]=b.pe;x["admit_cycle"]=Json::UInt64(b.begin);x["retire_cycle"]=Json::UInt64(b.end);r["block_intervals"].append(x);}
-    if(version>=5)for(unsigned i=0;i<blocks.size();++i){auto &row=r["block_intervals"][i];const auto &b=blocks[i];row["domain"]=b.control?"control_controller":b.controller?"memory_controller":"array";if(b.controller){row["pe"]=Json::Value();row["window_cycles"]=Json::UInt64(b.zero_work?0:b.end-b.begin);}}
+    r["block_intervals"]=Json::Value(Json::arrayValue);if(compact){for(const auto &[id,value]:interval_history){(void)id;r["block_intervals"].append(value);}
+      r["compact_blocks"]["logical_blocks"]=Json::UInt64(blocks.size());r["compact_blocks"]["run_descriptors"]=Json::UInt64(compact_runs);r["compact_blocks"]["peak_live_or_pending_descriptors"]=blocks.peak;r["compact_blocks"]["descriptors_drained"]=true;
+      r["compact_blocks"]["block_intervals_truncated"]=interval_history.size()<blocks.size();r["compact_blocks"]["block_interval_limit"]=Json::UInt64(interval_limit);
+    }else for(const auto &b:blocks)r["block_intervals"].append(interval(b));
     r["trace"]=trace;r["trace_truncated"]=counts["trace_admit"]+counts["trace_issue"]+counts["trace_complete"]+counts["trace_retire"]>trace.size();
     r["dependency_visibility"]="completion_next_edge";r["all_resources_drained"]=true;r["tensor_values_executed"]=false;r["full_model_verified"]=false;r["inference_performance_eligible"]=false;
     return r;

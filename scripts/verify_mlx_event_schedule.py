@@ -17,6 +17,26 @@ def require(value, message):
 
 
 def audit_trace(program, result):
+    if "source_streams" in program:
+        from mlxsim.model_compact_event_streams import expand_streams
+        r=result["compact_blocks"];count=events=0;rows={x["source_operator_id"]:x for x in result["source_intervals"]}
+        require(len(rows)==len(result["source_intervals"])==len(program["source_streams"]),"compact source coverage differs")
+        for source in program["source_streams"]:
+            row=rows[source["source_operator_id"]]
+            require(row["family"]==source["family"] and len(row["windows"])==len(source["windows"]),"compact source family/window count differs")
+            require(all(rows[parent]["publish_cycle"]<=row["begin_cycle"] for parent in source["parents"]),"compact source dependency bypassed")
+            previous=row["begin_cycle"]
+            for index,(window,observed) in enumerate(zip(source["windows"],row["windows"])):
+                require(observed["index"]==index and observed["begin_cycle"]==previous and observed["end_cycle"]>previous,"compact batch intervals differ")
+                previous=observed["end_cycle"]
+                for run in window["runs"]:count+=run["count"];events+=run["count"]*program["event_patterns"][run["event_pattern"]]["dynamic_events"]
+            require(previous==row["publish_cycle"],"compact source published before its batches")
+        require(count==r["logical_blocks"]==result["blocks"]==result["lazy_patterns"]["loaded_blocks"] and events==result["events"]==result["counts"]["events_completed"],"compact logical instance work differs")
+        h=program["hardware"];require(r["descriptors_drained"] and r["peak_live_or_pending_descriptors"]<=h["rows"]*h["columns"]*h["contexts"]+2*h["source_window_limit"]+2,"compact descriptors grew beyond active/pending bound")
+        lazy=result["lazy_patterns"];require(lazy["event_state_drained"] and lazy["rom_records_drained"] and lazy["peak_live_sequence_nodes"]<=1000000 and lazy["peak_serialized_cache_bytes"]<=program["pattern_cache_bytes"],"compact execution did not preserve lazy storage bounds")
+        require(len(result["block_intervals"])==min(count,program["block_interval_limit"]) and r["block_intervals_truncated"]==(count>program["block_interval_limit"]),"compact history bound altered coverage")
+        if result["trace_truncated"] or r["block_intervals_truncated"]:return
+        program=expand_streams(program)
     if "event_patterns" in program:
         from mlxsim.model_lazy_event_patterns import materialize
         r=result["lazy_patterns"]
@@ -226,9 +246,11 @@ def main():
     parser.add_argument("--include-source-graph",action="store_true")
     parser.add_argument("--include-lazy",action="store_true")
     parser.add_argument("--include-rom-recycling",action="store_true")
+    parser.add_argument("--include-compact",action="store_true")
     parser.add_argument("--case-timeout",type=int,default=60)
     args = parser.parse_args(); out = args.output.resolve(); tests = args.tests.resolve()
     require(1<=args.case_timeout<=600,"invalid safety case watchdog")
+    if args.include_compact:args.include_rom_recycling=True
     if args.include_rom_recycling:args.include_lazy=True
     if args.include_lazy:args.include_source_graph=True
     if args.include_source_graph:args.include_source_order=True
@@ -238,7 +260,7 @@ def main():
     require(suite is not None and all(suite.get(k) == "0" for k in ("failures", "errors", "skipped")), "event regression failed")
     paths = [p for p in (tests / "pytest").rglob("program.json") if not any(a.is_symlink() for a in p.parents)
              and json.loads(p.read_text()).get("schema","").startswith("mlx_event_schedule_")]
-    require(len(paths) == (328 if args.include_rom_recycling else 324 if args.include_lazy else 291 if args.include_source_graph else 272 if args.include_source_order else 202 if args.include_control else 166 if args.include_memory else 142 if args.include_vectors else 94 if args.include_ports else 58 if args.include_loops else 29), "event safety replay scope differs")
+    require(len(paths) == (364 if args.include_compact else 328 if args.include_rom_recycling else 324 if args.include_lazy else 291 if args.include_source_graph else 272 if args.include_source_order else 202 if args.include_control else 166 if args.include_memory else 142 if args.include_vectors else 94 if args.include_ports else 58 if args.include_loops else 29), "event safety replay scope differs")
     sources = {str(p.relative_to(ROOT)): sha(p) for p in (ROOT / "simulator_ext/event_schedule").iterdir() if p.is_file()}
     for p in (Path(__file__).resolve(), ROOT / "tests/test_event_schedule.py", ROOT / "src/mlxsim/model_event_resources.py"):
         sources[str(p.relative_to(ROOT))] = sha(p)
@@ -264,6 +286,9 @@ def main():
     if args.include_lazy:
         for name in ("tests/test_lazy_event_patterns.py","src/mlxsim/model_lazy_event_patterns.py"):
             sources[name]=sha(ROOT/name)
+    if args.include_compact:
+        for name in ("tests/test_compact_event_streams.py","src/mlxsim/model_compact_event_streams.py"):
+            sources[name]=sha(ROOT/name)
     binary_hash = sha(args.binary); files = {str(p): sha(p) for p in paths};missing=set();libraries=linked_libraries(args.binary.resolve())
     for p in paths:
         for spec in json.loads(p.read_text()).get("event_patterns",{}).values():
@@ -283,7 +308,7 @@ def main():
             require(result == baseline, "event sanitizer changed full result")
             audit_trace(json.loads(p.read_text()), result)
         replays.append(dict(program=str(p), expected_exit=expected, result=str(actual) if not expected else None, log_sha256=sha(log)))
-    require(sum(r["expected_exit"] == 0 for r in replays) == (277 if args.include_rom_recycling else 273 if args.include_lazy else 248 if args.include_source_graph else 236 if args.include_source_order else 168 if args.include_control else 136 if args.include_memory else 115 if args.include_vectors else 67 if args.include_ports else 37 if args.include_loops else 18), "event safety success coverage differs")
+    require(sum(r["expected_exit"] == 0 for r in replays) == (303 if args.include_compact else 277 if args.include_rom_recycling else 273 if args.include_lazy else 248 if args.include_source_graph else 236 if args.include_source_order else 168 if args.include_control else 136 if args.include_memory else 115 if args.include_vectors else 67 if args.include_ports else 37 if args.include_loops else 18), "event safety success coverage differs")
     require(all(sha(ROOT / p) == h for p,h in sources.items()) and all(sha(Path(p)) == h for p,h in {**files,**libraries}.items()) and all(not Path(p).exists() for p in missing) and sha(args.binary) == binary_hash, "event safety sources/inputs changed")
     record(out / "report.json", dict(classification="concurrent_event_core_component_validation_not_full_model", sources=sources, inputs=files,
                                      regression_tests=int(suite.get("tests")), replays=replays, asan_binary_sha256=binary_hash, full_model_verified=False,
