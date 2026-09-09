@@ -17,6 +17,36 @@ def require(value, message):
 
 
 def audit_trace(program, result):
+    streaming={p["consumer_source"]:p for p in program.get("streaming_pairs",[])}
+    if streaming:
+        streams={s["source_operator_id"]:s for s in program["source_streams"]};rows={s["source_operator_id"]:s for s in result["source_intervals"]}
+        groups={g["consumer_source"]:g for g in result["pipeline_groups"]};require(set(groups)==set(streaming) and len(groups)==len(result["pipeline_groups"]),"streaming pair coverage differs")
+        require([g["epoch"] for g in result["pipeline_groups"]]==list(range(1,len(groups)+1)),"streaming bank epochs duplicated or reordered")
+        for consumer,spec in streaming.items():
+            producer=spec["producer_source"];g=groups[consumer]
+            total=sum(run["count"] for w in streams[producer]["windows"] for run in w["runs"])
+            require(g["finished"] and g["blocks"]==g["frontier"]==g["admitted"]==g["completed"]==total and g["event_slots"]==spec["event_slots"] and g["peak_event_slots"]<=spec["event_slots"],"streaming completion bank work/credit mismatch")
+            require(g["active"]==g["pending_visibility"]==g["out_of_order_done"]==0,"streaming completion bank not drained")
+            require(rows[producer]["begin_cycle"]==rows[consumer]["begin_cycle"]==g["begin_cycle"] and max(rows[producer]["publish_cycle"],rows[consumer]["publish_cycle"])==g["end_cycle"],"streaming group lifecycle mismatch")
+            for identity,row in rows.items():
+                if identity not in {producer,consumer} and streams[identity]["family"] in {"matrix","vector"}:
+                    require(row["publish_cycle"]<=g["begin_cycle"] or row["begin_cycle"]>=g["end_cycle"],"independent array source bypassed closed pair exclusivity")
+        if not result["trace_truncated"] and not result["compact_blocks"]["block_intervals_truncated"]:
+            by_id={r["id"]:r for r in result["block_intervals"]}
+            for consumer,spec in streaming.items():
+                producer=spec["producer_source"];mapping=spec["mapping"];ready={};ordinal=0
+                for wi,window in enumerate(streams[producer]["windows"]):
+                    for local in range(sum(run["count"] for run in window["runs"])):
+                        ready[ordinal]=by_id[f"{producer}:{wi}:b{local}"]["retire_cycle"];ordinal+=1
+                for row in result["trace"]:
+                    if row["event"]!="issue" or row["source_operator_id"]!=consumer:continue
+                    block=int(row["block"].rsplit(":b",1)[1]);deps=set()
+                    for flat in range(block*16,min(mapping["elements"],block*16+16)):
+                        if mapping["kind"]=="matrix":
+                            m,n=mapping["m"],mapping["n"];dep=((flat//(m*n))*((m+1)//2)+((flat//n)%m)//2)*((n+15)//16)+(flat%n)//16
+                        else:dep=flat//(mapping["row_width"] if mapping["kind"]=="reduction" else 16)
+                        deps.add(dep)
+                    require(row["cycle"]>=max(ready[d] for d in deps),"consumer issued before all mapped producer block writes were visible")
     if "source_streams" in program:
         from mlxsim.model_compact_event_streams import expand_streams
         r=result["compact_blocks"];count=events=0;rows={x["source_operator_id"]:x for x in result["source_intervals"]}
@@ -24,7 +54,8 @@ def audit_trace(program, result):
         for source in program["source_streams"]:
             row=rows[source["source_operator_id"]]
             require(row["family"]==source["family"] and len(row["windows"])==len(source["windows"]),"compact source family/window count differs")
-            require(all(rows[parent]["publish_cycle"]<=row["begin_cycle"] for parent in source["parents"]),"compact source dependency bypassed")
+            early=streaming.get(source["source_operator_id"],{}).get("producer_source")
+            require(all(parent==early or rows[parent]["publish_cycle"]<=row["begin_cycle"] for parent in source["parents"]),"compact source dependency bypassed")
             previous=row["begin_cycle"]
             for index,(window,observed) in enumerate(zip(source["windows"],row["windows"])):
                 require(observed["index"]==index and observed["begin_cycle"]==previous and observed["end_cycle"]>previous,"compact batch intervals differ")
@@ -128,6 +159,8 @@ def audit_trace(program, result):
     for name, (block, spec) in specs.items():
         start = issued[name]["cycle"]; end = completed[name]["cycle"]
         latency=program["hardware"]["latencies"][spec["op"]]
+        if "physical_memory" in program and (spec["op"].startswith("dma_") or spec["op"] in {"memory_index_read","memory_predicate_read"}):
+            memory=program["physical_memory"];period=memory["accept_period"];latency=((start+1+period-1)//period)*period+memory["latency"]-start
         require(end-start>=latency if ports else end-start==latency, "event duration differs from architecture input")
         op=spec["op"]
         controller=block.get("controller",False)
@@ -220,7 +253,8 @@ def audit_trace(program, result):
         changes=Counter()
         for source in program["source_graph"]:
             r=rows[source["source_operator_id"]];begin=r["begin_cycle"];end=r["publish_cycle"]
-            require(begin<end and all(rows[parent]["publish_cycle"]<=begin for parent in source["parents"]),"source graph dependency publication bypassed")
+            early=streaming.get(source["source_operator_id"],{}).get("producer_source")
+            require(begin<end and all(parent==early or rows[parent]["publish_cycle"]<=begin for parent in source["parents"]),"source graph dependency publication bypassed")
             require(not any(a<begin<b for a,b in dma),"source launched before shared DMA quiescence")
             require(len(r["windows"])==len(source["windows"]) and r["windows"][0]["begin_cycle"]==begin and r["windows"][-1]["end_cycle"]==end,"source batch coverage differs")
             previous=begin
@@ -247,9 +281,11 @@ def main():
     parser.add_argument("--include-lazy",action="store_true")
     parser.add_argument("--include-rom-recycling",action="store_true")
     parser.add_argument("--include-compact",action="store_true")
+    parser.add_argument("--include-streaming",action="store_true")
     parser.add_argument("--case-timeout",type=int,default=60)
     args = parser.parse_args(); out = args.output.resolve(); tests = args.tests.resolve()
     require(1<=args.case_timeout<=600,"invalid safety case watchdog")
+    if args.include_streaming:args.include_compact=True
     if args.include_compact:args.include_rom_recycling=True
     if args.include_rom_recycling:args.include_lazy=True
     if args.include_lazy:args.include_source_graph=True
@@ -260,7 +296,7 @@ def main():
     require(suite is not None and all(suite.get(k) == "0" for k in ("failures", "errors", "skipped")), "event regression failed")
     paths = [p for p in (tests / "pytest").rglob("program.json") if not any(a.is_symlink() for a in p.parents)
              and json.loads(p.read_text()).get("schema","").startswith("mlx_event_schedule_")]
-    require(len(paths) == (364 if args.include_compact else 328 if args.include_rom_recycling else 324 if args.include_lazy else 291 if args.include_source_graph else 272 if args.include_source_order else 202 if args.include_control else 166 if args.include_memory else 142 if args.include_vectors else 94 if args.include_ports else 58 if args.include_loops else 29), "event safety replay scope differs")
+    require(len(paths) == (401 if args.include_streaming else 364 if args.include_compact else 328 if args.include_rom_recycling else 324 if args.include_lazy else 291 if args.include_source_graph else 272 if args.include_source_order else 202 if args.include_control else 166 if args.include_memory else 142 if args.include_vectors else 94 if args.include_ports else 58 if args.include_loops else 29), "event safety replay scope differs")
     sources = {str(p.relative_to(ROOT)): sha(p) for p in (ROOT / "simulator_ext/event_schedule").iterdir() if p.is_file()}
     for p in (Path(__file__).resolve(), ROOT / "tests/test_event_schedule.py", ROOT / "src/mlxsim/model_event_resources.py"):
         sources[str(p.relative_to(ROOT))] = sha(p)
@@ -289,6 +325,10 @@ def main():
     if args.include_compact:
         for name in ("tests/test_compact_event_streams.py","src/mlxsim/model_compact_event_streams.py"):
             sources[name]=sha(ROOT/name)
+    if args.include_streaming:
+        for name in ("tests/test_streaming_pair_events.py","src/mlxsim/model_streaming_pair_events.py","simulator_ext/model_events/completion_window.cc","simulator_ext/model_events/completion_window.h","simulator_ext/model_events/block_flow.h",
+                     "simulator_ext/model_system/physical_memory.cc","simulator_ext/model_io/queued_physical_port.cc","simulator_ext/model_io/physical_mux.cc"):
+            sources[name]=sha(ROOT/name)
     binary_hash = sha(args.binary); files = {str(p): sha(p) for p in paths};missing=set();libraries=linked_libraries(args.binary.resolve())
     for p in paths:
         for spec in json.loads(p.read_text()).get("event_patterns",{}).values():
@@ -308,7 +348,7 @@ def main():
             require(result == baseline, "event sanitizer changed full result")
             audit_trace(json.loads(p.read_text()), result)
         replays.append(dict(program=str(p), expected_exit=expected, result=str(actual) if not expected else None, log_sha256=sha(log)))
-    require(sum(r["expected_exit"] == 0 for r in replays) == (303 if args.include_compact else 277 if args.include_rom_recycling else 273 if args.include_lazy else 248 if args.include_source_graph else 236 if args.include_source_order else 168 if args.include_control else 136 if args.include_memory else 115 if args.include_vectors else 67 if args.include_ports else 37 if args.include_loops else 18), "event safety success coverage differs")
+    require(sum(r["expected_exit"] == 0 for r in replays) == (329 if args.include_streaming else 303 if args.include_compact else 277 if args.include_rom_recycling else 273 if args.include_lazy else 248 if args.include_source_graph else 236 if args.include_source_order else 168 if args.include_control else 136 if args.include_memory else 115 if args.include_vectors else 67 if args.include_ports else 37 if args.include_loops else 18), "event safety success coverage differs")
     require(all(sha(ROOT / p) == h for p,h in sources.items()) and all(sha(Path(p)) == h for p,h in {**files,**libraries}.items()) and all(not Path(p).exists() for p in missing) and sha(args.binary) == binary_hash, "event safety sources/inputs changed")
     record(out / "report.json", dict(classification="concurrent_event_core_component_validation_not_full_model", sources=sources, inputs=files,
                                      regression_tests=int(suite.get("tests")), replays=replays, asan_binary_sha256=binary_hash, full_model_verified=False,

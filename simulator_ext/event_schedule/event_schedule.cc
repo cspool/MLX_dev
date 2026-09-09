@@ -1,5 +1,6 @@
 #include "event_schedule.h"
 #include "pattern_store.h"
+#include "../model_events/completion_window.h"
 #include <algorithm>
 #include <array>
 #include <deque>
@@ -39,6 +40,7 @@ struct Sequence {U repeat=1,total=0;unsigned event=UINT32_MAX;std::vector<Sequen
 struct Event {std::string id,op;unsigned owner=0;std::vector<unsigned> deps;std::vector<std::string> dependency_names;
   U begin=NEVER,end=NEVER,visible=NEVER,instances=1,issued=0,completed=0;unsigned lanes=0,bytes=0;};
 struct Block {std::string id;U source=0,pc=0,total=0,frontier_ready=0;unsigned pe=0,code=0,slot=0,rf=0,spm=0;std::vector<unsigned> events,deps;Sequence sequence;
+  std::vector<U> data_deps;mutable U flow_revision=NEVER;mutable bool data_ready=false;
   std::string pattern;U owned_nodes=0;
   unsigned graph_source=UINT32_MAX,graph_window=0;
   std::vector<unsigned> children;unsigned unmet=0;
@@ -65,7 +67,10 @@ enum Change {Complete,Retire,Word};
 struct Wake {U time;Change kind;unsigned item;bool operator>(const Wake &o)const{return std::tie(time,kind,item)>std::tie(o.time,o.kind,o.item);}};
 struct Source {U id=0,begin=NEVER,end=NEVER,window_begin=NEVER;std::string family;unsigned unmet=0,window=0;bool active=false,complete=false,view=false;
   std::vector<unsigned> children,remaining;Json::Value intervals{Json::arrayValue};
-  std::vector<BlockWindow> windows;U cursor=0,in_run=0;unsigned run=0;};
+  std::vector<BlockWindow> windows;U cursor=0,in_run=0;unsigned run=0;
+  std::vector<unsigned> parents;int pair=-1;std::string kind,dtype;Json::Value shape;};
+struct StreamingPair {unsigned producer=0,consumer=0,producer_limit=0,consumer_limit=0,slots=32;model_events::Mapping mapping;
+  std::shared_ptr<model_events::CompletionWindow> bank;U epoch=0,begin=NEVER;bool complete=false;};
 struct Engine {
   unsigned pes=0,contexts=0,source_limit=0;U max_cycles=0,now=0,retired=0,transitions=0;
   bool timed_templates=true,loops=false,ports=false;U total_events=0,sequence_nodes=0;std::string policy;
@@ -75,6 +80,8 @@ struct Engine {
   std::vector<unsigned> free_events;U resident_nodes=0,peak_nodes=0,peak_leaves=0,loaded_leaves=0,loaded_blocks=0;
   std::vector<unsigned> free_codes;U code_generations=0;
   bool compact=false;U interval_limit=0,compact_runs=0;std::map<unsigned,Json::Value> interval_history;
+  std::vector<StreamingPair> pairs;int current_pair=-1;U next_epoch=1;unsigned graph_arrays=0;Json::Value pair_reports{Json::arrayValue};
+  bool registered_memory=false;U physical_latency=0,physical_accept_period=1;
   bool graph_mode=false;std::vector<Source> graph;std::map<U,unsigned> source_ids;std::set<std::pair<U,unsigned>> graph_ready;
   unsigned graph_active=0,peak_graph_active=0,graph_memory=0,graph_control=0,graph_completed=0;
   U spm_period=1,writeback_period=1,dma_request_period=1,dma_response_period=1,compute_ii=1;
@@ -100,9 +107,11 @@ struct Engine {
   explicit Engine(const Json::Value &p){
     const bool control=p["schema"]=="mlx_event_schedule_v6";
     const bool controllers=p["schema"]=="mlx_event_schedule_v5"||control;
-    auto top_fields=std::set<std::string>{"schema","hardware","templates","blocks","max_cycles","trace_limit","policy"};if(controllers)top_fields.insert("controllers");if(control){top_fields.insert("source_tick_order");top_fields.insert("source_graph");top_fields.insert("event_patterns");top_fields.insert("pattern_cache_bytes");top_fields.insert("source_streams");top_fields.insert("block_interval_limit");}fields(p,top_fields);
+    auto top_fields=std::set<std::string>{"schema","hardware","templates","blocks","max_cycles","trace_limit","policy"};if(controllers)top_fields.insert("controllers");if(control){top_fields.insert("source_tick_order");top_fields.insert("source_graph");top_fields.insert("event_patterns");top_fields.insert("pattern_cache_bytes");top_fields.insert("source_streams");top_fields.insert("block_interval_limit");top_fields.insert("streaming_pairs");top_fields.insert("physical_memory");}fields(p,top_fields);
+    registered_memory=p.isMember("physical_memory");if(registered_memory){const auto &m=p["physical_memory"];fields(m,{"latency","accept_period","nack_every"});physical_latency=number(m["latency"],"physical latency",1,1024);physical_accept_period=number(m["accept_period"],"physical accept period",1,1024);need(m["nack_every"]==0,"registered event memory retry policy not implemented");}
     if(p.isMember("source_tick_order")){need(p["source_tick_order"].isBool(),"source tick order must be Boolean");source_ticks=p["source_tick_order"].asBool();}
     compact=p.isMember("source_streams");graph_mode=p.isMember("source_graph")||compact;need(!graph_mode||source_ticks,"source graph requires explicit native source tick order");
+    need(!p.isMember("streaming_pairs")||(compact&&p["streaming_pairs"].isArray()),"streaming pairs require compact source streams");
     lazy=p.isMember("event_patterns");need(!lazy||source_ticks,"lazy patterns require explicit native source tick order");need(lazy==p.isMember("pattern_cache_bytes"),"lazy pattern cache configuration missing");
     need(!compact||(lazy&&!p.isMember("source_graph")&&p["blocks"].empty()&&p["controllers"].empty()),"compact streams cannot mix eager blocks or source graph");
     need(compact==p.isMember("block_interval_limit"),"compact interval bound must be explicit");if(compact)interval_limit=number(p["block_interval_limit"],"block interval limit",0,1000000);
@@ -171,12 +180,12 @@ struct Engine {
     if(compact){
       need(p["source_streams"].isArray()&&!p["source_streams"].empty(),"compact source streams empty");U total=0;
       for(const auto &descriptor:p["source_streams"]){
-        fields(descriptor,{"source_operator_id","family","parents","windows"});Source s;s.id=number(descriptor["source_operator_id"],"compact source identity",0,NEVER/4);s.family=descriptor["family"].asString();
+        fields(descriptor,{"source_operator_id","family","parents","windows","operator_kind","output_shape","output_dtype"});Source s;s.id=number(descriptor["source_operator_id"],"compact source identity",0,NEVER/4);s.family=descriptor["family"].asString();s.kind=descriptor.get("operator_kind","").asString();s.dtype=descriptor.get("output_dtype","").asString();s.shape=descriptor["output_shape"];
         need(source_ids.emplace(s.id,unsigned(graph.size())).second,"compact source duplicated");
         const bool private_unit=s.family=="memory"||s.family=="control";need(private_unit||s.family=="matrix"||s.family=="vector","compact source family unsupported");
         need(descriptor["parents"].isArray()&&descriptor["windows"].isArray()&&!descriptor["windows"].empty(),"compact parents/windows missing");
         std::set<U> parents;for(const auto &value:descriptor["parents"]){U parent=number(value,"compact parent",0,NEVER/4);auto found=source_ids.find(parent);
-          need(found!=source_ids.end()&&found->second<graph.size()&&parents.insert(parent).second,"compact parent missing, cyclic or repeated");graph[found->second].children.push_back(unsigned(graph.size()));++s.unmet;}
+          need(found!=source_ids.end()&&found->second<graph.size()&&parents.insert(parent).second,"compact parent missing, cyclic or repeated");graph[found->second].children.push_back(unsigned(graph.size()));s.parents.push_back(found->second);++s.unmet;}
         for(const auto &window:descriptor["windows"]){fields(window,{"runs"});need(window["runs"].isArray()&&!window["runs"].empty(),"compact window runs missing");BlockWindow w;w.base=total;
           for(const auto &r:window["runs"]){fields(r,private_unit?std::set<std::string>{"count","event_pattern"}:std::set<std::string>{"count","event_pattern","template","pe_base","pe_stride"});BlockRun run;
             run.count=number(r["count"],"compact run count",1,INT32_MAX);need(r["event_pattern"].isString()&&pattern_specs.isMember(r["event_pattern"].asString()),"compact event pattern missing");run.pattern=r["event_pattern"].asString();
@@ -191,6 +200,35 @@ struct Engine {
         graph.push_back(std::move(s));
       }
       blocks.compact=true;blocks.total=unsigned(total);
+    }
+    if(p.isMember("streaming_pairs")){
+      const std::set<std::string> pointwise={"add","sub","mul","div","maximum","exp","pow","rsqrt","silu","cos","sin","neg"};
+      for(const auto &spec:p["streaming_pairs"]){
+        fields(spec,{"producer_source","consumer_source","mapping","event_slots"});U producer=number(spec["producer_source"],"pair producer",0,NEVER/4),consumer=number(spec["consumer_source"],"pair consumer",0,NEVER/4);
+        need(source_ids.count(producer)&&source_ids.count(consumer)&&producer<consumer,"streaming pair source identities invalid");StreamingPair pair;pair.producer=source_ids.at(producer);pair.consumer=source_ids.at(consumer);
+        auto &a=graph[pair.producer],&b=graph[pair.consumer];need(a.pair<0&&b.pair<0&&a.children==std::vector<unsigned>{pair.consumer},"streaming pair must be disjoint and single-consumer closed");
+        need((a.family=="matrix"||a.family=="vector")&&b.family=="vector"&&pointwise.count(b.kind),"streaming pair requires array producer and pointwise consumer");
+        need(a.shape.isArray()&&a.shape.size()<=8&&a.shape==b.shape,"streaming pair output shapes differ or missing");U elements=1;for(const auto &n:a.shape){U value=number(n,"pair shape extent",1,NEVER/4);U product=0;accumulate(product,elements,value);elements=product;}
+        need((a.dtype=="f16"||a.dtype=="f32")&&(b.dtype=="f16"||b.dtype=="f32"),"streaming pair output dtype missing or unsupported");
+        pair.mapping=model_events::Mapping::parse(spec["mapping"]);need(pair.mapping.elements==elements,"streaming mapping does not match source shape");
+        if(a.family=="matrix"){
+          need((a.kind=="linear"||a.kind=="matmul")&&a.shape.size()>=2&&pair.mapping.kind==model_events::Mapping::Kind::Matrix,"streaming matrix kind/mapping differs");
+          U n=a.shape[a.shape.size()-1].asUInt64(),m=a.kind=="linear"?elements/n:a.shape[a.shape.size()-2].asUInt64(),batches=elements/(m*n);
+          need(pair.mapping.m==m&&pair.mapping.n==n&&pair.mapping.batches==batches&&a.windows.size()==batches,"streaming matrix batch geometry differs");
+          for(const auto &w:a.windows)need(w.total==((m+1)/2)*((n+15)/16),"streaming matrix window block count differs");
+        }else{
+          const bool reduction=a.kind=="mean"||a.kind=="softmax";need(reduction||pointwise.count(a.kind),"streaming vector producer kind unsupported");
+          need(pair.mapping.kind==(reduction?model_events::Mapping::Kind::Reduction:model_events::Mapping::Kind::Vector),"streaming vector mapping differs");
+          if(reduction){need(a.kind=="mean"||!a.shape.empty(),"streaming softmax output rank invalid");need(pair.mapping.row_width==(a.kind=="mean"?1:a.shape[a.shape.size()-1].asUInt64()),"streaming reduction row width differs");}
+          need(a.windows.size()==1&&a.windows[0].total==pair.mapping.producer_blocks(),"streaming vector producer block count differs");
+        }
+        need(b.windows.size()==1&&b.windows[0].total==(elements+15)/16,"streaming consumer block count differs");
+        for(auto *s:{&a,&b}){const auto code=s->windows[0].runs[0].code;for(const auto &w:s->windows)for(const auto &run:w.runs)need(run.code==code,"streaming source changes template across windows");}
+        const auto &pa=templates[a.windows[0].runs[0].code],&pb=templates[b.windows[0].runs[0].code];
+        need(contexts>=2&&pa.rf==(a.family=="matrix"?6u:8u)&&pb.rf==8&&pb.spm==5&&pa.rf+pb.rf<=16&&pa.spm+pb.spm<=128&&pa.words.size()+pb.words.size()<=32,"streaming pair cannot reserve producer resources");
+        pair.slots=unsigned(number(spec["event_slots"],"pair event slots",1,32));pair.producer_limit=pes;pair.consumer_limit=std::min(pes,(128-pa.spm)/pb.spm);need(pair.consumer_limit&&source_limit>=2,"streaming pair needs two source slots");
+        a.pair=b.pair=int(pairs.size());pairs.push_back(std::move(pair));
+      }
     }
     if(graph_mode&&!compact){
       need(p["source_graph"].isArray()&&!p["source_graph"].empty(),"source graph is empty");
@@ -328,7 +366,15 @@ struct Engine {
       if(e.op=="memory_index_read")need(e.bytes==8,"memory index read must preserve I64 width");
       if(e.op=="memory_predicate_read")need(e.bytes==1,"memory predicate read must preserve Boolean width");
       if(e.op=="memory_complete"||e.op=="control_complete"){need(b.total==1,"zero-work controller must have one event");zero=true;}}
-    need(zero==b.zero_work,"lazy zero-work declaration differs");++loaded_blocks;
+    need(zero==b.zero_work,"lazy zero-work declaration differs");
+    if(compact&&graph[b.graph_source].pair>=0){const auto &s=graph[b.graph_source];const auto &pair=pairs[unsigned(s.pair)];U width=s.dtype=="f16"?2:4,written=0,expected=0;
+      for(auto id:b.events)if(events[id].op=="dma_write"){need(events[id].bytes==width,"streaming output transaction width differs");accumulate(written,events[id].instances,width);}
+      U local=index-s.windows[b.graph_window].base;
+      if(b.graph_source==pair.producer&&pair.mapping.kind==model_events::Mapping::Kind::Matrix){U m=pair.mapping.m,n=pair.mapping.n,columns=(n+15)/16;expected=std::min<U>(2,m-(local/columns)*2)*std::min<U>(16,n-(local%columns)*16)*width;}
+      else if(b.graph_source==pair.producer&&pair.mapping.kind==model_events::Mapping::Kind::Reduction)accumulate(expected,pair.mapping.row_width,width);
+      else expected=std::min<U>(16,pair.mapping.elements-local*16)*width;
+      need(written==expected,"streaming block output volume differs");}
+    ++loaded_blocks;
   }
   void unload_events(Block &b){
     if(!lazy)return;
@@ -339,9 +385,23 @@ struct Engine {
     if(!graph_mode||dma_free>now)return;
     for(auto it=graph_ready.begin();it!=graph_ready.end()&&graph_active<source_limit;){auto &s=graph[it->second];
       if((s.family=="control"&&graph_control)||(s.family=="memory"&&!s.view&&graph_memory)){++it;continue;}
-      need(!s.active&&!s.complete&&!s.unmet,"source graph readiness corrupted");s.active=true;s.begin=s.window_begin=now;++graph_active;
-      graph_control+=s.family=="control";graph_memory+=s.family=="memory"&&!s.view;if(compact)generate_next(it->second);it=graph_ready.erase(it);resources_changed=true;}
+      const bool array=s.family=="matrix"||s.family=="vector";if(array&&current_pair>=0){++it;continue;}
+      if(s.pair>=0){auto &pair=pairs[unsigned(s.pair)];need(it->second==pair.producer,"streaming consumer entered ordinary ready queue");
+        if(graph_arrays||graph_active+2>source_limit||graph[pair.consumer].unmet!=1){++it;continue;}
+        need(used(spm)==0&&!pair.bank&&!pair.complete,"streaming pair array not quiescent");pair.epoch=next_epoch++;pair.begin=now;pair.bank=std::make_shared<model_events::CompletionWindow>(pair.epoch,pair.mapping.producer_blocks(),pair.slots);pair.bank->advance(now);current_pair=s.pair;
+        it=graph_ready.erase(it);start_source(pair.producer,false);start_source(pair.consumer,true);continue;}
+      auto index=it->second;it=graph_ready.erase(it);start_source(index,false);}
     peak_graph_active=std::max(peak_graph_active,graph_active);
+  }
+  void start_source(unsigned index,bool streaming){auto &s=graph[index];need(!s.active&&!s.complete&&s.unmet==(streaming?1u:0u),"source graph readiness corrupted");s.active=true;s.begin=s.window_begin=now;++graph_active;
+    graph_control+=s.family=="control";graph_memory+=s.family=="memory"&&!s.view;graph_arrays+=s.family=="matrix"||s.family=="vector";if(compact)generate_next(index);resources_changed=true;}
+  void advance_pair(){if(current_pair<0)return;auto &pair=pairs[unsigned(current_pair)];auto before=pair.bank->revision();pair.bank->advance(now);if(before!=pair.bank->revision())resources_changed=true;}
+  void finish_pair(){if(current_pair<0)return;auto &pair=pairs[unsigned(current_pair)];if(!graph[pair.producer].complete||!graph[pair.consumer].complete)return;
+    need(pair.bank->finished()&&graph_arrays==0&&used(spm)==0,"streaming pair did not drain");auto r=pair.bank->snapshot();r["producer_source"]=Json::UInt64(graph[pair.producer].id);r["consumer_source"]=Json::UInt64(graph[pair.consumer].id);r["begin_cycle"]=Json::UInt64(pair.begin);r["end_cycle"]=Json::UInt64(now);r["producer_context_limit"]=pair.producer_limit;r["consumer_context_limit"]=pair.consumer_limit;pair_reports.append(r);pair.complete=true;pair.bank.reset();current_pair=-1;resources_changed=true;}
+  bool streaming_inputs_ready(const Block &b)const{
+    if(!compact||graph[b.graph_source].pair<0)return true;
+    const auto &pair=pairs[unsigned(graph[b.graph_source].pair)];if(b.graph_source==pair.producer)return true;
+    need(bool(pair.bank),"streaming input has no event bank");if(!b.data_ready&&b.flow_revision!=pair.bank->revision()){b.data_ready=true;for(auto dep:b.data_deps)b.data_ready&=pair.bank->ready(pair.epoch,dep);b.flow_revision=pair.bank->revision();}return b.data_ready;
   }
   void retire_source_block(const Block &b){
     if(!graph_mode)return;
@@ -349,14 +409,15 @@ struct Engine {
     if(--s.remaining[s.window])return;
     Json::Value interval;interval["index"]=s.window;interval["begin_cycle"]=Json::UInt64(s.window_begin);interval["end_cycle"]=Json::UInt64(now);s.intervals.append(interval);
     if(++s.window<s.remaining.size()){s.window_begin=now;if(compact){s.cursor=s.in_run=0;s.run=0;generate_next(b.graph_source);}return;}
-    s.active=false;s.complete=true;s.end=now;--graph_active;++graph_completed;graph_control-=s.family=="control";graph_memory-=s.family=="memory"&&!s.view;
-    for(auto child:s.children){auto &c=graph[child];need(c.unmet,"source graph parent counter underflow");if(!--c.unmet)graph_ready.emplace(c.id,child);}
+    s.active=false;s.complete=true;s.end=now;--graph_active;++graph_completed;graph_control-=s.family=="control";graph_memory-=s.family=="memory"&&!s.view;graph_arrays-=s.family=="matrix"||s.family=="vector";
+    for(auto child:s.children){auto &c=graph[child];need(c.unmet,"source graph parent counter underflow");if(!--c.unmet&&!c.active&&!c.complete)graph_ready.emplace(c.id,child);}
   }
   void generate_next(unsigned source){
     auto &s=graph[source];need(compact&&s.active&&s.window<s.windows.size(),"compact cursor has no active window");const auto &w=s.windows[s.window];if(s.cursor==w.total)return;
     need(s.run<w.runs.size(),"compact run cursor overflow");const auto &run=w.runs[s.run];unsigned id=unsigned(w.base+s.cursor);Block b;
     b.id=std::to_string(s.id)+":"+std::to_string(s.window)+":b"+std::to_string(s.cursor);b.source=s.id;b.graph_source=source;b.graph_window=s.window;b.pattern=run.pattern;
     b.controller=s.family=="memory"||s.family=="control";b.control=s.family=="control";b.zero_work=pattern_specs[run.pattern]["zero_work"].asBool();b.total=pattern_specs[run.pattern]["dynamic_events"].asUInt64();b.code=run.code;
+    if(s.pair>=0&&pairs[unsigned(s.pair)].consumer==source)b.data_deps=pairs[unsigned(s.pair)].mapping.dependencies(s.cursor);
     b.pe=unsigned((run.pe+s.in_run*run.stride)%pes);blocks.insert(id,std::move(b));need(blocks.live.size()<=pes*contexts+2*source_limit+2,"compact live descriptor bound exceeded");enqueue_admission(id);++s.cursor;
     if(++s.in_run==run.count){s.in_run=0;++s.run;}
   }
@@ -367,6 +428,10 @@ struct Engine {
   bool admit(unsigned i){
     auto &b=blocks[i];if(b.active||b.retired)return false;for(auto parent:b.deps)if(!blocks[parent].retired)return false;
     if(graph_mode){const auto &s=graph[b.graph_source];if(!s.active||b.graph_window!=s.window)return false;}
+    if(compact&&graph[b.graph_source].pair>=0){const auto &pair=pairs[unsigned(graph[b.graph_source].pair)];need(bool(pair.bank),"streaming admission has no event bank");unsigned total=0,local=0;
+      for(auto [source,index]:active){(void)source;const auto &other=blocks[index];if(other.graph_source==b.graph_source){++total;local+=other.pe==b.pe;}}
+      const bool producer=b.graph_source==pair.producer;if(local>=1||total>=(producer?pair.producer_limit:pair.consumer_limit))return false;
+      if(producer&&!pair.bank->can_admit(pair.epoch,i-graph[pair.producer].windows[0].base))return false;}
     if(!live_sources.count(b.source)&&live_sources.size()>=source_limit)return false;
     if(b.controller){if((!b.zero_work||b.control)&&(b.control?control_live:memory_live))return false;load_events(i);if(!b.zero_work||b.control){(b.control?control_live:memory_live)=true;(b.control?peak_control:peak_memory)=1;}b.active=true;b.begin=now;b.frontier_ready=now;++live_sources[b.source];++counts[controller_prefix(b)+(b.zero_work?"_zero_work_admitted":"_controllers_admitted")];emit("admit",i);return true;}
     const auto &t=templates[b.code];unsigned pe=b.pe;int slot=-1;for(unsigned s=0;s<contexts;++s)if(slots[pe][s]<0){slot=int(s);break;}
@@ -385,6 +450,7 @@ struct Engine {
     ++codes[unsigned(code)].refs;b.slot=unsigned(slot);b.rf=unsigned(r);b.spm=unsigned(s);b.active=true;b.begin=now;
     if(ports)b.frontier_ready=add(now,1);
     slots[pe][b.slot]=int(i);for(unsigned x=0;x<t.rf;++x)rf[pe][b.rf+x]=int(i);for(unsigned x=0;x<t.spm;++x)spm[b.spm+x]=int(i);
+    if(compact&&graph[b.graph_source].pair>=0){auto &pair=pairs[unsigned(graph[b.graph_source].pair)];if(b.graph_source==pair.producer)pair.bank->admit(pair.epoch,i-graph[pair.producer].windows[0].base,U(i)+1);}
     ++live_sources[b.source];++counts["blocks_admitted"];emit("admit",i);return true;
   }
   U code_ready(const Block &b)const{for(const auto &c:codes)if(c.live&&c.pe==b.pe&&c.code==b.code)return c.ready;throw std::runtime_error("missing resident template");}
@@ -393,6 +459,7 @@ struct Engine {
     if(b.pc==b.total)return "retirement_wait_context_cycles";
     const auto &e=events[frontier(b)];
     if(!b.controller&&code_ready(b)>now)return "template_wait_context_cycles";
+    if(!streaming_inputs_ready(b))return "streaming_input_wait_context_cycles";
     if(loops&&b.frontier_ready>now)return "dependency_wait_context_cycles";
     for(auto dep:e.deps)if(events[dep].visible>now)return "dependency_wait_context_cycles";
     auto unit=kinds.at(e.op).unit;
@@ -411,7 +478,7 @@ struct Engine {
     auto &e=events[id];auto &b=blocks[e.owner];need(b.active&&b.running&&frontier(b)==id,"completion owner/frontier mismatch");
     need(e.completed<e.instances,"event instance completed twice");++e.completed;e.end=now;e.visible=e.completed==e.instances?add(now,1):NEVER;
     b.frontier_ready=add(now,1);b.running=false;++b.pc;++counts["events_completed"];emit("complete",e.owner,id);
-    if(b.pc==b.total)calendar.push(Wake{add(now,1),Retire,e.owner});
+    if(b.pc==b.total){if(compact&&graph[b.graph_source].pair>=0){auto &pair=pairs[unsigned(graph[b.graph_source].pair)];if(b.graph_source==pair.producer){need(e.op=="dma_write","producer block completion must follow final write response");pair.bank->complete(pair.epoch,e.owner-graph[pair.producer].windows[0].base,U(e.owner)+1,now);}}calendar.push(Wake{add(now,1),Retire,e.owner});}
   }
   bool completion_port(unsigned id){
     const auto &e=events[id];const auto unit=kinds.at(e.op).unit;unsigned pe=blocks[e.owner].pe;
@@ -468,7 +535,7 @@ struct Engine {
     if(ports)std::stable_partition(order.begin(),order.end(),[&](unsigned i){const auto &b=blocks[i];if(b.pc==b.total)return false;const auto &e=events[frontier(b)];return kinds.at(e.op).unit!=Dma&&e.op!="spm_initialize";});
     for(auto i:order){auto &b=blocks[i];if(!b.active||wait_reason(b)!="ready_context_cycles")continue;
       auto id=frontier(b);auto &e=events[id];need(e.issued<e.instances&&e.issued==e.completed,"event issued twice");++e.issued;e.begin=now;b.running=true;
-      U due=add(now,latency.at(e.op));need(due<max_cycles,"event exceeded cycle limit");auto unit=kinds.at(e.op).unit;
+      auto unit=kinds.at(e.op).unit;U due=registered_memory&&unit==Dma?add(aligned(add(now,1),physical_accept_period),physical_latency):add(now,latency.at(e.op));need(due<max_cycles,"event exceeded cycle limit");
       if(unit!=None)service(e)=ports?NEVER:add(due,1);
       if(!b.controller&&(!ports||(unit!=Dma&&e.op!="operand_prepare"&&e.op!="spm_initialize")))issue_free[b.pe]=add(now,1);
       if(!b.controller&&ports&&(unit==Spm||e.op=="dma_write"||e.op=="spm_initialize")){spm_port_free=add(now,1);++counts["spm_port_claims"];}
@@ -524,7 +591,7 @@ struct Engine {
   }
   Json::Value run(){
     while(retired<blocks.size()){
-      need(now<=max_cycles,"event model exceeded cycle limit");changes();
+      need(now<=max_cycles,"event model exceeded cycle limit");advance_pair();changes();finish_pair();
       launch_sources();
       admissions();
       if(source_ticks){
@@ -542,6 +609,7 @@ struct Engine {
     need(!lazy||(!resident_nodes&&event_ids.empty()&&free_events.size()==events.size()&&loaded_blocks==blocks.size()),"lazy event state failed to drain");
     need(!lazy||free_codes.size()==codes.size(),"lazy ROM records failed to drain");
     need(!compact||blocks.live.empty(),"compact descriptors failed to drain");
+    need(current_pair<0&&std::all_of(pairs.begin(),pairs.end(),[](const auto &p){return p.complete;}),"streaming pairs failed to complete");
     Json::Value r;r["classification"]="native_concurrent_event_component_not_full_model_or_numerical_execution";r["cycles"]=Json::UInt64(now);
     r["calendar_transitions"]=Json::UInt64(transitions);r["blocks"]=Json::UInt64(blocks.size());r["events"]=Json::UInt64(total_events);r["policy"]=policy;
     if(loops){r["schema"]=version==6?"mlx_event_schedule_v6":version==5?"mlx_event_schedule_v5":version==4?"mlx_event_schedule_v4":ports?"mlx_event_schedule_v3":"mlx_event_schedule_v2";r["stored_event_leaves"]=Json::UInt64(lazy?loaded_leaves:events.size());r["stored_sequence_nodes"]=Json::UInt64(sequence_nodes);
@@ -556,6 +624,8 @@ struct Engine {
     if(version>=6){r["control_controller_resources"]["register_bytes"]=512;r["control_controller_resources"]["rom_words"]=32;r["control_controller_resources"]["peak_active"]=peak_control;r["control_controller_resources"]["uses_array_rf_spm"]=false;r["control_controller_resources"]["rocket_cpu_timing"]=false;
       r["port_contract"]["issue_after_admission_edge_scope"]="array_only_controllers_start_on_admission_edge";}
     if(source_ticks)r["timing_semantics"]="source_priority_completion_then_issue_per_source_next_edge_visibility_not_full_graph";
+    if(!pairs.empty())r["pipeline_groups"]=pair_reports;
+    if(registered_memory){r["memory_timing_contract"]["kind"]="registered_queue_fixed_latency_no_cache";r["memory_timing_contract"]["latency"]=Json::UInt64(physical_latency);r["memory_timing_contract"]["accept_period"]=Json::UInt64(physical_accept_period);r["memory_timing_contract"]["submit_visible_next_edge"]=true;r["memory_timing_contract"]["nack_every"]=0;}
     if(lazy){r["lazy_patterns"]=pattern_store->report();r["lazy_patterns"]["loaded_blocks"]=Json::UInt64(loaded_blocks);r["lazy_patterns"]["peak_live_sequence_nodes"]=Json::UInt64(peak_nodes);r["lazy_patterns"]["peak_live_event_leaves"]=Json::UInt64(peak_leaves);r["lazy_patterns"]["allocated_event_slots"]=Json::UInt64(events.size());r["lazy_patterns"]["event_state_drained"]=true;r["lazy_patterns"]["block_descriptors_still_eager"]=!compact;}
     if(lazy){r["lazy_patterns"]["allocated_rom_record_slots"]=Json::UInt64(codes.size());r["lazy_patterns"]["rom_record_generations"]=Json::UInt64(code_generations);r["lazy_patterns"]["rom_records_drained"]=true;}
     if(graph_mode){r["source_graph_completed"]=true;r["source_frontend_peak"]=peak_graph_active;r["source_frontend_capacity"]=source_limit;r["source_launch_gate"]="shared_dma_quiescent";r["source_intervals"]=Json::Value(Json::arrayValue);
