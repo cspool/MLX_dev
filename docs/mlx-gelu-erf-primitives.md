@@ -1,5 +1,7 @@
 # GELU erf 形式的 C++ 原语路径
 
+2026-09-09验收更新：[392项回归与14次安全重放](../artifacts/tagged/gelu-publication-001/manifest.json)通过，其中7个正常执行、7个预期拒绝。完整`[1,28,3072]`物理算子使用原尺寸，安全重跑的输出/事件/周期与release一致；首轮1200秒宿主watchdog失败保留，第二轮仅将宿主上限改为3600秒。完整6181节点Llama2编译产物不变。此组件验收不是完整BERT、Rocket或作者hybrid通过。
+
 本增量实现 `aten.gelu.default(approximate="none")` 的编译路径。它使用现有乘加、NEG、MAX选择、DIV、EXP及精度转换原语，没有添加假定的erf硬件单元，不将该算子静默替换成tanh形式。Python只生成IR和做参考/审计，模型中的中间值由C++实际计算、写入和读取。
 
 [PyTorch GELU定义](https://docs.pytorch.org/docs/2.14/generated/torch.nn.GELU.html)区分默认的高斯CDF形式与显式tanh选项；这里保持前者的数学目标，但以明确登记、单独验证误差的FP32近似执行，不声称复现框架内核的逐位算法。
@@ -28,4 +30,4 @@ FP32 GELU为31个原语步骤，FP16另有输入/输出转换。当前是未融�
 
 实际BERT原始1,141个源调用可以展开为3,046个降级节点，初始bindings不变，没有golden中间数据。全部捕获算子名称已登记，但完整编译仍在旧的生成模型logits/token结果协议处拒绝：BERT需要独立的start/end及QA后处理协议。该预检/展开不是完整模型执行或系统通过。
 
-后续仍需QA结果协议、真实完整BERT推理及原框架比较、source-group系统ABI，以及其他要求模型和作者变体。原Llama2 GPU误差门槛失败及三个活动完整尝试的独立验收不被覆盖；性能和RTL门槛保持关闭。
+后续仍需QA结果协议、真实完整BERT推理及原框架比较、source-group系统ABI，以及其他要求模型和作者变体。上述QA缺口是本GELU快照的边界，后续在独立QA开发工作树继续推进。原Llama2 GPU比较失败保留；按用户2026-09-09更新，合理GPU差异不再单独阻塞已完成主要正确性的原生设备性能试验，真实系统及RTL仍需各自验收。
