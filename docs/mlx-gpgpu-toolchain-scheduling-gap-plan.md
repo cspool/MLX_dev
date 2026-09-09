@@ -10,6 +10,8 @@
 
 新增 `专题回答` 已纳入同一参考文档：区分空间映射、独立任务、顺序阶段与重复实例，指导紧凑块描述和 C++ 按需实例化；同时保留原始布局、地址、累加状态及有限完成事件。Task 不固定绑定功能单元，DFU 层次不直接等同 GPU block／warp，COPY 也不能证明未给出的 NoC 细节。实施顺序和整模验收门槛不变。
 
+按用户进一步明确，这些资料用于辅助 **MLX 指令集和空间任务调度的联合设计**，不仅是实现参考。[联合设计契约](mlx-isa-spatial-scheduling-contract.md)明确源图／映射、指令语义、控制／搬运、微架构调度与宿主存储表示的边界，并澄清早期 tagged ISA 与当前四后端 profile 不可混用。紧凑运行段不是新增硬件指令，后续仍须完整数值与系统验收。
+
 系统主线增量：[BERT 布尔控制和 memory v2 ABI](mlx-bert-system-abi.md)已连接实际 RV64/C++ 响应驱动入口，完成组合链及安全重放；source-group、split 生命周期、QA 系统输出和对应 Rocket 整模仍待接入/验收。
 
 后续[现代系统图增量](mlx-modern-system-graph.md)已接入 source-group、split 生命周期、QA CPU 读回/后处理和实际输出导出，227 项回归、两个实际配对 Rocket 小图及独立审计通过。完整 BERT 配对系统镜像已完成，首次整模 Rocket 尝试正在运行；其终态、主要正确性和性能仍须独立验收，其他 P0/GPU/RTL 的顺序不变。
