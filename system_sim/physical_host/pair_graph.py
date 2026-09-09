@@ -20,7 +20,7 @@ def schedule(program,event_slots):
         raise ValueError("pair graph has invalid or duplicate source identities")
     dependencies=[]
     for i,n in enumerate(nodes):
-        names=set(references(n["args"]))|set(references(n.get("kwargs",{})))
+        names=set(references(n["args"]))|set(references(n.get("kwargs",{})))|set(references(n.get("control_dependencies",[])))
         if any(name not in program["assets"] and (name not in ordinal or ordinal[name]>=i) for name in names):
             raise ValueError("pair graph input order is not a complete SSA DAG")
         dependencies.append(sorted(ordinal[name] for name in names if name in ordinal))
@@ -45,7 +45,7 @@ def storage(program,layouts,groups,*,base,limit):
     intervals={root:{"first":-1 if root in program["assets"] else at[owners[root]],
                      "last":len(groups) if root in program["assets"] else at[owners[root]]} for root in roots}
     for i,node in enumerate(nodes):
-        names={node["id"]}|set(references(node["args"]))|set(references(node.get("kwargs",{})))
+        names={node["id"]}|set(references(node["args"]))|set(references(node.get("kwargs",{})))|set(references(node.get("control_dependencies",[])))
         for name in names:
             record=intervals[layouts[name]["root"]]
             if at[i]<record["first"]:raise ValueError("pair storage used before its producer group")

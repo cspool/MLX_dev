@@ -77,7 +77,7 @@ struct Device::Impl {
   }
   void launch(uint64_t address,uint64_t bytes,uint64_t id){
     check(!busy()&&transport.queue.idle(),"launch requires drained device");
-    check(bytes==sizeof(mlx_matrix_wire)||bytes==sizeof(mlx_vector_wire)||bytes==sizeof(mlx_memory_wire)||bytes==sizeof(mlx_pair_wire),"unregistered descriptor size");
+    check(bytes==sizeof(mlx_matrix_wire)||bytes==sizeof(mlx_vector_wire)||bytes==sizeof(mlx_memory_wire)||bytes==sizeof(mlx_memory_wire_v2)||bytes==sizeof(mlx_pair_wire),"unregistered descriptor size");
     check(address%8==0&&address<=transport.address_limit&&bytes-1<=transport.address_limit-address,"descriptor address alignment/range invalid");
     release_models();release_decoded();kernel=Json::Value();transport.written.clear();error.clear();backend.clear();
     descriptor_address=address;descriptor_bytes=bytes;descriptor.assign(size_t(bytes),0);fetched=0;
@@ -90,7 +90,7 @@ struct Device::Impl {
     if(descriptor_bytes==sizeof(mlx_matrix_wire)){auto wire=std::make_unique<mlx_matrix_wire>();std::memcpy(wire.get(),descriptor.data(),sizeof(*wire));matrix=decode_matrix(*wire);backend="matrix";}
     else if(descriptor_bytes==sizeof(mlx_vector_wire)){auto wire=std::make_unique<mlx_vector_wire>();std::memcpy(wire.get(),descriptor.data(),sizeof(*wire));vector=decode_vector(*wire);backend="vector";}
     else if(descriptor_bytes==sizeof(mlx_pair_wire)){auto wire=std::make_unique<mlx_pair_wire>();std::memcpy(wire.get(),descriptor.data(),sizeof(*wire));pair=decode_pair(*wire);backend="pair";}
-    else{auto wire=std::make_unique<mlx_memory_wire>();std::memcpy(wire.get(),descriptor.data(),sizeof(*wire));memory=decode_memory(*wire);backend="memory";}
+    else{memory=decode_memory_bytes(descriptor.data(),descriptor.size());backend="memory";}
     const auto &regions=matrix?matrix->regions:vector?vector->regions:pair?pair->regions:memory->regions;
     for(const auto &r:regions)if(r.bytes){
       check(r.base<=transport.address_limit&&r.bytes-1<=transport.address_limit-r.base,"tensor region exceeds system address width");

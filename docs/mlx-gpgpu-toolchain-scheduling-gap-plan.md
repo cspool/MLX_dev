@@ -6,6 +6,10 @@
 
 五项主线的已有证据、独立退出条件及当前 Chipyard 推进内容见[主线验收清单](mlx-mainline-acceptance.md)。
 
+用户补充的知识库 `human_notes/模拟器卡片` 已纳入参考，重点是完整编译产物、instance/就绪调度、DMA 完成协议和逐周期/合并推进的分层，见[DFU/simict 卡片参考与弥补目标](mlx-dfu-simulator-reference.md)。这些资料不替代 MLX 资源约束，也不作为现有整模运行或合并推进精度的通过证据。
+
+系统主线增量：[BERT 布尔控制和 memory v2 ABI](mlx-bert-system-abi.md)已连接实际 RV64/C++ 响应驱动入口，完成组合链及安全重放；source-group、split 生命周期、QA 系统输出和对应 Rocket 整模仍待接入/验收。
+
 | 优先级 | 工作范围 | 当前执行约束 |
 | --- | --- | --- |
 | P0：最高 | 完整模型主要正确性、MLX并发端到端、完整事件驱动接入、MLX两模型性能误差、Chipyard整模系统集成 | 先集中处理Chipyard整模验收；其他MLX实现应服务于这条验收主线，不用小负载或原生版本结果替代系统结果 |

@@ -108,10 +108,11 @@ class MatrixDevice {
       require(port->idle(),"plugin launch while memory remains active");require(descriptor%8==0,"plugin descriptor is misaligned");
       auto at=offset(descriptor,8);uint64_t magic;memory->read(at,&magic,8);
       require(magic==MLX_MATRIX_WIRE_MAGIC||magic==MLX_VECTOR_WIRE_MAGIC||magic==MLX_MEMORY_WIRE_MAGIC,"unknown plugin descriptor magic");
-      auto size=magic==MLX_MATRIX_WIRE_MAGIC?sizeof(mlx_matrix_wire):magic==MLX_VECTOR_WIRE_MAGIC?sizeof(mlx_vector_wire):sizeof(mlx_memory_wire);offset(descriptor,size);
+      uint64_t version=1;if(magic==MLX_MEMORY_WIRE_MAGIC){offset(descriptor,16);memory->read(at+8,&version,8);}
+      auto size=magic==MLX_MATRIX_WIRE_MAGIC?sizeof(mlx_matrix_wire):magic==MLX_VECTOR_WIRE_MAGIC?sizeof(mlx_vector_wire):version==2?sizeof(mlx_memory_wire_v2):sizeof(mlx_memory_wire);offset(descriptor,size);
       if(magic==MLX_MATRIX_WIRE_MAGIC){mlx_matrix_wire wire;memory->read(at,&wire,sizeof(wire));decoded=decode_matrix(wire);}
       else if(magic==MLX_VECTOR_WIRE_MAGIC){mlx_vector_wire wire;memory->read(at,&wire,sizeof(wire));decoded_vector=decode_vector(wire);}
-      else{mlx_memory_wire wire;memory->read(at,&wire,sizeof(wire));decoded_memory=decode_memory(wire);}
+      else{std::vector<uint8_t> wire(size);memory->read(at,wire.data(),size);decoded_memory=decode_memory_bytes(wire.data(),size);}
       const auto &regions=decoded?decoded->regions:decoded_vector?decoded_vector->regions:decoded_memory->regions;
       for(const auto &region:regions)if(region.bytes){offset(region.base,region.bytes);require(region.base+region.bytes<=descriptor||region.base>=descriptor+size,"device data overlaps its descriptor");}
       address_space=std::make_unique<AddressSpacePort>(*port,tokens,regions,cycles);

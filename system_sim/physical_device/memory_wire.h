@@ -9,11 +9,13 @@
 #define MLX_MEMORY_PRESERVE_FORMAT UINT64_C(8)
 #define MLX_MEMORY_STRICT_VIEW UINT64_C(16)
 #define MLX_MEMORY_NONBLOCKING UINT64_C(32)
+#define MLX_MEMORY_EXPLICIT_DTYPE UINT64_C(64)
 #define MLX_MEMORY_LITERAL_F64 UINT64_C(4)
 enum mlx_memory_kind { MLX_MEMORY_EMBEDDING=1,MLX_MEMORY_WHERE=2,MLX_MEMORY_CAT=3,
   MLX_MEMORY_CAST=4,MLX_MEMORY_CAST_DEVICE=5,MLX_MEMORY_CONTIG=6,MLX_MEMORY_RESHAPE=7,
   MLX_MEMORY_TRANSPOSE=8,MLX_MEMORY_SLICE=9,MLX_MEMORY_SELECT=10,MLX_MEMORY_UNSQUEEZE=11,
-  MLX_MEMORY_EXPAND=12,MLX_MEMORY_ALIAS=13,MLX_MEMORY_DROPOUT=14 };
+  MLX_MEMORY_EXPAND=12,MLX_MEMORY_ALIAS=13,MLX_MEMORY_DROPOUT=14,
+  MLX_MEMORY_ADVANCED_INDEX=15,MLX_MEMORY_NEW_ONES=16,MLX_MEMORY_SQUEEZE=17 };
 typedef struct {
   uint64_t kind,scalar_dtype,scalar_bits,root_id;
   mlx_host_tensor tensor;
@@ -27,6 +29,19 @@ typedef struct {
   mlx_memory_operand operands[64];
   uint64_t words[4],tail_reserved[6];
 } mlx_memory_wire;
+/* v2 retains the header/operand layout. Only bounded control-template storage
+ * grows: eight index loads + load/convert/store fit in 12 words. This does not
+ * add PE registers, SPM, memory ports, or staging capacity. */
+typedef struct {
+  uint64_t magic,version,kind,mode,selector,flags,operand_count,argument_count;
+  uint64_t word_count,output_root,param_count,reserved[5];
+  uint64_t params[16],argument_indices[256];
+  mlx_host_tensor output;
+  mlx_memory_operand operands[64];
+  uint64_t words[12],tail_reserved[6];
+} mlx_memory_wire_v2;
 MLX_HOST_STATIC_ASSERT(sizeof(mlx_memory_wire)==15872,"memory wire size");
 MLX_HOST_STATIC_ASSERT(offsetof(mlx_memory_wire,output)==2304 && offsetof(mlx_memory_wire,words)==15792,"memory wire offsets");
+MLX_HOST_STATIC_ASSERT(sizeof(mlx_memory_wire_v2)==15936,"memory wire v2 size");
+MLX_HOST_STATIC_ASSERT(offsetof(mlx_memory_wire_v2,output)==2304 && offsetof(mlx_memory_wire_v2,words)==15792,"memory wire v2 offsets");
 #endif

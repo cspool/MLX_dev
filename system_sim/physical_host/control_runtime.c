@@ -99,8 +99,9 @@ static uint64_t float_le(float a,float b){uint64_t result;__asm__ volatile("fle.
 static int integer(uint64_t dtype){return dtype==MLX_HOST_I64||dtype==MLX_HOST_BOOL;}
 
 enum mlx_host_status mlx_host_control_execute(const volatile mlx_host_control_command *cmd){
-  if(!cmd || (uintptr_t)cmd%8 || (uintptr_t)cmd>UINT64_MAX-sizeof(*cmd) || cmd->magic!=MLX_HOST_CONTROL_MAGIC || cmd->version!=1 || cmd->reserved)return MLX_HOST_BAD_DESCRIPTOR;
-  if(cmd->opcode<MLX_HOST_ARANGE||cmd->opcode>MLX_HOST_ARGMAX)return MLX_HOST_UNSUPPORTED;
+  if(!cmd || (uintptr_t)cmd%8 || (uintptr_t)cmd>UINT64_MAX-sizeof(*cmd) || cmd->magic!=MLX_HOST_CONTROL_MAGIC || (cmd->version!=1&&cmd->version!=2) || cmd->reserved)return MLX_HOST_BAD_DESCRIPTOR;
+  if(cmd->version==2&&cmd->opcode<=MLX_HOST_ARGMAX)return MLX_HOST_BAD_DESCRIPTOR;
+  if(cmd->opcode<MLX_HOST_ARANGE||cmd->opcode>(cmd->version==1?MLX_HOST_ARGMAX:MLX_HOST_GUARD))return MLX_HOST_UNSUPPORTED;
   if((cmd->opcode==MLX_HOST_ARGMAX?(cmd->flags&~MLX_HOST_KEEP_DIM):cmd->flags) || (cmd->opcode!=MLX_HOST_ARANGE&&cmd->extent))return MLX_HOST_BAD_DESCRIPTOR;
   struct view out;struct operand a,b;enum mlx_host_status status=tensor(&out,&cmd->output,MLX_HOST_WRITE);if(status)return status;
   if(out.bytes&&out.base<(uintptr_t)cmd+sizeof(*cmd)&&(uintptr_t)cmd<out.base+out.bytes)return MLX_HOST_OVERLAP;
@@ -114,7 +115,27 @@ enum mlx_host_status mlx_host_control_execute(const volatile mlx_host_control_co
   }else{
     status=operand(&a,&cmd->a);if(status)return status;
     if(a.kind==MLX_HOST_TENSOR&&overlap(&out,&a.tensor))return MLX_HOST_OVERLAP;
-    if(cmd->opcode==MLX_HOST_ARGMAX){
+    if(cmd->opcode==MLX_HOST_ALL||cmd->opcode==MLX_HOST_GUARD){
+      if(a.kind!=MLX_HOST_TENSOR||a.dtype!=MLX_HOST_BOOL||out.dtype!=MLX_HOST_BOOL)return MLX_HOST_BAD_TYPE;
+      if(out.rank)return MLX_HOST_BAD_SHAPE;
+      if(cmd->opcode==MLX_HOST_ALL){
+        if(!zero(&cmd->b,sizeof(cmd->b)))return MLX_HOST_BAD_DESCRIPTOR;
+        __asm__ volatile("fence rw, rw":::"memory");
+        uint64_t result=1;
+        /* Read every logical input, including strided/expanded views. Empty
+         * Boolean ALL is true; this is not a cached framework branch value. */
+        for(uint64_t i=0;i<a.tensor.count;++i)result&=load(address(&a.tensor,i),1)!=0;
+        store(out.base,1,result);
+      }else{
+        if(a.tensor.count!=1)return MLX_HOST_BAD_SHAPE;
+        status=operand(&b,&cmd->b);if(status)return status;
+        if(b.kind!=MLX_HOST_SCALAR||b.dtype!=MLX_HOST_BOOL)return MLX_HOST_BAD_TYPE;
+        __asm__ volatile("fence rw, rw":::"memory");
+        uint64_t actual=load(address(&a.tensor,0),1)!=0;
+        if(actual!=b.bits)return MLX_HOST_GUARD_FAILED;
+        store(out.base,1,actual);
+      }
+    }else if(cmd->opcode==MLX_HOST_ARGMAX){
       if(!zero(&cmd->b,sizeof(cmd->b)))return MLX_HOST_BAD_DESCRIPTOR;
       if(a.kind!=MLX_HOST_TENSOR||a.dtype==MLX_HOST_BOOL||out.dtype!=MLX_HOST_I64)return MLX_HOST_BAD_TYPE;
       if(!a.tensor.rank||!a.tensor.shape[a.tensor.rank-1])return MLX_HOST_BAD_SHAPE;
@@ -136,8 +157,11 @@ enum mlx_host_status mlx_host_control_execute(const volatile mlx_host_control_co
     }else{
       status=operand(&b,&cmd->b);if(status)return status;
       if(b.kind==MLX_HOST_TENSOR&&overlap(&out,&b.tensor))return MLX_HOST_OVERLAP;
-      int integral=integer(a.dtype);if(integral!=integer(b.dtype)||(cmd->opcode!=MLX_HOST_LE&&!integral))return MLX_HOST_BAD_TYPE;
-      if(out.dtype!=(cmd->opcode==MLX_HOST_LE?MLX_HOST_BOOL:MLX_HOST_I64))return MLX_HOST_BAD_TYPE;
+      int comparison=cmd->opcode==MLX_HOST_LE||cmd->opcode==MLX_HOST_GE;
+      int boolean_and=cmd->opcode==MLX_HOST_BITWISE_AND;
+      int integral=integer(a.dtype);if(integral!=integer(b.dtype)||(!comparison&&!integral))return MLX_HOST_BAD_TYPE;
+      if(boolean_and&&(a.kind!=MLX_HOST_TENSOR||b.kind!=MLX_HOST_TENSOR||a.dtype!=MLX_HOST_BOOL||b.dtype!=MLX_HOST_BOOL))return MLX_HOST_BAD_TYPE;
+      if(out.dtype!=((comparison||boolean_and)?MLX_HOST_BOOL:MLX_HOST_I64))return MLX_HOST_BAD_TYPE;
       unsigned ar=a.kind==MLX_HOST_TENSOR?(unsigned)a.tensor.rank:0,br=b.kind==MLX_HOST_TENSOR?(unsigned)b.tensor.rank:0,rank=ar>br?ar:br;
       if(out.rank!=rank)return MLX_HOST_BAD_SHAPE;
       for(unsigned d=0;d<rank;++d){uint64_t as=d+ar>=rank?a.tensor.shape[d+ar-rank]:1,bs=d+br>=rank?b.tensor.shape[d+br-rank]:1;
@@ -150,6 +174,8 @@ enum mlx_host_status mlx_host_control_execute(const volatile mlx_host_control_co
         uint64_t av=value(&a,&out,index),bv=value(&b,&out,index),result;
         if(cmd->opcode==MLX_HOST_ADD)result=av+bv;
         else if(cmd->opcode==MLX_HOST_MUL)result=av*bv;
+        else if(boolean_and)result=av&bv;
+        else if(cmd->opcode==MLX_HOST_GE)result=integral?!less(av,bv):float_le(floating(bv,b.dtype),floating(av,a.dtype));
         else result=integral?!less(bv,av):float_le(floating(av,a.dtype),floating(bv,b.dtype));
         store(out.base+index*out.width,(unsigned)out.width,result);
       }

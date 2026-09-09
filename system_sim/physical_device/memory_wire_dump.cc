@@ -13,7 +13,8 @@ struct UnusedMemory final:mlx::model_io::PhysicalMemoryPort {
   void consume_response()override{throw std::runtime_error("memory decode unexpectedly consumed data");}
 };
 Json::Value decode(const std::filesystem::path &path){
-  require(std::filesystem::file_size(path)==sizeof(mlx_memory_wire),"memory wire file size mismatch");mlx_memory_wire wire;std::ifstream input(path,std::ios::binary);input.read(reinterpret_cast<char*>(&wire),sizeof(wire));require(bool(input),"cannot read memory wire");auto d=decode_memory(wire);
+  auto size=std::filesystem::file_size(path);require(size==sizeof(mlx_memory_wire)||size==sizeof(mlx_memory_wire_v2),"memory wire file size mismatch");
+  std::vector<uint8_t> wire(size);std::ifstream input(path,std::ios::binary);input.read(reinterpret_cast<char*>(wire.data()),size);require(bool(input),"cannot read memory wire");auto d=decode_memory_bytes(wire.data(),wire.size());
   UnusedMemory memory;mlx::model_io::RequestTokens tokens;mlx::model_io::AddressSpacePort port(memory,tokens,d.regions);mlx::memory_model::Simulator model(d.node,d.values,{},&port,&d.output);
   Json::Value row;row["file"]=path.string();row["node"]=d.node;row["backend_constructor_validated"]=true;row["view_elided"]=d.view;
   if(d.view)require(model.done()&&model.result()["dma_requests"].asUInt64()==0,"memory wire view performed data transfer");

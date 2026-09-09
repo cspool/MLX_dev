@@ -17,7 +17,7 @@ ROOT=Path(__file__).resolve().parents[1]
 SOURCE=ROOT/"system_sim/physical_host"
 DTYPE={"f16":0,"f32":1,"i64":2,"bool":3}
 NUMPY={"f16":np.float16,"f32":np.float32,"i64":np.int64,"bool":np.uint8}
-OP={"arange":1,"add":2,"mul":3,"le":4,"argmax":5}
+OP={"arange":1,"add":2,"mul":3,"le":4,"argmax":5,"ge":6,"bitwise_and":7,"all":8,"guard":9}
 
 
 def sha(path):return hashlib.sha256(path.read_bytes()).hexdigest()
@@ -43,7 +43,7 @@ def values(arg):
     return result!=0 if arg["dtype"]=="bool" else result
 
 
-def cases():
+def cases(include_mask=False):
     result=[]
     def case(name,kind,a=None,b=None,extent=0,keep=False):
         integral=a is None or a["dtype"] in {"i64","bool"}
@@ -100,6 +100,54 @@ def cases():
         c=copy.deepcopy(base);c.update(name="reject-"+name,status=status,fflags=0);change(c);result.append(c)
     for dtype in ("f16","f32"):
         c=copy.deepcopy(next(c for c in result if c["name"]==f"{dtype}-compare"));c.update(name=f"reject-{dtype}-frm",frm=1,status=7,fflags=0);result.append(c)
+    return result+mask_cases() if include_mask else result
+
+
+def mask_cases():
+    result=[]
+    def add(name,kind,a,b=None):
+        av=values(a);bv=values(b) if b is not None else None
+        if kind=="ge":expected=np.asarray(av>=bv,dtype=np.uint8)
+        elif kind=="bitwise_and":expected=np.asarray(av&bv,dtype=np.uint8)
+        elif kind=="all":expected=np.asarray(np.all(av),dtype=np.uint8)
+        else:expected=np.asarray(bool(np.asarray(av).reshape(-1)[0]),dtype=np.uint8)
+        invalid=kind=="guard" and bool(expected)!=bool(bv)
+        flags=16 if kind=="ge" and a["dtype"] in {"f16","f32"} and (np.isnan(av).any() or np.isnan(bv).any()) else 0
+        result.append({"name":name,"version":2,"kind":kind,"a":a,"b":b,"extent":0,"flags":0,
+                       "output_dtype":"bool","output_shape":list(expected.shape),"expected":expected.tobytes().hex(),
+                       "status":8 if invalid else 0,"fflags":flags})
+    add("mask-ge-i64-exact","ge",tensor([[-2**63,-1,2**60+1],[2**63-1,0,2**60+3]],"i64"),tensor([[0],[2**60+2]],"i64"))
+    add("mask-ge-noncanonical-bool","ge",tensor([0,128,255],"bool"),scalar(1,"i64"))
+    for dtype in ("f16","f32"):
+        add("mask-ge-"+dtype,"ge",tensor([-float("inf"),-0.0,0.0,3,float("inf"),float("nan")],dtype),scalar(0,"f32"))
+    add("mask-and-broadcast","bitwise_and",tensor([[0],[255]],"bool"),tensor([128,0,1],"bool"))
+    add("mask-and-empty","bitwise_and",tensor(np.empty((0,3)),"bool"),tensor([128,0,1],"bool"))
+    add("mask-all-empty","all",tensor(np.empty((0,3)),"bool"))
+    add("mask-all-false","all",tensor([128,0,255],"bool"))
+    add("mask-all-scalar","all",tensor(255,"bool"))
+    add("mask-all-strided","all",tensor([[0,128,0,255],[0,3,0,1]],"bool",shape=[2,2],stride=[4,2],offset=1))
+    add("mask-all-expanded","all",tensor([255],"bool",shape=[2,3],stride=[0,0]))
+    for expected in (False,True):
+        add(f"mask-guard-{expected}","guard",tensor(255 if expected else 0,"bool"),scalar(expected,"bool"))
+        add(f"mask-guard-mismatch-{expected}","guard",tensor(0 if expected else 128,"bool"),scalar(expected,"bool"))
+    add("mask-guard-one-element-view","guard",tensor([0,128,0],"bool",shape=[1,1],stride=[3,1],offset=1),scalar(True,"bool"))
+    def reject(name,source,status,**changes):
+        c=copy.deepcopy(next(c for c in result if c["name"]==source));c.update(name=name,status=status,fflags=0,**changes);result.append(c)
+    reject("reject-mask-v1","mask-ge-i64-exact",6,command_overrides={"version":"1"})
+    reject("reject-mask-version","mask-all-false",1,command_overrides={"version":"3"})
+    reject("reject-mask-all-extra-operand","mask-all-false",1,b=scalar(False,"bool"))
+    reject("reject-mask-all-input-type","mask-all-false",2,a=tensor([0,1,1],"i64"))
+    reject("reject-mask-all-output-rank","mask-all-false",3,output_overrides={"rank":"1","shape":"{1}","stride":"{1}"})
+    reject("reject-mask-and-scalar","mask-and-broadcast",2,b=scalar(True,"bool"))
+    reject("reject-mask-and-i64","mask-and-broadcast",2,a=tensor([[0],[1]],"i64"))
+    reject("reject-mask-guard-expected-type","mask-guard-True",2,b=scalar(1,"i64"))
+    reject("reject-mask-guard-expected-tensor","mask-guard-True",2,b=tensor(True,"bool"))
+    reject("reject-mask-guard-multiple","mask-guard-True",3,a=tensor([1,1],"bool"))
+    reject("reject-mask-guard-empty","mask-guard-True",3,a=tensor([],"bool"))
+    reject("reject-mask-guard-flags","mask-guard-True",1,command_overrides={"flags":"1"})
+    reject("reject-mask-guard-readonly","mask-guard-True",1,output_overrides={"access":"1"})
+    reject("reject-mask-all-overlap","mask-all-false",5,output_overrides={"base":"A_BASE"})
+    reject("reject-mask-ge-frm","mask-ge-f32",7,frm=1)
     return result
 
 
@@ -130,7 +178,7 @@ def generate(items):
         for n in reversed(shape):stride.insert(0,step);step*=max(n,1)
         desc={"base":f"(uint64_t)(uintptr_t)({symbol}+8)","bytes":str(len(raw)),"rank":str(len(shape)),"dtype":str(DTYPE[c["output_dtype"]]),"access":"MLX_HOST_READ|MLX_HOST_WRITE","shape":"{"+",".join(map(str,shape))+"}","stride":"{"+",".join(map(str,stride))+"}"}
         desc.update({k:v.replace("A_BASE",f"(uint64_t)(uintptr_t)(input_a_{index}+8)").replace("COMMAND_BASE",f"(uint64_t)(uintptr_t)&commands[{index}]") for k,v in c.get("output_overrides",{}).items()})
-        cmd={"magic":"MLX_HOST_CONTROL_MAGIC","version":"1","opcode":str(OP[c["kind"]]),"flags":str(c["flags"]),"extent":str(c["extent"]),"a":specs["a"],"b":specs["b"],"output":fields(desc)};cmd.update(c.get("command_overrides",{}));commands.append(fields(cmd))
+        cmd={"magic":"MLX_HOST_CONTROL_MAGIC","version":str(c.get("version",1)),"opcode":str(OP[c["kind"]]),"flags":str(c["flags"]),"extent":str(c["extent"]),"a":specs["a"],"b":specs["b"],"output":fields(desc)};cmd.update(c.get("command_overrides",{}));commands.append(fields(cmd))
         record.update({"output_data":f"(uintptr_t){symbol}","output_expected":expected,"output_size":str(len(guard)),"status":str(c["status"]),"fflags":str(c["fflags"]),"frm":str(c.get("frm",0))});records.append(fields(record))
     lines += ['static volatile mlx_host_control_command commands[]={'+','.join(commands)+'};',
         'struct record {uintptr_t a_data,b_data,output_data;const unsigned char *a_expected,*b_expected,*output_expected;uint64_t a_size,b_size,output_size,status,fflags,frm;};',
@@ -186,10 +234,10 @@ def serialized_commands_match(elf,items):
 
 
 def main():
-    parser=argparse.ArgumentParser(description=__doc__);parser.add_argument("--output",type=Path,required=True);parser.add_argument("--spike",type=Path,default=ROOT/"build/riscv-fesvr-build/spike");args=parser.parse_args();out=args.output.resolve()
+    parser=argparse.ArgumentParser(description=__doc__);parser.add_argument("--output",type=Path,required=True);parser.add_argument("--spike",type=Path,default=ROOT/"build/riscv-fesvr-build/spike");parser.add_argument("--include-mask-control",action="store_true");args=parser.parse_args();out=args.output.resolve()
     if out.exists():raise RuntimeError("choose a fresh physical host verification directory")
     out.mkdir(parents=True);source_files=[Path(__file__).resolve(),ROOT/"src/mlxsim/model_control_program.py",ROOT/"src/mlxsim/model_memory_program.py",*SOURCE.iterdir()];before={str(p.relative_to(ROOT)):sha(p) for p in source_files if p.is_file()}
-    items=cases();(out/"cases.json").write_text(json.dumps(items,indent=2)+"\n");(out/"test.c").write_text(generate(items));elf=out/"test.elf"
+    items=cases(args.include_mask_control);(out/"cases.json").write_text(json.dumps(items,indent=2)+"\n");(out/"test.c").write_text(generate(items));elf=out/"test.elf"
     cmd=["riscv64-unknown-elf-gcc","-std=c11","-O2","-march=rv64imafd","-mabi=lp64d","-mcmodel=medany","-ffreestanding","-fno-builtin","-fno-tree-loop-distribute-patterns","-ffp-contract=off","-Wall","-Wextra","-Werror","-nostdlib","-static","-Wl,--no-relax","-I",str(SOURCE),"-T",str(SOURCE/"link.ld"),str(SOURCE/"start.S"),str(SOURCE/"control_runtime.c"),str(out/"test.c"),"-o",str(elf)]
     with (out/"build.log").open("w") as log:subprocess.run(cmd,check=True,stdout=log,stderr=subprocess.STDOUT,timeout=120)
     disassembly=subprocess.run(["riscv64-unknown-elf-objdump","-d",str(elf)],capture_output=True,text=True,check=True).stdout;(out/"disassembly.txt").write_text(disassembly)
@@ -206,6 +254,9 @@ def main():
         "all_passed":True,"serialized_commands_match_c_abi":serialized,"case_manifest_sha256":sha(out/"cases.json"),"elf_sha256":sha(elf),"generated_source_sha256":sha(out/"test.c"),"spike_sha256":sha(args.spike.resolve()),
         "observed_instruction_families":sorted(required),"data_base":2**32,"host_load_store_and_loops_executed":True,
         "model_runner_integrated":False,"rocket_execution_verified":False,"mlx_system_verified":False,"inference_performance_eligible":False}
+    if args.include_mask_control:
+        report["mask_control_v2"]={"cases":len(mask_cases()),"kinds":sorted({c["kind"] for c in mask_cases()}),
+                                   "guard_mismatch_cases":sum(c["status"]==8 for c in items),"failure_outputs_remained_poisoned":True}
     (out/"report.json").write_text(json.dumps(report,indent=2)+"\n");print(f"PHYSICAL_HOST_RV64_ELF_PASS {out/'report.json'}")
 
 

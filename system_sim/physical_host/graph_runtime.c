@@ -94,7 +94,7 @@ int mlx_graph_execute(const volatile mlx_graph_program *p,volatile mlx_graph_res
       ++r->host_calls;
     }else if(t->kind==MLX_GRAPH_DEVICE||t->kind==MLX_GRAPH_PAIR){
       if(t->command%8||!t->command||t->bytes>p->scratch_bytes||t->command>UINT64_MAX-t->bytes)return fail(r,4);
-      uint64_t magic=read64(t->command);uint64_t bytes=magic==MLX_MATRIX_WIRE_MAGIC?sizeof(mlx_matrix_wire):magic==MLX_VECTOR_WIRE_MAGIC?sizeof(mlx_vector_wire):magic==MLX_MEMORY_WIRE_MAGIC?sizeof(mlx_memory_wire):0;
+      uint64_t magic=read64(t->command);uint64_t bytes=magic==MLX_MATRIX_WIRE_MAGIC?sizeof(mlx_matrix_wire):magic==MLX_VECTOR_WIRE_MAGIC?sizeof(mlx_vector_wire):magic==MLX_MEMORY_WIRE_MAGIC?(t->bytes==sizeof(mlx_memory_wire_v2)?sizeof(mlx_memory_wire_v2):sizeof(mlx_memory_wire)):0;
       if(t->kind==MLX_GRAPH_PAIR){
         if(!v2||!t->reserved||t->reserved>p->source_count||t->batch_count!=1)return fail(r,4);
         consumer=t->reserved-1;

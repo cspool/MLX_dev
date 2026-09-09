@@ -7,8 +7,8 @@ from system_sim.physical_host.lowering import tensor_descriptor,require,MAX
 from .vector_lowering import double_bits
 
 MAGIC=0x4D4C584D454D3031
-KINDS=("embedding","where","cat","cast","cast_device","contiguous","reshape","transpose","slice","select","unsqueeze","expand","alias","dropout_inference")
-SELECTORS=("linear","concat","indexed_rows","predicate_select")
+KINDS=("embedding","where","cat","cast","cast_device","contiguous","reshape","transpose","slice","select","unsqueeze","expand","alias","dropout_inference","advanced_index","new_ones","squeeze")
+SELECTORS=("linear","concat","indexed_rows","predicate_select","indexed_nd","constant_one")
 
 
 def signed(value):
@@ -22,7 +22,7 @@ def lower_memory(node,layouts,bindings):
     planner.register(candidate,planned=True,same_device=p["same_reference_device"])
     require(candidate["memory_program"]==p,"memory wire cannot replace a modified layout/transfer program")
     args=node["args"];flags=int(p["same_reference_device"]);params=[]
-    operands=list(args[0]) if kind=="cat" else list(args[:3]) if kind=="where" else list(args[:2]) if kind=="embedding" else [args[0]]
+    operands=list(args[0]) if kind=="cat" else [args[0],*args[1]] if kind=="advanced_index" else list(args[:3]) if kind=="where" else list(args[:2]) if kind=="embedding" else [args[0]]
     if kind=="embedding":
         require(2<=len(args)<=5,"memory wire embedding arity invalid");params=[signed(args[2] if len(args)>2 else -1),int(bool(args[3])) if len(args)>3 else 0,int(bool(args[4])) if len(args)>4 else 0]
     elif kind=="where":require(len(args)==3,"memory wire where arity invalid")
@@ -34,11 +34,17 @@ def lower_memory(node,layouts,bindings):
         if len(args)>2+shift and args[2+shift]:flags|=32
         if len(args)>3+shift and args[3+shift]:flags|=2
     elif kind=="contiguous":require(len(args)==1,"memory wire contiguous arity invalid")
-    elif kind in {"reshape","expand"}:
+    elif kind=="advanced_index":
+        require(len(args)==2 and isinstance(args[1],list) and 1<=len(args[1])<=8,"memory wire advanced index arguments invalid")
+    elif kind in {"reshape","expand","new_ones"}:
         require(len(args)==2 and len(args[1])<=8,"memory wire shape argument invalid");params=[signed(n) for n in args[1]]
         if kind=="reshape" and node.get("source_operator")=="aten.view.default":flags|=16
+        if kind=="new_ones":
+            kw=node.get("kwargs",{})
+            require(kw.get("layout") in {None,"torch.strided"} and (kw.get("pin_memory") is None or kw.get("pin_memory") is False),"memory wire new_ones layout/pinning unsupported")
+            if kw.get("dtype") is not None:flags|=64
     elif kind in {"transpose","select"}:require(len(args)==3,"memory wire axis/index arity invalid");params=[signed(args[1]),signed(args[2])]
-    elif kind=="unsqueeze":require(len(args)==2,"memory wire insertion arity invalid");params=[signed(args[1])]
+    elif kind in {"unsqueeze","squeeze"}:require(len(args)==2,"memory wire insertion/squeeze arity invalid");params=[signed(args[1])]
     elif kind=="slice":
         require(1<=len(args)<=5,"memory wire slice arity invalid");start=args[2] if len(args)>2 else None;end=args[3] if len(args)>3 else None
         params=[signed(args[1] if len(args)>1 else 0),signed(start or 0),signed(end or 0),signed(args[4] if len(args)>4 else 1),int(start is None)|(int(end is None)<<1)]
@@ -70,9 +76,10 @@ def lower_memory(node,layouts,bindings):
     else:
         output_root=0
         for operand in used:require(not (operand["bytes"] and info["bytes"] and operand["base"]<info["base"]+info["bytes"] and info["base"]<operand["base"]+operand["bytes"]),"memory wire output overlaps input storage")
-    used.append(info);words=p["words"];require(len(words)<=4,"memory wire transfer template too long")
-    raw=[MAGIC,1,KINDS.index(kind)+1,int(not view),SELECTORS.index(p["selector"])+1,flags,len(table),len(indices),len(words),output_root,len(params),0,0,0,0,0,
+    version=2 if kind in {"advanced_index","new_ones","squeeze"} else 1;capacity=12 if version==2 else 4
+    used.append(info);words=p["words"];require(len(words)<=capacity,"memory wire transfer template too long")
+    raw=[MAGIC,version,KINDS.index(kind)+1,int(not view),SELECTORS.index(p["selector"])+1,flags,len(table),len(indices),len(words),output_root,len(params),0,0,0,0,0,
          *params,*([0]*(16-len(params))),*indices,*([0]*(256-len(indices))),*output,
-         *[word for entry in table for word in entry],*([0]*((64-len(table))*26)),*words,*([0]*(4-len(words))),*([0]*6)]
-    require(len(raw)==1984,"memory wire ABI size changed");blob=struct.pack("<1984Q",*raw)
-    return blob,{"source_operator_id":node["source_operator_id"],"kind":kind,"mode":p["mode"],"selector":p["selector"],"wire_version":1,"command_bytes":len(blob),"operand_slots":len(table),"argument_count":len(indices),"input_slots":seen,"storage_root_ids":roots,"bindings":used,"entry":"mlx::memory_model::Simulator","model_execution_verified":False,"mlx_system_verified":False}
+         *[word for entry in table for word in entry],*([0]*((64-len(table))*26)),*words,*([0]*(capacity-len(words))),*([0]*6)]
+    require(len(raw)==(1992 if version==2 else 1984),"memory wire ABI size changed");blob=struct.pack(f"<{len(raw)}Q",*raw)
+    return blob,{"source_operator_id":node["source_operator_id"],"kind":kind,"mode":p["mode"],"selector":p["selector"],"wire_version":version,"command_bytes":len(blob),"operand_slots":len(table),"argument_count":len(indices),"input_slots":seen,"storage_root_ids":roots,"bindings":used,"entry":"mlx::memory_model::Simulator","model_execution_verified":False,"mlx_system_verified":False}

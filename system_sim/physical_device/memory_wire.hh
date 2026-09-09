@@ -12,4 +12,6 @@ struct DecodedMemory {
   bool view=false;
 };
 DecodedMemory decode_memory(const mlx_memory_wire &wire);
+DecodedMemory decode_memory(const mlx_memory_wire_v2 &wire);
+DecodedMemory decode_memory_bytes(const void *data,size_t bytes);
 } // namespace mlx::physical_device

@@ -9,7 +9,7 @@ from mlxsim.model_memory_program import Planner,KINDS
 MAGIC=0x4D4C584843545231
 DTYPE={"f16":0,"f32":1,"i64":2,"bool":3}
 BYTES={"f16":2,"f32":4,"i64":8,"bool":1}
-OP={"arange":1,"add":2,"mul":3,"le":4,"argmax":5}
+OP={"arange":1,"add":2,"mul":3,"le":4,"argmax":5,"ge":6,"bitwise_and":7,"all":8,"guard":9}
 MAX=2**64-1
 
 
@@ -80,10 +80,20 @@ def lower_control(node,layouts,bindings):
         require(2<=len(args)<=3 and isinstance(args[0],dict) and "value" in args[0],"host argmax arguments invalid")
         rank=len(layouts[args[0]["value"]]["shape"]);require(args[1] in {-1,rank-1},"host argmax requires final axis")
         flags=int(bool(args[2])) if len(args)==3 else 0;a=operand(args[0]);b=[0]*26
+    elif kind in {"all","guard"}:
+        require(len(args)==(1 if kind=="all" else 2) and isinstance(args[0],dict) and "value" in args[0],"host mask control requires a tensor input")
+        source=layouts.get(args[0]["value"],{});out=layouts.get(node["id"],{})
+        require(domain=="i64" and source.get("dtype")=="bool" and out.get("dtype")=="bool" and out.get("shape")==[],"host mask control requires Boolean input and scalar Boolean output")
+        if kind=="guard":require(math.prod(source["shape"])==1 and type(args[1]) is bool,"host guard requires one Boolean element and expected Boolean")
+        a=operand(args[0]);b=operand(args[1]) if kind=="guard" else [0]*26
     else:
-        require(len(args)==2,"host control binary arity mismatch");a=operand(args[0]);b=operand(args[1])
-    output=tensor(node["id"],True);words=[MAGIC,1,OP[kind],flags,extent,0,*a,*b,*output]
+        require(len(args)==2,"host control binary arity mismatch")
+        if kind=="bitwise_and":
+            require(domain=="i64" and all(isinstance(arg,dict) and "value" in arg and layouts.get(arg["value"],{}).get("dtype")=="bool" for arg in args),"host bitwise_and requires Boolean tensors")
+        a=operand(args[0]);b=operand(args[1])
+    version=2 if OP[kind]>=6 else 1
+    output=tensor(node["id"],True);words=[MAGIC,version,OP[kind],flags,extent,0,*a,*b,*output]
     require(len(words)==80,"host command ABI size changed")
     blob=struct.pack("<80Q",*words)
-    return blob,{"source_operator_id":node["source_operator_id"],"kind":kind,"entry":"mlx_host_control_execute","abi_version":1,"command_bytes":len(blob),"bindings":used,
+    return blob,{"source_operator_id":node["source_operator_id"],"kind":kind,"entry":"mlx_host_control_execute","abi_version":version,"command_bytes":len(blob),"bindings":used,
         "host_isa":"RV64IMAFD","pe_opcode":False,"rocket_execution_verified":False,"mlx_system_verified":False}
