@@ -20,7 +20,7 @@ U number(const Json::Value &v,const char *name,U lo,U hi){need(v.isUInt64()&&v.a
 U add(U a,U b){need(b<=NEVER-a,"event time/count overflow");return a+b;}
 void accumulate(U &a,U b,U c=1){need(!c||b<=NEVER/c,"event counter overflow");a=add(a,b*c);}
 void fields(const Json::Value &v,const std::set<std::string> &allowed){need(v.isObject(),"event descriptor must be an object");for(const auto &k:v.getMemberNames())need(allowed.count(k),"unknown event descriptor field: "+k);}
-enum Unit {Compute,Sfu,Spm,Dma,None};
+enum Unit {Compute,Sfu,Spm,Dma,None,MemoryConvert};
 struct Kind {Unit unit;unsigned lanes;unsigned version=1;};
 const std::map<std::string,Kind> kinds={{"zero",{Compute,16}},{"mul",{Compute,16}},{"add",{Compute,16}},
   {"convert",{Compute,16}},{"exp",{Sfu,4}},{"div",{Sfu,4}},{"sqrt",{Sfu,4}},
@@ -28,14 +28,16 @@ const std::map<std::string,Kind> kinds={{"zero",{Compute,16}},{"mul",{Compute,16
   {"operand_prepare",{None,0,4}},{"spm_initialize",{None,0,4}},
   {"neg",{Compute,16,4}},{"sub",{Compute,16,4}},{"maximum",{Compute,16,4}},
   {"constant",{Compute,16,4}},{"move",{Compute,16,4}},{"broadcast",{Compute,16,4}},{"shuffle",{Compute,16,4}},
-  {"cos",{Sfu,4,4}},{"sin",{Sfu,4,4}}};
+  {"cos",{Sfu,4,4}},{"sin",{Sfu,4,4}},
+  {"memory_literal",{None,0,5}},{"memory_convert",{MemoryConvert,0,5}},{"memory_complete",{None,0,5}},
+  {"memory_index_read",{Dma,0,5}},{"memory_predicate_read",{Dma,0,5}}};
 struct Template {std::string id;std::vector<unsigned> words;unsigned rf=0,spm=0;};
 struct Sequence {U repeat=1,total=0;unsigned event=UINT32_MAX;std::vector<Sequence> children;};
 struct Event {std::string id,op;unsigned owner=0;std::vector<unsigned> deps;std::vector<std::string> dependency_names;
   U begin=NEVER,end=NEVER,visible=NEVER,instances=1,issued=0,completed=0;unsigned lanes=0,bytes=0;};
 struct Block {std::string id;U source=0,pc=0,total=0,frontier_ready=0;unsigned pe=0,code=0,slot=0,rf=0,spm=0;std::vector<unsigned> events,deps;Sequence sequence;
   std::vector<unsigned> children;unsigned unmet=0;
-  bool active=false,running=false,retired=false;U begin=NEVER,end=NEVER;};
+  bool active=false,running=false,retired=false,controller=false,zero_work=false;U begin=NEVER,end=NEVER;};
 struct ResidentCode {unsigned pe=0,code=0,base=0,refs=0,loaded=0;U ready=NEVER;bool live=false;};
 // Calendar order is completions, retirements, template programming. Decisions
 // then use the resulting registered state; results become visible next edge.
@@ -48,6 +50,7 @@ struct Engine {
   U spm_period=1,writeback_period=1,dma_request_period=1,dma_response_period=1,compute_ii=1;
   U spm_port_free=0,admission_retry=NEVER;std::vector<U> writeback_free,compute_issue_free;
   U sfu_ii=1;std::vector<U> sfu_issue_free;
+  U memory_request_period=1,memory_response_period=1,memory_convert_free=0;bool memory_live=false;unsigned peak_memory=0;
   std::map<std::string,U> latency;std::vector<Template> templates;std::vector<Event> events;std::vector<Block> blocks;
   std::map<std::string,unsigned> template_ids,event_ids,block_ids;
   using Group=std::tuple<U,unsigned,unsigned>;
@@ -64,16 +67,21 @@ struct Engine {
   Json::Value trace{Json::arrayValue};U trace_limit=0;
 
   explicit Engine(const Json::Value &p){
-    fields(p,{"schema","hardware","templates","blocks","max_cycles","trace_limit","policy"});
-    need(p["schema"]=="mlx_event_schedule_v1"||p["schema"]=="mlx_event_schedule_v2"||p["schema"]=="mlx_event_schedule_v3"||p["schema"]=="mlx_event_schedule_v4","unsupported event timing contract");
-    version=p["schema"]=="mlx_event_schedule_v4"?4:p["schema"]=="mlx_event_schedule_v3"?3:p["schema"]=="mlx_event_schedule_v2"?2:1;ports=version>=3;loops=version>=2;
+    const bool controllers=p["schema"]=="mlx_event_schedule_v5";
+    auto top_fields=std::set<std::string>{"schema","hardware","templates","blocks","max_cycles","trace_limit","policy"};if(controllers)top_fields.insert("controllers");fields(p,top_fields);
+    need(p["schema"]=="mlx_event_schedule_v1"||p["schema"]=="mlx_event_schedule_v2"||p["schema"]=="mlx_event_schedule_v3"||p["schema"]=="mlx_event_schedule_v4"||controllers,"unsupported event timing contract");
+    version=controllers?5:p["schema"]=="mlx_event_schedule_v4"?4:p["schema"]=="mlx_event_schedule_v3"?3:p["schema"]=="mlx_event_schedule_v2"?2:1;ports=version>=3;loops=version>=2;
     const auto &h=p["hardware"];std::set<std::string> hardware_fields={"rows","columns","contexts","rf_vectors_per_pe","spm_vectors_total","rom_words_per_pe","source_window_limit","latencies","template_load_timing"};
     if(ports)for(const char *field:{"spm_port_period","writeback_period","dma_request_period","dma_response_period","compute_ii"})hardware_fields.insert(field);
     if(version>=4)hardware_fields.insert("sfu_ii");
+    if(controllers)hardware_fields.insert("memory_controller");
     fields(h,hardware_fields);
     if(ports){spm_period=number(h["spm_port_period"],"SPM port period",1,1024);writeback_period=number(h["writeback_period"],"writeback period",1,1024);
       dma_request_period=number(h["dma_request_period"],"DMA request period",1,1024);dma_response_period=number(h["dma_response_period"],"DMA response period",1,1024);compute_ii=number(h["compute_ii"],"compute II",1,1024);}
     if(version>=4)sfu_ii=number(h["sfu_ii"],"SFU II",1,1024);
+    if(controllers){const auto &m=h["memory_controller"];fields(m,{"data_register_bytes","staging_bytes","conversion_result_latch_bytes","request_data_latch_bytes","max_active","request_period","response_period"});
+      need(m["data_register_bytes"]==32&&m["staging_bytes"]==128&&m["conversion_result_latch_bytes"]==8&&m["request_data_latch_bytes"]==8&&m["max_active"]==1,"memory controller resources differ from native contract");
+      memory_request_period=number(m["request_period"],"memory request period",1,1024);memory_response_period=number(m["response_period"],"memory response period",1,1024);}
     pes=unsigned(number(h["rows"],"rows",1,4)*number(h["columns"],"columns",1,4));contexts=unsigned(number(h["contexts"],"contexts",1,2));
     need(h["rf_vectors_per_pe"]==16&&h["spm_vectors_total"]==128&&h["rom_words_per_pe"]==32,"event model cannot expand array capacities");
     source_limit=unsigned(number(h["source_window_limit"],"source window",1,64));need(h["template_load_timing"].isBool(),"template timing must be explicit");timed_templates=h["template_load_timing"].asBool();
@@ -82,7 +90,11 @@ struct Engine {
     unsigned kind_count=0;for(const auto &[name,kind]:kinds){(void)name;kind_count+=kind.version<=version;}
     need(h["latencies"].isObject()&&h["latencies"].size()==kind_count,"complete architectural event latencies required");
     for(const auto &[name,kind]:kinds){if(kind.version>version)continue;if(kind.unit==None)latency[name]=number(h["latencies"][name],"predicate/setup latency",0,0);else latency[name]=number(h["latencies"][name],"service latency",1,1024);}
-    need(p["templates"].isArray()&&!p["templates"].empty()&&p["blocks"].isArray()&&!p["blocks"].empty()&&p["blocks"].size()<=unsigned(INT32_MAX),"event program is empty or exceeds identity range");
+    need(p["templates"].isArray()&&p["blocks"].isArray()&&p["blocks"].size()<=unsigned(INT32_MAX),"event program is empty or exceeds identity range");
+    need((!p["blocks"].empty()&&!p["templates"].empty())||(controllers&&p["blocks"].empty()),"event array templates missing");
+    if(controllers)need(p["controllers"].isArray()&&p["controllers"].size()<=unsigned(INT32_MAX),"controller list invalid");
+    Json::Value descriptions=p["blocks"];if(controllers)for(const auto &c:p["controllers"])descriptions.append(c);
+    need(!descriptions.empty()&&descriptions.size()<=unsigned(INT32_MAX),"event program has no work streams");
     for(const auto &t:p["templates"]){
       fields(t,{"id","words","rf_vectors","spm_vectors"});Template code;need(t["id"].isString(),"template id must be a string");code.id=t["id"].asString();need(!code.id.empty()&&template_ids.emplace(code.id,unsigned(templates.size())).second,"duplicate/empty template");
       code.rf=unsigned(number(t["rf_vectors"],"template RF",1,16));code.spm=unsigned(number(t["spm_vectors"],"template SPM",1,128));
@@ -90,17 +102,24 @@ struct Engine {
       for(const auto &word:t["words"])code.words.push_back(unsigned(number(word,"template word",0,UINT32_MAX)));
       templates.push_back(std::move(code));
     }
-    for(const auto &b:p["blocks"]){
-      fields(b,{"id","source_operator_id","pe","template","admission_dependencies","events"});Block block;need(b["id"].isString()&&b["template"].isString(),"block/template id must be a string");block.id=b["id"].asString();
+    for(const auto &b:descriptions){
+      Block block;block.controller=blocks.size()>=p["blocks"].size();
+      fields(b,block.controller?std::set<std::string>{"id","source_operator_id","admission_dependencies","events"}:std::set<std::string>{"id","source_operator_id","pe","template","admission_dependencies","events"});
+      need(b["id"].isString()&&(block.controller||b["template"].isString()),"block/template id must be a string");block.id=b["id"].asString();
       unsigned owner=unsigned(blocks.size());need(!block.id.empty()&&block_ids.emplace(block.id,owner).second,"duplicate/empty block");
-      block.source=number(b["source_operator_id"],"source id",0,NEVER/4);block.pe=unsigned(number(b["pe"],"mapped PE",0,pes-1));
-      auto t=template_ids.find(b["template"].asString());need(t!=template_ids.end(),"block template missing");block.code=t->second;
+      block.source=number(b["source_operator_id"],"source id",0,NEVER/4);
+      if(!block.controller){block.pe=unsigned(number(b["pe"],"mapped PE",0,pes-1));auto t=template_ids.find(b["template"].asString());need(t!=template_ids.end(),"block template missing");block.code=t->second;}
       need(b["admission_dependencies"].isArray()&&b["events"].isArray()&&!b["events"].empty(),"block dependencies/events missing");
       block.sequence=parse_sequence(b["events"],owner,1,0,block.events);block.total=block.sequence.total;total_events=add(total_events,block.total);
+      for(auto id:block.events){const auto &e=events[id];const auto &unit=kinds.at(e.op);
+        need(block.controller?(unit.unit==Dma||unit.version==5):(unit.version!=5),"event belongs to a different resource domain");
+        if(e.op=="memory_index_read")need(e.bytes==8,"memory index read must preserve I64 width");
+        if(e.op=="memory_predicate_read")need(e.bytes==1,"memory predicate read must preserve Boolean width");
+        if(e.op=="memory_complete"){need(block.total==1,"zero-work controller must have only a completion marker");block.zero_work=true;}}
       source_order[block.source].push_back(owner);blocks.push_back(std::move(block));
     }
     unsigned bi=0;
-    for(const auto &b:p["blocks"]){
+    for(const auto &b:descriptions){
       std::set<unsigned> deps;
       for(const auto &id:b["admission_dependencies"]){need(id.isString(),"block dependency must be a string");auto found=block_ids.find(id.asString());need(found!=block_ids.end()&&found->second!=bi&&deps.insert(found->second).second,"invalid block dependency");blocks[bi].deps.push_back(found->second);blocks[found->second].children.push_back(bi);}
       blocks[bi].unmet=unsigned(deps.size());
@@ -144,7 +163,8 @@ struct Engine {
         need(events.size()<UINT32_MAX&&!event.id.empty()&&event_ids.emplace(event.id,unsigned(events.size())).second,"duplicate/empty event");
         auto kind=kinds.find(event.op);need(kind!=kinds.end()&&kind->second.version<=version&&item["dependencies"].isArray(),"unsupported event operation/dependencies");
         for(const auto &name:item["dependencies"]){need(name.isString(),"event dependency must be a string");event.dependency_names.push_back(name.asString());}
-        if(kind->second.unit==None){need(ports&&!item.isMember("active_lanes"),"predicate/setup event has no active compute work");
+        if(kind->second.unit==MemoryConvert){need(!item.isMember("active_lanes")&&!item.isMember("bytes"),"memory conversion uses private scalar registers");}
+        else if(kind->second.unit==None){need(ports&&!item.isMember("active_lanes"),"predicate/setup event has no active compute work");
           if(event.op=="spm_initialize")event.bytes=unsigned(number(item["bytes"],"SPM initialize bytes",1,64));else need(!item.isMember("bytes"),"predicate/setup event cannot declare memory bytes");}
         else if(kind->second.lanes){event.lanes=unsigned(number(item["active_lanes"],"active lanes",1,kind->second.lanes));need(!item.isMember("bytes"),"compute event cannot declare memory bytes");}
         else{event.bytes=unsigned(number(item["bytes"],"memory bytes",1,64));need(!item.isMember("active_lanes"),"memory event cannot declare compute work");if(kind->second.unit==Dma)need(event.bytes==1||event.bytes==2||event.bytes==4||event.bytes==8,"DMA event must represent one bounded element transaction");}
@@ -186,18 +206,20 @@ struct Engine {
   }
   void emit(const char *kind,unsigned block,unsigned event=UINT32_MAX){
     ++counts[std::string("trace_")+kind];if(trace.size()>=trace_limit)return;
-    Json::Value e;e["cycle"]=Json::UInt64(now);e["event"]=kind;e["block"]=blocks[block].id;e["source_operator_id"]=Json::UInt64(blocks[block].source);e["pe"]=blocks[block].pe;
+    Json::Value e;e["cycle"]=Json::UInt64(now);e["event"]=kind;e["block"]=blocks[block].id;e["source_operator_id"]=Json::UInt64(blocks[block].source);e["pe"]=blocks[block].controller?Json::Value():Json::Value(blocks[block].pe);
+    if(version>=5)e["domain"]=blocks[block].controller?"memory_controller":"array";
     if(event!=UINT32_MAX){e["operation"]=events[event].id;if(loops)e["instance"]=Json::UInt64(events[event].issued-1);}
     trace.append(e);
   }
   template<size_t N> int space(const std::array<int,N> &a,unsigned count){for(unsigned i=0;i+count<=N;++i){bool free=true;for(unsigned j=0;j<count;++j)free&=a[i+j]<0;if(free)return int(i);}return -1;}
   template<size_t N> unsigned used(const std::array<int,N> &a){return unsigned(std::count_if(a.begin(),a.end(),[](int x){return x>=0;}));}
-  U &service(const Event &e){unsigned pe=blocks[e.owner].pe;switch(kinds.at(e.op).unit){case Compute:return compute_free[pe];case Sfu:return sfu_free[pe];case Spm:return spm_free;case Dma:return dma_free;case None:break;}throw std::runtime_error("invalid event unit");}
+  U &service(const Event &e){unsigned pe=blocks[e.owner].pe;switch(kinds.at(e.op).unit){case Compute:return compute_free[pe];case Sfu:return sfu_free[pe];case Spm:return spm_free;case Dma:return dma_free;case MemoryConvert:return memory_convert_free;case None:break;}throw std::runtime_error("invalid event unit");}
   U aligned(U time,U period)const{return time%period?add(time,period-time%period):time;}
   bool spm_port_ready()const{return spm_port_free<=now&&now%spm_period==0;}
   bool admit(unsigned i){
     auto &b=blocks[i];if(b.active||b.retired)return false;for(auto parent:b.deps)if(!blocks[parent].retired)return false;
     if(!live_sources.count(b.source)&&live_sources.size()>=source_limit)return false;
+    if(b.controller){if(!b.zero_work){if(memory_live)return false;memory_live=true;peak_memory=1;}b.active=true;b.begin=now;b.frontier_ready=now;++live_sources[b.source];++counts[b.zero_work?"memory_zero_work_admitted":"memory_controllers_admitted"];emit("admit",i);return true;}
     const auto &t=templates[b.code];unsigned pe=b.pe;int slot=-1;for(unsigned s=0;s<contexts;++s)if(slots[pe][s]<0){slot=int(s);break;}
     int r=space(rf[pe],t.rf),s=space(spm,t.spm);if(slot<0||r<0||s<0)return false;
     int code=-1;for(unsigned c=0;c<codes.size();++c)if(codes[c].live&&codes[c].pe==pe&&codes[c].code==b.code){code=int(c);break;}
@@ -217,11 +239,12 @@ struct Engine {
     if(b.running)return "inflight_context_cycles";
     if(b.pc==b.total)return "retirement_wait_context_cycles";
     const auto &e=events[frontier(b)];
-    if(code_ready(b)>now)return "template_wait_context_cycles";
+    if(!b.controller&&code_ready(b)>now)return "template_wait_context_cycles";
     if(loops&&b.frontier_ready>now)return "dependency_wait_context_cycles";
     for(auto dep:e.deps)if(events[dep].visible>now)return "dependency_wait_context_cycles";
     auto unit=kinds.at(e.op).unit;
     if(unit!=None&&service(e)>now)return "resource_wait_context_cycles";
+    if(b.controller){if(unit==Dma&&(now-b.begin)%memory_request_period)return "dma_request_wait_context_cycles";return "ready_context_cycles";}
     if(ports){
       if(unit==Dma&&now%dma_request_period)return "dma_request_wait_context_cycles";
       if((unit==Spm||e.op=="dma_write"||e.op=="spm_initialize")&&!spm_port_ready())return "spm_port_wait_context_cycles";
@@ -240,7 +263,10 @@ struct Engine {
   bool completion_port(unsigned id){
     const auto &e=events[id];const auto unit=kinds.at(e.op).unit;unsigned pe=blocks[e.owner].pe;
     U retry=now;std::string reason;
-    if(unit==Dma&&now%dma_response_period){retry=aligned(now,dma_response_period);reason="dma_response_wait_cycles";}
+    const auto &block=blocks[e.owner];
+    if(block.controller){
+      if(unit==Dma&&(now-block.begin)%memory_response_period){retry=add(block.begin,aligned(now-block.begin,memory_response_period));reason="memory_response_wait_cycles";}
+    }else if(unit==Dma&&now%dma_response_period){retry=aligned(now,dma_response_period);reason="dma_response_wait_cycles";}
     else if(e.op=="spm_write"||e.op=="dma_read"){
       if(!spm_port_ready()){retry=aligned(std::max(add(now,1),spm_port_free),spm_period);reason="spm_completion_wait_cycles";}
       else{spm_port_free=add(now,1);++counts["spm_port_claims"];}
@@ -259,13 +285,16 @@ struct Engine {
         auto unit=kinds.at(events[w.item].op).unit;return std::make_tuple(unit==Spm?0:unit==Dma?1:version>=4&&unit==Sfu?3:2,blocks[events[w.item].owner].source,w.item);};return priority(a)<priority(b);});
     for(auto w:due){++transitions;
       if(w.kind==Complete){if(!ports||completion_port(w.item))complete(w.item);
-      }else if(w.kind==Retire){auto &b=blocks[w.item];need(b.active&&!b.running&&b.pc==b.total,"premature event block retirement");const auto &t=templates[b.code];
+      }else if(w.kind==Retire){auto &b=blocks[w.item];need(b.active&&!b.running&&b.pc==b.total,"premature event block retirement");
+        if(b.controller){if(!b.zero_work){need(memory_live,"memory controller lease missing");memory_live=false;}++counts[b.zero_work?"memory_zero_work_retired":"memory_controllers_retired"];}
+        else{const auto &t=templates[b.code];
         for(unsigned x=0;x<t.rf;++x){need(rf[b.pe][b.rf+x]==int(w.item),"RF lease lost");rf[b.pe][b.rf+x]=-1;}
         for(unsigned x=0;x<t.spm;++x){need(spm[b.spm+x]==int(w.item),"SPM lease lost");spm[b.spm+x]=-1;}
-        slots[b.pe][b.slot]=-1;b.active=false;b.retired=true;b.end=now;++retired;active.erase({b.source,w.item});resources_changed=true;
+        slots[b.pe][b.slot]=-1;
+        for(auto &c:codes)if(c.live&&c.pe==b.pe&&c.code==b.code){need(c.refs>0,"ROM lease lost");if(!--c.refs){for(unsigned x=0;x<t.words.size();++x)rom[b.pe][c.base+x]=-1;c.live=false;}break;}}
+        b.active=false;b.retired=true;b.end=now;++retired;active.erase({b.source,w.item});resources_changed=true;
         for(auto child:b.children){need(blocks[child].unmet>0,"admission dependency counter underflow");if(!--blocks[child].unmet)enqueue_admission(child);}
         auto it=live_sources.find(b.source);need(it!=live_sources.end()&&it->second,"source lease missing");if(!--it->second)live_sources.erase(it);
-        for(auto &c:codes)if(c.live&&c.pe==b.pe&&c.code==b.code){need(c.refs>0,"ROM lease lost");if(!--c.refs){for(unsigned x=0;x<t.words.size();++x)rom[b.pe][c.base+x]=-1;c.live=false;}break;}
         emit("retire",w.item);
       }else{auto &c=codes[w.item];need(c.live&&c.refs,"template programming lost owner");
         if(configured.count(c.pe)){calendar.push(Wake{add(now,1),Word,w.item});continue;}
@@ -277,6 +306,7 @@ struct Engine {
   void dispatch(){
     std::vector<unsigned> order;for(auto [source,i]:active){(void)source;order.push_back(i);}
     if(policy=="round_robin")std::stable_sort(order.begin(),order.end(),[&](unsigned a,unsigned b){
+      if(blocks[a].controller||blocks[b].controller)return std::make_pair(blocks[a].controller,blocks[a].source)<std::make_pair(blocks[b].controller,blocks[b].source);
       auto ka=std::make_pair(blocks[a].pe,(int64_t(a)-last_block[blocks[a].pe]-1+int64_t(blocks.size()))%int64_t(blocks.size()));
       auto kb=std::make_pair(blocks[b].pe,(int64_t(b)-last_block[blocks[b].pe]-1+int64_t(blocks.size()))%int64_t(blocks.size()));return ka<kb;});
     if(ports)std::stable_partition(order.begin(),order.end(),[&](unsigned i){const auto &b=blocks[i];if(b.pc==b.total)return false;const auto &e=events[frontier(b)];return kinds.at(e.op).unit!=Dma&&e.op!="spm_initialize";});
@@ -284,11 +314,13 @@ struct Engine {
       auto id=frontier(b);auto &e=events[id];need(e.issued<e.instances&&e.issued==e.completed,"event issued twice");++e.issued;e.begin=now;b.running=true;
       U due=add(now,latency.at(e.op));need(due<max_cycles,"event exceeded cycle limit");auto unit=kinds.at(e.op).unit;
       if(unit!=None)service(e)=ports?NEVER:add(due,1);
-      if(!ports||(unit!=Dma&&e.op!="operand_prepare"&&e.op!="spm_initialize"))issue_free[b.pe]=add(now,1);
-      if(ports&&(unit==Spm||e.op=="dma_write"||e.op=="spm_initialize")){spm_port_free=add(now,1);++counts["spm_port_claims"];}
+      if(!b.controller&&(!ports||(unit!=Dma&&e.op!="operand_prepare"&&e.op!="spm_initialize")))issue_free[b.pe]=add(now,1);
+      if(!b.controller&&ports&&(unit==Spm||e.op=="dma_write"||e.op=="spm_initialize")){spm_port_free=add(now,1);++counts["spm_port_claims"];}
       if(ports&&unit==Compute)compute_issue_free[b.pe]=add(now,compute_ii);
       if(ports&&unit==Sfu)sfu_issue_free[b.pe]=add(now,sfu_ii);
-      last_block[b.pe]=int(i);if(unit!=None)calendar.push(Wake{due,Complete,id});++counts["events_issued"];++work[e.op+"_events"];
+      if(!b.controller)last_block[b.pe]=int(i);
+      if(unit!=None)calendar.push(Wake{due,Complete,id});
+      ++counts["events_issued"];++work[e.op+"_events"];
       accumulate(work[e.op+"_declared_active_lanes"],e.lanes);accumulate(work[e.op+"_bytes"],e.bytes);emit("issue",i,id);
       if(unit==None)complete(id);
     }
@@ -298,26 +330,27 @@ struct Engine {
     for(auto x:issue_free)update(x);
     for(auto x:compute_free)update(x);
     for(auto x:sfu_free)update(x);
-    update(spm_free);update(dma_free);
+    update(spm_free);update(dma_free);update(memory_convert_free);
     if(ports){
       update(admission_retry);for(auto x:compute_issue_free)update(x);for(auto x:sfu_issue_free)update(x);
       for(auto [source,i]:active){(void)source;const auto &b=blocks[i];if(b.running||b.pc==b.total)continue;update(b.frontier_ready);
         auto reason=wait_reason(b);
-        if(reason=="dma_request_wait_context_cycles")update(aligned(add(now,1),dma_request_period));
+        if(reason=="dma_request_wait_context_cycles")update(b.controller?add(b.begin,aligned(add(now-b.begin,1),memory_request_period)):aligned(add(now,1),dma_request_period));
         if(reason=="spm_port_wait_context_cycles")update(aligned(std::max(add(now,1),spm_port_free),spm_period));
       }
     }
     need(time!=NEVER&&time>now,"event model deadlock: blocked residency/dependencies with no future transition");return time;
   }
   void account(U duration){
-    unsigned resident=unsigned(active.size());for(auto [source,i]:active){(void)source;accumulate(areas[wait_reason(blocks[i])],duration);}
+    unsigned resident=0;for(auto [source,i]:active){(void)source;const auto &b=blocks[i];if(b.controller){if(b.zero_work)accumulate(areas["memory_zero_work_publication_cycles"],duration);else{accumulate(areas["memory_controller_resident_cycles"],duration);accumulate(areas["memory_controller_"+wait_reason(b)],duration);}}else{++resident;accumulate(areas[wait_reason(b)],duration);}}
     if(ports){bool dma=false;std::set<unsigned> compute,sfu;std::map<unsigned,unsigned> running_by_pe;
       for(auto [source,i]:active){(void)source;const auto &b=blocks[i];if(!b.running)continue;auto unit=kinds.at(events[frontier(b)].op).unit;
-        if(unit!=None)++running_by_pe[b.pe];
+        if(unit!=None&&!b.controller)++running_by_pe[b.pe];
         if(unit==Compute){compute.insert(b.pe);accumulate(areas["compute_inflight_pe_cycles"],duration);}
         else if(unit==Sfu){sfu.insert(b.pe);accumulate(areas["sfu_inflight_pe_cycles"],duration);}
         else if(unit==Spm)accumulate(areas["spm_inflight_cycles"],duration);
         else if(unit==Dma){dma=true;accumulate(areas["dma_inflight_cycles"],duration);}}
+      for(auto [source,i]:active){(void)source;const auto &b=blocks[i];if(b.running&&kinds.at(events[frontier(b)].op).unit==MemoryConvert)accumulate(areas["memory_conversion_inflight_cycles"],duration);}
       if(dma)accumulate(areas["compute_dma_inflight_overlap_pe_cycles"],duration,compute.size());
       if(version>=4){for(auto pe:compute)if(sfu.count(pe))accumulate(areas["compute_sfu_inflight_overlap_pe_cycles"],duration);
         for(auto [pe,count]:running_by_pe){(void)pe;if(count>1)accumulate(areas["same_pe_inflight_context_overlap_pe_cycles"],duration);}}
@@ -340,12 +373,12 @@ struct Engine {
       dispatch();if(retired==blocks.size())break;
       U time=next();need(time<=max_cycles,"event model exceeded cycle limit");account(time-now);now=time;
     }
-    need(used(spm)==0&&live_sources.empty()&&calendar.empty()&&active.empty()&&admission_heads.empty(),"event model failed to drain");
+    need(used(spm)==0&&!memory_live&&live_sources.empty()&&calendar.empty()&&active.empty()&&admission_heads.empty(),"event model failed to drain");
     for(unsigned pe=0;pe<pes;++pe)need(used(rf[pe])==0&&used(rom[pe])==0&&used(slots[pe])==0,"event resource leak");
     need(counts["events_issued"]==total_events&&counts["events_completed"]==total_events,"not every event instance executed exactly once");
     Json::Value r;r["classification"]="native_concurrent_event_component_not_full_model_or_numerical_execution";r["cycles"]=Json::UInt64(now);
     r["calendar_transitions"]=Json::UInt64(transitions);r["blocks"]=Json::UInt64(blocks.size());r["events"]=Json::UInt64(total_events);r["policy"]=policy;
-    if(loops){r["schema"]=version==4?"mlx_event_schedule_v4":ports?"mlx_event_schedule_v3":"mlx_event_schedule_v2";r["stored_event_leaves"]=Json::UInt64(events.size());r["stored_sequence_nodes"]=Json::UInt64(sequence_nodes);
+    if(loops){r["schema"]=version==5?"mlx_event_schedule_v5":version==4?"mlx_event_schedule_v4":ports?"mlx_event_schedule_v3":"mlx_event_schedule_v2";r["stored_event_leaves"]=Json::UInt64(events.size());r["stored_sequence_nodes"]=Json::UInt64(sequence_nodes);
       r["loop_execution"]="lazy_instance_cursor_all_occurrences_scheduled";r["named_dependency_scope"]="last_occurrence_of_other_block_leaf";
       r["timing_semantics"]=ports?"completion_first_shared_ports_not_full_native_source_order":"v1_service_and_admission_contract_not_native_microprogram_alignment";}
     if(ports){r["port_contract"]["dma_consumes_pe_issue"]=false;r["port_contract"]["spm_port_period"]=Json::UInt64(spm_period);
@@ -353,6 +386,7 @@ struct Engine {
       r["port_contract"]["dma_response_period"]=Json::UInt64(dma_response_period);r["port_contract"]["compute_ii"]=Json::UInt64(compute_ii);
       r["port_contract"]["admission_per_source_per_cycle"]=1;r["port_contract"]["issue_after_admission_edge"]=true;}
     if(version>=4){r["port_contract"]["sfu_ii"]=Json::UInt64(sfu_ii);r["port_contract"]["operand_setup"]= "prepare_next_edge_spm_initialize_next_edge_data_readiness";}
+    if(version>=5){r["memory_controller_resources"]["data_register_bytes"]=32;r["memory_controller_resources"]["staging_bytes"]=128;r["memory_controller_resources"]["conversion_result_latch_bytes"]=8;r["memory_controller_resources"]["request_data_latch_bytes"]=8;r["memory_controller_resources"]["peak_active"]=peak_memory;r["memory_controller_resources"]["uses_array_rf_spm"]=false;}
     for(const auto &[k,v]:counts)r["counts"][k]=Json::UInt64(v);
     for(const auto &[k,v]:areas)r["integrated_usage"][k]=Json::UInt64(v);
     for(const auto &[k,v]:work)r["declared_work"][k]=Json::UInt64(v);
@@ -362,6 +396,7 @@ struct Engine {
     r["capacity"]["pes"]=pes;r["capacity"]["contexts_per_pe"]=contexts;r["capacity"]["rf_vectors_per_pe"]=16;r["capacity"]["rom_words_per_pe"]=32;r["capacity"]["spm_vectors_total"]=128;r["capacity"]["source_window_limit"]=source_limit;
     r["peak"]["contexts"]=peak_contexts;r["peak"]["spm_vectors"]=peak_spm;r["peak"]["rf_vectors_per_pe"]=peak_rf;r["peak"]["rom_words_per_pe"]=peak_rom;r["peak"]["active_sources"]=peak_sources;
     r["block_intervals"]=Json::Value(Json::arrayValue);for(const auto &b:blocks){Json::Value x;x["id"]=b.id;x["source_operator_id"]=Json::UInt64(b.source);x["pe"]=b.pe;x["admit_cycle"]=Json::UInt64(b.begin);x["retire_cycle"]=Json::UInt64(b.end);r["block_intervals"].append(x);}
+    if(version>=5)for(unsigned i=0;i<blocks.size();++i){auto &row=r["block_intervals"][i];const auto &b=blocks[i];row["domain"]=b.controller?"memory_controller":"array";if(b.controller){row["pe"]=Json::Value();row["window_cycles"]=Json::UInt64(events[b.events[0]].op=="memory_complete"?0:b.end-b.begin);}}
     r["trace"]=trace;r["trace_truncated"]=counts["trace_admit"]+counts["trace_issue"]+counts["trace_complete"]+counts["trace_retire"]>trace.size();
     r["dependency_visibility"]="completion_next_edge";r["all_resources_drained"]=true;r["tensor_values_executed"]=false;r["full_model_verified"]=false;r["inference_performance_eligible"]=false;
     return r;

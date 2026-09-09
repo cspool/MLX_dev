@@ -26,6 +26,8 @@ MLX 若增加合并推进，必须明确区间边界及不能合并的条件：�
 
 ## 材料边界与顺序
 
+后续落地记录：C++ 事件引擎已分别补齐[循环](mlx-event-loop-ir.md)、[矩阵窗口](mlx-event-port-contract.md)、[向量窗口](mlx-vector-event-lowering.md)及[独立搬运窗口](mlx-memory-event-lowering.md)。搬运实现按 MLX 自身的私有寄存器/staging 和共享 DMA 约束与原生执行对照；卡片用于建立检查项，没有据此引入 DFU 时序常数。完整控制、跨源时序与整模误差尚未验收。
+
 卡片自己标注：源码片段由文档/图片整理、未经运行；未提供完整模拟器源码；内部 opcode 分派、调度和 `time_type=1` 精度仍待核实。已知 `alu_unit.c` / `tensor_op.c` 是定位线索，不能据此编造函数或可直接应用的补丁。DFU 的 Task/Subtask 数量、SPM 容量、指令拍数和 DMA 位域都不能固化为 MLX 参数。
 
 参考工作服务于 P0：完整主要正确性、并发端到端、完整事件模型、MLX 两模型误差、Chipyard 整模集成。GPU 新实验继续等待 P0 验收；对应 RTL/PPA 最后。
