@@ -1,6 +1,6 @@
 """Bounded floating-point vector/normalization microprograms (functional stage)."""
 
-FLOAT_KINDS = {"add", "sub", "mul", "pow", "rsqrt", "silu", "cos", "sin", "neg", "mean", "softmax"}
+FLOAT_KINDS = {"add", "sub", "mul", "div", "maximum", "exp", "pow", "rsqrt", "silu", "cos", "sin", "neg", "mean", "softmax"}
 OP = {"load_a16": 2, "load_b16": 3, "cvt_up": 4, "mul": 5, "add": 6,
       "cvt_down": 7, "store16": 8, "load_a32": 9, "load_b32": 10, "store32": 11,
       "constant": 14, "neg": 15, "sub": 16, "exp": 17, "div": 18, "sqrt": 19,
@@ -11,7 +11,7 @@ OP = {"load_a16": 2, "load_b16": 3, "cvt_up": 4, "mul": 5, "add": 6,
 def vector_program(kind, input_dtypes, output_dtype, *, width=None, alpha=1):
     if kind not in FLOAT_KINDS or output_dtype not in {"f16", "f32"} or any(d not in {"f16", "f32"} for d in input_dtypes):
         raise ValueError("unsupported floating-point vector program contract")
-    if len(input_dtypes) != (2 if kind in {"add", "sub", "mul"} else 1):
+    if len(input_dtypes) != (2 if kind in {"add", "sub", "mul", "div", "maximum"} else 1):
         raise ValueError("vector program operand count mismatch")
     if kind in {"mean", "softmax"} and (type(width) is not int or not 1 <= width <= 2**31):
         raise ValueError("reduction width must be in [1, 2**31]")
@@ -43,16 +43,17 @@ def vector_program(kind, input_dtypes, output_dtype, *, width=None, alpha=1):
 
     if kind not in {"mean", "softmax"}:
         body = load()
-        if kind in {"add", "sub", "mul"}:
+        if kind in {"add", "sub", "mul", "div", "maximum"}:
             body += load(1, 1)
             if kind in {"add", "sub"} and alpha != 1:
                 body += [constant(alpha, 7), emit("mul", dst=1, a=1, b=7)]
-            body.append(emit(kind, a=0, b=1))
+            if kind=="div":body+=trans("div",a=0,b=1)
+            else:body.append(emit("max" if kind=="maximum" else kind, a=0, b=1))
         elif kind == "pow":
             body.append(emit("mul", a=0, b=0))
         elif kind == "neg":
             body.append(emit("neg", a=0))
-        elif kind in {"cos", "sin"}:
+        elif kind in {"cos", "sin", "exp"}:
             body += trans(kind)
         elif kind == "rsqrt":
             body += trans("sqrt") + [constant(1.0)] + trans("div", a=1, b=0)

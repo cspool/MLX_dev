@@ -1,6 +1,7 @@
 """Explicit source-to-primitive recipes; no Python tensor execution or timing."""
 import copy
 import math
+from .model_gelu_program import GELU,GELU_PROFILE,emit_gelu
 
 LAYER_NORM = "aten.layer_norm.default"
 LAYER_NORM_PROFILE = "mlx-layernorm-shifted-fp32-v1"
@@ -57,7 +58,9 @@ def expand_composites(inventory):
                        inputs=copy.deepcopy(inputs),kwargs=kwargs or {},outputs=output,
                        origin_source_operator_id=source,lowering_stage=len(stage_names),lowering_stage_name=name)
             stage_names.append(name);result["operations"].append(low);return output
-        if event["operator"]!=LAYER_NORM:
+        if event["operator"]==GELU:
+            cfg=emit_gelu(event,emit);profile=GELU_PROFILE
+        elif event["operator"]!=LAYER_NORM:
             low=copy.deepcopy(event);low.update(operator_id=start,origin_source_operator_id=source,lowering_stage=0,lowering_stage_name="direct")
             result["operations"].append(low);stage_names=["direct"];profile="direct"
         else:
@@ -90,4 +93,5 @@ def expand_composites(inventory):
                 "shape":event["inputs"][0]["shape"],"epsilon":cfg["eps"],"cudnn_enable":cfg["cudnn_enable"],
                 "weight_dtype":cfg["weight"]["dtype"] if cfg["weight"] is not None else None,
                 "bias_dtype":cfg["bias"]["dtype"] if cfg["bias"] is not None else None}
+        elif profile==GELU_PROFILE:groups[-1]["gelu_config"]=cfg
     return result,groups

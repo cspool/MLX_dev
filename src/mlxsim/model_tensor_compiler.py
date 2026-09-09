@@ -17,6 +17,7 @@ from mlxsim.model_memory_program import Planner
 from mlxsim.model_control_program import control_program
 from mlxsim.model_value_outputs import value_outputs
 from mlxsim.model_composites import LAYER_NORM, layer_norm_contract, expand_composites
+from mlxsim.model_gelu_program import GELU,gelu_contract
 
 ROUTES = {
     "aten.embedding.default": "embedding",
@@ -27,6 +28,10 @@ ROUTES = {
     "aten.add.Tensor": "add",
     "aten.sub.Tensor": "sub",
     "aten.layer_norm.default": "layer_norm",
+    "aten.gelu.default": "gelu",
+    "aten.exp.default": "exp",
+    "mlx.primitive.div": "div",
+    "mlx.primitive.maximum": "maximum",
     "aten.mul.Tensor": "mul",
     "aten.le.Tensor": "le",
     "aten.ge.Scalar": "ge",
@@ -76,6 +81,7 @@ DTYPES = {
 # Only the recorded overloads/attributes with implemented inference semantics
 # are accepted. A familiar ATen name is not permission to ignore its attributes.
 ARITY = {
+    "gelu": (1,1), "exp": (1,1), "div": (2,2), "maximum": (2,2),
     "sub": (2, 2), "layer_norm": (2, 6),
     "split": (2, 3),
     "squeeze": (2, 2), "advanced_index": (2, 2), "new_ones": (2, 2),
@@ -102,6 +108,9 @@ def validate_event(event):
     if operator not in ROUTES:
         raise ValueError(f"missing native semantic lowering: {operator}")
     kind = ROUTES[operator]
+    if kind == "gelu":
+        gelu_contract(event)
+        return kind
     if kind == "layer_norm":
         layer_norm_contract(event)
         if event.get("mutable"):raise ValueError("LayerNorm cannot be mutable")
@@ -176,11 +185,11 @@ def safetensors_header(path):
 def compile_inventory(inventory, *, matrix_backend="blas", schedule_options=None, vector_backend="functional", vector_schedule_options=None, memory_backend="functional", memory_schedule_options=None, control_backend="functional", control_schedule_options=None):
     if inventory.get("classification") not in {"real_model_operator_inventory_not_mlx_execution", "mlx_compiler_expanded_inventory_v1"}:
         raise ValueError("expected a real model execution inventory")
-    if any(event["operator"] == LAYER_NORM for event in inventory.get("operations", [])):
+    if any(event["operator"] in {LAYER_NORM,GELU} for event in inventory.get("operations", [])):
         if inventory["classification"] != "real_model_operator_inventory_not_mlx_execution":
             raise ValueError("composite source must be an original captured inventory")
         if vector_backend not in {"microcode", "scheduled"} or memory_backend not in {"planned", "scheduled"}:
-            raise ValueError("LayerNorm requires explicit vector instructions and memory plans")
+            raise ValueError("composite activation/normalization requires explicit vector instructions and memory plans")
         lowered, groups = expand_composites(inventory)
         program, coverage = compile_inventory(lowered, matrix_backend=matrix_backend, schedule_options=schedule_options,
             vector_backend=vector_backend, vector_schedule_options=vector_schedule_options, memory_backend=memory_backend,
@@ -320,6 +329,8 @@ def compile_inventory(inventory, *, matrix_backend="blas", schedule_options=None
     checks = {check["forward_id"]: check for check in inventory["reference_checks"]}
     for position, event in enumerate(inventory["operations"]):
         operator = event["operator"]
+        if operator.startswith("mlx.primitive.") and inventory["classification"]!="mlx_compiler_expanded_inventory_v1":
+            raise ValueError("internal primitive is not a captured model operator")
         kind = validate_event(event)
         if event["operator_id"] != position:
             raise ValueError("operator IDs must be unique and sequential")
@@ -378,7 +389,7 @@ def compile_inventory(inventory, *, matrix_backend="blas", schedule_options=None
             input_type = DTYPES[event["inputs"][0]["dtype"]]
             node["matrix_program"] = matrix_program(input_type, spec["dtype"], kind == "linear" and len(args) > 2 and args[2] is not None)
         if vector_backend != "functional" and kind in FLOAT_KINDS and spec["dtype"] in {"f16", "f32"}:
-            count = 2 if kind in {"add", "mul", "sub"} else 1
+            count = 2 if kind in {"add", "mul", "sub", "div", "maximum"} else 1
             input_types = [DTYPES[arg["dtype"]] if isinstance(arg, dict) and "tensor_id" in arg else "f32" for arg in event["inputs"][:count]]
             if any(value not in {"f16", "f32"} for value in input_types):
                 raise ValueError("floating vector microcode cannot silently narrow integer tensor operands")

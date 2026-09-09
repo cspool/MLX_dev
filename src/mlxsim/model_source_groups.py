@@ -1,5 +1,6 @@
 """Original source identity is distinct from executed lowered-stage identity."""
 import math
+from .model_gelu_program import GELU,GELU_PROFILE,validate_gelu_group
 
 def validate_source_groups(program):
     groups=program.get("source_groups")
@@ -14,7 +15,7 @@ def validate_source_groups(program):
         if group["source_operator_id"]!=source or not ids or ids!=list(range(cursor,cursor+len(ids))) or len(names)!=len(ids) or len(kinds)!=len(ids):
             raise ValueError("source groups must partition every lowered stage exactly once")
         if group["lowering_profile"]=="direct":
-            if names!=["direct"] or group["source_operator"]=="aten.layer_norm.default":raise ValueError("invalid direct source group")
+            if names!=["direct"] or group["source_operator"] in {"aten.layer_norm.default",GELU}:raise ValueError("invalid direct source group")
         elif group["lowering_profile"]=="mlx-layernorm-shifted-fp32-v1":
             cfg=group["layer_norm_config"]
             if cfg.get("input_dtype") not in {"torch.float16","torch.float32"} or cfg.get("output_dtype")!=cfg["input_dtype"]:
@@ -33,6 +34,9 @@ def validate_source_groups(program):
                     expected.append("affine_"+parameter)
             if cfg["output_dtype"]!="torch.float32":expected.append("output_cast")
             if group["source_operator"]!="aten.layer_norm.default" or names!=expected:raise ValueError("LayerNorm recipe stages are incomplete")
+        elif group["lowering_profile"]==GELU_PROFILE:
+            if group["source_operator"]!=GELU:raise ValueError("GELU source operator differs")
+            validate_gelu_group(group,nodes)
         else:raise ValueError("unknown source-group lowering profile")
         for stage,identifier in enumerate(ids):
             if identifier>=len(nodes):raise ValueError("source group references a missing stage")
@@ -40,12 +44,12 @@ def validate_source_groups(program):
             if group["lowering_profile"]=="direct" and node["source_operator"]!=group["source_operator"]:raise ValueError("direct source operator label differs")
             if (node["source_operator_id"],node.get("origin_source_operator_id"),node.get("lowering_stage"),node.get("lowering_stage_name"),node["kind"])!=(identifier,source,stage,names[stage],kinds[stage]):
                 raise ValueError("lowered node source/stage identity mismatch")
-            if group["lowering_profile"]!="direct":
+            if group["lowering_profile"]=="mlx-layernorm-shifted-fp32-v1":
                 required={"input_f32":"cast","anchor_select":"select","anchor_expand":"unsqueeze","shift":"sub","mean_shift":"mean","center":"sub","square":"pow","variance":"mean","epsilon":"add","rsqrt":"rsqrt","normalize":"mul","weight_f32":"cast","affine_weight":"mul","bias_f32":"cast","affine_bias":"add","output_cast":"cast"}
                 if node["kind"]!=required[names[stage]]:raise ValueError("LayerNorm primitive kind differs from the recipe")
                 if names[stage]=="epsilon" and node["args"][1]!=group["layer_norm_config"]["epsilon"]:raise ValueError("LayerNorm source epsilon differs from its primitive")
         last=nodes[ids[-1]]
-        if group["lowering_profile"]!="direct":
+        if group["lowering_profile"]=="mlx-layernorm-shifted-fp32-v1":
             cfg=group["layer_norm_config"]
             if last["output"]!={"shape":cfg["shape"],"dtype":"f16" if cfg["output_dtype"]=="torch.float16" else "f32"}:raise ValueError("LayerNorm source output contract differs")
         outputs=[o["id"] for o in last["split_outputs"]] if last["kind"]=="split" else [last["id"]]

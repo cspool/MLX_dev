@@ -45,7 +45,7 @@ def test_elementwise_routes_match_native_semantics_bitwise(native, tmp_path, pre
     args = [ref("x")]
     dtypes = [precision]
     expected = x.clone()  # shape/type declaration only; never executable data.
-    if kind in {"add", "sub", "mul"}:
+    if kind in {"add", "sub", "mul", "div", "maximum"}:
         args.append(ref("y")); dtypes.append(precision)
     if kind == "pow":
         args.append(2)

@@ -68,6 +68,9 @@ def test_all_native_entries_have_numerical_or_alias_conformance(native, tmp_path
         ("arange", [7], torch.arange(7)),
         ("add", [ref("x"), ref("y")], x + y),
         ("sub", [ref("x"), ref("y")], x - y),
+        ("div", [ref("x"), ref("y")], x / y),
+        ("maximum", [ref("x"), ref("y")], torch.maximum(x,y)),
+        ("exp", [ref("x")], x.exp()),
         ("mul", [ref("h"), 128**-0.5], h * (128**-0.5)),
         ("le", [ref("x"), 0.5], x <= 0.5),
         ("where", [ref("p"), ref("x"), -7.5], torch.where(predicate, x, -7.5)),
@@ -101,7 +104,7 @@ def test_all_native_entries_have_numerical_or_alias_conformance(native, tmp_path
     cases.append(("matmul", [ref("a"), ref("b")], a @ b))
     # v2 Boolean/guard entries deliberately require real RV64 leaves, not the
     # generic functional tensor fallback exercised here.
-    assert {case[0] for case in cases} == set(ROUTES.values()) - {"ge", "bitwise_and", "all", "guard", "advanced_index", "new_ones", "squeeze", "split", "layer_norm"}
+    assert {case[0] for case in cases} == set(ROUTES.values()) - {"ge", "bitwise_and", "all", "guard", "advanced_index", "new_ones", "squeeze", "split", "layer_norm", "gelu"}
     results = execute_nodes(native, tmp_path / "all", {key: literal(value) for key, value in tensors.items()}, [node(i, kind, args, expected) for i, (kind, args, expected) in enumerate(cases)])
     for (kind, _, expected), actual in zip(cases, results, strict=True):
         # Per-entry contract frozen independently from model-level tolerance.

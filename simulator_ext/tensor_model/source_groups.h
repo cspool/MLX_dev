@@ -1,5 +1,6 @@
 #pragma once
 #include "value_outputs.h"
+#include "gelu_recipe.h"
 #include <map>
 #include <cmath>
 
@@ -14,7 +15,9 @@ inline void validate_source_groups(const Json::Value &program){
             &&names.isArray()&&names.size()==ids.size()&&kinds.isArray()&&kinds.size()==ids.size(),"invalid original source group");
     std::vector<std::string> expected;
     if(g["lowering_profile"]=="direct"){
-      require(g["source_operator"]!="aten.layer_norm.default","LayerNorm cannot bypass its recipe");expected={"direct"};
+      require(g["source_operator"]!="aten.layer_norm.default"&&g["source_operator"]!="aten.gelu.default","composite cannot bypass its recipe");expected={"direct"};
+    }else if(g["lowering_profile"]=="mlx-gelu-erf-as7126-fp32-v1"){
+      require(g["source_operator"]=="aten.gelu.default","GELU source operator differs");expected=validate_gelu_group(g,nodes);
     }else{
       require(g["lowering_profile"]=="mlx-layernorm-shifted-fp32-v1"&&g["source_operator"]=="aten.layer_norm.default","unknown source lowering profile");
       const auto &cfg=g["layer_norm_config"];
@@ -40,14 +43,14 @@ inline void validate_source_groups(const Json::Value &program){
               &&node["source_operator_id"].asUInt()==ids[stage].asUInt()&&node["origin_source_operator_id"].isUInt()
               &&node["origin_source_operator_id"].asUInt()==source&&node["lowering_stage"].isUInt()&&node["lowering_stage"].asUInt()==stage
               &&node["forward_id"]==g["forward_id"]&&node["layer_idx"]==g["layer_idx"],"lowered stage lost its original source identity");
-      if(g["lowering_profile"]!="direct"){
+      if(g["lowering_profile"]=="mlx-layernorm-shifted-fp32-v1"){
         const std::map<std::string,std::string> required={{"input_f32","cast"},{"anchor_select","select"},{"anchor_expand","unsqueeze"},{"shift","sub"},{"mean_shift","mean"},{"center","sub"},{"square","pow"},{"variance","mean"},{"epsilon","add"},{"rsqrt","rsqrt"},{"normalize","mul"},{"weight_f32","cast"},{"affine_weight","mul"},{"bias_f32","cast"},{"affine_bias","add"},{"output_cast","cast"}};
         require(node["kind"]==required.at(expected[stage]),"LayerNorm primitive kind differs from recipe");
         if(expected[stage]=="epsilon")require(node["args"][1].isNumeric()&&node["args"][1].asDouble()==g["layer_norm_config"]["epsilon"].asDouble(),"LayerNorm source epsilon differs from its primitive");
       }
     }
     auto outputs=output_ids(nodes[cursor-1]);require(g["output_values"].isArray()&&g["output_values"].size()==outputs.size(),"source output binding mismatch");
-    if(g["lowering_profile"]!="direct")require(nodes[cursor-1]["output"]["shape"]==g["layer_norm_config"]["shape"]&&nodes[cursor-1]["output"]["dtype"]==(g["layer_norm_config"]["output_dtype"]=="torch.float16"?"f16":"f32"),"LayerNorm source output contract differs");
+    if(g["lowering_profile"]=="mlx-layernorm-shifted-fp32-v1")require(nodes[cursor-1]["output"]["shape"]==g["layer_norm_config"]["shape"]&&nodes[cursor-1]["output"]["dtype"]==(g["layer_norm_config"]["output_dtype"]=="torch.float16"?"f16":"f32"),"LayerNorm source output contract differs");
     for(unsigned i=0;i<outputs.size();++i)require(g["output_values"][i]==outputs[i],"source output binding mismatch");
   }
   require(cursor==nodes.size(),"ungrouped lowered stages");

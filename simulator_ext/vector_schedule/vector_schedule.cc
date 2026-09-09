@@ -121,7 +121,7 @@ struct Simulator::Impl{
     check(program["lanes"]==16&&program["trans_lanes"]==4&&program["rf_vectors"]==16&&program["rf_vector_bytes"]==64&&program["rf_vectors_used"]==8&&program["spm_bytes"]==8192&&program["spm_bytes_used"]==320&&program["rom_words"]==32,"scheduled vector resource descriptor mismatch");
     rom=decode(program["rom"]);check(program["phases"].isObject(),"vector phases are missing");
     for(const auto &key:program["phases"].getMemberNames()){check(program["phases"][key].isArray()&&!program["phases"][key].empty(),"empty/invalid vector phase");for(const auto &index:program["phases"][key])check(index.isUInt()&&index.asUInt()<rom.size(),"vector phase points outside ROM");}
-    unsigned expected_inputs=node["kind"]=="add"||node["kind"]=="sub"||node["kind"]=="mul"?2:1;
+    unsigned expected_inputs=node["kind"]=="add"||node["kind"]=="sub"||node["kind"]=="mul"||node["kind"]=="div"||node["kind"]=="maximum"?2:1;
     check(program["input_dtypes"].isArray()&&program["input_dtypes"].size()==expected_inputs,"vector operand count mismatch");
     if(node["kind"]=="pow")check(node["args"].size()==2&&scalar(node["args"][1])==2,"scheduled vector pow requires exponent 2");
     std::array<Tensor,3> regions;
