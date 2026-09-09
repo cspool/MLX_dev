@@ -16,9 +16,11 @@ def main():
     for key in ("tests", "safety", "resources", "output"): parser.add_argument("--" + key, type=Path, required=True)
     parser.add_argument("--include-loops",action="store_true")
     parser.add_argument("--include-ports",action="store_true")
+    parser.add_argument("--include-vectors",action="store_true")
     parser.add_argument("--matrix-alignment",type=Path)
+    parser.add_argument("--vector-alignment",type=Path)
     args = parser.parse_args(); out = args.output.resolve(); tests = args.tests.resolve(); safety = args.safety.resolve()
-    test_count,replay_count,success_count=(95,94,67) if args.include_ports else (55,58,37) if args.include_loops else (35,29,18)
+    test_count,replay_count,success_count=(148,142,115) if args.include_vectors else (95,94,67) if args.include_ports else (55,58,37) if args.include_loops else (35,29,18)
     require(not out.exists(), "choose a fresh event publication")
     suite = ET.parse(tests / "regression.xml").getroot().find("testsuite")
     require(suite is not None and suite.get("tests") == str(test_count) and all(suite.get(k) == "0" for k in ("errors", "failures", "skipped")), "event regression not accepted")
@@ -48,8 +50,8 @@ def main():
     require(set(contracts) == {"bert", "llama2"}, "both full-model resource inventories required")
     for name in ("scripts/package_mlx_event_core.py", "scripts/compile_mlx_event_resources.py"):
         copies[ROOT / name] = Path("sources") / name
-    if args.include_loops or args.include_ports:copies[ROOT/"docs/mlx-event-loop-ir.md"]=Path("sources/docs/mlx-event-loop-ir.md")
-    if args.include_ports:
+    if args.include_loops or args.include_ports or args.include_vectors:copies[ROOT/"docs/mlx-event-loop-ir.md"]=Path("sources/docs/mlx-event-loop-ir.md")
+    if args.include_ports or args.include_vectors:
         require(args.matrix_alignment is not None,"port publication needs actual matrix execution alignment")
         alignment=args.matrix_alignment.resolve();bound=json.loads((alignment/"report.json").read_text())
         require(len(bound["cases"])==22 and bound["all_window_cycles_and_work_equal"],"matrix alignment incomplete")
@@ -62,6 +64,18 @@ def main():
             copies[job]=Path("matrix-inputs")/job.parent.parent.name/"job.json"
         for name in ("docs/mlx-event-port-contract.md","scripts/compile_mlx_matrix_events.py"):
             copies[ROOT/name]=Path("sources")/name
+    if args.include_vectors:
+        require(args.vector_alignment is not None,"vector publication needs numerical window alignment")
+        alignment=args.vector_alignment.resolve();bound=json.loads((alignment/"report.json").read_text())
+        require(bound.get("family")=="vector" and len(bound["cases"])==48 and bound["all_window_cycles_and_work_equal"],"vector alignment incomplete")
+        for name,value in bound["sources"].items():
+            require(sha(ROOT/name)==value,"vector native/alignment source changed");copies[ROOT/name]=Path("sources")/name
+        for p in alignment.rglob("*"):
+            if p.is_file() and p.suffix in {".json",".bin",".log"}:copies[p]=Path("vector-alignment")/p.relative_to(alignment)
+        for row in bound["cases"]:
+            job=Path(row["job"]);require(sha(job)==row["job_sha256"],"vector input changed")
+            copies[job]=Path("vector-inputs")/job.parent.parent.name/"job.json"
+        copies[ROOT/"docs/mlx-vector-event-lowering.md"]=Path("sources/docs/mlx-vector-event-lowering.md")
     out.mkdir(parents=True); files = []
     for source, relative in sorted(copies.items()):
         target = out / relative; target.parent.mkdir(parents=True, exist_ok=True); digest = sha(source); shutil.copy2(source, target)

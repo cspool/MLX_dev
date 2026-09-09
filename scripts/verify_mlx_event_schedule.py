@@ -18,8 +18,9 @@ def require(value, message):
 
 def audit_trace(program, result):
     if result["trace_truncated"]: return
-    ports=program["schema"]=="mlx_event_schedule_v3"
-    if program["schema"] in {"mlx_event_schedule_v2","mlx_event_schedule_v3"}:
+    ports=program["schema"] in {"mlx_event_schedule_v3","mlx_event_schedule_v4"}
+    vector=program["schema"]=="mlx_event_schedule_v4"
+    if program["schema"] in {"mlx_event_schedule_v2","mlx_event_schedule_v3","mlx_event_schedule_v4"}:
         program=copy.deepcopy(program);result=copy.deepcopy(result);occurrences=Counter()
         def expand(items):
             for item in items:
@@ -42,7 +43,7 @@ def audit_trace(program, result):
     require(set(issued) == set(completed) == set(specs), "event trace source coverage differs")
     require(sum(row["event"]=="issue" for row in result["trace"])==len(specs)
             and sum(row["event"]=="complete" for row in result["trace"])==len(specs),"event trace duplicated an instance")
-    pe_issues = set(); busy = {}; compute = []; dma = [];spm_ports=set();writebacks=set();compute_issues={};inflight={}
+    pe_issues = set(); busy = {}; compute = []; dma = [];spm_ports=set();writebacks=set();compute_issues={};inflight={};sfu_issues={};pe_inflight={}
     def spm_claim(cycle):
         require(cycle%program["hardware"]["spm_port_period"]==0 and cycle not in spm_ports,"SPM port overcommit or phase mismatch");spm_ports.add(cycle)
     def writeback_claim(pe,cycle):
@@ -53,7 +54,7 @@ def audit_trace(program, result):
         latency=program["hardware"]["latencies"][spec["op"]]
         require(end-start>=latency if ports else end-start==latency, "event duration differs from architecture input")
         op=spec["op"]
-        if not ports or not op.startswith("dma"):
+        if not ports or (not op.startswith("dma") and op not in {"operand_prepare","spm_initialize"}):
             key = (block["pe"], start); require(key not in pe_issues, "PE issued twice on one edge"); pe_issues.add(key)
         previous = None
         for e in block["events"]:
@@ -61,10 +62,14 @@ def audit_trace(program, result):
             previous = e["id"]
         for parent in set(spec["dependencies"]) | ({previous} if previous else set()):
             require(start >= completed[parent]["cycle"]+1, "event bypassed dependency visibility")
-        if op=="predicate_skip":require(end==start,"predicated event occupied a service unit");continue
-        unit = ("dma", 0) if op.startswith("dma") else ("spm", 0) if op.startswith("spm") else ("sfu", block["pe"]) if op in {"exp", "div", "sqrt"} else ("compute", block["pe"])
+        if op in {"predicate_skip","operand_prepare","spm_initialize"}:
+            require(end==start,"predicated/setup event occupied a service unit")
+            if op=="spm_initialize":spm_claim(start)
+            continue
+        unit = ("dma", 0) if op.startswith("dma") else ("spm", 0) if op.startswith("spm") else ("sfu", block["pe"]) if op in {"exp", "div", "sqrt","cos","sin"} else ("compute", block["pe"])
         busy.setdefault(unit, []).append((start, end+1))
         inflight.setdefault(unit,[]).append((start,end))
+        pe_inflight.setdefault(block["pe"],[]).append((start,end))
         if ports:
             if unit[0]=="spm" or op=="dma_write":spm_claim(start)
             if unit[0]=="dma":
@@ -73,6 +78,7 @@ def audit_trace(program, result):
             elif op=="spm_write":spm_claim(end)
             else:writeback_claim(block["pe"],end)
             if unit[0]=="compute":compute_issues.setdefault(block["pe"],[]).append(start)
+            if unit[0]=="sfu":sfu_issues.setdefault(block["pe"],[]).append(start)
         if unit[0] == "compute": compute.append((start, end+1))
         if unit[0] == "dma": dma.append((start, end+1))
     for intervals in busy.values():
@@ -96,6 +102,22 @@ def audit_trace(program, result):
             require((source,cycle) not in admitted and cycle>last.get(source,-1),"source admission rate/order violated")
             admitted.add((source,cycle));last[source]=cycle
             require(all(row["cycle"]>cycle for row in issued.values() if row["block"]==block["id"]),"newly admitted context issued on the admission edge")
+    if vector:
+        for issues in sfu_issues.values():
+            ordered=sorted(issues);require(all(b-a>=program["hardware"]["sfu_ii"] for a,b in zip(ordered,ordered[1:])),"SFU issue interval violated")
+        overlap=0
+        for pe in pe_inflight:
+            overlap+=sum(max(0,min(b,d)-max(a,c)) for a,b in inflight.get(("compute",pe),[]) for c,d in inflight.get(("sfu",pe),[]))
+        require(areas.get("compute_sfu_inflight_overlap_pe_cycles",0)==overlap,"vector/SFU overlap differs")
+        overlap=0
+        for spans in pe_inflight.values():
+            changes=Counter()
+            for a,b in spans:changes[a]+=1;changes[b]-=1
+            previous=live=0
+            for time,delta in sorted(changes.items()):
+                if live>1:overlap+=time-previous
+                live+=delta;previous=time
+        require(areas.get("same_pe_inflight_context_overlap_pe_cycles",0)==overlap,"same-PE context overlap differs")
 
 
 def main():
@@ -103,18 +125,23 @@ def main():
     for key in ("tests", "binary", "output"): parser.add_argument("--" + key, type=Path, required=True)
     parser.add_argument("--include-loops",action="store_true")
     parser.add_argument("--include-ports",action="store_true")
+    parser.add_argument("--include-vectors",action="store_true")
     args = parser.parse_args(); out = args.output.resolve(); tests = args.tests.resolve()
     require(not out.exists(), "choose a fresh event verification directory")
     suite = ET.parse(tests / "regression.xml").getroot().find("testsuite")
     require(suite is not None and all(suite.get(k) == "0" for k in ("failures", "errors", "skipped")), "event regression failed")
-    paths = [p for p in (tests / "pytest").rglob("program.json") if not any(a.is_symlink() for a in p.parents)]
-    require(len(paths) == (94 if args.include_ports else 58 if args.include_loops else 29), "event safety replay scope differs")
+    paths = [p for p in (tests / "pytest").rglob("program.json") if not any(a.is_symlink() for a in p.parents)
+             and json.loads(p.read_text()).get("schema","").startswith("mlx_event_schedule_")]
+    require(len(paths) == (142 if args.include_vectors else 94 if args.include_ports else 58 if args.include_loops else 29), "event safety replay scope differs")
     sources = {str(p.relative_to(ROOT)): sha(p) for p in (ROOT / "simulator_ext/event_schedule").iterdir() if p.is_file()}
     for p in (Path(__file__).resolve(), ROOT / "tests/test_event_schedule.py", ROOT / "src/mlxsim/model_event_resources.py"):
         sources[str(p.relative_to(ROOT))] = sha(p)
-    if args.include_loops or args.include_ports:sources["tests/test_event_loops.py"]=sha(ROOT/"tests/test_event_loops.py")
-    if args.include_ports:
+    if args.include_loops or args.include_ports or args.include_vectors:sources["tests/test_event_loops.py"]=sha(ROOT/"tests/test_event_loops.py")
+    if args.include_ports or args.include_vectors:
         for name in ("tests/test_event_ports.py","src/mlxsim/model_matrix_events.py","tests/test_matrix_window_scheduler.py"):
+            sources[name]=sha(ROOT/name)
+    if args.include_vectors:
+        for name in ("tests/test_vector_events.py","src/mlxsim/model_vector_events.py","tests/test_vector_window_scheduler.py"):
             sources[name]=sha(ROOT/name)
     binary_hash = sha(args.binary); files = {str(p): sha(p) for p in paths}; out.mkdir(parents=True)
     replays = []; env = dict(os.environ, ASAN_OPTIONS="detect_leaks=1:halt_on_error=1", UBSAN_OPTIONS="halt_on_error=1:print_stacktrace=1")
@@ -129,7 +156,7 @@ def main():
             require(result == baseline, "event sanitizer changed full result")
             audit_trace(json.loads(p.read_text()), result)
         replays.append(dict(program=str(p), expected_exit=expected, result=str(actual) if not expected else None, log_sha256=sha(log)))
-    require(sum(r["expected_exit"] == 0 for r in replays) == (67 if args.include_ports else 37 if args.include_loops else 18), "event safety success coverage differs")
+    require(sum(r["expected_exit"] == 0 for r in replays) == (115 if args.include_vectors else 67 if args.include_ports else 37 if args.include_loops else 18), "event safety success coverage differs")
     require(all(sha(ROOT / p) == h for p,h in sources.items()) and all(sha(Path(p)) == h for p,h in files.items()) and sha(args.binary) == binary_hash, "event safety sources/inputs changed")
     record(out / "report.json", dict(classification="concurrent_event_core_component_validation_not_full_model", sources=sources, inputs=files,
                                      regression_tests=int(suite.get("tests")), replays=replays, asan_binary_sha256=binary_hash, full_model_verified=False,
