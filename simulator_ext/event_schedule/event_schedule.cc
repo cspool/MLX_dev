@@ -43,7 +43,7 @@ struct Block {std::string id;U source=0,pc=0,total=0,frontier_ready=0;unsigned p
   unsigned graph_source=UINT32_MAX,graph_window=0;
   std::vector<unsigned> children;unsigned unmet=0;
   bool active=false,running=false,retired=false,controller=false,control=false,zero_work=false;U begin=NEVER,end=NEVER;};
-struct ResidentCode {unsigned pe=0,code=0,base=0,refs=0,loaded=0;U ready=NEVER;bool live=false;};
+struct ResidentCode {unsigned pe=0,code=0,base=0,refs=0,loaded=0;U ready=NEVER;bool live=false;U generation=0;};
 // Calendar order is completions, retirements, template programming. Decisions
 // then use the resulting registered state; results become visible next edge.
 enum Change {Complete,Retire,Word};
@@ -57,6 +57,7 @@ struct Engine {
   bool source_ticks=false;std::map<U,std::vector<Wake>> source_completions;
   bool lazy=false;Json::Value pattern_specs;std::unique_ptr<PatternStore> pattern_store;
   std::vector<unsigned> free_events;U resident_nodes=0,peak_nodes=0,peak_leaves=0,loaded_leaves=0,loaded_blocks=0;
+  std::vector<unsigned> free_codes;U code_generations=0;
   bool graph_mode=false;std::vector<Source> graph;std::map<U,unsigned> source_ids;std::set<std::pair<U,unsigned>> graph_ready;
   unsigned graph_active=0,peak_graph_active=0,graph_memory=0,graph_control=0,graph_completed=0;
   U spm_period=1,writeback_period=1,dma_request_period=1,dma_response_period=1,compute_ii=1;
@@ -321,10 +322,12 @@ struct Engine {
     int base=code<0?space(rom[pe],unsigned(t.words.size())):0;if(base<0)return false;
     load_events(i);
     if(code<0){
-      code=int(codes.size());codes.push_back(ResidentCode{pe,b.code,unsigned(base),0,0,NEVER,true});
+      ResidentCode next_code{pe,b.code,unsigned(base),0,0,NEVER,true,code_generations++};
+      if(lazy&&!free_codes.empty()){code=int(free_codes.back());free_codes.pop_back();codes[unsigned(code)]=next_code;}
+      else{code=int(codes.size());codes.push_back(next_code);}
       for(unsigned w=0;w<t.words.size();++w)rom[pe][unsigned(base)+w]=code;
       if(timed_templates)calendar.push(Wake{add(now,1),Word,unsigned(code)});
-      else{codes.back().loaded=unsigned(t.words.size());codes.back().ready=now;counts["template_words_loaded"]+=t.words.size();}
+      else{codes[unsigned(code)].loaded=unsigned(t.words.size());codes[unsigned(code)].ready=now;counts["template_words_loaded"]+=t.words.size();}
     }
     ++codes[unsigned(code)].refs;b.slot=unsigned(slot);b.rf=unsigned(r);b.spm=unsigned(s);b.active=true;b.begin=now;
     if(ports)b.frontier_ready=add(now,1);
@@ -378,8 +381,8 @@ struct Engine {
     std::set<unsigned> configured;
     std::vector<Wake> due;while(!calendar.empty()&&calendar.top().time==now){due.push_back(calendar.top());calendar.pop();}
     if(ports)std::stable_sort(due.begin(),due.end(),[&](const Wake &a,const Wake &b){
-      auto priority=[&](const Wake &w){if(w.kind!=Complete)return std::make_tuple(int(w.kind)+10,U(0),w.item);
-        auto unit=kinds.at(events[w.item].op).unit;return std::make_tuple(unit==Spm?0:unit==Dma?1:version>=4&&unit==Sfu?3:2,blocks[events[w.item].owner].source,lazy?events[w.item].owner:w.item);};return priority(a)<priority(b);});
+      auto priority=[&](const Wake &w){if(w.kind!=Complete)return std::make_tuple(int(w.kind)+10,U(0),w.kind==Word?codes[w.item].generation:U(w.item));
+        auto unit=kinds.at(events[w.item].op).unit;return std::make_tuple(unit==Spm?0:unit==Dma?1:version>=4&&unit==Sfu?3:2,blocks[events[w.item].owner].source,U(lazy?events[w.item].owner:w.item));};return priority(a)<priority(b);});
     for(auto w:due){++transitions;
       if(w.kind==Complete){if(source_ticks)source_completions[blocks[events[w.item].owner].source].push_back(w);else if(!ports||completion_port(w.item))complete(w.item);
       }else if(w.kind==Retire){auto &b=blocks[w.item];need(b.active&&!b.running&&b.pc==b.total,"premature event block retirement");
@@ -388,7 +391,7 @@ struct Engine {
         for(unsigned x=0;x<t.rf;++x){need(rf[b.pe][b.rf+x]==int(w.item),"RF lease lost");rf[b.pe][b.rf+x]=-1;}
         for(unsigned x=0;x<t.spm;++x){need(spm[b.spm+x]==int(w.item),"SPM lease lost");spm[b.spm+x]=-1;}
         slots[b.pe][b.slot]=-1;
-        for(auto &c:codes)if(c.live&&c.pe==b.pe&&c.code==b.code){need(c.refs>0,"ROM lease lost");if(!--c.refs){for(unsigned x=0;x<t.words.size();++x)rom[b.pe][c.base+x]=-1;c.live=false;}break;}}
+        for(unsigned ci=0;ci<codes.size();++ci){auto &c=codes[ci];if(c.live&&c.pe==b.pe&&c.code==b.code){need(c.refs>0,"ROM lease lost");if(!--c.refs){need(c.loaded==t.words.size(),"retiring an incompletely programmed ROM record");for(unsigned x=0;x<t.words.size();++x)rom[b.pe][c.base+x]=-1;c.live=false;if(lazy)free_codes.push_back(ci);}break;}}}
         b.active=false;b.retired=true;b.end=now;++retired;active.erase({b.source,w.item});resources_changed=true;
         for(auto child:b.children){need(blocks[child].unmet>0,"admission dependency counter underflow");if(!--blocks[child].unmet)enqueue_admission(child);}
         auto it=live_sources.find(b.source);need(it!=live_sources.end()&&it->second,"source lease missing");if(!--it->second)live_sources.erase(it);
@@ -483,6 +486,7 @@ struct Engine {
     need(counts["events_issued"]==total_events&&counts["events_completed"]==total_events,"not every event instance executed exactly once");
     need(!graph_mode||(graph_completed==graph.size()&&!graph_active&&!graph_memory&&!graph_control&&graph_ready.empty()),"source graph failed to drain");
     need(!lazy||(!resident_nodes&&event_ids.empty()&&free_events.size()==events.size()&&loaded_blocks==blocks.size()),"lazy event state failed to drain");
+    need(!lazy||free_codes.size()==codes.size(),"lazy ROM records failed to drain");
     Json::Value r;r["classification"]="native_concurrent_event_component_not_full_model_or_numerical_execution";r["cycles"]=Json::UInt64(now);
     r["calendar_transitions"]=Json::UInt64(transitions);r["blocks"]=Json::UInt64(blocks.size());r["events"]=Json::UInt64(total_events);r["policy"]=policy;
     if(loops){r["schema"]=version==6?"mlx_event_schedule_v6":version==5?"mlx_event_schedule_v5":version==4?"mlx_event_schedule_v4":ports?"mlx_event_schedule_v3":"mlx_event_schedule_v2";r["stored_event_leaves"]=Json::UInt64(lazy?loaded_leaves:events.size());r["stored_sequence_nodes"]=Json::UInt64(sequence_nodes);
@@ -498,6 +502,7 @@ struct Engine {
       r["port_contract"]["issue_after_admission_edge_scope"]="array_only_controllers_start_on_admission_edge";}
     if(source_ticks)r["timing_semantics"]="source_priority_completion_then_issue_per_source_next_edge_visibility_not_full_graph";
     if(lazy){r["lazy_patterns"]=pattern_store->report();r["lazy_patterns"]["loaded_blocks"]=Json::UInt64(loaded_blocks);r["lazy_patterns"]["peak_live_sequence_nodes"]=Json::UInt64(peak_nodes);r["lazy_patterns"]["peak_live_event_leaves"]=Json::UInt64(peak_leaves);r["lazy_patterns"]["allocated_event_slots"]=Json::UInt64(events.size());r["lazy_patterns"]["event_state_drained"]=true;r["lazy_patterns"]["block_descriptors_still_eager"]=true;}
+    if(lazy){r["lazy_patterns"]["allocated_rom_record_slots"]=Json::UInt64(codes.size());r["lazy_patterns"]["rom_record_generations"]=Json::UInt64(code_generations);r["lazy_patterns"]["rom_records_drained"]=true;}
     if(graph_mode){r["source_graph_completed"]=true;r["source_frontend_peak"]=peak_graph_active;r["source_frontend_capacity"]=source_limit;r["source_launch_gate"]="shared_dma_quiescent";r["source_intervals"]=Json::Value(Json::arrayValue);
       for(const auto &s:graph){Json::Value row;row["source_operator_id"]=Json::UInt64(s.id);row["family"]=s.family;row["begin_cycle"]=Json::UInt64(s.begin);row["publish_cycle"]=Json::UInt64(s.end);row["windows"]=s.intervals;r["source_intervals"].append(row);}}
     for(const auto &[k,v]:counts)r["counts"][k]=Json::UInt64(v);

@@ -103,3 +103,25 @@ def test_cumulative_ir_exceeds_old_limit_without_resident_growth(binary,tmp_path
     assert r["events"]==r["cycles"]==r["stored_event_leaves"]==1000200
     assert r["lazy_patterns"]["peak_live_sequence_nodes"]==r["lazy_patterns"]["allocated_event_slots"]==600
     assert r["lazy_patterns"]["event_state_drained"] and r["lazy_patterns"]["file_reads"]==1
+
+
+def test_rom_host_records_are_reused_after_each_single_context_block(binary,tmp_path):
+    p=two_sources();p["hardware"]["contexts"]=1;p["blocks"]=[]
+    for i in range(2000):p["blocks"].append(dict(id=f"b{i}",source_operator_id=0,pe=0,template="t",admission_dependencies=[],events=[event("one")]))
+    _,r,extra=compare(binary,tmp_path,p)
+    assert r["cycles"]==12000 and extra["allocated_rom_record_slots"]==1
+    assert extra["rom_record_generations"]==2000 and extra["rom_records_drained"]
+
+
+def test_recycled_rom_slot_does_not_preempt_older_template_programming(binary,tmp_path):
+    p=control_events(base_request());p.update(source_tick_order=True)
+    p["hardware"]["template_load_timing"]=True
+    p["templates"]=[dict(id=name,words=words,rf_vectors=4,spm_vectors=4) for name,words in [("short",[1]),("long",list(range(30))),("replacement",[2])]]
+    p["controllers"]=[dict(id="gate",domain="control",source_operator_id=1,admission_dependencies=[],events=[dict(id="gate",op="control_literal",dependencies=[])])]
+    p["blocks"]=[dict(id=name,source_operator_id=source,pe=0,template=template,admission_dependencies=[],events=[event(name,op)]) for name,source,template,op in [
+        ("first",0,"short","dma_read"),("older",2,"long","mul"),("new",3,"replacement","dma_write")]]
+    p["source_graph"]=[dict(source_operator_id=source,family=family,parents=parents,windows=[[name]]) for source,name,family,parents in [
+        (0,"first","matrix",[]),(1,"gate","control",[]),(2,"older","matrix",[1]),(3,"new","matrix",[0])]]
+    _,r,extra=compare(binary,tmp_path,p)
+    assert extra["rom_record_generations"]==3 and extra["allocated_rom_record_slots"]==2
+    assert r["counts"]["template_words_loaded"]==32

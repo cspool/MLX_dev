@@ -20,10 +20,26 @@ def audit_trace(program, result):
     if "event_patterns" in program:
         from mlxsim.model_lazy_event_patterns import materialize
         r=result["lazy_patterns"]
+        if "rom_records_drained" in r:
+            require(r["rom_records_drained"] and r["allocated_rom_record_slots"]<=program["hardware"]["rows"]*program["hardware"]["columns"]*program["hardware"]["contexts"],"lazy ROM records exceed residency or failed to drain")
         require(r["event_state_drained"] and r["peak_serialized_cache_bytes"]<=program["pattern_cache_bytes"] and r["peak_live_sequence_nodes"]<=1000000,"lazy pattern storage did not drain or exceeded bounds")
         require(r["allocated_event_slots"]==r["peak_live_event_leaves"],"lazy event slots grew beyond residency peak")
         if result["trace_truncated"]:return
         original=program;program=materialize(program)
+        if "rom_records_drained" in r:
+            definitions={b["id"]:b for b in program["blocks"]};transitions=[];live={};peak_rom=generations=0
+            for b in result["block_intervals"]:
+                if b["id"] not in definitions:continue
+                key=(definitions[b["id"]]["pe"],definitions[b["id"]]["template"])
+                transitions.extend([(b["admit_cycle"],1,key),(b["retire_cycle"],-1,key)])
+            for _,delta,key in sorted(transitions):
+                if delta<0:
+                    live[key]-=1
+                    if not live[key]:del live[key]
+                else:
+                    if key not in live:generations+=1
+                    live[key]=live.get(key,0)+1;peak_rom=max(peak_rom,len(live))
+            require(not live and (peak_rom,generations)==(r["allocated_rom_record_slots"],r["rom_record_generations"]),"ROM host record reuse differs from actual template leases")
         def size(items):
             nodes=leaves=0
             for item in items:
@@ -209,9 +225,11 @@ def main():
     parser.add_argument("--include-source-order",action="store_true")
     parser.add_argument("--include-source-graph",action="store_true")
     parser.add_argument("--include-lazy",action="store_true")
+    parser.add_argument("--include-rom-recycling",action="store_true")
     parser.add_argument("--case-timeout",type=int,default=60)
     args = parser.parse_args(); out = args.output.resolve(); tests = args.tests.resolve()
     require(1<=args.case_timeout<=600,"invalid safety case watchdog")
+    if args.include_rom_recycling:args.include_lazy=True
     if args.include_lazy:args.include_source_graph=True
     if args.include_source_graph:args.include_source_order=True
     if args.include_source_order:args.include_control=True
@@ -220,7 +238,7 @@ def main():
     require(suite is not None and all(suite.get(k) == "0" for k in ("failures", "errors", "skipped")), "event regression failed")
     paths = [p for p in (tests / "pytest").rglob("program.json") if not any(a.is_symlink() for a in p.parents)
              and json.loads(p.read_text()).get("schema","").startswith("mlx_event_schedule_")]
-    require(len(paths) == (324 if args.include_lazy else 291 if args.include_source_graph else 272 if args.include_source_order else 202 if args.include_control else 166 if args.include_memory else 142 if args.include_vectors else 94 if args.include_ports else 58 if args.include_loops else 29), "event safety replay scope differs")
+    require(len(paths) == (328 if args.include_rom_recycling else 324 if args.include_lazy else 291 if args.include_source_graph else 272 if args.include_source_order else 202 if args.include_control else 166 if args.include_memory else 142 if args.include_vectors else 94 if args.include_ports else 58 if args.include_loops else 29), "event safety replay scope differs")
     sources = {str(p.relative_to(ROOT)): sha(p) for p in (ROOT / "simulator_ext/event_schedule").iterdir() if p.is_file()}
     for p in (Path(__file__).resolve(), ROOT / "tests/test_event_schedule.py", ROOT / "src/mlxsim/model_event_resources.py"):
         sources[str(p.relative_to(ROOT))] = sha(p)
@@ -265,7 +283,7 @@ def main():
             require(result == baseline, "event sanitizer changed full result")
             audit_trace(json.loads(p.read_text()), result)
         replays.append(dict(program=str(p), expected_exit=expected, result=str(actual) if not expected else None, log_sha256=sha(log)))
-    require(sum(r["expected_exit"] == 0 for r in replays) == (273 if args.include_lazy else 248 if args.include_source_graph else 236 if args.include_source_order else 168 if args.include_control else 136 if args.include_memory else 115 if args.include_vectors else 67 if args.include_ports else 37 if args.include_loops else 18), "event safety success coverage differs")
+    require(sum(r["expected_exit"] == 0 for r in replays) == (277 if args.include_rom_recycling else 273 if args.include_lazy else 248 if args.include_source_graph else 236 if args.include_source_order else 168 if args.include_control else 136 if args.include_memory else 115 if args.include_vectors else 67 if args.include_ports else 37 if args.include_loops else 18), "event safety success coverage differs")
     require(all(sha(ROOT / p) == h for p,h in sources.items()) and all(sha(Path(p)) == h for p,h in {**files,**libraries}.items()) and all(not Path(p).exists() for p in missing) and sha(args.binary) == binary_hash, "event safety sources/inputs changed")
     record(out / "report.json", dict(classification="concurrent_event_core_component_validation_not_full_model", sources=sources, inputs=files,
                                      regression_tests=int(suite.get("tests")), replays=replays, asan_binary_sha256=binary_hash, full_model_verified=False,

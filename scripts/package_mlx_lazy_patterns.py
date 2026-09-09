@@ -14,11 +14,13 @@ ROOT=Path(__file__).resolve().parents[1]
 def main():
     parser=argparse.ArgumentParser(description=__doc__)
     for key in ("tests","safety","pattern-run","output"):parser.add_argument("--"+key,type=Path,required=True)
+    parser.add_argument("--rom-recycling",action="store_true")
     args=parser.parse_args();tests=args.tests.resolve();safety=args.safety.resolve();run=args.pattern_run.resolve();out=args.output.resolve()
+    tests_expected,replays_expected,success_expected=(344,328,277) if args.rom_recycling else (342,324,273)
     require(not out.exists(),"choose fresh lazy publication")
     suite=ET.parse(tests/"regression.xml").getroot().find("testsuite")
-    require(suite is not None and suite.get("tests")=="342" and all(suite.get(k)=="0" for k in ("errors","failures","skipped")),"lazy regression not accepted")
-    report=json.loads((safety/"report.json").read_text());require(report["regression_tests"]==342 and len(report["replays"])==324 and sum(r["expected_exit"]==0 for r in report["replays"])==273,"lazy safety scope differs")
+    require(suite is not None and suite.get("tests")==str(tests_expected) and all(suite.get(k)=="0" for k in ("errors","failures","skipped")),"lazy regression not accepted")
+    report=json.loads((safety/"report.json").read_text());require(report["regression_tests"]==tests_expected and len(report["replays"])==replays_expected and sum(r["expected_exit"]==0 for r in report["replays"])==success_expected,"lazy safety scope differs")
     copies={tests/"regression.xml":Path("tests/regression.xml")}
     for name,sha in report["sources"].items():require(digest(ROOT/name)==sha,"lazy tested source changed");copies[ROOT/name]=Path("sources")/name
     for path,sha in report["inputs"].items():
@@ -48,7 +50,7 @@ def main():
     for source,relative in sorted(copies.items()):
         target=out/relative;target.parent.mkdir(parents=True,exist_ok=True);sha=digest(source);shutil.copy2(source,target);require(digest(target)==sha==digest(source),"lazy publication copy changed")
         files.append(dict(path=str(relative),source_path=str(source),sha256=sha,bytes=source.stat().st_size))
-    record(out/"manifest.json",dict(classification="lazy_event_state_loading_not_full_model_execution",regression_tests=342,sanitizer_replays=324,successful_replays=273,expected_rejections=51,
+    record(out/"manifest.json",dict(classification="lazy_event_state_loading_not_full_model_execution",regression_tests=tests_expected,sanitizer_replays=replays_expected,successful_replays=success_expected,expected_rejections=51,
         full_shape_pattern=full,block_descriptors_still_eager=True,full_event_lowering_complete=False,event_model_performance_error_available=False,
         files=files,file_count=len(files),total_bytes=sum(f["bytes"] for f in files)))
     print(f"LAZY_EVENT_PUBLICATION_PASS files={len(files)} bytes={sum(f['bytes'] for f in files)}")
