@@ -1,0 +1,224 @@
+{
+  "classification": "concurrent_event_core_component_validation_not_full_model",
+  "sources": {
+    "simulator_ext/event_schedule/event_schedule.h": "891ceb5a3a34e16dbe29b253b41bbc8c441f74481127ab3be37f535e2ec60b8a",
+    "simulator_ext/event_schedule/event_schedule.cc": "61c52645ce94340a9e3909b28965595c793d446c5480baa91ff8f6b15ed2fc97",
+    "simulator_ext/event_schedule/main.cc": "bba33e9c7998c3f1827873374618ac391b52241c79ac64b093068ad9d6f81047",
+    "simulator_ext/event_schedule/CMakeLists.txt": "2e7a7e0347f6dae7aa02935f83e38ef25a8ce77a338af2af3bc305f5d87e4f8b",
+    "scripts/verify_mlx_event_schedule.py": "c467f359e5dc5ab34c16cf59e21931d0dc4fd3548edd5db142c8cd27ee5ca41b",
+    "tests/test_event_schedule.py": "b336a655e800cc6c57e4dd4e010a8a5d8fa53872319fe563f98b93a66ef0b26b",
+    "src/mlxsim/model_event_resources.py": "a3df26f5b725ce4e3010461443a7fc77e1b4e66a99593957e2daa658551fb1e5"
+  },
+  "inputs": {
+    "/workspace/mlx-event-runtime-upfKzE/artifacts/tagged/event-schedule-tests-006/pytest/test_invalid_or_unrepresentabl2/bad/program.json": "d5053ab0bee2762912fb8190c9726cd9e75958addac394ec3dac3f7a99579687",
+    "/workspace/mlx-event-runtime-upfKzE/artifacts/tagged/event-schedule-tests-006/pytest/test_invalid_or_unrepresentabl9/bad/program.json": "83339ad6f9b09bbfb9427b581c18bdbb685d79aa1110dc21e7162fa831acf792",
+    "/workspace/mlx-event-runtime-upfKzE/artifacts/tagged/event-schedule-tests-006/pytest/test_calendar_advances_over_id0/skip/program.json": "43029968065a2c7e7c54f4fefc243364b2b5c973a04cdcddd0fd41ddfdf6ac53",
+    "/workspace/mlx-event-runtime-upfKzE/artifacts/tagged/event-schedule-tests-006/pytest/test_actual_matrix_template_sp1/f32/program.json": "9886254a0870cfc28e7b1c22aa0c95aa6726989a1ba5138e9f0954eddcc48df6",
+    "/workspace/mlx-event-runtime-upfKzE/artifacts/tagged/event-schedule-tests-006/pytest/test_single_dma_resource_and_c0/dma/program.json": "864257dcfb6b2dd190655c8b917216f73d9fe4c63c95043c02a0cc52072cf5b1",
+    "/workspace/mlx-event-runtime-upfKzE/artifacts/tagged/event-schedule-tests-006/pytest/test_invalid_or_unrepresentabl0/bad/program.json": "ea85b07799e512613c96e9723cb1dc45b6cd21a960820a9bda883416dd5bfdfd",
+    "/workspace/mlx-event-runtime-upfKzE/artifacts/tagged/event-schedule-tests-006/pytest/test_same_pe_different_pipelin0/overlap/program.json": "d3f66e2752d5d4de5cf9dadf2cb199f81b3ec95c761c203a52efc9ca2cf1682b",
+    "/workspace/mlx-event-runtime-upfKzE/artifacts/tagged/event-schedule-tests-006/pytest/test_invalid_or_unrepresentabl8/bad/program.json": "6440b211be69f6dedb73395fc89dd49f2adbcd587ecc82d38b2049dc53c55ac8",
+    "/workspace/mlx-event-runtime-upfKzE/artifacts/tagged/event-schedule-tests-006/pytest/test_two_contexts_share_one_re0/shared-code/program.json": "d12af14fa5aa41b9c5bcd78e80bee1a12d08ba1f9ac54c32fff993022bf75bfa",
+    "/workspace/mlx-event-runtime-upfKzE/artifacts/tagged/event-schedule-tests-006/pytest/test_many_mapped_blocks_are_no0/many/program.json": "c3c03e48ca1dc1dd50528a175552198f8c308d599b934ffd157143196ab2ccdb",
+    "/workspace/mlx-event-runtime-upfKzE/artifacts/tagged/event-schedule-tests-006/pytest/test_invalid_or_unrepresentabl5/bad/program.json": "09627b52f199ae9f17894542f6132a25c3ca7acaeba291453a41247e8ec7bdc9",
+    "/workspace/mlx-event-runtime-upfKzE/artifacts/tagged/event-schedule-tests-006/pytest/test_admission_dependency_does0/admission/program.json": "7b068d37558ce365424657181bbfac517fcce26fbde02bcbb0b9ffc0ef5828cf",
+    "/workspace/mlx-event-runtime-upfKzE/artifacts/tagged/event-schedule-tests-006/pytest/test_invalid_or_unrepresentabl4/bad/program.json": "4eedd6dfb48ddf3136e887dc071566a74670bef67a95c00d8cd25053098a3a71",
+    "/workspace/mlx-event-runtime-upfKzE/artifacts/tagged/event-schedule-tests-006/pytest/test_source_window_limits_sour0/one-source/program.json": "dacba92fce7fedc7c7c926ce8f65c24bcf4d6b0a4b41b8d2222507ffa56d85b2",
+    "/workspace/mlx-event-runtime-upfKzE/artifacts/tagged/event-schedule-tests-006/pytest/test_independent_pes_execute_c0/two-pes/program.json": "0ba15e99d6de62972bcef6eb827fa2c25601e503ce013082ac19d00c8a2e01a3",
+    "/workspace/mlx-event-runtime-upfKzE/artifacts/tagged/event-schedule-tests-006/pytest/test_actual_matrix_template_sp0/f16/program.json": "723bb69040eb4fc4072fd74bd2c955d6da3fb531118838ff50d9eaa72045bf2c",
+    "/workspace/mlx-event-runtime-upfKzE/artifacts/tagged/event-schedule-tests-006/pytest/test_completion_at_exact_cycle0/exact-budget/program.json": "64d8faafe9f9f7cdb9a66c58f54406d01b17a5c930827a96a5c5c9b431230a23",
+    "/workspace/mlx-event-runtime-upfKzE/artifacts/tagged/event-schedule-tests-006/pytest/test_issue_policy_changes_sele0/priority/program.json": "38d85063c387c2b3a3d25732556a79ce7739435030e2fc11d9073582e972fc2d",
+    "/workspace/mlx-event-runtime-upfKzE/artifacts/tagged/event-schedule-tests-006/pytest/test_issue_policy_changes_sele0/rr/program.json": "f506f422dfc1d2631dfc11c415121dd0e90d0ad945be40b6261d02c2f75fd125",
+    "/workspace/mlx-event-runtime-upfKzE/artifacts/tagged/event-schedule-tests-006/pytest/test_invalid_or_unrepresentabl7/bad/program.json": "fc31ee7af28e3967005d19129819e3a0818afdd9dfb93764410827274a6abbb6",
+    "/workspace/mlx-event-runtime-upfKzE/artifacts/tagged/event-schedule-tests-006/pytest/test_policy_ablation_keeps_mul1/round_robin/program.json": "9019a16af781118e9f541ae5867af0d4aff199534cdc94316299e3417fbc1b48",
+    "/workspace/mlx-event-runtime-upfKzE/artifacts/tagged/event-schedule-tests-006/pytest/test_event_identity_is_not_imp0/id/program.json": "926a7124bf32dc8ffb2547a492fd26b715a967b80d1322f722338a0d07edfa14",
+    "/workspace/mlx-event-runtime-upfKzE/artifacts/tagged/event-schedule-tests-006/pytest/test_rom_exhaustion_waits_for_0/rom/program.json": "a8ff290f7f16ca2d72dfe7ab58a4e77d75616f67ee3e80c0c45c569e82762663",
+    "/workspace/mlx-event-runtime-upfKzE/artifacts/tagged/event-schedule-tests-006/pytest/test_invalid_or_unrepresentabl6/bad/program.json": "f5025a48e030249fe3431be9675b260eb7483233afd3da69f9c82738003e2516",
+    "/workspace/mlx-event-runtime-upfKzE/artifacts/tagged/event-schedule-tests-006/pytest/test_policy_ablation_keeps_mul0/source_priority/program.json": "69be6a8ca42e1cdb390a94d5afa248bf5710fd03f7fbebbb96023eca9fd19020",
+    "/workspace/mlx-event-runtime-upfKzE/artifacts/tagged/event-schedule-tests-006/pytest/test_invalid_or_unrepresentabl1/bad/program.json": "5808370120a690092a170cf83cd8c5bd04116769b778b97617dffa8bb7df8d8c",
+    "/workspace/mlx-event-runtime-upfKzE/artifacts/tagged/event-schedule-tests-006/pytest/test_boolean_dma_is_one_real_b0/bool-dma/program.json": "9b3b16ab8eb451f86699aee5f5b3f6bf0d8487fc0a58545357a55d5413e78046",
+    "/workspace/mlx-event-runtime-upfKzE/artifacts/tagged/event-schedule-tests-006/pytest/test_invalid_or_unrepresentabl3/bad/program.json": "129e2a3d55f5718754ab78a993a959c7c7c2d78fe60a401d834cd4e5e85ff74c",
+    "/workspace/mlx-event-runtime-upfKzE/artifacts/tagged/event-schedule-tests-006/pytest/test_explicit_dependency_uses_0/edge/program.json": "95cc6d6ac0b4179fce764ed8a9a3ee3b9f38f8e5727aaa41a37b719d21b5e1ee"
+  },
+  "regression_tests": 35,
+  "replays": [
+    {
+      "program": "/workspace/mlx-event-runtime-upfKzE/artifacts/tagged/event-schedule-tests-006/pytest/test_actual_matrix_template_sp0/f16/program.json",
+      "expected_exit": 0,
+      "result": "/workspace/mlx-event-runtime-upfKzE/artifacts/tagged/event-schedule-safety-003/case-00.json",
+      "log_sha256": "3fd3c2299a33ca394dcdc908f141bfde3e7a64d708399d236068a7505af45903"
+    },
+    {
+      "program": "/workspace/mlx-event-runtime-upfKzE/artifacts/tagged/event-schedule-tests-006/pytest/test_actual_matrix_template_sp1/f32/program.json",
+      "expected_exit": 0,
+      "result": "/workspace/mlx-event-runtime-upfKzE/artifacts/tagged/event-schedule-safety-003/case-01.json",
+      "log_sha256": "914030913571eab12744155efc7086a136c6d3ccfccb911f911caaae363f56a4"
+    },
+    {
+      "program": "/workspace/mlx-event-runtime-upfKzE/artifacts/tagged/event-schedule-tests-006/pytest/test_admission_dependency_does0/admission/program.json",
+      "expected_exit": 0,
+      "result": "/workspace/mlx-event-runtime-upfKzE/artifacts/tagged/event-schedule-safety-003/case-02.json",
+      "log_sha256": "7b753354856d63cc887c88b298f0fd08eac7f16e8f4e970c35d10512d7bd5a72"
+    },
+    {
+      "program": "/workspace/mlx-event-runtime-upfKzE/artifacts/tagged/event-schedule-tests-006/pytest/test_boolean_dma_is_one_real_b0/bool-dma/program.json",
+      "expected_exit": 0,
+      "result": "/workspace/mlx-event-runtime-upfKzE/artifacts/tagged/event-schedule-safety-003/case-03.json",
+      "log_sha256": "3834876f40aa88993ee59a9b4720fc1657b5b04a0f5ea139bdf3923fe373778f"
+    },
+    {
+      "program": "/workspace/mlx-event-runtime-upfKzE/artifacts/tagged/event-schedule-tests-006/pytest/test_calendar_advances_over_id0/skip/program.json",
+      "expected_exit": 0,
+      "result": "/workspace/mlx-event-runtime-upfKzE/artifacts/tagged/event-schedule-safety-003/case-04.json",
+      "log_sha256": "63867572b399f053d223cab51f81ec6492ec86fc3f05cd0a30bcc71f374b9725"
+    },
+    {
+      "program": "/workspace/mlx-event-runtime-upfKzE/artifacts/tagged/event-schedule-tests-006/pytest/test_completion_at_exact_cycle0/exact-budget/program.json",
+      "expected_exit": 0,
+      "result": "/workspace/mlx-event-runtime-upfKzE/artifacts/tagged/event-schedule-safety-003/case-05.json",
+      "log_sha256": "6774f047cd0d9307190133b0f6736687596a8ca98df0e5a22fa0711e4949aa5e"
+    },
+    {
+      "program": "/workspace/mlx-event-runtime-upfKzE/artifacts/tagged/event-schedule-tests-006/pytest/test_event_identity_is_not_imp0/id/program.json",
+      "expected_exit": 1,
+      "result": null,
+      "log_sha256": "2fc07109670d161335c2604b84b0b1a565dc7dd8c6b4246dcb6ba9c2da3680f3"
+    },
+    {
+      "program": "/workspace/mlx-event-runtime-upfKzE/artifacts/tagged/event-schedule-tests-006/pytest/test_explicit_dependency_uses_0/edge/program.json",
+      "expected_exit": 0,
+      "result": "/workspace/mlx-event-runtime-upfKzE/artifacts/tagged/event-schedule-safety-003/case-07.json",
+      "log_sha256": "7b753354856d63cc887c88b298f0fd08eac7f16e8f4e970c35d10512d7bd5a72"
+    },
+    {
+      "program": "/workspace/mlx-event-runtime-upfKzE/artifacts/tagged/event-schedule-tests-006/pytest/test_independent_pes_execute_c0/two-pes/program.json",
+      "expected_exit": 0,
+      "result": "/workspace/mlx-event-runtime-upfKzE/artifacts/tagged/event-schedule-safety-003/case-08.json",
+      "log_sha256": "6774f047cd0d9307190133b0f6736687596a8ca98df0e5a22fa0711e4949aa5e"
+    },
+    {
+      "program": "/workspace/mlx-event-runtime-upfKzE/artifacts/tagged/event-schedule-tests-006/pytest/test_invalid_or_unrepresentabl0/bad/program.json",
+      "expected_exit": 1,
+      "result": null,
+      "log_sha256": "ea3dc5f30b5c5c96eac0543a240bf8e022bfad3ba3d48ca92176908b85571ef5"
+    },
+    {
+      "program": "/workspace/mlx-event-runtime-upfKzE/artifacts/tagged/event-schedule-tests-006/pytest/test_invalid_or_unrepresentabl1/bad/program.json",
+      "expected_exit": 1,
+      "result": null,
+      "log_sha256": "73ef08187cc0a9be22a2c055e3cf55cc7dabd1f60aaaee41f476c2c4e815a53e"
+    },
+    {
+      "program": "/workspace/mlx-event-runtime-upfKzE/artifacts/tagged/event-schedule-tests-006/pytest/test_invalid_or_unrepresentabl2/bad/program.json",
+      "expected_exit": 1,
+      "result": null,
+      "log_sha256": "e34eb54406b62ab5934ead1ebf01dfc0d2996f33c4c1758e0df52ef293a75245"
+    },
+    {
+      "program": "/workspace/mlx-event-runtime-upfKzE/artifacts/tagged/event-schedule-tests-006/pytest/test_invalid_or_unrepresentabl3/bad/program.json",
+      "expected_exit": 1,
+      "result": null,
+      "log_sha256": "d9182a8b45a5fd8cf067f055e1a880cc836b2ff79cb9750cc5f82bc4ff6ec07c"
+    },
+    {
+      "program": "/workspace/mlx-event-runtime-upfKzE/artifacts/tagged/event-schedule-tests-006/pytest/test_invalid_or_unrepresentabl4/bad/program.json",
+      "expected_exit": 1,
+      "result": null,
+      "log_sha256": "5fa58a46cded603c804ec0ec19976eecb70627ae827f505d17feb916f85765c6"
+    },
+    {
+      "program": "/workspace/mlx-event-runtime-upfKzE/artifacts/tagged/event-schedule-tests-006/pytest/test_invalid_or_unrepresentabl5/bad/program.json",
+      "expected_exit": 1,
+      "result": null,
+      "log_sha256": "a764f090515bfdc93c3b4624280e994958c4aacea65add11d63ea0863bbb1aa4"
+    },
+    {
+      "program": "/workspace/mlx-event-runtime-upfKzE/artifacts/tagged/event-schedule-tests-006/pytest/test_invalid_or_unrepresentabl6/bad/program.json",
+      "expected_exit": 1,
+      "result": null,
+      "log_sha256": "6bb0dbf0d55a175cf3988633193bbe56ae0234181a2e5e198772030c33589433"
+    },
+    {
+      "program": "/workspace/mlx-event-runtime-upfKzE/artifacts/tagged/event-schedule-tests-006/pytest/test_invalid_or_unrepresentabl7/bad/program.json",
+      "expected_exit": 1,
+      "result": null,
+      "log_sha256": "fe430ee937d4b111135300bb0d29ab936f4abeba97a48d8de3963a39ee1e90c8"
+    },
+    {
+      "program": "/workspace/mlx-event-runtime-upfKzE/artifacts/tagged/event-schedule-tests-006/pytest/test_invalid_or_unrepresentabl8/bad/program.json",
+      "expected_exit": 1,
+      "result": null,
+      "log_sha256": "4029df8e14b517351d45da12e63d1c2c6d6cae718314dab09b0fcbc4b13829b4"
+    },
+    {
+      "program": "/workspace/mlx-event-runtime-upfKzE/artifacts/tagged/event-schedule-tests-006/pytest/test_invalid_or_unrepresentabl9/bad/program.json",
+      "expected_exit": 1,
+      "result": null,
+      "log_sha256": "6cf72f489ba4f74d3aef3ad1f32d0af6766e105e3217045b78f7d3396563e27c"
+    },
+    {
+      "program": "/workspace/mlx-event-runtime-upfKzE/artifacts/tagged/event-schedule-tests-006/pytest/test_issue_policy_changes_sele0/priority/program.json",
+      "expected_exit": 0,
+      "result": "/workspace/mlx-event-runtime-upfKzE/artifacts/tagged/event-schedule-safety-003/case-19.json",
+      "log_sha256": "efa61214a3a7b1a5f2d9a4834b38f1e5b56a4782f329927b286b3e3273b8891b"
+    },
+    {
+      "program": "/workspace/mlx-event-runtime-upfKzE/artifacts/tagged/event-schedule-tests-006/pytest/test_issue_policy_changes_sele0/rr/program.json",
+      "expected_exit": 0,
+      "result": "/workspace/mlx-event-runtime-upfKzE/artifacts/tagged/event-schedule-safety-003/case-20.json",
+      "log_sha256": "efa61214a3a7b1a5f2d9a4834b38f1e5b56a4782f329927b286b3e3273b8891b"
+    },
+    {
+      "program": "/workspace/mlx-event-runtime-upfKzE/artifacts/tagged/event-schedule-tests-006/pytest/test_many_mapped_blocks_are_no0/many/program.json",
+      "expected_exit": 0,
+      "result": "/workspace/mlx-event-runtime-upfKzE/artifacts/tagged/event-schedule-safety-003/case-21.json",
+      "log_sha256": "23214a13cbf6e80ca5372cf0d32aba50cf772bf76799e1ed4549e1179834e9d5"
+    },
+    {
+      "program": "/workspace/mlx-event-runtime-upfKzE/artifacts/tagged/event-schedule-tests-006/pytest/test_policy_ablation_keeps_mul0/source_priority/program.json",
+      "expected_exit": 0,
+      "result": "/workspace/mlx-event-runtime-upfKzE/artifacts/tagged/event-schedule-safety-003/case-22.json",
+      "log_sha256": "6774f047cd0d9307190133b0f6736687596a8ca98df0e5a22fa0711e4949aa5e"
+    },
+    {
+      "program": "/workspace/mlx-event-runtime-upfKzE/artifacts/tagged/event-schedule-tests-006/pytest/test_policy_ablation_keeps_mul1/round_robin/program.json",
+      "expected_exit": 0,
+      "result": "/workspace/mlx-event-runtime-upfKzE/artifacts/tagged/event-schedule-safety-003/case-23.json",
+      "log_sha256": "6774f047cd0d9307190133b0f6736687596a8ca98df0e5a22fa0711e4949aa5e"
+    },
+    {
+      "program": "/workspace/mlx-event-runtime-upfKzE/artifacts/tagged/event-schedule-tests-006/pytest/test_rom_exhaustion_waits_for_0/rom/program.json",
+      "expected_exit": 0,
+      "result": "/workspace/mlx-event-runtime-upfKzE/artifacts/tagged/event-schedule-safety-003/case-24.json",
+      "log_sha256": "3fd3c2299a33ca394dcdc908f141bfde3e7a64d708399d236068a7505af45903"
+    },
+    {
+      "program": "/workspace/mlx-event-runtime-upfKzE/artifacts/tagged/event-schedule-tests-006/pytest/test_same_pe_different_pipelin0/overlap/program.json",
+      "expected_exit": 0,
+      "result": "/workspace/mlx-event-runtime-upfKzE/artifacts/tagged/event-schedule-safety-003/case-25.json",
+      "log_sha256": "7b753354856d63cc887c88b298f0fd08eac7f16e8f4e970c35d10512d7bd5a72"
+    },
+    {
+      "program": "/workspace/mlx-event-runtime-upfKzE/artifacts/tagged/event-schedule-tests-006/pytest/test_single_dma_resource_and_c0/dma/program.json",
+      "expected_exit": 0,
+      "result": "/workspace/mlx-event-runtime-upfKzE/artifacts/tagged/event-schedule-safety-003/case-26.json",
+      "log_sha256": "aa50fe2fab9d4a562609929fe7d88d2f34903803b81f6d3b5742f15f6bacbab7"
+    },
+    {
+      "program": "/workspace/mlx-event-runtime-upfKzE/artifacts/tagged/event-schedule-tests-006/pytest/test_source_window_limits_sour0/one-source/program.json",
+      "expected_exit": 0,
+      "result": "/workspace/mlx-event-runtime-upfKzE/artifacts/tagged/event-schedule-safety-003/case-27.json",
+      "log_sha256": "6774f047cd0d9307190133b0f6736687596a8ca98df0e5a22fa0711e4949aa5e"
+    },
+    {
+      "program": "/workspace/mlx-event-runtime-upfKzE/artifacts/tagged/event-schedule-tests-006/pytest/test_two_contexts_share_one_re0/shared-code/program.json",
+      "expected_exit": 0,
+      "result": "/workspace/mlx-event-runtime-upfKzE/artifacts/tagged/event-schedule-safety-003/case-28.json",
+      "log_sha256": "c5eadaaadbba54ec643aef08febecd252ae6bb15475f01f7212af49a50166af1"
+    }
+  ],
+  "asan_binary_sha256": "a14de1b874a7a13508f6433389fbea3113ea8676acddce88795c980ca1b3d660",
+  "full_model_verified": false,
+  "performance_error_available": false,
+  "trace_resource_accounting_checked": true
+}

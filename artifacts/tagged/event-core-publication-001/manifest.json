@@ -1,0 +1,842 @@
+{
+  "classification": "concurrent_event_core_and_complete_resource_inventory_not_full_model_event_execution",
+  "regression_tests": 35,
+  "sanitizer_replays": 29,
+  "successful_replays": 18,
+  "expected_rejections": 11,
+  "full_program_resources": {
+    "bert": {
+      "source_calls": 1141,
+      "lowered_calls": 3046,
+      "full_event_lowering_complete": false
+    },
+    "llama2": {
+      "source_calls": 6181,
+      "lowered_calls": 6181,
+      "full_event_lowering_complete": false
+    }
+  },
+  "full_event_lowering_complete": false,
+  "event_vs_end_to_end_error_available": false,
+  "files": [
+    {
+      "path": "resources/bert.json",
+      "source_path": "/workspace/mlx-event-runtime-upfKzE/artifacts/tagged/event-resource-contracts-001/bert.json",
+      "bytes": 1487329,
+      "sha256": "dd515f8add786ada7ef300fabd83c101d642f62470ac97a8c7c27bec3c06ef01"
+    },
+    {
+      "path": "resources/llama2.json",
+      "source_path": "/workspace/mlx-event-runtime-upfKzE/artifacts/tagged/event-resource-contracts-001/llama2.json",
+      "bytes": 2380903,
+      "sha256": "b6a51bf637e80731c14977d93899272407d5c591f18339ec0549ffd2314fe73a"
+    },
+    {
+      "path": "safety/case-00.json",
+      "source_path": "/workspace/mlx-event-runtime-upfKzE/artifacts/tagged/event-schedule-safety-003/case-00.json",
+      "bytes": 4363,
+      "sha256": "04a9e63f58340ae20838daf4b5c4aef11f570e693ec42832d0b61d02d6cb072d"
+    },
+    {
+      "path": "safety/case-00.log",
+      "source_path": "/workspace/mlx-event-runtime-upfKzE/artifacts/tagged/event-schedule-safety-003/case-00.log",
+      "bytes": 39,
+      "sha256": "3fd3c2299a33ca394dcdc908f141bfde3e7a64d708399d236068a7505af45903"
+    },
+    {
+      "path": "safety/case-01.json",
+      "source_path": "/workspace/mlx-event-runtime-upfKzE/artifacts/tagged/event-schedule-safety-003/case-01.json",
+      "bytes": 4367,
+      "sha256": "006f4ab85f296551df6d43477bbf8b7edcab9c456aaf65aad25128380b078176"
+    },
+    {
+      "path": "safety/case-01.log",
+      "source_path": "/workspace/mlx-event-runtime-upfKzE/artifacts/tagged/event-schedule-safety-003/case-01.log",
+      "bytes": 39,
+      "sha256": "914030913571eab12744155efc7086a136c6d3ccfccb911f911caaae363f56a4"
+    },
+    {
+      "path": "safety/case-02.json",
+      "source_path": "/workspace/mlx-event-runtime-upfKzE/artifacts/tagged/event-schedule-safety-003/case-02.json",
+      "bytes": 3026,
+      "sha256": "069aae98d8fef7400f60688bca596d48622c1befff4b865063f37c9fea04a3ad"
+    },
+    {
+      "path": "safety/case-02.log",
+      "source_path": "/workspace/mlx-event-runtime-upfKzE/artifacts/tagged/event-schedule-safety-003/case-02.log",
+      "bytes": 39,
+      "sha256": "7b753354856d63cc887c88b298f0fd08eac7f16e8f4e970c35d10512d7bd5a72"
+    },
+    {
+      "path": "safety/case-03.json",
+      "source_path": "/workspace/mlx-event-runtime-upfKzE/artifacts/tagged/event-schedule-safety-003/case-03.json",
+      "bytes": 2438,
+      "sha256": "fd47fc23a3465e49eaa4ba2b02461fe1db0fb72b10bb69d02b9c574faefba55b"
+    },
+    {
+      "path": "safety/case-03.log",
+      "source_path": "/workspace/mlx-event-runtime-upfKzE/artifacts/tagged/event-schedule-safety-003/case-03.log",
+      "bytes": 38,
+      "sha256": "3834876f40aa88993ee59a9b4720fc1657b5b04a0f5ea139bdf3923fe373778f"
+    },
+    {
+      "path": "safety/case-04.json",
+      "source_path": "/workspace/mlx-event-runtime-upfKzE/artifacts/tagged/event-schedule-safety-003/case-04.json",
+      "bytes": 2469,
+      "sha256": "69667c775c18f686ebbad9f9504ed71432f03f0c8e0b8272ac6edad488cc986a"
+    },
+    {
+      "path": "safety/case-04.log",
+      "source_path": "/workspace/mlx-event-runtime-upfKzE/artifacts/tagged/event-schedule-safety-003/case-04.log",
+      "bytes": 41,
+      "sha256": "63867572b399f053d223cab51f81ec6492ec86fc3f05cd0a30bcc71f374b9725"
+    },
+    {
+      "path": "safety/case-05.json",
+      "source_path": "/workspace/mlx-event-runtime-upfKzE/artifacts/tagged/event-schedule-safety-003/case-05.json",
+      "bytes": 3022,
+      "sha256": "be49c0b9a786c0e63a16b98e988daf3a960f087363db157a9043736917e72674"
+    },
+    {
+      "path": "safety/case-05.log",
+      "source_path": "/workspace/mlx-event-runtime-upfKzE/artifacts/tagged/event-schedule-safety-003/case-05.log",
+      "bytes": 38,
+      "sha256": "6774f047cd0d9307190133b0f6736687596a8ca98df0e5a22fa0711e4949aa5e"
+    },
+    {
+      "path": "safety/case-06.log",
+      "source_path": "/workspace/mlx-event-runtime-upfKzE/artifacts/tagged/event-schedule-safety-003/case-06.log",
+      "bytes": 45,
+      "sha256": "2fc07109670d161335c2604b84b0b1a565dc7dd8c6b4246dcb6ba9c2da3680f3"
+    },
+    {
+      "path": "safety/case-07.json",
+      "source_path": "/workspace/mlx-event-runtime-upfKzE/artifacts/tagged/event-schedule-safety-003/case-07.json",
+      "bytes": 3121,
+      "sha256": "4287ab34e5fb2ef03c09704bc8054937239288868bdb6e94854cdeed3e4ceffc"
+    },
+    {
+      "path": "safety/case-07.log",
+      "source_path": "/workspace/mlx-event-runtime-upfKzE/artifacts/tagged/event-schedule-safety-003/case-07.log",
+      "bytes": 39,
+      "sha256": "7b753354856d63cc887c88b298f0fd08eac7f16e8f4e970c35d10512d7bd5a72"
+    },
+    {
+      "path": "safety/case-08.json",
+      "source_path": "/workspace/mlx-event-runtime-upfKzE/artifacts/tagged/event-schedule-safety-003/case-08.json",
+      "bytes": 3022,
+      "sha256": "be49c0b9a786c0e63a16b98e988daf3a960f087363db157a9043736917e72674"
+    },
+    {
+      "path": "safety/case-08.log",
+      "source_path": "/workspace/mlx-event-runtime-upfKzE/artifacts/tagged/event-schedule-safety-003/case-08.log",
+      "bytes": 38,
+      "sha256": "6774f047cd0d9307190133b0f6736687596a8ca98df0e5a22fa0711e4949aa5e"
+    },
+    {
+      "path": "safety/case-09.log",
+      "source_path": "/workspace/mlx-event-runtime-upfKzE/artifacts/tagged/event-schedule-safety-003/case-09.log",
+      "bytes": 59,
+      "sha256": "ea3dc5f30b5c5c96eac0543a240bf8e022bfad3ba3d48ca92176908b85571ef5"
+    },
+    {
+      "path": "safety/case-10.log",
+      "source_path": "/workspace/mlx-event-runtime-upfKzE/artifacts/tagged/event-schedule-safety-003/case-10.log",
+      "bytes": 41,
+      "sha256": "73ef08187cc0a9be22a2c055e3cf55cc7dabd1f60aaaee41f476c2c4e815a53e"
+    },
+    {
+      "path": "safety/case-11.log",
+      "source_path": "/workspace/mlx-event-runtime-upfKzE/artifacts/tagged/event-schedule-safety-003/case-11.log",
+      "bytes": 49,
+      "sha256": "e34eb54406b62ab5934ead1ebf01dfc0d2996f33c4c1758e0df52ef293a75245"
+    },
+    {
+      "path": "safety/case-12.log",
+      "source_path": "/workspace/mlx-event-runtime-upfKzE/artifacts/tagged/event-schedule-safety-003/case-12.log",
+      "bytes": 38,
+      "sha256": "d9182a8b45a5fd8cf067f055e1a880cc836b2ff79cb9750cc5f82bc4ff6ec07c"
+    },
+    {
+      "path": "safety/case-13.log",
+      "source_path": "/workspace/mlx-event-runtime-upfKzE/artifacts/tagged/event-schedule-safety-003/case-13.log",
+      "bytes": 57,
+      "sha256": "5fa58a46cded603c804ec0ec19976eecb70627ae827f505d17feb916f85765c6"
+    },
+    {
+      "path": "safety/case-14.log",
+      "source_path": "/workspace/mlx-event-runtime-upfKzE/artifacts/tagged/event-schedule-safety-003/case-14.log",
+      "bytes": 40,
+      "sha256": "a764f090515bfdc93c3b4624280e994958c4aacea65add11d63ea0863bbb1aa4"
+    },
+    {
+      "path": "safety/case-15.log",
+      "source_path": "/workspace/mlx-event-runtime-upfKzE/artifacts/tagged/event-schedule-safety-003/case-15.log",
+      "bytes": 34,
+      "sha256": "6bb0dbf0d55a175cf3988633193bbe56ae0234181a2e5e198772030c33589433"
+    },
+    {
+      "path": "safety/case-16.log",
+      "source_path": "/workspace/mlx-event-runtime-upfKzE/artifacts/tagged/event-schedule-safety-003/case-16.log",
+      "bytes": 43,
+      "sha256": "fe430ee937d4b111135300bb0d29ab936f4abeba97a48d8de3963a39ee1e90c8"
+    },
+    {
+      "path": "safety/case-17.log",
+      "source_path": "/workspace/mlx-event-runtime-upfKzE/artifacts/tagged/event-schedule-safety-003/case-17.log",
+      "bytes": 73,
+      "sha256": "4029df8e14b517351d45da12e63d1c2c6d6cae718314dab09b0fcbc4b13829b4"
+    },
+    {
+      "path": "safety/case-18.log",
+      "source_path": "/workspace/mlx-event-runtime-upfKzE/artifacts/tagged/event-schedule-safety-003/case-18.log",
+      "bytes": 95,
+      "sha256": "6cf72f489ba4f74d3aef3ad1f32d0af6766e105e3217045b78f7d3396563e27c"
+    },
+    {
+      "path": "safety/case-19.json",
+      "source_path": "/workspace/mlx-event-runtime-upfKzE/artifacts/tagged/event-schedule-safety-003/case-19.json",
+      "bytes": 3737,
+      "sha256": "35b1ffe5041ca48d3b1a16b14d83d2bec9e9e7a164f5ba9f1446adaa821ff3eb"
+    },
+    {
+      "path": "safety/case-19.log",
+      "source_path": "/workspace/mlx-event-runtime-upfKzE/artifacts/tagged/event-schedule-safety-003/case-19.log",
+      "bytes": 38,
+      "sha256": "efa61214a3a7b1a5f2d9a4834b38f1e5b56a4782f329927b286b3e3273b8891b"
+    },
+    {
+      "path": "safety/case-20.json",
+      "source_path": "/workspace/mlx-event-runtime-upfKzE/artifacts/tagged/event-schedule-safety-003/case-20.json",
+      "bytes": 3733,
+      "sha256": "df6608b5ec8878d121996e6cf585f00140ca80bb85fbe04c099258a1d53ded35"
+    },
+    {
+      "path": "safety/case-20.log",
+      "source_path": "/workspace/mlx-event-runtime-upfKzE/artifacts/tagged/event-schedule-safety-003/case-20.log",
+      "bytes": 38,
+      "sha256": "efa61214a3a7b1a5f2d9a4834b38f1e5b56a4782f329927b286b3e3273b8891b"
+    },
+    {
+      "path": "safety/case-21.json",
+      "source_path": "/workspace/mlx-event-runtime-upfKzE/artifacts/tagged/event-schedule-safety-003/case-21.json",
+      "bytes": 508334,
+      "sha256": "3c3827625202a7ce4ad7281cb6c7e4d3527ebe31c091fd3cc7fdc75b8b3241d3"
+    },
+    {
+      "path": "safety/case-21.log",
+      "source_path": "/workspace/mlx-event-runtime-upfKzE/artifacts/tagged/event-schedule-safety-003/case-21.log",
+      "bytes": 44,
+      "sha256": "23214a13cbf6e80ca5372cf0d32aba50cf772bf76799e1ed4549e1179834e9d5"
+    },
+    {
+      "path": "safety/case-22.json",
+      "source_path": "/workspace/mlx-event-runtime-upfKzE/artifacts/tagged/event-schedule-safety-003/case-22.json",
+      "bytes": 4204,
+      "sha256": "155dc9f6446e8302f4aadcf910e36968cada0f4d8c015eb6f9a35ea8cfcb65c8"
+    },
+    {
+      "path": "safety/case-22.log",
+      "source_path": "/workspace/mlx-event-runtime-upfKzE/artifacts/tagged/event-schedule-safety-003/case-22.log",
+      "bytes": 38,
+      "sha256": "6774f047cd0d9307190133b0f6736687596a8ca98df0e5a22fa0711e4949aa5e"
+    },
+    {
+      "path": "safety/case-23.json",
+      "source_path": "/workspace/mlx-event-runtime-upfKzE/artifacts/tagged/event-schedule-safety-003/case-23.json",
+      "bytes": 4200,
+      "sha256": "c5584715f699337a28889f9a8fb430356c30163c20e858b6d6438bcf520d3181"
+    },
+    {
+      "path": "safety/case-23.log",
+      "source_path": "/workspace/mlx-event-runtime-upfKzE/artifacts/tagged/event-schedule-safety-003/case-23.log",
+      "bytes": 38,
+      "sha256": "6774f047cd0d9307190133b0f6736687596a8ca98df0e5a22fa0711e4949aa5e"
+    },
+    {
+      "path": "safety/case-24.json",
+      "source_path": "/workspace/mlx-event-runtime-upfKzE/artifacts/tagged/event-schedule-safety-003/case-24.json",
+      "bytes": 3172,
+      "sha256": "ae9f10ff5608af9a6b2f14a2681c5b14ba2db1a9daa27e5214bd37a4052ce0b4"
+    },
+    {
+      "path": "safety/case-24.log",
+      "source_path": "/workspace/mlx-event-runtime-upfKzE/artifacts/tagged/event-schedule-safety-003/case-24.log",
+      "bytes": 39,
+      "sha256": "3fd3c2299a33ca394dcdc908f141bfde3e7a64d708399d236068a7505af45903"
+    },
+    {
+      "path": "safety/case-25.json",
+      "source_path": "/workspace/mlx-event-runtime-upfKzE/artifacts/tagged/event-schedule-safety-003/case-25.json",
+      "bytes": 3349,
+      "sha256": "87aecd0746a7ef77f6adb11c36cc55e5fde667527acad524306905c120311db0"
+    },
+    {
+      "path": "safety/case-25.log",
+      "source_path": "/workspace/mlx-event-runtime-upfKzE/artifacts/tagged/event-schedule-safety-003/case-25.log",
+      "bytes": 39,
+      "sha256": "7b753354856d63cc887c88b298f0fd08eac7f16e8f4e970c35d10512d7bd5a72"
+    },
+    {
+      "path": "safety/case-26.json",
+      "source_path": "/workspace/mlx-event-runtime-upfKzE/artifacts/tagged/event-schedule-safety-003/case-26.json",
+      "bytes": 3987,
+      "sha256": "188dcd3d89375f9b5e683ba3aa9e92a23bfe16c1b0063af1dd0fc1889965002b"
+    },
+    {
+      "path": "safety/case-26.log",
+      "source_path": "/workspace/mlx-event-runtime-upfKzE/artifacts/tagged/event-schedule-safety-003/case-26.log",
+      "bytes": 39,
+      "sha256": "aa50fe2fab9d4a562609929fe7d88d2f34903803b81f6d3b5742f15f6bacbab7"
+    },
+    {
+      "path": "safety/case-27.json",
+      "source_path": "/workspace/mlx-event-runtime-upfKzE/artifacts/tagged/event-schedule-safety-003/case-27.json",
+      "bytes": 4203,
+      "sha256": "8c038782b4152a2d8ca4483b6214a91b2cd75dc2f9b15f757da595147edf05b6"
+    },
+    {
+      "path": "safety/case-27.log",
+      "source_path": "/workspace/mlx-event-runtime-upfKzE/artifacts/tagged/event-schedule-safety-003/case-27.log",
+      "bytes": 38,
+      "sha256": "6774f047cd0d9307190133b0f6736687596a8ca98df0e5a22fa0711e4949aa5e"
+    },
+    {
+      "path": "safety/case-28.json",
+      "source_path": "/workspace/mlx-event-runtime-upfKzE/artifacts/tagged/event-schedule-safety-003/case-28.json",
+      "bytes": 3248,
+      "sha256": "c2fb83978eeed038f97d7e9f720d09be01fe37249cd05f994b162d326140bc12"
+    },
+    {
+      "path": "safety/case-28.log",
+      "source_path": "/workspace/mlx-event-runtime-upfKzE/artifacts/tagged/event-schedule-safety-003/case-28.log",
+      "bytes": 39,
+      "sha256": "c5eadaaadbba54ec643aef08febecd252ae6bb15475f01f7212af49a50166af1"
+    },
+    {
+      "path": "safety/report.json",
+      "source_path": "/workspace/mlx-event-runtime-upfKzE/artifacts/tagged/event-schedule-safety-003/report.json",
+      "bytes": 17735,
+      "sha256": "44e98b5d101c5a9397b64607ab6012ec748a1ff200fa0473885dec39b5b2b8f2"
+    },
+    {
+      "path": "tests/pytest/test_actual_matrix_template_sp0/f16/program.json",
+      "source_path": "/workspace/mlx-event-runtime-upfKzE/artifacts/tagged/event-schedule-tests-006/pytest/test_actual_matrix_template_sp0/f16/program.json",
+      "bytes": 1391,
+      "sha256": "723bb69040eb4fc4072fd74bd2c955d6da3fb531118838ff50d9eaa72045bf2c"
+    },
+    {
+      "path": "tests/pytest/test_actual_matrix_template_sp0/f16/result.json",
+      "source_path": "/workspace/mlx-event-runtime-upfKzE/artifacts/tagged/event-schedule-tests-006/pytest/test_actual_matrix_template_sp0/f16/result.json",
+      "bytes": 4363,
+      "sha256": "04a9e63f58340ae20838daf4b5c4aef11f570e693ec42832d0b61d02d6cb072d"
+    },
+    {
+      "path": "tests/pytest/test_actual_matrix_template_sp0/f16/run.log",
+      "source_path": "/workspace/mlx-event-runtime-upfKzE/artifacts/tagged/event-schedule-tests-006/pytest/test_actual_matrix_template_sp0/f16/run.log",
+      "bytes": 39,
+      "sha256": "3fd3c2299a33ca394dcdc908f141bfde3e7a64d708399d236068a7505af45903"
+    },
+    {
+      "path": "tests/pytest/test_actual_matrix_template_sp1/f32/program.json",
+      "source_path": "/workspace/mlx-event-runtime-upfKzE/artifacts/tagged/event-schedule-tests-006/pytest/test_actual_matrix_template_sp1/f32/program.json",
+      "bytes": 1345,
+      "sha256": "9886254a0870cfc28e7b1c22aa0c95aa6726989a1ba5138e9f0954eddcc48df6"
+    },
+    {
+      "path": "tests/pytest/test_actual_matrix_template_sp1/f32/result.json",
+      "source_path": "/workspace/mlx-event-runtime-upfKzE/artifacts/tagged/event-schedule-tests-006/pytest/test_actual_matrix_template_sp1/f32/result.json",
+      "bytes": 4367,
+      "sha256": "006f4ab85f296551df6d43477bbf8b7edcab9c456aaf65aad25128380b078176"
+    },
+    {
+      "path": "tests/pytest/test_actual_matrix_template_sp1/f32/run.log",
+      "source_path": "/workspace/mlx-event-runtime-upfKzE/artifacts/tagged/event-schedule-tests-006/pytest/test_actual_matrix_template_sp1/f32/run.log",
+      "bytes": 39,
+      "sha256": "914030913571eab12744155efc7086a136c6d3ccfccb911f911caaae363f56a4"
+    },
+    {
+      "path": "tests/pytest/test_admission_dependency_does0/admission/program.json",
+      "source_path": "/workspace/mlx-event-runtime-upfKzE/artifacts/tagged/event-schedule-tests-006/pytest/test_admission_dependency_does0/admission/program.json",
+      "bytes": 899,
+      "sha256": "7b068d37558ce365424657181bbfac517fcce26fbde02bcbb0b9ffc0ef5828cf"
+    },
+    {
+      "path": "tests/pytest/test_admission_dependency_does0/admission/result.json",
+      "source_path": "/workspace/mlx-event-runtime-upfKzE/artifacts/tagged/event-schedule-tests-006/pytest/test_admission_dependency_does0/admission/result.json",
+      "bytes": 3026,
+      "sha256": "069aae98d8fef7400f60688bca596d48622c1befff4b865063f37c9fea04a3ad"
+    },
+    {
+      "path": "tests/pytest/test_admission_dependency_does0/admission/run.log",
+      "source_path": "/workspace/mlx-event-runtime-upfKzE/artifacts/tagged/event-schedule-tests-006/pytest/test_admission_dependency_does0/admission/run.log",
+      "bytes": 39,
+      "sha256": "7b753354856d63cc887c88b298f0fd08eac7f16e8f4e970c35d10512d7bd5a72"
+    },
+    {
+      "path": "tests/pytest/test_boolean_dma_is_one_real_b0/bool-dma/program.json",
+      "source_path": "/workspace/mlx-event-runtime-upfKzE/artifacts/tagged/event-schedule-tests-006/pytest/test_boolean_dma_is_one_real_b0/bool-dma/program.json",
+      "bytes": 720,
+      "sha256": "9b3b16ab8eb451f86699aee5f5b3f6bf0d8487fc0a58545357a55d5413e78046"
+    },
+    {
+      "path": "tests/pytest/test_boolean_dma_is_one_real_b0/bool-dma/result.json",
+      "source_path": "/workspace/mlx-event-runtime-upfKzE/artifacts/tagged/event-schedule-tests-006/pytest/test_boolean_dma_is_one_real_b0/bool-dma/result.json",
+      "bytes": 2438,
+      "sha256": "fd47fc23a3465e49eaa4ba2b02461fe1db0fb72b10bb69d02b9c574faefba55b"
+    },
+    {
+      "path": "tests/pytest/test_boolean_dma_is_one_real_b0/bool-dma/run.log",
+      "source_path": "/workspace/mlx-event-runtime-upfKzE/artifacts/tagged/event-schedule-tests-006/pytest/test_boolean_dma_is_one_real_b0/bool-dma/run.log",
+      "bytes": 38,
+      "sha256": "3834876f40aa88993ee59a9b4720fc1657b5b04a0f5ea139bdf3923fe373778f"
+    },
+    {
+      "path": "tests/pytest/test_calendar_advances_over_id0/skip/program.json",
+      "source_path": "/workspace/mlx-event-runtime-upfKzE/artifacts/tagged/event-schedule-tests-006/pytest/test_calendar_advances_over_id0/skip/program.json",
+      "bytes": 724,
+      "sha256": "43029968065a2c7e7c54f4fefc243364b2b5c973a04cdcddd0fd41ddfdf6ac53"
+    },
+    {
+      "path": "tests/pytest/test_calendar_advances_over_id0/skip/result.json",
+      "source_path": "/workspace/mlx-event-runtime-upfKzE/artifacts/tagged/event-schedule-tests-006/pytest/test_calendar_advances_over_id0/skip/result.json",
+      "bytes": 2469,
+      "sha256": "69667c775c18f686ebbad9f9504ed71432f03f0c8e0b8272ac6edad488cc986a"
+    },
+    {
+      "path": "tests/pytest/test_calendar_advances_over_id0/skip/run.log",
+      "source_path": "/workspace/mlx-event-runtime-upfKzE/artifacts/tagged/event-schedule-tests-006/pytest/test_calendar_advances_over_id0/skip/run.log",
+      "bytes": 41,
+      "sha256": "63867572b399f053d223cab51f81ec6492ec86fc3f05cd0a30bcc71f374b9725"
+    },
+    {
+      "path": "tests/pytest/test_completion_at_exact_cycle0/exact-budget/program.json",
+      "source_path": "/workspace/mlx-event-runtime-upfKzE/artifacts/tagged/event-schedule-tests-006/pytest/test_completion_at_exact_cycle0/exact-budget/program.json",
+      "bytes": 889,
+      "sha256": "64d8faafe9f9f7cdb9a66c58f54406d01b17a5c930827a96a5c5c9b431230a23"
+    },
+    {
+      "path": "tests/pytest/test_completion_at_exact_cycle0/exact-budget/result.json",
+      "source_path": "/workspace/mlx-event-runtime-upfKzE/artifacts/tagged/event-schedule-tests-006/pytest/test_completion_at_exact_cycle0/exact-budget/result.json",
+      "bytes": 3022,
+      "sha256": "be49c0b9a786c0e63a16b98e988daf3a960f087363db157a9043736917e72674"
+    },
+    {
+      "path": "tests/pytest/test_completion_at_exact_cycle0/exact-budget/run.log",
+      "source_path": "/workspace/mlx-event-runtime-upfKzE/artifacts/tagged/event-schedule-tests-006/pytest/test_completion_at_exact_cycle0/exact-budget/run.log",
+      "bytes": 38,
+      "sha256": "6774f047cd0d9307190133b0f6736687596a8ca98df0e5a22fa0711e4949aa5e"
+    },
+    {
+      "path": "tests/pytest/test_event_identity_is_not_imp0/id/program.json",
+      "source_path": "/workspace/mlx-event-runtime-upfKzE/artifacts/tagged/event-schedule-tests-006/pytest/test_event_identity_is_not_imp0/id/program.json",
+      "bytes": 893,
+      "sha256": "926a7124bf32dc8ffb2547a492fd26b715a967b80d1322f722338a0d07edfa14"
+    },
+    {
+      "path": "tests/pytest/test_event_identity_is_not_imp0/id/run.log",
+      "source_path": "/workspace/mlx-event-runtime-upfKzE/artifacts/tagged/event-schedule-tests-006/pytest/test_event_identity_is_not_imp0/id/run.log",
+      "bytes": 45,
+      "sha256": "2fc07109670d161335c2604b84b0b1a565dc7dd8c6b4246dcb6ba9c2da3680f3"
+    },
+    {
+      "path": "tests/pytest/test_explicit_dependency_uses_0/edge/program.json",
+      "source_path": "/workspace/mlx-event-runtime-upfKzE/artifacts/tagged/event-schedule-tests-006/pytest/test_explicit_dependency_uses_0/edge/program.json",
+      "bytes": 899,
+      "sha256": "95cc6d6ac0b4179fce764ed8a9a3ee3b9f38f8e5727aaa41a37b719d21b5e1ee"
+    },
+    {
+      "path": "tests/pytest/test_explicit_dependency_uses_0/edge/result.json",
+      "source_path": "/workspace/mlx-event-runtime-upfKzE/artifacts/tagged/event-schedule-tests-006/pytest/test_explicit_dependency_uses_0/edge/result.json",
+      "bytes": 3121,
+      "sha256": "4287ab34e5fb2ef03c09704bc8054937239288868bdb6e94854cdeed3e4ceffc"
+    },
+    {
+      "path": "tests/pytest/test_explicit_dependency_uses_0/edge/run.log",
+      "source_path": "/workspace/mlx-event-runtime-upfKzE/artifacts/tagged/event-schedule-tests-006/pytest/test_explicit_dependency_uses_0/edge/run.log",
+      "bytes": 39,
+      "sha256": "7b753354856d63cc887c88b298f0fd08eac7f16e8f4e970c35d10512d7bd5a72"
+    },
+    {
+      "path": "tests/pytest/test_independent_pes_execute_c0/two-pes/program.json",
+      "source_path": "/workspace/mlx-event-runtime-upfKzE/artifacts/tagged/event-schedule-tests-006/pytest/test_independent_pes_execute_c0/two-pes/program.json",
+      "bytes": 895,
+      "sha256": "0ba15e99d6de62972bcef6eb827fa2c25601e503ce013082ac19d00c8a2e01a3"
+    },
+    {
+      "path": "tests/pytest/test_independent_pes_execute_c0/two-pes/result.json",
+      "source_path": "/workspace/mlx-event-runtime-upfKzE/artifacts/tagged/event-schedule-tests-006/pytest/test_independent_pes_execute_c0/two-pes/result.json",
+      "bytes": 3022,
+      "sha256": "be49c0b9a786c0e63a16b98e988daf3a960f087363db157a9043736917e72674"
+    },
+    {
+      "path": "tests/pytest/test_independent_pes_execute_c0/two-pes/run.log",
+      "source_path": "/workspace/mlx-event-runtime-upfKzE/artifacts/tagged/event-schedule-tests-006/pytest/test_independent_pes_execute_c0/two-pes/run.log",
+      "bytes": 38,
+      "sha256": "6774f047cd0d9307190133b0f6736687596a8ca98df0e5a22fa0711e4949aa5e"
+    },
+    {
+      "path": "tests/pytest/test_invalid_or_unrepresentabl0/bad/program.json",
+      "source_path": "/workspace/mlx-event-runtime-upfKzE/artifacts/tagged/event-schedule-tests-006/pytest/test_invalid_or_unrepresentabl0/bad/program.json",
+      "bytes": 895,
+      "sha256": "ea85b07799e512613c96e9723cb1dc45b6cd21a960820a9bda883416dd5bfdfd"
+    },
+    {
+      "path": "tests/pytest/test_invalid_or_unrepresentabl0/bad/run.log",
+      "source_path": "/workspace/mlx-event-runtime-upfKzE/artifacts/tagged/event-schedule-tests-006/pytest/test_invalid_or_unrepresentabl0/bad/run.log",
+      "bytes": 59,
+      "sha256": "ea3dc5f30b5c5c96eac0543a240bf8e022bfad3ba3d48ca92176908b85571ef5"
+    },
+    {
+      "path": "tests/pytest/test_invalid_or_unrepresentabl1/bad/program.json",
+      "source_path": "/workspace/mlx-event-runtime-upfKzE/artifacts/tagged/event-schedule-tests-006/pytest/test_invalid_or_unrepresentabl1/bad/program.json",
+      "bytes": 903,
+      "sha256": "5808370120a690092a170cf83cd8c5bd04116769b778b97617dffa8bb7df8d8c"
+    },
+    {
+      "path": "tests/pytest/test_invalid_or_unrepresentabl1/bad/run.log",
+      "source_path": "/workspace/mlx-event-runtime-upfKzE/artifacts/tagged/event-schedule-tests-006/pytest/test_invalid_or_unrepresentabl1/bad/run.log",
+      "bytes": 41,
+      "sha256": "73ef08187cc0a9be22a2c055e3cf55cc7dabd1f60aaaee41f476c2c4e815a53e"
+    },
+    {
+      "path": "tests/pytest/test_invalid_or_unrepresentabl2/bad/program.json",
+      "source_path": "/workspace/mlx-event-runtime-upfKzE/artifacts/tagged/event-schedule-tests-006/pytest/test_invalid_or_unrepresentabl2/bad/program.json",
+      "bytes": 903,
+      "sha256": "d5053ab0bee2762912fb8190c9726cd9e75958addac394ec3dac3f7a99579687"
+    },
+    {
+      "path": "tests/pytest/test_invalid_or_unrepresentabl2/bad/run.log",
+      "source_path": "/workspace/mlx-event-runtime-upfKzE/artifacts/tagged/event-schedule-tests-006/pytest/test_invalid_or_unrepresentabl2/bad/run.log",
+      "bytes": 49,
+      "sha256": "e34eb54406b62ab5934ead1ebf01dfc0d2996f33c4c1758e0df52ef293a75245"
+    },
+    {
+      "path": "tests/pytest/test_invalid_or_unrepresentabl3/bad/program.json",
+      "source_path": "/workspace/mlx-event-runtime-upfKzE/artifacts/tagged/event-schedule-tests-006/pytest/test_invalid_or_unrepresentabl3/bad/program.json",
+      "bytes": 895,
+      "sha256": "129e2a3d55f5718754ab78a993a959c7c7c2d78fe60a401d834cd4e5e85ff74c"
+    },
+    {
+      "path": "tests/pytest/test_invalid_or_unrepresentabl3/bad/run.log",
+      "source_path": "/workspace/mlx-event-runtime-upfKzE/artifacts/tagged/event-schedule-tests-006/pytest/test_invalid_or_unrepresentabl3/bad/run.log",
+      "bytes": 38,
+      "sha256": "d9182a8b45a5fd8cf067f055e1a880cc836b2ff79cb9750cc5f82bc4ff6ec07c"
+    },
+    {
+      "path": "tests/pytest/test_invalid_or_unrepresentabl4/bad/program.json",
+      "source_path": "/workspace/mlx-event-runtime-upfKzE/artifacts/tagged/event-schedule-tests-006/pytest/test_invalid_or_unrepresentabl4/bad/program.json",
+      "bytes": 913,
+      "sha256": "4eedd6dfb48ddf3136e887dc071566a74670bef67a95c00d8cd25053098a3a71"
+    },
+    {
+      "path": "tests/pytest/test_invalid_or_unrepresentabl4/bad/run.log",
+      "source_path": "/workspace/mlx-event-runtime-upfKzE/artifacts/tagged/event-schedule-tests-006/pytest/test_invalid_or_unrepresentabl4/bad/run.log",
+      "bytes": 57,
+      "sha256": "5fa58a46cded603c804ec0ec19976eecb70627ae827f505d17feb916f85765c6"
+    },
+    {
+      "path": "tests/pytest/test_invalid_or_unrepresentabl5/bad/program.json",
+      "source_path": "/workspace/mlx-event-runtime-upfKzE/artifacts/tagged/event-schedule-tests-006/pytest/test_invalid_or_unrepresentabl5/bad/program.json",
+      "bytes": 895,
+      "sha256": "09627b52f199ae9f17894542f6132a25c3ca7acaeba291453a41247e8ec7bdc9"
+    },
+    {
+      "path": "tests/pytest/test_invalid_or_unrepresentabl5/bad/run.log",
+      "source_path": "/workspace/mlx-event-runtime-upfKzE/artifacts/tagged/event-schedule-tests-006/pytest/test_invalid_or_unrepresentabl5/bad/run.log",
+      "bytes": 40,
+      "sha256": "a764f090515bfdc93c3b4624280e994958c4aacea65add11d63ea0863bbb1aa4"
+    },
+    {
+      "path": "tests/pytest/test_invalid_or_unrepresentabl6/bad/program.json",
+      "source_path": "/workspace/mlx-event-runtime-upfKzE/artifacts/tagged/event-schedule-tests-006/pytest/test_invalid_or_unrepresentabl6/bad/program.json",
+      "bytes": 895,
+      "sha256": "f5025a48e030249fe3431be9675b260eb7483233afd3da69f9c82738003e2516"
+    },
+    {
+      "path": "tests/pytest/test_invalid_or_unrepresentabl6/bad/run.log",
+      "source_path": "/workspace/mlx-event-runtime-upfKzE/artifacts/tagged/event-schedule-tests-006/pytest/test_invalid_or_unrepresentabl6/bad/run.log",
+      "bytes": 34,
+      "sha256": "6bb0dbf0d55a175cf3988633193bbe56ae0234181a2e5e198772030c33589433"
+    },
+    {
+      "path": "tests/pytest/test_invalid_or_unrepresentabl7/bad/program.json",
+      "source_path": "/workspace/mlx-event-runtime-upfKzE/artifacts/tagged/event-schedule-tests-006/pytest/test_invalid_or_unrepresentabl7/bad/program.json",
+      "bytes": 889,
+      "sha256": "fc31ee7af28e3967005d19129819e3a0818afdd9dfb93764410827274a6abbb6"
+    },
+    {
+      "path": "tests/pytest/test_invalid_or_unrepresentabl7/bad/run.log",
+      "source_path": "/workspace/mlx-event-runtime-upfKzE/artifacts/tagged/event-schedule-tests-006/pytest/test_invalid_or_unrepresentabl7/bad/run.log",
+      "bytes": 43,
+      "sha256": "fe430ee937d4b111135300bb0d29ab936f4abeba97a48d8de3963a39ee1e90c8"
+    },
+    {
+      "path": "tests/pytest/test_invalid_or_unrepresentabl8/bad/program.json",
+      "source_path": "/workspace/mlx-event-runtime-upfKzE/artifacts/tagged/event-schedule-tests-006/pytest/test_invalid_or_unrepresentabl8/bad/program.json",
+      "bytes": 893,
+      "sha256": "6440b211be69f6dedb73395fc89dd49f2adbcd587ecc82d38b2049dc53c55ac8"
+    },
+    {
+      "path": "tests/pytest/test_invalid_or_unrepresentabl8/bad/run.log",
+      "source_path": "/workspace/mlx-event-runtime-upfKzE/artifacts/tagged/event-schedule-tests-006/pytest/test_invalid_or_unrepresentabl8/bad/run.log",
+      "bytes": 73,
+      "sha256": "4029df8e14b517351d45da12e63d1c2c6d6cae718314dab09b0fcbc4b13829b4"
+    },
+    {
+      "path": "tests/pytest/test_invalid_or_unrepresentabl9/bad/program.json",
+      "source_path": "/workspace/mlx-event-runtime-upfKzE/artifacts/tagged/event-schedule-tests-006/pytest/test_invalid_or_unrepresentabl9/bad/program.json",
+      "bytes": 901,
+      "sha256": "83339ad6f9b09bbfb9427b581c18bdbb685d79aa1110dc21e7162fa831acf792"
+    },
+    {
+      "path": "tests/pytest/test_invalid_or_unrepresentabl9/bad/run.log",
+      "source_path": "/workspace/mlx-event-runtime-upfKzE/artifacts/tagged/event-schedule-tests-006/pytest/test_invalid_or_unrepresentabl9/bad/run.log",
+      "bytes": 95,
+      "sha256": "6cf72f489ba4f74d3aef3ad1f32d0af6766e105e3217045b78f7d3396563e27c"
+    },
+    {
+      "path": "tests/pytest/test_issue_policy_changes_sele0/priority/program.json",
+      "source_path": "/workspace/mlx-event-runtime-upfKzE/artifacts/tagged/event-schedule-tests-006/pytest/test_issue_policy_changes_sele0/priority/program.json",
+      "bytes": 1033,
+      "sha256": "38d85063c387c2b3a3d25732556a79ce7739435030e2fc11d9073582e972fc2d"
+    },
+    {
+      "path": "tests/pytest/test_issue_policy_changes_sele0/priority/result.json",
+      "source_path": "/workspace/mlx-event-runtime-upfKzE/artifacts/tagged/event-schedule-tests-006/pytest/test_issue_policy_changes_sele0/priority/result.json",
+      "bytes": 3737,
+      "sha256": "35b1ffe5041ca48d3b1a16b14d83d2bec9e9e7a164f5ba9f1446adaa821ff3eb"
+    },
+    {
+      "path": "tests/pytest/test_issue_policy_changes_sele0/priority/run.log",
+      "source_path": "/workspace/mlx-event-runtime-upfKzE/artifacts/tagged/event-schedule-tests-006/pytest/test_issue_policy_changes_sele0/priority/run.log",
+      "bytes": 38,
+      "sha256": "efa61214a3a7b1a5f2d9a4834b38f1e5b56a4782f329927b286b3e3273b8891b"
+    },
+    {
+      "path": "tests/pytest/test_issue_policy_changes_sele0/rr/program.json",
+      "source_path": "/workspace/mlx-event-runtime-upfKzE/artifacts/tagged/event-schedule-tests-006/pytest/test_issue_policy_changes_sele0/rr/program.json",
+      "bytes": 1029,
+      "sha256": "f506f422dfc1d2631dfc11c415121dd0e90d0ad945be40b6261d02c2f75fd125"
+    },
+    {
+      "path": "tests/pytest/test_issue_policy_changes_sele0/rr/result.json",
+      "source_path": "/workspace/mlx-event-runtime-upfKzE/artifacts/tagged/event-schedule-tests-006/pytest/test_issue_policy_changes_sele0/rr/result.json",
+      "bytes": 3733,
+      "sha256": "df6608b5ec8878d121996e6cf585f00140ca80bb85fbe04c099258a1d53ded35"
+    },
+    {
+      "path": "tests/pytest/test_issue_policy_changes_sele0/rr/run.log",
+      "source_path": "/workspace/mlx-event-runtime-upfKzE/artifacts/tagged/event-schedule-tests-006/pytest/test_issue_policy_changes_sele0/rr/run.log",
+      "bytes": 38,
+      "sha256": "efa61214a3a7b1a5f2d9a4834b38f1e5b56a4782f329927b286b3e3273b8891b"
+    },
+    {
+      "path": "tests/pytest/test_many_mapped_blocks_are_no0/many/program.json",
+      "source_path": "/workspace/mlx-event-runtime-upfKzE/artifacts/tagged/event-schedule-tests-006/pytest/test_many_mapped_blocks_are_no0/many/program.json",
+      "bytes": 735606,
+      "sha256": "c3c03e48ca1dc1dd50528a175552198f8c308d599b934ffd157143196ab2ccdb"
+    },
+    {
+      "path": "tests/pytest/test_many_mapped_blocks_are_no0/many/result.json",
+      "source_path": "/workspace/mlx-event-runtime-upfKzE/artifacts/tagged/event-schedule-tests-006/pytest/test_many_mapped_blocks_are_no0/many/result.json",
+      "bytes": 508334,
+      "sha256": "3c3827625202a7ce4ad7281cb6c7e4d3527ebe31c091fd3cc7fdc75b8b3241d3"
+    },
+    {
+      "path": "tests/pytest/test_many_mapped_blocks_are_no0/many/run.log",
+      "source_path": "/workspace/mlx-event-runtime-upfKzE/artifacts/tagged/event-schedule-tests-006/pytest/test_many_mapped_blocks_are_no0/many/run.log",
+      "bytes": 44,
+      "sha256": "23214a13cbf6e80ca5372cf0d32aba50cf772bf76799e1ed4549e1179834e9d5"
+    },
+    {
+      "path": "tests/pytest/test_policy_ablation_keeps_mul0/source_priority/program.json",
+      "source_path": "/workspace/mlx-event-runtime-upfKzE/artifacts/tagged/event-schedule-tests-006/pytest/test_policy_ablation_keeps_mul0/source_priority/program.json",
+      "bytes": 1243,
+      "sha256": "69be6a8ca42e1cdb390a94d5afa248bf5710fd03f7fbebbb96023eca9fd19020"
+    },
+    {
+      "path": "tests/pytest/test_policy_ablation_keeps_mul0/source_priority/result.json",
+      "source_path": "/workspace/mlx-event-runtime-upfKzE/artifacts/tagged/event-schedule-tests-006/pytest/test_policy_ablation_keeps_mul0/source_priority/result.json",
+      "bytes": 4204,
+      "sha256": "155dc9f6446e8302f4aadcf910e36968cada0f4d8c015eb6f9a35ea8cfcb65c8"
+    },
+    {
+      "path": "tests/pytest/test_policy_ablation_keeps_mul0/source_priority/run.log",
+      "source_path": "/workspace/mlx-event-runtime-upfKzE/artifacts/tagged/event-schedule-tests-006/pytest/test_policy_ablation_keeps_mul0/source_priority/run.log",
+      "bytes": 38,
+      "sha256": "6774f047cd0d9307190133b0f6736687596a8ca98df0e5a22fa0711e4949aa5e"
+    },
+    {
+      "path": "tests/pytest/test_policy_ablation_keeps_mul1/round_robin/program.json",
+      "source_path": "/workspace/mlx-event-runtime-upfKzE/artifacts/tagged/event-schedule-tests-006/pytest/test_policy_ablation_keeps_mul1/round_robin/program.json",
+      "bytes": 1239,
+      "sha256": "9019a16af781118e9f541ae5867af0d4aff199534cdc94316299e3417fbc1b48"
+    },
+    {
+      "path": "tests/pytest/test_policy_ablation_keeps_mul1/round_robin/result.json",
+      "source_path": "/workspace/mlx-event-runtime-upfKzE/artifacts/tagged/event-schedule-tests-006/pytest/test_policy_ablation_keeps_mul1/round_robin/result.json",
+      "bytes": 4200,
+      "sha256": "c5584715f699337a28889f9a8fb430356c30163c20e858b6d6438bcf520d3181"
+    },
+    {
+      "path": "tests/pytest/test_policy_ablation_keeps_mul1/round_robin/run.log",
+      "source_path": "/workspace/mlx-event-runtime-upfKzE/artifacts/tagged/event-schedule-tests-006/pytest/test_policy_ablation_keeps_mul1/round_robin/run.log",
+      "bytes": 38,
+      "sha256": "6774f047cd0d9307190133b0f6736687596a8ca98df0e5a22fa0711e4949aa5e"
+    },
+    {
+      "path": "tests/pytest/test_rom_exhaustion_waits_for_0/rom/program.json",
+      "source_path": "/workspace/mlx-event-runtime-upfKzE/artifacts/tagged/event-schedule-tests-006/pytest/test_rom_exhaustion_waits_for_0/rom/program.json",
+      "bytes": 1114,
+      "sha256": "a8ff290f7f16ca2d72dfe7ab58a4e77d75616f67ee3e80c0c45c569e82762663"
+    },
+    {
+      "path": "tests/pytest/test_rom_exhaustion_waits_for_0/rom/result.json",
+      "source_path": "/workspace/mlx-event-runtime-upfKzE/artifacts/tagged/event-schedule-tests-006/pytest/test_rom_exhaustion_waits_for_0/rom/result.json",
+      "bytes": 3172,
+      "sha256": "ae9f10ff5608af9a6b2f14a2681c5b14ba2db1a9daa27e5214bd37a4052ce0b4"
+    },
+    {
+      "path": "tests/pytest/test_rom_exhaustion_waits_for_0/rom/run.log",
+      "source_path": "/workspace/mlx-event-runtime-upfKzE/artifacts/tagged/event-schedule-tests-006/pytest/test_rom_exhaustion_waits_for_0/rom/run.log",
+      "bytes": 39,
+      "sha256": "3fd3c2299a33ca394dcdc908f141bfde3e7a64d708399d236068a7505af45903"
+    },
+    {
+      "path": "tests/pytest/test_same_pe_different_pipelin0/overlap/program.json",
+      "source_path": "/workspace/mlx-event-runtime-upfKzE/artifacts/tagged/event-schedule-tests-006/pytest/test_same_pe_different_pipelin0/overlap/program.json",
+      "bytes": 892,
+      "sha256": "d3f66e2752d5d4de5cf9dadf2cb199f81b3ec95c761c203a52efc9ca2cf1682b"
+    },
+    {
+      "path": "tests/pytest/test_same_pe_different_pipelin0/overlap/result.json",
+      "source_path": "/workspace/mlx-event-runtime-upfKzE/artifacts/tagged/event-schedule-tests-006/pytest/test_same_pe_different_pipelin0/overlap/result.json",
+      "bytes": 3349,
+      "sha256": "87aecd0746a7ef77f6adb11c36cc55e5fde667527acad524306905c120311db0"
+    },
+    {
+      "path": "tests/pytest/test_same_pe_different_pipelin0/overlap/run.log",
+      "source_path": "/workspace/mlx-event-runtime-upfKzE/artifacts/tagged/event-schedule-tests-006/pytest/test_same_pe_different_pipelin0/overlap/run.log",
+      "bytes": 39,
+      "sha256": "7b753354856d63cc887c88b298f0fd08eac7f16e8f4e970c35d10512d7bd5a72"
+    },
+    {
+      "path": "tests/pytest/test_single_dma_resource_and_c0/dma/program.json",
+      "source_path": "/workspace/mlx-event-runtime-upfKzE/artifacts/tagged/event-schedule-tests-006/pytest/test_single_dma_resource_and_c0/dma/program.json",
+      "bytes": 1023,
+      "sha256": "864257dcfb6b2dd190655c8b917216f73d9fe4c63c95043c02a0cc52072cf5b1"
+    },
+    {
+      "path": "tests/pytest/test_single_dma_resource_and_c0/dma/result.json",
+      "source_path": "/workspace/mlx-event-runtime-upfKzE/artifacts/tagged/event-schedule-tests-006/pytest/test_single_dma_resource_and_c0/dma/result.json",
+      "bytes": 3987,
+      "sha256": "188dcd3d89375f9b5e683ba3aa9e92a23bfe16c1b0063af1dd0fc1889965002b"
+    },
+    {
+      "path": "tests/pytest/test_single_dma_resource_and_c0/dma/run.log",
+      "source_path": "/workspace/mlx-event-runtime-upfKzE/artifacts/tagged/event-schedule-tests-006/pytest/test_single_dma_resource_and_c0/dma/run.log",
+      "bytes": 39,
+      "sha256": "aa50fe2fab9d4a562609929fe7d88d2f34903803b81f6d3b5742f15f6bacbab7"
+    },
+    {
+      "path": "tests/pytest/test_source_window_limits_sour0/one-source/program.json",
+      "source_path": "/workspace/mlx-event-runtime-upfKzE/artifacts/tagged/event-schedule-tests-006/pytest/test_source_window_limits_sour0/one-source/program.json",
+      "bytes": 1242,
+      "sha256": "dacba92fce7fedc7c7c926ce8f65c24bcf4d6b0a4b41b8d2222507ffa56d85b2"
+    },
+    {
+      "path": "tests/pytest/test_source_window_limits_sour0/one-source/result.json",
+      "source_path": "/workspace/mlx-event-runtime-upfKzE/artifacts/tagged/event-schedule-tests-006/pytest/test_source_window_limits_sour0/one-source/result.json",
+      "bytes": 4203,
+      "sha256": "8c038782b4152a2d8ca4483b6214a91b2cd75dc2f9b15f757da595147edf05b6"
+    },
+    {
+      "path": "tests/pytest/test_source_window_limits_sour0/one-source/run.log",
+      "source_path": "/workspace/mlx-event-runtime-upfKzE/artifacts/tagged/event-schedule-tests-006/pytest/test_source_window_limits_sour0/one-source/run.log",
+      "bytes": 38,
+      "sha256": "6774f047cd0d9307190133b0f6736687596a8ca98df0e5a22fa0711e4949aa5e"
+    },
+    {
+      "path": "tests/pytest/test_two_contexts_share_one_re0/shared-code/program.json",
+      "source_path": "/workspace/mlx-event-runtime-upfKzE/artifacts/tagged/event-schedule-tests-006/pytest/test_two_contexts_share_one_re0/shared-code/program.json",
+      "bytes": 894,
+      "sha256": "d12af14fa5aa41b9c5bcd78e80bee1a12d08ba1f9ac54c32fff993022bf75bfa"
+    },
+    {
+      "path": "tests/pytest/test_two_contexts_share_one_re0/shared-code/result.json",
+      "source_path": "/workspace/mlx-event-runtime-upfKzE/artifacts/tagged/event-schedule-tests-006/pytest/test_two_contexts_share_one_re0/shared-code/result.json",
+      "bytes": 3248,
+      "sha256": "c2fb83978eeed038f97d7e9f720d09be01fe37249cd05f994b162d326140bc12"
+    },
+    {
+      "path": "tests/pytest/test_two_contexts_share_one_re0/shared-code/run.log",
+      "source_path": "/workspace/mlx-event-runtime-upfKzE/artifacts/tagged/event-schedule-tests-006/pytest/test_two_contexts_share_one_re0/shared-code/run.log",
+      "bytes": 39,
+      "sha256": "c5eadaaadbba54ec643aef08febecd252ae6bb15475f01f7212af49a50166af1"
+    },
+    {
+      "path": "tests/regression.xml",
+      "source_path": "/workspace/mlx-event-runtime-upfKzE/artifacts/tagged/event-schedule-tests-006/regression.xml",
+      "bytes": 4959,
+      "sha256": "28f3763ed3500b57f16f4f1346478a67eaaeb522539ad4998159f4d9c7a526c0"
+    },
+    {
+      "path": "sources/scripts/compile_mlx_event_resources.py",
+      "source_path": "/workspace/mlx-event-runtime-upfKzE/scripts/compile_mlx_event_resources.py",
+      "bytes": 1169,
+      "sha256": "cdd9b1cf82455911def5146d962a5699564fcb15df9d78def4d3a39bc8631d43"
+    },
+    {
+      "path": "sources/scripts/package_mlx_event_core.py",
+      "source_path": "/workspace/mlx-event-runtime-upfKzE/scripts/package_mlx_event_core.py",
+      "bytes": 4103,
+      "sha256": "ba6513aa911ac809aa6e50487669a50052ef35773c637961ee0ef634c9fc3d1d"
+    },
+    {
+      "path": "sources/scripts/verify_mlx_event_schedule.py",
+      "source_path": "/workspace/mlx-event-runtime-upfKzE/scripts/verify_mlx_event_schedule.py",
+      "bytes": 5846,
+      "sha256": "c467f359e5dc5ab34c16cf59e21931d0dc4fd3548edd5db142c8cd27ee5ca41b"
+    },
+    {
+      "path": "sources/simulator_ext/event_schedule/CMakeLists.txt",
+      "source_path": "/workspace/mlx-event-runtime-upfKzE/simulator_ext/event_schedule/CMakeLists.txt",
+      "bytes": 617,
+      "sha256": "2e7a7e0347f6dae7aa02935f83e38ef25a8ce77a338af2af3bc305f5d87e4f8b"
+    },
+    {
+      "path": "sources/simulator_ext/event_schedule/event_schedule.cc",
+      "source_path": "/workspace/mlx-event-runtime-upfKzE/simulator_ext/event_schedule/event_schedule.cc",
+      "bytes": 21256,
+      "sha256": "61c52645ce94340a9e3909b28965595c793d446c5480baa91ff8f6b15ed2fc97"
+    },
+    {
+      "path": "sources/simulator_ext/event_schedule/event_schedule.h",
+      "source_path": "/workspace/mlx-event-runtime-upfKzE/simulator_ext/event_schedule/event_schedule.h",
+      "bytes": 198,
+      "sha256": "891ceb5a3a34e16dbe29b253b41bbc8c441f74481127ab3be37f535e2ec60b8a"
+    },
+    {
+      "path": "sources/simulator_ext/event_schedule/main.cc",
+      "source_path": "/workspace/mlx-event-runtime-upfKzE/simulator_ext/event_schedule/main.cc",
+      "bytes": 655,
+      "sha256": "bba33e9c7998c3f1827873374618ac391b52241c79ac64b093068ad9d6f81047"
+    },
+    {
+      "path": "sources/src/mlxsim/model_event_resources.py",
+      "source_path": "/workspace/mlx-event-runtime-upfKzE/src/mlxsim/model_event_resources.py",
+      "bytes": 4264,
+      "sha256": "a3df26f5b725ce4e3010461443a7fc77e1b4e66a99593957e2daa658551fb1e5"
+    },
+    {
+      "path": "sources/tests/test_event_schedule.py",
+      "source_path": "/workspace/mlx-event-runtime-upfKzE/tests/test_event_schedule.py",
+      "bytes": 12370,
+      "sha256": "b336a655e800cc6c57e4dd4e010a8a5d8fa53872319fe563f98b93a66ef0b26b"
+    }
+  ],
+  "file_count": 136,
+  "total_bytes": 5842896,
+  "packager_sha256": "ba6513aa911ac809aa6e50487669a50052ef35773c637961ee0ef634c9fc3d1d"
+}

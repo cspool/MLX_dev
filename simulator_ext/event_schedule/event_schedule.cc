@@ -1,0 +1,253 @@
+#include "event_schedule.h"
+#include <algorithm>
+#include <array>
+#include <deque>
+#include <limits>
+#include <map>
+#include <queue>
+#include <set>
+#include <stdexcept>
+#include <string>
+#include <tuple>
+#include <vector>
+
+namespace mlx::event_schedule {
+namespace {
+using U=uint64_t;
+constexpr U NEVER=std::numeric_limits<U>::max();
+void need(bool v,const std::string &s){if(!v)throw std::runtime_error(s);}
+U number(const Json::Value &v,const char *name,U lo,U hi){need(v.isUInt64()&&v.asUInt64()>=lo&&v.asUInt64()<=hi,std::string("invalid ")+name);return v.asUInt64();}
+U add(U a,U b){need(b<=NEVER-a,"event time/count overflow");return a+b;}
+void accumulate(U &a,U b,U c=1){need(!c||b<=NEVER/c,"event counter overflow");a=add(a,b*c);}
+void fields(const Json::Value &v,const std::set<std::string> &allowed){need(v.isObject(),"event descriptor must be an object");for(const auto &k:v.getMemberNames())need(allowed.count(k),"unknown event descriptor field: "+k);}
+enum Unit {Compute,Sfu,Spm,Dma};
+struct Kind {Unit unit;unsigned lanes;};
+const std::map<std::string,Kind> kinds={{"zero",{Compute,16}},{"mul",{Compute,16}},{"add",{Compute,16}},
+  {"convert",{Compute,16}},{"exp",{Sfu,4}},{"div",{Sfu,4}},{"sqrt",{Sfu,4}},
+  {"spm_read",{Spm,0}},{"spm_write",{Spm,0}},{"dma_read",{Dma,0}},{"dma_write",{Dma,0}}};
+struct Template {std::string id;std::vector<unsigned> words;unsigned rf=0,spm=0;};
+struct Event {std::string id,op;unsigned owner=0;std::vector<unsigned> deps;U begin=NEVER,end=NEVER,visible=NEVER;unsigned lanes=0,bytes=0;};
+struct Block {std::string id;U source=0;unsigned pe=0,code=0,slot=0,rf=0,spm=0,pc=0;std::vector<unsigned> events,deps;
+  std::vector<unsigned> children;unsigned unmet=0;
+  bool active=false,running=false,retired=false;U begin=NEVER,end=NEVER;};
+struct ResidentCode {unsigned pe=0,code=0,base=0,refs=0,loaded=0;U ready=NEVER;bool live=false;};
+// Calendar order is completions, retirements, template programming. Decisions
+// then use the resulting registered state; results become visible next edge.
+enum Change {Complete,Retire,Word};
+struct Wake {U time;Change kind;unsigned item;bool operator>(const Wake &o)const{return std::tie(time,kind,item)>std::tie(o.time,o.kind,o.item);}};
+struct Engine {
+  unsigned pes=0,contexts=0,source_limit=0;U max_cycles=0,now=0,retired=0,transitions=0;
+  bool timed_templates=true;std::string policy;
+  std::map<std::string,U> latency;std::vector<Template> templates;std::vector<Event> events;std::vector<Block> blocks;
+  std::map<std::string,unsigned> template_ids,event_ids,block_ids;
+  using Group=std::tuple<U,unsigned,unsigned>;
+  std::map<Group,std::set<unsigned>> admission_groups;
+  std::set<std::pair<U,unsigned>> admission_heads,active;
+  bool resources_changed=true;
+  std::vector<ResidentCode> codes;std::vector<std::array<int,16>> rf;std::vector<std::array<int,32>> rom;
+  std::vector<std::array<int,2>> slots;std::array<int,128> spm{};
+  std::vector<U> issue_free,compute_free,sfu_free;std::vector<int> last_block;
+  U spm_free=0,dma_free=0;std::priority_queue<Wake,std::vector<Wake>,std::greater<Wake>> calendar;
+  std::map<U,unsigned> live_sources;std::map<std::string,U> counts,areas,work;
+  unsigned peak_contexts=0,peak_spm=0,peak_rf=0,peak_rom=0,peak_sources=0;
+  Json::Value trace{Json::arrayValue};U trace_limit=0;
+
+  explicit Engine(const Json::Value &p){
+    fields(p,{"schema","hardware","templates","blocks","max_cycles","trace_limit","policy"});
+    need(p["schema"]=="mlx_event_schedule_v1","unsupported event timing contract");
+    const auto &h=p["hardware"];fields(h,{"rows","columns","contexts","rf_vectors_per_pe","spm_vectors_total","rom_words_per_pe","source_window_limit","latencies","template_load_timing"});
+    pes=unsigned(number(h["rows"],"rows",1,4)*number(h["columns"],"columns",1,4));contexts=unsigned(number(h["contexts"],"contexts",1,2));
+    need(h["rf_vectors_per_pe"]==16&&h["spm_vectors_total"]==128&&h["rom_words_per_pe"]==32,"event model cannot expand array capacities");
+    source_limit=unsigned(number(h["source_window_limit"],"source window",1,64));need(h["template_load_timing"].isBool(),"template timing must be explicit");timed_templates=h["template_load_timing"].asBool();
+    max_cycles=number(p["max_cycles"],"max cycles",1,NEVER/4);trace_limit=number(p.get("trace_limit",Json::UInt64(0)),"trace limit",0,1000000);
+    policy=p.get("policy","source_priority").asString();need(policy=="source_priority"||policy=="round_robin","unknown event issue policy");
+    need(h["latencies"].isObject()&&h["latencies"].size()==kinds.size(),"complete architectural event latencies required");
+    for(const auto &[name,kind]:kinds){(void)kind;latency[name]=number(h["latencies"][name],"service latency",1,1024);}
+    need(p["templates"].isArray()&&!p["templates"].empty()&&p["blocks"].isArray()&&!p["blocks"].empty()&&p["blocks"].size()<=unsigned(INT32_MAX),"event program is empty or exceeds identity range");
+    for(const auto &t:p["templates"]){
+      fields(t,{"id","words","rf_vectors","spm_vectors"});Template code;need(t["id"].isString(),"template id must be a string");code.id=t["id"].asString();need(!code.id.empty()&&template_ids.emplace(code.id,unsigned(templates.size())).second,"duplicate/empty template");
+      code.rf=unsigned(number(t["rf_vectors"],"template RF",1,16));code.spm=unsigned(number(t["spm_vectors"],"template SPM",1,128));
+      need(t["words"].isArray()&&!t["words"].empty()&&t["words"].size()<=32,"template exceeds ROM");
+      for(const auto &word:t["words"])code.words.push_back(unsigned(number(word,"template word",0,UINT32_MAX)));
+      templates.push_back(std::move(code));
+    }
+    for(const auto &b:p["blocks"]){
+      fields(b,{"id","source_operator_id","pe","template","admission_dependencies","events"});Block block;need(b["id"].isString()&&b["template"].isString(),"block/template id must be a string");block.id=b["id"].asString();
+      unsigned owner=unsigned(blocks.size());need(!block.id.empty()&&block_ids.emplace(block.id,owner).second,"duplicate/empty block");
+      block.source=number(b["source_operator_id"],"source id",0,NEVER/4);block.pe=unsigned(number(b["pe"],"mapped PE",0,pes-1));
+      auto t=template_ids.find(b["template"].asString());need(t!=template_ids.end(),"block template missing");block.code=t->second;
+      need(b["admission_dependencies"].isArray()&&b["events"].isArray()&&!b["events"].empty(),"block dependencies/events missing");
+      for(const auto &e:b["events"]){
+        fields(e,{"id","op","dependencies","active_lanes","bytes"});Event event;need(e["id"].isString()&&e["op"].isString(),"event id/op must be a string");event.id=e["id"].asString();event.op=e["op"].asString();event.owner=owner;
+        need(!event.id.empty()&&event_ids.emplace(event.id,unsigned(events.size())).second,"duplicate/empty event");
+        auto kind=kinds.find(event.op);need(kind!=kinds.end()&&e["dependencies"].isArray(),"unsupported event operation/dependencies");
+        if(kind->second.lanes){event.lanes=unsigned(number(e["active_lanes"],"active lanes",1,kind->second.lanes));need(!e.isMember("bytes"),"compute event cannot declare memory bytes");}
+        else{event.bytes=unsigned(number(e["bytes"],"memory bytes",1,64));need(!e.isMember("active_lanes"),"memory event cannot declare compute work");if(kind->second.unit==Dma)need(event.bytes==1||event.bytes==2||event.bytes==4||event.bytes==8,"DMA event must represent one bounded element transaction");}
+        block.events.push_back(unsigned(events.size()));events.push_back(std::move(event));
+      }
+      blocks.push_back(std::move(block));
+    }
+    unsigned bi=0,ei=0;
+    for(const auto &b:p["blocks"]){
+      std::set<unsigned> deps;
+      for(const auto &id:b["admission_dependencies"]){need(id.isString(),"block dependency must be a string");auto found=block_ids.find(id.asString());need(found!=block_ids.end()&&found->second!=bi&&deps.insert(found->second).second,"invalid block dependency");blocks[bi].deps.push_back(found->second);blocks[found->second].children.push_back(bi);}
+      blocks[bi].unmet=unsigned(deps.size());
+      unsigned previous=UINT32_MAX;
+      for(const auto &e:b["events"]){
+        std::set<unsigned> incoming;
+        for(const auto &id:e["dependencies"]){need(id.isString(),"event dependency must be a string");auto found=event_ids.find(id.asString());need(found!=event_ids.end()&&found->second!=ei&&incoming.insert(found->second).second,"invalid event dependency");}
+        if(previous!=UINT32_MAX)incoming.insert(previous);
+        events[ei].deps.assign(incoming.begin(),incoming.end());previous=ei++;
+      }
+      ++bi;
+    }
+    // Validate both explicit dependencies and the implicit per-block frontier.
+    std::vector<unsigned> degree(events.size());std::vector<std::vector<unsigned>> children(events.size());
+    for(unsigned i=0;i<events.size();++i){std::set<unsigned> deps(events[i].deps.begin(),events[i].deps.end());
+      for(auto parent:blocks[events[i].owner].deps)deps.insert(blocks[parent].events.back());
+      degree[i]=unsigned(deps.size());for(auto dep:deps)children[dep].push_back(i);
+    }
+    std::queue<unsigned> q;for(unsigned i=0;i<degree.size();++i)if(!degree[i])q.push(i);unsigned visited=0;
+    while(!q.empty()){auto i=q.front();q.pop();++visited;for(auto c:children[i])if(!--degree[c])q.push(c);}
+    need(visited==events.size(),"event/admission dependency cycle");
+    rf.resize(pes);rom.resize(pes);slots.resize(pes);for(auto &a:rf)a.fill(-1);for(auto &a:rom)a.fill(-1);for(auto &a:slots)a.fill(-1);spm.fill(-1);
+    issue_free.resize(pes);compute_free.resize(pes);sfu_free.resize(pes);last_block.assign(pes,-1);
+    for(unsigned i=0;i<blocks.size();++i)if(!blocks[i].unmet)enqueue_admission(i);
+  }
+  void enqueue_admission(unsigned i){
+    const auto &b=blocks[i];auto &group=admission_groups[{b.source,b.pe,b.code}];
+    if(!group.empty())admission_heads.erase({b.source,*group.begin()});
+    need(group.insert(i).second,"block queued for admission twice");admission_heads.emplace(b.source,*group.begin());
+  }
+  void admissions(){
+    if(!resources_changed)return;
+    for(;;){bool changed=false;
+      for(auto [source,i]:admission_heads){
+        if(!admit(i))continue;
+        auto &b=blocks[i];auto &group=admission_groups.at({source,b.pe,b.code});need(group.erase(i)==1,"admission queue lost block");
+        admission_heads.erase({source,i});if(!group.empty())admission_heads.emplace(source,*group.begin());
+        active.emplace(source,i);changed=true;break;
+      }
+      if(!changed)break;
+    }
+    resources_changed=false;
+  }
+  void emit(const char *kind,unsigned block,unsigned event=UINT32_MAX){
+    ++counts[std::string("trace_")+kind];if(trace.size()>=trace_limit)return;
+    Json::Value e;e["cycle"]=Json::UInt64(now);e["event"]=kind;e["block"]=blocks[block].id;e["source_operator_id"]=Json::UInt64(blocks[block].source);e["pe"]=blocks[block].pe;
+    if(event!=UINT32_MAX)e["operation"]=events[event].id;
+    trace.append(e);
+  }
+  template<size_t N> int space(const std::array<int,N> &a,unsigned count){for(unsigned i=0;i+count<=N;++i){bool free=true;for(unsigned j=0;j<count;++j)free&=a[i+j]<0;if(free)return int(i);}return -1;}
+  template<size_t N> unsigned used(const std::array<int,N> &a){return unsigned(std::count_if(a.begin(),a.end(),[](int x){return x>=0;}));}
+  U &service(const Event &e){unsigned pe=blocks[e.owner].pe;switch(kinds.at(e.op).unit){case Compute:return compute_free[pe];case Sfu:return sfu_free[pe];case Spm:return spm_free;case Dma:return dma_free;}throw std::runtime_error("invalid event unit");}
+  bool admit(unsigned i){
+    auto &b=blocks[i];if(b.active||b.retired)return false;for(auto parent:b.deps)if(!blocks[parent].retired)return false;
+    if(!live_sources.count(b.source)&&live_sources.size()>=source_limit)return false;
+    const auto &t=templates[b.code];unsigned pe=b.pe;int slot=-1;for(unsigned s=0;s<contexts;++s)if(slots[pe][s]<0){slot=int(s);break;}
+    int r=space(rf[pe],t.rf),s=space(spm,t.spm);if(slot<0||r<0||s<0)return false;
+    int code=-1;for(unsigned c=0;c<codes.size();++c)if(codes[c].live&&codes[c].pe==pe&&codes[c].code==b.code){code=int(c);break;}
+    if(code<0){int base=space(rom[pe],unsigned(t.words.size()));if(base<0)return false;
+      code=int(codes.size());codes.push_back(ResidentCode{pe,b.code,unsigned(base),0,0,NEVER,true});
+      for(unsigned w=0;w<t.words.size();++w)rom[pe][unsigned(base)+w]=code;
+      if(timed_templates)calendar.push(Wake{add(now,1),Word,unsigned(code)});
+      else{codes.back().loaded=unsigned(t.words.size());codes.back().ready=now;counts["template_words_loaded"]+=t.words.size();}
+    }
+    ++codes[unsigned(code)].refs;b.slot=unsigned(slot);b.rf=unsigned(r);b.spm=unsigned(s);b.active=true;b.begin=now;
+    slots[pe][b.slot]=int(i);for(unsigned x=0;x<t.rf;++x)rf[pe][b.rf+x]=int(i);for(unsigned x=0;x<t.spm;++x)spm[b.spm+x]=int(i);
+    ++live_sources[b.source];++counts["blocks_admitted"];emit("admit",i);return true;
+  }
+  U code_ready(const Block &b)const{for(const auto &c:codes)if(c.live&&c.pe==b.pe&&c.code==b.code)return c.ready;throw std::runtime_error("missing resident template");}
+  std::string wait_reason(const Block &b){
+    if(b.running)return "inflight_context_cycles";
+    if(b.pc==b.events.size())return "retirement_wait_context_cycles";
+    const auto &e=events[b.events[b.pc]];
+    if(code_ready(b)>now)return "template_wait_context_cycles";
+    for(auto dep:e.deps)if(events[dep].visible>now)return "dependency_wait_context_cycles";
+    if(service(e)>now)return "resource_wait_context_cycles";
+    if(issue_free[b.pe]>now)return "issue_wait_context_cycles";
+    return "ready_context_cycles";
+  }
+  void changes(){
+    std::set<unsigned> configured;
+    while(!calendar.empty()&&calendar.top().time==now){auto w=calendar.top();calendar.pop();++transitions;
+      if(w.kind==Complete){auto &e=events[w.item];auto &b=blocks[e.owner];need(b.active&&b.running&&b.events[b.pc]==w.item,"completion owner/frontier mismatch");
+        e.end=now;e.visible=add(now,1);b.running=false;++b.pc;++counts["events_completed"];emit("complete",e.owner,w.item);
+        if(b.pc==b.events.size())calendar.push(Wake{add(now,1),Retire,e.owner});
+      }else if(w.kind==Retire){auto &b=blocks[w.item];need(b.active&&!b.running&&b.pc==b.events.size(),"premature event block retirement");const auto &t=templates[b.code];
+        for(unsigned x=0;x<t.rf;++x){need(rf[b.pe][b.rf+x]==int(w.item),"RF lease lost");rf[b.pe][b.rf+x]=-1;}
+        for(unsigned x=0;x<t.spm;++x){need(spm[b.spm+x]==int(w.item),"SPM lease lost");spm[b.spm+x]=-1;}
+        slots[b.pe][b.slot]=-1;b.active=false;b.retired=true;b.end=now;++retired;active.erase({b.source,w.item});resources_changed=true;
+        for(auto child:b.children){need(blocks[child].unmet>0,"admission dependency counter underflow");if(!--blocks[child].unmet)enqueue_admission(child);}
+        auto it=live_sources.find(b.source);need(it!=live_sources.end()&&it->second,"source lease missing");if(!--it->second)live_sources.erase(it);
+        for(auto &c:codes)if(c.live&&c.pe==b.pe&&c.code==b.code){need(c.refs>0,"ROM lease lost");if(!--c.refs){for(unsigned x=0;x<t.words.size();++x)rom[b.pe][c.base+x]=-1;c.live=false;}break;}
+        emit("retire",w.item);
+      }else{auto &c=codes[w.item];need(c.live&&c.refs,"template programming lost owner");
+        if(configured.count(c.pe)){calendar.push(Wake{add(now,1),Word,w.item});continue;}
+        configured.insert(c.pe);issue_free[c.pe]=add(now,1);++c.loaded;++counts["template_words_loaded"];++counts["template_program_pe_cycles"];
+        if(c.loaded==templates[c.code].words.size())c.ready=add(now,1);else calendar.push(Wake{add(now,1),Word,w.item});
+      }
+    }
+  }
+  void dispatch(){
+    std::vector<unsigned> order;for(auto [source,i]:active){(void)source;order.push_back(i);}
+    if(policy=="round_robin")std::stable_sort(order.begin(),order.end(),[&](unsigned a,unsigned b){
+      auto ka=std::make_pair(blocks[a].pe,(int64_t(a)-last_block[blocks[a].pe]-1+int64_t(blocks.size()))%int64_t(blocks.size()));
+      auto kb=std::make_pair(blocks[b].pe,(int64_t(b)-last_block[blocks[b].pe]-1+int64_t(blocks.size()))%int64_t(blocks.size()));return ka<kb;});
+    for(auto i:order){auto &b=blocks[i];if(!b.active||wait_reason(b)!="ready_context_cycles")continue;
+      auto id=b.events[b.pc];auto &e=events[id];need(e.begin==NEVER,"event issued twice");e.begin=now;b.running=true;
+      U due=add(now,latency.at(e.op));need(due<max_cycles,"event exceeded cycle limit");service(e)=add(due,1);issue_free[b.pe]=add(now,1);
+      last_block[b.pe]=int(i);calendar.push(Wake{due,Complete,id});++counts["events_issued"];++work[e.op+"_events"];
+      work[e.op+"_declared_active_lanes"]+=e.lanes;work[e.op+"_bytes"]+=e.bytes;emit("issue",i,id);
+    }
+  }
+  U next(){U time=calendar.empty()?NEVER:calendar.top().time;
+    auto update=[&](U x){if(x>now)time=std::min(time,x);};
+    for(auto x:issue_free)update(x);
+    for(auto x:compute_free)update(x);
+    for(auto x:sfu_free)update(x);
+    update(spm_free);update(dma_free);
+    need(time!=NEVER&&time>now,"event model deadlock: blocked residency/dependencies with no future transition");return time;
+  }
+  void account(U duration){
+    unsigned resident=unsigned(active.size());for(auto [source,i]:active){(void)source;accumulate(areas[wait_reason(blocks[i])],duration);}
+    accumulate(areas["resident_context_cycles"],duration,resident);accumulate(areas["spm_vector_cycles"],duration,used(spm));
+    peak_contexts=std::max(peak_contexts,resident);peak_spm=std::max(peak_spm,used(spm));peak_sources=std::max(peak_sources,unsigned(live_sources.size()));
+    for(unsigned pe=0;pe<pes;++pe){auto r=used(rf[pe]),c=used(rom[pe]);peak_rf=std::max(peak_rf,r);peak_rom=std::max(peak_rom,c);
+      accumulate(areas["rf_vector_cycles"],duration,r);accumulate(areas["rom_word_cycles"],duration,c);
+      if(compute_free[pe]>now)accumulate(areas["compute_busy_pe_cycles"],duration);
+      if(sfu_free[pe]>now)accumulate(areas["sfu_busy_pe_cycles"],duration);
+      if(compute_free[pe]>now&&dma_free>now)accumulate(areas["compute_dma_overlap_pe_cycles"],duration);
+    }
+    if(spm_free>now)accumulate(areas["spm_busy_cycles"],duration);
+    if(dma_free>now)accumulate(areas["dma_busy_cycles"],duration);
+  }
+  Json::Value run(){
+    while(retired<blocks.size()){
+      need(now<=max_cycles,"event model exceeded cycle limit");changes();
+      admissions();
+      dispatch();if(retired==blocks.size())break;
+      U time=next();need(time<=max_cycles,"event model exceeded cycle limit");account(time-now);now=time;
+    }
+    need(used(spm)==0&&live_sources.empty()&&calendar.empty()&&active.empty()&&admission_heads.empty(),"event model failed to drain");
+    for(unsigned pe=0;pe<pes;++pe)need(used(rf[pe])==0&&used(rom[pe])==0&&used(slots[pe])==0,"event resource leak");
+    need(counts["events_issued"]==events.size()&&counts["events_completed"]==events.size(),"not every event executed exactly once");
+    Json::Value r;r["classification"]="native_concurrent_event_component_not_full_model_or_numerical_execution";r["cycles"]=Json::UInt64(now);
+    r["calendar_transitions"]=Json::UInt64(transitions);r["blocks"]=Json::UInt64(blocks.size());r["events"]=Json::UInt64(events.size());r["policy"]=policy;
+    for(const auto &[k,v]:counts)r["counts"][k]=Json::UInt64(v);
+    for(const auto &[k,v]:areas)r["integrated_usage"][k]=Json::UInt64(v);
+    for(const auto &[k,v]:work)r["declared_work"][k]=Json::UInt64(v);
+    for(const auto &[k,v]:areas){(void)v;r["counter_units"][k]=k.find("context")!=std::string::npos?"context_cycle":k.find("vector")!=std::string::npos?"vector_cycle":k.find("rom_word")!=std::string::npos?"word_cycle":k.find("pe_cycle")!=std::string::npos?"pe_cycle":"wall_cycle";}
+    auto denominator=[&](const char *key,U units){U value=0;accumulate(value,now,units);r["capacity_time_denominators"][key]=Json::UInt64(value);};
+    denominator("pe_cycles",pes);denominator("context_slot_cycles",pes*contexts);denominator("rf_vector_cycles",pes*16);denominator("spm_vector_cycles",128);denominator("rom_word_cycles",pes*32);
+    r["capacity"]["pes"]=pes;r["capacity"]["contexts_per_pe"]=contexts;r["capacity"]["rf_vectors_per_pe"]=16;r["capacity"]["rom_words_per_pe"]=32;r["capacity"]["spm_vectors_total"]=128;r["capacity"]["source_window_limit"]=source_limit;
+    r["peak"]["contexts"]=peak_contexts;r["peak"]["spm_vectors"]=peak_spm;r["peak"]["rf_vectors_per_pe"]=peak_rf;r["peak"]["rom_words_per_pe"]=peak_rom;r["peak"]["active_sources"]=peak_sources;
+    r["block_intervals"]=Json::Value(Json::arrayValue);for(const auto &b:blocks){Json::Value x;x["id"]=b.id;x["source_operator_id"]=Json::UInt64(b.source);x["pe"]=b.pe;x["admit_cycle"]=Json::UInt64(b.begin);x["retire_cycle"]=Json::UInt64(b.end);r["block_intervals"].append(x);}
+    r["trace"]=trace;r["trace_truncated"]=counts["trace_admit"]+counts["trace_issue"]+counts["trace_complete"]+counts["trace_retire"]>trace.size();
+    r["dependency_visibility"]="completion_next_edge";r["all_resources_drained"]=true;r["tensor_values_executed"]=false;r["full_model_verified"]=false;r["inference_performance_eligible"]=false;
+    return r;
+  }
+};
+}
+Json::Value simulate(const Json::Value &program){return Engine(program).run();}
+}
