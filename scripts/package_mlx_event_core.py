@@ -18,11 +18,13 @@ def main():
     parser.add_argument("--include-ports",action="store_true")
     parser.add_argument("--include-vectors",action="store_true")
     parser.add_argument("--include-memory",action="store_true")
+    parser.add_argument("--include-control",action="store_true")
     parser.add_argument("--matrix-alignment",type=Path)
     parser.add_argument("--vector-alignment",type=Path)
     parser.add_argument("--memory-alignment",type=Path)
+    parser.add_argument("--control-alignment",type=Path)
     args = parser.parse_args(); out = args.output.resolve(); tests = args.tests.resolve(); safety = args.safety.resolve()
-    test_count,replay_count,success_count=(176,166,136) if args.include_memory else (148,142,115) if args.include_vectors else (95,94,67) if args.include_ports else (55,58,37) if args.include_loops else (35,29,18)
+    test_count,replay_count,success_count=(221,202,168) if args.include_control else (176,166,136) if args.include_memory else (148,142,115) if args.include_vectors else (95,94,67) if args.include_ports else (55,58,37) if args.include_loops else (35,29,18)
     require(not out.exists(), "choose a fresh event publication")
     suite = ET.parse(tests / "regression.xml").getroot().find("testsuite")
     require(suite is not None and suite.get("tests") == str(test_count) and all(suite.get(k) == "0" for k in ("errors", "failures", "skipped")), "event regression not accepted")
@@ -52,8 +54,8 @@ def main():
     require(set(contracts) == {"bert", "llama2"}, "both full-model resource inventories required")
     for name in ("scripts/package_mlx_event_core.py", "scripts/compile_mlx_event_resources.py"):
         copies[ROOT / name] = Path("sources") / name
-    if args.include_loops or args.include_ports or args.include_vectors or args.include_memory:copies[ROOT/"docs/mlx-event-loop-ir.md"]=Path("sources/docs/mlx-event-loop-ir.md")
-    if args.include_ports or args.include_vectors or args.include_memory:
+    if args.include_loops or args.include_ports or args.include_vectors or args.include_memory or args.include_control:copies[ROOT/"docs/mlx-event-loop-ir.md"]=Path("sources/docs/mlx-event-loop-ir.md")
+    if args.include_ports or args.include_vectors or args.include_memory or args.include_control:
         require(args.matrix_alignment is not None,"port publication needs actual matrix execution alignment")
         alignment=args.matrix_alignment.resolve();bound=json.loads((alignment/"report.json").read_text())
         require(len(bound["cases"])==22 and bound["all_window_cycles_and_work_equal"],"matrix alignment incomplete")
@@ -66,7 +68,7 @@ def main():
             copies[job]=Path("matrix-inputs")/job.parent.parent.name/"job.json"
         for name in ("docs/mlx-event-port-contract.md","scripts/compile_mlx_matrix_events.py"):
             copies[ROOT/name]=Path("sources")/name
-    if args.include_vectors or args.include_memory:
+    if args.include_vectors or args.include_memory or args.include_control:
         require(args.vector_alignment is not None,"vector publication needs numerical window alignment")
         alignment=args.vector_alignment.resolve();bound=json.loads((alignment/"report.json").read_text())
         require(bound.get("family")=="vector" and len(bound["cases"])==48 and bound["all_window_cycles_and_work_equal"],"vector alignment incomplete")
@@ -78,7 +80,7 @@ def main():
             job=Path(row["job"]);require(sha(job)==row["job_sha256"],"vector input changed")
             copies[job]=Path("vector-inputs")/job.parent.parent.name/"job.json"
         copies[ROOT/"docs/mlx-vector-event-lowering.md"]=Path("sources/docs/mlx-vector-event-lowering.md")
-    if args.include_memory:
+    if args.include_memory or args.include_control:
         require(args.memory_alignment is not None,"memory publication needs numerical controller alignment")
         alignment=args.memory_alignment.resolve();bound=json.loads((alignment/"report.json").read_text())
         require(bound.get("family")=="memory" and len(bound["cases"])==18 and bound["all_window_cycles_and_work_equal"],"memory alignment incomplete")
@@ -95,6 +97,24 @@ def main():
             copies[job]=destination/"memory-event-job.json"
             copies[native_job]=destination/"native/job.json"
         copies[ROOT/"docs/mlx-memory-event-lowering.md"]=Path("sources/docs/mlx-memory-event-lowering.md")
+    if args.include_control:
+        require(args.control_alignment is not None,"control publication needs numerical RV64 window alignment")
+        alignment=args.control_alignment.resolve();bound=json.loads((alignment/"report.json").read_text())
+        require(bound.get("family")=="control" and len(bound["cases"])==28 and bound["all_window_cycles_and_work_equal"],"control alignment incomplete")
+        for name,value in bound["sources"].items():
+            require(sha(ROOT/name)==value,"control native/alignment source changed");copies[ROOT/name]=Path("sources")/name
+        for p in alignment.rglob("*"):
+            if p.is_file() and p.suffix in {".json",".bin",".log"}:copies[p]=Path("control-alignment")/p.relative_to(alignment)
+        for row in bound["cases"]:
+            job=Path(row["job"]);native_job=Path(row["native_job"])
+            require(sha(job)==row["job_sha256"] and sha(native_job)==row["native_job_sha256"],"control input changed")
+            destination=Path("control-inputs")/job.parent.name
+            copies[job]=destination/"control-event-job.json";copies[native_job]=destination/"native/job.json"
+            for path,value in row["input_files"].items():
+                p=Path(path);require(sha(p)==value,"control raw input changed")
+                require(p.parent==job.parent,"control input outside test directory")
+                copies[p]=destination/p.name
+        copies[ROOT/"docs/mlx-control-event-lowering.md"]=Path("sources/docs/mlx-control-event-lowering.md")
     out.mkdir(parents=True); files = []
     for source, relative in sorted(copies.items()):
         target = out / relative; target.parent.mkdir(parents=True, exist_ok=True); digest = sha(source); shutil.copy2(source, target)
