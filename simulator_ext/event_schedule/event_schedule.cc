@@ -49,6 +49,7 @@ struct Engine {
   unsigned pes=0,contexts=0,source_limit=0;U max_cycles=0,now=0,retired=0,transitions=0;
   bool timed_templates=true,loops=false,ports=false;U total_events=0,sequence_nodes=0;std::string policy;
   unsigned version=1;
+  bool source_ticks=false;std::map<U,std::vector<Wake>> source_completions;
   U spm_period=1,writeback_period=1,dma_request_period=1,dma_response_period=1,compute_ii=1;
   U spm_port_free=0,admission_retry=NEVER;std::vector<U> writeback_free,compute_issue_free;
   U sfu_ii=1;std::vector<U> sfu_issue_free;
@@ -72,7 +73,8 @@ struct Engine {
   explicit Engine(const Json::Value &p){
     const bool control=p["schema"]=="mlx_event_schedule_v6";
     const bool controllers=p["schema"]=="mlx_event_schedule_v5"||control;
-    auto top_fields=std::set<std::string>{"schema","hardware","templates","blocks","max_cycles","trace_limit","policy"};if(controllers)top_fields.insert("controllers");fields(p,top_fields);
+    auto top_fields=std::set<std::string>{"schema","hardware","templates","blocks","max_cycles","trace_limit","policy"};if(controllers)top_fields.insert("controllers");if(control)top_fields.insert("source_tick_order");fields(p,top_fields);
+    if(p.isMember("source_tick_order")){need(p["source_tick_order"].isBool(),"source tick order must be Boolean");source_ticks=p["source_tick_order"].asBool();}
     need(p["schema"]=="mlx_event_schedule_v1"||p["schema"]=="mlx_event_schedule_v2"||p["schema"]=="mlx_event_schedule_v3"||p["schema"]=="mlx_event_schedule_v4"||controllers,"unsupported event timing contract");
     version=control?6:controllers?5:p["schema"]=="mlx_event_schedule_v4"?4:p["schema"]=="mlx_event_schedule_v3"?3:p["schema"]=="mlx_event_schedule_v2"?2:1;ports=version>=3;loops=version>=2;
     const auto &h=p["hardware"];std::set<std::string> hardware_fields={"rows","columns","contexts","rf_vectors_per_pe","spm_vectors_total","rom_words_per_pe","source_window_limit","latencies","template_load_timing"};
@@ -95,6 +97,7 @@ struct Engine {
     source_limit=unsigned(number(h["source_window_limit"],"source window",1,64));need(h["template_load_timing"].isBool(),"template timing must be explicit");timed_templates=h["template_load_timing"].asBool();
     max_cycles=number(p["max_cycles"],"max cycles",1,NEVER/4);trace_limit=number(p.get("trace_limit",Json::UInt64(0)),"trace limit",0,1000000);
     policy=p.get("policy","source_priority").asString();need(policy=="source_priority"||policy=="round_robin","unknown event issue policy");
+    need(!source_ticks||policy=="source_priority","native source tick order requires source priority");
     unsigned kind_count=0;for(const auto &[name,kind]:kinds){(void)name;kind_count+=kind.version<=version;}
     need(h["latencies"].isObject()&&h["latencies"].size()==kind_count,"complete architectural event latencies required");
     for(const auto &[name,kind]:kinds){if(kind.version>version)continue;if(kind.unit==None)latency[name]=number(h["latencies"][name],"predicate/setup latency",0,0);else latency[name]=number(h["latencies"][name],"service latency",1,1024);}
@@ -297,7 +300,7 @@ struct Engine {
       auto priority=[&](const Wake &w){if(w.kind!=Complete)return std::make_tuple(int(w.kind)+10,U(0),w.item);
         auto unit=kinds.at(events[w.item].op).unit;return std::make_tuple(unit==Spm?0:unit==Dma?1:version>=4&&unit==Sfu?3:2,blocks[events[w.item].owner].source,w.item);};return priority(a)<priority(b);});
     for(auto w:due){++transitions;
-      if(w.kind==Complete){if(!ports||completion_port(w.item))complete(w.item);
+      if(w.kind==Complete){if(source_ticks)source_completions[blocks[events[w.item].owner].source].push_back(w);else if(!ports||completion_port(w.item))complete(w.item);
       }else if(w.kind==Retire){auto &b=blocks[w.item];need(b.active&&!b.running&&b.pc==b.total,"premature event block retirement");
         if(b.controller){if(!b.zero_work||b.control){auto &live=b.control?control_live:memory_live;need(live,"controller lease missing");live=false;}++counts[controller_prefix(b)+(b.zero_work?"_zero_work_retired":"_controllers_retired")];}
         else{const auto &t=templates[b.code];
@@ -316,8 +319,8 @@ struct Engine {
       }
     }
   }
-  void dispatch(){
-    std::vector<unsigned> order;for(auto [source,i]:active){(void)source;order.push_back(i);}
+  void dispatch(U only_source=NEVER){
+    std::vector<unsigned> order;for(auto [source,i]:active)if(only_source==NEVER||source==only_source)order.push_back(i);
     if(policy=="round_robin")std::stable_sort(order.begin(),order.end(),[&](unsigned a,unsigned b){
       if(blocks[a].controller||blocks[b].controller)return std::make_pair(blocks[a].controller,blocks[a].source)<std::make_pair(blocks[b].controller,blocks[b].source);
       auto ka=std::make_pair(blocks[a].pe,(int64_t(a)-last_block[blocks[a].pe]-1+int64_t(blocks.size()))%int64_t(blocks.size()));
@@ -383,7 +386,12 @@ struct Engine {
     while(retired<blocks.size()){
       need(now<=max_cycles,"event model exceeded cycle limit");changes();
       admissions();
-      dispatch();if(retired==blocks.size())break;
+      if(source_ticks){
+        std::set<U> sources;for(auto [source,i]:active){(void)i;sources.insert(source);}
+        for(auto source:sources){auto due=source_completions.find(source);if(due!=source_completions.end())for(auto w:due->second)if(completion_port(w.item))complete(w.item);dispatch(source);}
+        source_completions.clear();
+      }else dispatch();
+      if(retired==blocks.size())break;
       U time=next();need(time<=max_cycles,"event model exceeded cycle limit");account(time-now);now=time;
     }
     need(used(spm)==0&&!memory_live&&!control_live&&live_sources.empty()&&calendar.empty()&&active.empty()&&admission_heads.empty(),"event model failed to drain");
@@ -402,6 +410,7 @@ struct Engine {
     if(version>=5){r["memory_controller_resources"]["data_register_bytes"]=32;r["memory_controller_resources"]["staging_bytes"]=128;r["memory_controller_resources"]["conversion_result_latch_bytes"]=8;r["memory_controller_resources"]["request_data_latch_bytes"]=8;r["memory_controller_resources"]["peak_active"]=peak_memory;r["memory_controller_resources"]["uses_array_rf_spm"]=false;}
     if(version>=6){r["control_controller_resources"]["register_bytes"]=512;r["control_controller_resources"]["rom_words"]=32;r["control_controller_resources"]["peak_active"]=peak_control;r["control_controller_resources"]["uses_array_rf_spm"]=false;r["control_controller_resources"]["rocket_cpu_timing"]=false;
       r["port_contract"]["issue_after_admission_edge_scope"]="array_only_controllers_start_on_admission_edge";}
+    if(source_ticks)r["timing_semantics"]="source_priority_completion_then_issue_per_source_next_edge_visibility_not_full_graph";
     for(const auto &[k,v]:counts)r["counts"][k]=Json::UInt64(v);
     for(const auto &[k,v]:areas)r["integrated_usage"][k]=Json::UInt64(v);
     for(const auto &[k,v]:work)r["declared_work"][k]=Json::UInt64(v);

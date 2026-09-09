@@ -1,0 +1,6 @@
+cmake_minimum_required(VERSION 3.16)
+project(mlx_event_native_group LANGUAGES C CXX)
+add_subdirectory(../tensor_model tensor-model)
+add_executable(mlx-event-native-group main.cc)
+target_link_libraries(mlx-event-native-group PRIVATE mlx_tensor_values)
+target_compile_options(mlx-event-native-group PRIVATE -Wall -Wextra -Werror -ffp-contract=off)

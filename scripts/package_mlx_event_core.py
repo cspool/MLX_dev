@@ -19,12 +19,15 @@ def main():
     parser.add_argument("--include-vectors",action="store_true")
     parser.add_argument("--include-memory",action="store_true")
     parser.add_argument("--include-control",action="store_true")
+    parser.add_argument("--include-source-order",action="store_true")
     parser.add_argument("--matrix-alignment",type=Path)
     parser.add_argument("--vector-alignment",type=Path)
     parser.add_argument("--memory-alignment",type=Path)
     parser.add_argument("--control-alignment",type=Path)
+    parser.add_argument("--group-alignment",type=Path)
     args = parser.parse_args(); out = args.output.resolve(); tests = args.tests.resolve(); safety = args.safety.resolve()
-    test_count,replay_count,success_count=(221,202,168) if args.include_control else (176,166,136) if args.include_memory else (148,142,115) if args.include_vectors else (95,94,67) if args.include_ports else (55,58,37) if args.include_loops else (35,29,18)
+    if args.include_source_order:args.include_control=True
+    test_count,replay_count,success_count=(261,272,236) if args.include_source_order else (221,202,168) if args.include_control else (176,166,136) if args.include_memory else (148,142,115) if args.include_vectors else (95,94,67) if args.include_ports else (55,58,37) if args.include_loops else (35,29,18)
     require(not out.exists(), "choose a fresh event publication")
     suite = ET.parse(tests / "regression.xml").getroot().find("testsuite")
     require(suite is not None and suite.get("tests") == str(test_count) and all(suite.get(k) == "0" for k in ("errors", "failures", "skipped")), "event regression not accepted")
@@ -115,6 +118,22 @@ def main():
                 require(p.parent==job.parent,"control input outside test directory")
                 copies[p]=destination/p.name
         copies[ROOT/"docs/mlx-control-event-lowering.md"]=Path("sources/docs/mlx-control-event-lowering.md")
+    if args.include_source_order:
+        require(args.group_alignment is not None,"source order publication needs numerical concurrent groups")
+        alignment=args.group_alignment.resolve();bound=json.loads((alignment/"report.json").read_text())
+        require(len(bound["cases"])==32 and bound["all_source_tick_cycles_equal"],"concurrent group alignment incomplete")
+        for name,value in bound["sources"].items():
+            require(sha(ROOT/name)==value,"group alignment source changed");copies[ROOT/name]=Path("sources")/name
+        for p in alignment.rglob("*"):
+            if p.is_file() and p.suffix in {".json",".bin",".log"}:copies[p]=Path("group-alignment")/p.relative_to(alignment)
+        for row in bound["cases"]:
+            job=Path(row["job"]);require(sha(job)==row["job_sha256"],"group input changed")
+            destination=Path("group-inputs")/job.parent.name;copies[job]=destination/"group-job.json"
+            for i,value in enumerate(row["numerical_output_sha256"]):
+                solo=job.parent/f"solo{i}/out";require(sha(solo/"output.bin")==value,"standalone numerical reference changed")
+                for p in solo.iterdir():
+                    if p.is_file() and p.suffix in {".json",".bin"}:copies[p]=destination/f"solo{i}/out"/p.name
+        copies[ROOT/"docs/mlx-event-source-order.md"]=Path("sources/docs/mlx-event-source-order.md")
     out.mkdir(parents=True); files = []
     for source, relative in sorted(copies.items()):
         target = out / relative; target.parent.mkdir(parents=True, exist_ok=True); digest = sha(source); shutil.copy2(source, target)
