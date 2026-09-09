@@ -9,7 +9,7 @@ import subprocess
 import xml.etree.ElementTree as ET
 
 from scripts.run_mlx_tensor_semantics import sha, ROOT
-from scripts.mlx_system_attempt import record
+from scripts.mlx_system_attempt import record,linked_libraries
 
 
 def require(value, message):
@@ -17,6 +17,42 @@ def require(value, message):
 
 
 def audit_trace(program, result):
+    if "event_patterns" in program:
+        from mlxsim.model_lazy_event_patterns import materialize
+        r=result["lazy_patterns"]
+        require(r["event_state_drained"] and r["peak_serialized_cache_bytes"]<=program["pattern_cache_bytes"] and r["peak_live_sequence_nodes"]<=1000000,"lazy pattern storage did not drain or exceeded bounds")
+        require(r["allocated_event_slots"]==r["peak_live_event_leaves"],"lazy event slots grew beyond residency peak")
+        if result["trace_truncated"]:return
+        original=program;program=materialize(program)
+        def size(items):
+            nodes=leaves=0
+            for item in items:
+                nodes+=1
+                if "repeat" in item:
+                    n,l=size(item["body"]);nodes+=n;leaves+=l
+                else:leaves+=1
+            return nodes,leaves
+        dimensions={b["id"]:size(b["events"]) for b in program["blocks"]+program.get("controllers",[])}
+        changes={};totals=[0,0];peaks=[0,0]
+        for b in result["block_intervals"]:
+            n,l=dimensions[b["id"]]
+            for cycle,sign in ((b["admit_cycle"],1),(b["retire_cycle"],-1)):
+                delta=changes.setdefault(cycle,[0,0]);delta[0]+=sign*n;delta[1]+=sign*l
+        for _,delta in sorted(changes.items()):
+            for i in range(2):totals[i]+=delta[i];peaks[i]=max(peaks[i],totals[i])
+        require(totals==[0,0] and peaks==[r["peak_live_sequence_nodes"],r["peak_live_event_leaves"]],"lazy resident IR peak does not match block lifetimes")
+        block_patterns={b["id"]:b["event_pattern"] for b in original["blocks"]+original.get("controllers",[])}
+        sizes={key:Path(spec["path"]).stat().st_size for key,spec in original["event_patterns"].items()};cache={};used=peak=reads=hits=stamp=0
+        for row in result["trace"]:
+            if row["event"]!="admit":continue
+            stamp+=1;key=block_patterns[row["block"]]
+            if key in cache:hits+=1
+            else:
+                while used+sizes[key]>original["pattern_cache_bytes"]:
+                    victim=min(cache,key=cache.get);used-=sizes[victim];del cache[victim]
+                reads+=1;used+=sizes[key];peak=max(peak,used)
+            cache[key]=stamp
+        require((reads,hits,peak)==(r["file_reads"],r["cache_hits"],r["peak_serialized_cache_bytes"]),"lazy cache counters differ from actual admission order")
     if result["trace_truncated"]: return
     control=program["schema"]=="mlx_event_schedule_v6"
     memory=program["schema"]=="mlx_event_schedule_v5" or control
@@ -172,7 +208,11 @@ def main():
     parser.add_argument("--include-control",action="store_true")
     parser.add_argument("--include-source-order",action="store_true")
     parser.add_argument("--include-source-graph",action="store_true")
+    parser.add_argument("--include-lazy",action="store_true")
+    parser.add_argument("--case-timeout",type=int,default=60)
     args = parser.parse_args(); out = args.output.resolve(); tests = args.tests.resolve()
+    require(1<=args.case_timeout<=600,"invalid safety case watchdog")
+    if args.include_lazy:args.include_source_graph=True
     if args.include_source_graph:args.include_source_order=True
     if args.include_source_order:args.include_control=True
     require(not out.exists(), "choose a fresh event verification directory")
@@ -180,7 +220,7 @@ def main():
     require(suite is not None and all(suite.get(k) == "0" for k in ("failures", "errors", "skipped")), "event regression failed")
     paths = [p for p in (tests / "pytest").rglob("program.json") if not any(a.is_symlink() for a in p.parents)
              and json.loads(p.read_text()).get("schema","").startswith("mlx_event_schedule_")]
-    require(len(paths) == (291 if args.include_source_graph else 272 if args.include_source_order else 202 if args.include_control else 166 if args.include_memory else 142 if args.include_vectors else 94 if args.include_ports else 58 if args.include_loops else 29), "event safety replay scope differs")
+    require(len(paths) == (324 if args.include_lazy else 291 if args.include_source_graph else 272 if args.include_source_order else 202 if args.include_control else 166 if args.include_memory else 142 if args.include_vectors else 94 if args.include_ports else 58 if args.include_loops else 29), "event safety replay scope differs")
     sources = {str(p.relative_to(ROOT)): sha(p) for p in (ROOT / "simulator_ext/event_schedule").iterdir() if p.is_file()}
     for p in (Path(__file__).resolve(), ROOT / "tests/test_event_schedule.py", ROOT / "src/mlxsim/model_event_resources.py"):
         sources[str(p.relative_to(ROOT))] = sha(p)
@@ -203,12 +243,21 @@ def main():
     if args.include_source_graph:
         for name in ("tests/test_event_source_graph.py","tests/test_event_graph_plan.py","src/mlxsim/model_array_graph_events.py","src/mlxsim/model_event_graph_plan.py"):
             sources[name]=sha(ROOT/name)
-    binary_hash = sha(args.binary); files = {str(p): sha(p) for p in paths}; out.mkdir(parents=True)
+    if args.include_lazy:
+        for name in ("tests/test_lazy_event_patterns.py","src/mlxsim/model_lazy_event_patterns.py"):
+            sources[name]=sha(ROOT/name)
+    binary_hash = sha(args.binary); files = {str(p): sha(p) for p in paths};missing=set();libraries=linked_libraries(args.binary.resolve())
+    for p in paths:
+        for spec in json.loads(p.read_text()).get("event_patterns",{}).values():
+            path=Path(spec["path"])
+            if path.is_file():files[str(path)]=sha(path)
+            else:missing.add(str(path))
+    out.mkdir(parents=True)
     replays = []; env = dict(os.environ, ASAN_OPTIONS="detect_leaks=1:halt_on_error=1", UBSAN_OPTIONS="halt_on_error=1:print_stacktrace=1")
     for i, p in enumerate(sorted(paths)):
         actual = out / f"case-{i:02d}.json"; log = out / f"case-{i:02d}.log"; expected = 0 if (p.parent / "result.json").exists() else 1
         with log.open("w") as stream:
-            process = subprocess.run([str(args.binary.resolve()), str(p), str(actual)], stdout=stream, stderr=subprocess.STDOUT, env=env, timeout=60)
+            process = subprocess.run([str(args.binary.resolve()), str(p), str(actual)], stdout=stream, stderr=subprocess.STDOUT, env=env, timeout=args.case_timeout)
         require(process.returncode == expected and not any(x in log.read_text() for x in ("ERROR: AddressSanitizer", "runtime error:", "LeakSanitizer", "DEADLYSIGNAL")), "event sanitizer replay failed")
         if expected: require(not actual.exists(), "rejected event program produced success")
         else:
@@ -216,11 +265,11 @@ def main():
             require(result == baseline, "event sanitizer changed full result")
             audit_trace(json.loads(p.read_text()), result)
         replays.append(dict(program=str(p), expected_exit=expected, result=str(actual) if not expected else None, log_sha256=sha(log)))
-    require(sum(r["expected_exit"] == 0 for r in replays) == (248 if args.include_source_graph else 236 if args.include_source_order else 168 if args.include_control else 136 if args.include_memory else 115 if args.include_vectors else 67 if args.include_ports else 37 if args.include_loops else 18), "event safety success coverage differs")
-    require(all(sha(ROOT / p) == h for p,h in sources.items()) and all(sha(Path(p)) == h for p,h in files.items()) and sha(args.binary) == binary_hash, "event safety sources/inputs changed")
+    require(sum(r["expected_exit"] == 0 for r in replays) == (273 if args.include_lazy else 248 if args.include_source_graph else 236 if args.include_source_order else 168 if args.include_control else 136 if args.include_memory else 115 if args.include_vectors else 67 if args.include_ports else 37 if args.include_loops else 18), "event safety success coverage differs")
+    require(all(sha(ROOT / p) == h for p,h in sources.items()) and all(sha(Path(p)) == h for p,h in {**files,**libraries}.items()) and all(not Path(p).exists() for p in missing) and sha(args.binary) == binary_hash, "event safety sources/inputs changed")
     record(out / "report.json", dict(classification="concurrent_event_core_component_validation_not_full_model", sources=sources, inputs=files,
                                      regression_tests=int(suite.get("tests")), replays=replays, asan_binary_sha256=binary_hash, full_model_verified=False,
-                                     performance_error_available=False, trace_resource_accounting_checked=True))
+                                     performance_error_available=False, trace_resource_accounting_checked=True,runtime_libraries=libraries,missing_pattern_paths=sorted(missing),case_watchdog_seconds=args.case_timeout))
     print(f"EVENT_CORE_SAFETY_PASS replays={len(replays)}")
 
 

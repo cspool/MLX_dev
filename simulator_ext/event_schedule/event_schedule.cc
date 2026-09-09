@@ -1,4 +1,5 @@
 #include "event_schedule.h"
+#include "pattern_store.h"
 #include <algorithm>
 #include <array>
 #include <deque>
@@ -38,6 +39,7 @@ struct Sequence {U repeat=1,total=0;unsigned event=UINT32_MAX;std::vector<Sequen
 struct Event {std::string id,op;unsigned owner=0;std::vector<unsigned> deps;std::vector<std::string> dependency_names;
   U begin=NEVER,end=NEVER,visible=NEVER,instances=1,issued=0,completed=0;unsigned lanes=0,bytes=0;};
 struct Block {std::string id;U source=0,pc=0,total=0,frontier_ready=0;unsigned pe=0,code=0,slot=0,rf=0,spm=0;std::vector<unsigned> events,deps;Sequence sequence;
+  std::string pattern;U owned_nodes=0;
   unsigned graph_source=UINT32_MAX,graph_window=0;
   std::vector<unsigned> children;unsigned unmet=0;
   bool active=false,running=false,retired=false,controller=false,control=false,zero_work=false;U begin=NEVER,end=NEVER;};
@@ -53,6 +55,8 @@ struct Engine {
   bool timed_templates=true,loops=false,ports=false;U total_events=0,sequence_nodes=0;std::string policy;
   unsigned version=1;
   bool source_ticks=false;std::map<U,std::vector<Wake>> source_completions;
+  bool lazy=false;Json::Value pattern_specs;std::unique_ptr<PatternStore> pattern_store;
+  std::vector<unsigned> free_events;U resident_nodes=0,peak_nodes=0,peak_leaves=0,loaded_leaves=0,loaded_blocks=0;
   bool graph_mode=false;std::vector<Source> graph;std::map<U,unsigned> source_ids;std::set<std::pair<U,unsigned>> graph_ready;
   unsigned graph_active=0,peak_graph_active=0,graph_memory=0,graph_control=0,graph_completed=0;
   U spm_period=1,writeback_period=1,dma_request_period=1,dma_response_period=1,compute_ii=1;
@@ -78,9 +82,12 @@ struct Engine {
   explicit Engine(const Json::Value &p){
     const bool control=p["schema"]=="mlx_event_schedule_v6";
     const bool controllers=p["schema"]=="mlx_event_schedule_v5"||control;
-    auto top_fields=std::set<std::string>{"schema","hardware","templates","blocks","max_cycles","trace_limit","policy"};if(controllers)top_fields.insert("controllers");if(control){top_fields.insert("source_tick_order");top_fields.insert("source_graph");}fields(p,top_fields);
+    auto top_fields=std::set<std::string>{"schema","hardware","templates","blocks","max_cycles","trace_limit","policy"};if(controllers)top_fields.insert("controllers");if(control){top_fields.insert("source_tick_order");top_fields.insert("source_graph");top_fields.insert("event_patterns");top_fields.insert("pattern_cache_bytes");}fields(p,top_fields);
     if(p.isMember("source_tick_order")){need(p["source_tick_order"].isBool(),"source tick order must be Boolean");source_ticks=p["source_tick_order"].asBool();}
     graph_mode=p.isMember("source_graph");need(!graph_mode||source_ticks,"source graph requires explicit native source tick order");
+    lazy=p.isMember("event_patterns");need(!lazy||source_ticks,"lazy patterns require explicit native source tick order");need(lazy==p.isMember("pattern_cache_bytes"),"lazy pattern cache configuration missing");
+    if(lazy){pattern_specs=p["event_patterns"];need(pattern_specs.isObject()&&!pattern_specs.empty(),"lazy pattern registry empty");pattern_store=std::make_unique<PatternStore>(number(p["pattern_cache_bytes"],"pattern cache bytes",1,268435456));
+      for(const auto &id:pattern_specs.getMemberNames()){const auto &spec=pattern_specs[id];fields(spec,{"path","sha256","dynamic_events","zero_work"});need(spec["path"].isString()&&!spec["path"].asString().empty()&&spec["sha256"].isString()&&spec["sha256"].asString().size()==64&&spec["zero_work"].isBool(),"invalid lazy pattern binding");number(spec["dynamic_events"],"pattern dynamic work",1,NEVER/4);}}
     need(p["schema"]=="mlx_event_schedule_v1"||p["schema"]=="mlx_event_schedule_v2"||p["schema"]=="mlx_event_schedule_v3"||p["schema"]=="mlx_event_schedule_v4"||controllers,"unsupported event timing contract");
     version=control?6:controllers?5:p["schema"]=="mlx_event_schedule_v4"?4:p["schema"]=="mlx_event_schedule_v3"?3:p["schema"]=="mlx_event_schedule_v2"?2:1;ports=version>=3;loops=version>=2;
     const auto &h=p["hardware"];std::set<std::string> hardware_fields={"rows","columns","contexts","rf_vectors_per_pe","spm_vectors_total","rom_words_per_pe","source_window_limit","latencies","template_load_timing"};
@@ -122,14 +129,18 @@ struct Engine {
     for(const auto &b:descriptions){
       Block block;block.controller=blocks.size()>=p["blocks"].size();
       auto block_fields=block.controller?std::set<std::string>{"id","source_operator_id","admission_dependencies","events"}:std::set<std::string>{"id","source_operator_id","pe","template","admission_dependencies","events"};
+      if(lazy){block_fields.erase("events");block_fields.insert("event_pattern");}
       if(control&&block.controller){block_fields.insert("domain");need(b["domain"]=="control"||b["domain"]=="memory","unknown controller domain");block.control=b["domain"]=="control";}
       fields(b,block_fields);
       need(b["id"].isString()&&(block.controller||b["template"].isString()),"block/template id must be a string");block.id=b["id"].asString();
       unsigned owner=unsigned(blocks.size());need(!block.id.empty()&&block_ids.emplace(block.id,owner).second,"duplicate/empty block");
       block.source=number(b["source_operator_id"],"source id",0,NEVER/4);
       if(!block.controller){block.pe=unsigned(number(b["pe"],"mapped PE",0,pes-1));auto t=template_ids.find(b["template"].asString());need(t!=template_ids.end(),"block template missing");block.code=t->second;}
-      need(b["admission_dependencies"].isArray()&&b["events"].isArray()&&!b["events"].empty(),"block dependencies/events missing");
-      block.sequence=parse_sequence(b["events"],owner,1,0,block.events);block.total=block.sequence.total;total_events=add(total_events,block.total);
+      need(b["admission_dependencies"].isArray(),"block dependencies missing");
+      if(lazy){need(b["admission_dependencies"].empty()&&b["event_pattern"].isString()&&pattern_specs.isMember(b["event_pattern"].asString()),"lazy blocks require a known pattern and source-level dependencies");
+        block.pattern=b["event_pattern"].asString();block.total=pattern_specs[block.pattern]["dynamic_events"].asUInt64();block.zero_work=pattern_specs[block.pattern]["zero_work"].asBool();need(!block.zero_work||block.controller,"zero-work array pattern is invalid");}
+      else{need(b["events"].isArray()&&!b["events"].empty(),"block dependencies/events missing");block.sequence=parse_sequence(b["events"],owner,1,0,block.events);block.total=block.sequence.total;}
+      total_events=add(total_events,block.total);
       for(auto id:block.events){const auto &e=events[id];const auto &unit=kinds.at(e.op);
         need(block.controller?((unit.unit==Dma&&unit.version==1)||unit.version==(block.control?6u:5u)):unit.version<5,"event belongs to a different resource domain");
         if(e.op=="memory_index_read")need(e.bytes==8,"memory index read must preserve I64 width");
@@ -195,23 +206,26 @@ struct Engine {
   }
   Sequence parse_sequence(const Json::Value &items,unsigned owner,U factor,unsigned depth,std::vector<unsigned> &ids){
     need(depth<=16&&items.isArray()&&!items.empty(),"invalid/empty or excessively nested event loop");Sequence sequence;
-    for(const auto &item:items){++sequence_nodes;need(!loops||sequence_nodes<=1000000,"event sequence metadata exceeds bound");Sequence node;
+    for(const auto &item:items){++sequence_nodes;if(lazy){++resident_nodes;peak_nodes=std::max(peak_nodes,resident_nodes);}need(!loops||(lazy?resident_nodes:sequence_nodes)<=1000000,"event sequence metadata exceeds bound");Sequence node;
       if(item.isMember("repeat")){
         need(loops,"event loops require schema v2");fields(item,{"repeat","body"});node.repeat=number(item["repeat"],"loop repeat",1,NEVER/4);
         U multiplicity=0;accumulate(multiplicity,factor,node.repeat);
         auto body=parse_sequence(item["body"],owner,multiplicity,depth+1,ids);node.children=std::move(body.children);accumulate(node.total,body.total,node.repeat);
       }else{
         fields(item,{"id","op","dependencies","active_lanes","bytes"});Event event;
-        need(item["id"].isString()&&item["op"].isString(),"event id/op must be a string");event.id=item["id"].asString();event.op=item["op"].asString();event.owner=owner;event.instances=factor;
-        need(events.size()<UINT32_MAX&&!event.id.empty()&&event_ids.emplace(event.id,unsigned(events.size())).second,"duplicate/empty event");
+        need(item["id"].isString()&&!item["id"].asString().empty()&&item["op"].isString(),"event id/op must be a string");event.id=(lazy?blocks[owner].id+":":"")+item["id"].asString();event.op=item["op"].asString();event.owner=owner;event.instances=factor;
+        unsigned slot=unsigned(events.size());if(lazy&&!free_events.empty()){slot=free_events.back();free_events.pop_back();}
+        need(events.size()<UINT32_MAX&&!event.id.empty()&&event_ids.emplace(event.id,slot).second,"duplicate/empty event");
         auto kind=kinds.find(event.op);need(kind!=kinds.end()&&kind->second.version<=version&&item["dependencies"].isArray(),"unsupported event operation/dependencies");
+        need(!lazy||item["dependencies"].empty(),"lazy leaf patterns cannot hide cross-block dependencies");
         for(const auto &name:item["dependencies"]){need(name.isString(),"event dependency must be a string");event.dependency_names.push_back(name.asString());}
         if(kind->second.unit==MemoryConvert||kind->second.unit==Control){need(!item.isMember("active_lanes")&&!item.isMember("bytes"),"controller execution uses private scalar registers");}
         else if(kind->second.unit==None){need(ports&&!item.isMember("active_lanes"),"predicate/setup event has no active compute work");
           if(event.op=="spm_initialize")event.bytes=unsigned(number(item["bytes"],"SPM initialize bytes",1,64));else need(!item.isMember("bytes"),"predicate/setup event cannot declare memory bytes");}
         else if(kind->second.lanes){event.lanes=unsigned(number(item["active_lanes"],"active lanes",1,kind->second.lanes));need(!item.isMember("bytes"),"compute event cannot declare memory bytes");}
         else{event.bytes=unsigned(number(item["bytes"],"memory bytes",1,64));need(!item.isMember("active_lanes"),"memory event cannot declare compute work");if(kind->second.unit==Dma)need(event.bytes==1||event.bytes==2||event.bytes==4||event.bytes==8,"DMA event must represent one bounded element transaction");}
-        node.event=unsigned(events.size());node.total=1;ids.push_back(node.event);events.push_back(std::move(event));
+        node.event=slot;node.total=1;ids.push_back(slot);if(slot==events.size())events.push_back(std::move(event));else events[slot]=std::move(event);
+        if(lazy){++loaded_leaves;peak_leaves=std::max(peak_leaves,U(events.size()-free_events.size()));}
       }
       need(node.total&&node.total<=NEVER/4,"event loop work exceeds count bound");sequence.total=add(sequence.total,node.total);sequence.children.push_back(std::move(node));
     }
@@ -260,6 +274,23 @@ struct Engine {
   U request_period(const Block &b)const{return b.control?control_request_period:memory_request_period;}
   U response_period(const Block &b)const{return b.control?control_response_period:memory_response_period;}
   std::string controller_prefix(const Block &b)const{return b.control?"control":"memory";}
+  void load_events(unsigned index){
+    if(!lazy)return;
+    auto &b=blocks[index];need(b.events.empty(),"lazy block loaded twice");U before=sequence_nodes;
+    const auto &value=pattern_store->get(b.pattern,pattern_specs[b.pattern]);b.sequence=parse_sequence(value["events"],index,1,0,b.events);b.owned_nodes=sequence_nodes-before;
+    need(b.sequence.total==b.total,"lazy pattern dynamic work differs from descriptor");bool zero=false;
+    for(auto id:b.events){const auto &e=events[id];const auto &kind=kinds.at(e.op);
+      need(b.controller?((kind.unit==Dma&&kind.version==1)||kind.version==(b.control?6u:5u)):kind.version<5,"lazy pattern resource domain differs");
+      if(e.op=="memory_index_read")need(e.bytes==8,"memory index read must preserve I64 width");
+      if(e.op=="memory_predicate_read")need(e.bytes==1,"memory predicate read must preserve Boolean width");
+      if(e.op=="memory_complete"||e.op=="control_complete"){need(b.total==1,"zero-work controller must have one event");zero=true;}}
+    need(zero==b.zero_work,"lazy zero-work declaration differs");++loaded_blocks;
+  }
+  void unload_events(Block &b){
+    if(!lazy)return;
+    need(resident_nodes>=b.owned_nodes,"lazy metadata accounting underflow");resident_nodes-=b.owned_nodes;b.sequence=Sequence{};
+    for(auto id:b.events){need(events[id].issued==events[id].instances&&events[id].completed==events[id].instances,"lazy event recycled before all occurrences completed");need(event_ids.erase(events[id].id)==1,"lazy event identity lost");events[id]=Event{};free_events.push_back(id);}b.events.clear();
+  }
   void launch_sources(){
     if(!graph_mode||dma_free>now)return;
     for(auto it=graph_ready.begin();it!=graph_ready.end()&&graph_active<source_limit;){auto &s=graph[it->second];
@@ -283,11 +314,13 @@ struct Engine {
     auto &b=blocks[i];if(b.active||b.retired)return false;for(auto parent:b.deps)if(!blocks[parent].retired)return false;
     if(graph_mode){const auto &s=graph[b.graph_source];if(!s.active||b.graph_window!=s.window)return false;}
     if(!live_sources.count(b.source)&&live_sources.size()>=source_limit)return false;
-    if(b.controller){if(!b.zero_work||b.control){auto &live=b.control?control_live:memory_live;if(live)return false;live=true;(b.control?peak_control:peak_memory)=1;}b.active=true;b.begin=now;b.frontier_ready=now;++live_sources[b.source];++counts[controller_prefix(b)+(b.zero_work?"_zero_work_admitted":"_controllers_admitted")];emit("admit",i);return true;}
+    if(b.controller){if((!b.zero_work||b.control)&&(b.control?control_live:memory_live))return false;load_events(i);if(!b.zero_work||b.control){(b.control?control_live:memory_live)=true;(b.control?peak_control:peak_memory)=1;}b.active=true;b.begin=now;b.frontier_ready=now;++live_sources[b.source];++counts[controller_prefix(b)+(b.zero_work?"_zero_work_admitted":"_controllers_admitted")];emit("admit",i);return true;}
     const auto &t=templates[b.code];unsigned pe=b.pe;int slot=-1;for(unsigned s=0;s<contexts;++s)if(slots[pe][s]<0){slot=int(s);break;}
     int r=space(rf[pe],t.rf),s=space(spm,t.spm);if(slot<0||r<0||s<0)return false;
     int code=-1;for(unsigned c=0;c<codes.size();++c)if(codes[c].live&&codes[c].pe==pe&&codes[c].code==b.code){code=int(c);break;}
-    if(code<0){int base=space(rom[pe],unsigned(t.words.size()));if(base<0)return false;
+    int base=code<0?space(rom[pe],unsigned(t.words.size())):0;if(base<0)return false;
+    load_events(i);
+    if(code<0){
       code=int(codes.size());codes.push_back(ResidentCode{pe,b.code,unsigned(base),0,0,NEVER,true});
       for(unsigned w=0;w<t.words.size();++w)rom[pe][unsigned(base)+w]=code;
       if(timed_templates)calendar.push(Wake{add(now,1),Word,unsigned(code)});
@@ -346,7 +379,7 @@ struct Engine {
     std::vector<Wake> due;while(!calendar.empty()&&calendar.top().time==now){due.push_back(calendar.top());calendar.pop();}
     if(ports)std::stable_sort(due.begin(),due.end(),[&](const Wake &a,const Wake &b){
       auto priority=[&](const Wake &w){if(w.kind!=Complete)return std::make_tuple(int(w.kind)+10,U(0),w.item);
-        auto unit=kinds.at(events[w.item].op).unit;return std::make_tuple(unit==Spm?0:unit==Dma?1:version>=4&&unit==Sfu?3:2,blocks[events[w.item].owner].source,w.item);};return priority(a)<priority(b);});
+        auto unit=kinds.at(events[w.item].op).unit;return std::make_tuple(unit==Spm?0:unit==Dma?1:version>=4&&unit==Sfu?3:2,blocks[events[w.item].owner].source,lazy?events[w.item].owner:w.item);};return priority(a)<priority(b);});
     for(auto w:due){++transitions;
       if(w.kind==Complete){if(source_ticks)source_completions[blocks[events[w.item].owner].source].push_back(w);else if(!ports||completion_port(w.item))complete(w.item);
       }else if(w.kind==Retire){auto &b=blocks[w.item];need(b.active&&!b.running&&b.pc==b.total,"premature event block retirement");
@@ -361,6 +394,7 @@ struct Engine {
         auto it=live_sources.find(b.source);need(it!=live_sources.end()&&it->second,"source lease missing");if(!--it->second)live_sources.erase(it);
         retire_source_block(b);
         emit("retire",w.item);
+        unload_events(b);
       }else{auto &c=codes[w.item];need(c.live&&c.refs,"template programming lost owner");
         if(configured.count(c.pe)){calendar.push(Wake{add(now,1),Word,w.item});continue;}
         configured.insert(c.pe);issue_free[c.pe]=add(now,1);++c.loaded;++counts["template_words_loaded"];++counts["template_program_pe_cycles"];
@@ -448,9 +482,10 @@ struct Engine {
     for(unsigned pe=0;pe<pes;++pe)need(used(rf[pe])==0&&used(rom[pe])==0&&used(slots[pe])==0,"event resource leak");
     need(counts["events_issued"]==total_events&&counts["events_completed"]==total_events,"not every event instance executed exactly once");
     need(!graph_mode||(graph_completed==graph.size()&&!graph_active&&!graph_memory&&!graph_control&&graph_ready.empty()),"source graph failed to drain");
+    need(!lazy||(!resident_nodes&&event_ids.empty()&&free_events.size()==events.size()&&loaded_blocks==blocks.size()),"lazy event state failed to drain");
     Json::Value r;r["classification"]="native_concurrent_event_component_not_full_model_or_numerical_execution";r["cycles"]=Json::UInt64(now);
     r["calendar_transitions"]=Json::UInt64(transitions);r["blocks"]=Json::UInt64(blocks.size());r["events"]=Json::UInt64(total_events);r["policy"]=policy;
-    if(loops){r["schema"]=version==6?"mlx_event_schedule_v6":version==5?"mlx_event_schedule_v5":version==4?"mlx_event_schedule_v4":ports?"mlx_event_schedule_v3":"mlx_event_schedule_v2";r["stored_event_leaves"]=Json::UInt64(events.size());r["stored_sequence_nodes"]=Json::UInt64(sequence_nodes);
+    if(loops){r["schema"]=version==6?"mlx_event_schedule_v6":version==5?"mlx_event_schedule_v5":version==4?"mlx_event_schedule_v4":ports?"mlx_event_schedule_v3":"mlx_event_schedule_v2";r["stored_event_leaves"]=Json::UInt64(lazy?loaded_leaves:events.size());r["stored_sequence_nodes"]=Json::UInt64(sequence_nodes);
       r["loop_execution"]="lazy_instance_cursor_all_occurrences_scheduled";r["named_dependency_scope"]="last_occurrence_of_other_block_leaf";
       r["timing_semantics"]=ports?"completion_first_shared_ports_not_full_native_source_order":"v1_service_and_admission_contract_not_native_microprogram_alignment";}
     if(ports){r["port_contract"]["dma_consumes_pe_issue"]=false;r["port_contract"]["spm_port_period"]=Json::UInt64(spm_period);
@@ -462,6 +497,7 @@ struct Engine {
     if(version>=6){r["control_controller_resources"]["register_bytes"]=512;r["control_controller_resources"]["rom_words"]=32;r["control_controller_resources"]["peak_active"]=peak_control;r["control_controller_resources"]["uses_array_rf_spm"]=false;r["control_controller_resources"]["rocket_cpu_timing"]=false;
       r["port_contract"]["issue_after_admission_edge_scope"]="array_only_controllers_start_on_admission_edge";}
     if(source_ticks)r["timing_semantics"]="source_priority_completion_then_issue_per_source_next_edge_visibility_not_full_graph";
+    if(lazy){r["lazy_patterns"]=pattern_store->report();r["lazy_patterns"]["loaded_blocks"]=Json::UInt64(loaded_blocks);r["lazy_patterns"]["peak_live_sequence_nodes"]=Json::UInt64(peak_nodes);r["lazy_patterns"]["peak_live_event_leaves"]=Json::UInt64(peak_leaves);r["lazy_patterns"]["allocated_event_slots"]=Json::UInt64(events.size());r["lazy_patterns"]["event_state_drained"]=true;r["lazy_patterns"]["block_descriptors_still_eager"]=true;}
     if(graph_mode){r["source_graph_completed"]=true;r["source_frontend_peak"]=peak_graph_active;r["source_frontend_capacity"]=source_limit;r["source_launch_gate"]="shared_dma_quiescent";r["source_intervals"]=Json::Value(Json::arrayValue);
       for(const auto &s:graph){Json::Value row;row["source_operator_id"]=Json::UInt64(s.id);row["family"]=s.family;row["begin_cycle"]=Json::UInt64(s.begin);row["publish_cycle"]=Json::UInt64(s.end);row["windows"]=s.intervals;r["source_intervals"].append(row);}}
     for(const auto &[k,v]:counts)r["counts"][k]=Json::UInt64(v);
